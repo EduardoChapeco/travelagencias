@@ -41,6 +41,7 @@ const items: NavItem[] = [
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
   { label: "Clientes", segment: "clients", icon: UserRound },
+  { label: "Fornecedores", segment: "suppliers", icon: Store },
   { label: "Minha Empresa", segment: "company", icon: Store },
   { label: "Base de Conhecimento", segment: "knowledge", icon: BookOpen },
   { label: "Configurações", segment: "settings", icon: Settings },
