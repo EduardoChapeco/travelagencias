@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClientRouteImport } from './routes/client'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClientIndexRouteImport } from './routes/client.index'
+import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PAgency_slugRouteImport } from './routes/p.$agency_slug'
 import { Route as ClientTripsRouteImport } from './routes/client.trips'
@@ -94,6 +96,11 @@ const ClientRoute = ClientRouteImport.update({
   path: '/client',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -108,6 +115,11 @@ const ClientIndexRoute = ClientIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ClientRoute,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -155,34 +167,34 @@ const ClientCouponsRoute = ClientCouponsRouteImport.update({
   getParentRoute: () => ClientRoute,
 } as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
-  id: '/auth/verify',
-  path: '/auth/verify',
-  getParentRoute: () => rootRouteImport,
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  id: '/auth/reset-password',
-  path: '/auth/reset-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
-  getParentRoute: () => rootRouteImport,
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthOnboardingRoute = AuthOnboardingRouteImport.update({
-  id: '/auth/onboarding',
-  path: '/auth/onboarding',
-  getParentRoute: () => rootRouteImport,
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/auth/forgot-password',
-  path: '/auth/forgot-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AgencySlugRoute = AgencySlugRouteImport.update({
   id: '/agency/$slug',
@@ -495,6 +507,7 @@ const AgencySlugProposalsIdPreviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
   '/client': typeof ClientRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
@@ -524,6 +537,7 @@ export interface FileRoutesByFullPath {
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -602,6 +616,7 @@ export interface FileRoutesByTo {
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/admin': typeof AdminIndexRoute
+  '/auth': typeof AuthIndexRoute
   '/client': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -655,6 +670,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
   '/client': typeof ClientRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
@@ -684,6 +700,7 @@ export interface FileRoutesById {
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -738,6 +755,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/auth'
     | '/client'
     | '/admin/agencies'
     | '/admin/agents'
@@ -767,6 +785,7 @@ export interface FileRouteTypes {
     | '/client/trips'
     | '/p/$agency_slug'
     | '/admin/'
+    | '/auth/'
     | '/client/'
     | '/admin/agencies/$id'
     | '/agency/$slug/boarding'
@@ -845,6 +864,7 @@ export interface FileRouteTypes {
     | '/client/trips'
     | '/p/$agency_slug'
     | '/admin'
+    | '/auth'
     | '/client'
     | '/admin/agencies/$id'
     | '/agency/$slug/boarding'
@@ -897,6 +917,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/auth'
     | '/client'
     | '/admin/agencies'
     | '/admin/agents'
@@ -926,6 +947,7 @@ export interface FileRouteTypes {
     | '/client/trips'
     | '/p/$agency_slug'
     | '/admin/'
+    | '/auth/'
     | '/client/'
     | '/admin/agencies/$id'
     | '/agency/$slug/boarding'
@@ -979,14 +1001,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthOnboardingRoute: typeof AuthOnboardingRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-  AuthVerifyRoute: typeof AuthVerifyRoute
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
   MCheckinTokenRoute: typeof MCheckinTokenRoute
   MContractTokenRoute: typeof MContractTokenRoute
@@ -1003,6 +1020,13 @@ declare module '@tanstack/react-router' {
       path: '/client'
       fullPath: '/client'
       preLoaderRoute: typeof ClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -1025,6 +1049,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/client/'
       preLoaderRoute: typeof ClientIndexRouteImport
       parentRoute: typeof ClientRoute
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -1091,45 +1122,45 @@ declare module '@tanstack/react-router' {
     }
     '/auth/verify': {
       id: '/auth/verify'
-      path: '/auth/verify'
+      path: '/verify'
       fullPath: '/auth/verify'
       preLoaderRoute: typeof AuthVerifyRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
-      path: '/auth/reset-password'
+      path: '/reset-password'
       fullPath: '/auth/reset-password'
       preLoaderRoute: typeof AuthResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/register': {
       id: '/auth/register'
-      path: '/auth/register'
+      path: '/register'
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/onboarding': {
       id: '/auth/onboarding'
-      path: '/auth/onboarding'
+      path: '/onboarding'
       fullPath: '/auth/onboarding'
       preLoaderRoute: typeof AuthOnboardingRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/login': {
       id: '/auth/login'
-      path: '/auth/login'
+      path: '/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
-      path: '/auth/forgot-password'
+      path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/agency/$slug': {
       id: '/agency/$slug'
@@ -1600,6 +1631,28 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthOnboardingRoute: typeof AuthOnboardingRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthVerifyRoute: typeof AuthVerifyRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthOnboardingRoute: AuthOnboardingRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthVerifyRoute: AuthVerifyRoute,
+  AuthIndexRoute: AuthIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface ClientTripsRouteChildren {
   ClientTripsIdRoute: typeof ClientTripsIdRoute
 }
@@ -1832,14 +1885,9 @@ const PAgency_slugRouteWithChildren = PAgency_slugRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
   AgencySlugRoute: AgencySlugRouteWithChildren,
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthOnboardingRoute: AuthOnboardingRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-  AuthResetPasswordRoute: AuthResetPasswordRoute,
-  AuthVerifyRoute: AuthVerifyRoute,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
   MCheckinTokenRoute: MCheckinTokenRoute,
   MContractTokenRoute: MContractTokenRoute,
