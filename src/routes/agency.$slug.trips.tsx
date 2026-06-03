@@ -144,7 +144,7 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
       travel_start: travelStart || null,
       travel_end: travelEnd || null,
       client_id: clientId || null,
-      status,
+      status: status as "planning" | "confirmed" | "in_progress" | "completed" | "cancelled",
       owner_id: u.user?.id ?? null,
     });
     setSubmitting(false);
