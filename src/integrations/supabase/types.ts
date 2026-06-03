@@ -14,16 +14,326 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agencies: {
+        Row: {
+          brand_color: string | null
+          brand_color_fg: string | null
+          brand_color_light: string | null
+          created_at: string
+          created_by: string | null
+          document: string | null
+          email: string | null
+          id: string
+          legal_name: string | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          brand_color?: string | null
+          brand_color_fg?: string | null
+          brand_color_light?: string | null
+          created_at?: string
+          created_by?: string | null
+          document?: string | null
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          brand_color?: string | null
+          brand_color_fg?: string | null
+          brand_color_light?: string | null
+          created_at?: string
+          created_by?: string | null
+          document?: string | null
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lead_activities: {
+        Row: {
+          agency_id: string
+          author_id: string | null
+          content: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          metadata: Json
+          type: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Insert: {
+          agency_id: string
+          author_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          metadata?: Json
+          type: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Update: {
+          agency_id?: string
+          author_id?: string | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          metadata?: Json
+          type?: Database["public"]["Enums"]["lead_activity_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_stages: {
+        Row: {
+          agency_id: string
+          color: string
+          created_at: string
+          id: string
+          is_lost: boolean
+          is_won: boolean
+          name: string
+          position: number
+        }
+        Insert: {
+          agency_id: string
+          color?: string
+          created_at?: string
+          id?: string
+          is_lost?: boolean
+          is_won?: boolean
+          name: string
+          position: number
+        }
+        Update: {
+          agency_id?: string
+          color?: string
+          created_at?: string
+          id?: string
+          is_lost?: boolean
+          is_won?: boolean
+          name?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_stages_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          agency_id: string
+          closed_at: string | null
+          created_at: string
+          destination: string | null
+          email: string | null
+          estimated_value: number | null
+          id: string
+          lost_reason: string | null
+          name: string
+          notes: string | null
+          owner_id: string | null
+          pax_count: number | null
+          phone: string | null
+          position: number
+          source: string | null
+          stage_id: string
+          travel_end: string | null
+          travel_start: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          closed_at?: string | null
+          created_at?: string
+          destination?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          id?: string
+          lost_reason?: string | null
+          name: string
+          notes?: string | null
+          owner_id?: string | null
+          pax_count?: number | null
+          phone?: string | null
+          position?: number
+          source?: string | null
+          stage_id: string
+          travel_end?: string | null
+          travel_start?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          closed_at?: string | null
+          created_at?: string
+          destination?: string | null
+          email?: string | null
+          estimated_value?: number | null
+          id?: string
+          lost_reason?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string | null
+          pax_count?: number | null
+          phone?: string | null
+          position?: number
+          source?: string | null
+          stage_id?: string
+          travel_end?: string | null
+          travel_start?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "lead_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          default_agency_id: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          default_agency_id?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          default_agency_id?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_default_agency_id_fkey"
+            columns: ["default_agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          agency_id: string | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      agency_id_by_slug: { Args: { _slug: string }; Returns: string }
+      has_role: {
+        Args: {
+          _agency_id?: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_agency_member: {
+        Args: { _agency_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "agency_admin" | "agent" | "client"
+      lead_activity_type:
+        | "note"
+        | "stage_change"
+        | "call"
+        | "email"
+        | "whatsapp"
+        | "meeting"
+        | "task"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +460,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "agency_admin", "agent", "client"],
+      lead_activity_type: [
+        "note",
+        "stage_change",
+        "call",
+        "email",
+        "whatsapp",
+        "meeting",
+        "task",
+      ],
+    },
   },
 } as const
