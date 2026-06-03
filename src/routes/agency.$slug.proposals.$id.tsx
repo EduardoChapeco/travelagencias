@@ -12,6 +12,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
 
+const SMALL_INPUT =
+  "w-full h-[30px] px-2 rounded-md border border-input bg-surface text-xs outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/20";
+
+
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
   head: () => ({ meta: [{ title: "Editor de Proposta · TravelOS" }] }),
   component: ProposalEditor,
