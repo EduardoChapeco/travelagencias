@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClientIndexRouteImport } from './routes/client.index'
 import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VerifySerialRouteImport } from './routes/verify.$serial'
 import { Route as PAgency_slugRouteImport } from './routes/p.$agency_slug'
 import { Route as ClientTripsRouteImport } from './routes/client.trips'
 import { Route as ClientProfileRouteImport } from './routes/client.profile'
@@ -126,6 +127,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const VerifySerialRoute = VerifySerialRouteImport.update({
+  id: '/verify/$serial',
+  path: '/verify/$serial',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PAgency_slugRoute = PAgency_slugRouteImport.update({
   id: '/p/$agency_slug',
@@ -542,6 +548,7 @@ export interface FileRoutesByFullPath {
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
+  '/verify/$serial': typeof VerifySerialRoute
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
@@ -622,6 +629,7 @@ export interface FileRoutesByTo {
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
+  '/verify/$serial': typeof VerifySerialRoute
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
   '/client': typeof ClientIndexRoute
@@ -707,6 +715,7 @@ export interface FileRoutesById {
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
+  '/verify/$serial': typeof VerifySerialRoute
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
@@ -793,6 +802,7 @@ export interface FileRouteTypes {
     | '/client/profile'
     | '/client/trips'
     | '/p/$agency_slug'
+    | '/verify/$serial'
     | '/admin/'
     | '/auth/'
     | '/client/'
@@ -873,6 +883,7 @@ export interface FileRouteTypes {
     | '/client/profile'
     | '/client/trips'
     | '/p/$agency_slug'
+    | '/verify/$serial'
     | '/admin'
     | '/auth'
     | '/client'
@@ -957,6 +968,7 @@ export interface FileRouteTypes {
     | '/client/profile'
     | '/client/trips'
     | '/p/$agency_slug'
+    | '/verify/$serial'
     | '/admin/'
     | '/auth/'
     | '/client/'
@@ -1017,6 +1029,7 @@ export interface RootRouteChildren {
   ClientRoute: typeof ClientRouteWithChildren
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
+  VerifySerialRoute: typeof VerifySerialRoute
   MCheckinTokenRoute: typeof MCheckinTokenRoute
   MContractTokenRoute: typeof MContractTokenRoute
   MInviteTokenRoute: typeof MInviteTokenRoute
@@ -1075,6 +1088,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/verify/$serial': {
+      id: '/verify/$serial'
+      path: '/verify/$serial'
+      fullPath: '/verify/$serial'
+      preLoaderRoute: typeof VerifySerialRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/p/$agency_slug': {
       id: '/p/$agency_slug'
@@ -1910,6 +1930,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClientRoute: ClientRouteWithChildren,
   AgencySlugRoute: AgencySlugRouteWithChildren,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
+  VerifySerialRoute: VerifySerialRoute,
   MCheckinTokenRoute: MCheckinTokenRoute,
   MContractTokenRoute: MContractTokenRoute,
   MInviteTokenRoute: MInviteTokenRoute,
