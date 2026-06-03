@@ -59,6 +59,7 @@
   --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -68,6 +69,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-highlight-a: var(--highlight-a);
+  --color-highlight-b: var(--highlight-b);
+  --color-highlight-c: var(--highlight-c);
 }
 
 :root {
@@ -112,6 +116,7 @@
   --border-strong: #cbd5e1;
   --input: #e2e8f0;
   --ring: #cbd5e1;
+  --overlay: rgb(15 23 42 / 0.38);
 
   --radius: 0.5rem;
 
@@ -125,10 +130,14 @@
   --sidebar-ring: #cbd5e1;
 
   /* Shell */
-  --sidebar-w-collapsed: 56px;
+  --sidebar-w-collapsed: 48px;
   --sidebar-w-expanded: 220px;
   --ai-w: 320px;
   --header-h: 48px;
+
+  --highlight-a: #06b6d4;
+  --highlight-b: #8b5cf6;
+  --highlight-c: #22c55e;
 }
 
 .dark {
@@ -152,6 +161,7 @@
   --border-strong: #334155;
   --input: #1e293b;
   --ring: #334155;
+  --overlay: rgb(2 6 23 / 0.62);
   --sidebar: #0f172a;
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #f8fafc;
@@ -160,6 +170,9 @@
   --sidebar-accent-foreground: #f8fafc;
   --sidebar-border: #1e293b;
   --sidebar-ring: #334155;
+  --highlight-a: #22d3ee;
+  --highlight-b: #a78bfa;
+  --highlight-c: #34d399;
 }
 
 @layer base {
@@ -186,5 +199,56 @@
   }
   .no-scrollbar {
     scrollbar-width: none;
+  }
+}
+
+@layer utilities {
+  .dynamic-highlight-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .dynamic-highlight-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--highlight-angle, 0deg),
+      var(--color-highlight-a),
+      var(--color-highlight-b),
+      var(--color-highlight-c),
+      var(--color-highlight-a)
+    );
+    opacity: 0.72;
+    animation: highlight-spin 7s linear infinite;
+  }
+
+  .dynamic-highlight-border::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: calc(var(--radius-md) - 1px);
+    background: var(--color-surface);
+  }
+}
+
+@property --highlight-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes highlight-spin {
+  to {
+    --highlight-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dynamic-highlight-border::before {
+    animation: none;
   }
 }
