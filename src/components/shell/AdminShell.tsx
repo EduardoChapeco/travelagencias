@@ -1,9 +1,9 @@
-import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { Building2, Users, ScrollText, FileText, ShieldCheck, Wallet, BookOpen, Brush, Settings, Plane, Luggage, LayoutDashboard, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
-import { cn } from "@/lib/utils";
+import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
 
 const items = [
   { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
@@ -23,7 +23,7 @@ const items = [
 
 export function AdminShell() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancel = false;
@@ -50,31 +50,21 @@ export function AdminShell() {
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
-      <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-border bg-sidebar">
-        <div className="flex h-12 items-center gap-2 border-b border-border px-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-foreground text-xs font-bold text-background">A</div>
-          <span className="text-sm font-semibold">Admin Global</span>
-        </div>
-        <nav className="flex-1 overflow-y-auto px-2 py-2">
-          <ul className="space-y-0.5">
-            {items.map((it) => {
-              const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
-              const Icon = it.icon;
-              return (
-                <li key={it.to}>
-                  <Link to={it.to} className={cn("flex h-9 items-center gap-2.5 rounded-md px-2 text-sm text-muted-foreground hover:bg-surface-alt hover:text-foreground", active && "bg-surface-alt text-foreground")}>
-                    <Icon className="h-4 w-4" />
-                    <span className="truncate">{it.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-        <button onClick={signOut} className="flex h-10 items-center gap-2 border-t border-border px-3 text-xs text-muted-foreground hover:text-foreground">
-          <LogOut className="h-3.5 w-3.5" /> Sair
-        </button>
-      </aside>
+      <SlimSidebar
+        items={items as SlimSidebarItem[]}
+        brand={
+          <>
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">A</div>
+            <span className="ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">Admin Global</span>
+          </>
+        }
+        footer={
+          <button onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))} className="flex h-9 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+            <LogOut className="h-[18px] w-[18px] shrink-0" />
+            <span className="translate-x-1 opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">Sair</span>
+          </button>
+        }
+      />
       <main className="no-scrollbar min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1200px] px-6 py-6"><Outlet /></div>
       </main>
