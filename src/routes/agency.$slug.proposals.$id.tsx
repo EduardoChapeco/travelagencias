@@ -308,10 +308,6 @@ function ProposalEditor() {
         </main>
       </div>
 
-      <style>{`
-        .i { width:100%; height:30px; padding:0 8px; border-radius:6px; border:1px solid var(--color-border); background:var(--color-surface); font-size:12px; outline:none; }
-        .i:focus { border-color: var(--color-border-strong); }
-      `}</style>
     </div>
   );
 }
