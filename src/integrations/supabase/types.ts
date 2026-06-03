@@ -623,6 +623,7 @@ export type Database = {
           passengers_data: Json
           payment_terms: string | null
           pdf_url: string | null
+          public_token: string | null
           signatures: Json
           signed_at: string | null
           signed_hash: string | null
@@ -647,6 +648,7 @@ export type Database = {
           passengers_data?: Json
           payment_terms?: string | null
           pdf_url?: string | null
+          public_token?: string | null
           signatures?: Json
           signed_at?: string | null
           signed_hash?: string | null
@@ -671,6 +673,7 @@ export type Database = {
           passengers_data?: Json
           payment_terms?: string | null
           pdf_url?: string | null
+          public_token?: string | null
           signatures?: Json
           signed_at?: string | null
           signed_hash?: string | null
@@ -830,6 +833,7 @@ export type Database = {
           invoice_number: string | null
           paid_at: string | null
           payment_method: string | null
+          public_token: string | null
           receipt_url: string | null
           status: string
           trip_id: string | null
@@ -853,6 +857,7 @@ export type Database = {
           invoice_number?: string | null
           paid_at?: string | null
           payment_method?: string | null
+          public_token?: string | null
           receipt_url?: string | null
           status?: string
           trip_id?: string | null
@@ -876,6 +881,7 @@ export type Database = {
           invoice_number?: string | null
           paid_at?: string | null
           payment_method?: string | null
+          public_token?: string | null
           receipt_url?: string | null
           status?: string
           trip_id?: string | null
@@ -2336,6 +2342,10 @@ export type Database = {
     Functions: {
       accept_agency_invite: { Args: { _token: string }; Returns: string }
       agency_id_by_slug: { Args: { _slug: string }; Returns: string }
+      confirm_payment_with_token: {
+        Args: { _payment_method: string; _receipt_url: string; _token: string }
+        Returns: string
+      }
       contract_template_clauses: { Args: never; Returns: Json }
       get_my_agency_id: { Args: never; Returns: string }
       has_role: {
@@ -2349,6 +2359,77 @@ export type Database = {
       is_agency_member: {
         Args: { _agency_id: string; _user_id: string }
         Returns: boolean
+      }
+      public_contract_by_token: {
+        Args: { _token: string }
+        Returns: {
+          agency_logo: string
+          agency_name: string
+          client_data: Json
+          content_hash: string
+          custom_clauses: Json
+          fixed_clauses: Json
+          id: string
+          package_summary: string
+          passengers_data: Json
+          payment_terms: string
+          signed_at: string
+          status: string
+          total_value: number
+        }[]
+      }
+      public_passenger_by_token: {
+        Args: { _token: string }
+        Returns: {
+          agency_logo: string
+          agency_name: string
+          birth_date: string
+          cpf: string
+          data_complete: boolean
+          disabilities: string
+          document: string
+          document_type: string
+          email: string
+          filled_at: string
+          full_name: string
+          id: string
+          meal_preference: string
+          nationality: string
+          passport_expiry: string
+          passport_number: string
+          phone: string
+          trip_title: string
+        }[]
+      }
+      public_payment_by_token: {
+        Args: { _token: string }
+        Returns: {
+          agency_logo: string
+          agency_name: string
+          amount: number
+          currency: string
+          description: string
+          due_date: string
+          id: string
+          status: string
+          trip_title: string
+        }[]
+      }
+      save_passenger_with_token: {
+        Args: { _payload: Json; _token: string }
+        Returns: string
+      }
+      sign_contract_with_token: {
+        Args: {
+          _ip: string
+          _selfie_image: string
+          _signature_image: string
+          _signer_document: string
+          _signer_name: string
+          _token: string
+          _user_agent: string
+        }
+        Returns: string
       }
       verify_contract: {
         Args: { _serial: string }
