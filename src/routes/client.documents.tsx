@@ -24,7 +24,7 @@ function ClientDocumentsPage() {
       if (!tripIds.length) return { contracts: [], vouchers: [] };
       const [contracts, vouchers] = await Promise.all([
         supabase.from("contracts").select("id, status, signed_at, pdf_url, total_value").in("trip_id", tripIds),
-        supabase.from("vouchers").select("id, kind, status, pdf_url, issued_at").in("trip_id", tripIds),
+        supabase.from("vouchers").select("id, source_type, pdf_url, generated_at").in("trip_id", tripIds),
       ]);
       return { contracts: contracts.data ?? [], vouchers: vouchers.data ?? [] };
     },
@@ -62,12 +62,12 @@ function ClientDocumentsPage() {
             <div className="flex items-center gap-3">
               <FileText className="h-4 w-4 text-muted-foreground" />
               <div>
-                <div className="text-sm font-medium capitalize">{v.kind}</div>
-                <div className="text-xs text-muted-foreground">{v.issued_at ? `Emitido em ${fmtDate(v.issued_at)}` : "—"}</div>
+                <div className="text-sm font-medium capitalize">{v.source_type ?? "Voucher"}</div>
+                <div className="text-xs text-muted-foreground">{v.generated_at ? `Emitido em ${fmtDate(v.generated_at)}` : "—"}</div>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <StatusBadge tone={v.status === "issued" ? "success" : "warning"}>{v.status}</StatusBadge>
+              <StatusBadge tone={v.pdf_url ? "success" : "warning"}>{v.pdf_url ? "Emitido" : "Pendente"}</StatusBadge>
               {v.pdf_url && <a href={v.pdf_url} className="text-xs text-primary inline-flex items-center gap-1 hover:underline"><Download className="h-3 w-3" /> PDF</a>}
             </div>
           </div>

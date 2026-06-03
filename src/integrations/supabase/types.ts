@@ -553,6 +553,33 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_clauses_template: {
+        Row: {
+          clause_text: string
+          created_at: string
+          id: string
+          is_immutable: boolean
+          number: number
+          section: string
+        }
+        Insert: {
+          clause_text: string
+          created_at?: string
+          id?: string
+          is_immutable?: boolean
+          number: number
+          section: string
+        }
+        Update: {
+          clause_text?: string
+          created_at?: string
+          id?: string
+          is_immutable?: boolean
+          number?: number
+          section?: string
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           agency_data: Json
@@ -1438,7 +1465,14 @@ export type Database = {
           decided_at: string | null
           destination: string | null
           discount: number
+          excludes: Json
+          flights: Json
+          hotels: Json
           id: string
+          includes: Json
+          installments_boleto: number
+          installments_card: number
+          itinerary: Json
           lead_id: string | null
           notes: string | null
           number: number
@@ -1446,13 +1480,18 @@ export type Database = {
           pax_adults: number
           pax_children: number
           pax_infants: number
+          pax_seniors: number
+          pix_discount_percent: number
           public_token: string
           sent_at: string | null
           status: Database["public"]["Enums"]["proposal_status"]
           subtotal: number
+          template: string
           terms: string | null
           title: string
           total: number
+          tours: Json
+          transfers: Json
           travel_end: string | null
           travel_start: string | null
           updated_at: string
@@ -1467,7 +1506,14 @@ export type Database = {
           decided_at?: string | null
           destination?: string | null
           discount?: number
+          excludes?: Json
+          flights?: Json
+          hotels?: Json
           id?: string
+          includes?: Json
+          installments_boleto?: number
+          installments_card?: number
+          itinerary?: Json
           lead_id?: string | null
           notes?: string | null
           number?: number
@@ -1475,13 +1521,18 @@ export type Database = {
           pax_adults?: number
           pax_children?: number
           pax_infants?: number
+          pax_seniors?: number
+          pix_discount_percent?: number
           public_token?: string
           sent_at?: string | null
           status?: Database["public"]["Enums"]["proposal_status"]
           subtotal?: number
+          template?: string
           terms?: string | null
           title: string
           total?: number
+          tours?: Json
+          transfers?: Json
           travel_end?: string | null
           travel_start?: string | null
           updated_at?: string
@@ -1496,7 +1547,14 @@ export type Database = {
           decided_at?: string | null
           destination?: string | null
           discount?: number
+          excludes?: Json
+          flights?: Json
+          hotels?: Json
           id?: string
+          includes?: Json
+          installments_boleto?: number
+          installments_card?: number
+          itinerary?: Json
           lead_id?: string | null
           notes?: string | null
           number?: number
@@ -1504,13 +1562,18 @@ export type Database = {
           pax_adults?: number
           pax_children?: number
           pax_infants?: number
+          pax_seniors?: number
+          pix_discount_percent?: number
           public_token?: string
           sent_at?: string | null
           status?: Database["public"]["Enums"]["proposal_status"]
           subtotal?: number
+          template?: string
           terms?: string | null
           title?: string
           total?: number
+          tours?: Json
+          transfers?: Json
           travel_end?: string | null
           travel_start?: string | null
           updated_at?: string
@@ -1683,52 +1746,82 @@ export type Database = {
           agency_id: string
           birth_date: string | null
           client_id: string | null
+          cpf: string | null
           created_at: string
+          data_complete: boolean
+          disabilities: string | null
           document: string | null
+          document_images: Json
           document_type: string | null
           email: string | null
           full_name: string
           id: string
           is_lead_passenger: boolean
           kind: Database["public"]["Enums"]["passenger_kind"]
+          magic_link_filled_at: string | null
+          magic_link_token: string | null
+          meal_preference: string | null
           nationality: string | null
           notes: string | null
+          passport_expiry: string | null
+          passport_number: string | null
           phone: string | null
           trip_id: string
+          vaccination_certificates: Json
         }
         Insert: {
           agency_id: string
           birth_date?: string | null
           client_id?: string | null
+          cpf?: string | null
           created_at?: string
+          data_complete?: boolean
+          disabilities?: string | null
           document?: string | null
+          document_images?: Json
           document_type?: string | null
           email?: string | null
           full_name: string
           id?: string
           is_lead_passenger?: boolean
           kind?: Database["public"]["Enums"]["passenger_kind"]
+          magic_link_filled_at?: string | null
+          magic_link_token?: string | null
+          meal_preference?: string | null
           nationality?: string | null
           notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
           trip_id: string
+          vaccination_certificates?: Json
         }
         Update: {
           agency_id?: string
           birth_date?: string | null
           client_id?: string | null
+          cpf?: string | null
           created_at?: string
+          data_complete?: boolean
+          disabilities?: string | null
           document?: string | null
+          document_images?: Json
           document_type?: string | null
           email?: string | null
           full_name?: string
           id?: string
           is_lead_passenger?: boolean
           kind?: Database["public"]["Enums"]["passenger_kind"]
+          magic_link_filled_at?: string | null
+          magic_link_token?: string | null
+          meal_preference?: string | null
           nationality?: string | null
           notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
           trip_id?: string
+          vaccination_certificates?: Json
         }
         Relationships: [
           {
@@ -2064,6 +2157,7 @@ export type Database = {
     Functions: {
       accept_agency_invite: { Args: { _token: string }; Returns: string }
       agency_id_by_slug: { Args: { _slug: string }; Returns: string }
+      contract_template_clauses: { Args: never; Returns: Json }
       get_my_agency_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -2076,6 +2170,17 @@ export type Database = {
       is_agency_member: {
         Args: { _agency_id: string; _user_id: string }
         Returns: boolean
+      }
+      verify_contract: {
+        Args: { _serial: string }
+        Returns: {
+          content_hash: string
+          issuer: string
+          parties_masked: string
+          signed_at: string
+          signed_hash: string
+          status: string
+        }[]
       }
     }
     Enums: {
