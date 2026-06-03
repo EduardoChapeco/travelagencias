@@ -51,10 +51,13 @@ function VisasPage() {
   });
 
   async function updateStatus(id: string, status: string) {
-    const patch: Record<string, unknown> = { status };
-    if (status === "submitted") patch.submitted_at = new Date().toISOString();
-    if (status === "approved") patch.approved_at = new Date().toISOString();
-    if (status === "denied") patch.denied_at = new Date().toISOString();
+    const now = new Date().toISOString();
+    const patch = {
+      status,
+      submitted_at: status === "submitted" ? now : null,
+      approved_at: status === "approved" ? now : null,
+      denied_at: status === "denied" ? now : null,
+    };
     const { error } = await supabase.from("visa_requests").update(patch).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Status atualizado");
