@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { slugify } from "@/lib/slug";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
@@ -13,20 +15,13 @@ export const Route = createFileRoute("/auth/register")({
   component: RegisterPage,
 });
 
-function slugify(s: string) {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 48);
-}
-
 function RegisterPage() {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [agencyName, setAgencyName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [document, setDocument] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +30,7 @@ function RegisterPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const slug = slugify(agencyName) || `agencia-${Date.now().toString(36)}`;
+      const slug = slugify(agencyName, `agencia-${Date.now().toString(36)}`);
 
       const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email,
@@ -58,19 +53,18 @@ function RegisterPage() {
         if (signInErr) throw signInErr;
       }
 
-      // Create the agency. Trigger handles admin role + default stages.
-      const { data: agency, error: agencyErr } = await supabase
-        .from("agencies")
-        .insert({ slug, name: agencyName, created_by: userId })
-        .select("id, slug")
-        .single();
+      const { data: rows, error: agencyErr } = await (supabase as any).rpc("create_agency_onboarding", {
+        _name: agencyName,
+        _slug: slug,
+        _email: email,
+        _phone: phone,
+        _full_name: fullName,
+        _legal_name: legalName,
+        _document: document,
+      });
       if (agencyErr) throw agencyErr;
-
-      // Store sensitive contact info in private table (members-only RLS)
-      await supabase.from("agency_private").insert({ agency_id: agency.id, email });
-
-      // Set default agency in profile.
-      await supabase.from("profiles").upsert({ id: userId, full_name: fullName });
+      const agency = Array.isArray(rows) ? rows[0] : rows;
+      if (!agency?.slug) throw new Error("Agência criada sem retorno de URL.");
 
       toast.success("Agência criada!");
       navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
@@ -107,11 +101,10 @@ function RegisterPage() {
             />
           </Field>
           <Field label="Nome da agência">
-            <input
+            <Input
               required
               value={agencyName}
               onChange={(e) => setAgencyName(e.target.value)}
-              className="input"
             />
             {agencyName && (
               <p className="mt-1 font-mono text-[10px] text-muted-foreground">
@@ -119,30 +112,37 @@ function RegisterPage() {
               </p>
             )}
           </Field>
+          <Field label="Telefone / WhatsApp">
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </Field>
+          <Field label="Razão social">
+            <Input value={legalName} onChange={(e) => setLegalName(e.target.value)} />
+          </Field>
+          <Field label="CNPJ / documento">
+            <Input value={document} onChange={(e) => setDocument(e.target.value)} />
+          </Field>
           <Field label="Email">
-            <input
+            <Input
               type="email"
               required
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input"
             />
           </Field>
           <Field label="Senha (mínimo 8 caracteres)">
-            <input
+            <Input
               type="password"
               required
               minLength={8}
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input"
             />
           </Field>
-          <button type="submit" disabled={submitting} className="btn-primary w-full">
+          <PrimaryButton type="submit" disabled={submitting} className="w-full">
             {submitting ? "Criando…" : "Criar agência"}
-          </button>
+          </PrimaryButton>
         </form>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -153,22 +153,6 @@ function RegisterPage() {
         </p>
       </div>
 
-      <style>{`
-        .input { width:100%; height:40px; padding:0 12px; border-radius:0.5rem; border:1px solid var(--color-border); background:var(--color-surface); font-size:0.875rem; outline:none; }
-        .input:focus { border-color: var(--color-border-strong); }
-        .btn-primary { height:36px; padding:0 16px; border-radius:0.5rem; background:var(--color-primary); color:var(--color-primary-foreground); font-weight:600; font-size:0.875rem; border:1px solid var(--color-primary); }
-        .btn-primary:hover { background:#0f172a; }
-        .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
-      `}</style>
     </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
-      {children}
-    </label>
   );
 }
