@@ -88,7 +88,7 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!membership) throw new Error("Usuário não pertence a esta agência.");
 
-    await checkAndIncrementRateLimit(supabase as never, data.agencyId);
+    await checkAndIncrementRateLimit(supabase, data.agencyId);
 
     // Persist user message
     const ctxPayload = { route: data.contextRoute ?? null };
