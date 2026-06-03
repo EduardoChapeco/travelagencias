@@ -1,0 +1,1 @@
+drop policy if exists "invites accept self" on public.agency_invites;
