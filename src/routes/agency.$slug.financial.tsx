@@ -1,8 +1,14 @@
-import { createFileRoute, Link, Outlet, useLocation, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useLocation, useParams } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial")({
   head: () => ({ meta: [{ title: "Financeiro · TravelOS" }] }),
+  beforeLoad: ({ location, params }) => {
+    const p = location.pathname.replace(/\/$/, "");
+    if (p.endsWith("/financial")) {
+      throw redirect({ to: "/agency/$slug/financial/cash", params: { slug: params.slug } });
+    }
+  },
   component: FinancialLayout,
 });
 
