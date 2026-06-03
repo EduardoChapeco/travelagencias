@@ -56,6 +56,7 @@ import { Route as AgencySlugVisasRouteImport } from './routes/agency.$slug.visas
 import { Route as AgencySlugTripsRouteImport } from './routes/agency.$slug.trips'
 import { Route as AgencySlugTeamRouteImport } from './routes/agency.$slug.team'
 import { Route as AgencySlugSupportRouteImport } from './routes/agency.$slug.support'
+import { Route as AgencySlugSuppliersRouteImport } from './routes/agency.$slug.suppliers'
 import { Route as AgencySlugSettingsRouteImport } from './routes/agency.$slug.settings'
 import { Route as AgencySlugProposalsRouteImport } from './routes/agency.$slug.proposals'
 import { Route as AgencySlugPortalRouteImport } from './routes/agency.$slug.portal'
@@ -326,6 +327,11 @@ const AgencySlugSupportRoute = AgencySlugSupportRouteImport.update({
   path: '/support',
   getParentRoute: () => AgencySlugRoute,
 } as any)
+const AgencySlugSuppliersRoute = AgencySlugSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
 const AgencySlugSettingsRoute = AgencySlugSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -553,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/portal': typeof AgencySlugPortalRouteWithChildren
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
+  '/agency/$slug/suppliers': typeof AgencySlugSuppliersRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
   '/agency/$slug/team': typeof AgencySlugTeamRoute
   '/agency/$slug/trips': typeof AgencySlugTripsRouteWithChildren
@@ -632,6 +639,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/portal': typeof AgencySlugPortalRouteWithChildren
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
+  '/agency/$slug/suppliers': typeof AgencySlugSuppliersRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
   '/agency/$slug/team': typeof AgencySlugTeamRoute
   '/agency/$slug/trips': typeof AgencySlugTripsRouteWithChildren
@@ -716,6 +724,7 @@ export interface FileRoutesById {
   '/agency/$slug/portal': typeof AgencySlugPortalRouteWithChildren
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
+  '/agency/$slug/suppliers': typeof AgencySlugSuppliersRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
   '/agency/$slug/team': typeof AgencySlugTeamRoute
   '/agency/$slug/trips': typeof AgencySlugTripsRouteWithChildren
@@ -801,6 +810,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/portal'
     | '/agency/$slug/proposals'
     | '/agency/$slug/settings'
+    | '/agency/$slug/suppliers'
     | '/agency/$slug/support'
     | '/agency/$slug/team'
     | '/agency/$slug/trips'
@@ -880,6 +890,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/portal'
     | '/agency/$slug/proposals'
     | '/agency/$slug/settings'
+    | '/agency/$slug/suppliers'
     | '/agency/$slug/support'
     | '/agency/$slug/team'
     | '/agency/$slug/trips'
@@ -963,6 +974,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/portal'
     | '/agency/$slug/proposals'
     | '/agency/$slug/settings'
+    | '/agency/$slug/suppliers'
     | '/agency/$slug/support'
     | '/agency/$slug/team'
     | '/agency/$slug/trips'
@@ -1342,6 +1354,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/agency/$slug/support'
       preLoaderRoute: typeof AgencySlugSupportRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
+    '/agency/$slug/suppliers': {
+      id: '/agency/$slug/suppliers'
+      path: '/suppliers'
+      fullPath: '/agency/$slug/suppliers'
+      preLoaderRoute: typeof AgencySlugSuppliersRouteImport
       parentRoute: typeof AgencySlugRoute
     }
     '/agency/$slug/settings': {
@@ -1832,6 +1851,7 @@ interface AgencySlugRouteChildren {
   AgencySlugPortalRoute: typeof AgencySlugPortalRouteWithChildren
   AgencySlugProposalsRoute: typeof AgencySlugProposalsRouteWithChildren
   AgencySlugSettingsRoute: typeof AgencySlugSettingsRoute
+  AgencySlugSuppliersRoute: typeof AgencySlugSuppliersRoute
   AgencySlugSupportRoute: typeof AgencySlugSupportRouteWithChildren
   AgencySlugTeamRoute: typeof AgencySlugTeamRoute
   AgencySlugTripsRoute: typeof AgencySlugTripsRouteWithChildren
@@ -1854,6 +1874,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugPortalRoute: AgencySlugPortalRouteWithChildren,
   AgencySlugProposalsRoute: AgencySlugProposalsRouteWithChildren,
   AgencySlugSettingsRoute: AgencySlugSettingsRoute,
+  AgencySlugSuppliersRoute: AgencySlugSuppliersRoute,
   AgencySlugSupportRoute: AgencySlugSupportRouteWithChildren,
   AgencySlugTeamRoute: AgencySlugTeamRoute,
   AgencySlugTripsRoute: AgencySlugTripsRouteWithChildren,
