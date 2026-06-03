@@ -12,6 +12,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
 
+const SMALL_INPUT =
+  "w-full h-[30px] px-2 rounded-md border border-input bg-surface text-xs outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/20";
+
+
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
   head: () => ({ meta: [{ title: "Editor de Proposta · TravelOS" }] }),
   component: ProposalEditor,
@@ -286,12 +290,12 @@ function ProposalEditor() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <L label="Cartão (até x)">
-                  <select className="i" value={draft.installments_card} onChange={(e) => save({ installments_card: parseInt(e.target.value) })}>
+                  <select className={SMALL_INPUT} value={draft.installments_card} onChange={(e) => save({ installments_card: parseInt(e.target.value) })}>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}x</option>)}
                   </select>
                 </L>
                 <L label="Boleto (até x)">
-                  <select className="i" value={draft.installments_boleto} onChange={(e) => save({ installments_boleto: parseInt(e.target.value) })}>
+                  <select className={SMALL_INPUT} value={draft.installments_boleto} onChange={(e) => save({ installments_boleto: parseInt(e.target.value) })}>
                     {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => <option key={n} value={n}>{n}x</option>)}
                   </select>
                 </L>
@@ -308,10 +312,6 @@ function ProposalEditor() {
         </main>
       </div>
 
-      <style>{`
-        .i { width:100%; height:30px; padding:0 8px; border-radius:6px; border:1px solid var(--color-border); background:var(--color-surface); font-size:12px; outline:none; }
-        .i:focus { border-color: var(--color-border-strong); }
-      `}</style>
     </div>
   );
 }
@@ -339,7 +339,7 @@ function NumField({ label, value, onSave }: { label: string; value: number; onSa
   return (
     <label className="block">
       <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
-      <input type="number" min={0} className="i" value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onSave(parseInt(v) || 0)} />
+      <input type="number" min={0} className={SMALL_INPUT} value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onSave(parseInt(v) || 0)} />
     </label>
   );
 }
@@ -349,17 +349,17 @@ function TextField({ label, value, onSave, type = "text" }: { label: string; val
   return (
     <label className="block">
       <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
-      <input type={type} className="i" value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onSave(v)} />
+      <input type={type} className={SMALL_INPUT} value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onSave(v)} />
     </label>
   );
 }
 function Inp({ value, onChange, ph, type = "text" }: { value: string; onChange: (v: string) => void; ph?: string; type?: string }) {
   const [v, setV] = useState(value);
   useEffect(() => setV(value ?? ""), [value]);
-  return <input type={type} placeholder={ph} className="i" value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onChange(v)} />;
+  return <input type={type} placeholder={ph} className={SMALL_INPUT} value={v} onChange={(e) => setV(e.target.value)} onBlur={() => onChange(v)} />;
 }
 function Sel({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: Array<[string, string]> }) {
-  return <select className="i" value={value} onChange={(e) => onChange(e.target.value)}>{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>;
+  return <select className={SMALL_INPUT} value={value} onChange={(e) => onChange(e.target.value)}>{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>;
 }
 function L({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="block"><span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>{children}</label>;
@@ -389,7 +389,7 @@ function TagsEditor({ tags, onChange, placeholder }: { tags: string[]; onChange:
         ))}
       </div>
       <input
-        className="i"
+        className={SMALL_INPUT}
         placeholder={placeholder}
         value={v}
         onChange={(e) => setV(e.target.value)}
