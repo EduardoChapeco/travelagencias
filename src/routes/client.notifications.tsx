@@ -1,24 +1,54 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/client/notifications")({
-  head: () => ({
-    meta: [
-      { title: "Notificações · TravelOS" },
-      { name: "description", content: "Suas notificações" },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Notificações · TravelOS" }] }),
   component: Page,
 });
 
 function Page() {
+  const qc = useQueryClient();
+  const q = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => (await supabase.from("notifications").select("*").order("created_at", { ascending: false }).limit(100)).data ?? [],
+  });
+
+  async function markRead(id: string) {
+    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+    qc.invalidateQueries({ queryKey: ["notifications"] });
+  }
+  async function markAll() {
+    const ids = q.data?.filter((n) => !n.read_at).map((n) => n.id) ?? [];
+    if (!ids.length) return;
+    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).in("id", ids);
+    qc.invalidateQueries({ queryKey: ["notifications"] });
+  }
+
+  const unread = q.data?.filter((n) => !n.read_at).length ?? 0;
+
   return (
     <>
-      <PageHeader title="Notificações" description="Suas notificações" />
-      <EmptyState
-        title="Em construção"
-        description="Este módulo será implementado em breve."
-      />
+      <PageHeader title="Notificações" description={unread ? `${unread} não lida${unread > 1 ? "s" : ""}` : "Tudo em dia"} actions={unread > 0 ? <GhostButton onClick={markAll}>Marcar tudo como lido</GhostButton> : null} />
+      {q.isLoading ? <p className="text-sm text-muted-foreground">Carregando…</p> : q.data?.length === 0 ? (
+        <EmptyState title="Nenhuma notificação" description="Você verá aqui atualizações sobre suas viagens." />
+      ) : (
+        <ul className="space-y-2">
+          {q.data?.map((n) => (
+            <li key={n.id} className={`flex items-start gap-3 rounded-lg border p-4 ${n.read_at ? "border-border bg-surface" : "border-primary/40 bg-primary/5"}`}>
+              <div className="flex-1">
+                <div className="font-medium">{n.title}</div>
+                {n.body && <p className="mt-1 text-sm text-muted-foreground">{n.body}</p>}
+                <div className="mt-2 text-[11px] text-muted-foreground">{new Date(n.created_at).toLocaleString("pt-BR")}</div>
+              </div>
+              {!n.read_at && <button onClick={() => markRead(n.id)} className="rounded p-1 hover:bg-surface-alt" title="Marcar como lida"><Check className="h-4 w-4" /></button>}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
