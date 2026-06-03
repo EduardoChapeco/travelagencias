@@ -35,7 +35,7 @@ function Page() {
   async function confirm() {
     setBusy(true);
     const { error } = await supabase.rpc("confirm_payment_with_token", {
-      _token: token, _payment_method: method, _receipt_url: proof || null,
+      _token: token, _payment_method: method, _receipt_url: proof || "",
     });
     setBusy(false);
     if (error) toast.error(error.message); else { toast.success("Pagamento registrado"); setDone(true); }
