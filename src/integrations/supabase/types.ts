@@ -738,6 +738,80 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          agency_id: string
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          max_discount: number | null
+          min_purchase: number | null
+          per_client_limit: number | null
+          scope: string
+          scope_id: string | null
+          starts_at: string
+          updated_at: string
+          usage_limit: number | null
+          used_count: number
+          value: number
+        }
+        Insert: {
+          agency_id: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          max_discount?: number | null
+          min_purchase?: number | null
+          per_client_limit?: number | null
+          scope?: string
+          scope_id?: string | null
+          starts_at?: string
+          updated_at?: string
+          usage_limit?: number | null
+          used_count?: number
+          value?: number
+        }
+        Update: {
+          agency_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          max_discount?: number | null
+          min_purchase?: number | null
+          per_client_limit?: number | null
+          scope?: string
+          scope_id?: string | null
+          starts_at?: string
+          updated_at?: string
+          usage_limit?: number | null
+          used_count?: number
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupons_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_records: {
         Row: {
           agency_id: string
@@ -809,6 +883,85 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      gift_cards: {
+        Row: {
+          agency_id: string
+          balance: number
+          code: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          expires_at: string | null
+          id: string
+          initial_value: number
+          message: string | null
+          purchased_by_client_id: string | null
+          recipient_email: string | null
+          recipient_name: string | null
+          redeemed_by_client_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          balance?: number
+          code: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          initial_value?: number
+          message?: string | null
+          purchased_by_client_id?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          redeemed_by_client_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          balance?: number
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          initial_value?: number
+          message?: string | null
+          purchased_by_client_id?: string | null
+          recipient_email?: string | null
+          recipient_name?: string | null
+          redeemed_by_client_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_cards_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_cards_purchased_by_client_id_fkey"
+            columns: ["purchased_by_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_cards_redeemed_by_client_id_fkey"
+            columns: ["redeemed_by_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       group_tour_enrollments: {
         Row: {
