@@ -12,10 +12,7 @@ Use o contexto da rota atual fornecido pelo usuário para sugerir ações concre
 Nunca invente dados — se faltar informação, peça ao usuário ou indique onde ele pode encontrar dentro do sistema.
 Formate listas e passos com markdown simples quando apropriado.`;
 
-async function checkAndIncrementRateLimit(
-  supabase: ReturnType<typeof import("@supabase/supabase-js").createClient>,
-  agencyId: string,
-) {
+async function checkAndIncrementRateLimit(supabase: any, agencyId: string) {
   const bucket = new Date();
   bucket.setMinutes(0, 0, 0);
   const bucketIso = bucket.toISOString();
@@ -27,9 +24,11 @@ async function checkAndIncrementRateLimit(
     .eq("bucket_start", bucketIso)
     .maybeSingle();
 
-  const current = (existing?.count as number | undefined) ?? 0;
+  const current: number = (existing?.count as number | undefined) ?? 0;
   if (current >= RATE_LIMIT_PER_HOUR) {
-    throw new Error(`Limite de ${RATE_LIMIT_PER_HOUR} mensagens por hora atingido para esta agência.`);
+    throw new Error(
+      `Limite de ${RATE_LIMIT_PER_HOUR} mensagens por hora atingido para esta agência.`,
+    );
   }
 
   if (existing) {
