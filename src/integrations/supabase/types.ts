@@ -65,6 +65,291 @@ export type Database = {
         }
         Relationships: []
       }
+      agency_tags: {
+        Row: {
+          agency_id: string
+          color: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          agency_id: string
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          agency_id?: string
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      api_keys: {
+        Row: {
+          agency_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          key_value: string
+          label: string | null
+          monthly_limit: number | null
+          provider: string
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_value: string
+          label?: string | null
+          monthly_limit?: number | null
+          provider: string
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_value?: string
+          label?: string | null
+          monthly_limit?: number | null
+          provider?: string
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_type: string | null
+          agency_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: number
+          ip_address: string | null
+          metadata: Json
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_type?: string | null
+          agency_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: number
+          ip_address?: string | null
+          metadata?: Json
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_type?: string | null
+          agency_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: number
+          ip_address?: string | null
+          metadata?: Json
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          agency_id: string
+          author_id: string | null
+          category: string | null
+          content: string | null
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          gbp_post_id: string | null
+          id: string
+          publish_to_gbp: boolean
+          published_at: string | null
+          scheduled_for: string | null
+          seo: Json
+          slug: string
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          agency_id: string
+          author_id?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          gbp_post_id?: string | null
+          id?: string
+          publish_to_gbp?: boolean
+          published_at?: string | null
+          scheduled_for?: string | null
+          seo?: Json
+          slug: string
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          agency_id?: string
+          author_id?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          gbp_post_id?: string | null
+          id?: string
+          publish_to_gbp?: boolean
+          published_at?: string | null
+          scheduled_for?: string | null
+          seo?: Json
+          slug?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
+      boarding_cards: {
+        Row: {
+          agency_id: string
+          airline: string | null
+          alerts: string[]
+          checklist: Json
+          created_at: string
+          id: string
+          pnr: string | null
+          status: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          airline?: string | null
+          alerts?: string[]
+          checklist?: Json
+          created_at?: string
+          id?: string
+          pnr?: string | null
+          status?: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          airline?: string | null
+          alerts?: string[]
+          checklist?: Json
+          created_at?: string
+          id?: string
+          pnr?: string | null
+          status?: string
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      brand_kit: {
+        Row: {
+          agency_id: string
+          brand_color: string | null
+          brand_color_fg: string | null
+          brand_color_light: string | null
+          contract_header_img: string | null
+          facebook: string | null
+          favicon_url: string | null
+          font_body: string | null
+          font_heading: string | null
+          google_analytics_id: string | null
+          google_business_id: string | null
+          id: string
+          instagram: string | null
+          logo_dark_url: string | null
+          logo_url: string | null
+          proposal_header_img: string | null
+          proposal_template: string | null
+          updated_at: string
+          voucher_theme: string | null
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          agency_id: string
+          brand_color?: string | null
+          brand_color_fg?: string | null
+          brand_color_light?: string | null
+          contract_header_img?: string | null
+          facebook?: string | null
+          favicon_url?: string | null
+          font_body?: string | null
+          font_heading?: string | null
+          google_analytics_id?: string | null
+          google_business_id?: string | null
+          id?: string
+          instagram?: string | null
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          proposal_header_img?: string | null
+          proposal_template?: string | null
+          updated_at?: string
+          voucher_theme?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          agency_id?: string
+          brand_color?: string | null
+          brand_color_fg?: string | null
+          brand_color_light?: string | null
+          contract_header_img?: string | null
+          facebook?: string | null
+          favicon_url?: string | null
+          font_body?: string | null
+          font_heading?: string | null
+          google_analytics_id?: string | null
+          google_business_id?: string | null
+          id?: string
+          instagram?: string | null
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          proposal_header_img?: string | null
+          proposal_template?: string | null
+          updated_at?: string
+          voucher_theme?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           address: Json
@@ -133,6 +418,492 @@ export type Database = {
           },
         ]
       }
+      company_profiles: {
+        Row: {
+          address: Json
+          agency_id: string
+          business_hours: Json
+          category: string | null
+          cnpj: string | null
+          cover_image_url: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          facebook: string | null
+          gallery: string[]
+          google_business_id: string | null
+          google_maps_url: string | null
+          google_reviews_embed: string | null
+          id: string
+          instagram: string | null
+          last_synced_google_at: string | null
+          linkedin: string | null
+          logo_url: string | null
+          name: string
+          partner_operators: Json
+          payment_methods: string[]
+          phone: string | null
+          reviews: Json
+          short_description: string | null
+          tiktok: string | null
+          updated_at: string
+          website: string | null
+          whatsapp: string | null
+          youtube: string | null
+        }
+        Insert: {
+          address?: Json
+          agency_id: string
+          business_hours?: Json
+          category?: string | null
+          cnpj?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          gallery?: string[]
+          google_business_id?: string | null
+          google_maps_url?: string | null
+          google_reviews_embed?: string | null
+          id?: string
+          instagram?: string | null
+          last_synced_google_at?: string | null
+          linkedin?: string | null
+          logo_url?: string | null
+          name: string
+          partner_operators?: Json
+          payment_methods?: string[]
+          phone?: string | null
+          reviews?: Json
+          short_description?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          website?: string | null
+          whatsapp?: string | null
+          youtube?: string | null
+        }
+        Update: {
+          address?: Json
+          agency_id?: string
+          business_hours?: Json
+          category?: string | null
+          cnpj?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          facebook?: string | null
+          gallery?: string[]
+          google_business_id?: string | null
+          google_maps_url?: string | null
+          google_reviews_embed?: string | null
+          id?: string
+          instagram?: string | null
+          last_synced_google_at?: string | null
+          linkedin?: string | null
+          logo_url?: string | null
+          name?: string
+          partner_operators?: Json
+          payment_methods?: string[]
+          phone?: string | null
+          reviews?: Json
+          short_description?: string | null
+          tiktok?: string | null
+          updated_at?: string
+          website?: string | null
+          whatsapp?: string | null
+          youtube?: string | null
+        }
+        Relationships: []
+      }
+      contracts: {
+        Row: {
+          agency_data: Json
+          agency_id: string
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          certificate: Json | null
+          client_data: Json
+          content_hash: string | null
+          created_at: string
+          custom_clauses: Json
+          fixed_clauses: Json
+          id: string
+          package_summary: string | null
+          passengers_data: Json
+          payment_terms: string | null
+          pdf_url: string | null
+          signatures: Json
+          signed_at: string | null
+          signed_hash: string | null
+          status: string
+          total_value: number
+          trip_id: string
+          version: string
+        }
+        Insert: {
+          agency_data?: Json
+          agency_id: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          certificate?: Json | null
+          client_data?: Json
+          content_hash?: string | null
+          created_at?: string
+          custom_clauses?: Json
+          fixed_clauses?: Json
+          id?: string
+          package_summary?: string | null
+          passengers_data?: Json
+          payment_terms?: string | null
+          pdf_url?: string | null
+          signatures?: Json
+          signed_at?: string | null
+          signed_hash?: string | null
+          status?: string
+          total_value?: number
+          trip_id: string
+          version?: string
+        }
+        Update: {
+          agency_data?: Json
+          agency_id?: string
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          certificate?: Json | null
+          client_data?: Json
+          content_hash?: string | null
+          created_at?: string
+          custom_clauses?: Json
+          fixed_clauses?: Json
+          id?: string
+          package_summary?: string | null
+          passengers_data?: Json
+          payment_terms?: string | null
+          pdf_url?: string | null
+          signatures?: Json
+          signed_at?: string | null
+          signed_hash?: string | null
+          status?: string
+          total_value?: number
+          trip_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      corporate_clients: {
+        Row: {
+          agency_id: string
+          billing_address: Json
+          billing_cycle: string | null
+          cnpj: string | null
+          company_name: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          credit_limit: number
+          id: string
+          industry: string | null
+          payment_terms: number | null
+          status: string
+          travel_policy: Json
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          billing_address?: Json
+          billing_cycle?: string | null
+          cnpj?: string | null
+          company_name: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          credit_limit?: number
+          id?: string
+          industry?: string | null
+          payment_terms?: number | null
+          status?: string
+          travel_policy?: Json
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          billing_address?: Json
+          billing_cycle?: string | null
+          cnpj?: string | null
+          company_name?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          credit_limit?: number
+          id?: string
+          industry?: string | null
+          payment_terms?: number | null
+          status?: string
+          travel_policy?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      financial_records: {
+        Row: {
+          agency_id: string
+          amount: number
+          amount_brl: number | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          currency: string
+          description: string | null
+          due_date: string | null
+          exchange_rate: number | null
+          id: string
+          installment_value: number | null
+          installments: number
+          invoice_number: string | null
+          paid_at: string | null
+          payment_method: string | null
+          receipt_url: string | null
+          status: string
+          trip_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          amount?: number
+          amount_brl?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          id?: string
+          installment_value?: number | null
+          installments?: number
+          invoice_number?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          receipt_url?: string | null
+          status?: string
+          trip_id?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          amount?: number
+          amount_brl?: number | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          id?: string
+          installment_value?: number | null
+          installments?: number
+          invoice_number?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          receipt_url?: string | null
+          status?: string
+          trip_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      group_tour_enrollments: {
+        Row: {
+          agency_id: string
+          client_id: string | null
+          created_at: string
+          group_tour_id: string
+          id: string
+          notes: string | null
+          passenger_cpf: string | null
+          passenger_name: string
+          payment_plan_id: string | null
+          room_type: string | null
+          seat_number: string | null
+          status: string
+          total_paid: number
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          client_id?: string | null
+          created_at?: string
+          group_tour_id: string
+          id?: string
+          notes?: string | null
+          passenger_cpf?: string | null
+          passenger_name: string
+          payment_plan_id?: string | null
+          room_type?: string | null
+          seat_number?: string | null
+          status?: string
+          total_paid?: number
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          client_id?: string | null
+          created_at?: string
+          group_tour_id?: string
+          id?: string
+          notes?: string | null
+          passenger_cpf?: string | null
+          passenger_name?: string
+          payment_plan_id?: string | null
+          room_type?: string | null
+          seat_number?: string | null
+          status?: string
+          total_paid?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      group_tours: {
+        Row: {
+          agency_id: string
+          agent_id: string | null
+          base_price: number
+          cover_image_url: string | null
+          created_at: string
+          departure_date: string | null
+          description: string | null
+          destination: string | null
+          excludes: string[]
+          financial: Json
+          gallery: string[]
+          id: string
+          includes: string[]
+          is_public: boolean
+          itinerary: Json
+          payment_options: Json
+          registration_deadline: string | null
+          reserved_seats: number
+          return_date: string | null
+          seat_map: Json
+          seo: Json
+          slug: string
+          status: string
+          title: string
+          total_seats: number
+          transport_details: string | null
+          transport_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          agent_id?: string | null
+          base_price?: number
+          cover_image_url?: string | null
+          created_at?: string
+          departure_date?: string | null
+          description?: string | null
+          destination?: string | null
+          excludes?: string[]
+          financial?: Json
+          gallery?: string[]
+          id?: string
+          includes?: string[]
+          is_public?: boolean
+          itinerary?: Json
+          payment_options?: Json
+          registration_deadline?: string | null
+          reserved_seats?: number
+          return_date?: string | null
+          seat_map?: Json
+          seo?: Json
+          slug: string
+          status?: string
+          title: string
+          total_seats?: number
+          transport_details?: string | null
+          transport_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          agent_id?: string | null
+          base_price?: number
+          cover_image_url?: string | null
+          created_at?: string
+          departure_date?: string | null
+          description?: string | null
+          destination?: string | null
+          excludes?: string[]
+          financial?: Json
+          gallery?: string[]
+          id?: string
+          includes?: string[]
+          is_public?: boolean
+          itinerary?: Json
+          payment_options?: Json
+          registration_deadline?: string | null
+          reserved_seats?: number
+          return_date?: string | null
+          seat_map?: Json
+          seo?: Json
+          slug?: string
+          status?: string
+          title?: string
+          total_seats?: number
+          transport_details?: string | null
+          transport_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      knowledge_articles: {
+        Row: {
+          agency_id: string
+          category: string | null
+          content: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_internal: boolean
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_internal?: boolean
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_internal?: boolean
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lead_activities: {
         Row: {
           agency_id: string
@@ -180,6 +951,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lead_forms: {
+        Row: {
+          agency_id: string
+          created_at: string
+          design: Json
+          fields: Json
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          submissions_count: number
+          target_stage_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          design?: Json
+          fields?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          submissions_count?: number
+          target_stage_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          design?: Json
+          fields?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          submissions_count?: number
+          target_stage_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       lead_stages: {
         Row: {
@@ -315,6 +1128,153 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          agency_id: string
+          body: string | null
+          created_at: string
+          data: Json
+          id: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          agency_id: string
+          body?: string | null
+          created_at?: string
+          data?: Json
+          id?: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          agency_id?: string
+          body?: string | null
+          created_at?: string
+          data?: Json
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payment_installments: {
+        Row: {
+          agency_id: string
+          amount: number
+          due_date: string
+          id: string
+          late_fee: number
+          number: number
+          paid_at: string | null
+          payment_method: string | null
+          payment_plan_id: string
+          receipt_url: string | null
+          status: string
+        }
+        Insert: {
+          agency_id: string
+          amount?: number
+          due_date: string
+          id?: string
+          late_fee?: number
+          number: number
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_plan_id: string
+          receipt_url?: string | null
+          status?: string
+        }
+        Update: {
+          agency_id?: string
+          amount?: number
+          due_date?: string
+          id?: string
+          late_fee?: number
+          number?: number
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_plan_id?: string
+          receipt_url?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      payment_plans: {
+        Row: {
+          agency_id: string
+          client_id: string | null
+          created_at: string
+          id: string
+          status: string
+          total_amount: number
+          trip_id: string | null
+        }
+        Insert: {
+          agency_id: string
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          total_amount?: number
+          trip_id?: string | null
+        }
+        Update: {
+          agency_id?: string
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          total_amount?: number
+          trip_id?: string | null
+        }
+        Relationships: []
+      }
+      portal_pages: {
+        Row: {
+          agency_id: string
+          blocks: Json
+          created_at: string
+          id: string
+          is_published: boolean
+          seo: Json
+          slug: string
+          template: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          blocks?: Json
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          seo?: Json
+          slug: string
+          template?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          blocks?: Json
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          seo?: Json
+          slug?: string
+          template?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -610,6 +1570,78 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          agency_id: string
+          agent_id: string | null
+          attachments: string[]
+          client_id: string | null
+          code: string
+          created_at: string
+          description: string | null
+          email_thread_id: string | null
+          id: string
+          messages: Json
+          priority: string
+          refund_amount: number | null
+          refund_requested: boolean
+          refund_status: string | null
+          resolved_at: string | null
+          sla_deadline: string | null
+          status: string
+          title: string
+          trip_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          agent_id?: string | null
+          attachments?: string[]
+          client_id?: string | null
+          code?: string
+          created_at?: string
+          description?: string | null
+          email_thread_id?: string | null
+          id?: string
+          messages?: Json
+          priority?: string
+          refund_amount?: number | null
+          refund_requested?: boolean
+          refund_status?: string | null
+          resolved_at?: string | null
+          sla_deadline?: string | null
+          status?: string
+          title: string
+          trip_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          agent_id?: string | null
+          attachments?: string[]
+          client_id?: string | null
+          code?: string
+          created_at?: string
+          description?: string | null
+          email_thread_id?: string | null
+          id?: string
+          messages?: Json
+          priority?: string
+          refund_amount?: number | null
+          refund_requested?: boolean
+          refund_status?: string | null
+          resolved_at?: string | null
+          sla_deadline?: string | null
+          status?: string
+          title?: string
+          trip_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       trip_passengers: {
         Row: {
           agency_id: string
@@ -803,12 +1835,199 @@ export type Database = {
           },
         ]
       }
+      visa_requests: {
+        Row: {
+          agency_handling: boolean
+          agency_id: string
+          approved_at: string | null
+          checklist: Json
+          client_id: string | null
+          country: string
+          country_code: string | null
+          denied_at: string | null
+          expected_approval_at: string | null
+          id: string
+          notes: string | null
+          passport_expiry: string | null
+          passport_number: string | null
+          price: number
+          requested_at: string | null
+          required_documents: Json
+          status: string
+          submitted_at: string | null
+          travel_date: string | null
+          trip_id: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          agency_handling?: boolean
+          agency_id: string
+          approved_at?: string | null
+          checklist?: Json
+          client_id?: string | null
+          country: string
+          country_code?: string | null
+          denied_at?: string | null
+          expected_approval_at?: string | null
+          id?: string
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          price?: number
+          requested_at?: string | null
+          required_documents?: Json
+          status?: string
+          submitted_at?: string | null
+          travel_date?: string | null
+          trip_id?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          agency_handling?: boolean
+          agency_id?: string
+          approved_at?: string | null
+          checklist?: Json
+          client_id?: string | null
+          country?: string
+          country_code?: string | null
+          denied_at?: string | null
+          expected_approval_at?: string | null
+          id?: string
+          notes?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          price?: number
+          requested_at?: string | null
+          required_documents?: Json
+          status?: string
+          submitted_at?: string | null
+          travel_date?: string | null
+          trip_id?: string | null
+          visa_type?: string | null
+        }
+        Relationships: []
+      }
+      visa_requirements: {
+        Row: {
+          agency_id: string | null
+          destination_country: string
+          id: string
+          last_updated: string
+          notes: string | null
+          official_url: string | null
+          origin_nationality: string
+          price_estimate: number | null
+          processing_days: number | null
+          required_documents: string[]
+          visa_required: boolean
+          visa_type: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          destination_country: string
+          id?: string
+          last_updated?: string
+          notes?: string | null
+          official_url?: string | null
+          origin_nationality: string
+          price_estimate?: number | null
+          processing_days?: number | null
+          required_documents?: string[]
+          visa_required?: boolean
+          visa_type?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          destination_country?: string
+          id?: string
+          last_updated?: string
+          notes?: string | null
+          official_url?: string | null
+          origin_nationality?: string
+          price_estimate?: number | null
+          processing_days?: number | null
+          required_documents?: string[]
+          visa_required?: boolean
+          visa_type?: string | null
+        }
+        Relationships: []
+      }
+      vouchers: {
+        Row: {
+          accommodation: Json
+          agency_id: string
+          cover_image_url: string | null
+          created_at: string
+          destination: string | null
+          emergency_contacts: Json
+          flights: Json
+          general_locator: string | null
+          generated_at: string | null
+          id: string
+          insurance: Json
+          observations: string | null
+          passengers: Json
+          pdf_url: string | null
+          source_file_url: string | null
+          source_type: string
+          template: string
+          tours: Json
+          transfers: Json
+          trip_id: string
+        }
+        Insert: {
+          accommodation?: Json
+          agency_id: string
+          cover_image_url?: string | null
+          created_at?: string
+          destination?: string | null
+          emergency_contacts?: Json
+          flights?: Json
+          general_locator?: string | null
+          generated_at?: string | null
+          id?: string
+          insurance?: Json
+          observations?: string | null
+          passengers?: Json
+          pdf_url?: string | null
+          source_file_url?: string | null
+          source_type?: string
+          template?: string
+          tours?: Json
+          transfers?: Json
+          trip_id: string
+        }
+        Update: {
+          accommodation?: Json
+          agency_id?: string
+          cover_image_url?: string | null
+          created_at?: string
+          destination?: string | null
+          emergency_contacts?: Json
+          flights?: Json
+          general_locator?: string | null
+          generated_at?: string | null
+          id?: string
+          insurance?: Json
+          observations?: string | null
+          passengers?: Json
+          pdf_url?: string | null
+          source_file_url?: string | null
+          source_type?: string
+          template?: string
+          tours?: Json
+          transfers?: Json
+          trip_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       agency_id_by_slug: { Args: { _slug: string }; Returns: string }
+      get_my_agency_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _agency_id?: string
@@ -823,7 +2042,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "super_admin" | "agency_admin" | "agent" | "client"
+      app_role:
+        | "super_admin"
+        | "agency_admin"
+        | "agent"
+        | "client"
+        | "agent_viewer"
       client_kind: "individual" | "company"
       lead_activity_type:
         | "note"
@@ -998,7 +2222,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["super_admin", "agency_admin", "agent", "client"],
+      app_role: [
+        "super_admin",
+        "agency_admin",
+        "agent",
+        "client",
+        "agent_viewer",
+      ],
       client_kind: ["individual", "company"],
       lead_activity_type: [
         "note",
