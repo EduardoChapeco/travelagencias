@@ -10,13 +10,21 @@ export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
   component: Page,
 });
 
+type FormDef = {
+  id: string; agency_id: string; name: string; slug: string;
+  fields: Array<{ key: string; label: string; type?: string; required?: boolean }>;
+  target_stage_id: string | null; submissions_count: number;
+};
+
 function Page() {
   const { agency_slug, id } = Route.useParams();
   const q = useQuery({
-    queryKey: ["portal-visa", id],
+    queryKey: ["portal-visa", agency_slug, id],
     queryFn: async () => {
-      const { data } = await supabase.from("lead_forms").select("*, agencies!inner(id, name, slug)").eq("id", id).eq("is_active", true).maybeSingle();
-      return data;
+      const { data: agency } = await supabase.from("agencies").select("id, name, slug").eq("slug", agency_slug).maybeSingle();
+      if (!agency) return null;
+      const { data: form } = await supabase.from("lead_forms").select("*").eq("id", id).eq("agency_id", agency.id).eq("is_active", true).maybeSingle();
+      return form ? { agency, form: form as unknown as FormDef } : null;
     },
   });
 
@@ -25,13 +33,13 @@ function Page() {
 
   if (q.isLoading) return <div className="p-10 text-center text-sm text-muted-foreground">Carregando…</div>;
   if (!q.data) return <div className="p-10 text-center text-sm">Formulário não disponível</div>;
-  const form = q.data;
-  if (form.agencies.slug !== agency_slug) return <div className="p-10 text-center text-sm">Formulário não pertence a esta agência</div>;
+  const { agency, form } = q.data;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault(); setBusy(true);
+    if (!form.target_stage_id) { setBusy(false); toast.error("Formulário sem estágio CRM configurado"); return; }
     const { error: leadErr } = await supabase.from("leads").insert({
-      agency_id: form.agencies.id, name: values.name ?? "", email: values.email ?? "", phone: values.phone ?? "",
+      agency_id: agency.id, name: values.name ?? "", email: values.email ?? "", phone: values.phone ?? "",
       destination: values.destination ?? null, source: `form:${form.slug}`,
       notes: Object.entries(values).map(([k, v]) => `${k}: ${v}`).join("\n"),
       stage_id: form.target_stage_id,
@@ -43,12 +51,12 @@ function Page() {
 
   if (done) return <div className="mx-auto max-w-md p-10 text-center"><h1 className="text-lg font-semibold">✓ Solicitação enviada</h1><p className="mt-2 text-sm text-muted-foreground">A agência entrará em contato em breve.</p></div>;
 
-  const fields = (form.fields ?? []) as Array<{ key: string; label: string; type?: string; required?: boolean }>;
+  const fields = Array.isArray(form.fields) ? form.fields : [];
 
   return (
     <div className="mx-auto min-h-screen max-w-lg px-4 py-10">
       <h1 className="text-xl font-semibold tracking-tight">{form.name}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">{form.agencies.name}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{agency.name}</p>
       <form onSubmit={submit} className="mt-6 space-y-3 rounded-lg border border-border bg-surface p-6">
         {fields.length === 0 && (
           <>
