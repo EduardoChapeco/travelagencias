@@ -436,7 +436,12 @@ function SortableItDay({ item, onChange, onRemove }: { item: ItineraryDay; onCha
           <Inp ph="Dia" value={item.day} onChange={(v) => onChange({ ...item, day: v })} />
           <Inp ph="Título" value={item.title} onChange={(v) => onChange({ ...item, title: v })} />
         </div>
-        <textarea className="i" style={{ height: 50 }} placeholder="Descrição" defaultValue={item.description} onBlur={(e) => onChange({ ...item, description: e.target.value })} />
+        <textarea
+          className="min-h-[50px] w-full rounded-md border border-input bg-surface px-2.5 py-1.5 text-sm outline-none transition-colors focus:border-border-strong"
+          placeholder="Descrição"
+          defaultValue={item.description}
+          onBlur={(e) => onChange({ ...item, description: e.target.value })}
+        />
       </div>
       <button onClick={onRemove} className="text-muted-foreground hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
     </div>

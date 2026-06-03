@@ -1,7 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Field, Input, PrimaryButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({ meta: [{ title: "Recuperar senha · TravelOS" }] }),
@@ -26,12 +27,10 @@ function ForgotPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <div className="flex min-h-screen items-center justify-center bg-background p-6">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-semibold tracking-tight">Recuperar senha</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Enviaremos um link para o seu email.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Enviaremos um link para o seu email.</p>
         {sent ? (
           <div className="mt-8 rounded-md border border-border bg-surface-alt p-4 text-sm">
             Se o email existir, um link foi enviado.
@@ -44,21 +43,23 @@ function ForgotPage() {
           </div>
         ) : (
           <form onSubmit={onSubmit} className="mt-8 space-y-3">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
-              className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm outline-none focus:border-border-strong"
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              className="h-9 w-full rounded-md bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60"
-            >
+            <Field label="Email">
+              <Input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
+              />
+            </Field>
+            <PrimaryButton type="submit" disabled={submitting} className="w-full">
               {submitting ? "Enviando…" : "Enviar link"}
-            </button>
+            </PrimaryButton>
+            <div className="text-center">
+              <Link to="/auth/login" className="text-xs text-muted-foreground hover:text-foreground">
+                Voltar para entrar
+              </Link>
+            </div>
           </form>
         )}
       </div>
