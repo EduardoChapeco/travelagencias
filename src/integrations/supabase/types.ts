@@ -2539,6 +2539,19 @@ export type Database = {
         Returns: string
       }
       contract_template_clauses: { Args: never; Returns: Json }
+      create_agency_onboarding: {
+        Args: {
+          _email?: string
+          _full_name?: string
+          _name: string
+          _phone?: string
+          _slug: string
+        }
+        Returns: {
+          id: string
+          slug: string
+        }[]
+      }
       get_my_agency_id: { Args: never; Returns: string }
       has_role: {
         Args: {
