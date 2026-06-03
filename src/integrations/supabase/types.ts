@@ -65,6 +65,42 @@ export type Database = {
         }
         Relationships: []
       }
+      agency_invites: {
+        Row: {
+          accepted_at: string | null
+          agency_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          agency_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          agency_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token?: string
+        }
+        Relationships: []
+      }
       agency_tags: {
         Row: {
           agency_id: string
@@ -2026,6 +2062,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_agency_invite: { Args: { _token: string }; Returns: string }
       agency_id_by_slug: { Args: { _slug: string }; Returns: string }
       get_my_agency_id: { Args: never; Returns: string }
       has_role: {
