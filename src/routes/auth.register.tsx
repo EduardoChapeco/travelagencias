@@ -93,11 +93,10 @@ function RegisterPage() {
 
         <form onSubmit={onSubmit} className="mt-8 space-y-3">
           <Field label="Seu nome">
-            <input
+            <Input
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="input"
             />
           </Field>
           <Field label="Nome da agência">
