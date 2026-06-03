@@ -21,13 +21,9 @@ export type Database = {
           brand_color_light: string | null
           created_at: string
           created_by: string | null
-          document: string | null
-          email: string | null
           id: string
-          legal_name: string | null
           logo_url: string | null
           name: string
-          phone: string | null
           slug: string
           updated_at: string
         }
@@ -37,13 +33,9 @@ export type Database = {
           brand_color_light?: string | null
           created_at?: string
           created_by?: string | null
-          document?: string | null
-          email?: string | null
           id?: string
-          legal_name?: string | null
           logo_url?: string | null
           name: string
-          phone?: string | null
           slug: string
           updated_at?: string
         }
@@ -53,13 +45,9 @@ export type Database = {
           brand_color_light?: string | null
           created_at?: string
           created_by?: string | null
-          document?: string | null
-          email?: string | null
           id?: string
-          legal_name?: string | null
           logo_url?: string | null
           name?: string
-          phone?: string | null
           slug?: string
           updated_at?: string
         }
@@ -100,6 +88,44 @@ export type Database = {
           token?: string
         }
         Relationships: []
+      }
+      agency_private: {
+        Row: {
+          agency_id: string
+          created_at: string
+          document: string | null
+          email: string | null
+          legal_name: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          legal_name?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          document?: string | null
+          email?: string | null
+          legal_name?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_private_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: true
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       agency_tags: {
         Row: {
