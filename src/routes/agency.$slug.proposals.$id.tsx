@@ -453,8 +453,7 @@ function FileUploadList({ agencyId, images, onChange }: { agencyId: string; imag
       const path = `${agencyId}/${uid()}-${file.name}`;
       const { error } = await supabase.storage.from("proposal-attachments").upload(path, file);
       if (error) { toast.error(error.message); continue; }
-      const { data } = supabase.storage.from("proposal-attachments").createSignedUrl(path, 60 * 60 * 24 * 365);
-      const signed = await data;
+      const { data: signed } = await supabase.storage.from("proposal-attachments").createSignedUrl(path, 60 * 60 * 24 * 365);
       if (signed?.signedUrl) urls.push(signed.signedUrl);
     }
     onChange([...images, ...urls]);
