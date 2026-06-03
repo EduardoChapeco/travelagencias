@@ -347,45 +347,30 @@ function NewLeadSheet({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/30" onClick={onClose}>
-      <div className="h-full w-full max-w-md overflow-y-auto bg-surface p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-lg font-semibold tracking-tight">Novo lead</h2>
-        <form onSubmit={onSubmit} className="mt-6 space-y-3">
-          <L label="Nome *"><input className="input" required value={name} onChange={(e) => setName(e.target.value)} /></L>
-          <L label="Email"><input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} /></L>
-          <L label="Telefone / WhatsApp"><input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} /></L>
-          <L label="Destino"><input className="input" value={destination} onChange={(e) => setDestination(e.target.value)} /></L>
-          <div className="grid grid-cols-2 gap-3">
-            <L label="Pax"><input type="number" min={1} className="input" value={paxCount} onChange={(e) => setPaxCount(parseInt(e.target.value) || 1)} /></L>
-            <L label="Valor estimado (R$)"><input type="number" min={0} step="0.01" className="input" value={estValue} onChange={(e) => setEstValue(parseFloat(e.target.value) || 0)} /></L>
-          </div>
-          <L label="Origem"><input className="input" placeholder="instagram, whatsapp, site, indicação…" value={source} onChange={(e) => setSource(e.target.value)} /></L>
-          <L label="Estágio inicial">
-            <select className="input" value={stageId} onChange={(e) => setStageId(e.target.value)}>
-              {stages.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          </L>
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-surface-alt">Cancelar</button>
-            <button type="submit" disabled={submitting} className="h-9 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-60">
-              {submitting ? "Criando…" : "Criar lead"}
-            </button>
-          </div>
-        </form>
-        <style>{`
-          .input { width:100%; height:38px; padding:0 10px; border-radius:0.5rem; border:1px solid var(--color-border); background:var(--color-surface); font-size:0.875rem; outline:none; }
-          .input:focus { border-color: var(--color-border-strong); }
-        `}</style>
-      </div>
-    </div>
+    <Sheet onClose={onClose} title="Novo lead">
+      <form onSubmit={onSubmit} className="space-y-3">
+        <Field label="Nome *"><Input required value={name} onChange={(e) => setName(e.target.value)} /></Field>
+        <Field label="Email"><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+        <Field label="Telefone / WhatsApp"><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></Field>
+        <Field label="Destino"><Input value={destination} onChange={(e) => setDestination(e.target.value)} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Pax"><Input type="number" min={1} value={paxCount} onChange={(e) => setPaxCount(parseInt(e.target.value) || 1)} /></Field>
+          <Field label="Valor estimado (R$)"><Input type="number" min={0} step="0.01" value={estValue} onChange={(e) => setEstValue(parseFloat(e.target.value) || 0)} /></Field>
+        </div>
+        <Field label="Origem"><Input placeholder="instagram, whatsapp, site, indicação…" value={source} onChange={(e) => setSource(e.target.value)} /></Field>
+        <Field label="Estágio inicial">
+          <Select value={stageId} onChange={(e) => setStageId(e.target.value)}>
+            {stages.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </Select>
+        </Field>
+        <div className="flex justify-end gap-2 pt-2">
+          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+          <PrimaryButton type="submit" disabled={submitting}>
+            {submitting ? "Criando…" : "Criar lead"}
+          </PrimaryButton>
+        </div>
+      </form>
+    </Sheet>
   );
 }
 
-function L({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
-      {children}
-    </label>
-  );
-}
