@@ -36,7 +36,7 @@ function Page() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault(); setSaving(true);
-    const { error } = await supabase.rpc("save_passenger_with_token", { _token: token, _payload: form as Record<string, unknown> });
+    const { error } = await supabase.rpc("save_passenger_with_token", { _token: token, _payload: JSON.parse(JSON.stringify(form)) });
     setSaving(false);
     if (error) toast.error(error.message); else { toast.success("Dados enviados!"); setDone(true); }
   }
