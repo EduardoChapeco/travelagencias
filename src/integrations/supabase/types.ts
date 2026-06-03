@@ -151,6 +151,69 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_chat_messages: {
+        Row: {
+          agency_id: string
+          content: string
+          context: Json
+          conversation_id: string
+          created_at: string
+          id: string
+          model: string | null
+          provider: string | null
+          role: string
+          tokens_in: number | null
+          tokens_out: number | null
+          user_id: string
+        }
+        Insert: {
+          agency_id: string
+          content: string
+          context?: Json
+          conversation_id: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          provider?: string | null
+          role: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id: string
+        }
+        Update: {
+          agency_id?: string
+          content?: string
+          context?: Json
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          provider?: string | null
+          role?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_rate_limit: {
+        Row: {
+          agency_id: string
+          bucket_start: string
+          count: number
+        }
+        Insert: {
+          agency_id: string
+          bucket_start: string
+          count?: number
+        }
+        Update: {
+          agency_id?: string
+          bucket_start?: string
+          count?: number
+        }
+        Relationships: []
+      }
       api_keys: {
         Row: {
           agency_id: string | null
@@ -969,6 +1032,27 @@ export type Database = {
           },
         ]
       }
+      global_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       group_tour_enrollments: {
         Row: {
           agency_id: string
@@ -1485,6 +1569,84 @@ export type Database = {
         }
         Relationships: []
       }
+      plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          features: string[]
+          id: string
+          is_active: boolean
+          max_agents: number | null
+          max_clients: number | null
+          name: string
+          price_annual: number
+          price_monthly: number
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          features?: string[]
+          id?: string
+          is_active?: boolean
+          max_agents?: number | null
+          max_clients?: number | null
+          name: string
+          price_annual?: number
+          price_monthly?: number
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          features?: string[]
+          id?: string
+          is_active?: boolean
+          max_agents?: number | null
+          max_clients?: number | null
+          name?: string
+          price_annual?: number
+          price_monthly?: number
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      policy_documents: {
+        Row: {
+          content_md: string
+          created_at: string
+          created_by: string | null
+          effective_at: string
+          id: string
+          kind: string
+          version: string
+        }
+        Insert: {
+          content_md: string
+          created_at?: string
+          created_by?: string | null
+          effective_at?: string
+          id?: string
+          kind: string
+          version: string
+        }
+        Update: {
+          content_md?: string
+          created_at?: string
+          created_by?: string | null
+          effective_at?: string
+          id?: string
+          kind?: string
+          version?: string
+        }
+        Relationships: []
+      }
       portal_pages: {
         Row: {
           agency_id: string
@@ -1788,6 +1950,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_subscriptions: {
+        Row: {
+          agency_id: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          keys: Json
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          keys?: Json
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          keys?: Json
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       suppliers: {
         Row: {
@@ -2359,6 +2551,14 @@ export type Database = {
       is_agency_member: {
         Args: { _agency_id: string; _user_id: string }
         Returns: boolean
+      }
+      pick_active_api_key: {
+        Args: { _agency_id: string; _provider: string }
+        Returns: {
+          id: string
+          key_value: string
+          scope: string
+        }[]
       }
       public_contract_by_token: {
         Args: { _token: string }
