@@ -61,10 +61,13 @@ function RegisterPage() {
       // Create the agency. Trigger handles admin role + default stages.
       const { data: agency, error: agencyErr } = await supabase
         .from("agencies")
-        .insert({ slug, name: agencyName, email, created_by: userId })
-        .select("slug")
+        .insert({ slug, name: agencyName, created_by: userId })
+        .select("id, slug")
         .single();
       if (agencyErr) throw agencyErr;
+
+      // Store sensitive contact info in private table (members-only RLS)
+      await supabase.from("agency_private").insert({ agency_id: agency.id, email });
 
       // Set default agency in profile.
       await supabase.from("profiles").upsert({ id: userId, full_name: fullName });
