@@ -115,7 +115,7 @@ function ProposalDetail() {
       const patch: Record<string, unknown> = { status };
       if (status === "sent") patch.sent_at = new Date().toISOString();
       if (status === "accepted" || status === "rejected") patch.decided_at = new Date().toISOString();
-      const { error } = await supabase.from("proposals").update(patch).eq("id", id);
+      const { error } = await supabase.from("proposals").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -149,7 +149,7 @@ function ProposalDetail() {
 
   const updateItem = useMutation({
     mutationFn: async ({ itemId, patch }: { itemId: string; patch: Partial<Item> }) => {
-      const { error } = await supabase.from("proposal_items").update(patch).eq("id", itemId);
+      const { error } = await supabase.from("proposal_items").update(patch as never).eq("id", itemId);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["proposal-items", id] }),

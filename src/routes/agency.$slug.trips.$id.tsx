@@ -54,7 +54,7 @@ function TripDetail() {
 
   const save = useMutation({
     mutationFn: async (patch: Partial<Trip>) => {
-      const { error } = await supabase.from("trips").update(patch).eq("id", id);
+      const { error } = await supabase.from("trips").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
