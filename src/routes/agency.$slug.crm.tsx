@@ -13,7 +13,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { toast } from "sonner";
 
 
@@ -319,26 +319,33 @@ function NewLeadSheet({
   agencyId, stages, onClose, onCreated,
 }: { agencyId: string; stages: Stage[]; onClose: () => void; onCreated: () => void }) {
   const firstStage = stages[0];
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [destination, setDestination] = useState("");
-  const [paxCount, setPaxCount] = useState(2);
-  const [estValue, setEstValue] = useState(0);
-  const [source, setSource] = useState("");
-  const [stageId, setStageId] = useState(firstStage?.id ?? "");
+  const [f, setF] = useState({
+    name: "", email: "", phone: "", destination: "",
+    travel_start: "", travel_end: "",
+    pax_count: 2, estimated_value: 0,
+    source: "", notes: "",
+    stage_id: firstStage?.id ?? "",
+  });
   const [submitting, setSubmitting] = useState(false);
-  useEffect(() => { if (firstStage && !stageId) setStageId(firstStage.id); }, [firstStage, stageId]);
+  useEffect(() => { if (firstStage && !f.stage_id) setF((c) => ({ ...c, stage_id: firstStage.id })); }, [firstStage, f.stage_id]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!stageId) return;
+    if (!f.stage_id) return;
     setSubmitting(true);
     const user = (await supabase.auth.getUser()).data.user;
     const { error } = await supabase.from("leads").insert({
-      agency_id: agencyId, stage_id: stageId, owner_id: user?.id,
-      name, email: email || null, phone: phone || null, destination: destination || null,
-      pax_count: paxCount, estimated_value: estValue, source: source || null,
+      agency_id: agencyId, stage_id: f.stage_id, owner_id: user?.id,
+      name: f.name,
+      email: f.email || null,
+      phone: f.phone || null,
+      destination: f.destination || null,
+      travel_start: f.travel_start || null,
+      travel_end: f.travel_end || null,
+      pax_count: f.pax_count,
+      estimated_value: f.estimated_value,
+      source: f.source || null,
+      notes: f.notes || null,
     });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
@@ -349,20 +356,27 @@ function NewLeadSheet({
   return (
     <Sheet onClose={onClose} title="Novo lead">
       <form onSubmit={onSubmit} className="space-y-3">
-        <Field label="Nome *"><Input required value={name} onChange={(e) => setName(e.target.value)} /></Field>
-        <Field label="Email"><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-        <Field label="Telefone / WhatsApp"><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></Field>
-        <Field label="Destino"><Input value={destination} onChange={(e) => setDestination(e.target.value)} /></Field>
+        <Field label="Nome *"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Pax"><Input type="number" min={1} value={paxCount} onChange={(e) => setPaxCount(parseInt(e.target.value) || 1)} /></Field>
-          <Field label="Valor estimado (R$)"><Input type="number" min={0} step="0.01" value={estValue} onChange={(e) => setEstValue(parseFloat(e.target.value) || 0)} /></Field>
+          <Field label="Email"><Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></Field>
+          <Field label="Telefone / WhatsApp"><Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></Field>
         </div>
-        <Field label="Origem"><Input placeholder="instagram, whatsapp, site, indicação…" value={source} onChange={(e) => setSource(e.target.value)} /></Field>
+        <Field label="Destino"><Input value={f.destination} onChange={(e) => setF({ ...f, destination: e.target.value })} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Início da viagem"><Input type="date" value={f.travel_start} onChange={(e) => setF({ ...f, travel_start: e.target.value })} /></Field>
+          <Field label="Fim da viagem"><Input type="date" value={f.travel_end} onChange={(e) => setF({ ...f, travel_end: e.target.value })} /></Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Pax"><Input type="number" min={1} value={f.pax_count} onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })} /></Field>
+          <Field label="Valor estimado (R$)"><Input type="number" min={0} step="0.01" value={f.estimated_value} onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })} /></Field>
+        </div>
+        <Field label="Origem"><Input placeholder="instagram, whatsapp, site, indicação…" value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })} /></Field>
         <Field label="Estágio inicial">
-          <Select value={stageId} onChange={(e) => setStageId(e.target.value)}>
+          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })}>
             {stages.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </Select>
         </Field>
+        <Field label="Anotações"><Textarea rows={3} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} /></Field>
         <div className="flex justify-end gap-2 pt-2">
           <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
           <PrimaryButton type="submit" disabled={submitting}>
