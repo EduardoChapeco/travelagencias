@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveSignedInAgency } from "@/lib/auth-routing";
 
 export const Route = createFileRoute("/auth/verify")({
   head: () => ({ meta: [{ title: "Verificação de e-mail · TravelOS" }] }),
@@ -19,7 +20,11 @@ function Page() {
       setEmail(data.user.email ?? null);
       if (data.user.email_confirmed_at) {
         setStatus("verified");
-        setTimeout(() => navigate({ to: "/auth/onboarding" }), 1200);
+        const agency = await resolveSignedInAgency(data.user.id);
+        setTimeout(() => {
+          if (agency) navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
+          else navigate({ to: "/auth/onboarding", replace: true });
+        }, 1200);
       } else setStatus("pending");
     })();
   }, [navigate]);
