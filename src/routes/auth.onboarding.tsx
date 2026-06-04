@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { slugify } from "@/lib/slug";
+import { resolveSignedInAgency } from "@/lib/auth-routing";
 
 export const Route = createFileRoute("/auth/onboarding")({
   head: () => ({ meta: [{ title: "Configure sua agência · TravelOS" }] }),
@@ -20,12 +21,8 @@ function Page() {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) { navigate({ to: "/auth/login" }); return; }
       setForm((f) => ({ ...f, email: u.user?.email ?? "" }));
-      // If user already belongs to an agency, redirect
-      const { data: roles } = await supabase.from("user_roles").select("agency_id").eq("user_id", u.user.id).not("agency_id", "is", null).limit(1);
-      if (roles && roles.length > 0) {
-        const { data: ag } = await supabase.from("agencies").select("slug").eq("id", roles[0].agency_id!).maybeSingle();
-        if (ag?.slug) navigate({ to: "/agency/$slug", params: { slug: ag.slug } });
-      }
+      const agency = await resolveSignedInAgency(u.user.id);
+      if (agency) navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
     })();
   }, [navigate]);
 
@@ -39,7 +36,13 @@ function Page() {
     e.preventDefault(); setBusy(true);
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) { setBusy(false); return; }
-    const { data: rows, error } = await (supabase as any).rpc("create_agency_onboarding", {
+    const existingAgency = await resolveSignedInAgency(u.user.id);
+    if (existingAgency) {
+      setBusy(false);
+      navigate({ to: "/agency/$slug", params: { slug: existingAgency.slug }, replace: true });
+      return;
+    }
+    const { data: rows, error } = await supabase.rpc("create_agency_onboarding", {
       _name: form.name,
       _slug: form.slug,
       _email: form.email,
