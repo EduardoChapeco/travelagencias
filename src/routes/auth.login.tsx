@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { resolveSignedInAgency } from "@/lib/auth-routing";
 
 export const Route = createFileRoute("/auth/login")({
   head: () => ({
@@ -29,23 +30,13 @@ function LoginPage() {
   }, []);
 
   async function redirectToDefault() {
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("agency_id")
-      .not("agency_id", "is", null)
-      .limit(1);
-    const agencyId = roles?.[0]?.agency_id as string | undefined;
-    if (!agencyId) {
+    const { data } = await supabase.auth.getUser();
+    const agency = await resolveSignedInAgency(data.user?.id);
+    if (!agency) {
       navigate({ to: "/auth/onboarding", replace: true });
       return;
     }
-    const { data: a } = await supabase
-      .from("agencies")
-      .select("slug")
-      .eq("id", agencyId)
-      .maybeSingle();
-    if (a?.slug) navigate({ to: "/agency/$slug", params: { slug: a.slug }, replace: true });
-    else navigate({ to: "/auth/onboarding", replace: true });
+    navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
   }
 
   async function onSubmit(e: React.FormEvent) {
