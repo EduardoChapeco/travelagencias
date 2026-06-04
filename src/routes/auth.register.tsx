@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { slugify } from "@/lib/slug";
+import { resolveSignedInAgency } from "@/lib/auth-routing";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
@@ -51,6 +52,13 @@ function RegisterPage() {
       if (!sessionData.session) {
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
+      }
+
+      const existingAgency = await resolveSignedInAgency(userId);
+      if (existingAgency) {
+        toast.success("Agência encontrada.");
+        navigate({ to: "/agency/$slug", params: { slug: existingAgency.slug }, replace: true });
+        return;
       }
 
       const { data: rows, error: agencyErr } = await (supabase as any).rpc("create_agency_onboarding", {
