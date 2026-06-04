@@ -42,7 +42,7 @@ function Page() {
       navigate({ to: "/agency/$slug", params: { slug: existingAgency.slug }, replace: true });
       return;
     }
-    const { data: rows, error } = await (supabase as any).rpc("create_agency_onboarding", {
+    const { data: rows, error } = await supabase.rpc("create_agency_onboarding", {
       _name: form.name,
       _slug: form.slug,
       _email: form.email,

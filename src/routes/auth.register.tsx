@@ -61,7 +61,7 @@ function RegisterPage() {
         return;
       }
 
-      const { data: rows, error: agencyErr } = await (supabase as any).rpc("create_agency_onboarding", {
+      const { data: rows, error: agencyErr } = await supabase.rpc("create_agency_onboarding", {
         _name: agencyName,
         _slug: slug,
         _email: email,
