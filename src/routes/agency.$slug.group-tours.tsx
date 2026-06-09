@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge, fmtDate, money } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/group-tours")({
   head: () => ({ meta: [{ title: "Excursões em grupo · TravelOS" }] }),
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/agency/$slug/group-tours")({
 type Tour = {
   id: string; title: string; destination: string | null; departure_date: string | null; return_date: string | null;
   base_price: number; total_seats: number; reserved_seats: number; status: string; is_public: boolean; slug: string;
+  bus_layout_id: string | null;
 };
 
 function slugify(s: string) {
