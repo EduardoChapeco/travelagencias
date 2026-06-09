@@ -38,7 +38,7 @@ function BusLayoutEditorPage() {
   useEffect(() => {
     if (q.data) {
       if (q.data.seat_map && Array.isArray(q.data.seat_map) && q.data.seat_map.length > 0) {
-        setMap(q.data.seat_map);
+        setMap(q.data.seat_map as unknown as SeatCell[]);
       } else {
         generateDefaultMap(q.data.rows, q.data.cols);
       }

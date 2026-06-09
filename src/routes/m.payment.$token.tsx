@@ -43,12 +43,12 @@ function Page() {
       }
       
       // Chamada real ao banco de dados para os boletos:
-      const { data: paymentData, error: payErr } = await supabase.rpc("public_installments_by_token", { _token: token });
-      
+      const { data: paymentData, error: payErr } = await supabase.rpc("public_payment_by_token" as never, { _token: token } as never);
+
       if (payErr) {
          setErr("Erro ao buscar carnê digital.");
       } else {
-         setInstallments(paymentData as Installment[] || []);
+         setInstallments((paymentData as unknown as Installment[]) || []);
       }
       setIsLoading(false);
     };
@@ -125,7 +125,7 @@ function Page() {
         })}
       </section>
 
-      <Sheet open={!!selectedInst} onClose={() => setSelectedInst(null)}>
+      {selectedInst && <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
         {selectedInst && (
           <div className="p-6">
             <div className="mb-8 text-center">
@@ -160,8 +160,8 @@ function Page() {
               )}
             </div>
           </div>
-        )}
-      </Sheet>
+          </div>
+      </Sheet>}
     </div>
   );
 }

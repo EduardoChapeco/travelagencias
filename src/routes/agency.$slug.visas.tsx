@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, CheckCircle2, AlertCircle, FileText, Globe, Passport, Info } from "lucide-react";
+import { Plus, CheckCircle2, AlertCircle, FileText, Globe, BookUser, Info } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -44,12 +44,12 @@ function VisasPage() {
         .select(`
           id, country, visa_type, status, travel_date, price, agency_handling, 
           passport_number, client_id, trip_id, notes,
-          clients(full_name)
+          client:clients(full_name)
         `)
         .eq("agency_id", agency!.id)
         .order("requested_at", { ascending: false });
       if (error) throw error;
-      return data as Visa[];
+      return data as unknown as Visa[];
     },
   });
 
@@ -115,7 +115,7 @@ function VisasPage() {
 
                         <div className="space-y-3 mb-5">
                            <div className="flex items-center gap-2">
-                              <Passport className="h-4 w-4 text-muted-foreground" />
+                              <BookUser className="h-4 w-4 text-muted-foreground" />
                               <span className="text-sm font-medium">{v.clients?.full_name || "Cliente sem cadastro"}</span>
                            </div>
                            <div className="flex justify-between items-center bg-surface-alt/30 p-2.5 rounded-lg border border-border/50">

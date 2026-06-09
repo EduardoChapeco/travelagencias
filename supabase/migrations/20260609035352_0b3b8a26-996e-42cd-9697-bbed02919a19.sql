@@ -1,0 +1,6 @@
+
+ALTER TABLE public.group_tours
+  ADD COLUMN IF NOT EXISTS bus_layout_id UUID REFERENCES public.bus_layouts(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS is_public BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS important_notes TEXT,
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'draft';

@@ -643,7 +643,7 @@ function TripContract() {
                       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
                         {c.section}
                       </span>
-                      <Shield className="h-3 w-3 text-muted-foreground" title="Imutável" />
+                      <Shield className="h-3 w-3 text-muted-foreground" />
                     </div>
                     <p className="text-xs text-foreground leading-relaxed">{c.clause_text}</p>
                   </div>
