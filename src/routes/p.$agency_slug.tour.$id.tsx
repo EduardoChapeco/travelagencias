@@ -165,7 +165,6 @@ function Page() {
             {excludes.length > 0 && <div><h3 className="text-sm font-semibold">Não inclui</h3><ul className="text-sm">{excludes.map((i) => <li key={i}>✗ {i}</li>)}</ul></div>}
           </section>
         )}
-        )}
       </div>
 
       {layout && layout.seat_map && layout.seat_map.length > 0 && (
