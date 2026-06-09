@@ -3,10 +3,15 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, PrimaryButton, GhostButton, Sheet, StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
+import { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/agency/$slug/trips")({
   head: () => ({ meta: [{ title: "Viagens · TravelOS" }] }),
@@ -44,6 +49,56 @@ function TripsList() {
     },
   });
 
+  const columns: ColumnDef<any>[] = [
+    {
+      accessorKey: "number",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
+      cell: ({ row }) => <span className="font-mono text-xs text-muted-foreground">#{row.original.number}</span>,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Título" />,
+      cell: ({ row }) => (
+        <Link to="/agency/$slug/trips/$id" params={{ slug: slug as string, id: row.original.id }} className="font-medium hover:underline">
+          {row.getValue("title")}
+        </Link>
+      ),
+    },
+    {
+      accessorKey: "destination",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Destino" />,
+      cell: ({ row }) => <span className="text-xs">{row.getValue("destination") ?? "—"}</span>,
+    },
+    {
+      id: "dates",
+      header: "Datas",
+      cell: ({ row }) => (
+        <span className="text-xs text-muted-foreground whitespace-nowrap">
+          {fmtDate(row.original.travel_start)} → {fmtDate(row.original.travel_end)}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return <StatusBadge tone={STATUS_TONE[status] ?? "neutral"}>{status}</StatusBadge>;
+      },
+    },
+    {
+      accessorKey: "total_sale",
+      header: () => <div className="text-right">Venda</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="text-right font-mono text-xs whitespace-nowrap">
+            {money(Number(row.getValue("total_sale")), row.original.currency)}
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <PageHeader
@@ -59,58 +114,35 @@ function TripsList() {
         }
       />
 
-      {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+      {list.isLoading && (
+        <div className="flex h-32 items-center justify-center">
+          <div className="text-sm text-muted-foreground flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            Carregando viagens...
+          </div>
+        </div>
+      )}
+      
       {list.data && list.data.data.length === 0 && (
         <EmptyState title="Nenhuma viagem ainda" description="Crie a primeira viagem ou converta uma cotação aceita." />
       )}
 
       {list.data && list.data.data.length > 0 && (
-        <>
-          <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">#</th>
-                <th className="px-3 py-2 font-medium">Título</th>
-                <th className="px-3 py-2 font-medium">Destino</th>
-                <th className="px-3 py-2 font-medium">Datas</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-                <th className="px-3 py-2 text-right font-medium">Venda</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.data.data.map((t) => (
-                <tr key={t.id} className="border-t border-border hover:bg-surface-alt/30">
-                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">#{t.number}</td>
-                  <td className="px-3 py-2.5">
-                    <Link to="/agency/$slug/trips/$id" params={{ slug, id: t.id }} className="font-medium hover:underline">
-                      {t.title}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs">{t.destination ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(t.travel_start)} → {fmtDate(t.travel_end)}
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <StatusBadge tone={STATUS_TONE[t.status] ?? "neutral"}>{t.status}</StatusBadge>
-                  </td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs">{money(Number(t.total_sale), t.currency)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-          <div className="text-xs text-muted-foreground">
-            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(list.data.count / pageSize) || 1}
-          </div>
-          <div className="flex items-center gap-2">
-            <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
-            <GhostButton disabled={page * pageSize >= list.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
-          </div>
-        </div>
-      </>
+        <DataTable 
+          columns={columns} 
+          data={list.data.data} 
+          isLoading={list.isFetching}
+          pageCount={Math.ceil(list.data.count / pageSize)}
+          pagination={{ pageIndex: page - 1, pageSize }}
+          onPaginationChange={(updater) => {
+            if (typeof updater === 'function') {
+              const newState = updater({ pageIndex: page - 1, pageSize });
+              setPage(newState.pageIndex + 1);
+            } else {
+              setPage(updater.pageIndex + 1);
+            }
+          }}
+        />
       )}
 
       {newOpen && agency && (
@@ -127,14 +159,37 @@ function TripsList() {
   );
 }
 
+const tripSchema = z.object({
+  title: z.string().min(3, "O título precisa ter pelo menos 3 caracteres"),
+  destination: z.string().optional(),
+  travel_start: z.string().optional(),
+  travel_end: z.string().optional(),
+  client_id: z.string().optional(),
+  status: z.enum(["planning", "confirmed", "in_progress", "completed", "cancelled"]),
+}).refine((data) => {
+  if (data.travel_start && data.travel_end) {
+    return new Date(data.travel_end) >= new Date(data.travel_start);
+  }
+  return true;
+}, {
+  message: "A data de volta deve ser posterior à data de ida",
+  path: ["travel_end"],
+});
+
+type TripFormValues = z.infer<typeof tripSchema>;
+
 function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onClose: () => void; onCreated: () => void }) {
-  const [title, setTitle] = useState("");
-  const [destination, setDestination] = useState("");
-  const [travelStart, setTravelStart] = useState("");
-  const [travelEnd, setTravelEnd] = useState("");
-  const [clientId, setClientId] = useState("");
-  const [status, setStatus] = useState("planning");
-  const [submitting, setSubmitting] = useState(false);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TripFormValues>({
+    resolver: zodResolver(tripSchema),
+    defaultValues: {
+      title: "",
+      destination: "",
+      travel_start: "",
+      travel_end: "",
+      client_id: "",
+      status: "planning",
+    }
+  });
 
   const clientsQ = useQuery({
     queryKey: ["clients-pick", agencyId],
@@ -147,53 +202,69 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
     },
   });
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
+  const onSubmit = async (data: TripFormValues) => {
     const { data: u } = await supabase.auth.getUser();
     const { error } = await supabase.from("trips").insert({
       agency_id: agencyId,
-      title,
-      destination: destination || null,
-      travel_start: travelStart || null,
-      travel_end: travelEnd || null,
-      client_id: clientId || null,
-      status: status as "planning" | "confirmed" | "in_progress" | "completed" | "cancelled",
+      title: data.title,
+      destination: data.destination || null,
+      travel_start: data.travel_start || null,
+      travel_end: data.travel_end || null,
+      client_id: data.client_id || null,
+      status: data.status,
       owner_id: u.user?.id ?? null,
     });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Viagem criada");
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Viagem criada com sucesso!");
     onCreated();
-  }
+  };
 
   return (
     <Sheet onClose={onClose} title="Nova viagem">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Título *"><Input required value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
-        <Field label="Destino"><Input value={destination} onChange={(e) => setDestination(e.target.value)} /></Field>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Field label="Título *" hint={errors.title?.message}>
+          <Input 
+            {...register("title")} 
+            className={errors.title ? "border-danger focus:ring-danger/20 focus:border-danger" : ""} 
+            placeholder="Ex: Férias em Cancún"
+          />
+        </Field>
+        <Field label="Destino">
+          <Input {...register("destination")} placeholder="Ex: Cancún, México" />
+        </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Início"><Input type="date" value={travelStart} onChange={(e) => setTravelStart(e.target.value)} /></Field>
-          <Field label="Volta"><Input type="date" value={travelEnd} onChange={(e) => setTravelEnd(e.target.value)} /></Field>
+          <Field label="Ida">
+            <Input type="date" {...register("travel_start")} />
+          </Field>
+          <Field label="Volta" hint={errors.travel_end?.message}>
+            <Input 
+              type="date" 
+              {...register("travel_end")} 
+              className={errors.travel_end ? "border-danger focus:ring-danger/20 focus:border-danger" : ""}
+            />
+          </Field>
         </div>
-        <Field label="Cliente">
-          <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-            <option value="">— selecionar —</option>
+        <Field label="Cliente associado">
+          <Select {...register("client_id")}>
+            <option value="">— Sem cliente —</option>
             {(clientsQ.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
           </Select>
         </Field>
         <Field label="Status inicial">
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <Select {...register("status")}>
             <option value="planning">Planejamento</option>
             <option value="confirmed">Confirmada</option>
             <option value="in_progress">Em andamento</option>
             <option value="completed">Concluída</option>
           </Select>
         </Field>
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex justify-end gap-2 pt-4 border-t border-border/50">
           <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar viagem"}
+          <PrimaryButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Criando…" : "Criar viagem"}
           </PrimaryButton>
         </div>
       </form>

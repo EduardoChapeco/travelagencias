@@ -88,7 +88,7 @@ function PassengersPage() {
                     <div className="text-muted-foreground">{p.phone ?? ""}</div>
                   </td>
                   <td className="px-3 py-2.5 text-right">
-                    <button onClick={() => remove.mutate(p.id)} className="rounded p-1 text-muted-foreground hover:text-red-500">
+                    <button onClick={() => remove.mutate(p.id)} className="rounded p-1 text-muted-foreground hover:text-danger">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </td>

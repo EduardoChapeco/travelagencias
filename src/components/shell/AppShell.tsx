@@ -3,6 +3,8 @@ import { Search, Sparkles } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { AIChatPanel } from "./AIChatPanel";
+import { NotificationBadge } from "./NotificationsPanel";
+import { LegalBlocker } from "./LegalBlocker";
 
 export function AppShell({
   title,
@@ -60,6 +62,7 @@ export function AppShell({
               />
             </div>
             {actions}
+            <NotificationBadge />
             <button
               onClick={() => setAiOpen((v) => !v)}
               className={`flex h-8 items-center gap-1.5 rounded-md border border-border px-2 text-xs font-medium ${
@@ -75,7 +78,9 @@ export function AppShell({
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
             <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 py-6">
-              {children ?? <Outlet />}
+              <LegalBlocker>
+                {children ?? <Outlet />}
+              </LegalBlocker>
             </div>
           </main>
           {aiOpen && <AIChatPanel onClose={() => setAiOpen(false)} />}

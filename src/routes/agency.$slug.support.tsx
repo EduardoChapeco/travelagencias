@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -31,24 +31,31 @@ function SupportPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "open" | "resolved">("all");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 15;
 
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["tickets", agency?.id, filter],
+    queryKey: ["tickets", agency?.id, filter, page],
     queryFn: async () => {
       let qb = supabase
         .from("support_tickets")
-        .select("id, code, title, type, priority, status, sla_deadline, created_at, client_id")
+        .select("id, code, title, type, priority, status, sla_deadline, created_at, client_id", { count: "exact" })
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+      
       if (filter === "open") qb = qb.in("status", ["open", "in_progress"]);
       if (filter === "resolved") qb = qb.eq("status", "resolved");
-      const { data, error } = await qb;
+      
+      const { data, error, count } = await qb;
       if (error) throw error;
-      return data as unknown as Ticket[];
+      return { data: data as unknown as Ticket[], count: count ?? 0 };
     },
+    placeholderData: keepPreviousData,
   });
+
+  const totalPages = Math.ceil((q.data?.count ?? 0) / PAGE_SIZE);
 
   return (
     <>
@@ -66,7 +73,7 @@ function SupportPage() {
         {(["all", "open", "resolved"] as const).map((f) => (
           <button
             key={f}
-            onClick={() => setFilter(f)}
+            onClick={() => { setFilter(f); setPage(1); }}
             className={`rounded px-2.5 py-1 ${filter === f ? "bg-surface-alt text-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
             {f === "all" ? "Todos" : f === "open" ? "Abertos" : "Resolvidos"}
@@ -75,9 +82,9 @@ function SupportPage() {
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && <EmptyState title="Sem tickets" description="Os tickets de suporte aparecem aqui." />}
+      {q.data?.data.length === 0 && <EmptyState title="Sem tickets" description="Os tickets de suporte aparecem aqui." />}
 
-      {q.data && q.data.length > 0 && (
+      {q.data && q.data.data.length > 0 && (
         <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -92,7 +99,7 @@ function SupportPage() {
               </tr>
             </thead>
             <tbody>
-              {q.data.map((t) => (
+              {q.data.data.map((t) => (
                 <tr key={t.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5 font-mono text-xs">{t.code}</td>
                   <td className="px-3 py-2.5">
@@ -113,6 +120,22 @@ function SupportPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-xs text-muted-foreground">
+            Página {page} de {totalPages} ({q.data?.count} total)
+          </div>
+          <div className="flex gap-1">
+            <GhostButton disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-2">
+              <ChevronLeft className="h-4 w-4" />
+            </GhostButton>
+            <GhostButton disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="px-2">
+              <ChevronRight className="h-4 w-4" />
+            </GhostButton>
+          </div>
         </div>
       )}
 

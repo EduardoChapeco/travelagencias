@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "isomorphic-dompurify";
 
 export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   head: ({ params }) => ({ meta: [{ title: `${params.slug} · Blog` }] }),
@@ -30,7 +31,10 @@ function Page() {
       {post.published_at && <div className="mt-2 text-xs text-muted-foreground">{new Date(post.published_at).toLocaleDateString("pt-BR")}</div>}
       {post.cover_image_url && <img src={post.cover_image_url} alt={post.title} className="my-6 w-full rounded-lg object-cover" />}
       {post.excerpt && <p className="text-lg italic text-muted-foreground">{post.excerpt}</p>}
-      <div className="prose prose-sm dark:prose-invert mt-6 whitespace-pre-line">{post.content}</div>
+      <div 
+        className="prose prose-sm dark:prose-invert mt-6 max-w-none prose-headings:font-bold prose-a:text-brand hover:prose-a:underline"
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content || "") }}
+      />
       {post.tags?.length > 0 && (
         <div className="mt-8 flex flex-wrap gap-2">{post.tags.map((t: string) => <span key={t} className="rounded-full bg-surface-alt px-2 py-1 text-xs">#{t}</span>)}</div>
       )}

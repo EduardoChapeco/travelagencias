@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plane, CreditCard, FileText, Gift } from "lucide-react";
+import { Plane, CreditCard, FileText, Gift, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { money, fmtDate } from "@/components/ui/form";
@@ -29,10 +29,11 @@ function ClientHome() {
   return (
     <>
       <PageHeader title="Bem-vindo" description="Suas viagens, pagamentos e documentos em um só lugar." />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 mb-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5 mb-6">
         <ShortcutCard to="/client/trips" icon={<Plane className="h-4 w-4" />} label="Viagens" />
         <ShortcutCard to="/client/payments" icon={<CreditCard className="h-4 w-4" />} label="Pagamentos" />
         <ShortcutCard to="/client/documents" icon={<FileText className="h-4 w-4" />} label="Documentos" />
+        <ShortcutCard to="/client/consents" icon={<Shield className="h-4 w-4" />} label="Termos" />
         <ShortcutCard to="/client/coupons" icon={<Gift className="h-4 w-4" />} label="Cupons" />
       </div>
 

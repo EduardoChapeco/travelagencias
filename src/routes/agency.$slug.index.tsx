@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Wallet, Users, BarChart3, PlaneTakeoff, TrendingUp, ChevronRight, Bus } from "lucide-react";
-import { StatusBadge, fmtDate } from "@/components/ui/form";
+import { StatusBadge, fmtDate, money } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export const Route = createFileRoute("/agency/$slug/")({
   head: () => ({ meta: [{ title: "Painel de Comando · TravelOS" }] }),
@@ -20,22 +22,47 @@ function Dashboard() {
     enabled: !!agency,
     queryKey: ["dashboard-stats", agency?.id],
     queryFn: async () => {
-      const [leads, won, trips, groups] = await Promise.all([
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const last6 = Array.from({ length: 6 }, (_, i) => {
+        const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+        return { label: d.toLocaleString("pt-BR", { month: "short" }), start: d };
+      });
+
+      const [leads, won, trips, groups, fin] = await Promise.all([
         supabase.from("leads").select("id, estimated_value", { count: "exact" }).eq("agency_id", agency!.id),
         supabase.from("leads").select("id, estimated_value").eq("agency_id", agency!.id).not("converted_at", "is", null),
         supabase.from("trips").select("id, title, travel_start, travel_end, status, destination").eq("agency_id", agency!.id).gte("travel_start", new Date().toISOString()).order("travel_start").limit(3),
-        supabase.from("group_tours").select("id, title, destination, departure_date, return_date, reserved_seats, total_seats").eq("agency_id", agency!.id).gte("departure_date", new Date().toISOString()).order("departure_date").limit(2)
+        supabase.from("group_tours").select("id, title, destination, departure_date, return_date, reserved_seats, total_seats").eq("agency_id", agency!.id).gte("departure_date", new Date().toISOString()).order("departure_date").limit(2),
+        supabase.from("financial_records").select("amount, type, status, created_at").eq("agency_id", agency!.id)
       ]);
       const totalLeads = leads.count ?? 0;
       const wonLeads = won.data?.length ?? 0;
       const pipelineValue = leads.data?.reduce((sum, l) => sum + Number(l.estimated_value ?? 0), 0) ?? 0;
       const wonValue = won.data?.reduce((sum, l) => sum + Number(l.estimated_value ?? 0), 0) ?? 0;
       const conversionRate = totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
-      return { totalLeads, wonLeads, pipelineValue, wonValue, conversionRate, upcomingTrips: trips.data ?? [], upcomingGroups: groups.data ?? [] };
+      
+      const allRecords = fin.data ?? [];
+      const revenueData = last6.map(({ label, start }) => {
+        const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+        const total = allRecords
+          .filter((r) => r.type === "income" && r.status === "paid" && r.created_at >= start.toISOString() && r.created_at < end.toISOString())
+          .reduce((s, r) => s + Number(r.amount ?? 0), 0);
+        return { label, total };
+      });
+
+      return { totalLeads, wonLeads, pipelineValue, wonValue, conversionRate, upcomingTrips: trips.data ?? [], upcomingGroups: groups.data ?? [], revenueData };
     },
   });
 
   const s = statsQ.data;
+
+  const chartConfig = {
+    total: {
+      label: "Receita",
+      color: "hsl(var(--success))",
+    },
+  };
 
   return (
     <div className="flex flex-col space-y-8 pb-10">
@@ -46,16 +73,47 @@ function Dashboard() {
 
       {/* MÉTRICAS PRINCIPAIS (BENTO TOP) */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={BarChart3} label="Pipeline Ativo" value={s ? brl(s.pipelineValue) : "—"} subtitle="Total estimado" color="text-info" bg="bg-info-bg" />
-        <StatCard icon={TrendingUp} label="Vendas Fechadas" value={s ? brl(s.wonValue) : "—"} subtitle="No mês atual" color="text-success" bg="bg-success-bg" />
+        <StatCard icon={BarChart3} label="Pipeline Ativo" value={s ? money(s.pipelineValue) : "—"} subtitle="Total estimado" color="text-info" bg="bg-info-bg" />
+        <StatCard icon={TrendingUp} label="Vendas Fechadas" value={s ? money(s.wonValue) : "—"} subtitle="Geral" color="text-success" bg="bg-success-bg" />
         <StatCard icon={Users} label="Total de Leads" value={s?.totalLeads ?? "—"} subtitle="No CRM" color="text-warning" bg="bg-warning-bg" />
         <StatCard icon={TrendingUp} label="Taxa Conversão" value={s ? `${s.conversionRate}%` : "—"} subtitle="Eficácia de vendas" color="text-success" bg="bg-success/10" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
          {/* EMBARQUES IMINENTES (Viagens Sob Medida) */}
-         <div className="lg:col-span-2 space-y-6">
-            <div className="rounded-2xl border border-border/50 bg-surface  overflow-hidden flex flex-col h-full">
+         <div className="xl:col-span-2 space-y-6">
+            {/* GRÁFICO DE RECEITA */}
+            <div className="rounded-2xl border border-border/50 bg-surface overflow-hidden flex flex-col h-[300px]">
+               <div className="border-b border-border/50 p-5 bg-surface-alt/20 flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-bold text-foreground">
+                     <BarChart3 className="h-4 w-4 text-brand" /> Receita Confirmada (Últimos 6 meses)
+                  </div>
+               </div>
+               <div className="flex-1 p-5 pt-6 pb-2 min-h-0">
+                 {s ? (
+                   <ChartContainer config={chartConfig} className="h-full w-full">
+                     <AreaChart data={s.revenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                       <defs>
+                         <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
+                           <stop offset="5%" stopColor="var(--color-total)" stopOpacity={0.3}/>
+                           <stop offset="95%" stopColor="var(--color-total)" stopOpacity={0}/>
+                         </linearGradient>
+                       </defs>
+                       <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                       <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} fontSize={11} />
+                       <YAxis tickLine={false} axisLine={false} fontSize={11} tickFormatter={(val) => `R$ ${(val/1000).toFixed(1)}k`} />
+                       <ChartTooltip cursor={{ stroke: "var(--color-border)", strokeWidth: 1, strokeDasharray: "3 3" }} content={<ChartTooltipContent formatter={(value) => money(Number(value))} hideIndicator />} />
+                       <Area type="monotone" dataKey="total" stroke="var(--color-total)" strokeWidth={3} fill="url(#fillTotal)" />
+                     </AreaChart>
+                   </ChartContainer>
+                 ) : (
+                   <div className="h-full w-full animate-pulse bg-surface-alt rounded-lg" />
+                 )}
+               </div>
+            </div>
+
+            {/* LISTA DE EMBARQUES */}
+            <div className="rounded-2xl border border-border/50 bg-surface overflow-hidden flex flex-col">
                <div className="border-b border-border/50 p-5 bg-surface-alt/20 flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold text-foreground">
                      <PlaneTakeoff className="h-4 w-4 text-brand" /> Próximos Embarques (VIP)

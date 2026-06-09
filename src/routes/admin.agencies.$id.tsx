@@ -1,6 +1,6 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
@@ -46,7 +46,17 @@ function Page() {
   return (
     <>
       <Link to="/admin/agencies" className="mb-3 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3 w-3" /> Voltar</Link>
-      <PageHeader title={agency.name} description={`/${agency.slug} · criada em ${fmtDate(agency.created_at)}`} />
+      <div className="flex items-start justify-between mb-4">
+        <PageHeader title={agency.name} description={`/${agency.slug} · criada em ${fmtDate(agency.created_at)}`} />
+        <Link 
+          to="/agency/$slug" 
+          params={{ slug: agency.slug }}
+          target="_blank"
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
+        >
+          Acessar Agência <ExternalLink className="h-4 w-4" />
+        </Link>
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <section className="rounded-lg border border-border bg-surface p-4">
           <h3 className="mb-2 text-sm font-semibold">Dados cadastrais</h3>

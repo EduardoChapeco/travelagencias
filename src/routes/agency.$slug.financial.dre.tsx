@@ -50,7 +50,7 @@ function DREPage() {
         </div>
         <div className="rounded-lg border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
-          <div className="mt-1 font-mono text-xl font-semibold text-red-500">{money(q.data?.expense ?? 0)}</div>
+          <div className="mt-1 font-mono text-xl font-semibold text-danger">{money(q.data?.expense ?? 0)}</div>
         </div>
         <div className="rounded-lg border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Resultado</div>

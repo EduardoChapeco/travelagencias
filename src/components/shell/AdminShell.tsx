@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { Building2, Users, ScrollText, FileText, ShieldCheck, Wallet, BookOpen, Brush, Settings, Plane, Luggage, LayoutDashboard, LogOut } from "lucide-react";
+import { Building2, Users, ScrollText, FileText, ShieldCheck, Wallet, BookOpen, Brush, Settings, Plane, Luggage, LayoutDashboard, LogOut, Zap, Shield, Palette } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
@@ -13,6 +13,9 @@ const items = [
   { to: "/admin/trips", label: "Viagens", icon: Luggage },
   { to: "/admin/contracts", label: "Contratos", icon: ScrollText },
   { to: "/admin/billing", label: "Faturamento", icon: Wallet },
+  { to: "/admin/plans", label: "Planos", icon: Zap },
+  { to: "/admin/policies", label: "Políticas & LGPD", icon: Shield },
+  { to: "/admin/brand", label: "Marca Global", icon: Palette },
   { to: "/admin/audit", label: "Auditoria", icon: ScrollText },
 ];
 

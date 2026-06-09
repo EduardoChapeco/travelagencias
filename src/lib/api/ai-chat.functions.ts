@@ -3,7 +3,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const RATE_LIMIT_PER_HOUR = 50;
-const MODEL = "google/gemini-2.5-flash";
+const OPENROUTER_MODEL = "google/gemini-2.5-flash";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const SYSTEM_PROMPT = `Você é o assistente TravelOS, especialista em operação de agências de viagem.
@@ -122,20 +123,31 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       })),
     ];
 
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY não configurada no servidor.");
+    const apiKey = process.env.OPENROUTER_API_KEY || process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("API_KEY não configurada no servidor (OpenRouter ou Lovable).");
 
-    const res = await fetch(GATEWAY_URL, {
+    const isOpenRouter = !!process.env.OPENROUTER_API_KEY;
+    const url = isOpenRouter ? OPENROUTER_URL : GATEWAY_URL;
+    const model = isOpenRouter ? OPENROUTER_MODEL : "google/gemini-2.5-flash";
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    };
+
+    if (isOpenRouter) {
+      headers["HTTP-Referer"] = "https://travelos.com";
+      headers["X-Title"] = "TravelOS";
+    }
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({ model: MODEL, messages, temperature: 0.4 }),
+      headers,
+      body: JSON.stringify({ model, messages, temperature: 0.4 }),
     });
 
     if (res.status === 429) throw new Error("Limite de uso do provedor de IA atingido. Tente novamente em alguns minutos.");
-    if (res.status === 402) throw new Error("Créditos de IA esgotados. Adicione créditos no Lovable Cloud.");
+    if (res.status === 402) throw new Error("Créditos de IA esgotados. Adicione créditos.");
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
       throw new Error(`Falha no provedor de IA (${res.status}): ${txt.slice(0, 200)}`);
@@ -155,8 +167,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       role: "assistant",
       content: assistantText,
       context: ctxPayload,
-      provider: "lovable-ai",
-      model: MODEL,
+      provider: isOpenRouter ? "openrouter" : "lovable-ai",
+      model: model,
       tokens_in: json.usage?.prompt_tokens ?? null,
       tokens_out: json.usage?.completion_tokens ?? null,
     });
@@ -170,10 +182,10 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       action: "ai_chat_message",
       entity_type: "ai_chat",
       entity_id: data.conversationId,
-      metadata: { route: data.contextRoute ?? null, model: MODEL },
+      metadata: { route: data.contextRoute ?? null, model },
     });
 
-    return { reply: assistantText, model: MODEL };
+    return { reply: assistantText, model };
   });
 
 export const clearAIChatConversation = createServerFn({ method: "POST" })

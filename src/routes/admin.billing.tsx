@@ -35,7 +35,7 @@ function Page() {
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground"><tr><th className="px-3 py-2 text-left">Agência</th><th className="px-3 py-2 text-right">Receita</th><th className="px-3 py-2 text-right">Despesa</th><th className="px-3 py-2 text-right">Pendente</th><th className="px-3 py-2 text-right">Líquido</th></tr></thead>
             <tbody>
-              {q.data.map((r) => (
+              {q.data.map((r: any) => (
                 <tr key={r.agency_id} className="border-t border-border">
                   <td className="px-3 py-2.5 text-xs">{r.agency_name}</td>
                   <td className="px-3 py-2.5 text-right text-xs font-mono">{money(r.income)}</td>

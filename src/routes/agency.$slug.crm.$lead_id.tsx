@@ -1,7 +1,7 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Pencil, Trash2, Save, X, MessageSquare, Phone, Mail, CalendarClock, CheckCircle2, StickyNote, ArrowRightLeft } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Save, X, MessageSquare, Phone, Mail, CalendarClock, CheckCircle2, StickyNote, ArrowRightLeft, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -20,6 +20,7 @@ type Lead = {
   travel_start: string | null; travel_end: string | null; pax_count: number;
   estimated_value: number; source: string | null; notes: string | null;
   created_at: string; updated_at: string; closed_at: string | null; lost_reason: string | null;
+  client_id: string | null;
 };
 type Activity = {
   id: string; type: "note" | "stage_change" | "call" | "email" | "whatsapp" | "meeting" | "task";
@@ -43,6 +44,7 @@ function iconFor(type: Activity["type"]) {
 function LeadDetailPage() {
   const { agency } = useAgency();
   const { slug, lead_id } = useParams({ from: "/agency/$slug/crm/$lead_id" });
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const [editing, setEditing] = useState(false);
 
@@ -164,6 +166,37 @@ function LeadDetailPage() {
             >
               {stagesQ.data?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
             </Select>
+
+            {/* Convert to Client Section */}
+            {lead.client_id ? (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide mb-2 flex items-center gap-1.5 text-success">
+                  <UserCheck className="h-3.5 w-3.5" /> Cliente Convertido
+                </div>
+                <PrimaryButton className="w-full justify-center" onClick={() => navigate({ to: "/agency/$slug/clients/$id", params: { slug, id: lead.client_id! } })}>
+                  Acessar Perfil do Cliente
+                </PrimaryButton>
+              </div>
+            ) : stage?.is_won ? (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                  <UserCheck className="h-3.5 w-3.5" /> Ação Necessária
+                </div>
+                <PrimaryButton 
+                  className="w-full justify-center bg-success text-success-foreground hover:bg-success/90"
+                  onClick={async () => {
+                    const { data: clientId, error } = await supabase.rpc("promote_lead_to_client", { _lead_id: lead.id });
+                    if (error) return toast.error("Erro ao converter lead: " + error.message);
+                    toast.success("Lead convertido para Cliente!");
+                    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                  }}
+                >
+                  Converter em Cliente
+                </PrimaryButton>
+              </div>
+            ) : null}
+
           </div>
 
           <div className="rounded-lg border border-border bg-surface p-4 text-sm">

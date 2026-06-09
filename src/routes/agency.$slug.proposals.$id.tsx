@@ -209,7 +209,7 @@ function ProposalEditor() {
                     <div key={ri} className="mb-1 flex gap-1">
                       <Inp ph="Tipo (duplo)" value={r.type} onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, rooms: replaceAt(h.rooms, ri, { ...r, type: v }) }) })} />
                       <Inp type="number" ph="Qtd" value={String(r.qty)} onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, rooms: replaceAt(h.rooms, ri, { ...r, qty: parseInt(v) || 1 }) }) })} />
-                      <button onClick={() => save({ hotels: replaceAt(draft.hotels, i, { ...h, rooms: h.rooms.filter((_, x) => x !== ri) }) })} className="text-muted-foreground hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => save({ hotels: replaceAt(draft.hotels, i, { ...h, rooms: h.rooms.filter((_, x) => x !== ri) }) })} className="text-muted-foreground hover:text-danger"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   ))}
                   <button onClick={() => save({ hotels: replaceAt(draft.hotels, i, { ...h, rooms: [...h.rooms, { type: "", qty: 1 }] }) })} className="text-[11px] text-primary hover:underline">+ quarto</button>
@@ -384,7 +384,7 @@ function TagsEditor({ tags, onChange, placeholder }: { tags: string[]; onChange:
         {tags.map((t, i) => (
           <span key={i} className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 text-[11px]">
             {t}
-            <button onClick={() => onChange(tags.filter((_, x) => x !== i))} className="text-muted-foreground hover:text-red-500">×</button>
+            <button onClick={() => onChange(tags.filter((_, x) => x !== i))} className="text-muted-foreground hover:text-danger">×</button>
           </span>
         ))}
       </div>
@@ -443,7 +443,7 @@ function SortableItDay({ item, onChange, onRemove }: { item: ItineraryDay; onCha
           onBlur={(e) => onChange({ ...item, description: e.target.value })}
         />
       </div>
-      <button onClick={onRemove} className="text-muted-foreground hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
+      <button onClick={onRemove} className="text-muted-foreground hover:text-danger"><Trash2 className="h-3.5 w-3.5" /></button>
     </div>
   );
 }
@@ -587,7 +587,7 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
       {(p.includes.length > 0 || p.excludes.length > 0) && (
         <section className="mb-6 grid grid-cols-2 gap-4">
           {p.includes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-success">Inclui</h3><ul className="text-xs">{p.includes.map((i, x) => <li key={x}>✓ {i}</li>)}</ul></div>}
-          {p.excludes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-red-700">Não inclui</h3><ul className="text-xs">{p.excludes.map((i, x) => <li key={x}>✗ {i}</li>)}</ul></div>}
+          {p.excludes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-danger">Não inclui</h3><ul className="text-xs">{p.excludes.map((i, x) => <li key={x}>✗ {i}</li>)}</ul></div>}
         </section>
       )}
 

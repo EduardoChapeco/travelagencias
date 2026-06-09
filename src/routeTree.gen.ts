@@ -25,6 +25,7 @@ import { Route as ClientNotificationsRouteImport } from './routes/client.notific
 import { Route as ClientGiftcardsRouteImport } from './routes/client.giftcards'
 import { Route as ClientDocumentsRouteImport } from './routes/client.documents'
 import { Route as ClientCouponsRouteImport } from './routes/client.coupons'
+import { Route as ClientConsentsRouteImport } from './routes/client.consents'
 import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
@@ -34,17 +35,17 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-pas
 import { Route as AgencySlugRouteImport } from './routes/agency.$slug'
 import { Route as AdminTripsRouteImport } from './routes/admin.trips'
 import { Route as AdminTravelersRouteImport } from './routes/admin.travelers'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminPoliciesRouteImport } from './routes/admin.policies'
 import { Route as AdminPlansRouteImport } from './routes/admin.plans'
-import { Route as AdminKnowledgeRouteImport } from './routes/admin.knowledge'
 import { Route as AdminContractsRouteImport } from './routes/admin.contracts'
 import { Route as AdminBrandRouteImport } from './routes/admin.brand'
 import { Route as AdminBillingRouteImport } from './routes/admin.billing'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
+import { Route as PAgency_slugIndexRouteImport } from './routes/p.$agency_slug.index'
 import { Route as AgencySlugIndexRouteImport } from './routes/agency.$slug.index'
+import { Route as PAgency_slugPage_slugRouteImport } from './routes/p.$agency_slug.$page_slug'
 import { Route as MProposalTokenRouteImport } from './routes/m.proposal.$token'
 import { Route as MPaymentTokenRouteImport } from './routes/m.payment.$token'
 import { Route as MPassengerTokenRouteImport } from './routes/m.passenger.$token'
@@ -177,6 +178,11 @@ const ClientCouponsRoute = ClientCouponsRouteImport.update({
   path: '/coupons',
   getParentRoute: () => ClientRoute,
 } as any)
+const ClientConsentsRoute = ClientConsentsRouteImport.update({
+  id: '/consents',
+  path: '/consents',
+  getParentRoute: () => ClientRoute,
+} as any)
 const AuthVerifyRoute = AuthVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
@@ -222,11 +228,6 @@ const AdminTravelersRoute = AdminTravelersRouteImport.update({
   path: '/travelers',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminPoliciesRoute = AdminPoliciesRouteImport.update({
   id: '/policies',
   path: '/policies',
@@ -235,11 +236,6 @@ const AdminPoliciesRoute = AdminPoliciesRouteImport.update({
 const AdminPlansRoute = AdminPlansRouteImport.update({
   id: '/plans',
   path: '/plans',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminKnowledgeRoute = AdminKnowledgeRouteImport.update({
-  id: '/knowledge',
-  path: '/knowledge',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminContractsRoute = AdminContractsRouteImport.update({
@@ -272,10 +268,20 @@ const AdminAgenciesRoute = AdminAgenciesRouteImport.update({
   path: '/agencies',
   getParentRoute: () => AdminRoute,
 } as any)
+const PAgency_slugIndexRoute = PAgency_slugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PAgency_slugRoute,
+} as any)
 const AgencySlugIndexRoute = AgencySlugIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AgencySlugRoute,
+} as any)
+const PAgency_slugPage_slugRoute = PAgency_slugPage_slugRouteImport.update({
+  id: '/$page_slug',
+  path: '/$page_slug',
+  getParentRoute: () => PAgency_slugRoute,
 } as any)
 const MProposalTokenRoute = MProposalTokenRouteImport.update({
   id: '/m/proposal/$token',
@@ -551,10 +557,8 @@ export interface FileRoutesByFullPath {
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
   '/admin/contracts': typeof AdminContractsRoute
-  '/admin/knowledge': typeof AdminKnowledgeRoute
   '/admin/plans': typeof AdminPlansRoute
   '/admin/policies': typeof AdminPoliciesRoute
-  '/admin/settings': typeof AdminSettingsRoute
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
   '/agency/$slug': typeof AgencySlugRouteWithChildren
@@ -564,6 +568,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
   '/client/giftcards': typeof ClientGiftcardsRoute
@@ -604,7 +609,9 @@ export interface FileRoutesByFullPath {
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
+  '/p/$agency_slug/$page_slug': typeof PAgency_slugPage_slugRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
@@ -637,10 +644,8 @@ export interface FileRoutesByTo {
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
   '/admin/contracts': typeof AdminContractsRoute
-  '/admin/knowledge': typeof AdminKnowledgeRoute
   '/admin/plans': typeof AdminPlansRoute
   '/admin/policies': typeof AdminPoliciesRoute
-  '/admin/settings': typeof AdminSettingsRoute
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -649,6 +654,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
   '/client/giftcards': typeof ClientGiftcardsRoute
@@ -656,7 +662,6 @@ export interface FileRoutesByTo {
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
-  '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/verify/$serial': typeof VerifySerialRoute
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
@@ -688,7 +693,9 @@ export interface FileRoutesByTo {
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
+  '/p/$agency_slug/$page_slug': typeof PAgency_slugPage_slugRoute
   '/agency/$slug': typeof AgencySlugIndexRoute
+  '/p/$agency_slug': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
@@ -724,10 +731,8 @@ export interface FileRoutesById {
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
   '/admin/contracts': typeof AdminContractsRoute
-  '/admin/knowledge': typeof AdminKnowledgeRoute
   '/admin/plans': typeof AdminPlansRoute
   '/admin/policies': typeof AdminPoliciesRoute
-  '/admin/settings': typeof AdminSettingsRoute
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
   '/agency/$slug': typeof AgencySlugRouteWithChildren
@@ -737,6 +742,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/verify': typeof AuthVerifyRoute
+  '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
   '/client/giftcards': typeof ClientGiftcardsRoute
@@ -777,7 +783,9 @@ export interface FileRoutesById {
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
+  '/p/$agency_slug/$page_slug': typeof PAgency_slugPage_slugRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
@@ -815,10 +823,8 @@ export interface FileRouteTypes {
     | '/admin/billing'
     | '/admin/brand'
     | '/admin/contracts'
-    | '/admin/knowledge'
     | '/admin/plans'
     | '/admin/policies'
-    | '/admin/settings'
     | '/admin/travelers'
     | '/admin/trips'
     | '/agency/$slug'
@@ -828,6 +834,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/auth/verify'
+    | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
     | '/client/giftcards'
@@ -868,7 +875,9 @@ export interface FileRouteTypes {
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
+    | '/p/$agency_slug/$page_slug'
     | '/agency/$slug/'
+    | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/crm/$lead_id'
@@ -901,10 +910,8 @@ export interface FileRouteTypes {
     | '/admin/billing'
     | '/admin/brand'
     | '/admin/contracts'
-    | '/admin/knowledge'
     | '/admin/plans'
     | '/admin/policies'
-    | '/admin/settings'
     | '/admin/travelers'
     | '/admin/trips'
     | '/auth/forgot-password'
@@ -913,6 +920,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/auth/verify'
+    | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
     | '/client/giftcards'
@@ -920,7 +928,6 @@ export interface FileRouteTypes {
     | '/client/payments'
     | '/client/profile'
     | '/client/trips'
-    | '/p/$agency_slug'
     | '/verify/$serial'
     | '/admin'
     | '/auth'
@@ -952,7 +959,9 @@ export interface FileRouteTypes {
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
+    | '/p/$agency_slug/$page_slug'
     | '/agency/$slug'
+    | '/p/$agency_slug'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/crm/$lead_id'
@@ -987,10 +996,8 @@ export interface FileRouteTypes {
     | '/admin/billing'
     | '/admin/brand'
     | '/admin/contracts'
-    | '/admin/knowledge'
     | '/admin/plans'
     | '/admin/policies'
-    | '/admin/settings'
     | '/admin/travelers'
     | '/admin/trips'
     | '/agency/$slug'
@@ -1000,6 +1007,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/auth/verify'
+    | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
     | '/client/giftcards'
@@ -1040,7 +1048,9 @@ export interface FileRouteTypes {
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
+    | '/p/$agency_slug/$page_slug'
     | '/agency/$slug/'
+    | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/crm/$lead_id'
@@ -1196,6 +1206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientCouponsRouteImport
       parentRoute: typeof ClientRoute
     }
+    '/client/consents': {
+      id: '/client/consents'
+      path: '/consents'
+      fullPath: '/client/consents'
+      preLoaderRoute: typeof ClientConsentsRouteImport
+      parentRoute: typeof ClientRoute
+    }
     '/auth/verify': {
       id: '/auth/verify'
       path: '/verify'
@@ -1259,13 +1276,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTravelersRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/policies': {
       id: '/admin/policies'
       path: '/policies'
@@ -1278,13 +1288,6 @@ declare module '@tanstack/react-router' {
       path: '/plans'
       fullPath: '/admin/plans'
       preLoaderRoute: typeof AdminPlansRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/knowledge': {
-      id: '/admin/knowledge'
-      path: '/knowledge'
-      fullPath: '/admin/knowledge'
-      preLoaderRoute: typeof AdminKnowledgeRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/contracts': {
@@ -1329,12 +1332,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAgenciesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/p/$agency_slug/': {
+      id: '/p/$agency_slug/'
+      path: '/'
+      fullPath: '/p/$agency_slug/'
+      preLoaderRoute: typeof PAgency_slugIndexRouteImport
+      parentRoute: typeof PAgency_slugRoute
+    }
     '/agency/$slug/': {
       id: '/agency/$slug/'
       path: '/'
       fullPath: '/agency/$slug/'
       preLoaderRoute: typeof AgencySlugIndexRouteImport
       parentRoute: typeof AgencySlugRoute
+    }
+    '/p/$agency_slug/$page_slug': {
+      id: '/p/$agency_slug/$page_slug'
+      path: '/$page_slug'
+      fullPath: '/p/$agency_slug/$page_slug'
+      preLoaderRoute: typeof PAgency_slugPage_slugRouteImport
+      parentRoute: typeof PAgency_slugRoute
     }
     '/m/proposal/$token': {
       id: '/m/proposal/$token'
@@ -1715,10 +1732,8 @@ interface AdminRouteChildren {
   AdminBillingRoute: typeof AdminBillingRoute
   AdminBrandRoute: typeof AdminBrandRoute
   AdminContractsRoute: typeof AdminContractsRoute
-  AdminKnowledgeRoute: typeof AdminKnowledgeRoute
   AdminPlansRoute: typeof AdminPlansRoute
   AdminPoliciesRoute: typeof AdminPoliciesRoute
-  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTravelersRoute: typeof AdminTravelersRoute
   AdminTripsRoute: typeof AdminTripsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1731,10 +1746,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBillingRoute: AdminBillingRoute,
   AdminBrandRoute: AdminBrandRoute,
   AdminContractsRoute: AdminContractsRoute,
-  AdminKnowledgeRoute: AdminKnowledgeRoute,
   AdminPlansRoute: AdminPlansRoute,
   AdminPoliciesRoute: AdminPoliciesRoute,
-  AdminSettingsRoute: AdminSettingsRoute,
   AdminTravelersRoute: AdminTravelersRoute,
   AdminTripsRoute: AdminTripsRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -1777,6 +1790,7 @@ const ClientTripsRouteWithChildren = ClientTripsRoute._addFileChildren(
 )
 
 interface ClientRouteChildren {
+  ClientConsentsRoute: typeof ClientConsentsRoute
   ClientCouponsRoute: typeof ClientCouponsRoute
   ClientDocumentsRoute: typeof ClientDocumentsRoute
   ClientGiftcardsRoute: typeof ClientGiftcardsRoute
@@ -1788,6 +1802,7 @@ interface ClientRouteChildren {
 }
 
 const ClientRouteChildren: ClientRouteChildren = {
+  ClientConsentsRoute: ClientConsentsRoute,
   ClientCouponsRoute: ClientCouponsRoute,
   ClientDocumentsRoute: ClientDocumentsRoute,
   ClientGiftcardsRoute: ClientGiftcardsRoute,
@@ -1997,12 +2012,16 @@ const AgencySlugRouteWithChildren = AgencySlugRoute._addFileChildren(
 )
 
 interface PAgency_slugRouteChildren {
+  PAgency_slugPage_slugRoute: typeof PAgency_slugPage_slugRoute
+  PAgency_slugIndexRoute: typeof PAgency_slugIndexRoute
   PAgency_slugBlogSlugRoute: typeof PAgency_slugBlogSlugRoute
   PAgency_slugTourIdRoute: typeof PAgency_slugTourIdRoute
   PAgency_slugVisaIdRoute: typeof PAgency_slugVisaIdRoute
 }
 
 const PAgency_slugRouteChildren: PAgency_slugRouteChildren = {
+  PAgency_slugPage_slugRoute: PAgency_slugPage_slugRoute,
+  PAgency_slugIndexRoute: PAgency_slugIndexRoute,
   PAgency_slugBlogSlugRoute: PAgency_slugBlogSlugRoute,
   PAgency_slugTourIdRoute: PAgency_slugTourIdRoute,
   PAgency_slugVisaIdRoute: PAgency_slugVisaIdRoute,

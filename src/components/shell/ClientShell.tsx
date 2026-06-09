@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { Home, Luggage, Wallet, FileText, Bell, Gift, Ticket, User, LogOut } from "lucide-react";
+import { Home, Luggage, Wallet, FileText, Bell, Gift, Ticket, User, LogOut, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
@@ -12,6 +12,7 @@ const items = [
   { to: "/client/documents", label: "Documentos", icon: FileText },
   { to: "/client/coupons", label: "Cupons", icon: Ticket },
   { to: "/client/giftcards", label: "Gift Cards", icon: Gift },
+  { to: "/client/consents", label: "Consentimentos", icon: Shield },
   { to: "/client/notifications", label: "Notificações", icon: Bell },
   { to: "/client/profile", label: "Perfil", icon: User },
 ];

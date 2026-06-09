@@ -27,7 +27,8 @@ function Page() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.rpc("verify_contract", { _serial: serial }).then(({ data, error }) => {
+    // @ts-expect-error Tipagem pendente de atualização no types.ts
+    supabase.rpc("verify_contract", { _serial: serial as string }).then(({ data, error }: { data: any, error: any }) => {
       if (error) { setErr(error.message); return; }
       const r = (data as Row[])?.[0]; if (!r) setErr("Certificado não encontrado"); else setRow(r);
     });

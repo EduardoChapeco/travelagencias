@@ -84,7 +84,7 @@ export function ClientFormSheet({
         
         <Field label={kind === "individual" ? "Nome completo *" : "Nome fantasia *"}>
           <Input {...register("fullName")} />
-          {errors.fullName && <span className="text-xs text-red-500">{errors.fullName.message}</span>}
+          {errors.fullName && <span className="text-xs text-danger">{errors.fullName.message}</span>}
         </Field>
         
         {kind === "company" && (
@@ -106,7 +106,7 @@ export function ClientFormSheet({
         
         <Field label="Email">
           <Input type="email" {...register("email")} />
-          {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
+          {errors.email && <span className="text-xs text-danger">{errors.email.message}</span>}
         </Field>
         
         <Field label="Telefone / WhatsApp">

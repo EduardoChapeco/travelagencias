@@ -107,17 +107,17 @@ function Page() {
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground">Nome da Agência *</label>
                   <input {...register("name")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: Viagens Inc." />
-                  {errors.name && <span className="text-xs text-red-500">{errors.name.message}</span>}
+                  {errors.name && <span className="text-xs text-danger">{errors.name.message}</span>}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground">Slug (URL) *</label>
                   <input {...register("slug")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: viagens-inc" />
-                  {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
+                  {errors.slug && <span className="text-xs text-danger">{errors.slug.message}</span>}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-muted-foreground">E-mail do Proprietário *</label>
                   <input type="email" {...register("email")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="dono@agencia.com" />
-                  {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
+                  {errors.email && <span className="text-xs text-danger">{errors.email.message}</span>}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -135,7 +135,7 @@ function Page() {
               </form>
             ) : (
               <div className="mt-4 flex flex-col gap-4">
-                <div className="rounded-md border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-600 dark:text-green-400">
+                <div className="rounded-md border border-success/20 bg-success/10 p-4 text-sm text-success">
                   Agência provisionada no banco de dados! Envie o link abaixo para o proprietário definir a senha e acessar a plataforma.
                 </div>
                 <div>

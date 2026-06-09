@@ -20,19 +20,21 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-tour", agency_slug, id],
     queryFn: async () => {
-      const { data: agency } = await supabase
+      const { data } = await supabase
         .from("agencies")
         .select("id, name, slug, brand_color, brand_color_fg")
         .eq("slug", agency_slug)
         .maybeSingle();
+      const agency = data as any;
       if (!agency) return null;
 
-      const { data: tour } = await supabase
+      const { data: tourData } = await supabase
         .from("group_tours")
         .select("*")
         .eq("id", id)
         .eq("agency_id", agency.id)
         .maybeSingle();
+      const tour = tourData as any;
       if (!tour) return { agency, tour: null, days: [] as TourDay[], layout: null as any, assignedSeats: [] as string[] };
 
       const days: TourDay[] = Array.isArray(tour.itinerary) ? (tour.itinerary as unknown as TourDay[]) : [];

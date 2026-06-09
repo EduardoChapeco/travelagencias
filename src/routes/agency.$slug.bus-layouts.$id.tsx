@@ -124,7 +124,7 @@ function BusLayoutEditorPage() {
                     "flex h-16 w-16 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-colors focus:outline-none",
                     cell.type === 'seat' && "border-brand bg-brand/5 text-brand hover:bg-brand/10",
                     cell.type === 'aisle' && "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt",
-                    cell.type === 'wc' && "border-blue-200 bg-blue-50 text-blue-600",
+                    cell.type === 'wc' && "border-info/20 bg-info-bg text-info",
                     cell.type === 'door' && "border-orange-200 bg-orange-50 text-orange-600"
                   )}
                 >
