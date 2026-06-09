@@ -148,10 +148,10 @@ function ProposalPreview() {
       </div>
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto bg-neutral-200/50 py-8 px-4">
-        <div className="mx-auto max-w-2xl rounded-xl border border-neutral-300 bg-white shadow-sm overflow-hidden">
+      <div className="flex-1 overflow-y-auto bg-surface-alt py-8 px-4">
+        <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface shadow-sm overflow-hidden">
           {/* Agency header */}
-          <div className="px-8 pt-8 pb-6 border-b border-neutral-100">
+          <div className="px-8 pt-8 pb-6 border-b border-border/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {agency?.logo_url ? (
@@ -165,8 +165,8 @@ function ProposalPreview() {
                   </div>
                 )}
                 <div>
-                  <div className="text-sm font-semibold text-neutral-900">{agency?.name ?? "Agência"}</div>
-                  <div className="text-xs text-neutral-500">Cotação #{p.number}</div>
+                  <div className="text-sm font-semibold text-foreground">{agency?.name ?? "Agência"}</div>
+                  <div className="text-xs text-muted-foreground">Cotação #{p.number}</div>
                 </div>
               </div>
               <div
@@ -180,8 +180,8 @@ function ProposalPreview() {
 
           {/* Hero */}
           <div className="px-8 pt-7 pb-5">
-            <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">{p.title}</h1>
-            <p className="mt-2 text-sm text-neutral-500">
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">{p.title}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
               {p.destination ?? "Destino a confirmar"}
               {p.travel_start && <> · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}</>}
               {totalPax > 0 && <> · {totalPax} {totalPax === 1 ? "passageiro" : "passageiros"}</>}
@@ -193,7 +193,7 @@ function ProposalPreview() {
             <Section title="Voos" color={accentColor}>
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-neutral-100 text-left text-neutral-400">
+                  <tr className="border-b border-border/50 text-left text-muted-foreground">
                     <th className="pb-2 font-medium">Trecho</th>
                     <th className="pb-2 font-medium">Cia / Voo</th>
                     <th className="pb-2 font-medium">Data</th>
@@ -203,15 +203,15 @@ function ProposalPreview() {
                 </thead>
                 <tbody>
                   {p.flights.map((f) => (
-                    <tr key={f.id} className="border-b border-neutral-50">
-                      <td className="py-2 font-medium text-neutral-800">
+                    <tr key={f.id} className="border-b border-border/20">
+                      <td className="py-2 font-medium text-foreground">
                         {f.origin} → {f.destination}
-                        {f.stops > 0 && <span className="ml-1 text-neutral-400">({f.stops} parada{f.stops > 1 ? "s" : ""})</span>}
+                        {f.stops > 0 && <span className="ml-1 text-muted-foreground">({f.stops} parada{f.stops > 1 ? "s" : ""})</span>}
                       </td>
-                      <td className="py-2 text-neutral-600">{f.airline} {f.flight_number}</td>
-                      <td className="py-2 text-neutral-600">{fmtDate(f.date)}</td>
-                      <td className="py-2 text-neutral-600">{f.departure_time} – {f.arrival_time}</td>
-                      <td className="py-2 text-right text-neutral-600">{f.baggage_rules}</td>
+                      <td className="py-2 text-muted-foreground">{f.airline} {f.flight_number}</td>
+                      <td className="py-2 text-muted-foreground">{fmtDate(f.date)}</td>
+                      <td className="py-2 text-muted-foreground">{f.departure_time} – {f.arrival_time}</td>
+                      <td className="py-2 text-right text-muted-foreground">{f.baggage_rules}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -224,20 +224,20 @@ function ProposalPreview() {
             <Section title="Hospedagem" color={accentColor}>
               <div className="space-y-3">
                 {p.hotels.map((h) => (
-                  <div key={h.id} className="rounded-lg border border-neutral-100 overflow-hidden">
+                  <div key={h.id} className="rounded-lg border border-border/50 overflow-hidden">
                     {h.images[0] && (
                       <img src={h.images[0]} alt={h.name} className="h-32 w-full object-cover" />
                     )}
                     <div className="p-3">
                       <div className="flex items-baseline justify-between">
-                        <span className="text-sm font-semibold text-neutral-900">{h.name}</span>
-                        <span className="text-xs text-neutral-500">{h.city}</span>
+                        <span className="text-sm font-semibold text-foreground">{h.name}</span>
+                        <span className="text-xs text-muted-foreground">{h.city}</span>
                       </div>
-                      <div className="mt-1 text-xs text-neutral-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         {fmtDate(h.checkin)} → {fmtDate(h.checkout)} · {h.meal_plan}
                       </div>
                       {h.rooms.length > 0 && (
-                        <div className="mt-1 text-xs text-neutral-500">
+                        <div className="mt-1 text-xs text-muted-foreground">
                           {h.rooms.map((r, i) => (
                             <span key={i}>{r.qty}× {r.type}{i < h.rooms.length - 1 ? ", " : ""}</span>
                           ))}
@@ -256,8 +256,8 @@ function ProposalPreview() {
               <div className="space-y-3">
                 {p.itinerary.map((d) => (
                   <div key={d.id} className="border-l-2 pl-3" style={{ borderColor: accentColor }}>
-                    <div className="text-xs font-semibold text-neutral-800">{d.day} — {d.title}</div>
-                    <div className="mt-0.5 text-xs text-neutral-500 whitespace-pre-wrap">{d.description}</div>
+                    <div className="text-xs font-semibold text-foreground">{d.day} — {d.title}</div>
+                    <div className="mt-0.5 text-xs text-muted-foreground whitespace-pre-wrap">{d.description}</div>
                   </div>
                 ))}
               </div>
@@ -270,11 +270,11 @@ function ProposalPreview() {
               <div className="grid grid-cols-2 gap-4">
                 {p.includes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700">Inclui</div>
+                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-success">Inclui</div>
                     <ul className="space-y-1 text-xs">
                       {p.includes.map((item, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-neutral-700">
-                          <span className="text-emerald-600 mt-0.5">✓</span>
+                        <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
+                          <span className="text-success mt-0.5">✓</span>
                           {item}
                         </li>
                       ))}
@@ -283,11 +283,11 @@ function ProposalPreview() {
                 )}
                 {p.excludes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-red-600">Não inclui</div>
+                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-danger">Não inclui</div>
                     <ul className="space-y-1 text-xs">
                       {p.excludes.map((item, i) => (
-                        <li key={i} className="flex items-start gap-1.5 text-neutral-700">
-                          <span className="text-red-500 mt-0.5">✗</span>
+                        <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
+                          <span className="text-danger mt-0.5">✗</span>
                           {item}
                         </li>
                       ))}
@@ -337,7 +337,7 @@ function ProposalPreview() {
 
 function Section({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
   return (
-    <div className="px-8 py-5 border-t border-neutral-100">
+    <div className="px-8 py-5 border-t border-border/50">
       <h2
         className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em]"
         style={{ color }}

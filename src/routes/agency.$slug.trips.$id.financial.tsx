@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge, money, fmtDate, Field, Input, Select } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
   head: () => ({ meta: [{ title: "Financeiro da Viagem · TravelOS" }] }),
@@ -278,26 +279,13 @@ function TripFinancial() {
 
   return (
     <>
-      <Link
-        to="/agency/$slug/trips/$id"
-        params={{ slug, id: tripId }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Voltar à viagem
-      </Link>
-
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Financeiro</h1>
-          <p className="mt-1 text-xs text-muted-foreground">{trip?.title}</p>
-        </div>
+        <h2 className="text-lg font-semibold tracking-tight">Gestão Financeira</h2>
         <button
-          onClick={() => setShowAddRecord(true)}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand"
+          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-brand shadow-sm transition-all"
         >
           <Plus className="h-3.5 w-3.5" />
-          Lançamento
+          Novo Lançamento
         </button>
       </div>
 
@@ -450,114 +438,104 @@ function TripFinancial() {
       </Section>
 
       {/* ── Add record modal ──────────────────────────────────────────────────── */}
-      {showAddRecord && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-overlay sm:items-center"
-          onClick={() => setShowAddRecord(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-t-xl border border-border bg-surface p-6 sm:rounded-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="mb-4 text-base font-semibold">
-              {recordType === "income" ? "Nova Receita" : "Novo Custo"}
-            </h2>
-
-            {/* Type toggle */}
-            <div className="mb-4 flex rounded-lg border border-border p-0.5 text-xs">
-              {(["income", "expense"] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setRecordType(t)}
-                  className={`flex-1 rounded-md py-1.5 font-medium transition-colors ${
-                    recordType === t
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {t === "income" ? "Receita" : "Custo"}
-                </button>
-              ))}
-            </div>
-
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Categoria">
-                  <Select
-                    value={rForm.category}
-                    onChange={(e) => setRForm({ ...rForm, category: e.target.value })}
-                  >
-                    <option value="">Selecionar…</option>
-                    {(recordType === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </Select>
-                </Field>
-                <Field label="Valor (R$)">
-                  <Input
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={rForm.amount}
-                    onChange={(e) => setRForm({ ...rForm, amount: e.target.value })}
-                    placeholder="0,00"
-                  />
-                </Field>
-              </div>
-              <Field label="Descrição">
-                <Input
-                  value={rForm.description}
-                  onChange={(e) => setRForm({ ...rForm, description: e.target.value })}
-                  placeholder="Ex: Passagem aérea GRU → LIS"
-                />
-              </Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Forma de pagamento">
-                  <Select
-                    value={rForm.payment_method}
-                    onChange={(e) => setRForm({ ...rForm, payment_method: e.target.value })}
-                  >
-                    <option value="">—</option>
-                    {PAYMENT_METHODS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                  </Select>
-                </Field>
-                <Field label="Vencimento">
-                  <Input
-                    type="date"
-                    value={rForm.due_date}
-                    onChange={(e) => setRForm({ ...rForm, due_date: e.target.value })}
-                  />
-                </Field>
-              </div>
-              <Field label="Status">
-                <Select
-                  value={rForm.status}
-                  onChange={(e) => setRForm({ ...rForm, status: e.target.value as "pending" | "confirmed" })}
-                >
-                  <option value="confirmed">Confirmado/Pago</option>
-                  <option value="pending">Pendente</option>
-                </Select>
-              </Field>
-            </div>
-
-            <div className="mt-5 flex gap-2">
-              <button
-                onClick={() => addRecord.mutate()}
-                disabled={addRecord.isPending || !rForm.amount}
-                className="flex-1 h-9 rounded-md bg-primary text-xs font-semibold text-primary-foreground disabled:opacity-60"
-              >
-                {addRecord.isPending ? "Salvando…" : "Adicionar"}
-              </button>
-              <button
-                onClick={() => setShowAddRecord(false)}
-                className="h-9 rounded-md border border-border px-4 text-xs"
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
+      <SheetPage
+        isOpen={showAddRecord}
+        onClose={() => setShowAddRecord(false)}
+        title={recordType === "income" ? "Nova Receita" : "Novo Custo"}
+      >
+        {/* Type toggle */}
+        <div className="mb-6 flex rounded-lg border border-border p-0.5 text-xs">
+          {(["income", "expense"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setRecordType(t)}
+              className={`flex-1 rounded-md py-1.5 font-medium transition-colors ${
+                recordType === t
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t === "income" ? "Receita" : "Custo"}
+            </button>
+          ))}
         </div>
-      )}
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Categoria">
+              <Select
+                value={rForm.category}
+                onChange={(e) => setRForm({ ...rForm, category: e.target.value })}
+              >
+                <option value="">Selecionar…</option>
+                {(recordType === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Valor (R$)">
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                value={rForm.amount}
+                onChange={(e) => setRForm({ ...rForm, amount: e.target.value })}
+                placeholder="0,00"
+              />
+            </Field>
+          </div>
+          <Field label="Descrição">
+            <Input
+              value={rForm.description}
+              onChange={(e) => setRForm({ ...rForm, description: e.target.value })}
+              placeholder="Ex: Passagem aérea GRU → LIS"
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Forma de pagamento">
+              <Select
+                value={rForm.payment_method}
+                onChange={(e) => setRForm({ ...rForm, payment_method: e.target.value })}
+              >
+                <option value="">—</option>
+                {PAYMENT_METHODS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </Select>
+            </Field>
+            <Field label="Vencimento">
+              <Input
+                type="date"
+                value={rForm.due_date}
+                onChange={(e) => setRForm({ ...rForm, due_date: e.target.value })}
+              />
+            </Field>
+          </div>
+          <Field label="Status">
+            <Select
+              value={rForm.status}
+              onChange={(e) => setRForm({ ...rForm, status: e.target.value as "pending" | "confirmed" })}
+            >
+              <option value="confirmed">Confirmado/Pago</option>
+              <option value="pending">Pendente</option>
+            </Select>
+          </Field>
+        </div>
+
+        <div className="mt-8 flex gap-3">
+          <button
+            onClick={() => addRecord.mutate()}
+            disabled={addRecord.isPending || !rForm.amount}
+            className="flex-1 h-10 rounded-md bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60"
+          >
+            {addRecord.isPending ? "Salvando…" : "Adicionar Lançamento"}
+          </button>
+          <button
+            onClick={() => setShowAddRecord(false)}
+            className="flex-1 h-10 rounded-md border border-border text-sm font-medium hover:bg-surface-alt transition-colors"
+          >
+            Cancelar
+          </button>
+        </div>
+      </SheetPage>
     </>
   );
 }
@@ -584,12 +562,12 @@ function KpiCard({
   }[tone];
 
   return (
-    <div className={`rounded-lg border border-border ${bg} p-4`}>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">{label}</span>
+    <div className={`rounded-xl border border-border/60 ${bg} p-5 shadow-sm`}>
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
         {icon}
       </div>
-      <div className="font-mono text-lg font-semibold tracking-tight">{value}</div>
+      <div className="font-mono text-2xl font-bold tracking-tight">{value}</div>
     </div>
   );
 }
@@ -612,11 +590,11 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-4 rounded-lg border border-border bg-surface">
-      <div className="flex items-center justify-between px-4 py-3">
+    <div className="mb-6 rounded-xl border border-border/60 bg-surface shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 hover:bg-surface-alt/50 transition-colors">
         <button
           onClick={onToggle}
-          className="flex flex-1 items-center gap-2 text-sm font-semibold text-left"
+          className="flex flex-1 items-center gap-3 text-sm font-semibold text-left"
         >
           {open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
           {title}

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge, fmtDate, Field, Input, Select } from "@/components/ui/form";
+import { processVoucherWithAI } from "@/lib/ocr-ai";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
   head: () => ({ meta: [{ title: "Vouchers · TravelOS" }] }),
@@ -273,6 +274,8 @@ function TripVouchers() {
     mutationFn: async (file: File) => {
       if (!agency) throw new Error("Sem agência");
       const path = `${agency.id}/${tripId}/${uid()}-${file.name}`;
+      
+      toast.loading("Enviando arquivo original…", { id: "ocr" });
       const { error: upErr } = await supabase.storage
         .from("voucher-sources")
         .upload(path, file, { upsert: true });
@@ -282,30 +285,31 @@ function TripVouchers() {
         .from("voucher-sources")
         .createSignedUrl(path, 60 * 60 * 24 * 365);
 
-      if (!signed?.signedUrl) throw new Error("Erro ao gerar URL");
+      if (!signed?.signedUrl) throw new Error("Erro ao gerar URL segura do arquivo.");
 
-      // OCR via edge function
-      toast.info("Processando PDF via OCR…");
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      await new Promise<void>((res, rej) => {
-        reader.onload = async () => {
-          try {
-            const base64 = (reader.result as string).split(",")[1];
-            const { data: ocrData, error: ocrErr } = await supabase.functions.invoke("ocr-proposal", {
-              body: { file_base64: base64, mime: file.type, mode: "voucher" },
-            });
-            if (ocrErr) { toast.warning("OCR indisponível — preencha manualmente"); }
-            else if (ocrData) {
-              setDraft((d) => ({ ...d, ...ocrData, source_file_url: signed.signedUrl, source_type: "operator_pdf" as const }));
-            }
-            res();
-          } catch { rej(); }
-        };
-        reader.onerror = rej;
-      });
+      // OCR Inteligente via PDF.js + AI Edge Function
+      toast.loading("Inteligência Artificial Lendo PDF…", { id: "ocr" });
+      
+      try {
+        const aiResult = await processVoucherWithAI(file);
+        
+        // Convertendo o resultado da IA em preenchimento inteligente de Voucher
+        setDraft((d) => ({ 
+          ...d, 
+          destination: aiResult.title || d.destination,
+          general_locator: aiResult.locator || d.general_locator,
+          observations: "Extraído via IA OCR\n\nProvedor: " + (aiResult.provider || "") + "\n\nTexto Bruto:\n" + (aiResult.raw_extracted_text?.substring(0, 400) || ""),
+          source_file_url: signed.signedUrl, 
+          source_type: "operator_pdf" as const 
+        }));
+        
+        toast.success("Dados estruturados pela IA com sucesso!", { id: "ocr" });
+      } catch (err: any) {
+        toast.warning(err.message || "A IA não conseguiu ler os dados exatos. O arquivo foi salvo, mas preencha manualmente.", { id: "ocr", duration: 5000 });
+        setDraft((d) => ({ ...d, source_file_url: signed.signedUrl, source_type: "operator_pdf" as const }));
+      }
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro no upload"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro crítico no upload.", { id: "ocr" }),
   });
 
   // ── Edit existing ─────────────────────────────────────────────────────────────
@@ -345,20 +349,8 @@ function TripVouchers() {
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (
     <>
-      <Link
-        to="/agency/$slug/trips/$id"
-        params={{ slug, id: tripId }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Voltar à viagem
-      </Link>
-
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Vouchers</h1>
-          <p className="mt-1 text-xs text-muted-foreground">{trip?.title}</p>
-        </div>
+        <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
         <button
           onClick={() => { if (trip) initNewVoucher(trip, passengersQ.data ?? []); }}
           className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand"
@@ -538,27 +530,20 @@ function VoucherEditor({
   const passengers = draft.passengers ?? [];
 
   return (
-    <>
-      <Link
-        to="/agency/$slug/trips/$id/vouchers"
-        params={{ slug, id: tripId }}
-        onClick={(e) => { e.preventDefault(); onCancel(); }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Voltar à lista
-      </Link>
-
+    <div className="bg-surface border border-border/60 rounded-xl p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{isEdit ? "Editar Voucher" : "Novo Voucher"}</h1>
+        <div className="flex items-center gap-3">
+           <button onClick={onCancel} className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-surface-alt transition-colors"><ArrowLeft className="h-4 w-4" /></button>
+           <h2 className="text-lg font-semibold">{isEdit ? "Editar Voucher" : "Novo Voucher"}</h2>
+        </div>
         <div className="flex gap-2">
-          {/* Upload PDF da operadora */}
-          <label className="flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt">
-            <Upload className="h-3.5 w-3.5" />
-            PDF da Operadora
+          {/* Upload PDF Inteligente */}
+          <label className="flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border-2 border-dashed border-brand/50 bg-brand/5 px-4 text-xs font-bold uppercase tracking-widest text-brand transition-colors hover:bg-brand hover:text-brand-fg">
+            <Upload className="h-4 w-4" />
+            Extrair com IA (PDF)
             <input
               type="file"
-              accept="application/pdf,image/*"
+              accept="application/pdf"
               className="hidden"
               onChange={(e) => { if (e.target.files?.[0]) onUploadPdf(e.target.files[0]); }}
             />
@@ -692,6 +677,6 @@ function VoucherEditor({
           <button onClick={() => setDraft((d) => ({ ...d, emergency_contacts: [...(d.emergency_contacts ?? []), { name: "", phone: "", role: "" }] }))} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"><Plus className="h-3.5 w-3.5" />+ Contato</button>
         </Section>
       </div>
-    </>
+    </div>
   );
 }

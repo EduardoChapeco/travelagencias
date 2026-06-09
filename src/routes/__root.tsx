@@ -116,6 +116,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
+  pendingComponent: PendingComponent,
 });
 
 function RootShell({ children }: { children: ReactNode }) {
@@ -142,5 +143,19 @@ function RootComponent() {
       <Outlet />
       <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
+  );
+}
+
+function PendingComponent() {
+  return (
+    <div className="flex h-full flex-col p-6 space-y-4 animate-pulse bg-background">
+      <div className="h-8 w-1/4 rounded-md bg-surface-alt border border-border" />
+      <div className="h-4 w-1/2 rounded-md bg-surface-alt border border-border" />
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
+        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
+        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
+      </div>
+    </div>
   );
 }

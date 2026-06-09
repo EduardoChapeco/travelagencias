@@ -15,7 +15,7 @@ export const Route = createFileRoute("/agency/$slug/group-tours")({
 
 type Tour = {
   id: string; title: string; destination: string | null; departure_date: string | null; return_date: string | null;
-  base_price: number; total_seats: number; reserved_seats: number; status: string; is_public: boolean; slug: string;
+  price_per_pax: number; max_pax: number; current_pax: number; status: string; is_public: boolean; slug: string;
 };
 
 function slugify(s: string) {
@@ -33,8 +33,8 @@ function GroupToursPage() {
     queryKey: ["group-tours", agency?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("group_tours")
-        .select("id, title, destination, departure_date, return_date, base_price, total_seats, reserved_seats, status, is_public, slug")
+        .from("group_trips")
+        .select("id, title, destination, departure_date, return_date, price_per_pax, max_pax, current_pax, status, is_public, slug, bus_layout_id")
         .eq("agency_id", agency!.id)
         .order("departure_date", { ascending: false, nullsFirst: false });
       if (error) throw error;
@@ -60,21 +60,24 @@ function GroupToursPage() {
       {q.data && q.data.length > 0 && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {q.data.map((t) => {
-            const occupancy = t.total_seats ? Math.round((t.reserved_seats / t.total_seats) * 100) : 0;
+            const occupancy = t.max_pax ? Math.round((t.current_pax / t.max_pax) * 100) : 0;
             return (
               <Link key={t.id} to="/agency/$slug/group-tours/$id" params={{ slug, id: t.id }} className="rounded-lg border border-border bg-surface p-4 hover:border-border-strong">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-semibold">{t.title}</div>
-                    <div className="text-xs text-muted-foreground">{t.destination ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
+                      {t.destination ?? "—"}
+                      {t.bus_layout_id && <span className="ml-2 flex items-center gap-1 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand"><svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 11h8m-8 4h8m-9 4h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Ônibus</span>}
+                    </div>
                   </div>
-                  <StatusBadge tone={t.status === "open" ? "success" : t.status === "confirmed" ? "info" : "neutral"}>{t.status}</StatusBadge>
+                  <StatusBadge tone={t.status === "open" ? "success" : t.status === "published" ? "info" : "neutral"}>{t.status}</StatusBadge>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div><div className="text-muted-foreground">Saída</div><div>{fmtDate(t.departure_date)}</div></div>
                   <div><div className="text-muted-foreground">Retorno</div><div>{fmtDate(t.return_date)}</div></div>
-                  <div><div className="text-muted-foreground">Preço</div><div className="font-mono">{money(Number(t.base_price))}</div></div>
-                  <div><div className="text-muted-foreground flex items-center gap-1"><Users className="h-3 w-3" /> Vagas</div><div>{t.reserved_seats}/{t.total_seats}</div></div>
+                  <div><div className="text-muted-foreground">Preço</div><div className="font-mono">{money(Number(t.price_per_pax))}</div></div>
+                  <div><div className="text-muted-foreground flex items-center gap-1"><Users className="h-3 w-3" /> Vagas</div><div>{t.current_pax}/{t.max_pax}</div></div>
                 </div>
                 <div className="mt-2 h-1.5 overflow-hidden rounded bg-surface-alt">
                   <div className="h-full bg-primary" style={{ width: `${occupancy}%` }} />
@@ -100,15 +103,25 @@ function NewTour({ agencyId, onClose, onCreated }: { agencyId: string; onClose: 
   const [price, setPrice] = useState(0);
   const [seats, setSeats] = useState(20);
   const [desc, setDesc] = useState("");
+  const [busLayout, setBusLayout] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const busesQ = useQuery({
+    queryKey: ["bus-layouts", agencyId],
+    queryFn: async () => {
+      const { data } = await supabase.from("bus_layouts").select("id, name").eq("agency_id", agencyId);
+      return data ?? [];
+    }
+  });
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.from("group_tours").insert({
+    const { error } = await supabase.from("group_trips").insert({
       agency_id: agencyId, title, slug: slugify(title) + "-" + Math.random().toString(36).slice(2, 6),
       destination: destination || null, departure_date: departure || null, return_date: ret || null,
-      base_price: price, total_seats: seats, description: desc || null,
+      price_per_pax: price, max_pax: seats, important_notes: desc || null,
+      bus_layout_id: busLayout || null
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
@@ -126,8 +139,13 @@ function NewTour({ agencyId, onClose, onCreated }: { agencyId: string; onClose: 
           <Field label="Retorno"><Input type="date" value={ret} onChange={(e) => setRet(e.target.value)} /></Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Preço base"><Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(+e.target.value || 0)} /></Field>
           <Field label="Total de vagas"><Input type="number" min={1} value={seats} onChange={(e) => setSeats(+e.target.value || 0)} /></Field>
+          <Field label="Frota de Ônibus">
+            <Select value={busLayout} onChange={(e) => setBusLayout(e.target.value)}>
+               <option value="">Sem ônibus atrelado</option>
+               {busesQ.data?.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </Select>
+          </Field>
         </div>
         <Field label="Descrição"><Textarea value={desc} onChange={(e) => setDesc(e.target.value)} /></Field>
         <div className="flex justify-end gap-2 pt-2">

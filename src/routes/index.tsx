@@ -108,84 +108,93 @@ function Landing() {
         </div>
       </header>
 
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 pb-20 pt-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center rounded-md border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-            v1.0 · Novo sistema para agências de viagens
+      {/* ── Hero BENTO PREMIUM ─────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-border/50 bg-surface pb-24 pt-32">
+        <div className="absolute inset-0 bg-brand/5 backdrop-blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-brand/20 rounded-[100%] blur-[120px] pointer-events-none opacity-50" />
+
+        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
+          <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand shadow-sm">
+            <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span></span>
+            A Nova Era do Turismo B2B
           </div>
 
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Sua agência,{" "}
-            <span className="text-muted-foreground">organizada de verdade.</span>
+          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-foreground md:text-7xl drop-shadow-sm leading-[1.1]">
+            O Sistema Operacional da <span className="text-brand">sua Agência.</span>
           </h1>
 
-          <p className="mt-5 text-base text-muted-foreground leading-relaxed">
-            CRM, cotações, contratos digitais, embarques, vouchers e financeiro — integrados em
-            um único workspace limpo. Sem planilhas, sem confusão.
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed font-medium">
+            Gerencie Leads, Operadores, Vouchers, Financeiro DRE e Embarques em um único Workspace Premium.
+            Sem planilhas. Sem confusão.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/auth/register"
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-            >
-              Criar minha agência <ArrowRight className="h-4 w-4" />
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/auth/register" className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-widest text-brand-foreground shadow-xl shadow-brand/20 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/40 overflow-hidden">
+               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+               <span className="relative flex items-center gap-2">Criar minha agência <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
             </Link>
-            <Link
-              to="/auth/login"
-              className="inline-flex h-10 items-center rounded-md border border-border px-5 text-sm font-medium text-foreground transition-colors hover:bg-surface-alt"
-            >
-              Já tenho conta
+            <Link to="/auth/login" className="inline-flex h-14 items-center justify-center rounded-xl border-2 border-border/50 bg-surface px-8 text-sm font-bold uppercase tracking-widest text-foreground transition-all hover:border-brand/50 hover:bg-brand/5">
+              Acessar Painel
             </Link>
           </div>
 
-          <p className="mt-4 text-xs text-muted-foreground">
-            Grátis para começar · Sem cartão de crédito
-          </p>
+          <div className="mt-8 flex items-center justify-center gap-4 text-xs font-semibold text-muted-foreground">
+             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-brand"/> Sem cartão de crédito</span>
+             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-brand"/> Setup instantâneo</span>
+          </div>
         </div>
 
-        {/* Stats strip */}
-        <div className="mt-16 grid grid-cols-3 divide-x divide-border rounded-lg border border-border">
-          {stats.map((s) => (
-            <div key={s.label} className="px-6 py-6 text-center">
-              <div className="text-3xl font-semibold tracking-tight">{s.value}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
-            </div>
-          ))}
+        {/* BENTO STATS */}
+        <div className="relative z-10 mx-auto mt-20 max-w-4xl px-6">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             {stats.map((s, i) => (
+               <div key={i} className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/80 p-8 shadow-lg backdrop-blur-md transition-transform hover:-translate-y-1">
+                 <div className="text-4xl font-extrabold text-foreground">{s.value}</div>
+                 <div className="mt-2 text-xs uppercase tracking-widest font-bold text-muted-foreground">{s.label}</div>
+               </div>
+             ))}
+           </div>
         </div>
       </section>
 
-      {/* ── Features ─────────────────────────────────────────── */}
-      <section id="features" className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-5xl px-6 py-20">
-          <div className="mb-12 text-center">
-            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              Funcionalidades
+      {/* ── Features Bento Grid ─────────────────────────────────────────── */}
+      <section id="features" className="bg-background py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mb-16 text-center max-w-2xl mx-auto">
+            <p className="text-sm font-bold uppercase tracking-widest text-brand mb-4">
+              Módulos Nativos
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              Tudo que sua agência precisa
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+              A arquitetura perfeita para escalar suas vendas.
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Seis módulos completos, integrados e prontos para usar.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f, i) => {
               const Icon = f.icon;
               return (
                 <div
                   key={f.title}
-                  className="group bg-surface p-6 transition-colors hover:bg-surface-alt"
+                  className={cn(
+                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 hover:border-brand/40",
+                     i === 0 || i === 3 ? "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-surface to-surface-alt" : ""
+                  )}
                 >
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background">
-                    <Icon className="h-4 w-4 text-foreground" strokeWidth={1.5} />
+                  <div className="absolute right-0 top-0 h-40 w-40 -translate-y-10 translate-x-10 rounded-full bg-brand/5 transition-transform duration-500 group-hover:scale-150" />
+                  
+                  <div className="relative z-10 flex flex-col h-full">
+                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 text-brand">
+                       <Icon className="h-6 w-6" strokeWidth={2} />
+                     </div>
+                     <h3 className="text-xl font-bold mb-3">{f.title}</h3>
+                     <p className="text-sm leading-relaxed text-muted-foreground font-medium flex-1">
+                       {f.description}
+                     </p>
+                     
+                     <div className="mt-8 flex items-center text-xs font-bold uppercase tracking-widest text-brand opacity-0 transform translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
+                        Saber mais <ArrowRight className="ml-2 h-4 w-4" />
+                     </div>
                   </div>
-                  <h3 className="text-sm font-semibold">{f.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                    {f.description}
-                  </p>
                 </div>
               );
             })}
@@ -227,27 +236,30 @@ function Landing() {
         </div>
       </section>
 
-      {/* ── CTA Final ────────────────────────────────────────── */}
-      <section className="border-t border-border bg-surface">
-        <div className="mx-auto max-w-5xl px-6 py-16 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Comece agora, é grátis
+      {/* ── CTA Final Premium ────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-brand py-24 text-brand-foreground">
+         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
+         
+        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-sm mb-6">
+            O seu próximo nível em Turismo começa aqui.
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Crie sua agência em minutos. Sem cartão de crédito, sem burocracia.
+          <p className="mt-4 text-lg font-medium opacity-90 max-w-2xl mx-auto mb-10">
+            Diga adeus às planilhas. Configure sua agência em menos de 2 minutos e traga toda a sua equipe para o TravelOS.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
-              className="inline-flex h-10 items-center gap-2 rounded-md bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-background px-10 text-sm font-bold uppercase tracking-widest text-brand shadow-2xl transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] overflow-hidden"
             >
-              Criar conta gratuita <ArrowRight className="h-4 w-4" />
+              Criar Conta B2B <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-10 items-center rounded-md border border-border px-5 text-sm font-medium transition-colors hover:bg-surface-alt"
+              className="inline-flex h-14 items-center rounded-xl border-2 border-brand-foreground/30 px-10 text-sm font-bold uppercase tracking-widest transition-colors hover:bg-brand-foreground/10"
             >
-              Já tenho conta
+              Fazer Login
             </Link>
           </div>
         </div>

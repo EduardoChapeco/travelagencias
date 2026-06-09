@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { Plus, CheckCircle2, AlertCircle, FileText, Globe, Passport, Info } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
-  head: () => ({ meta: [{ title: "Vistos · TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Tracker Consular · TravelOS" }] }),
   component: VisasPage,
 });
 
@@ -17,18 +18,16 @@ type Visa = {
   id: string; country: string; visa_type: string | null; status: string;
   travel_date: string | null; price: number; agency_handling: boolean;
   passport_number: string | null; client_id: string | null; trip_id: string | null;
+  notes: string | null; clients: { full_name: string } | null;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  pending_docs: "Aguardando docs",
-  docs_ready: "Docs prontos",
-  submitted: "Submetido",
-  approved: "Aprovado",
-  denied: "Negado",
-  cancelled: "Cancelado",
-};
-const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  pending_docs: "warning", docs_ready: "info", submitted: "info", approved: "success", denied: "danger", cancelled: "neutral",
+const STATUS_INFO: Record<string, { label: string; color: string; bg: string }> = {
+  pending_docs: { label: "Aguardando Documentos", color: "text-warning-text", bg: "bg-warning-bg" },
+  docs_ready: { label: "Documentação Pronta", color: "text-info-text", bg: "bg-info-bg" },
+  submitted: { label: "Em Análise Consular", color: "text-brand", bg: "bg-brand/10" },
+  approved: { label: "Visto Aprovado", color: "text-success", bg: "bg-success/10" },
+  denied: { label: "Visto Negado", color: "text-danger", bg: "bg-danger/10" },
+  cancelled: { label: "Cancelado", color: "text-muted-foreground", bg: "bg-surface-alt" },
 };
 
 function VisasPage() {
@@ -42,7 +41,11 @@ function VisasPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("visa_requests")
-        .select("id, country, visa_type, status, travel_date, price, agency_handling, passport_number, client_id, trip_id")
+        .select(`
+          id, country, visa_type, status, travel_date, price, agency_handling, 
+          passport_number, client_id, trip_id, notes,
+          clients(full_name)
+        `)
         .eq("agency_id", agency!.id)
         .order("requested_at", { ascending: false });
       if (error) throw error;
@@ -50,73 +53,101 @@ function VisasPage() {
     },
   });
 
-  async function updateStatus(id: string, status: string) {
-    const now = new Date().toISOString();
-    const patch = {
-      status,
-      submitted_at: status === "submitted" ? now : null,
-      approved_at: status === "approved" ? now : null,
-      denied_at: status === "denied" ? now : null,
-    };
-    const { error } = await supabase.from("visa_requests").update(patch).eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Status atualizado");
-    qc.invalidateQueries({ queryKey: ["visas", agency?.id] });
-  }
+  const updateStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const now = new Date().toISOString();
+      const patch = {
+        status,
+        submitted_at: status === "submitted" ? now : null,
+        approved_at: status === "approved" ? now : null,
+        denied_at: status === "denied" ? now : null,
+      };
+      const { error } = await supabase.from("visa_requests").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Progresso consular atualizado");
+      qc.invalidateQueries({ queryKey: ["visas", agency?.id] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao atualizar status"),
+  });
 
   return (
-    <>
+    <div className="flex h-[calc(100vh-4.5rem)] flex-col overflow-hidden">
       <PageHeader
-        title="Vistos"
-        description="Solicitações e acompanhamento de vistos consulares."
+        title="Tracker Consular"
+        description="Acompanhamento rigoroso de Burocracia, Passaportes e Vistos Despachantes."
         actions={
-          <button onClick={() => setOpen(true)} className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">
-            <Plus className="h-3.5 w-3.5" /> Nova solicitação
-          </button>
+          <PrimaryButton onClick={() => setOpen(true)} className="gap-2 text-[11px] uppercase tracking-widest font-bold">
+            <Plus className="h-4 w-4" /> Novo Processo
+          </PrimaryButton>
         }
       />
 
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && <EmptyState title="Sem vistos" description="Cadastre uma solicitação para começar." />}
+      {q.isLoading && (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+        </div>
+      )}
+
+      {q.data?.length === 0 && <EmptyState title="Sem processos consulares" description="Inicie um pedido de Visto para um cliente." />}
 
       {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">País</th>
-                <th className="px-3 py-2 font-medium">Tipo</th>
-                <th className="px-3 py-2 font-medium">Viagem</th>
-                <th className="px-3 py-2 font-medium">Passaporte</th>
-                <th className="px-3 py-2 font-medium text-right">Preço</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {q.data.map((v) => (
-                <tr key={v.id} className="border-t border-border hover:bg-surface-alt/30">
-                  <td className="px-3 py-2.5 font-medium">{v.country}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{v.visa_type ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(v.travel_date)}</td>
-                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">{v.passport_number ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs">{money(Number(v.price))}</td>
-                  <td className="px-3 py-2.5">
-                    <Select value={v.status} onChange={(e) => updateStatus(v.id, e.target.value)} className="h-7 text-xs">
-                      {Object.entries(STATUS_LABEL).map(([k, l]) => (<option key={k} value={k}>{l}</option>))}
-                    </Select>
-                    <div className="mt-1"><StatusBadge tone={STATUS_TONE[v.status]}>{STATUS_LABEL[v.status]}</StatusBadge></div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-4 flex-1 overflow-y-auto px-1 no-scrollbar pb-10">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {q.data.map((v) => {
+               const statusStyle = STATUS_INFO[v.status] || STATUS_INFO.pending_docs;
+               
+               return (
+                  <div key={v.id} className="group flex flex-col justify-between rounded-xl border border-border/50 bg-surface p-5 shadow-sm transition-all hover:border-brand/30 hover:shadow-md">
+                     <div>
+                        <div className="mb-4 flex items-start justify-between">
+                           <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt ring-1 ring-border shadow-sm">
+                                 <Globe className="h-5 w-5 text-brand" />
+                              </div>
+                              <div>
+                                 <div className="font-bold text-foreground text-sm">{v.country}</div>
+                                 <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{v.visa_type || "Geral"}</div>
+                              </div>
+                           </div>
+                        </div>
+
+                        <div className="space-y-3 mb-5">
+                           <div className="flex items-center gap-2">
+                              <Passport className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm font-medium">{v.clients?.full_name || "Cliente sem cadastro"}</span>
+                           </div>
+                           <div className="flex justify-between items-center bg-surface-alt/30 p-2.5 rounded-lg border border-border/50">
+                              <span className="text-xs text-muted-foreground">Passaporte</span>
+                              <span className="font-mono text-xs font-semibold">{v.passport_number || "A Confirmar"}</span>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="pt-4 border-t border-border/50">
+                        <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Progresso do Visto</div>
+                        <Select 
+                          value={v.status} 
+                          onChange={(e) => updateStatus.mutate({ id: v.id, status: e.target.value })}
+                          className={cn("h-8 text-xs font-semibold border-none font-sans", statusStyle.bg, statusStyle.color)}
+                        >
+                          {Object.entries(STATUS_INFO).map(([k, info]) => (
+                             <option key={k} value={k}>{info.label}</option>
+                          ))}
+                        </Select>
+                     </div>
+                  </div>
+               );
+            })}
+          </div>
         </div>
       )}
 
       {open && agency && (
         <NewVisa agencyId={agency.id} onClose={() => setOpen(false)} onCreated={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["visas", agency.id] }); }} />
       )}
-    </>
+    </div>
   );
 }
 
@@ -126,45 +157,75 @@ function NewVisa({ agencyId, onClose, onCreated }: { agencyId: string; onClose: 
   const [travelDate, setTravelDate] = useState("");
   const [passport, setPassport] = useState("");
   const [price, setPrice] = useState(0);
+  const [clientId, setClientId] = useState("");
   const [handling, setHandling] = useState(true);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const clientsQ = useQuery({
+     queryKey: ["clients-min", agencyId],
+     queryFn: async () => {
+        const { data } = await supabase.from("clients").select("id, full_name, document").eq("agency_id", agencyId).order("full_name");
+        return data || [];
+     }
+  });
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!clientId) return toast.error("Por favor, selecione um cliente.");
     setSubmitting(true);
     const { error } = await supabase.from("visa_requests").insert({
       agency_id: agencyId, country, visa_type: type || null, travel_date: travelDate || null,
       passport_number: passport || null, price, agency_handling: handling, notes: notes || null,
+      client_id: clientId || null, status: "pending_docs"
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
-    toast.success("Solicitação criada");
+    toast.success("Processo Consular Iniciado");
     onCreated();
   }
 
   return (
-    <Sheet onClose={onClose} title="Nova solicitação de visto">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="País de destino *"><Input required value={country} onChange={(e) => setCountry(e.target.value)} /></Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Tipo de visto"><Input value={type} onChange={(e) => setType(e.target.value)} placeholder="Turismo, trabalho…" /></Field>
-          <Field label="Data da viagem"><Input type="date" value={travelDate} onChange={(e) => setTravelDate(e.target.value)} /></Field>
+    <Sheet onClose={onClose} title="Novo Processo Consular">
+      <form onSubmit={submit} className="space-y-4 p-2">
+        
+        <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl space-y-3">
+           <h3 className="text-xs font-bold uppercase tracking-widest text-brand mb-2">Dados do Requerente</h3>
+           <Field label="Cliente (CRM) *">
+             <Select required value={clientId} onChange={(e) => setClientId(e.target.value)}>
+                <option value="">Selecione o Titular...</option>
+                {clientsQ.data?.map(c => <option key={c.id} value={c.id}>{c.full_name} ({c.document || "S/Doc"})</option>)}
+             </Select>
+           </Field>
+           <Field label="Nº do Passaporte (Opcional agora)"><Input value={passport} onChange={(e) => setPassport(e.target.value)} placeholder="AB123456" /></Field>
         </div>
-        <Field label="Nº do passaporte"><Input value={passport} onChange={(e) => setPassport(e.target.value)} /></Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Preço"><Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(+e.target.value || 0)} /></Field>
-          <Field label="Quem processa">
+
+        <div className="bg-surface-alt/30 border border-border/50 p-4 rounded-xl space-y-3">
+           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Alvo do Visto</h3>
+           <div className="grid grid-cols-2 gap-3">
+              <Field label="País de destino *"><Input required value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Estados Unidos" /></Field>
+              <Field label="Tipo de visto"><Input value={type} onChange={(e) => setType(e.target.value)} placeholder="B1/B2 (Turismo)" /></Field>
+           </div>
+           <Field label="Data Prevista da Viagem"><Input type="date" value={travelDate} onChange={(e) => setTravelDate(e.target.value)} /></Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 px-1">
+          <Field label="Taxa / Preço do Serviço"><Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(+e.target.value || 0)} /></Field>
+          <Field label="Quem processa o DS?">
             <Select value={handling ? "agency" : "client"} onChange={(e) => setHandling(e.target.value === "agency")}>
-              <option value="agency">Agência</option>
-              <option value="client">Cliente</option>
+              <option value="agency">Agência (Despachante)</option>
+              <option value="client">O próprio passageiro</option>
             </Select>
           </Field>
         </div>
-        <Field label="Notas"><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} /></Field>
-        <div className="flex justify-end gap-2 pt-2">
+
+        <Field label="Anotações / Login Consular">
+           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Use este espaço para salvar o Application ID do CEAC, Senhas provisórias..." className="min-h-[100px] font-mono text-xs" />
+        </Field>
+        
+        <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
           <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>{submitting ? "Salvando…" : "Criar"}</PrimaryButton>
+          <PrimaryButton type="submit" disabled={submitting}>{submitting ? "Iniciando Processo…" : "Abrir Processo"}</PrimaryButton>
         </div>
       </form>
     </Sheet>

@@ -1,0 +1,3245 @@
+# TravelOS — Plataforma SaaS de Agências de Viagens
+## Product Requirements Document · Blueprint · Design System · Schema
+
+> **Versão:** 1.0.0  
+> **Stack:** React + Supabase + Gemini AI + WebMCP  
+> **Build Target:** Lovable.dev  
+> **Domínio:** travelos.app  
+> **Autor:** Gerado para Excelência Tour · Chapecó/SC  
+
+---
+
+## SUMÁRIO
+
+1. [Visão Geral e Missão](#1-visão-geral-e-missão)
+2. [Design System — Fonte de Verdade](#2-design-system--fonte-de-verdade)
+3. [Arquitetura Técnica](#3-arquitetura-técnica)
+4. [Estrutura de Rotas (Imutável)](#4-estrutura-de-rotas-imutável)
+5. [Layout Global e Shell](#5-layout-global-e-shell)
+6. [Módulo: Admin Global](#6-módulo-admin-global)
+7. [Módulo: Onboarding de Agência](#7-módulo-onboarding-de-agência)
+8. [Módulo: Brand Kit](#8-módulo-brand-kit)
+9. [Módulo: CRM — Kanban de Leads](#9-módulo-crm--kanban-de-leads)
+10. [Módulo: Cotação e Proposta](#10-módulo-cotação-e-proposta)
+11. [Módulo: Passageiros e Magic Links](#11-módulo-passageiros-e-magic-links)
+12. [Módulo: Contratos Digitais](#12-módulo-contratos-digitais)
+13. [Módulo: Embarques — Kanban Operacional](#13-módulo-embarques--kanban-operacional)
+14. [Módulo: Vouchers e OCR](#14-módulo-vouchers-e-ocr)
+15. [Módulo: Suporte e Tickets](#15-módulo-suporte-e-tickets)
+16. [Módulo: Financeiro Completo](#16-módulo-financeiro-completo)
+17. [Módulo: Roteiros em Grupo](#17-módulo-roteiros-em-grupo)
+18. [Módulo: Vistos](#18-módulo-vistos)
+19. [Módulo: Viagens Corporativas](#19-módulo-viagens-corporativas)
+20. [Módulo: Minha Empresa](#20-módulo-minha-empresa)
+21. [Portal do Cliente](#21-portal-do-cliente)
+22. [Portal Público da Agência](#22-portal-público-da-agência)
+23. [Módulo: Base de Conhecimento](#23-módulo-base-de-conhecimento)
+24. [IA Integrada — Coluna de Chat](#24-ia-integrada--coluna-de-chat)
+25. [Módulo: Mapa de Assentos](#25-módulo-mapa-de-assentos)
+26. [Geração de Documentos (PDF/PNG 8K)](#26-geração-de-documentos-pdfpng-8k)
+27. [WebMCP Protocol](#27-webmcp-protocol)
+28. [Schema do Banco de Dados](#28-schema-do-banco-de-dados)
+29. [Regras de Negócio e Cláusulas Pétreas](#29-regras-de-negócio-e-cláusulas-pétreas)
+30. [Segurança, LGPD e Compliance](#30-segurança-lgpd-e-compliance)
+31. [Integrações Externas](#31-integrações-externas)
+32. [User Stories Completas](#32-user-stories-completas)
+33. [Storyboards e Fluxos End-to-End](#33-storyboards-e-fluxos-end-to-end)
+
+---
+
+## 1. Visão Geral e Missão
+
+### 1.1 O Produto
+
+TravelOS é uma plataforma SaaS multi-tenant para agências de viagens que unifica CRM, proposta comercial, contratação, operação de embarque, portal do cliente e financeiro em um único workspace minimalista e orientado por fluxo de trabalho.
+
+### 1.2 Stakeholders
+
+| Perfil | Papel |
+|---|---|
+| **Super Admin (Global)** | Gerencia todas as agências, planos, permissões e dados globais |
+| **Admin da Agência** | Gerencia agentes, brand kit, financeiro e configurações da agência |
+| **Agente de Viagens** | Usa CRM, cria propostas, gera contratos, faz embarques |
+| **Cliente** | Acessa portal pessoal, assina contratos, acompanha viagens |
+| **Viajante** | Preenche dados pessoais via magic link, faz check-in online |
+
+### 1.3 Fluxo Macro do Produto
+
+```
+Lead Captado
+    │
+    ▼
+CRM Kanban (Lead → Qualificado → Proposta → Fechado)
+    │
+    ▼
+Cotação/Proposta (CMS + Canvas A4 + Web View)
+    │
+    ▼ Cliente aceita
+Contrato Digital (Cláusulas Pétreas + Assinatura Eletrônica ICP-B)
+    │
+    ▼
+Gestão de Passageiros (Magic Links por Quarto/Pax)
+    │
+    ▼
+Kanban de Embarques (Checklists + Vouchers + Vistos)
+    │
+    ▼
+Voucher Personalizado (OCR Operadora → AI → PDF/PNG 8K)
+    │
+    ▼
+Portal do Cliente (Timeline, Pagamentos, Documentos)
+    │
+    ▼
+Suporte/Ticket (Pós-Venda, Alterações, Email/WA)
+    │
+    ▼
+Financeiro (DRE por Viagem + Caixa Geral)
+```
+
+---
+
+## 2. Design System — Fonte de Verdade
+
+> **Princípio absoluto:** Nenhum componente deve ter sombra decorativa, gradiente, cor neon ou borda arredondada excessiva. O produto é uma ferramenta profissional, não um aplicativo de consumo.
+
+### 2.1 Tokens de Cor
+
+```css
+/* design.tokens.css — IMUTÁVEL */
+
+:root {
+  /* Base */
+  --color-bg:         #F8FAFC;   /* Fundo global */
+  --color-surface:    #FFFFFF;   /* Cards, painéis */
+  --color-surface-alt:#F1F5F9;   /* Zebra, hover states */
+  --color-border:     #E2E8F0;   /* Todas as bordas */
+  --color-border-strong: #CBD5E1; /* Foco, selected */
+
+  /* Texto */
+  --color-text-primary:   #0F172A; /* Títulos */
+  --color-text-secondary: #475569; /* Subtítulos, labels */
+  --color-text-muted:     #94A3B8; /* Placeholders */
+  --color-text-disabled:  #CBD5E1; /* Desabilitado */
+
+  /* Accent (único ponto de cor) */
+  --color-accent:         #1E293B; /* Botões primários */
+  --color-accent-hover:   #0F172A;
+  --color-accent-fg:      #FFFFFF;
+
+  /* Brand da Agência (runtime, sobreposição via CSS var) */
+  --color-brand:          var(--agency-brand, #1E293B);
+  --color-brand-light:    var(--agency-brand-light, #F1F5F9);
+  --color-brand-fg:       var(--agency-brand-fg, #FFFFFF);
+
+  /* Semânticos */
+  --color-success:     #10B981;
+  --color-success-bg:  #ECFDF5;
+  --color-warning:     #F59E0B;
+  --color-warning-bg:  #FFFBEB;
+  --color-danger:      #EF4444;
+  --color-danger-bg:   #FEF2F2;
+  --color-info:        #3B82F6;
+  --color-info-bg:     #EFF6FF;
+}
+```
+
+### 2.2 Tipografia
+
+```css
+/* Fonte: Inter (Google Fonts) — único typeface */
+--font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+--font-mono: 'JetBrains Mono', 'Fira Code', monospace; /* Localizadores, IDs */
+
+/* Scale */
+--text-xs:   0.75rem;   /* 12px — labels, tags */
+--text-sm:   0.875rem;  /* 14px — corpo padrão */
+--text-base: 1rem;      /* 16px — texto principal */
+--text-lg:   1.125rem;  /* 18px — subtítulos */
+--text-xl:   1.25rem;   /* 20px — títulos de seção */
+--text-2xl:  1.5rem;    /* 24px — títulos de página */
+--text-3xl:  1.875rem;  /* 30px — hero / destaque */
+
+/* Weight */
+--font-normal: 400;
+--font-medium: 500;
+--font-semibold: 600;
+--font-bold: 700;
+--font-black: 900;
+
+/* Line height */
+--leading-tight: 1.25;
+--leading-normal: 1.5;
+--leading-relaxed: 1.75;
+```
+
+### 2.3 Espaçamento
+
+```css
+/* Base 4px */
+--space-1:  0.25rem;   /*  4px */
+--space-2:  0.5rem;    /*  8px */
+--space-3:  0.75rem;   /* 12px */
+--space-4:  1rem;      /* 16px */
+--space-5:  1.25rem;   /* 20px */
+--space-6:  1.5rem;    /* 24px */
+--space-8:  2rem;      /* 32px */
+--space-10: 2.5rem;    /* 40px */
+--space-12: 3rem;      /* 48px */
+--space-16: 4rem;      /* 64px */
+```
+
+### 2.4 Border Radius
+
+```css
+--radius-sm:   0.375rem;  /*  6px — badges, tags */
+--radius-md:   0.5rem;    /*  8px — inputs */
+--radius-lg:   0.75rem;   /* 12px — cards */
+--radius-xl:   1rem;      /* 16px — modais, drawers */
+--radius-full: 9999px;    /* pills */
+```
+
+### 2.5 Componentes Base
+
+#### Input
+```
+height: 40px (--h-input)
+border: 1px solid var(--color-border)
+border-radius: var(--radius-md)
+background: var(--color-surface)
+padding: 0 12px
+font-size: var(--text-sm)
+focus → border-color: var(--color-border-strong), outline: none
+```
+
+#### Botão Primário
+```
+height: 36px
+background: var(--color-accent)
+color: var(--color-accent-fg)
+border: 1px solid var(--color-accent)
+border-radius: var(--radius-md)
+padding: 0 16px
+font-size: var(--text-sm)
+font-weight: var(--font-semibold)
+hover → background: var(--color-accent-hover)
+NUNCA: sombra, gradiente
+```
+
+#### Botão Secundário
+```
+height: 36px
+background: var(--color-surface)
+color: var(--color-text-primary)
+border: 1px solid var(--color-border)
+hover → background: var(--color-surface-alt)
+```
+
+#### Card
+```
+background: var(--color-surface)
+border: 1px solid var(--color-border)
+border-radius: var(--radius-lg)
+padding: var(--space-5)
+NUNCA: box-shadow decorativo
+hover → border-color: var(--color-border-strong)
+```
+
+#### Tag / Badge
+```
+height: 22px
+padding: 0 8px
+border-radius: var(--radius-sm)
+font-size: var(--text-xs)
+font-weight: var(--font-semibold)
+background: var(--color-surface-alt)
+border: 1px solid var(--color-border)
+```
+
+#### Sheet Page (substitui modal/popup)
+```
+position: fixed
+inset-y: 0; right: 0
+width: clamp(480px, 45vw, 720px)  /* desktop */
+width: 100vw                       /* mobile */
+background: var(--color-surface)
+border-left: 1px solid var(--color-border)
+z-index: 50
+overflow-y: auto
+scrollbar: hidden (overflow auto + scrollbar-width: none)
+header: 56px fixo com título + botão [X] canto direito
+transition: transform 0.25s ease
+```
+
+### 2.6 Scroll sem Barra
+
+```css
+/* Global */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar { display: none; }
+```
+
+### 2.7 Ícones
+
+Biblioteca única: **lucide-react** (v0.400+). Nenhum outro conjunto de ícones.
+
+### 2.8 Bento Grid Pattern
+
+```
+Dashboard cards usam CSS Grid:
+grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+gap: var(--space-4);
+
+Cards de destaque (span 2):
+grid-column: span 2;
+
+Cards heroicos (span full):
+grid-column: 1 / -1;
+```
+
+---
+
+## 3. Arquitetura Técnica
+
+### 3.1 Stack
+
+| Camada | Tecnologia |
+|---|---|
+| Frontend | React 18 + TypeScript + Vite |
+| UI Framework | Tailwind CSS (config baseado nos tokens acima) |
+| Componentes | shadcn/ui (customizado conforme design system) |
+| Estado | Zustand (global) + React Query (server state) |
+| Backend | Supabase (PostgreSQL + Auth + Storage + Realtime + Edge Functions) |
+| IA | Google Gemini API (gemini-2.5-flash para OCR/texto; imagen-4.0 para imagens) |
+| PDF | html2pdf.js + html2canvas (scale 4 = qualidade 8K) |
+| Assinatura | signature_pad + hash SHA-256 + metadados ICP-B |
+| Drag & Drop | @dnd-kit/sortable (Kanban) |
+| Mapas | Leaflet + OpenStreetMap (Nominatim geocoding) |
+| Gráficos | Recharts |
+| Formulários | React Hook Form + Zod |
+| Email | Resend API |
+| WhatsApp | Meta WhatsApp Business Cloud API |
+| MCP | @modelcontextprotocol/sdk |
+
+### 3.2 Multi-tenancy
+
+```
+Estrutura de isolamento:
+├── global_admin          → schema público, sem RLS
+├── agencies              → tenant principal
+│   ├── agents            → RLS: agent.agency_id = agency.id
+│   ├── clients           → RLS: agency_id
+│   ├── trips             → RLS: agency_id
+│   ├── contracts         → RLS: agency_id (READ ONLY após assinatura)
+│   ├── financial         → RLS: agency_id
+│   └── ...
+```
+
+### 3.3 Estrutura de Pastas (Lovable)
+
+```
+src/
+├── app/                     # Rotas principais
+│   ├── (admin)/             # Admin global
+│   ├── (agency)/            # Painel da agência
+│   ├── (client)/            # Portal do cliente
+│   ├── (public)/            # Portal público da agência
+│   └── (auth)/              # Login, registro, magic link
+├── components/
+│   ├── ui/                  # Design system base (shadcn customizado)
+│   ├── layout/              # Shell, Sidebar, SheetPage
+│   ├── modules/             # Componentes por módulo
+│   └── documents/           # Templates de PDF/Canvas
+├── lib/
+│   ├── supabase.ts
+│   ├── gemini.ts
+│   ├── pdf-engine.ts
+│   ├── mcp.ts
+│   └── utils.ts
+├── stores/                  # Zustand stores
+├── hooks/                   # Custom hooks
+├── types/                   # TypeScript types
+└── design.tokens.css        # ÚNICO arquivo de tokens
+```
+
+---
+
+## 4. Estrutura de Rotas (Imutável)
+
+> ⚠️ Estas rotas NÃO podem ser alteradas. São a espinha dorsal do produto.
+
+### 4.1 Admin Global
+
+```
+/admin                          → Dashboard global
+/admin/agencies                 → Lista de agências
+/admin/agencies/:id             → Detalhe da agência
+/admin/agents                   → Todos os agentes
+/admin/plans                    → Planos e preços
+/admin/billing                  → Faturamento global
+/admin/travelers                → Viajantes globais
+/admin/trips                    → Todas as viagens
+/admin/contracts                → Cofre global de contratos
+/admin/brand                    → Marca global (favicon, nome, cores)
+/admin/policies                 → LGPD, Privacidade, Termos
+/admin/knowledge                → Base de conhecimento global
+/admin/settings                 → Configurações do sistema
+/admin/audit                    → Log de auditoria
+```
+
+### 4.2 Agência
+
+```
+/agency/:slug                   → Dashboard da agência
+/agency/:slug/crm               → CRM Kanban
+/agency/:slug/crm/:lead_id      → Detalhe do lead (sheet page)
+/agency/:slug/proposals         → Lista de propostas
+/agency/:slug/proposals/new     → Nova proposta
+/agency/:slug/proposals/:id     → Editar proposta (CMS + Canvas)
+/agency/:slug/proposals/:id/preview  → Web view da proposta
+/agency/:slug/trips             → Todas as viagens
+/agency/:slug/trips/:id         → Detalhe da viagem (tabs)
+/agency/:slug/trips/:id/passengers  → Gestão de passageiros
+/agency/:slug/trips/:id/contract    → Contrato da viagem
+/agency/:slug/trips/:id/vouchers    → Vouchers da viagem
+/agency/:slug/trips/:id/financial   → Financeiro da viagem
+/agency/:slug/boarding          → Kanban de embarques
+/agency/:slug/vouchers          → Central de vouchers
+/agency/:slug/contracts         → Cofre de contratos da agência
+/agency/:slug/support           → Suporte/Tickets
+/agency/:slug/support/:ticket_id → Detalhe do ticket
+/agency/:slug/financial         → Financeiro geral
+/agency/:slug/financial/cash    → Caixa
+/agency/:slug/financial/invoices → Notas e comprovantes
+/agency/:slug/financial/dre     → DRE
+/agency/:slug/group-tours       → Roteiros em grupo
+/agency/:slug/group-tours/:id   → Detalhe do roteiro em grupo
+/agency/:slug/visas             → Gestão de vistos
+/agency/:slug/corporate         → Viagens corporativas
+/agency/:slug/clients           → Base de clientes
+/agency/:slug/clients/:id       → Ficha do cliente
+/agency/:slug/knowledge         → Base de conhecimento
+/agency/:slug/company           → Minha empresa
+/agency/:slug/brand             → Brand kit
+/agency/:slug/settings          → Configurações da agência
+/agency/:slug/team              → Equipe e permissões
+/agency/:slug/portal            → CMS do portal público
+/agency/:slug/portal/blog       → Posts do blog
+/agency/:slug/portal/pages      → Páginas estáticas
+```
+
+### 4.3 Cliente
+
+```
+/client                         → Dashboard do cliente
+/client/trips                   → Minhas viagens
+/client/trips/:id               → Detalhe da viagem
+/client/payments                → Meus pagamentos
+/client/documents               → Meus documentos
+/client/profile                 → Meu perfil
+/client/notifications           → Notificações
+/client/giftcards               → Gift Cards
+/client/coupons                 → Cupons
+```
+
+### 4.4 Fluxos Públicos e Magic Links
+
+```
+/p/:agency_slug                 → Portal público da agência
+/p/:agency_slug/blog/:slug      → Post do blog
+/p/:agency_slug/tour/:id        → Roteiro em grupo (público)
+/p/:agency_slug/visa/:id        → Formulário de solicitação de visto
+
+/m/proposal/:token              → Web view da proposta (link único)
+/m/contract/:token              → Assinatura de contrato
+/m/passenger/:token             → Formulário do passageiro (magic link)
+/m/payment/:token               → Link de pagamento
+/m/invite/:token                → Convite para cadastro de cliente
+/m/checkin/:token               → Auto check-in do passageiro
+```
+
+### 4.5 Auth
+
+```
+/auth/login                     → Login
+/auth/register                  → Registro de agência
+/auth/forgot-password           → Recuperação de senha
+/auth/reset-password            → Redefinir senha
+/auth/verify                    → Verificar email
+/auth/onboarding                → Onboarding da agência (step-by-step)
+```
+
+---
+
+## 5. Layout Global e Shell
+
+### 5.1 Estrutura de 3 Colunas
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Coluna 1: Sidebar    │ Coluna 3: Conteúdo / Módulo       │
+│ (Ultra fina)         │                                   │
+│ 56px collapsed       │                                   │
+│ 220px expanded       │                                   │
+│                      │                      ┌────────────┤
+│                      │                      │ Coluna 2:  │
+│                      │                      │ AI Chat    │
+│                      │                      │ 320px      │
+│                      │                      │ colapsável │
+└──────────────────────┴──────────────────────┴────────────┘
+```
+
+### 5.2 Sidebar (Coluna 1)
+
+```
+Estado collapsed: 56px de largura
+Estado expanded: 220px
+Transição: 0.2s ease
+
+Elementos:
+  - Logo da agência (ícone 28px no collapsed, logo completo no expanded)
+  - Nav items: ícone 18px + label (hidden no collapsed)
+  - Hover sobre qualquer item: expande automaticamente com tooltip
+  - Sem labels no collapsed
+  - Sem divisórias visuais
+  - Ativo: background var(--color-surface-alt), borda esquerda 2px var(--color-brand)
+  - Scroll dentro da nav se necessário (sem barra)
+  
+  Nav items (ordem fixa):
+    📊 Dashboard
+    👥 CRM
+    📋 Cotações
+    🧳 Viagens
+    ✈️ Embarques
+    📄 Vouchers
+    📜 Contratos
+    🎫 Suporte
+    💰 Financeiro
+    🚌 Roteiros em Grupo
+    🌍 Vistos
+    🏢 Corporativo
+    👤 Clientes
+    🏪 Minha Empresa
+    📚 Base de Conhecimento
+    ⚙️ Configurações
+
+  Bottom:
+    - Avatar do agente + nome
+    - Botão logout
+    - Toggle dark/light (futuro)
+```
+
+### 5.3 Coluna de IA Chat (Coluna 2)
+
+```
+Posição: direita da sidebar, esquerda do conteúdo
+Largura: 300px (colapsável para 0)
+Toggle: botão no header com ícone de IA
+Comportamento: persiste entre navegações
+
+Layout interno:
+  - Header: "Assistente TravelOS" + botão fechar
+  - Thread de mensagens (estilo WhatsApp, sem bolhas coloridas)
+  - Input no rodapé com botão enviar
+  - Ações contextuais: sugerir com base na página atual
+  - Histórico de conversas
+  
+Estado: 
+  - Salvo no localStorage por agente
+  - Contexto automático da página atual injetado no prompt
+```
+
+### 5.4 Área de Conteúdo (Coluna 3)
+
+```
+Header fixo (48px):
+  - Breadcrumb com contexto
+  - Título da página
+  - Ações primárias da página (máx. 2 botões)
+  - Input de busca (quando aplicável)
+  - Avatar do usuário
+
+Conteúdo:
+  - Padding: 24px
+  - Scroll vertical sem barra
+  - Máx. largura: 1200px (centrado)
+```
+
+---
+
+## 6. Módulo: Admin Global
+
+### 6.1 Dashboard Admin
+
+Bento grid com:
+- Total de agências ativas
+- Total de agentes
+- Total de propostas geradas (mês)
+- Total de contratos assinados (mês)
+- Receita SaaS (MRR)
+- Gráfico de crescimento (linha, 12 meses)
+- Lista de agências com status
+- Alertas de sistema
+
+### 6.2 Gestão de Agências
+
+**Lista:** Tabela com busca, filtro por plano/status.
+
+**Campos de uma agência:**
+```typescript
+interface Agency {
+  id: string;                     // uuid
+  slug: string;                   // identificador único para URL
+  name: string;
+  cnpj: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  plan: 'starter' | 'pro' | 'enterprise';
+  status: 'active' | 'suspended' | 'trial' | 'cancelled';
+  trial_ends_at?: Date;
+  contract_clauses: ContractClause[];  // cláusulas pétreas customizadas
+  legal_name: string;                  // razão social
+  responsible_name: string;            // nome do responsável legal
+  brand: AgencyBrand;                  // ver Brand Kit
+  settings: AgencySettings;
+  created_at: Date;
+  updated_at: Date;
+}
+```
+
+**Sheet Page de Edição:**
+- Tabs: Dados Gerais | Plano | Brand Kit | Cláusulas | Agentes | Logs
+
+### 6.3 Planos
+
+```typescript
+interface Plan {
+  id: string;
+  name: string;
+  price_monthly: number;
+  price_annual: number;
+  max_agents: number;
+  max_clients: number;
+  max_proposals_month: number;
+  max_contracts_month: number;
+  features: string[];             // lista de features habilitadas
+  is_active: boolean;
+}
+```
+
+### 6.4 Marca Global
+
+Campos:
+- Nome do produto (default: "TravelOS")
+- Favicon (upload SVG/PNG)
+- Logo principal (upload SVG/PNG)
+- Logo dark mode
+- Cor primária global
+- Meta description global
+- Google Analytics ID
+
+### 6.5 Políticas (LGPD)
+
+Editor rico (formato markdown) para:
+- Política de Privacidade
+- Política de Cookies
+- Termos de Uso
+- Política de Tratamento de Dados
+- DPA (Data Processing Agreement)
+
+Cada documento tem:
+- Versão semântica (1.0.0)
+- Data de vigência
+- Histórico de versões (imutável)
+- Link público gerado automaticamente
+
+---
+
+## 7. Módulo: Onboarding de Agência
+
+### 7.1 Fluxo Step-by-Step (rota: /auth/onboarding)
+
+```
+Step 1: Dados da Agência
+  - Nome fantasia
+  - Razão social
+  - CNPJ
+  - Cidade, Estado
+  - Telefone
+  - Email corporativo
+
+Step 2: Responsável Legal
+  - Nome completo
+  - CPF
+  - Cargo
+  - Telefone direto
+
+Step 3: Brand Kit Básico
+  - Logo (upload)
+  - Cor primária (color picker)
+  - Cor de texto sobre a cor primária
+
+Step 4: Primeiro Agente
+  - Nome
+  - Email
+  - Senha
+
+Step 5: Aceite de Termos
+  - Checkbox: Li e aceito os Termos de Uso
+  - Checkbox: Li e aceito a Política de Privacidade
+  - Checkbox: Autorizo tratamento de dados (LGPD)
+  - Timestamp do aceite registrado
+
+Step 6: Plano (trial 14 dias por padrão)
+
+Step 7: Sucesso → redireciona para /agency/:slug
+```
+
+---
+
+## 8. Módulo: Brand Kit
+
+Rota: `/agency/:slug/brand`
+
+### 8.1 Campos do Brand Kit
+
+```typescript
+interface AgencyBrand {
+  agency_id: string;
+  // Identidade Visual
+  logo_url: string;               // URL Supabase Storage
+  logo_dark_url?: string;
+  favicon_url?: string;
+  brand_color: string;            // hex — sobrepõe --color-brand
+  brand_color_light: string;      // versão clara para backgrounds
+  brand_color_fg: string;         // cor do texto sobre brand_color
+  // Tipografia
+  font_heading: string;           // Google Fonts slug
+  font_body: string;
+  // Agentes (fotos e assinaturas)
+  agents: AgentProfile[];
+  // Templates de documento
+  proposal_template: 'editorial' | 'classic' | 'dark' | 'story';
+  proposal_header_img?: string;
+  voucher_theme: 'navy' | 'minimal' | 'brand';
+  contract_header_img?: string;
+  // Redes Sociais
+  instagram?: string;
+  facebook?: string;
+  whatsapp?: string;
+  website?: string;
+  // Google
+  google_business_id?: string;
+  google_analytics_id?: string;
+}
+```
+
+### 8.2 Preview em Tempo Real
+
+Ao editar qualquer campo do Brand Kit, o painel direito mostra um preview live de:
+- Card de proposta
+- Header de voucher
+- Rodapé de contrato
+
+---
+
+## 9. Módulo: CRM — Kanban de Leads
+
+Rota: `/agency/:slug/crm`
+
+### 9.1 Visão Kanban
+
+Colunas configuráveis (drag para reordenar, adicionar, renomear):
+- **Default:** Novo Lead → Em Contato → Proposta Enviada → Negociando → Ganho → Perdido
+- Cada coluna tem: cor dot personalizável, contagem de leads, soma de valor estimado
+- Drag & drop entre colunas (@dnd-kit/sortable)
+- Card compacto com: nome, destino, valor estimado, data de viagem, agente responsável, tags
+
+### 9.2 Card de Lead
+
+```typescript
+interface Lead {
+  id: string;
+  agency_id: string;
+  agent_id?: string;
+  // Identificação
+  name: string;
+  email?: string;
+  phone?: string;
+  source: 'manual' | 'form' | 'whatsapp' | 'instagram' | 'referral' | string;
+  form_id?: string;               // se veio de um formulário vinculado
+  // Viagem
+  destination?: string;
+  estimated_departure?: Date;
+  estimated_return?: Date;
+  travelers_count?: number;
+  estimated_value?: number;
+  // CRM
+  column_id: string;
+  column_order: number;
+  tags: string[];                  // tags personalizadas
+  notes?: string;
+  // Conversão
+  proposal_id?: string;
+  trip_id?: string;
+  // Meta
+  created_at: Date;
+  updated_at: Date;
+  last_contact_at?: Date;
+}
+```
+
+### 9.3 Sheet Page do Lead
+
+Tabs:
+1. **Resumo** — Dados gerais, notas, timeline de atividades
+2. **Viagem** — Destino, datas, preferências, vacinas, observações
+3. **Formulário** — Se veio de form: dados preenchidos
+4. **Proposta** — Vincular/criar proposta
+5. **Atividades** — Log imutável de ações
+
+**Campos de preferência de viagem:**
+```typescript
+interface TravelPreferences {
+  budget_range?: { min: number; max: number; currency: string; };
+  travel_style: ('luxury' | 'budget' | 'adventure' | 'cultural' | 'beach' | 'cruise')[];
+  accommodation_preference?: ('hotel' | 'resort' | 'hostel' | 'airbnb' | 'pousada')[];
+  meal_restrictions?: string[];   // vegano, celíaco, halal, etc
+  physical_limitations?: string;
+  vaccination_status?: {
+    covid: boolean;
+    yellow_fever: boolean;
+    other: string[];
+  };
+  passport_expiry?: Date;
+  frequent_flyer?: { airline: string; number: string; }[];
+  observations?: string;
+}
+```
+
+### 9.4 Formulários Vinculados
+
+O agente pode criar formulários personalizados e vincular a colunas do Kanban:
+
+```typescript
+interface LeadForm {
+  id: string;
+  agency_id: string;
+  name: string;
+  slug: string;                   // /p/:slug/form/:form_slug
+  target_column_id: string;       // coluna destino no Kanban
+  fields: FormField[];
+  design: {
+    header_image?: string;
+    brand_color: string;
+    welcome_message: string;
+    success_message: string;
+  };
+  is_active: boolean;
+}
+
+interface FormField {
+  id: string;
+  type: 'text' | 'email' | 'phone' | 'select' | 'date' | 'textarea' | 'number' | 'checkbox' | 'radio';
+  label: string;
+  placeholder?: string;
+  required: boolean;
+  options?: string[];             // para select/radio
+  maps_to?: keyof Lead;          // mapeamento automático para campo do Lead
+}
+```
+
+**Página do formulário** (`/p/:slug/form/:form_slug`):
+- Layout responsivo mobile-first
+- Cores da agência
+- Logo da agência
+- Sem sidebar
+- Sucesso: mensagem personalizada
+
+### 9.5 Tags
+
+Tags são globais por agência e podem ser:
+- Criadas no CRM, nos leads, nas viagens
+- Com cor (dot color)
+- Reutilizáveis em qualquer entidade
+
+---
+
+## 10. Módulo: Cotação e Proposta
+
+Rota: `/agency/:slug/proposals/:id`
+
+### 10.1 Visão Geral
+
+O módulo é dividido em 2 painéis lado a lado:
+- **Esquerda (400px):** CMS/CRUD de edição — todos os campos em acordeões
+- **Direita (flex-1):** Canvas de preview do documento A4 em tempo real
+
+O canvas NÃO é responsivo — ele é um documento A4 (210mm × 297mm) renderizado via `transform: scale()` calculado automaticamente conforme a largura disponível do painel.
+
+### 10.2 Schema da Proposta
+
+```typescript
+interface Proposal {
+  id: string;
+  agency_id: string;
+  agent_id: string;
+  lead_id?: string;
+  trip_id?: string;
+  // Identificação
+  code: string;                   // Ex: EXC-2026-001
+  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'rejected' | 'expired';
+  public_token: string;           // token único para URL pública
+  public_slug?: string;           // slug personalizável
+  expires_at?: Date;
+  // Clientes
+  client: {
+    name: string;
+    email?: string;
+    phone?: string;
+    adults: number;
+    seniors: number;
+    children: number;
+    infants: number;
+  };
+  // Conteúdo
+  cover_image_url?: string;
+  layout_mode: 'editorial' | 'classic' | 'dark' | 'story';
+  flights: ProposalFlight[];
+  extras: ProposalExtra[];
+  hotels: ProposalHotel[];
+  transfers: ProposalTransfer[];
+  tours: ProposalTour[];
+  itinerary: ProposalItineraryDay[];
+  inclusions: string[];
+  exclusions: string[];
+  extra_pages: ProposalExtraPage[];
+  map_waypoints: MapWaypoint[];
+  map_image_url?: string;
+  // Financeiro
+  financial: ProposalFinancial;
+  // Metadados
+  viewed_at?: Date;
+  accepted_at?: Date;
+  rejected_at?: Date;
+  accepted_ip?: string;
+  accepted_device?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface ProposalFlight {
+  id: string;
+  type: 'outbound' | 'return' | 'domestic';
+  origin: string;
+  destination: string;
+  date: string;
+  departure_time: string;
+  arrival_time: string;
+  airline: string;
+  flight_number: string;
+  stops: string;                  // "Voo Direto" ou conexões separadas por " | "
+  baggage_rules?: string;
+  price: number;                  // oculto no PDF
+}
+
+interface ProposalHotel {
+  id: string;
+  name: string;
+  city: string;
+  checkin: string;
+  checkout: string;
+  nights: number;
+  meal_plan: string;
+  rooms: { type: string; qty: number; }[];
+  images: string[];
+  policies?: string;
+  price: number;                  // oculto no PDF
+}
+
+interface ProposalTransfer {
+  id: string;
+  description: string;
+  date?: string;
+  type: 'private' | 'shared';
+  vehicle: 'car' | 'van' | 'bus' | 'boat' | 'helicopter';
+  price: number;
+  notes?: string;
+}
+
+interface ProposalTour {
+  id: string;
+  description: string;
+  date?: string;
+  price: number;
+  image_url?: string;
+  notes?: string;
+}
+
+interface ProposalExtra {
+  id: string;
+  description: string;
+  weight?: string;
+  price: number;
+  is_optional: boolean;
+  show_price: boolean;
+  notes?: string;
+}
+
+interface ProposalItineraryDay {
+  day: string;          // "Dia 01"
+  title: string;
+  description: string;
+}
+
+interface ProposalExtraPage {
+  id: string;
+  title: string;
+  layout: 'highlight' | 'text_img_right' | 'text_img_left' | 'grid2' | 'grid3' | 'grid4' | 'mosaic' | 'portrait' | 'panoramic';
+  text?: string;
+  images: string[];
+}
+
+interface ProposalFinancial {
+  total: number;                  // calculado automaticamente
+  pix_discount_percent: number;
+  installments_card: number;
+  installments_boleto: number;
+  custom_payment_options: {
+    title: string;
+    value: string;
+    description: string;
+  }[];
+}
+```
+
+### 10.3 OCR de Cotação (IA)
+
+Upload de PDF/imagem da operadora → Gemini extrai → preenche o CMS automaticamente.
+
+**Prompt estruturado (IMUTÁVEL):**
+```
+Sistema: Auditor Operacional de Agência de Turismo
+Regras:
+1. Valores DEVEM ser soma total com taxas
+2. Passageiros do mesmo serviço: uma linha
+3. BRL: float sem formatação (26279.45)
+4. Conexões: campo 'stops' separado por " | "
+5. Cronograma dia-a-dia → array 'itinerary'
+Retorno: JSON estruturado conforme schema ProposalFlight/Hotel/etc
+```
+
+### 10.4 Geração de Imagem de Capa (IA)
+
+Botão "Gerar Capa com IA" → chama Imagen 4.0 com prompt:
+```
+"Ultra-realistic 8K travel photography of {destination}. Luxury travel aesthetic, stunning landscape, highly detailed, photorealistic, no text, no watermark, clean composition"
+```
+
+### 10.5 Web View da Proposta
+
+URL: `/m/proposal/:public_token`
+
+Layout responsivo (diferente do canvas A4):
+- Hero com imagem de capa
+- Seções em cards modernos
+- Timeline do itinerário
+- Galeria de fotos
+- Precificação
+- Botões: **Aceitar Proposta** | **Recusar**
+
+Ao aceitar:
+1. Registra `accepted_at`, `accepted_ip`, `accepted_device`, `user_agent`
+2. Atualiza status para `accepted`
+3. Cria automaticamente uma `Trip` vinculada
+4. Notifica o agente via email + WhatsApp
+5. Redireciona para formulário de dados dos passageiros
+
+---
+
+## 11. Módulo: Passageiros e Magic Links
+
+Rota: `/agency/:slug/trips/:id/passengers`
+
+### 11.1 Estrutura de Viajantes
+
+```typescript
+interface Trip {
+  id: string;
+  agency_id: string;
+  agent_id: string;
+  lead_id?: string;
+  proposal_id?: string;
+  // Identificação
+  code: string;
+  title: string;
+  destination: string;
+  departure_date: Date;
+  return_date: Date;
+  // Passageiros
+  rooms: TripRoom[];
+  passengers: TripPassenger[];
+  // Status
+  status: 'pending' | 'contracted' | 'boarding' | 'traveling' | 'finished' | 'cancelled';
+  boarding_status: 'pending' | 'in_progress' | 'done';
+  contract_id?: string;
+  // Operadora
+  operator: string;
+  operator_booking_id?: string;
+  operator_pnr?: string;
+  airline: string;
+  // Financeiro
+  total_price: number;
+  total_paid: number;
+  // Metadados
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface TripRoom {
+  id: string;
+  trip_id: string;
+  label: string;                  // "Quarto 1", "Casal 2", etc
+  type: 'single' | 'double' | 'triple' | 'family' | 'suite';
+  passenger_ids: string[];
+  magic_link_token?: string;      // token único para este quarto
+  payment_split?: {
+    total: number;
+    per_passenger: number;
+        custom?: { passenger_id: string; amount: number; }[];
+  };
+}
+
+interface TripPassenger {
+  id: string;
+  trip_id: string;
+  room_id?: string;
+  // Dados pessoais
+  full_name: string;
+  cpf?: string;
+  passport_number?: string;
+  passport_expiry?: Date;
+  birth_date: Date;
+  nationality?: string;
+  email?: string;
+  phone?: string;
+  // Viagem
+  locator?: string;               // localizador individual na cia aérea
+  seat?: string;
+  class?: string;
+  // Especial
+  meal_preference?: string;
+  disabilities?: string;
+  vaccination_certificates: { vaccine: string; date: string; file_url?: string; }[];
+  // Status
+  data_complete: boolean;
+  magic_link_token?: string;
+  magic_link_filled_at?: Date;
+  checkin_done: boolean;
+  checkin_done_at?: Date;
+  // Documentos
+  document_images: string[];
+  // Pagamento
+  payment_status: 'pending' | 'partial' | 'paid';
+  amount_due: number;
+  amount_paid: number;
+}
+```
+
+### 11.2 Distribuição de Magic Links
+
+O agente vê um grid de quartos:
+
+```
+┌─────────────────┐  ┌─────────────────┐
+│ Quarto 1 - Casal│  │ Quarto 2 - Casal│
+│ João + Maria    │  │ Pedro + Ana     │
+│ [Link Quarto]   │  │ [Link Quarto]   │
+│ [Link João]     │  │ [Link Pedro]    │
+│ [Link Maria]    │  │ [Link Ana]      │
+└─────────────────┘  └─────────────────┘
+┌─────────────────┐
+│ Quarto 3 - Single
+│ Carlos          │
+│ [Link Carlos]   │
+└─────────────────┘
+```
+
+Magic links gerados:
+- **Por quarto:** `/m/passenger/:room_token` — preenche todos do quarto
+- **Por pax:** `/m/passenger/:pax_token` — preenche apenas o próprio
+
+### 11.3 Formulário do Passageiro (Magic Link)
+
+Rota: `/m/passenger/:token`
+
+Layout minimalista, mobile-first:
+1. Boas-vindas com nome da viagem e destino
+2. Campos obrigatórios: nome, CPF, nascimento, passaporte
+3. Upload de documentos (foto do RG/passaporte)
+4. Upload de comprovantes de vacina (se exigido)
+5. Preferências especiais
+6. Confirmação
+
+Ao submeter → marca `data_complete: true`, notifica agente.
+
+### 11.4 Divisão de Pagamento
+
+O agente pode configurar:
+- **Igual:** total ÷ número de passageiros pagantes
+- **Por quarto:** valor por quarto (configurado no quarto)
+- **Personalizado:** valor específico por passageiro
+
+Cada divisão gera um link de pagamento individual: `/m/payment/:token`
+
+---
+
+## 12. Módulo: Contratos Digitais
+
+Rota: `/agency/:slug/trips/:id/contract` e `/agency/:slug/contracts`
+
+### 12.1 Princípio de Imutabilidade
+
+> **REGRA ABSOLUTA:** Após assinatura, NENHUM campo do contrato pode ser alterado. O documento é selado com hash SHA-256 e todos os metadados são imutáveis.
+
+### 12.2 Schema do Contrato
+
+```typescript
+interface Contract {
+  id: string;
+  agency_id: string;
+  trip_id: string;
+  // Documento
+  version: string;                // "1.0.0"
+  content_hash: string;           // SHA-256 do conteúdo pré-assinatura
+  signed_hash: string;            // SHA-256 do conteúdo + metadados pós-assinatura
+  pdf_url: string;                // URL imutável no Storage
+  // Partes
+  agency_data: ContractParty;     // snapshot da agência no momento
+  client_data: ContractParty;     // snapshot do cliente no momento
+  passengers_data: ContractPassenger[];
+  // Conteúdo
+  fixed_clauses: ContractClause[]; // 49 cláusulas pétreas (ver seção 29)
+  custom_clauses: ContractClause[]; // cláusulas adicionais da agência
+  package_summary: string;         // resumo do pacote
+  total_value: number;
+  payment_terms: string;
+  // Assinaturas
+  signatures: ContractSignature[];
+  // Certificado
+  certificate: ContractCertificate;
+  // Status
+  status: 'draft' | 'sent' | 'pending_signature' | 'signed' | 'cancelled';
+  created_at: Date;
+  signed_at?: Date;
+  cancelled_at?: Date;
+  cancellation_reason?: string;
+}
+
+interface ContractSignature {
+  party: 'agency' | 'client' | 'passenger';
+  party_id: string;
+  full_name: string;
+  cpf: string;
+  // Dados de captura
+  signature_image_base64: string; // imagem da assinatura desenhada
+  selfie_image_base64?: string;   // foto tirada no momento da assinatura
+  ip_address: string;
+  user_agent: string;
+  device_fingerprint: string;
+  geolocation?: { lat: number; lng: number; city: string; };
+  signed_at: Date;
+  // Hash individual
+  signature_hash: string;         // SHA-256(nome+cpf+ip+timestamp+conteudo)
+}
+
+interface ContractCertificate {
+  serial: string;                  // UUID do certificado
+  issued_at: Date;
+  issuer: string;                  // "TravelOS Digital Certificate Authority"
+  algorithm: 'SHA-256';
+  chain_hash: string;              // hash encadeado de todas as assinaturas
+  verification_url: string;        // URL pública para verificar autenticidade
+  legal_text: string;              // declaração legal de validade
+}
+```
+
+### 12.3 Fluxo de Assinatura
+
+```
+1. Agente gera contrato (pré-preenchido com dados da viagem)
+2. Sistema gera PDF draft + calcula content_hash
+3. Agente envia magic link para o cliente: /m/contract/:token
+4. Cliente:
+   a. Lê o contrato na íntegra (scroll obrigatório monitorado)
+   b. Preenche dados pessoais
+   c. Tira foto selfie (via câmera do dispositivo)
+   d. Desenha assinatura (canvas signature_pad)
+   e. Confirma geolocalização
+   f. Clica "Assinar Contrato"
+5. Sistema:
+   a. Captura IP, user_agent, device_fingerprint
+   b. Calcula signature_hash
+   c. Atualiza signed_hash (encadeia todas as assinaturas)
+   d. Gera PDF final imutável
+   e. Salva em Supabase Storage (bucket protegido, sem delete)
+   f. Registra timestamp em tabela de auditoria (append-only)
+6. Ambas as partes recebem PDF por email
+```
+
+### 12.4 Cofre de Contratos
+
+Acesso em: `/agency/:slug/contracts`
+
+- Listagem com filtros: por cliente, data, status, valor
+- Visualização do PDF no próprio sistema
+- Página de verificação pública: `/verify/:certificate_serial`
+- Exportação em lote (ZIP com PDFs)
+- A agência pode criar um contrato avulso (sem proposta)
+
+### 12.5 Cláusulas Pétreas (Ver Seção 29)
+
+O sistema vem com 49 cláusulas pré-configuradas baseadas no modelo da Excelência Tour. A agência pode:
+- **Adicionar** cláusulas adicionais
+- **NÃO pode** remover ou alterar as 49 cláusulas base
+
+---
+
+## 13. Módulo: Embarques — Kanban Operacional
+
+Rota: `/agency/:slug/boarding`
+
+### 13.1 Visão Kanban por Data
+
+Cada **coluna** representa uma **data de embarque**. Colunas criadas automaticamente quando uma viagem tem `departure_date` definida.
+
+```
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│  05/07/2026  │  │  12/07/2026  │  │  19/07/2026  │
+│  2 embarques │  │  1 embarque  │  │  3 embarques │
+│              │  │              │  │              │
+│ [Card]       │  │ [Card]       │  │ [Card]       │
+│ [Card]       │  │              │  │ [Card]       │
+└──────────────┘  └──────────────┘  └──────────────┘
+```
+
+Hoje: coluna com destaque visual (fundo sutil da cor brand).
+
+### 13.2 Card de Embarque
+
+```typescript
+interface BoardingCard {
+  trip_id: string;
+  title: string;
+  pnr: string;
+  airline: string;
+  passengers_count: number;
+  checkins_done: number;
+  checklist_progress: number;         // %
+  status: 'pending' | 'in_progress' | 'boarding' | 'done';
+  alerts: string[];                   // ex: "2 passaportes vencendo"
+}
+```
+
+### 13.3 Checklist de Embarque
+
+Modelo de checklist padrão (editável por agência):
+
+```
+Pré-Embarque (30 dias antes):
+  □ Enviar voucher ao cliente
+  □ Confirmar dados dos passageiros
+  □ Verificar validade dos passaportes
+  □ Verificar necessidade de visto
+  □ Enviar informações de embarque
+  □ Confirmar horários com receptivo
+
+Embarque (48h antes):
+  □ Fazer check-in online na companhia aérea
+  □ Enviar cartões de embarque ao cliente
+  □ Confirmar transfer de ida
+  □ Verificar alterações de voo
+  □ Contato final com o cliente
+
+Dia do Embarque:
+  □ Cliente confirmou chegada ao aeroporto
+  □ Verificar voo em tempo real
+  □ Disponível para contato
+```
+
+### 13.4 Check-in na Companhia Aérea
+
+**Smart Check-in:** baseado na companhia aérea, o sistema abre a URL correta de check-in web:
+
+```typescript
+const AIRLINE_CHECKIN_URLS: Record<string, string> = {
+  'LATAM': 'https://www.latam.com/pt_br/faq/check-in/como-fazer-check-in-online/',
+  'GOL': 'https://checkin.vamosgol.com.br/',
+  'AZUL': 'https://www.voeazul.com.br/pt-br/check-in',
+  'EMIRATES': 'https://www.emirates.com/br/portuguese/manage-booking/online-check-in/',
+  'QATAR': 'https://www.qatarairways.com/pt-br/manage-booking.html',
+  // ...
+};
+```
+
+### 13.5 Agendamentos Vinculados ao Embarque
+
+O agente pode vincular à viagem:
+- Solicitações de visto (link para módulo de vistos)
+- Compromissos com data/hora (ex: "Ligar para o cliente 48h antes")
+- Lembretes (notificação automática)
+
+---
+
+## 14. Módulo: Vouchers e OCR
+
+Rota: `/agency/:slug/vouchers`
+
+### 14.1 Fluxo do Voucher
+
+```
+1. Upload do voucher da operadora (PDF/imagem)
+2. IA (Gemini) faz OCR → extrai texto
+3. Segunda IA processa o texto → estrutura os dados
+4. Sistema gera voucher personalizado (PDF/PNG 8K)
+5. Agente revisa/edita os dados extraídos
+6. Exporta: PDF, PNG, Mensagem WhatsApp
+```
+
+### 14.2 Schema do Voucher
+
+```typescript
+interface Voucher {
+  id: string;
+  trip_id: string;
+  agency_id: string;
+  // Fonte
+  source_type: 'operator_pdf' | 'manual';
+  source_file_url?: string;
+  // Dados extraídos
+  destination: string;
+  passengers: VoucherPassenger[];
+  flights: VoucherFlight[];
+  accommodation: VoucherAccommodation[];
+  transfers: VoucherTransfer[];
+  tours: VoucherTour[];
+  insurance: VoucherInsurance[];
+  emergency_contacts: VoucherContact[];
+  general_locator?: string;
+  observations?: string;
+  // Geração
+  cover_image_url?: string;
+  template: 'navy' | 'minimal' | 'brand';
+  generated_at?: Date;
+  pdf_url?: string;
+  // Metadados
+  created_at: Date;
+}
+```
+
+### 14.3 Documento Gerado: 3 Templates
+
+**Template 1 — Voucher Principal:**
+- Capa com foto do destino (gerada por IA)
+- Página: Passageiros
+- Página: Voos
+- Página: Hospedagem
+- Página: Transporte
+- Página: Passeios
+- Página: Seguro Viagem
+
+**Template 2 — Guia de Embarque:**
+- Página 1: Documentação necessária, bagagem, chegada ao aeroporto
+- Página 2: Traslados, passeios, chimarrão ✓
+
+**Template 3 — Guia de Emergência:**
+- Contatos do pacote (hotel, receptivo, seguro)
+- Números de emergência nacionais (192, 190, 193...)
+- Informações sobre perda de documentos
+
+### 14.4 Regras de Sanitização do OCR
+
+```typescript
+const BLOCKED_CONTENT = [
+  // B2B (nunca aparecer para o cliente)
+  'FRT', 'Orinter', 'CVC', 'Diversa',
+  // Financeiro B2B
+  'caução', 'multa por cancelamento', 'resort fee',
+  'taxa de agência', 'ADM', 'comissão',
+  // Jurídico interno
+  'valorize seu agente', 'regra tarifária B2B',
+];
+
+// Contatos PERMITIDOS nos contatos de emergência:
+// - Hotel/Pousada/Resort
+// - Receptivo local
+// - Seguro viagem (central 24h)
+// NÃO PERMITIDOS:
+// - Operadora (FRT, Orinter, etc)
+// - Companhia aérea (SAC)
+```
+
+---
+
+## 15. Módulo: Suporte e Tickets
+
+Rota: `/agency/:slug/support`
+
+### 15.1 Schema do Ticket
+
+```typescript
+interface SupportTicket {
+  id: string;
+  agency_id: string;
+  trip_id?: string;
+  client_id?: string;
+  agent_id: string;
+  // Identificação
+  code: string;                   // TCK-XXXXXX
+  title: string;
+  type: 'flight_change' | 'cancellation' | 'complaint' | 'request' | 'refund' | 'general';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'open' | 'in_progress' | 'waiting_client' | 'waiting_operator' | 'resolved' | 'closed';
+  // Conteúdo
+  description: string;
+  messages: TicketMessage[];
+  attachments: string[];
+  // Financeiro
+  refund_requested?: boolean;
+  refund_amount?: number;
+  refund_status?: 'pending' | 'approved' | 'partial' | 'denied';
+  // Integrações
+  email_thread_id?: string;
+  whatsapp_thread_id?: string;
+  // Metadados
+  created_at: Date;
+  updated_at: Date;
+  resolved_at?: Date;
+  sla_deadline?: Date;
+}
+
+interface TicketMessage {
+  id: string;
+  ticket_id: string;
+  sender: 'agent' | 'client' | 'system' | 'operator';
+  sender_id?: string;
+  content: string;
+  attachments: string[];
+  channel: 'internal' | 'email' | 'whatsapp';
+  created_at: Date;
+}
+```
+
+### 15.2 Visão Kanban de Suporte
+
+Colunas: Aberto → Em Andamento → Aguardando Cliente → Aguardando Operadora → Resolvido
+
+### 15.3 Integração Email
+
+- Cada ticket gera um endereço de email único: `ticket-TCK-XXXXXX@replies.travelos.app`
+- Respostas ao email são capturadas via webhook (Resend Inbound) e adicionadas ao ticket
+- O agente pode responder diretamente do sistema
+
+### 15.4 Integração WhatsApp
+
+- Via Meta WhatsApp Business Cloud API
+- Ao receber mensagem de cliente já cadastrado → vincula ao ticket existente ou cria novo
+- Agente responde pelo sistema, mensagem é enviada via API
+
+### 15.5 Monitoramento de Reembolso
+
+Para cada ticket de reembolso:
+- Valor solicitado
+- Cálculo de multa (baseado nas regras da tarifa)
+- Valor a devolver estimado
+- Status da solicitação junto à operadora
+- Prazo estimado
+- Histórico de atualizações
+
+---
+
+## 16. Módulo: Financeiro Completo
+
+Rota: `/agency/:slug/financial`
+
+### 16.1 Estrutura Financeira
+
+Dois níveis:
+1. **Financeiro Global da Agência** — visão macro, caixa geral
+2. **Financeiro por Viagem** — DRE individual de cada trip
+
+### 16.2 Schema Financeiro
+
+```typescript
+interface FinancialRecord {
+  id: string;
+  agency_id: string;
+  trip_id?: string;               // se vinculado a viagem específica
+  // Identificação
+  type: 'income' | 'expense' | 'transfer';
+  category: FinancialCategory;
+  description: string;
+  // Valores
+  amount: number;
+  currency: 'BRL' | 'USD' | 'EUR';
+  exchange_rate?: number;
+  amount_brl: number;             // sempre em BRL
+  // Pagamento
+  payment_method: 'cash' | 'pix' | 'credit_card' | 'debit_card' | 'bank_transfer' | 'boleto';
+  installments?: number;
+  installment_value?: number;
+  // Status
+  status: 'pending' | 'confirmed' | 'cancelled';
+  due_date?: Date;
+  paid_at?: Date;
+  // Documentação
+  receipt_url?: string;           // comprovante/nota fiscal
+  invoice_number?: string;
+  // Metadados
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+type FinancialCategory =
+  // Receitas
+  | 'sale_package' | 'sale_flight' | 'sale_hotel' | 'service_fee' | 'commission'
+  // Despesas
+  | 'operator_cost' | 'hotel_cost' | 'airline_cost' | 'transfer_cost' | 'tour_cost'
+  | 'insurance_cost' | 'visa_cost' | 'marketing' | 'admin' | 'personnel'
+  | 'gift' | 'tip' | 'refund_out'
+  // Outros
+  | 'tax' | 'bank_fee' | 'other';
+```
+
+### 16.3 DRE por Viagem
+
+```typescript
+interface TripDRE {
+  trip_id: string;
+  // Receita Bruta
+  gross_revenue: number;
+  discounts: number;
+  net_revenue: number;
+  // CMV (Custo da Mercadoria Vendida)
+  operator_cost: number;
+  airline_cost: number;
+  hotel_cost: number;
+  transfer_cost: number;
+  tour_cost: number;
+  insurance_cost: number;
+  visa_cost: number;
+  other_direct_costs: number;
+  total_cmv: number;
+  // Margem Bruta
+  gross_margin: number;
+  gross_margin_percent: number;
+  // Despesas Operacionais (rateio)
+  operational_expenses: number;
+  // EBITDA
+  ebitda: number;
+  ebitda_percent: number;
+  // Status
+  total_paid_by_client: number;
+  total_pending: number;
+  commission_payable: number;     // comissão do agente
+}
+```
+
+### 16.4 Módulo de Caixa
+
+- Lançamento de entradas e saídas do dia
+- Upload de comprovantes (foto)
+- Upload de notas fiscais (PDF)
+- Conciliação bancária simples
+- Relatório diário/semanal/mensal
+
+### 16.5 Parcelamento Direto (Carnê da Agência)
+
+Para roteiros em grupo e viagens corporativas:
+
+```typescript
+interface PaymentPlan {
+  id: string;
+  trip_id: string;
+  client_id: string;
+  total_amount: number;
+  installments: PaymentInstallment[];
+  status: 'active' | 'paid' | 'defaulted' | 'cancelled';
+}
+
+interface PaymentInstallment {
+  number: number;
+  due_date: Date;
+  amount: number;
+  status: 'pending' | 'paid' | 'late' | 'waived';
+  paid_at?: Date;
+  payment_method?: string;
+  receipt_url?: string;
+  late_fee?: number;
+}
+```
+
+---
+
+## 17. Módulo: Roteiros em Grupo
+
+Rota: `/agency/:slug/group-tours`
+
+### 17.1 Schema do Roteiro em Grupo
+
+```typescript
+interface GroupTour {
+  id: string;
+  agency_id: string;
+  // Identificação
+  title: string;
+  slug: string;                   // URL pública
+  description: string;
+  destination: string;
+  cover_image_url?: string;
+  gallery: string[];
+  // Datas
+  departure_date: Date;
+  return_date: Date;
+  registration_deadline: Date;
+  // Transporte
+  transport_type: 'air' | 'bus' | 'cruise' | 'train' | 'mixed';
+  transport_details: string;
+  // Capacidade
+  total_seats: number;
+  reserved_seats: number;
+  available_seats: number;        // calculado
+  min_seats_to_confirm: number;
+  // Preço
+  base_price_per_person: number;
+  includes: string[];
+  excludes: string[];
+  payment_options: GroupTourPaymentOption[];
+  // Roteiro
+  itinerary: GroupTourDay[];
+  // Status
+  status: 'draft' | 'open' | 'confirmed' | 'completed' | 'cancelled';
+  is_public: boolean;
+  // Financeiro
+  financial: GroupTourFinancial;
+  // SEO
+  meta_title?: string;
+  meta_description?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface GroupTourDay {
+  day_number: number;
+  date: Date;
+  title: string;
+  description: string;
+  accommodation?: string;
+  meals: ('breakfast' | 'lunch' | 'dinner')[];
+  activities: string[];
+  highlights?: string;
+}
+
+interface GroupTourFinancial {
+  // Custos do grupo
+  costs: GroupTourCost[];
+  // Receitas
+  total_revenue_expected: number;
+  total_revenue_received: number;
+  // DRE do roteiro
+  total_cost: number;
+  gross_margin: number;
+  // Status geral
+  is_profitable: boolean;
+}
+
+interface GroupTourCost {
+  description: string;
+  unit: 'per_person' | 'fixed';
+  unit_cost: number;
+  quantity: number;
+  total: number;
+  category: 'transport' | 'hotel' | 'tour' | 'meal' | 'guide' | 'marketing' | 'other';
+  paid: boolean;
+  due_date?: Date;
+  receipt_url?: string;
+}
+```
+
+### 17.2 Mapa de Assentos de Ônibus
+
+Para roteiros com transporte terrestre, o agente pode criar um mapa 2D do ônibus:
+
+```typescript
+interface BusSeatMap {
+  id: string;
+  group_tour_id: string;
+  rows: number;
+  cols: number;
+  seats: BusSeat[];
+  layout: 'standard_44' | 'standard_40' | 'leito_28' | 'custom';
+}
+
+interface BusSeat {
+  id: string;
+  row: number;
+  col: number;
+  number: string;                 // ex: "01", "02"
+  type: 'normal' | 'accessible' | 'guide' | 'blocked';
+  status: 'available' | 'reserved' | 'sold' | 'blocked';
+  passenger_id?: string;
+  reservation_token?: string;     // para venda online
+}
+```
+
+### 17.3 Página Pública do Roteiro
+
+URL: `/p/:agency_slug/tour/:id`
+
+Seções:
+- Hero com imagem e título
+- Informações do roteiro (datas, transporte, inclui/não inclui)
+- Timeline dia-a-dia interativa
+- Galeria de fotos
+- Preços e formas de pagamento
+- Botão "Reservar Minha Vaga" → formulário de interesse → lead no CRM
+- Contador de vagas disponíveis
+- Mapa do roteiro (se waypoints configurados)
+
+---
+
+## 18. Módulo: Vistos
+
+Rota: `/agency/:slug/visas`
+
+### 18.1 Schema de Solicitação de Visto
+
+```typescript
+interface VisaRequest {
+  id: string;
+  agency_id: string;
+  trip_id?: string;
+  client_id: string;
+  // Destino
+  country: string;
+  country_code: string;           // ISO 3166-1 alpha-3
+  visa_type: string;              // turismo, negócios, estudante, etc
+  // Prazos
+  travel_date: Date;
+  requested_at: Date;
+  submitted_at?: Date;
+  expected_approval_at?: Date;
+  approved_at?: Date;
+  denied_at?: Date;
+  // Dados do passageiro
+  passenger_id?: string;
+  passport_number: string;
+  passport_expiry: Date;
+  // Processo
+  status: 'pending_docs' | 'docs_ready' | 'submitted' | 'approved' | 'denied' | 'cancelled';
+  agency_handling: boolean;       // a agência está gerenciando o processo?
+  price: number;
+  notes?: string;
+  // Documentos necessários
+  required_documents: VisaDocument[];
+  // Checklist
+  checklist: VisaChecklistItem[];
+}
+
+interface VisaDocument {
+  name: string;
+  required: boolean;
+  uploaded: boolean;
+  file_url?: string;
+  verified: boolean;
+}
+```
+
+### 18.2 Catálogo de Vistos
+
+Banco de dados com requisitos por país/nacionalidade (alimentado pela agência e/ou Admin Global):
+
+```typescript
+interface VisaRequirement {
+  destination_country: string;
+  origin_nationality: string;
+  visa_required: boolean;
+  visa_type?: string;
+  processing_days?: number;
+  price_estimate?: number;
+  required_documents: string[];
+  notes?: string;
+  official_url?: string;
+  last_updated: Date;
+}
+```
+
+### 18.3 Formulário de Solicitação (Público)
+
+URL: `/p/:agency_slug/visa/:country`
+
+Formulário mobile-first para o cliente solicitar visto:
+- País de destino
+- Tipo de visto
+- Data pretendida de viagem
+- Dados do passaporte
+- Upload de documentos
+
+---
+
+## 19. Módulo: Viagens Corporativas
+
+Rota: `/agency/:slug/corporate`
+
+### 19.1 Schema de Cliente Corporativo
+
+```typescript
+interface CorporateClient {
+  id: string;
+  agency_id: string;
+  company_name: string;
+  cnpj: string;
+  industry: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  billing_address: string;
+  // Política de viagens
+  travel_policy: {
+    max_flight_class: 'economy' | 'business' | 'first';
+    max_hotel_stars: number;
+    advance_booking_days: number;
+    preferred_airlines: string[];
+    preferred_hotels: string[];
+    requires_approval: boolean;
+    approval_flow?: string;
+    budget_per_trip?: number;
+    budget_per_person_per_day?: number;
+  };
+  // Faturamento
+  billing_cycle: 'per_trip' | 'monthly' | 'weekly';
+  payment_terms: number;          // dias para pagamento
+  credit_limit?: number;
+  // Status
+  status: 'active' | 'inactive' | 'blocked';
+  created_at: Date;
+}
+```
+
+### 19.2 Solicitação Corporativa
+
+Formulário de solicitação de viagem corporativa com:
+- Solicitante
+- Motivo da viagem
+- Destino e datas
+- Número de viajantes
+- Aprovação (se configurado)
+- Vinculação à política de viagens da empresa
+
+---
+
+## 20. Módulo: Minha Empresa
+
+Rota: `/agency/:slug/company`
+
+### 20.1 Visão Geral
+
+Este módulo funciona como um Google Meu Negócio da agência, com sincronização bidirecional:
+
+> Qualquer informação publicada aqui → atualiza automaticamente o Google Business Profile + o Portal Público da Agência.
+
+### 20.2 Campos
+
+```typescript
+interface CompanyProfile {
+  agency_id: string;
+  // Básico
+  name: string;
+  description: string;
+  short_description: string;       // meta description, 160 chars
+  category: string;                // "Agência de Viagens e Turismo"
+  cnpj: string;
+  // Contato
+  phone: string;
+  whatsapp: string;
+  email: string;
+  website?: string;
+  // Endereço
+  address: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip: string;
+  lat?: number;
+  lng?: number;
+  // Horários
+  business_hours: BusinessHour[];
+  // Mídia
+  cover_image_url?: string;
+  logo_url?: string;
+  gallery: string[];
+  // Redes Sociais
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  linkedin?: string;
+  // Operadoras Parceiras
+  partner_operators: { name: string; logo_url?: string; }[];
+  // Formas de Pagamento
+  payment_methods: string[];
+  // Google
+  google_business_id?: string;
+  google_maps_url?: string;
+  google_reviews_embed?: string;
+  // Avaliações internas
+  reviews: CompanyReview[];
+  // Atualização
+  last_synced_google_at?: Date;
+}
+
+interface BusinessHour {
+  day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  is_open: boolean;
+  open_time?: string;             // "09:00"
+  close_time?: string;            // "18:00"
+  break_start?: string;
+  break_end?: string;
+}
+```
+
+### 20.3 Integração Google Business Profile
+
+Via Google My Business API:
+- Sincronizar nome, descrição, horários, fotos
+- Publicar posts (blog) no GBP automaticamente
+- Ler e responder avaliações
+
+---
+
+## 21. Portal do Cliente
+
+Rota: `/client`
+
+### 21.1 Dashboard do Cliente
+
+```
+Bento grid com:
+- Próxima viagem (destaque, card grande)
+- Pagamentos pendentes
+- Documentos para completar
+- Notificações não lidas
+- Viagens anteriores
+```
+
+### 21.2 Detalhe da Viagem (cliente)
+
+Tabs:
+1. **Resumo** — destino, datas, hotel, voos
+2. **Documentos** — voucher, contrato, bilhetes
+3. **Passageiros** — status de preenchimento
+4. **Pagamentos** — histórico e parcelas pendentes
+5. **Suporte** — abrir ticket ou ver tickets abertos
+6. **Check-in** — status e link de check-in online
+
+### 21.3 Gift Cards e Cupons
+
+```typescript
+interface GiftCard {
+  id: string;
+  agency_id: string;
+  code: string;                   // código único
+  value: number;
+  balance: number;
+  purchaser_id?: string;
+  recipient_email?: string;
+  is_redeemed: boolean;
+  expires_at?: Date;
+  created_at: Date;
+}
+
+interface Coupon {
+  id: string;
+  agency_id: string;
+  code: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  min_purchase?: number;
+  max_uses: number;
+  used_count: number;
+  valid_from: Date;
+  valid_until: Date;
+  applicable_to: 'all' | 'specific_destination' | 'specific_tour';
+  created_at: Date;
+}
+```
+
+### 21.4 Notificações do Cliente
+
+Sistema de notificações com:
+- Push (browser)
+- Email
+- WhatsApp
+
+Triggers automáticos:
+- Proposta recebida
+- Contrato para assinar
+- Pagamento vencendo (7, 3, 1 dia antes)
+- Viagem em X dias (30, 7, 2, 1)
+- Voucher disponível
+- Alteração de voo detectada
+
+---
+
+## 22. Portal Público da Agência
+
+Rota: `/p/:agency_slug`
+
+### 22.1 Estrutura do Site Institucional
+
+O CMS gerencia blocos/seções da página inicial. Cada seção pode ser adicionada, reordenada ou removida:
+
+```typescript
+type PageBlock =
+  | 'hero'              // banner principal com CTA
+  | 'about'             // sobre a agência
+  | 'services'          // serviços oferecidos
+  | 'featured_tours'    // roteiros em destaque
+  | 'destinations'      // grade de destinos
+  | 'testimonials'      // depoimentos / avaliações Google
+  | 'partners'          // operadoras parceiras
+  | 'blog_preview'      // últimos posts
+  | 'contact'           // formulário de contato
+  | 'map'               // mapa Google
+  | 'faq'               // perguntas frequentes
+  | 'gallery'           // galeria de fotos
+  | 'payment_methods'   // formas de pagamento
+  | 'custom_html'       // bloco HTML personalizado
+```
+
+### 22.2 CMS do Portal
+
+Rota: `/agency/:slug/portal`
+
+Interface de edição estilo Wix (drag & drop de seções):
+
+- Lista de seções ativas com drag para reordenar
+- Botão "+ Adicionar Seção" com gallery de templates
+- Ao clicar na seção: sheet page com campos de edição
+- Preview em tempo real
+
+**Personalização avançada:**
+- Paleta de cores (baseada no brand kit)
+- Fontes (Google Fonts)
+- Espaçamentos
+- Imagens de fundo por seção
+
+### 22.3 Blog
+
+```typescript
+interface BlogPost {
+  id: string;
+  agency_id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;                // markdown/rich text
+  cover_image_url?: string;
+  tags: string[];
+  category: string;
+  status: 'draft' | 'published' | 'scheduled';
+  published_at?: Date;
+  scheduled_for?: Date;
+  seo: {
+    title: string;
+    description: string;
+    keywords: string[];
+    og_image?: string;
+  };
+  publish_to_google_business: boolean;
+  author_id: string;
+  views: number;
+  created_at: Date;
+  updated_at: Date;
+}
+```
+
+Ao publicar com `publish_to_google_business: true` → chama Google My Business Posts API.
+
+### 22.4 Catálogo de Roteiros
+
+Página `/p/:agency_slug/tours` com:
+- Grid de cards de roteiros em grupo
+- Filtros: destino, tipo, mês, preço
+- Cards com: foto, título, datas, vagas, preço
+- Link para página individual do roteiro
+
+---
+
+## 23. Módulo: Base de Conhecimento
+
+Rota: `/agency/:slug/knowledge`
+
+### 23.1 Estrutura
+
+```typescript
+interface KnowledgeArticle {
+  id: string;
+  agency_id: string;
+  title: string;
+  content: string;
+  category: string;
+  tags: string[];
+  is_internal: boolean;           // apenas para a equipe ou público?
+  embeddings?: number[];          // para busca semântica futura
+  created_by: string;
+  created_at: Date;
+  updated_at: Date;
+}
+```
+
+### 23.2 Categorias Sugeridas
+
+- Destinos (por país/região)
+- Operadoras (políticas, contatos, sistemas)
+- Procedimentos Internos
+- Perguntas Frequentes dos Clientes
+- Documentação de Vistos
+- Legislação e Compliance
+- Scripts de Vendas
+- Emails e Templates
+
+### 23.3 Integração com IA
+
+A base de conhecimento é o contexto principal do agente de IA (Coluna 2). Ao fazer uma pergunta, a IA:
+1. Busca artigos relevantes (embedding search)
+2. Usa o conteúdo como contexto (RAG)
+3. Responde citando os artigos
+
+---
+
+## 24. IA Integrada — Coluna de Chat
+
+### 24.1 Comportamento por Contexto
+
+| Página atual | Contexto injetado automático |
+|---|---|
+| `/crm` | Lead selecionado + preferências + histórico |
+| `/proposals/:id` | Dados da proposta + destino + cliente |
+| `/trips/:id` | Dados da viagem + passageiros + status |
+| `/vouchers` | Dados do voucher + passageiros |
+| `/support/:id` | Ticket + histórico + dados da viagem |
+| `/financial` | Dados financeiros do período |
+
+### 24.2 Capacidades
+
+- OCR de documentos (PDF/imagem)
+- Geração de textos de proposta
+- Geração de roteiros dia-a-dia
+- Análise de cliente (perfil comportamental)
+- Resumo para WhatsApp
+- Geração de imagem de capa (Imagen 4.0)
+- Resposta com base na base de conhecimento (RAG)
+- Sugestão de ações contextuais
+
+### 24.3 Histórico de Conversas
+
+Cada conversa é salva por agente + contexto. O agente pode ver e retomar conversas anteriores.
+
+---
+
+## 25. Módulo: Mapa de Assentos
+
+(Subcomponente do Roteiro em Grupo)
+
+### 25.1 Editor Visual 2D
+
+Interface drag-and-drop para criar o layout do veículo:
+
+- Selecionar template: ônibus 44p, 40p, leito 28p, personalizado
+- Definir linhas e colunas
+- Marcar poltronas: normal, acessível, guia, bloqueada
+- Numeração automática
+
+### 25.2 Venda Online de Poltronas
+
+Na página pública do roteiro, o cliente pode:
+1. Ver o mapa de assentos com disponibilidade
+2. Selecionar poltrona
+3. Inserir dados (nome, CPF, contato)
+4. Pagar (link de pagamento)
+5. Poltrona é reservada com nome
+
+---
+
+## 26. Geração de Documentos (PDF/PNG 8K)
+
+### 26.1 Motor de Renderização
+
+**Tecnologia:** html2canvas (scale 4) + jsPDF + html2pdf.js
+
+```typescript
+// Configuração padrão (IMUTÁVEL — qualidade máxima)
+const PDF_CONFIG = {
+  image: { type: 'jpeg', quality: 0.98 },
+  html2canvas: {
+    scale: 4,                     // 4x = qualidade "8K" para documentos
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    letterRendering: true,
+    logging: false,
+  },
+  jsPDF: {
+    unit: 'mm',
+    format: 'a4',
+    orientation: 'portrait',
+    compress: true,
+  },
+  pagebreak: { mode: ['css', 'legacy'] },
+};
+
+// Story/Story (voucher, passagem)
+const STORY_CONFIG = {
+  // 400px × 711px (proporção story Instagram 9:16)
+  width: 400,
+  height: 711,
+  scale: 3,
+};
+```
+
+### 26.2 Dimensões Fixas dos Documentos
+
+| Tipo | Dimensão CSS | Equivalente |
+|---|---|---|
+| Contrato | 210mm × auto | A4 Portrait |
+| Proposta | 210mm × 297mm | A4 Portrait |
+| Proposta (apresentação) | 297mm × 210mm | A4 Landscape |
+| Voucher | 400px × auto (múltiplas páginas story) | Story 9:16 |
+| Passagem Aérea | 900px × 340px | Boarding pass |
+| Roteiro Dia-a-Dia | 210mm × 297mm | A4 Portrait |
+
+### 26.3 Regra de Renderização
+
+> ⚠️ O canvas de documentos NÃO é responsivo. Ele é um documento de design gráfico renderizado em CSS píxeis fixos com `transform: scale()` para se ajustar ao viewport. O zoom não altera o documento, apenas o preview.
+
+---
+
+## 27. WebMCP Protocol
+
+### 27.1 Configuração
+
+O TravelOS expõe um servidor MCP para integração com agentes de IA externos (ex: Claude Desktop):
+
+```typescript
+// mcp/server.ts
+const server = new McpServer({
+  name: "travelos",
+  version: "1.0.0",
+});
+
+// Recursos expostos
+server.resource("trips", "Viagens da agência");
+server.resource("clients", "Base de clientes");
+server.resource("proposals", "Propostas e cotações");
+server.resource("financial", "Dados financeiros");
+server.resource("knowledge", "Base de conhecimento");
+
+// Ferramentas expostas
+server.tool("create_lead", "Criar novo lead no CRM");
+server.tool("create_proposal", "Criar rascunho de proposta");
+server.tool("get_trip_details", "Obter detalhes de uma viagem");
+server.tool("send_whatsapp", "Enviar mensagem WhatsApp");
+server.tool("generate_voucher", "Gerar voucher personalizado");
+server.tool("search_knowledge", "Buscar na base de conhecimento");
+```
+
+### 27.2 Autenticação MCP
+
+API Key por agência, configurável em `/agency/:slug/settings` → "Integrações" → "MCP API".
+
+---
+
+## 28. Schema do Banco de Dados
+
+### 28.1 Tabelas Principais (Supabase PostgreSQL)
+
+```sql
+-- ========================
+-- MULTI-TENANCY BASE
+-- ========================
+
+CREATE TABLE agencies (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug        TEXT UNIQUE NOT NULL,
+  name        TEXT NOT NULL,
+  legal_name  TEXT NOT NULL,
+  cnpj        TEXT UNIQUE,
+  email       TEXT NOT NULL,
+  phone       TEXT,
+  plan        TEXT NOT NULL DEFAULT 'trial',
+  status      TEXT NOT NULL DEFAULT 'active',
+  brand       JSONB DEFAULT '{}',
+  settings    JSONB DEFAULT '{}',
+  created_at  TIMESTAMPTZ DEFAULT now(),
+  updated_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE agents (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id   UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  user_id     UUID REFERENCES auth.users(id),
+  name        TEXT NOT NULL,
+  email       TEXT NOT NULL,
+  phone       TEXT,
+  role        TEXT NOT NULL DEFAULT 'agent',  -- 'admin', 'agent', 'viewer'
+  avatar_url  TEXT,
+  is_active   BOOLEAN DEFAULT true,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- CRM
+-- ========================
+
+CREATE TABLE kanban_columns (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id   UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  color       TEXT DEFAULT '#64748b',
+  position    INTEGER NOT NULL,
+  is_default  BOOLEAN DEFAULT false,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE leads (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  agent_id        UUID REFERENCES agents(id),
+  column_id       UUID REFERENCES kanban_columns(id),
+  column_order    INTEGER DEFAULT 0,
+  name            TEXT NOT NULL,
+  email           TEXT,
+  phone           TEXT,
+  source          TEXT DEFAULT 'manual',
+  destination     TEXT,
+  departure_date  DATE,
+  travelers_count INTEGER DEFAULT 1,
+  estimated_value DECIMAL(10,2),
+  tags            TEXT[] DEFAULT '{}',
+  preferences     JSONB DEFAULT '{}',
+  notes           TEXT,
+  proposal_id     UUID,
+  trip_id         UUID,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- PROPOSTAS
+-- ========================
+
+CREATE TABLE proposals (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  agent_id        UUID REFERENCES agents(id),
+  lead_id         UUID REFERENCES leads(id),
+  code            TEXT NOT NULL,
+  status          TEXT DEFAULT 'draft',
+  public_token    TEXT UNIQUE NOT NULL,
+  public_slug     TEXT,
+  expires_at      TIMESTAMPTZ,
+  client_data     JSONB NOT NULL DEFAULT '{}',
+  layout_mode     TEXT DEFAULT 'editorial',
+  cover_image_url TEXT,
+  flights         JSONB DEFAULT '[]',
+  extras          JSONB DEFAULT '[]',
+  hotels          JSONB DEFAULT '[]',
+  transfers       JSONB DEFAULT '[]',
+  tours           JSONB DEFAULT '[]',
+  itinerary       JSONB DEFAULT '[]',
+  inclusions      TEXT[] DEFAULT '{}',
+  exclusions      TEXT[] DEFAULT '{}',
+  extra_pages     JSONB DEFAULT '[]',
+  map_waypoints   JSONB DEFAULT '[]',
+  map_image_url   TEXT,
+  financial       JSONB NOT NULL DEFAULT '{}',
+  viewed_at       TIMESTAMPTZ,
+  accepted_at     TIMESTAMPTZ,
+  rejected_at     TIMESTAMPTZ,
+  accepted_ip     TEXT,
+  accepted_device TEXT,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- VIAGENS (TRIPS)
+-- ========================
+
+CREATE TABLE trips (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id           UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  agent_id            UUID REFERENCES agents(id),
+  lead_id             UUID REFERENCES leads(id),
+  proposal_id         UUID REFERENCES proposals(id),
+  code                TEXT NOT NULL,
+  title               TEXT NOT NULL,
+  destination         TEXT NOT NULL,
+  departure_date      DATE NOT NULL,
+  return_date         DATE,
+  operator            TEXT,
+  operator_booking_id TEXT,
+  airline             TEXT,
+  pnr                 TEXT,
+  total_price         DECIMAL(10,2) DEFAULT 0,
+  total_paid          DECIMAL(10,2) DEFAULT 0,
+  status              TEXT DEFAULT 'pending',
+  boarding_status     TEXT DEFAULT 'pending',
+  contract_id         UUID,
+  rooms               JSONB DEFAULT '[]',
+  passengers          JSONB DEFAULT '[]',
+  checklist           JSONB DEFAULT '[]',
+  tags                TEXT[] DEFAULT '{}',
+  notes               TEXT,
+  created_at          TIMESTAMPTZ DEFAULT now(),
+  updated_at          TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- CONTRATOS (APPEND-ONLY)
+-- ========================
+
+CREATE TABLE contracts (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id),
+  trip_id         UUID REFERENCES trips(id),
+  version         TEXT NOT NULL DEFAULT '1.0.0',
+  content_hash    TEXT NOT NULL,
+  signed_hash     TEXT,
+  pdf_url         TEXT,
+  agency_data     JSONB NOT NULL,
+  client_data     JSONB NOT NULL,
+  passengers_data JSONB DEFAULT '[]',
+  fixed_clauses   JSONB NOT NULL,
+  custom_clauses  JSONB DEFAULT '[]',
+  package_summary TEXT,
+  total_value     DECIMAL(10,2) NOT NULL,
+  payment_terms   TEXT,
+  signatures      JSONB DEFAULT '[]',
+  certificate     JSONB,
+  status          TEXT DEFAULT 'draft',
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  signed_at       TIMESTAMPTZ,
+  -- IMUTABILIDADE: trigger impede UPDATE após signed_at IS NOT NULL
+  CONSTRAINT no_update_after_signing CHECK (
+    signed_at IS NULL OR (signed_hash IS NOT NULL AND pdf_url IS NOT NULL)
+  )
+);
+
+-- Trigger de auditoria (append-only após assinatura)
+CREATE OR REPLACE FUNCTION prevent_contract_modification()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF OLD.signed_at IS NOT NULL THEN
+    RAISE EXCEPTION 'Contrato assinado não pode ser modificado.';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER enforce_contract_immutability
+  BEFORE UPDATE ON contracts
+  FOR EACH ROW EXECUTE FUNCTION prevent_contract_modification();
+
+-- ========================
+-- VOUCHERS
+-- ========================
+
+CREATE TABLE vouchers (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  trip_id         UUID REFERENCES trips(id),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  source_type     TEXT DEFAULT 'operator_pdf',
+  source_file_url TEXT,
+  destination     TEXT,
+  passengers      JSONB DEFAULT '[]',
+  flights         JSONB DEFAULT '[]',
+  accommodation   JSONB DEFAULT '[]',
+  transfers       JSONB DEFAULT '[]',
+  tours           JSONB DEFAULT '[]',
+  insurance       JSONB DEFAULT '[]',
+  emergency_contacts JSONB DEFAULT '[]',
+  general_locator TEXT,
+  observations    TEXT,
+  cover_image_url TEXT,
+  template        TEXT DEFAULT 'navy',
+  pdf_url         TEXT,
+  generated_at    TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- FINANCEIRO
+-- ========================
+
+CREATE TABLE financial_records (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  trip_id         UUID REFERENCES trips(id),
+  type            TEXT NOT NULL,
+  category        TEXT NOT NULL,
+  description     TEXT NOT NULL,
+  amount          DECIMAL(10,2) NOT NULL,
+  currency        TEXT DEFAULT 'BRL',
+  amount_brl      DECIMAL(10,2) NOT NULL,
+  payment_method  TEXT NOT NULL,
+  installments    INTEGER DEFAULT 1,
+  status          TEXT DEFAULT 'pending',
+  due_date        DATE,
+  paid_at         TIMESTAMPTZ,
+  receipt_url     TEXT,
+  invoice_number  TEXT,
+  created_by      UUID REFERENCES agents(id),
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- SUPORTE / TICKETS
+-- ========================
+
+CREATE TABLE support_tickets (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  trip_id         UUID REFERENCES trips(id),
+  client_id       UUID,
+  agent_id        UUID REFERENCES agents(id),
+  code            TEXT NOT NULL UNIQUE,
+  title           TEXT NOT NULL,
+  type            TEXT NOT NULL,
+  priority        TEXT DEFAULT 'medium',
+  status          TEXT DEFAULT 'open',
+  description     TEXT,
+  messages        JSONB DEFAULT '[]',
+  attachments     TEXT[] DEFAULT '{}',
+  refund_requested BOOLEAN DEFAULT false,
+  refund_amount   DECIMAL(10,2),
+  refund_status   TEXT,
+  email_thread_id TEXT,
+  sla_deadline    TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now(),
+  resolved_at     TIMESTAMPTZ
+);
+
+-- ========================
+-- CLIENTES
+-- ========================
+
+CREATE TABLE clients (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id         UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  user_id           UUID REFERENCES auth.users(id),
+  -- Dados pessoais
+  name              TEXT NOT NULL,
+  email             TEXT,
+  phone             TEXT,
+  cpf               TEXT,
+  birth_date        DATE,
+  nationality       TEXT DEFAULT 'brasileiro',
+  -- Passaporte
+  passport_number   TEXT,
+  passport_expiry   DATE,
+  passport_country  TEXT,
+  -- Endereço
+  address           JSONB DEFAULT '{}',
+  -- Preferências
+  preferences       JSONB DEFAULT '{}',
+  -- Documentos
+  document_images   TEXT[] DEFAULT '{}',
+  -- AI
+  brain_data        JSONB,
+  -- Metadados
+  source            TEXT DEFAULT 'manual',
+  tags              TEXT[] DEFAULT '{}',
+  notes             TEXT,
+  created_at        TIMESTAMPTZ DEFAULT now(),
+  updated_at        TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- ROTEIROS EM GRUPO
+-- ========================
+
+CREATE TABLE group_tours (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id             UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  title                 TEXT NOT NULL,
+  slug                  TEXT NOT NULL,
+  description           TEXT,
+  destination           TEXT NOT NULL,
+  cover_image_url       TEXT,
+  gallery               TEXT[] DEFAULT '{}',
+  departure_date        DATE NOT NULL,
+  return_date           DATE NOT NULL,
+  registration_deadline DATE,
+  transport_type        TEXT DEFAULT 'bus',
+  total_seats           INTEGER NOT NULL,
+  reserved_seats        INTEGER DEFAULT 0,
+  base_price            DECIMAL(10,2) NOT NULL,
+  includes              TEXT[] DEFAULT '{}',
+  excludes              TEXT[] DEFAULT '{}',
+  payment_options       JSONB DEFAULT '[]',
+  itinerary             JSONB DEFAULT '[]',
+  financial             JSONB DEFAULT '{}',
+  seat_map              JSONB,
+  status                TEXT DEFAULT 'draft',
+  is_public             BOOLEAN DEFAULT false,
+  seo                   JSONB DEFAULT '{}',
+  created_at            TIMESTAMPTZ DEFAULT now(),
+  updated_at            TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- BLOG / CMS
+-- ========================
+
+CREATE TABLE blog_posts (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id       UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  author_id       UUID REFERENCES agents(id),
+  title           TEXT NOT NULL,
+  slug            TEXT NOT NULL,
+  excerpt         TEXT,
+  content         TEXT,
+  cover_image_url TEXT,
+  tags            TEXT[] DEFAULT '{}',
+  category        TEXT,
+  status          TEXT DEFAULT 'draft',
+  published_at    TIMESTAMPTZ,
+  scheduled_for   TIMESTAMPTZ,
+  seo             JSONB DEFAULT '{}',
+  publish_to_gbp  BOOLEAN DEFAULT false,
+  gbp_post_id     TEXT,
+  views           INTEGER DEFAULT 0,
+  created_at      TIMESTAMPTZ DEFAULT now(),
+  updated_at      TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(agency_id, slug)
+);
+
+-- ========================
+-- BASE DE CONHECIMENTO
+-- ========================
+
+CREATE TABLE knowledge_articles (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agency_id   UUID REFERENCES agencies(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  content     TEXT NOT NULL,
+  category    TEXT,
+  tags        TEXT[] DEFAULT '{}',
+  is_internal BOOLEAN DEFAULT true,
+  embeddings  VECTOR(1536),       -- para pgvector (busca semântica)
+  created_by  UUID REFERENCES agents(id),
+  created_at  TIMESTAMPTZ DEFAULT now(),
+  updated_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- ========================
+-- AUDIT LOG (APPEND-ONLY)
+-- ========================
+
+CREATE TABLE audit_log (
+  id          BIGSERIAL PRIMARY KEY,
+  agency_id   UUID REFERENCES agencies(id),
+  actor_id    UUID,
+  actor_type  TEXT,               -- 'agent', 'client', 'system'
+  action      TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id   UUID,
+  metadata    JSONB DEFAULT '{}',
+  ip_address  TEXT,
+  user_agent  TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
+  -- SEM UPDATE, SEM DELETE — append-only via policy
+);
+
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "audit_insert_only" ON audit_log
+  FOR INSERT WITH CHECK (true);
+CREATE POLICY "audit_no_update" ON audit_log
+  FOR UPDATE USING (false);
+CREATE POLICY "audit_no_delete" ON audit_log
+  FOR DELETE USING (false);
+```
+
+### 28.2 Row Level Security (RLS)
+
+```sql
+-- Política base para todas as tabelas com agency_id
+CREATE POLICY "agency_isolation" ON leads
+  USING (agency_id = (
+    SELECT agency_id FROM agents WHERE user_id = auth.uid() LIMIT 1
+  ));
+-- (replicar para todas as tabelas com agency_id)
+
+-- Clientes só veem seus próprios dados
+CREATE POLICY "client_own_data" ON trips
+  FOR SELECT USING (
+    id IN (
+      SELECT trip_id FROM trip_passengers WHERE client_id = auth.uid()
+    )
+  );
+```
+
+---
+
+## 29. Regras de Negócio e Cláusulas Pétreas
+
+### 29.1 As 49 Cláusulas Pétreas
+
+> Estas cláusulas são IMUTÁVEIS no sistema. Não podem ser removidas, alteradas ou reordenadas por nenhum usuário, incluindo o Super Admin Global. São a base legal de todos os contratos.
+
+**Estrutura:**
+
+```typescript
+interface ContractClause {
+  number: number;             // 1 a 49 (pétreas) ou 50+ (customizadas)
+  section: string;            // "DO OBJETO" | "DOS PAGAMENTOS" | etc
+  text: string;               // texto integral (imutável)
+  is_immutable: boolean;      // true para as 49 base
+}
+```
+
+**Seções das 49 cláusulas:**
+- Cláusulas 1-2: Do Objeto do Contrato
+- Cláusulas 3-8: Dos Valores e Forma de Pagamento
+- Cláusulas 9-13: Das Condições Gerais
+- Cláusulas 14-16: Das Responsabilidades do Contratante
+- Cláusulas 17-20: Dos Cancelamentos e Alterações
+- Cláusulas 21-28: Das Condições Específicas (Bagagem, Furtos, Câmbio)
+- Cláusulas 29-32: Das Responsabilidades da Contratada
+- Cláusulas 33-44: Do Transporte Aéreo
+- Cláusulas 45-48: Da Rescisão e Cancelamento
+- Cláusula 49: Do Foro (Chapecó/SC)
+
+**Dados pré-preenchidos (template Excelência Tour):**
+- Razão Social: EVELLYN DOS SANTOS AGENCIA DE VIAGENS
+- CNPJ: 36.620.341/0001-07
+- Endereço: Av. Nereu Ramos, 576 E, Centro, Chapecó/SC, CEP 89801-020
+- Foro: Comarca de Chapecó/SC
+
+> Outras agências que usem a plataforma devem preencher seus próprios dados no Brand Kit, e o template de contrato usa esses dados.
+
+### 29.2 Regras de Negócio Críticas
+
+```
+R01: Proposta aceita → cria Trip automaticamente
+R02: Trip criada → ativa checklist de embarque automático
+R03: Contrato assinado → imutável (trigger no banco)
+R04: Trip com departure_date passada → arquivada automaticamente
+R05: Voucher gerado → NUNCA incluir contatos de operadoras B2B
+R06: OCR de cotação → filtrar valores de comissão e ADM
+R07: Magic link de passageiro → expira em 30 dias
+R08: Magic link de contrato → expira em 90 dias
+R09: Parcelas de pagamento → gerar notificação 7d, 3d, 1d antes
+R10: Alteração de voo detectada → criar ticket automaticamente
+R11: Aniversariante em 15 dias → trigger de automação WhatsApp
+R12: Check-in da cia aérea abre 48h antes → criar alerta no embarque
+R13: Cláusulas pétreas → nunca aparecer opção de edição/exclusão
+R14: Cofre de contratos → sem opção de delete
+R15: Audit log → append-only, sem delete, sem update
+```
+
+---
+
+## 30. Segurança, LGPD e Compliance
+
+### 30.1 Autenticação e Autorização
+
+- Supabase Auth com JWT
+- MFA disponível (TOTP)
+- Magic links para clientes e passageiros (expiração configurável)
+- Sessões com refresh automático
+- Logout forçado em caso de violação
+
+### 30.2 Papéis e Permissões
+
+| Papel | Acesso |
+|---|---|
+| `super_admin` | Tudo, incluindo dados de outras agências |
+| `agency_admin` | Tudo da própria agência |
+| `agent` | CRM, propostas, viagens, suporte (sem financeiro completo) |
+| `agent_viewer` | Somente leitura |
+| `client` | Portal do cliente (próprios dados) |
+| `passenger` | Formulário magic link (preenchimento de dados próprios) |
+
+### 30.3 LGPD
+
+**Dados coletados e finalidade:**
+- Dados pessoais de clientes → execução de serviço turístico
+- Dados de passageiros → obrigação legal (emissão de passagens)
+- Dados de navegação → analytics interno
+
+**Direitos do titular:**
+- Acesso → portal do cliente mostra todos os dados
+- Retificação → cliente pode editar dados no perfil
+- Exclusão → solicitação via ticket (dados de contratos: 5 anos mínimo por lei)
+- Portabilidade → exportação em JSON/PDF
+
+**Consentimento:**
+- Checkbox obrigatório no onboarding da agência
+- Checkbox obrigatório no cadastro do cliente
+- Timestamp de aceite registrado no audit_log
+
+### 30.4 Validade Jurídica dos Contratos
+
+Os contratos eletrônicos do TravelOS seguem os requisitos da **MP 2.200-2/2001** (ICP-Brasil) e do **Decreto 10.543/2020**:
+
+- Assinatura eletrônica qualificada com:
+  - Identificação do signatário (nome + CPF)
+  - Autenticação por email/SMS
+  - Registro de IP, user-agent, geolocalização
+  - Timestamp certificado
+  - Hash do documento (SHA-256)
+  - Selfie no momento da assinatura
+
+- Página de verificação pública: `/verify/:certificate_serial`
+
+### 30.5 Armazenamento
+
+- Contratos assinados: bucket Supabase Storage com policy `no_delete`
+- Retenção mínima: 5 anos (por imposição legal)
+- Backup automático diário (Supabase)
+- Criptografia em repouso e em trânsito
+
+---
+
+## 31. Integrações Externas
+
+### 31.1 Google
+
+```
+Google Business Profile API v4.9
+  - Sync: nome, descrição, horários, fotos
+  - Posts: blog posts → GBP
+  - Reviews: leitura e resposta
+
+Google Maps Embed API
+  - Exibição de mapa no portal público
+
+Google Analytics 4
+  - Configurável por agência
+```
+
+### 31.2 WhatsApp
+
+```
+Meta WhatsApp Business Cloud API
+  - Envio de notificações (templates aprovados)
+  - Recebimento de mensagens (webhook)
+  - Integração com suporte/tickets
+  - Número dedicado por agência (recomendado)
+```
+
+### 31.3 Email
+
+```
+Resend API
+  - Transacional (confirmações, notificações)
+  - Inbound (respostas de tickets via email)
+  - Templates HTML personalizados por agência
+```
+
+### 31.4 Pagamentos (Futuro)
+
+```
+Stripe
+  - Links de pagamento
+  - Parcelamento
+  - Gift cards
+  
+PagSeguro / Mercado Pago
+  - Alternativa nacional
+  - PIX
+  - Boleto
+```
+
+### 31.5 IA
+
+```
+Google Gemini
+  - gemini-2.5-flash: OCR, extração, geração de texto
+  - imagen-4.0: geração de imagens
+  
+OpenAI (alternativa)
+  - GPT-4o: análise e geração
+  - DALL-E 3: imagens
+```
+
+---
+
+## 32. User Stories Completas
+
+### Epic 1: CRM
+
+```
+US-001: Como agente, quero adicionar um lead manualmente ao CRM para iniciar o processo de venda.
+US-002: Como agente, quero mover leads entre colunas do Kanban arrastando os cards.
+US-003: Como agente, quero criar colunas personalizadas no Kanban com cor e nome próprios.
+US-004: Como agente, quero criar um formulário de captura de leads com campos personalizados.
+US-005: Como agente, quero que leads de formulários apareçam automaticamente no Kanban.
+US-006: Como agente, quero adicionar tags coloridas a um lead para categorização.
+US-007: Como agente, quero registrar preferências de viagem de um lead (vacinas, dieta, limitações).
+US-008: Como agente, quero vincular uma proposta a um lead diretamente do card.
+US-009: Como agente, quero ver o histórico completo de atividades de um lead.
+US-010: Como agente, quero exportar leads para CSV para uso externo.
+```
+
+### Epic 2: Proposta
+
+```
+US-011: Como agente, quero criar uma proposta com código automático e vinculá-la a um lead.
+US-012: Como agente, quero importar dados de cotação de operadora via OCR (PDF/imagem).
+US-013: Como agente, quero ver o preview do documento A4 atualizar em tempo real conforme edito.
+US-014: Como agente, quero gerar uma imagem de capa do destino via IA.
+US-015: Como agente, quero adicionar múltiplos voos, hotéis, transfers e passeios à proposta.
+US-016: Como agente, quero configurar formas de pagamento (cartão, boleto, PIX) com descontos.
+US-017: Como agente, quero exportar a proposta como PDF em alta qualidade.
+US-018: Como agente, quero gerar um link único da proposta para enviar ao cliente.
+US-019: Como cliente, quero ver a proposta em formato web responsivo e elegante.
+US-020: Como cliente, quero aceitar ou recusar a proposta com um clique.
+US-021: Como agente, quero ser notificado quando o cliente visualizar ou responder a proposta.
+```
+
+### Epic 3: Contrato
+
+```
+US-022: Como agente, quero gerar um contrato pré-preenchido com dados da viagem.
+US-023: Como agente, quero adicionar cláusulas customizadas além das 49 pétreas.
+US-024: Como agente, quero enviar o contrato via link para assinatura do cliente.
+US-025: Como cliente, quero assinar o contrato digitalmente com foto selfie e assinatura desenhada.
+US-026: Como sistema, quero registrar IP, geolocalização e user-agent no momento da assinatura.
+US-027: Como agente, quero receber o PDF do contrato assinado imediatamente após a assinatura.
+US-028: Como agente, quero verificar a autenticidade de um contrato via certificado digital.
+US-029: Como agente, quero buscar contratos por cliente, data ou valor no cofre.
+```
+
+### Epic 4: Embarques
+
+```
+US-030: Como agente, quero ver todos os embarques do mês no Kanban por data.
+US-031: Como agente, quero marcar itens do checklist de embarque por viagem.
+US-032: Como agente, quero ser notificado 48h antes de um embarque para fazer check-in.
+US-033: Como agente, quero abrir o site de check-in da companhia com o PNR pré-preenchido.
+US-034: Como agente, quero marcar individualmente o check-in de cada passageiro.
+US-035: Como agente, quero vincular solicitações de visto ao embarque.
+```
+
+### Epic 5: Voucher
+
+```
+US-036: Como agente, quero importar o voucher da operadora via PDF para o sistema.
+US-037: Como sistema, quero extrair automaticamente todos os dados do voucher via IA.
+US-038: Como agente, quero revisar e corrigir dados extraídos antes de gerar o voucher.
+US-039: Como agente, quero gerar voucher personalizado em PNG/PDF com as cores da agência.
+US-040: Como agente, quero gerar mensagem de WhatsApp personalizada para envio ao cliente.
+US-041: Como sistema, quero NUNCA incluir contatos de operadoras B2B no voucher do cliente.
+```
+
+### Epic 6: Financeiro
+
+```
+US-042: Como agente, quero registrar um pagamento recebido de um cliente.
+US-043: Como agente, quero registrar um custo de operadora para uma viagem.
+US-044: Como agente, quero ver o DRE de uma viagem específica.
+US-045: Como agente, quero ver o DRE geral da agência por período.
+US-046: Como agente, quero fazer upload de comprovante para cada lançamento.
+US-047: Como agente, quero criar um plano de parcelamento personalizado para um cliente.
+US-048: Como agente, quero receber alertas de parcelas vencendo.
+```
+
+### Epic 7: Portal do Cliente
+
+```
+US-049: Como cliente, quero ver minha próxima viagem em destaque no dashboard.
+US-050: Como cliente, quero ver e baixar meus vouchers e contrato.
+US-051: Como cliente, quero pagar parcelas via link direto do portal.
+US-052: Como cliente, quero abrir um ticket de suporte diretamente do portal.
+US-053: Como cliente, quero ver o histórico de todas as minhas viagens com a agência.
+US-054: Como cliente, quero receber notificações de proximidade de embarque.
+```
+
+---
+
+## 33. Storyboards e Fluxos End-to-End
+
+### Fluxo 1: Lead → Contrato Assinado
+
+```
+1. [Agente - CRM] Recebe lead pelo formulário do Instagram
+   → Lead aparece na coluna "Novo Lead" do Kanban
+   
+2. [Agente - CRM] Abre o card → vê dados preenchidos pelo form
+   → Edita preferências, adiciona nota, move para "Em Contato"
+   
+3. [Agente - Proposta] Cria nova proposta vinculada ao lead
+   → Faz upload da cotação da operadora (PDF)
+   → IA extrai todos os dados e preenche o CMS
+   → Revisa, ajusta preços, seleciona template
+   → Gera imagem de capa com IA
+   → Preview do A4 aprovado
+   
+4. [Agente - Proposta] Envia link da proposta via WhatsApp
+   → Move lead para "Proposta Enviada"
+   
+5. [Cliente - Web] Recebe link, abre a proposta no celular
+   → Visualiza: destino, voos, hotel, passeios, preços
+   → Clica "Aceitar Proposta"
+   
+6. [Sistema] Registra aceite com IP + dispositivo
+   → Cria Trip automaticamente
+   → Notifica agente
+   → Lead movido para "Ganho"
+   
+7. [Agente - Contrato] Gera contrato da Trip
+   → Visualiza preview do A4
+   → Envia magic link para assinatura
+   
+8. [Cliente - Web] Recebe link do contrato
+   → Lê as cláusulas na íntegra
+   → Preenche dados pessoais
+   → Tira selfie com câmera
+   → Desenha assinatura no canvas
+   → Confirma geolocalização
+   → Clica "Assinar"
+   
+9. [Sistema] Gera certificado digital
+   → Salva PDF imutável no Storage
+   → Envia PDF por email para cliente e agência
+   → Trip status → 'contracted'
+```
+
+### Fluxo 2: Embarque Completo
+
+```
+30 dias antes do embarque:
+1. [Sistema] Trigger automático → 
+   - Envia voucher ao cliente via WhatsApp
+   - Abre item do checklist "Enviar voucher"
+   - Cria notificação para o agente
+
+48h antes:
+2. [Sistema] → 
+   - Alerta de check-in para o agente
+   - Abre item "Fazer check-in online"
+   
+3. [Agente - Embarques] Abre card do embarque
+   → Clica "Smart Check-in" → abre site da cia com PNR
+   → Faz check-in e obtém cartões de embarque
+   → Faz upload dos cartões no sistema
+   → Marca item como concluído
+   → Envia cartões de embarque ao cliente via WhatsApp
+
+Dia do embarque:
+4. [Agente - Embarques] Monitora voo em tempo real
+   → Se alteração detectada → ticket aberto automaticamente
+   → Caso tudo OK → marca "Voo partiu" no checklist
+   
+5. [Sistema] 
+   → 7 dias após retorno → move viagem para "Encerrada"
+   → Solicita avaliação do cliente
+```
+
+### Fluxo 3: Voucher via OCR
+
+```
+1. [Agente - Vouchers] Upload do PDF da operadora (ex: FRT)
+2. [Gemini] OCR: extrai texto completo do PDF
+3. [Gemini] Estrutura: 
+   - Identifica passageiros (filtra nome da agência)
+   - Extrai voos (datas, horários, CIA, PNR)
+   - Extrai hotel (check-in/out, regime)
+   - Extrai transfer (fornecedor LOCAL, telefone LOCAL)
+   - Extrai seguro (apólice, central 24h)
+   - IGNORA: contatos FRT, taxas B2B, regras de cancelamento
+4. [Sistema] Preenche schema do voucher automaticamente
+5. [Agente] Revisa e ajusta dados se necessário
+6. [Sistema] Gera 3 documentos (Story 9:16):
+   - Voucher completo (capa + voos + hotel + transfer + passeios + seguro)
+   - Guia de Embarque (documentação + bagagem + chimarrão)
+   - Guia de Emergência (contatos locais + SAMU 192 + etc)
+7. [Agente] Gera mensagem WhatsApp personalizada
+8. [Agente] Envia tudo para o cliente
+```
+
+---
+
+## CHECKLIST DE IMPLEMENTAÇÃO PARA LOVABLE
+
+### Fase 1 — Fundação (Semanas 1-2)
+- [ ] Setup Supabase: auth, storage, todas as tabelas
+- [ ] Design System: tokens CSS, componentes base, layout shell
+- [ ] Auth: login, registro, onboarding de agência
+- [ ] Shell: sidebar 3 colunas, routing, navegação
+
+### Fase 2 — Core (Semanas 3-5)
+- [ ] CRM Kanban completo com dnd-kit
+- [ ] Módulo de Propostas: CMS + Canvas A4
+- [ ] Motor de PDF: html2canvas + html2pdf
+- [ ] Módulo de Contratos: assinatura eletrônica
+
+### Fase 3 — Operacional (Semanas 6-8)
+- [ ] Kanban de Embarques
+- [ ] Módulo de Vouchers + OCR Gemini
+- [ ] Passageiros + Magic Links
+- [ ] Módulo de Suporte/Tickets
+
+### Fase 4 — Financeiro e Avançado (Semanas 9-11)
+- [ ] Financeiro completo + DRE
+- [ ] Roteiros em Grupo + Mapa de Assentos
+- [ ] Portal do Cliente
+- [ ] Portal Público + Blog + SEO
+
+### Fase 5 — IA e Integrações (Semanas 12-14)
+- [ ] IA Chat (coluna 2) com RAG
+- [ ] Integração Google Business
+- [ ] Integração WhatsApp Business API
+- [ ] WebMCP Protocol
+- [ ] Base de Conhecimento
+
+---
+
+## NOTAS FINAIS PARA O LOVABLE
+
+```
+1. NUNCA criar popups/modais — sempre SheetPages (drawer lateral ou full page)
+2. NUNCA usar gradientes, sombras decorativas ou cores neon
+3. SEMPRE usar os tokens CSS do design.tokens.css
+4. SEMPRE usar lucide-react para ícones
+5. Scroll: overflow: auto + scrollbar-width: none em todo lugar
+6. Documentos A4: width fixa em CSS mm, NÃO responsivo
+7. Canvas de documentos: transform: scale() calculado via JS, nunca CSS responsivo
+8. Contratos assinados: NENHUMA UI de edição/delete deve existir
+9. Cláusulas pétreas (1-49): NUNCA renderizar controles de edição sobre elas
+10. Todos os CRUDs: SheetPage com botão [X] no canto superior direito
+11. Todas as listas: scroll interno sem barra visível
+12. Sidebar: colapsável com CSS transition, não com JS condicional
+13. Brand color: sempre via CSS var(--color-brand), nunca hardcoded
+14. IDs e localizadores: sempre em font-mono
+15. A IA chat (coluna 2) é persistente entre navegações via Zustand
+```
+
+---
+
+*Documento gerado em: Junho 2026 · TravelOS Platform Blueprint v1.0.0*
+*Para uso exclusivo no desenvolvimento via Lovable.dev*

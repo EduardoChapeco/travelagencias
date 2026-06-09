@@ -34,34 +34,55 @@ function Page() {
   }, [serial]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-xl px-6 py-16">
-      <div className="rounded-2xl border border-border bg-surface p-8">
-        {err && <div className="text-center"><h1 className="text-lg font-semibold">⚠ {err}</h1></div>}
-        {!err && !row && <p className="text-center text-sm text-muted-foreground">Verificando…</p>}
-        {row && (
-          <>
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-                ✓ Assinatura verificada
+    <div className="mx-auto min-h-screen max-w-xl px-4 py-12 md:py-20">
+      <div className="overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-border/50">
+        <div className="border-b border-border/50 bg-surface-alt/30 px-6 py-4 text-center">
+          <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sistema de Autenticidade TravelOS</h2>
+        </div>
+        <div className="p-8">
+          {err && <div className="text-center text-danger"><h1 className="text-sm font-bold uppercase tracking-widest">⚠ {err}</h1></div>}
+          {!err && !row && <p className="text-center text-sm font-medium text-muted-foreground animate-pulse">Consultando a cadeia de custódia…</p>}
+          {row && (
+            <>
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/20 text-success">
+                  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-success">
+                  Assinatura Chancelada
+                </div>
+                <h1 className="mt-5 font-mono text-xl font-bold tracking-tight text-foreground">#{serial}</h1>
+                <p className="mt-1 text-xs font-medium text-muted-foreground">Emitido por {row.issuer}</p>
               </div>
-              <h1 className="mt-4 text-2xl font-bold tracking-tight">Certificado #{serial}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Emitido por {row.issuer}</p>
-            </div>
-            <dl className="mt-8 space-y-3 text-sm">
-              <Row k="Partes" v={mask(row.parties_masked)} />
-              <Row k="Assinado em" v={row.signed_at ? new Date(row.signed_at).toLocaleString("pt-BR") : "—"} />
-              <Row k="Status" v={row.status} />
-              <Row k="Hash do conteúdo" v={<span className="break-all font-mono text-[11px]">{row.content_hash ?? "—"}</span>} />
-              <Row k="Hash da assinatura" v={<span className="break-all font-mono text-[11px]">{row.signed_hash ?? "—"}</span>} />
-            </dl>
-            <p className="mt-8 text-[11px] text-muted-foreground text-center">Este documento foi assinado digitalmente. O conteúdo completo do contrato não é exibido nesta página por privacidade.</p>
-          </>
-        )}
+              <div className="mt-8 overflow-hidden rounded-xl border border-border/50 bg-surface-alt/20">
+                <dl className="divide-y divide-border/50 text-xs">
+                  <Row k="Partes Envolvidas" v={mask(row.parties_masked)} />
+                  <Row k="Data da Assinatura" v={row.signed_at ? new Date(row.signed_at).toLocaleString("pt-BR") : "—"} />
+                  <Row k="Status Legal" v={<span className="font-semibold uppercase tracking-wider text-success">{row.status}</span>} />
+                  <Row k="Hash Criptográfico (Conteúdo)" v={<span className="break-all font-mono text-[10px] text-muted-foreground">{row.content_hash ?? "—"}</span>} />
+                  <Row k="Hash Criptográfico (Assinatura)" v={<span className="break-all font-mono text-[10px] text-muted-foreground">{row.signed_hash ?? "—"}</span>} />
+                </dl>
+              </div>
+              <div className="mt-6 rounded-lg bg-warning-bg/50 px-4 py-3 text-center">
+                <p className="text-[10px] font-medium leading-relaxed text-warning-text/80">
+                  Este documento foi assinado digitalmente e possui validade jurídica garantida por geolocalização, biometria e IP. O conteúdo completo do contrato está selado por motivos de privacidade.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
-  return <div className="flex justify-between gap-4 border-b border-border pb-2"><dt className="text-muted-foreground">{k}</dt><dd className="text-right">{v}</dd></div>;
+  return (
+    <div className="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <dt className="font-semibold text-muted-foreground">{k}</dt>
+      <dd className="text-right font-medium text-foreground">{v}</dd>
+    </div>
+  );
 }

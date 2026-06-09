@@ -34,24 +34,46 @@ function Page() {
   const { agency, company, tours, posts } = q.data;
 
   return (
-    <div className="min-h-screen" style={{ background: agency.brand_color ?? undefined, color: agency.brand_color_fg ?? undefined }}>
-      <header className="px-6 py-12 text-center">
-        {agency.logo_url && <img src={agency.logo_url} alt={agency.name} className="mx-auto mb-4 h-16 w-16 rounded object-cover" />}
-        <h1 className="text-3xl font-bold tracking-tight">{agency.name}</h1>
-        {company?.short_description && <p className="mx-auto mt-2 max-w-xl text-sm opacity-90">{company.short_description}</p>}
+    <div className="min-h-screen bg-background" style={{ "--color-brand": agency.brand_color, "--color-brand-foreground": agency.brand_color_fg } as React.CSSProperties}>
+      
+      <header className="relative px-6 py-20 text-center bg-surface overflow-hidden">
+        {/* Decorativo */}
+        <div className="absolute inset-0 bg-brand/5 backdrop-blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center justify-center">
+          {agency.logo_url && <img src={agency.logo_url} alt={agency.name} className="mb-6 h-24 w-24 rounded-2xl object-cover shadow-xl shadow-brand/10 ring-4 ring-surface" />}
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{agency.name}</h1>
+          {company?.short_description && <p className="mx-auto mt-4 max-w-xl text-muted-foreground font-medium">{company.short_description}</p>}
+        </div>
       </header>
-      <main className="space-y-12 bg-background px-6 py-10 text-foreground">
+
+      <main className="space-y-16 px-6 py-16 text-foreground">
         {tours.length > 0 && (
           <section className="mx-auto max-w-5xl">
-            <h2 className="mb-4 text-xl font-semibold tracking-tight">Próximas viagens em grupo</h2>
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <h2 className="mb-8 text-2xl font-bold tracking-tight">Próximas viagens em grupo</h2>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {tours.map((t) => (
-                <Link key={t.id} to="/p/$agency_slug/tour/$id" params={{ agency_slug, id: t.id }} className="overflow-hidden rounded-lg border border-border bg-surface hover:border-border-strong">
-                  {t.cover_image_url && <img src={t.cover_image_url} alt={t.title} className="aspect-video w-full object-cover" />}
-                  <div className="p-3">
-                    <div className="font-medium">{t.title}</div>
-                    <div className="text-xs text-muted-foreground">{t.destination} · {t.departure_date ? new Date(t.departure_date).toLocaleDateString("pt-BR") : "—"}</div>
-                    <div className="mt-2 font-mono text-sm">{Number(t.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+                <Link key={t.id} to="/p/$agency_slug/tour/$id" params={{ agency_slug, id: t.id }} className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface shadow-sm transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5">
+                  <div className="relative aspect-video overflow-hidden">
+                     {t.cover_image_url ? (
+                       <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                     ) : (
+                       <div className="h-full w-full bg-surface-alt" />
+                     )}
+                     <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-xs font-bold shadow-sm backdrop-blur-sm">
+                        {t.departure_date ? new Date(t.departure_date).toLocaleDateString("pt-BR") : "A Confirmar"}
+                     </div>
+                  </div>
+                  <div className="flex flex-col p-5 flex-1 justify-between">
+                    <div>
+                       <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">{t.destination}</div>
+                       <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-brand transition-colors">{t.title}</h3>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-border/50">
+                       <span className="text-[10px] uppercase text-muted-foreground font-bold">A partir de</span>
+                       <div className="font-mono text-xl font-bold text-brand">{Number(t.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+                    </div>
                   </div>
                 </Link>
               ))}

@@ -182,26 +182,27 @@ function CRMPage() {
   const activeLead = activeId ? (localLeads ?? []).find((l) => l.id === activeId) : null;
 
   return (
-    <>
+    <div className="flex h-[calc(100vh-4.5rem)] flex-col overflow-hidden">
       <PageHeader
-        title="CRM"
-        description="Gerencie seus leads no Kanban. Arraste e solte para mover entre estágios."
+        title="CRM & Pipeline"
+        description="Acompanhe o funil de vendas. Arraste e solte para mover leads entre estágios."
         actions={
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo lead
-          </button>
+          <PrimaryButton onClick={() => setNewOpen(true)} className="gap-2 text-[11px] uppercase tracking-widest font-bold">
+            <Plus className="h-4 w-4" /> Novo Lead
+          </PrimaryButton>
         }
       />
 
-      {(stagesQ.isLoading || leadsQ.isLoading) && <div className="text-sm text-muted-foreground">Carregando…</div>}
+      {(stagesQ.isLoading || leadsQ.isLoading) && (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+        </div>
+      )}
 
       {stagesQ.data && localLeads && (
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          <div className="-mx-6 overflow-x-auto px-6">
-            <div className="flex min-w-max gap-3 pb-4">
+          <div className="mt-4 flex-1 overflow-x-auto overflow-y-hidden px-1 no-scrollbar cursor-grab active:cursor-grabbing pb-4">
+            <div className="flex h-full min-w-max gap-4 px-1">
               {stagesQ.data.map((stage) => {
                 const items = stagesById[stage.id] ?? [];
                 return <Column key={stage.id} stage={stage} leads={items} slug={slug} />;
@@ -226,7 +227,7 @@ function CRMPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -235,23 +236,25 @@ function Column({ stage, leads, slug }: { stage: Stage; leads: Lead[]; slug: str
   return (
     <div
       ref={setNodeRef}
-      className={`w-72 shrink-0 rounded-lg border bg-surface-alt/40 ${isOver ? "border-primary" : "border-border"}`}
+      className={`flex h-full w-[320px] shrink-0 flex-col rounded-xl border bg-surface/40 transition-colors ${isOver ? "border-brand bg-brand/5" : "border-border/50"}`}
     >
-      <div className="flex items-center justify-between px-3 py-2.5">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full" style={{ background: stage.color }} />
-          <span className="text-xs font-semibold uppercase tracking-wide">{stage.name}</span>
-          <span className="rounded bg-surface px-1.5 text-[10px] font-medium text-muted-foreground">{leads.length}</span>
+      <div className="flex items-center justify-between border-b border-border/50 bg-surface-alt/20 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <span className="h-2.5 w-2.5 rounded-full ring-2 ring-surface shadow-sm" style={{ background: stage.color }} />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">{stage.name}</span>
+          <span className="flex h-5 items-center justify-center rounded-md bg-surface-alt px-2 text-[10px] font-bold text-muted-foreground ring-1 ring-border/50">
+            {leads.length}
+          </span>
         </div>
       </div>
       <SortableContext items={leads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-        <div className="min-h-[60px] space-y-2 px-2 pb-2">
+        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default">
           {leads.map((lead) => (
             <SortableLead key={lead.id} lead={lead} slug={slug} />
           ))}
           {leads.length === 0 && (
-            <div className="rounded-md border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-              Solte aqui
+            <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Arraste um card para cá
             </div>
           )}
         </div>
@@ -282,17 +285,24 @@ function LeadCardView({
   dragging?: boolean;
 }) {
   return (
-    <div className={`group rounded-md border border-border bg-surface p-3 transition-shadow ${dragging ? "shadow-lg ring-1 ring-primary" : "hover:border-border-strong"}`}>
-      <div className="flex items-start gap-2">
-        <button {...(dragAttributes ?? {})} className="mt-0.5 cursor-grab text-muted-foreground active:cursor-grabbing" aria-label="Arrastar">
-          <GripVertical className="h-4 w-4" />
-        </button>
+    <div
+      {...(dragAttributes ?? {})}
+      className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all active:cursor-grabbing ${
+        dragging
+          ? "border-brand shadow-2xl scale-105 z-50 rotate-2 opacity-90"
+          : "border-border/50 hover:border-brand/40 shadow-sm hover:shadow-md"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div className="mt-1 text-muted-foreground/30 transition-colors group-hover:text-brand/50">
+          <GripVertical className="h-5 w-5" />
+        </div>
         <div className="min-w-0 flex-1">
           {slug ? (
             <Link
               to="/agency/$slug/crm/$lead_id"
               params={{ slug, lead_id: lead.id }}
-              className="truncate text-sm font-medium hover:underline"
+              className="block truncate text-sm font-bold text-foreground hover:text-brand transition-colors"
             >
               {lead.name}
             </Link>

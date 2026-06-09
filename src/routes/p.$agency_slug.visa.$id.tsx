@@ -29,7 +29,8 @@ function Page() {
   });
 
   const [values, setValues] = useState<Record<string, string>>({});
-  const [busy, setBusy] = useState(false); const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false); 
+  const [doneLeadId, setDoneLeadId] = useState<string | null>(null);
 
   if (q.isLoading) return <div className="p-10 text-center text-sm text-muted-foreground">Carregando…</div>;
   if (!q.data) return <div className="p-10 text-center text-sm">Formulário não disponível</div>;
@@ -38,18 +39,43 @@ function Page() {
   async function submit(e: React.FormEvent) {
     e.preventDefault(); setBusy(true);
     if (!form.target_stage_id) { setBusy(false); toast.error("Formulário sem estágio CRM configurado"); return; }
-    const { error: leadErr } = await supabase.from("leads").insert({
+    const { data: leadData, error: leadErr } = await supabase.from("leads").insert({
       agency_id: agency.id, name: values.name ?? "", email: values.email ?? "", phone: values.phone ?? "",
       destination: values.destination ?? null, source: `form:${form.slug}`,
       notes: Object.entries(values).map(([k, v]) => `${k}: ${v}`).join("\n"),
       stage_id: form.target_stage_id,
-    });
-    if (!leadErr) await supabase.from("lead_forms").update({ submissions_count: (form.submissions_count ?? 0) + 1 }).eq("id", form.id);
+    }).select("id");
+    if (!leadErr && leadData) {
+       await supabase.from("lead_forms").update({ submissions_count: (form.submissions_count ?? 0) + 1 }).eq("id", form.id);
+       setDoneLeadId(leadData[0].id);
+    }
     setBusy(false);
-    if (leadErr) toast.error(leadErr.message); else setDone(true);
+    if (leadErr) toast.error(leadErr.message);
   }
 
-  if (done) return <div className="mx-auto max-w-md p-10 text-center"><h1 className="text-lg font-semibold">✓ Solicitação enviada</h1><p className="mt-2 text-sm text-muted-foreground">A agência entrará em contato em breve.</p></div>;
+  if (doneLeadId) {
+     return (
+        <div className="mx-auto max-w-md p-10 text-center bg-surface border border-border/50 rounded-2xl shadow-xl mt-10">
+           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success mx-auto mb-4">
+              <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+           </div>
+           <h1 className="text-2xl font-extrabold tracking-tight">Solicitação Recebida!</h1>
+           <p className="mt-2 text-sm text-muted-foreground font-medium">Os seus dados já estão no sistema da nossa agência.</p>
+           
+           <div className="mt-6 bg-surface-alt/50 border border-border/50 p-4 rounded-xl">
+              <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Protocolo de Atendimento</div>
+              <div className="font-mono text-lg font-bold text-foreground mt-1 select-all">{doneLeadId.split("-")[0].toUpperCase()}</div>
+           </div>
+
+           <div className="mt-8 space-y-3">
+              <a href={`https://wa.me/?text=Ol%C3%A1!%20Acabei%20de%20enviar%20uma%20solicita%C3%A7%C3%A3o%20pelo%20site%20(Protocolo:%20${doneLeadId.split("-")[0].toUpperCase()})`} target="_blank" rel="noreferrer" className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-success px-4 text-sm font-bold text-white shadow-md hover:bg-success/90 transition-colors">
+                 Chamar no WhatsApp Agora
+              </a>
+              <button onClick={() => setDoneLeadId(null)} className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors underline">Enviar nova resposta</button>
+           </div>
+        </div>
+     );
+  }
 
   const fields = Array.isArray(form.fields) ? form.fields : [];
 

@@ -35,6 +35,7 @@ const items: NavItem[] = [
   { label: "Vouchers", segment: "vouchers", icon: Ticket },
   { label: "Financeiro", segment: "financial", icon: Wallet },
   { label: "Roteiros em Grupo", segment: "group-tours", icon: Bus },
+  { label: "Frota & Ônibus", segment: "bus-layouts", icon: Bus },
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
   { label: "Clientes", segment: "clients", icon: UserRound },

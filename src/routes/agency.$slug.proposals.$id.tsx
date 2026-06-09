@@ -13,7 +13,7 @@ import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
 
 const SMALL_INPUT =
-  "w-full h-[30px] px-2 rounded-md border border-input bg-surface text-xs outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/20";
+  "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
 
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
@@ -154,9 +154,9 @@ function ProposalEditor() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 bg-surface-alt/30">
         {/* Left CMS */}
-        <aside className="w-[420px] shrink-0 overflow-y-auto border-r border-border bg-surface-alt/30 p-4">
+        <aside className="w-[420px] shrink-0 overflow-y-auto border-r border-border/50 p-5 no-scrollbar">
           <Accordion title="Cliente & Passageiros" defaultOpen>
             <div className="grid grid-cols-2 gap-2">
               <NumField label="Adultos" value={draft.pax_adults} onSave={(v) => save({ pax_adults: v })} />
@@ -269,22 +269,22 @@ function ProposalEditor() {
           </Accordion>
 
           <Accordion title="Financeiro" defaultOpen>
-            <div className="space-y-3">
-              <div className="rounded-md bg-surface p-3">
+            <div className="space-y-4">
+              <div className="rounded-xl border border-border/50 bg-surface p-4 shadow-sm">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-mono">{money(draft.subtotal, draft.currency)}</span>
+                  <span className="font-mono text-sm">{money(draft.subtotal, draft.currency)}</span>
                 </div>
-                <div className="mt-1 flex items-center justify-between text-xs">
+                <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Desconto Pix</span>
-                  <span className="font-mono">−{money(draft.discount, draft.currency)}</span>
+                  <span className="font-mono text-sm text-success">−{money(draft.discount, draft.currency)}</span>
                 </div>
-                <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-sm font-semibold">
-                  <span>Total</span>
-                  <span className="font-mono">{money(draft.total, draft.currency)}</span>
+                <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-3 text-sm font-bold">
+                  <span>Total final</span>
+                  <span className="font-mono text-lg">{money(draft.total, draft.currency)}</span>
                 </div>
               </div>
-              <div>
+              <div className="rounded-xl border border-border/50 bg-surface-alt/20 p-4">
                 <label className="text-xs text-muted-foreground">Desconto Pix: <strong>{draft.pix_discount_percent}%</strong></label>
                 <input type="range" min={0} max={20} step={0.5} value={draft.pix_discount_percent} onChange={(e) => save({ pix_discount_percent: parseFloat(e.target.value) })} className="w-full" />
               </div>
@@ -305,7 +305,7 @@ function ProposalEditor() {
         </aside>
 
         {/* Right canvas */}
-        <main className="flex-1 overflow-auto bg-neutral-100 p-8">
+        <main className="flex-1 overflow-auto bg-surface-alt p-8">
           <ScalableCanvas>
             <ProposalTemplate proposal={draft} />
           </ScalableCanvas>
@@ -323,12 +323,12 @@ function replaceAt<T>(arr: T[], i: number, item: T): T[] {
 function Accordion({ title, children, defaultOpen }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div className="mb-2 rounded-lg border border-border bg-surface">
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide hover:bg-surface-alt">
+    <div className="mb-4 overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-border/50 transition-all">
+      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-surface-alt/50 transition-colors">
         <span>{title}</span>
-        {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>
-      {open && <div className="border-t border-border p-3">{children}</div>}
+      {open && <div className="border-t border-border/50 p-4">{children}</div>}
     </div>
   );
 }
@@ -366,14 +366,14 @@ function L({ label, children }: { label: string; children: React.ReactNode }) {
 }
 function Card({ children, onRemove }: { children: React.ReactNode; onRemove: () => void }) {
   return (
-    <div className="relative mb-2 rounded-md border border-border bg-surface-alt/40 p-2">
-      <button onClick={onRemove} className="absolute right-1 top-1 text-muted-foreground hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
+    <div className="relative mb-3 rounded-xl border border-border/60 bg-surface-alt/20 p-4">
+      <button onClick={onRemove} className="absolute right-2 top-2 rounded p-1 text-muted-foreground hover:bg-surface hover:text-danger transition-colors"><Trash2 className="h-3.5 w-3.5" /></button>
       {children}
     </div>
   );
 }
 function AddBtn({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
-  return <button onClick={onClick} className="mt-1 flex w-full items-center justify-center gap-1 rounded-md border border-dashed border-border py-1.5 text-[11px] font-medium text-muted-foreground hover:bg-surface-alt"><Plus className="h-3 w-3" />{children}</button>;
+  return <button onClick={onClick} className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/60 py-2 text-xs font-medium text-muted-foreground hover:bg-surface-alt transition-colors"><Plus className="h-3.5 w-3.5" />{children}</button>;
 }
 
 function TagsEditor({ tags, onChange, placeholder }: { tags: string[]; onChange: (t: string[]) => void; placeholder?: string }) {
@@ -508,22 +508,22 @@ function ScalableCanvas({ children }: { children: React.ReactNode }) {
 // ===== Editorial template (A4 portrait) =====
 function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
   return (
-    <div id="proposal-canvas" className="bg-white text-neutral-900" style={{ width: 794, minHeight: 1123, padding: 48, fontFamily: "Inter, system-ui, sans-serif" }}>
+    <div id="proposal-canvas" className="bg-surface text-foreground" style={{ width: 794, minHeight: 1123, padding: 48, fontFamily: "Inter, system-ui, sans-serif" }}>
       <div className="mb-6 border-b-2 border-neutral-900 pb-4">
-        <div className="text-xs uppercase tracking-[0.2em] text-neutral-500">Proposta #{p.number}</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Proposta #{p.number}</div>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">{p.title || "Proposta de viagem"}</h1>
-        <div className="mt-2 text-sm text-neutral-600">{p.destination ?? ""} · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)} · {p.pax_adults + p.pax_seniors + p.pax_children + p.pax_infants} pax</div>
+        <div className="mt-2 text-sm text-muted-foreground">{p.destination ?? ""} · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)} · {p.pax_adults + p.pax_seniors + p.pax_children + p.pax_infants} pax</div>
       </div>
 
       {p.flights.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">Voos</h2>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Voos</h2>
           <table className="w-full text-xs">
-            <thead><tr className="border-b border-neutral-200 text-left text-neutral-500"><th className="py-1">Trecho</th><th>Cia / Voo</th><th>Data</th><th>Horários</th><th>Bagagem</th></tr></thead>
+            <thead><tr className="border-b border-border text-left text-muted-foreground"><th className="py-1">Trecho</th><th>Cia / Voo</th><th>Data</th><th>Horários</th><th>Bagagem</th></tr></thead>
             <tbody>
               {p.flights.map((f) => (
-                <tr key={f.id} className="border-b border-neutral-100">
-                  <td className="py-2 font-medium">{f.origin} → {f.destination} {f.stops > 0 && <span className="text-neutral-500">({f.stops} parada{f.stops > 1 ? "s" : ""})</span>}</td>
+                <tr key={f.id} className="border-b border-border/60">
+                  <td className="py-2 font-medium">{f.origin} → {f.destination} {f.stops > 0 && <span className="text-muted-foreground">({f.stops} parada{f.stops > 1 ? "s" : ""})</span>}</td>
                   <td>{f.airline} {f.flight_number}</td>
                   <td>{fmtDate(f.date)}</td>
                   <td>{f.departure_time} – {f.arrival_time}</td>
@@ -537,17 +537,17 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
 
       {p.hotels.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-neutral-500">Hospedagem</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Hospedagem</h2>
           <div className="space-y-3">
             {p.hotels.map((h) => (
-              <div key={h.id} className="overflow-hidden rounded-lg border border-neutral-200">
+              <div key={h.id} className="overflow-hidden rounded-lg border border-border">
                 {h.images[0] && <img src={h.images[0]} alt={h.name} className="h-40 w-full object-cover" />}
                 <div className="p-3">
                   <div className="flex items-baseline justify-between">
                     <h3 className="font-semibold">{h.name}</h3>
-                    <span className="text-xs text-neutral-500">{h.city}</span>
+                    <span className="text-xs text-muted-foreground">{h.city}</span>
                   </div>
-                  <div className="mt-1 text-xs text-neutral-600">{fmtDate(h.checkin)} → {fmtDate(h.checkout)} · {h.meal_plan}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{fmtDate(h.checkin)} → {fmtDate(h.checkout)} · {h.meal_plan}</div>
                   {h.rooms.length > 0 && <div className="mt-1 text-xs">{h.rooms.map((r, i) => <span key={i}>{r.qty}× {r.type}{i < h.rooms.length - 1 ? ", " : ""}</span>)}</div>}
                 </div>
               </div>
@@ -558,7 +558,7 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
 
       {p.transfers.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">Transfers</h2>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Transfers</h2>
           <ul className="space-y-1 text-xs">
             {p.transfers.map((t) => <li key={t.id}>• <strong>{fmtDate(t.date)}</strong> — {t.description} ({t.type === "private" ? "Privativo" : "Compartilhado"}, {t.vehicle})</li>)}
           </ul>
@@ -567,18 +567,18 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
 
       {p.tours.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">Passeios</h2>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Passeios</h2>
           <ul className="space-y-1 text-xs">{p.tours.map((t) => <li key={t.id}>• <strong>{fmtDate(t.date)}</strong> — {t.description}</li>)}</ul>
         </section>
       )}
 
       {p.itinerary.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">Itinerário</h2>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Itinerário</h2>
           <div className="space-y-2">{p.itinerary.map((d) => (
             <div key={d.id} className="border-l-2 border-neutral-900 pl-3">
               <div className="text-xs font-semibold">{d.day} — {d.title}</div>
-              <div className="text-xs text-neutral-600 whitespace-pre-wrap">{d.description}</div>
+              <div className="text-xs text-muted-foreground whitespace-pre-wrap">{d.description}</div>
             </div>
           ))}</div>
         </section>
@@ -591,13 +591,13 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
         </section>
       )}
 
-      <section className="mt-8 rounded-lg bg-neutral-100 p-5">
+      <section className="mt-8 rounded-lg bg-surface-alt p-5">
         <div className="flex items-baseline justify-between">
-          <span className="text-sm text-neutral-600">Total à vista (Pix)</span>
+          <span className="text-sm text-muted-foreground">Total à vista (Pix)</span>
           <span className="text-2xl font-bold">{money(p.total, p.currency)}</span>
         </div>
-        {p.installments_card > 1 && <div className="mt-1 text-xs text-neutral-600">ou em até {p.installments_card}x no cartão</div>}
-        {p.installments_boleto > 1 && <div className="text-xs text-neutral-600">ou em até {p.installments_boleto}x no boleto</div>}
+        {p.installments_card > 1 && <div className="mt-1 text-xs text-muted-foreground">ou em até {p.installments_card}x no cartão</div>}
+        {p.installments_boleto > 1 && <div className="text-xs text-muted-foreground">ou em até {p.installments_boleto}x no boleto</div>}
       </section>
     </div>
   );

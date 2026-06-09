@@ -200,6 +200,12 @@
   .no-scrollbar {
     scrollbar-width: none;
   }
+
+  /* Oculta completamente o badge injetado do Lovable sem quebrar os scripts da plataforma */
+  #lovable-badge,
+  #lovable-badge-cta {
+    display: none !important;
+  }
 }
 
 @layer utilities {

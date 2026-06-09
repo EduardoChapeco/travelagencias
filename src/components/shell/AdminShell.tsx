@@ -13,12 +13,7 @@ const items = [
   { to: "/admin/trips", label: "Viagens", icon: Luggage },
   { to: "/admin/contracts", label: "Contratos", icon: ScrollText },
   { to: "/admin/billing", label: "Faturamento", icon: Wallet },
-  { to: "/admin/plans", label: "Planos", icon: FileText },
-  { to: "/admin/policies", label: "Políticas", icon: ShieldCheck },
-  { to: "/admin/brand", label: "Marca", icon: Brush },
-  { to: "/admin/knowledge", label: "Conhecimento", icon: BookOpen },
   { to: "/admin/audit", label: "Auditoria", icon: ScrollText },
-  { to: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 
 export function AdminShell() {
