@@ -1156,6 +1156,7 @@ export type Database = {
           agency_id: string
           agent_id: string | null
           base_price: number
+          bus_layout_id: string | null
           cover_image_url: string | null
           created_at: string
           departure_date: string | null
@@ -1165,6 +1166,7 @@ export type Database = {
           financial: Json
           gallery: string[]
           id: string
+          important_notes: string | null
           includes: string[]
           is_public: boolean
           itinerary: Json
@@ -1186,6 +1188,7 @@ export type Database = {
           agency_id: string
           agent_id?: string | null
           base_price?: number
+          bus_layout_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           departure_date?: string | null
@@ -1195,6 +1198,7 @@ export type Database = {
           financial?: Json
           gallery?: string[]
           id?: string
+          important_notes?: string | null
           includes?: string[]
           is_public?: boolean
           itinerary?: Json
@@ -1216,6 +1220,7 @@ export type Database = {
           agency_id?: string
           agent_id?: string | null
           base_price?: number
+          bus_layout_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           departure_date?: string | null
@@ -1225,6 +1230,7 @@ export type Database = {
           financial?: Json
           gallery?: string[]
           id?: string
+          important_notes?: string | null
           includes?: string[]
           is_public?: boolean
           itinerary?: Json
@@ -1242,7 +1248,15 @@ export type Database = {
           transport_type?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "group_tours_bus_layout_id_fkey"
+            columns: ["bus_layout_id"]
+            isOneToOne: false
+            referencedRelation: "bus_layouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       knowledge_articles: {
         Row: {
