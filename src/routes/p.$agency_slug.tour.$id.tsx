@@ -222,6 +222,7 @@ function Page() {
            {busy ? "Enviando…" : (selectedSeats.length > 0 ? `Comprar ${selectedSeats.length} vaga(s) — ${(Number(t.price_per_pax) * selectedSeats.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}` : "Enviar Interesse")}
         </PrimaryButton>
       </form>
+      </div>
     </div>
   );
 }
