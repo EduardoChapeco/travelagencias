@@ -373,6 +373,7 @@ export type Database = {
           created_at: string
           id: string
           pnr: string | null
+          position: number
           status: string
           trip_id: string
           updated_at: string
@@ -385,6 +386,7 @@ export type Database = {
           created_at?: string
           id?: string
           pnr?: string | null
+          position?: number
           status?: string
           trip_id: string
           updated_at?: string
@@ -397,6 +399,7 @@ export type Database = {
           created_at?: string
           id?: string
           pnr?: string | null
+          position?: number
           status?: string
           trip_id?: string
           updated_at?: string
@@ -474,6 +477,50 @@ export type Database = {
           whatsapp?: string | null
         }
         Relationships: []
+      }
+      bus_layouts: {
+        Row: {
+          agency_id: string
+          cols: number
+          created_at: string
+          id: string
+          name: string
+          rows: number
+          seat_map: Json
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          agency_id: string
+          cols?: number
+          created_at?: string
+          id?: string
+          name: string
+          rows?: number
+          seat_map?: Json
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          agency_id?: string
+          cols?: number
+          created_at?: string
+          id?: string
+          name?: string
+          rows?: number
+          seat_map?: Json
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bus_layouts_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clients: {
         Row: {
