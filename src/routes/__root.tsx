@@ -77,20 +77,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality." },
+      { title: "TravelOS — Plataforma para Agências de Viagens" },
+      {
+        name: "description",
+        content:
+          "CRM, propostas, contratos digitais, vouchers, embarques, portal do cliente e financeiro em um único workspace para agências de viagens.",
+      },
+      { name: "author", content: "TravelOS" },
+      { property: "og:title", content: "TravelOS — Plataforma para Agências de Viagens" },
+      {
+        property: "og:description",
+        content:
+          "CRM, propostas, contratos digitais, vouchers, embarques, portal do cliente e financeiro em um único workspace para agências de viagens.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f73a9c12-537a-40dd-801e-217b758c08eb/id-preview-9298554e--a96da259-7773-4de2-b818-1c99dad3b5a8.lovable.app-1780555836779.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f73a9c12-537a-40dd-801e-217b758c08eb/id-preview-9298554e--a96da259-7773-4de2-b818-1c99dad3b5a8.lovable.app-1780555836779.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "TravelOS — Plataforma para Agências de Viagens" },
+      {
+        name: "twitter:description",
+        content:
+          "CRM, propostas, contratos digitais, vouchers, embarques, portal do cliente e financeiro para agências de viagens.",
+      },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,

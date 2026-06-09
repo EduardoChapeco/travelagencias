@@ -480,8 +480,11 @@ export type Database = {
           address: Json
           agency_id: string
           birth_date: string | null
+          brain_data: Json
+          cpf: string | null
           created_at: string
           document: string | null
+          document_images: string[]
           email: string | null
           full_name: string
           id: string
@@ -490,7 +493,14 @@ export type Database = {
           nationality: string | null
           notes: string | null
           owner_id: string | null
+          passport_country: string | null
+          passport_expiry: string | null
+          passport_number: string | null
           phone: string | null
+          preferred_agent_id: string | null
+          preferences: Json
+          rg: string | null
+          source: string | null
           tags: string[]
           updated_at: string
           user_id: string | null
@@ -499,8 +509,11 @@ export type Database = {
           address?: Json
           agency_id: string
           birth_date?: string | null
+          brain_data?: Json
+          cpf?: string | null
           created_at?: string
           document?: string | null
+          document_images?: string[]
           email?: string | null
           full_name: string
           id?: string
@@ -509,7 +522,14 @@ export type Database = {
           nationality?: string | null
           notes?: string | null
           owner_id?: string | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
+          preferred_agent_id?: string | null
+          preferences?: Json
+          rg?: string | null
+          source?: string | null
           tags?: string[]
           updated_at?: string
           user_id?: string | null
@@ -518,8 +538,11 @@ export type Database = {
           address?: Json
           agency_id?: string
           birth_date?: string | null
+          brain_data?: Json
+          cpf?: string | null
           created_at?: string
           document?: string | null
+          document_images?: string[]
           email?: string | null
           full_name?: string
           id?: string
@@ -528,7 +551,14 @@ export type Database = {
           nationality?: string | null
           notes?: string | null
           owner_id?: string | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
           phone?: string | null
+          preferred_agent_id?: string | null
+          preferences?: Json
+          rg?: string | null
+          source?: string | null
           tags?: string[]
           updated_at?: string
           user_id?: string | null
@@ -1377,7 +1407,9 @@ export type Database = {
           destination: string | null
           email: string | null
           estimated_value: number | null
+          form_id: string | null
           id: string
+          last_contact_at: string | null
           lost_reason: string | null
           name: string
           notes: string | null
@@ -1385,10 +1417,14 @@ export type Database = {
           pax_count: number | null
           phone: string | null
           position: number
+          preferences: Json
+          proposal_id: string | null
           source: string | null
           stage_id: string
+          tags: string[]
           travel_end: string | null
           travel_start: string | null
+          trip_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1400,7 +1436,9 @@ export type Database = {
           destination?: string | null
           email?: string | null
           estimated_value?: number | null
+          form_id?: string | null
           id?: string
+          last_contact_at?: string | null
           lost_reason?: string | null
           name: string
           notes?: string | null
@@ -1408,10 +1446,14 @@ export type Database = {
           pax_count?: number | null
           phone?: string | null
           position?: number
+          preferences?: Json
+          proposal_id?: string | null
           source?: string | null
           stage_id: string
+          tags?: string[]
           travel_end?: string | null
           travel_start?: string | null
+          trip_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1423,7 +1465,9 @@ export type Database = {
           destination?: string | null
           email?: string | null
           estimated_value?: number | null
+          form_id?: string | null
           id?: string
+          last_contact_at?: string | null
           lost_reason?: string | null
           name?: string
           notes?: string | null
@@ -1431,10 +1475,14 @@ export type Database = {
           pax_count?: number | null
           phone?: string | null
           position?: number
+          preferences?: Json
+          proposal_id?: string | null
           source?: string | null
           stage_id?: string
+          tags?: string[]
           travel_end?: string | null
           travel_start?: string | null
+          trip_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -2227,6 +2275,9 @@ export type Database = {
       trips: {
         Row: {
           agency_id: string
+          airline: string | null
+          boarding_status: string
+          checklist: Json
           client_id: string | null
           code: string | null
           created_at: string
@@ -2235,11 +2286,21 @@ export type Database = {
           id: string
           notes: string | null
           number: number
+          operator: string | null
+          operator_booking_id: string | null
           owner_id: string | null
+          pax_adults: number
+          pax_children: number
+          pax_infants: number
+          pax_seniors: number
+          pnr: string | null
           proposal_id: string | null
+          rooms: Json
           status: Database["public"]["Enums"]["trip_status"]
+          tags: string[]
           title: string
           total_cost: number
+          total_paid: number
           total_sale: number
           travel_end: string | null
           travel_start: string | null
@@ -2247,6 +2308,9 @@ export type Database = {
         }
         Insert: {
           agency_id: string
+          airline?: string | null
+          boarding_status?: string
+          checklist?: Json
           client_id?: string | null
           code?: string | null
           created_at?: string
@@ -2255,11 +2319,21 @@ export type Database = {
           id?: string
           notes?: string | null
           number?: number
+          operator?: string | null
+          operator_booking_id?: string | null
           owner_id?: string | null
+          pax_adults?: number
+          pax_children?: number
+          pax_infants?: number
+          pax_seniors?: number
+          pnr?: string | null
           proposal_id?: string | null
+          rooms?: Json
           status?: Database["public"]["Enums"]["trip_status"]
+          tags?: string[]
           title: string
           total_cost?: number
+          total_paid?: number
           total_sale?: number
           travel_end?: string | null
           travel_start?: string | null
@@ -2267,6 +2341,9 @@ export type Database = {
         }
         Update: {
           agency_id?: string
+          airline?: string | null
+          boarding_status?: string
+          checklist?: Json
           client_id?: string | null
           code?: string | null
           created_at?: string
@@ -2275,11 +2352,21 @@ export type Database = {
           id?: string
           notes?: string | null
           number?: number
+          operator?: string | null
+          operator_booking_id?: string | null
           owner_id?: string | null
+          pax_adults?: number
+          pax_children?: number
+          pax_infants?: number
+          pax_seniors?: number
+          pnr?: string | null
           proposal_id?: string | null
+          rooms?: Json
           status?: Database["public"]["Enums"]["trip_status"]
+          tags?: string[]
           title?: string
           total_cost?: number
+          total_paid?: number
           total_sale?: number
           travel_end?: string | null
           travel_start?: string | null

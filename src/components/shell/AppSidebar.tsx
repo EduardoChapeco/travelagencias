@@ -17,6 +17,7 @@ import {
   BookOpen,
   Settings,
   LogOut,
+  Globe,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -25,22 +26,23 @@ import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
 type NavItem = { label: string; segment: string; icon: typeof LayoutDashboard; exact?: boolean };
 
 const items: NavItem[] = [
-  { label: "Dashboard", segment: "", icon: LayoutDashboard },
+  { label: "Dashboard", segment: "", icon: LayoutDashboard, exact: true },
   { label: "CRM", segment: "crm", icon: Users },
   { label: "Cotações", segment: "proposals", icon: FileText },
   { label: "Viagens", segment: "trips", icon: Luggage },
   { label: "Embarques", segment: "boarding", icon: Plane },
-  { label: "Vouchers", segment: "vouchers", icon: Ticket },
   { label: "Contratos", segment: "contracts", icon: ScrollText },
-  { label: "Suporte", segment: "support", icon: LifeBuoy },
+  { label: "Vouchers", segment: "vouchers", icon: Ticket },
   { label: "Financeiro", segment: "financial", icon: Wallet },
   { label: "Roteiros em Grupo", segment: "group-tours", icon: Bus },
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
   { label: "Clientes", segment: "clients", icon: UserRound },
   { label: "Fornecedores", segment: "suppliers", icon: Store },
-  { label: "Minha Empresa", segment: "company", icon: Store },
+  { label: "Suporte", segment: "support", icon: LifeBuoy },
+  { label: "Portal", segment: "portal", icon: Globe },
   { label: "Base de Conhecimento", segment: "knowledge", icon: BookOpen },
+  { label: "Minha Empresa", segment: "company", icon: Building2 },
   { label: "Configurações", segment: "settings", icon: Settings },
 ];
 

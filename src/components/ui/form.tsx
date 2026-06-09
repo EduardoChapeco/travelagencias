@@ -52,7 +52,7 @@ export function Sheet({ onClose, title, children }: { onClose: () => void; title
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6 shadow-xl"
+        className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-6 text-lg font-semibold tracking-tight">{title}</h2>
@@ -71,7 +71,7 @@ export function StatusBadge({ children, tone = "neutral" }: { children: ReactNod
     info: "bg-info-bg text-info",
   };
   return (
-    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${tones[tone]}`}>
+    <span className={`inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${tones[tone]}`}>
       {children}
     </span>
   );

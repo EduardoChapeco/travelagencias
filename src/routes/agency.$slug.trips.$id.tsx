@@ -15,9 +15,14 @@ export const Route = createFileRoute("/agency/$slug/trips/$id")({
 type Trip = {
   id: string; number: number; title: string; status: string;
   destination: string | null; travel_start: string | null; travel_end: string | null;
-  currency: string; total_sale: number; total_cost: number;
+  currency: string; total_sale: number; total_cost: number; total_paid: number;
   client_id: string | null; proposal_id: string | null; notes: string | null;
   code: string | null;
+  // Novos campos — migration 20260605000001
+  operator: string | null; operator_booking_id: string | null;
+  airline: string | null; pnr: string | null;
+  tags: string[]; pax_adults: number; pax_children: number;
+  pax_infants: number; pax_seniors: number; owner_id: string | null;
 };
 
 function TripDetail() {
@@ -94,6 +99,9 @@ function TripDetail() {
           </Link>
           <Link to="/agency/$slug/trips/$id/financial" params={{ slug, id }} className="h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-surface-alt inline-flex items-center">
             Financeiro
+          </Link>
+          <Link to="/agency/$slug/trips/$id/contract" params={{ slug, id }} className="h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-surface-alt inline-flex items-center">
+            Contrato
           </Link>
         </div>
       </div>
