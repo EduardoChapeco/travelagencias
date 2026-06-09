@@ -22,8 +22,8 @@ function Dashboard() {
     queryFn: async () => {
       const [leads, won, trips, groups] = await Promise.all([
         supabase.from("leads").select("id, estimated_value", { count: "exact" }).eq("agency_id", agency!.id),
-        supabase.from("leads").select("id, estimated_value").eq("agency_id", agency!.id).eq("status", "won"),
-        supabase.from("trips").select("id, title, start_date, end_date, status, destination").eq("agency_id", agency!.id).gte("start_date", new Date().toISOString()).order("start_date").limit(3),
+        supabase.from("leads").select("id, estimated_value").eq("agency_id", agency!.id).not("converted_at", "is", null),
+        supabase.from("trips").select("id, title, travel_start, travel_end, status, destination").eq("agency_id", agency!.id).gte("travel_start", new Date().toISOString()).order("travel_start").limit(3),
         supabase.from("group_tours").select("id, title, destination, departure_date, return_date, reserved_seats, total_seats").eq("agency_id", agency!.id).gte("departure_date", new Date().toISOString()).order("departure_date").limit(2)
       ]);
       const totalLeads = leads.count ?? 0;
@@ -40,7 +40,7 @@ function Dashboard() {
   return (
     <div className="flex flex-col space-y-8 pb-10">
       <PageHeader
-        title={<span className="text-2xl tracking-tight font-extrabold">Olá, {agency?.name}</span>}
+        title={`Olá, ${agency?.name ?? ""}`}
         description="Painel de Controle B2B e Análises Comerciais."
       />
 
@@ -74,7 +74,7 @@ function Dashboard() {
                            <Link key={t.id} to="/agency/$slug/trips/$id" params={{ slug, id: t.id }} className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-brand/30 hover:bg-surface-alt/30 transition-all group">
                               <div className="flex items-center gap-4">
                                  <div className="h-10 w-10 rounded-lg bg-brand/5 border border-brand/20 flex items-center justify-center text-brand font-bold text-xs">
-                                    {t.start_date ? new Date(t.start_date).getDate().toString().padStart(2, '0') : '--'}
+                                    {t.travel_start ? new Date(t.travel_start).getDate().toString().padStart(2, '0') : '--'}
                                  </div>
                                  <div>
                                     <div className="font-bold text-sm group-hover:text-brand transition-colors">{t.title}</div>
@@ -83,7 +83,7 @@ function Dashboard() {
                               </div>
                               <div className="text-right">
                                  <StatusBadge tone="success">{t.status || "Confirmado"}</StatusBadge>
-                                 <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-semibold">{fmtDate(t.start_date)}</div>
+                                 <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest font-semibold">{fmtDate(t.travel_start)}</div>
                               </div>
                            </Link>
                         ))}

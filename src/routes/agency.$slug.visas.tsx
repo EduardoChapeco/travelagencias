@@ -44,12 +44,12 @@ function VisasPage() {
         .select(`
           id, country, visa_type, status, travel_date, price, agency_handling, 
           passport_number, client_id, trip_id, notes,
-          clients(full_name)
+          client:clients(full_name)
         `)
         .eq("agency_id", agency!.id)
         .order("requested_at", { ascending: false });
       if (error) throw error;
-      return data as Visa[];
+      return data as unknown as Visa[];
     },
   });
 
