@@ -12,7 +12,7 @@ export const Route = createFileRoute("/m/contract/$token")({
 
 type Clause = { number: number; section: string; clause_text: string; is_immutable?: boolean };
 type Contract = {
-  id: string; status: string; agency_name: string; agency_logo: string | null;
+  id: string; status: string; agency_id: string; agency_name: string; agency_logo: string | null;
   package_summary: string | null; total_value: number; payment_terms: string | null;
   fixed_clauses: Clause[]; custom_clauses: Clause[];
   client_data: { name?: string; document?: string }; passengers_data: Array<{ full_name?: string }>;
@@ -87,7 +87,23 @@ function Page() {
       // 1. Snapshot PDF via html2canvas
       const pdfBase64 = await generateContractPdf("contract-document");
 
-      // 2. Hash em Cadeia (Web Crypto API)
+      // 2. Upload do PDF para o Storage via política pública
+      const pdfPath = `${c!.agency_id}/${token}/contrato-${Date.now()}.pdf`;
+
+      // Convert dataURL (base64) para Blob
+      const res = await fetch(pdfBase64);
+      const blob = await res.blob();
+
+      const { data: uploadData, error: uploadErr } = await supabase.storage
+        .from("contract-pdfs")
+        .upload(pdfPath, blob, {
+          contentType: "application/pdf",
+          upsert: true
+        });
+
+      if (uploadErr) throw new Error("Erro ao salvar o documento final no cofre: " + uploadErr.message);
+
+      // 3. Hash em Cadeia (Web Crypto API) - Cliente (Servidor também re-checará)
       const contentToHash = JSON.stringify({ 
         summary: c?.package_summary, 
         total: c?.total_value, 
@@ -102,7 +118,7 @@ function Page() {
         content: contentToHash
       });
 
-      // 3. Enviar Payload
+      // 4. Enviar Payload (apenas com o path do storage)
       const { error } = await supabase.rpc("sign_contract_with_token", {
         _token: token, 
         _signer_name: name, 
@@ -111,7 +127,7 @@ function Page() {
         _selfie_image: selfie, 
         _ip: ip, 
         _user_agent: ua,
-        _pdf_data: pdfBase64,
+        _pdf_path: pdfPath,
         _signed_hash: hash
       });
 
