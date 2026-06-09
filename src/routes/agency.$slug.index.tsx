@@ -24,7 +24,7 @@ function Dashboard() {
         supabase.from("leads").select("id, estimated_value", { count: "exact" }).eq("agency_id", agency!.id),
         supabase.from("leads").select("id, estimated_value").eq("agency_id", agency!.id).eq("status", "won"),
         supabase.from("trips").select("id, title, start_date, end_date, status, destination").eq("agency_id", agency!.id).gte("start_date", new Date().toISOString()).order("start_date").limit(3),
-        supabase.from("group_trips").select("id, title, destination, departure_date, return_date, current_pax, max_pax").eq("agency_id", agency!.id).gte("departure_date", new Date().toISOString()).order("departure_date").limit(2)
+        supabase.from("group_tours").select("id, title, destination, departure_date, return_date, reserved_seats, total_seats").eq("agency_id", agency!.id).gte("departure_date", new Date().toISOString()).order("departure_date").limit(2)
       ]);
       const totalLeads = leads.count ?? 0;
       const wonLeads = won.data?.length ?? 0;
@@ -109,7 +109,7 @@ function Dashboard() {
                               <div className="font-semibold text-sm mb-1">{g.title}</div>
                               <div className="flex items-center justify-between text-xs">
                                  <span className="text-muted-foreground">{fmtDate(g.departure_date)}</span>
-                                 <span className="font-mono bg-surface-alt px-1.5 py-0.5 rounded">{g.current_pax}/{g.max_pax} pax</span>
+                                 <span className="font-mono bg-surface-alt px-1.5 py-0.5 rounded">{g.reserved_seats}/{g.total_seats} pax</span>
                               </div>
                            </Link>
                         ))}

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/agency/$slug/group-tours")({
 
 type Tour = {
   id: string; title: string; destination: string | null; departure_date: string | null; return_date: string | null;
-  price_per_pax: number; max_pax: number; current_pax: number; status: string; is_public: boolean; slug: string;
+  base_price: number; total_seats: number; reserved_seats: number; status: string; is_public: boolean; slug: string;
 };
 
 function slugify(s: string) {
@@ -33,8 +33,8 @@ function GroupToursPage() {
     queryKey: ["group-tours", agency?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("group_trips")
-        .select("id, title, destination, departure_date, return_date, price_per_pax, max_pax, current_pax, status, is_public, slug, bus_layout_id")
+        .from("group_tours")
+        .select("id, title, destination, departure_date, return_date, base_price, total_seats, reserved_seats, status, is_public, slug, bus_layout_id")
         .eq("agency_id", agency!.id)
         .order("departure_date", { ascending: false, nullsFirst: false });
       if (error) throw error;
@@ -60,7 +60,7 @@ function GroupToursPage() {
       {q.data && q.data.length > 0 && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {q.data.map((t) => {
-            const occupancy = t.max_pax ? Math.round((t.current_pax / t.max_pax) * 100) : 0;
+            const occupancy = t.total_seats ? Math.round((t.reserved_seats / t.total_seats) * 100) : 0;
             return (
               <Link key={t.id} to="/agency/$slug/group-tours/$id" params={{ slug, id: t.id }} className="rounded-lg border border-border bg-surface p-4 hover:border-border-strong">
                 <div className="flex items-start justify-between gap-2">
@@ -76,8 +76,8 @@ function GroupToursPage() {
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div><div className="text-muted-foreground">Saída</div><div>{fmtDate(t.departure_date)}</div></div>
                   <div><div className="text-muted-foreground">Retorno</div><div>{fmtDate(t.return_date)}</div></div>
-                  <div><div className="text-muted-foreground">Preço</div><div className="font-mono">{money(Number(t.price_per_pax))}</div></div>
-                  <div><div className="text-muted-foreground flex items-center gap-1"><Users className="h-3 w-3" /> Vagas</div><div>{t.current_pax}/{t.max_pax}</div></div>
+                  <div><div className="text-muted-foreground">Preço</div><div className="font-mono">{money(Number(t.base_price))}</div></div>
+                  <div><div className="text-muted-foreground flex items-center gap-1"><Users className="h-3 w-3" /> Vagas</div><div>{t.reserved_seats}/{t.total_seats}</div></div>
                 </div>
                 <div className="mt-2 h-1.5 overflow-hidden rounded bg-surface-alt">
                   <div className="h-full bg-primary" style={{ width: `${occupancy}%` }} />
@@ -117,10 +117,10 @@ function NewTour({ agencyId, onClose, onCreated }: { agencyId: string; onClose: 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.from("group_trips").insert({
+    const { error } = await supabase.from("group_tours").insert({
       agency_id: agencyId, title, slug: slugify(title) + "-" + Math.random().toString(36).slice(2, 6),
       destination: destination || null, departure_date: departure || null, return_date: ret || null,
-      price_per_pax: price, max_pax: seats, important_notes: desc || null,
+      base_price: price, total_seats: seats, important_notes: desc || null,
       bus_layout_id: busLayout || null
     });
     setSubmitting(false);
