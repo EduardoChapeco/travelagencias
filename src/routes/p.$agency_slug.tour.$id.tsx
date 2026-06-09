@@ -168,7 +168,7 @@ function Page() {
             <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1 font-semibold">Por Passageiro</div>
           </div>
           {t.important_notes && (
-            <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl text-sm leading-relaxed max-w-lg shadow-sm">
+            <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl text-sm leading-relaxed max-w-lg ">
               {t.important_notes}
             </div>
           )}
@@ -180,7 +180,7 @@ function Page() {
               <h2 className="text-lg font-bold tracking-tight border-b border-border/50 pb-2">Roteiro Dia a Dia</h2>
               <ol className="space-y-3">
                 {days.map((d, i) => (
-                  <li key={i} className="rounded-xl border border-border bg-surface p-4 shadow-sm relative overflow-hidden group hover:border-brand/30 transition-colors">
+                  <li key={i} className="rounded-xl border border-border bg-surface p-4  relative overflow-hidden group hover:border-brand/30 transition-colors">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-surface-alt group-hover:bg-brand transition-colors" />
                     <div className="font-bold text-sm text-foreground ml-2">Dia {d.day_number} — {d.title}</div>
                     <div className="text-xs text-muted-foreground ml-2 mt-2 leading-relaxed">{d.description_md}</div>
@@ -220,7 +220,7 @@ function Page() {
                       onClick={() => setSelectedSeats((prev) => (isSelected ? prev.filter((s) => s !== cell.label) : [...prev, cell.label]))}
                       className={cn(
                         "h-10 w-10 rounded-md border text-xs font-semibold transition-colors flex flex-col items-center justify-center",
-                        isAssigned ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50" : isSelected ? "border-brand bg-brand text-brand-foreground shadow-sm" : "border-border bg-surface hover:border-brand/50 hover:bg-brand/5",
+                        isAssigned ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50" : isSelected ? "border-brand bg-brand text-brand-foreground " : "border-border bg-surface hover:border-brand/50 hover:bg-brand/5",
                       )}
                     >
                       <span>{cell.label}</span>
@@ -237,7 +237,7 @@ function Page() {
           </div>
         )}
 
-        <form onSubmit={enroll} className="mt-12 space-y-4 rounded-2xl border-2 border-brand/20 bg-surface p-6 shadow-xl shadow-brand/5">
+        <form onSubmit={enroll} className="mt-12 space-y-4 rounded-2xl border-2 border-brand/20 bg-surface p-6  ">
           <div className="mb-2 border-b border-border/50 pb-4">
             <h2 className="text-xl font-bold tracking-tight">Garanta a sua vaga</h2>
             <p className="text-sm text-muted-foreground">Preencha seus dados e nossa equipe de vendas entrará em contato.</p>
@@ -253,7 +253,7 @@ function Page() {
           <Field label="CPF"><Input value={form.passenger_cpf} onChange={(e) => setForm({ ...form, passenger_cpf: e.target.value })} className="h-11" /></Field>
           <Field label="Dúvidas ou Observações?"><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="min-h-[80px]" /></Field>
 
-          <PrimaryButton disabled={busy} className="w-full h-12 text-sm uppercase tracking-widest font-bold shadow-md shadow-brand/20 hover:shadow-brand/40 transition-shadow">
+          <PrimaryButton disabled={busy} className="w-full h-12 text-sm uppercase tracking-widest font-bold   hover: transition-">
             {busy ? "Enviando…" : selectedSeats.length > 0
               ? `Comprar ${selectedSeats.length} vaga(s) — ${(Number(t.base_price) * selectedSeats.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
               : "Enviar Interesse"}

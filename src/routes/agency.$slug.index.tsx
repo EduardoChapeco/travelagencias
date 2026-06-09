@@ -55,7 +55,7 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          {/* EMBARQUES IMINENTES (Viagens Sob Medida) */}
          <div className="lg:col-span-2 space-y-6">
-            <div className="rounded-2xl border border-border/50 bg-surface shadow-sm overflow-hidden flex flex-col h-full">
+            <div className="rounded-2xl border border-border/50 bg-surface  overflow-hidden flex flex-col h-full">
                <div className="border-b border-border/50 p-5 bg-surface-alt/20 flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold text-foreground">
                      <PlaneTakeoff className="h-4 w-4 text-brand" /> Próximos Embarques (VIP)
@@ -95,7 +95,7 @@ function Dashboard() {
 
          {/* EXCURSÕES E ATALHOS */}
          <div className="space-y-6">
-            <div className="rounded-2xl border border-border/50 bg-surface shadow-sm overflow-hidden">
+            <div className="rounded-2xl border border-border/50 bg-surface  overflow-hidden">
                <div className="border-b border-border/50 p-4 bg-surface-alt/20 flex items-center gap-2 font-bold text-foreground text-sm">
                   <Bus className="h-4 w-4 text-brand" /> Próximas Excursões
                </div>
@@ -118,7 +118,7 @@ function Dashboard() {
                </div>
             </div>
 
-            <div className="rounded-2xl border border-brand/20 bg-brand/5 p-5 shadow-sm">
+            <div className="rounded-2xl border border-brand/20 bg-brand/5 p-5 ">
                <h3 className="text-xs font-bold uppercase tracking-widest text-brand mb-3">Ações Rápidas</h3>
                <div className="space-y-2">
                  <QuickLink to={`/agency/${slug}/proposals/new`} label="Nova Cotação" />
@@ -135,7 +135,7 @@ function Dashboard() {
 
 function StatCard({ label, value, subtitle, icon: Icon, color, bg }: any) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-surface p-6 shadow-sm transition-all hover:shadow-md hover:border-border-strong group">
+    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-surface p-6  transition-all hover: hover:border-border-strong group">
       <div className="absolute right-0 top-0 h-24 w-24 -translate-y-8 translate-x-8 rounded-full bg-surface-alt opacity-20 transition-transform group-hover:scale-150" />
       <div className="flex items-center justify-between mb-4">
          <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", bg, color)}>
@@ -153,7 +153,7 @@ function StatCard({ label, value, subtitle, icon: Icon, color, bg }: any) {
 
 function QuickLink({ to, label }: { to: string, label: string }) {
    return (
-      <Link to={to} className="flex items-center justify-between p-3 rounded-lg bg-surface border border-border/50 hover:border-brand hover:text-brand transition-all shadow-sm group">
+      <Link to={to} className="flex items-center justify-between p-3 rounded-lg bg-surface border border-border/50 hover:border-brand hover:text-brand transition-all  group">
          <span className="text-sm font-semibold">{label}</span>
          <ChevronRight className="h-4 w-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
       </Link>

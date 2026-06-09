@@ -30,7 +30,7 @@ export function SheetPage({ isOpen, onClose, title, children, width = "clamp(480
   return createPortal(
     <div className={cn("fixed inset-0 z-50 flex justify-end transition-opacity duration-300", isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
       <div className={cn("absolute inset-0 bg-overlay transition-opacity duration-300", isOpen ? "opacity-100" : "opacity-0")} onClick={onClose} />
-      <div className={cn("relative flex h-full flex-col bg-surface border-l border-border shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]", isOpen ? "translate-x-0" : "translate-x-full")} style={{ width }}>
+      <div className={cn("relative flex h-full flex-col bg-surface border-l border-border  transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]", isOpen ? "translate-x-0" : "translate-x-full")} style={{ width }}>
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-6">
           <h2 className="text-base font-semibold">{title}</h2>
           <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
@@ -63,7 +63,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  "fixed z-50 gap-4 bg-background p-6  transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
   {
     variants: {
       side: {

@@ -270,7 +270,7 @@ function ProposalEditor() {
 
           <Accordion title="Financeiro" defaultOpen>
             <div className="space-y-4">
-              <div className="rounded-xl border border-border/50 bg-surface p-4 shadow-sm">
+              <div className="rounded-xl border border-border/50 bg-surface p-4 ">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-mono text-sm">{money(draft.subtotal, draft.currency)}</span>
@@ -323,7 +323,7 @@ function replaceAt<T>(arr: T[], i: number, item: T): T[] {
 function Accordion({ title, children, defaultOpen }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div className="mb-4 overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-border/50 transition-all">
+    <div className="mb-4 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50 transition-all">
       <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-surface-alt/50 transition-colors">
         <span>{title}</span>
         {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}

@@ -50,7 +50,7 @@ function TripOverview() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
       <form
-        className="space-y-4 rounded-lg border border-border bg-surface p-6 shadow-sm"
+        className="space-y-4 rounded-lg border border-border bg-surface p-6 "
         onSubmit={(e) => {
           e.preventDefault();
           save.mutate({
@@ -92,7 +92,7 @@ function TripOverview() {
       </form>
 
       <aside className="space-y-4">
-        <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+        <div className="rounded-lg border border-border bg-surface p-5 ">
           <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Rentabilidade (P&L)</h3>
           <div className="space-y-3">
              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Volume Vendido</span><span className="font-mono">{money(Number(t.total_sale), t.currency)}</span></div>
@@ -110,7 +110,7 @@ function TripOverview() {
           <Link
             to="/agency/$slug/proposals/$id"
             params={{ slug, id: t.proposal_id }}
-            className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors shadow-sm"
+            className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
           >
             <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">Origem</div>
             <div className="font-medium">Abrir Proposta Original →</div>
@@ -120,7 +120,7 @@ function TripOverview() {
           <Link
             to="/agency/$slug/clients/$id"
             params={{ slug, id: t.client_id }}
-            className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors shadow-sm"
+            className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
           >
             <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">Titular</div>
             <div className="font-medium">Ficha do Cliente →</div>

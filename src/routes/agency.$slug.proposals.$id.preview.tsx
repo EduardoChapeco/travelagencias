@@ -149,7 +149,7 @@ function ProposalPreview() {
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto bg-surface-alt py-8 px-4">
-        <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface shadow-sm overflow-hidden">
+        <div className="mx-auto max-w-2xl rounded-xl border border-border bg-surface  overflow-hidden">
           {/* Agency header */}
           <div className="px-8 pt-8 pb-6 border-b border-border/50">
             <div className="flex items-center justify-between">

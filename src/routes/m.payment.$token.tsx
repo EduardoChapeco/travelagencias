@@ -70,7 +70,7 @@ function Page() {
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background px-4 py-8 md:py-12">
       <header className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface shadow-sm ring-1 ring-border/50">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface  ring-1 ring-border/50">
           <CreditCard className="h-6 w-6 text-brand" />
         </div>
         <h1 className="text-xl font-bold tracking-tight text-foreground">Seu Carnê Digital</h1>
@@ -78,11 +78,11 @@ function Page() {
       </header>
 
       <section className="mb-8 grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center shadow-sm">
+        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center ">
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total Pago</div>
           <div className="mt-2 text-lg font-bold text-success">{totalPaid.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
         </div>
-        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center shadow-sm">
+        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center ">
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Restante</div>
           <div className="mt-2 text-lg font-bold text-foreground">{totalDue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
         </div>
@@ -95,11 +95,11 @@ function Page() {
           
           return (
             <div key={inst.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group cursor-pointer" onClick={() => !isPaid && setSelectedInst(inst)}>
-              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full shadow-sm ring-4 ring-background md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isPaid ? 'bg-success text-white' : isOverdue ? 'bg-danger text-white' : 'bg-surface border border-border text-brand'}`}>
+              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full  ring-4 ring-background md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isPaid ? 'bg-success text-white' : isOverdue ? 'bg-danger text-white' : 'bg-surface border border-border text-brand'}`}>
                 {isPaid ? <CheckCircle2 className="h-3.5 w-3.5" /> : isOverdue ? <AlertCircle className="h-3.5 w-3.5" /> : <div className="h-2 w-2 rounded-full bg-brand" />}
               </div>
               
-              <div className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-xl border bg-surface p-4 shadow-sm transition-all hover:shadow-md ${isPaid ? 'border-success/30 bg-success/5' : isOverdue ? 'border-danger/40 bg-danger/5' : 'border-border/50 hover:border-brand/40'}`}>
+              <div className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-xl border bg-surface p-4  transition-all hover: ${isPaid ? 'border-success/30 bg-success/5' : isOverdue ? 'border-danger/40 bg-danger/5' : 'border-border/50 hover:border-brand/40'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Parcela {index + 1}</div>
                   {isPaid ? (
@@ -140,7 +140,7 @@ function Page() {
               {selectedInst.payment_method === "pix" && selectedInst.external_link ? (
                 <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">PIX Copia e Cola</div>
-                  <div className="break-all rounded-md bg-surface p-3 font-mono text-[10px] text-foreground ring-1 ring-border shadow-inner">
+                  <div className="break-all rounded-md bg-surface p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
                   <PrimaryButton onClick={() => copyToClipboard(selectedInst.external_link!)} className="mt-4 w-full gap-2">

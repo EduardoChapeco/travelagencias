@@ -57,7 +57,7 @@ function SuppliersPage() {
       {q.data && q.data.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
            {q.data.map((s) => (
-              <div key={s.id} className={cn("group rounded-2xl border border-border/50 bg-surface p-5 shadow-sm transition-all hover:shadow-md", s.is_active ? "hover:border-brand/40" : "opacity-70")}>
+              <div key={s.id} className={cn("group rounded-2xl border border-border/50 bg-surface p-5  transition-all hover:", s.is_active ? "hover:border-brand/40" : "opacity-70")}>
                  <div className="flex justify-between items-start mb-4 border-b border-border/50 pb-4">
                     <div className="flex items-center gap-3">
                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt border border-border/50">

@@ -328,7 +328,7 @@ function BusSeatManager({ tourId, layoutId, passengers, onChange }: { tourId: st
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex-1 bg-surface border border-border rounded-xl p-8 shadow-sm overflow-x-auto">
+      <div className="flex-1 bg-surface border border-border rounded-xl p-8  overflow-x-auto">
         <div className="min-w-max mx-auto">
           <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] bg-surface-alt/20 flex items-end justify-center pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Motorista</div>
           <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: "8px" }}>

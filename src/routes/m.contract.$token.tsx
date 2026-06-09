@@ -136,9 +136,9 @@ function Page() {
     <div className="mx-auto min-h-screen max-w-3xl px-4 py-8 md:py-12" id="contract-document">
       <header className="mb-8 flex items-center gap-4">
         {c.agency_logo ? (
-          <img src={c.agency_logo} alt={c.agency_name} className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border/50" />
+          <img src={c.agency_logo} alt={c.agency_name} className="h-12 w-12 rounded-xl object-cover  ring-1 ring-border/50" />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-alt font-bold text-muted-foreground shadow-sm ring-1 ring-border/50">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-alt font-bold text-muted-foreground  ring-1 ring-border/50">
             {c.agency_name.charAt(0)}
           </div>
         )}
@@ -148,7 +148,7 @@ function Page() {
         </div>
       </header>
 
-      <section className="mb-6 overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-border/50">
+      <section className="mb-6 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50">
         <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Resumo Executivo</h2>
         </div>
@@ -167,7 +167,7 @@ function Page() {
         </div>
       </section>
 
-      <section className="mb-8 overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-border/50">
+      <section className="mb-8 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50">
         <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Termos e Cláusulas</h2>
         </div>
@@ -182,7 +182,7 @@ function Page() {
       </section>
 
       {signed ? (
-        <div className="overflow-hidden rounded-xl bg-success-bg shadow-sm ring-1 ring-success/30" id="signature-section">
+        <div className="overflow-hidden rounded-xl bg-success-bg  ring-1 ring-success/30" id="signature-section">
           <div className="flex flex-col items-center justify-center p-8 text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/20 text-success">
               <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -199,7 +199,7 @@ function Page() {
           </div>
         </div>
       ) : (
-        <section className="overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-border/50" id="signature-section">
+        <section className="overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50" id="signature-section">
           <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
             <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Verificação e Assinatura Legal</h2>
           </div>
@@ -213,7 +213,7 @@ function Page() {
               <div className="relative overflow-hidden rounded-xl border border-border/60 bg-surface-alt/10">
                 <canvas ref={sigRef} width={600} height={180} className="touch-none w-full cursor-crosshair"
                   onPointerDown={startDraw} onPointerMove={moveDraw} onPointerUp={endDraw} onPointerLeave={endDraw} />
-                <button type="button" onClick={clearSig} className="absolute bottom-2 right-2 rounded-md bg-surface px-2 py-1 text-[10px] font-semibold text-muted-foreground shadow hover:text-danger transition-colors">
+                <button type="button" onClick={clearSig} className="absolute bottom-2 right-2 rounded-md bg-surface px-2 py-1 text-[10px] font-semibold text-muted-foreground  hover:text-danger transition-colors">
                   Limpar Canvas
                 </button>
               </div>
@@ -222,15 +222,15 @@ function Page() {
             <Field label="Prova de Vida (KYC)">
               {selfie ? (
                 <div className="relative inline-block">
-                  <img src={selfie} alt="selfie de verificação" className="h-32 w-32 rounded-full border-4 border-surface shadow-md object-cover" />
-                  <button type="button" onClick={() => setSelfie(null)} className="absolute bottom-0 right-0 rounded-full bg-danger p-1.5 text-white shadow hover:bg-danger/80">
+                  <img src={selfie} alt="selfie de verificação" className="h-32 w-32 rounded-full border-4 border-surface  object-cover" />
+                  <button type="button" onClick={() => setSelfie(null)} className="absolute bottom-0 right-0 rounded-full bg-danger p-1.5 text-white  hover:bg-danger/80">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>
               ) : (
                 <div className="flex flex-col items-start gap-3">
                   <div className="text-xs text-muted-foreground">Para garantir a autenticidade, precisamos de uma foto do seu rosto no momento da assinatura.</div>
-                  <GhostButton type="button" onClick={takeSelfie} className="rounded-full border-border/50 bg-surface shadow-sm">
+                  <GhostButton type="button" onClick={takeSelfie} className="rounded-full border-border/50 bg-surface ">
                     📷 Iniciar Câmera e Tirar Selfie
                   </GhostButton>
                 </div>

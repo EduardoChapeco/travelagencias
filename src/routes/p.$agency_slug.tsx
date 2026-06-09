@@ -42,7 +42,7 @@ function Page() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center justify-center">
-          {agency.logo_url && <img src={agency.logo_url} alt={agency.name} className="mb-6 h-24 w-24 rounded-2xl object-cover shadow-xl shadow-brand/10 ring-4 ring-surface" />}
+          {agency.logo_url && <img src={agency.logo_url} alt={agency.name} className="mb-6 h-24 w-24 rounded-2xl object-cover   ring-4 ring-surface" />}
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{agency.name}</h1>
           {company?.short_description && <p className="mx-auto mt-4 max-w-xl text-muted-foreground font-medium">{company.short_description}</p>}
         </div>
@@ -54,14 +54,14 @@ function Page() {
             <h2 className="mb-8 text-2xl font-bold tracking-tight">Próximas viagens em grupo</h2>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {tours.map((t) => (
-                <Link key={t.id} to="/p/$agency_slug/tour/$id" params={{ agency_slug, id: t.id }} className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface shadow-sm transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5">
+                <Link key={t.id} to="/p/$agency_slug/tour/$id" params={{ agency_slug, id: t.id }} className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface  transition-all hover:-translate-y-1 hover:border-brand/40 hover: hover:">
                   <div className="relative aspect-video overflow-hidden">
                      {t.cover_image_url ? (
                        <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                      ) : (
                        <div className="h-full w-full bg-surface-alt" />
                      )}
-                     <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-xs font-bold shadow-sm backdrop-blur-sm">
+                     <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-xs font-bold  backdrop-blur-sm">
                         {t.departure_date ? new Date(t.departure_date).toLocaleDateString("pt-BR") : "A Confirmar"}
                      </div>
                   </div>

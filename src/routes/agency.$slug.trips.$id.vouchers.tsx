@@ -530,7 +530,7 @@ function VoucherEditor({
   const passengers = draft.passengers ?? [];
 
   return (
-    <div className="bg-surface border border-border/60 rounded-xl p-6 shadow-sm">
+    <div className="bg-surface border border-border/60 rounded-xl p-6 ">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
            <button onClick={onCancel} className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-surface-alt transition-colors"><ArrowLeft className="h-4 w-4" /></button>

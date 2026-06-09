@@ -112,7 +112,7 @@ function BusLayoutEditorPage() {
 
       <div className="flex justify-center mt-6">
         <div 
-           className="bg-surface border border-border rounded-xl p-8 shadow-sm"
+           className="bg-surface border border-border rounded-xl p-8 "
            style={{ display: 'grid', gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`, gap: '12px' }}
         >
           {map.map((cell, idx) => (

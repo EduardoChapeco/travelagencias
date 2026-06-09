@@ -99,11 +99,11 @@ function VisasPage() {
                const statusStyle = STATUS_INFO[v.status] || STATUS_INFO.pending_docs;
                
                return (
-                  <div key={v.id} className="group flex flex-col justify-between rounded-xl border border-border/50 bg-surface p-5 shadow-sm transition-all hover:border-brand/30 hover:shadow-md">
+                  <div key={v.id} className="group flex flex-col justify-between rounded-xl border border-border/50 bg-surface p-5  transition-all hover:border-brand/30 hover:">
                      <div>
                         <div className="mb-4 flex items-start justify-between">
                            <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt ring-1 ring-border shadow-sm">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt ring-1 ring-border ">
                                  <Globe className="h-5 w-5 text-brand" />
                               </div>
                               <div>

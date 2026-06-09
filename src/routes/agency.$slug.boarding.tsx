@@ -203,7 +203,7 @@ function Column({ stage, cards, slug }: { stage: any; cards: Card[]; slug: strin
     >
       <div className="flex items-center justify-between border-b border-border/50 bg-surface-alt/20 px-4 py-3">
         <div className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full ring-2 ring-surface shadow-sm" style={{ background: stage.color }} />
+          <span className="h-2.5 w-2.5 rounded-full ring-2 ring-surface " style={{ background: stage.color }} />
           <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">{stage.name}</span>
           <span className="flex h-5 items-center justify-center rounded-md bg-surface-alt px-2 text-[10px] font-bold text-muted-foreground ring-1 ring-border/50">
             {cards.length}
@@ -239,7 +239,7 @@ function CardView({ card, slug, dragAttributes, dragging }: { card: Card; slug?:
     <div
       {...(dragAttributes ?? {})}
       className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all active:cursor-grabbing ${
-        dragging ? "border-brand shadow-2xl scale-105 z-50 rotate-2 opacity-90" : "border-border/50 hover:border-brand/40 shadow-sm hover:shadow-md"
+        dragging ? "border-brand  scale-105 z-50 rotate-2 opacity-90" : "border-border/50 hover:border-brand/40  hover:"
       }`}
     >
       <div className="flex items-start gap-3">

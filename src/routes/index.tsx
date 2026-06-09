@@ -115,12 +115,12 @@ function Landing() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-brand/20 rounded-[100%] blur-[120px] pointer-events-none opacity-50" />
 
         <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-          <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand shadow-sm">
+          <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand ">
             <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span></span>
             A Nova Era do Turismo B2B
           </div>
 
-          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-foreground md:text-7xl drop-shadow-sm leading-[1.1]">
+          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-foreground md:text-7xl drop- leading-[1.1]">
             O Sistema Operacional da <span className="text-brand">sua Agência.</span>
           </h1>
 
@@ -130,7 +130,7 @@ function Landing() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/auth/register" className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-widest text-brand-foreground shadow-xl shadow-brand/20 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/40 overflow-hidden">
+            <Link to="/auth/register" className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-widest text-brand-foreground   transition-all hover:-translate-y-1 hover: hover: overflow-hidden">
                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                <span className="relative flex items-center gap-2">Criar minha agência <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
             </Link>
@@ -149,7 +149,7 @@ function Landing() {
         <div className="relative z-10 mx-auto mt-20 max-w-4xl px-6">
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
              {stats.map((s, i) => (
-               <div key={i} className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/80 p-8 shadow-lg backdrop-blur-md transition-transform hover:-translate-y-1">
+               <div key={i} className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/80 p-8  backdrop-blur-md transition-transform hover:-translate-y-1">
                  <div className="text-4xl font-extrabold text-foreground">{s.value}</div>
                  <div className="mt-2 text-xs uppercase tracking-widest font-bold text-muted-foreground">{s.label}</div>
                </div>
@@ -177,7 +177,7 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 hover:border-brand/40",
+                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8  transition-all hover: hover:-translate-y-1 hover:border-brand/40",
                      i === 0 || i === 3 ? "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-surface to-surface-alt" : ""
                   )}
                 >
@@ -242,7 +242,7 @@ function Landing() {
          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
          
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-sm mb-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight drop- mb-6">
             O seu próximo nível em Turismo começa aqui.
           </h2>
           <p className="mt-4 text-lg font-medium opacity-90 max-w-2xl mx-auto mb-10">
@@ -252,7 +252,7 @@ function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-background px-10 text-sm font-bold uppercase tracking-widest text-brand shadow-2xl transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] overflow-hidden"
+              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-background px-10 text-sm font-bold uppercase tracking-widest text-brand  transition-all hover:-translate-y-1 hover:)] overflow-hidden"
             >
               Criar Conta B2B <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>

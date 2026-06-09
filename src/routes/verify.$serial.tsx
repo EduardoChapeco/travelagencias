@@ -35,7 +35,7 @@ function Page() {
 
   return (
     <div className="mx-auto min-h-screen max-w-xl px-4 py-12 md:py-20">
-      <div className="overflow-hidden rounded-2xl bg-surface shadow-sm ring-1 ring-border/50">
+      <div className="overflow-hidden rounded-2xl bg-surface  ring-1 ring-border/50">
         <div className="border-b border-border/50 bg-surface-alt/30 px-6 py-4 text-center">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sistema de Autenticidade TravelOS</h2>
         </div>

@@ -230,7 +230,7 @@ function ClientTripDetail() {
                <Plane className="h-4 w-4" />
                <span className="text-xs uppercase tracking-widest font-semibold">{trip.code ?? "VIAGEM"}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight drop-shadow-lg leading-tight">{trip.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight drop- leading-tight">{trip.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-medium text-white/90">
                {trip.destination && (
                   <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-300" /> {trip.destination}</span>
@@ -243,7 +243,7 @@ function ClientTripDetail() {
       </div>
 
       {/* ── Flutuante de Status / Regressiva (Glassmorphism) ────────────────── */}
-      <div className="relative z-10 mx-6 -mt-8 flex items-center justify-between rounded-2xl bg-white/80 p-5 shadow-xl ring-1 ring-black/5 backdrop-blur-xl">
+      <div className="relative z-10 mx-6 -mt-8 flex items-center justify-between rounded-2xl bg-white/80 p-5  ring-1 ring-black/5 backdrop-blur-xl">
          <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Status da Jornada</div>
             <div className="mt-1 flex items-center gap-2">
@@ -271,7 +271,7 @@ function ClientTripDetail() {
                    {trip.pnr && (
                      <div className="mb-4 flex items-center justify-between">
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Código de Reserva</span>
-                        <span className="text-lg font-mono font-black text-slate-900 rounded bg-white px-3 py-1 shadow-sm ring-1 ring-slate-200">{trip.pnr}</span>
+                        <span className="text-lg font-mono font-black text-slate-900 rounded bg-white px-3 py-1  ring-1 ring-slate-200">{trip.pnr}</span>
                      </div>
                    )}
                    <div className="space-y-4">
@@ -303,7 +303,7 @@ function ClientTripDetail() {
              <AppWidget title="Hospedagem" icon={<Hotel className="h-5 w-5 text-indigo-500" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    {voucher.accommodation.map((h, i) => (
-                      <div key={i} className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                      <div key={i} className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100  hover: transition-">
                          <div className="h-24 bg-gradient-to-r from-indigo-50 to-purple-50 flex items-center justify-center border-b border-slate-100">
                             <Hotel className="h-8 w-8 text-indigo-200" />
                          </div>
@@ -333,7 +333,7 @@ function ClientTripDetail() {
              <AppWidget title="Equipe de Viagem" icon={<Users className="h-5 w-5 text-teal-500" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                    {passengers.map((p) => (
-                      <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 shadow-sm">
+                      <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 ">
                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-600 font-bold">
                             {p.full_name.charAt(0)}
                          </div>
@@ -361,7 +361,7 @@ function ClientTripDetail() {
         <div className="space-y-6">
            
            {/* Resumo Financeiro iOS Style */}
-           <div className="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-2xl text-white relative overflow-hidden">
+           <div className="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-6  text-white relative overflow-hidden">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
               <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-brand/20 blur-2xl" />
               
@@ -389,7 +389,7 @@ function ClientTripDetail() {
               <AppWidget title="Suas Parcelas" icon={<CreditCard className="h-5 w-5 text-emerald-500" />}>
                  <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                     {installments.map((inst) => (
-                       <div key={inst.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-white p-3 shadow-sm hover:border-emerald-200 transition-colors">
+                       <div key={inst.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-white p-3  hover:border-emerald-200 transition-colors">
                           <div className="flex items-center gap-3">
                              <div className={`flex h-10 w-10 items-center justify-center rounded-full ${inst.status === "paid" ? "bg-success/10 text-success" : inst.status === "late" ? "bg-danger/10 text-danger" : "bg-slate-100 text-slate-500"}`}>
                                 {inst.status === "paid" ? <CheckCircle className="h-5 w-5" /> : inst.status === "late" ? <AlertCircle className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
@@ -444,7 +444,7 @@ function ClientTripDetail() {
            
            {/* Emergency Button */}
            {voucher?.emergency_contacts && voucher.emergency_contacts.length > 0 && (
-              <a href={`tel:${voucher.emergency_contacts[0].phone}`} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-danger p-4 text-sm font-bold text-white shadow-lg shadow-danger/20 hover:bg-danger-600 transition-colors">
+              <a href={`tel:${voucher.emergency_contacts[0].phone}`} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-danger p-4 text-sm font-bold text-white   hover:bg-danger-600 transition-colors">
                  <Phone className="h-5 w-5" />
                  LIGAR PARA EMERGÊNCIA
               </a>
@@ -460,7 +460,7 @@ function ClientTripDetail() {
 
 function AppWidget({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-slate-100">
+    <div className="rounded-3xl bg-white p-5 )] ring-1 ring-slate-100">
       <div className="mb-4 flex items-center gap-2">
         {icon}
         <h3 className="text-sm font-black text-slate-800 tracking-tight">{title}</h3>
