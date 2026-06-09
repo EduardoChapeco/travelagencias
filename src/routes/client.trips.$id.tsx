@@ -83,7 +83,6 @@ const INST_STATUS: Record<string, string> = {
 function ClientTripDetail() {
   const { id } = useParams({ from: "/client/trips/$id" });
 
-  // Get authenticated user's client records
   const { data: clientIds } = useQuery({
     queryKey: ["client-ids"],
     queryFn: async () => {
@@ -143,12 +142,6 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-installments", id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("payment_installments")
-        .select("id, number, due_date, amount, status, paid_at")
-        .eq("agency_id", tripQ.data!.id) // via payment_plans join — query via trip
-        .order("number");
-      // Note: proper query via payment_plans
       const { data: plans } = await supabase
         .from("payment_plans")
         .select("id")
@@ -202,22 +195,18 @@ function ClientTripDetail() {
   const installments = installmentsQ.data ?? [];
   const passengers = passengersQ.data ?? [];
   const outstanding = (trip.total_sale ?? 0) - (trip.total_paid ?? 0);
-  const paidCount = installments.filter((i) => i.status === "paid").length;
 
-  // Contador Regressivo
   const now = new Date();
   const start = trip.travel_start ? new Date(trip.travel_start) : null;
   const daysToTrip = start ? Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
 
-  // Imagem de capa dinâmica (fallback para Unsplash baseada no destino)
   const coverImage = `https://source.unsplash.com/1600x900/?${encodeURIComponent(trip.destination || "travel,resort")}`;
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
-      {/* ── Immersive Hero Header (App Style) ─────────────────────────────────── */}
-      <div className="relative h-[40vh] min-h-[300px] w-full bg-slate-900">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="relative h-[40vh] min-h-[300px] w-full bg-foreground">
          <img src={coverImage} alt="Destino" className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-overlay" />
-         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+         <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent" />
          
          <div className="absolute top-4 left-4">
             <Link to="/client/trips" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/30 transition-all">
@@ -230,22 +219,21 @@ function ClientTripDetail() {
                <Plane className="h-4 w-4" />
                <span className="text-xs uppercase tracking-widest font-semibold">{trip.code ?? "VIAGEM"}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight drop- leading-tight">{trip.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight">{trip.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-medium text-white/90">
                {trip.destination && (
-                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-300" /> {trip.destination}</span>
+                  <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-light" /> {trip.destination}</span>
                )}
                {trip.travel_start && (
-                  <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4 text-brand-300" /> {fmtDate(trip.travel_start)} → {fmtDate(trip.travel_end)}</span>
+                  <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4 text-brand-light" /> {fmtDate(trip.travel_start)} → {fmtDate(trip.travel_end)}</span>
                )}
             </div>
          </div>
       </div>
 
-      {/* ── Flutuante de Status / Regressiva (Glassmorphism) ────────────────── */}
-      <div className="relative z-10 mx-6 -mt-8 flex items-center justify-between rounded-2xl bg-white/80 p-5  ring-1 ring-black/5 backdrop-blur-xl">
+      <div className="relative z-10 mx-6 -mt-8 flex items-center justify-between rounded-2xl bg-surface/80 p-5 ring-1 ring-border/50 backdrop-blur-xl">
          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Status da Jornada</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Status da Jornada</div>
             <div className="mt-1 flex items-center gap-2">
                <StatusBadge tone={trip.status === "confirmed" ? "success" : trip.status === "in_progress" ? "info" : trip.status === "cancelled" ? "danger" : "neutral"}>
                   {TRIP_STATUS[trip.status] ?? trip.status}
@@ -255,40 +243,37 @@ function ClientTripDetail() {
          {daysToTrip !== null && daysToTrip > 0 && (
             <div className="text-right">
                <div className="text-[10px] font-bold uppercase tracking-widest text-brand">Contagem Regressiva</div>
-               <div className="mt-1 text-2xl font-black text-slate-800 tracking-tighter">{daysToTrip} <span className="text-sm font-medium text-slate-500">Dias</span></div>
+               <div className="mt-1 text-2xl font-black text-foreground tracking-tighter">{daysToTrip} <span className="text-sm font-medium text-muted-foreground">Dias</span></div>
             </div>
          )}
       </div>
 
       <div className="mx-6 mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
         
-        {/* ── Coluna Esquerda: O Itinerário e Passageiros ───────────────────── */}
         <div className="space-y-6">
-          {/* Timeline de Voos */}
           {(trip.airline || trip.pnr || voucher?.flights?.length) && (
-             <AppWidget title="Localizador e Voos" icon={<Plane className="h-5 w-5 text-sky-500" />}>
-                <div className="rounded-xl bg-slate-50 p-4 border border-slate-100">
+             <AppWidget title="Localizador e Voos" icon={<Plane className="h-5 w-5 text-info" />}>
+                <div className="rounded-xl bg-surface-alt p-4 border border-border">
                    {trip.pnr && (
                      <div className="mb-4 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Código de Reserva</span>
-                        <span className="text-lg font-mono font-black text-slate-900 rounded bg-white px-3 py-1  ring-1 ring-slate-200">{trip.pnr}</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Código de Reserva</span>
+                        <span className="text-lg font-mono font-black text-foreground rounded bg-surface px-3 py-1 ring-1 ring-border">{trip.pnr}</span>
                      </div>
                    )}
                    <div className="space-y-4">
                      {voucher?.flights.map((f, i) => (
                        <div key={i} className="relative pl-6">
-                          {/* Timeline dot */}
-                          <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 border-sky-500 bg-white" />
-                          {i !== voucher.flights.length - 1 && <div className="absolute left-1.5 top-4 h-full w-px bg-slate-200" />}
+                          <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full border-2 border-info bg-surface" />
+                          {i !== voucher.flights.length - 1 && <div className="absolute left-1.5 top-4 h-full w-px bg-border" />}
                           
                           <div className="flex items-start justify-between">
                              <div>
-                                <div className="font-bold text-slate-800 text-sm">{f.origin} <ArrowLeft className="inline h-3 w-3 rotate-180 text-slate-400 mx-1" /> {f.destination}</div>
-                                <div className="text-xs font-medium text-slate-500 mt-0.5">{f.airline} {f.flight_number}</div>
+                                <div className="font-bold text-foreground text-sm">{f.origin} <ArrowLeft className="inline h-3 w-3 rotate-180 text-muted-foreground mx-1" /> {f.destination}</div>
+                                <div className="text-xs font-medium text-muted-foreground mt-0.5">{f.airline} {f.flight_number}</div>
                              </div>
                              <div className="text-right">
-                                <div className="text-xs font-bold text-slate-700">{fmtDate(f.date)}</div>
-                                <div className="text-[11px] font-medium text-slate-400 mt-0.5">{f.departure_time} - {f.arrival_time}</div>
+                                <div className="text-xs font-bold text-foreground">{fmtDate(f.date)}</div>
+                                <div className="text-[11px] font-medium text-muted-foreground mt-0.5">{f.departure_time} - {f.arrival_time}</div>
                              </div>
                           </div>
                        </div>
@@ -298,26 +283,25 @@ function ClientTripDetail() {
              </AppWidget>
           )}
 
-          {/* Hotel */}
           {voucher?.accommodation && voucher.accommodation.length > 0 && (
-             <AppWidget title="Hospedagem" icon={<Hotel className="h-5 w-5 text-indigo-500" />}>
+             <AppWidget title="Hospedagem" icon={<Hotel className="h-5 w-5 text-info" />}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    {voucher.accommodation.map((h, i) => (
-                      <div key={i} className="group relative overflow-hidden rounded-2xl bg-white border border-slate-100  hover: transition-">
-                         <div className="h-24 bg-gradient-to-r from-indigo-50 to-purple-50 flex items-center justify-center border-b border-slate-100">
-                            <Hotel className="h-8 w-8 text-indigo-200" />
+                      <div key={i} className="group relative overflow-hidden rounded-2xl bg-surface border border-border transition-all">
+                         <div className="h-24 bg-info-bg flex items-center justify-center border-b border-border">
+                            <Hotel className="h-8 w-8 text-info" />
                          </div>
                          <div className="p-4">
-                            <h4 className="font-bold text-slate-800">{h.name}</h4>
-                            <p className="text-xs font-medium text-slate-500 flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" /> {h.city}</p>
-                            <div className="mt-4 flex items-center justify-between text-xs font-semibold text-slate-600 bg-slate-50 rounded-lg p-2">
+                            <h4 className="font-bold text-foreground">{h.name}</h4>
+                            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" /> {h.city}</p>
+                            <div className="mt-4 flex items-center justify-between text-xs font-semibold text-foreground bg-surface-alt rounded-lg p-2">
                                <div className="text-center">
-                                  <div className="text-[9px] uppercase tracking-wider text-slate-400">Check-in</div>
+                                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Check-in</div>
                                   <div>{fmtDate(h.checkin)}</div>
                                </div>
-                               <ArrowLeft className="h-3 w-3 rotate-180 text-slate-300" />
+                               <ArrowLeft className="h-3 w-3 rotate-180 text-muted-foreground" />
                                <div className="text-center">
-                                  <div className="text-[9px] uppercase tracking-wider text-slate-400">Check-out</div>
+                                  <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Check-out</div>
                                   <div>{fmtDate(h.checkout)}</div>
                                </div>
                             </div>
@@ -328,24 +312,23 @@ function ClientTripDetail() {
              </AppWidget>
           )}
 
-          {/* Passageiros KYC */}
           {passengers.length > 0 && (
-             <AppWidget title="Equipe de Viagem" icon={<Users className="h-5 w-5 text-teal-500" />}>
+             <AppWidget title="Equipe de Viagem" icon={<Users className="h-5 w-5 text-info" />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                    {passengers.map((p) => (
-                      <div key={p.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 ">
-                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-600 font-bold">
+                      <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3 ">
+                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info-bg text-info font-bold">
                             {p.full_name.charAt(0)}
                          </div>
                          <div className="flex-1 overflow-hidden">
-                            <div className="truncate text-sm font-bold text-slate-800">{p.full_name}</div>
-                            <div className="text-[10px] uppercase font-medium text-slate-400 mt-0.5">{p.document ?? p.cpf ?? "Sem Doc"}</div>
+                            <div className="truncate text-sm font-bold text-foreground">{p.full_name}</div>
+                            <div className="text-[10px] uppercase font-medium text-muted-foreground mt-0.5">{p.document ?? p.cpf ?? "Sem Doc"}</div>
                          </div>
                          <div>
                             {p.data_complete ? (
-                               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success/10 text-success"><CheckCircle className="h-3 w-3" /></div>
+                               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success-bg text-success"><CheckCircle className="h-3 w-3" /></div>
                             ) : (
-                               <a href={`${window.location.origin}/m/passenger/${p.magic_link_token}`} target="_blank" rel="noreferrer" className="flex h-8 items-center justify-center rounded-lg bg-warning/10 px-3 text-[10px] font-bold text-warning-700 hover:bg-warning/20 transition-colors">
+                               <a href={`${window.location.origin}/m/passenger/${p.magic_link_token}`} target="_blank" rel="noreferrer" className="flex h-8 items-center justify-center rounded-lg bg-warning-bg px-3 text-[10px] font-bold text-warning hover:bg-warning-bg/80 transition-colors">
                                   COMPLETAR
                                </a>
                             )}
@@ -357,51 +340,48 @@ function ClientTripDetail() {
           )}
         </div>
 
-        {/* ── Coluna Direita: Financeiro e Documentos (Bento Grid) ──────────── */}
         <div className="space-y-6">
            
-           {/* Resumo Financeiro iOS Style */}
-           <div className="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-6  text-white relative overflow-hidden">
+           <div className="rounded-3xl bg-foreground p-6 text-background relative overflow-hidden">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/5 blur-2xl" />
               <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-brand/20 blur-2xl" />
               
               <div className="relative z-10">
-                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">Total da Viagem</h3>
+                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-background/50 mb-1">Total da Viagem</h3>
                  <div className="text-3xl font-black tracking-tight">{money(trip.total_sale, trip.currency)}</div>
                  
                  <div className="mt-6 space-y-3">
                     <div className="flex items-center justify-between rounded-xl bg-white/10 p-3 backdrop-blur-md">
-                       <span className="text-xs font-medium text-white/70">Total Pago</span>
-                       <span className="text-sm font-bold text-success-300">{money(trip.total_paid ?? 0, trip.currency)}</span>
+                       <span className="text-xs font-medium text-background/70">Total Pago</span>
+                       <span className="text-sm font-bold text-success">{money(trip.total_paid ?? 0, trip.currency)}</span>
                     </div>
                     {outstanding > 0 && (
                        <div className="flex items-center justify-between rounded-xl bg-white/10 p-3 backdrop-blur-md border border-warning/30">
-                          <span className="text-xs font-medium text-warning-300">A Pagar</span>
-                          <span className="text-sm font-black text-warning-400">{money(outstanding, trip.currency)}</span>
+                          <span className="text-xs font-medium text-warning">A Pagar</span>
+                          <span className="text-sm font-black text-warning">{money(outstanding, trip.currency)}</span>
                        </div>
                     )}
                  </div>
               </div>
            </div>
 
-           {/* Painel de Boletos / Parcelas */}
            {installments.length > 0 && (
-              <AppWidget title="Suas Parcelas" icon={<CreditCard className="h-5 w-5 text-emerald-500" />}>
+              <AppWidget title="Suas Parcelas" icon={<CreditCard className="h-5 w-5 text-success" />}>
                  <div className="max-h-[300px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                     {installments.map((inst) => (
-                       <div key={inst.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-white p-3  hover:border-emerald-200 transition-colors">
+                       <div key={inst.id} className="flex items-center justify-between rounded-xl border border-border bg-surface p-3 transition-colors">
                           <div className="flex items-center gap-3">
-                             <div className={`flex h-10 w-10 items-center justify-center rounded-full ${inst.status === "paid" ? "bg-success/10 text-success" : inst.status === "late" ? "bg-danger/10 text-danger" : "bg-slate-100 text-slate-500"}`}>
+                             <div className={`flex h-10 w-10 items-center justify-center rounded-full ${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}>
                                 {inst.status === "paid" ? <CheckCircle className="h-5 w-5" /> : inst.status === "late" ? <AlertCircle className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
                              </div>
                              <div>
-                                <div className="text-xs font-bold text-slate-800">Parcela {inst.number}</div>
-                                <div className="text-[10px] font-medium text-slate-400">Vence em {fmtDate(inst.due_date)}</div>
+                                <div className="text-xs font-bold text-foreground">Parcela {inst.number}</div>
+                                <div className="text-[10px] font-medium text-muted-foreground">Vence em {fmtDate(inst.due_date)}</div>
                              </div>
                           </div>
                           <div className="text-right">
-                             <div className="text-sm font-black text-slate-700">{money(inst.amount, trip.currency)}</div>
-                             <div className={`text-[9px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-slate-400"}`}>
+                             <div className="text-sm font-black text-foreground">{money(inst.amount, trip.currency)}</div>
+                             <div className={`text-[9px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}>
                                 {INST_STATUS[inst.status] ?? inst.status}
                              </div>
                           </div>
@@ -411,40 +391,38 @@ function ClientTripDetail() {
               </AppWidget>
            )}
 
-           {/* Centro de Documentos */}
-           <AppWidget title="Seus Documentos" icon={<FileText className="h-5 w-5 text-rose-500" />}>
+           <AppWidget title="Seus Documentos" icon={<FileText className="h-5 w-5 text-brand" />}>
               <div className="space-y-3">
                  {contract && (
-                    <a href={`/m/contract/${contract.public_token}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-100 hover:bg-slate-100 transition-colors group">
+                    <a href={`/m/contract/${contract.public_token}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl bg-surface-alt p-3 border border-border hover:bg-muted transition-colors group">
                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600 group-hover:scale-105 transition-transform"><FileText className="h-5 w-5" /></div>
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-danger-bg text-danger group-hover:scale-105 transition-transform"><FileText className="h-5 w-5" /></div>
                           <div>
-                             <div className="text-xs font-bold text-slate-800">Contrato de Prestação</div>
-                             <div className="text-[10px] font-medium text-slate-400">{contract.status === "signed" ? "Assinado Eletronicamente" : "Requer sua assinatura"}</div>
+                             <div className="text-xs font-bold text-foreground">Contrato de Prestação</div>
+                             <div className="text-[10px] font-medium text-muted-foreground">{contract.status === "signed" ? "Assinado Eletronicamente" : "Requer sua assinatura"}</div>
                           </div>
                        </div>
-                       <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-rose-500 transition-colors" />
+                       <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-brand transition-colors" />
                     </a>
                  )}
 
                  {voucher?.pdf_url && (
-                    <a href={voucher.pdf_url} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-100 hover:bg-slate-100 transition-colors group">
+                    <a href={voucher.pdf_url} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-xl bg-surface-alt p-3 border border-border hover:bg-muted transition-colors group">
                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-600 group-hover:scale-105 transition-transform"><Ticket className="h-5 w-5" /></div>
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info-bg text-info group-hover:scale-105 transition-transform"><Ticket className="h-5 w-5" /></div>
                           <div>
-                             <div className="text-xs font-bold text-slate-800">Voucher Oficial PDF</div>
-                             <div className="text-[10px] font-medium text-slate-400">Pronto para embarque</div>
+                             <div className="text-xs font-bold text-foreground">Voucher Oficial PDF</div>
+                             <div className="text-[10px] font-medium text-muted-foreground">Pronto para embarque</div>
                           </div>
                        </div>
-                       <Download className="h-4 w-4 text-slate-400 group-hover:text-sky-500 transition-colors" />
+                       <Download className="h-4 w-4 text-muted-foreground group-hover:text-info transition-colors" />
                     </a>
                  )}
               </div>
            </AppWidget>
            
-           {/* Emergency Button */}
            {voucher?.emergency_contacts && voucher.emergency_contacts.length > 0 && (
-              <a href={`tel:${voucher.emergency_contacts[0].phone}`} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-danger p-4 text-sm font-bold text-white   hover:bg-danger-600 transition-colors">
+              <a href={`tel:${voucher.emergency_contacts[0].phone}`} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-danger p-4 text-sm font-bold text-danger-foreground transition-colors">
                  <Phone className="h-5 w-5" />
                  LIGAR PARA EMERGÊNCIA
               </a>
@@ -456,14 +434,12 @@ function ClientTripDetail() {
   );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
 function AppWidget({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rounded-3xl bg-white p-5 )] ring-1 ring-slate-100">
+    <div className="rounded-3xl bg-surface p-5 ring-1 ring-border">
       <div className="mb-4 flex items-center gap-2">
         {icon}
-        <h3 className="text-sm font-black text-slate-800 tracking-tight">{title}</h3>
+        <h3 className="text-sm font-black text-foreground tracking-tight">{title}</h3>
       </div>
       {children}
     </div>

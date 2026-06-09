@@ -10,7 +10,11 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import "nprogress/nprogress.css";
+import nprogress from "nprogress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+
+nprogress.configure({ showSpinner: false, speed: 400, minimum: 0.2 });
 
 function NotFoundComponent() {
   return (
@@ -134,9 +138,19 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 import { Toaster } from "sonner";
+import { useRouterState } from "@tanstack/react-router";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const isLoading = useRouterState({ select: (s: any) => s.status === "pending" });
+
+  useEffect(() => {
+    if (isLoading) {
+      nprogress.start();
+    } else {
+      nprogress.done();
+    }
+  }, [isLoading]);
 
   return (
     <QueryClientProvider client={queryClient}>

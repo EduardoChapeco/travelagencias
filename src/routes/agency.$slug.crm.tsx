@@ -51,13 +51,9 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["leads", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("id, stage_id, name, email, phone, destination, estimated_value, pax_count, position, created_at")
-        .eq("agency_id", agency!.id)
-        .order("position");
+      const { data, error } = await supabase.rpc("get_crm_leads", { _agency_id: agency!.id });
       if (error) throw error;
-      return data as Lead[];
+      return (data as Lead[]).sort((a, b) => a.position - b.position);
     },
   });
 
@@ -243,7 +239,7 @@ function Column({ stage, leads, slug }: { stage: Stage; leads: Lead[]; slug: str
           <span className="h-2.5 w-2.5 rounded-full ring-2 ring-surface " style={{ background: stage.color }} />
           <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">{stage.name}</span>
           <span className="flex h-5 items-center justify-center rounded-md bg-surface-alt px-2 text-[10px] font-bold text-muted-foreground ring-1 ring-border/50">
-            {leads.length}
+            {leads.length}{(stage.is_won || stage.is_lost) && leads.length >= 50 ? "+" : ""}
           </span>
         </div>
       </div>
@@ -252,6 +248,11 @@ function Column({ stage, leads, slug }: { stage: Stage; leads: Lead[]; slug: str
           {leads.map((lead) => (
             <SortableLead key={lead.id} lead={lead} slug={slug} />
           ))}
+          {(stage.is_won || stage.is_lost) && leads.length >= 50 && (
+            <div className="text-center text-[10px] text-muted-foreground pt-2 font-medium uppercase tracking-wider">
+              Apenas os últimos 50 visíveis
+            </div>
+          )}
           {leads.length === 0 && (
             <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               Arraste um card para cá

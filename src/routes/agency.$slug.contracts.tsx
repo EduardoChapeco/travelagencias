@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
   head: () => ({ meta: [{ title: "Contratos · TravelOS" }] }),
@@ -26,19 +27,21 @@ type ContractRow = {
 function ContractsPage() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/contracts" });
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["contracts", agency?.id],
+    queryKey: ["contracts", agency?.id, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error, count } = await supabase
         .from("contracts")
-        .select("id, trip_id, version, status, total_value, signed_at, created_at, package_summary, client_data")
+        .select("id, trip_id, version, status, total_value, signed_at, created_at, package_summary, client_data", { count: "exact" })
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
-      return data as unknown as ContractRow[];
+      return { data: (data as unknown as ContractRow[]) ?? [], count: count ?? 0 };
     },
   });
 
@@ -50,14 +53,15 @@ function ContractsPage() {
       />
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && (
+      {q.data?.data.length === 0 && (
         <EmptyState
           title="Nenhum contrato ainda"
           description="Gere o contrato a partir da página de cada viagem confirmada."
         />
       )}
-      {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
+      {q.data && q.data.data.length > 0 && (
+        <>
+          <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -70,7 +74,7 @@ function ContractsPage() {
               </tr>
             </thead>
             <tbody>
-              {q.data.map((c) => (
+              {q.data.data.map((c) => (
                 <tr key={c.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5">
                     <Link
@@ -99,6 +103,17 @@ function ContractsPage() {
             </tbody>
           </table>
         </div>
+        
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(q.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
+            <GhostButton disabled={page * pageSize >= q.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+          </div>
+        </div>
+      </>
       )}
     </>
   );

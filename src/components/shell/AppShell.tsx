@@ -14,12 +14,27 @@ export function AppShell({
   children?: ReactNode;
 }) {
   const [aiOpen, setAiOpen] = useState(false);
+  const [isPinned, setIsPinned] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("sidebar-pinned") === "true";
+    }
+    return false;
+  });
+
+  const togglePin = () => {
+    setIsPinned((v) => {
+      const next = !v;
+      localStorage.setItem("sidebar-pinned", String(next));
+      return next;
+    });
+  };
+
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
-      <AppSidebar />
+      <AppSidebar isPinned={isPinned} onTogglePin={togglePin} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">

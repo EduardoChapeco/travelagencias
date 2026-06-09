@@ -46,9 +46,9 @@ function Dashboard() {
 
       {/* MÉTRICAS PRINCIPAIS (BENTO TOP) */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={BarChart3} label="Pipeline Ativo" value={s ? brl(s.pipelineValue) : "—"} subtitle="Total estimado" color="text-blue-500" bg="bg-blue-500/10" />
-        <StatCard icon={Wallet} label="Receita Geração" value={s ? brl(s.wonValue) : "—"} subtitle="De leads fechados" color="text-brand" bg="bg-brand/10" />
-        <StatCard icon={Users} label="Total de Leads" value={s?.totalLeads ?? "—"} subtitle="No CRM" color="text-orange-500" bg="bg-orange-500/10" />
+        <StatCard icon={BarChart3} label="Pipeline Ativo" value={s ? brl(s.pipelineValue) : "—"} subtitle="Total estimado" color="text-info" bg="bg-info-bg" />
+        <StatCard icon={TrendingUp} label="Vendas Fechadas" value={s ? brl(s.wonValue) : "—"} subtitle="No mês atual" color="text-success" bg="bg-success-bg" />
+        <StatCard icon={Users} label="Total de Leads" value={s?.totalLeads ?? "—"} subtitle="No CRM" color="text-warning" bg="bg-warning-bg" />
         <StatCard icon={TrendingUp} label="Taxa Conversão" value={s ? `${s.conversionRate}%` : "—"} subtitle="Eficácia de vendas" color="text-success" bg="bg-success/10" />
       </div>
 

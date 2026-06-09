@@ -23,7 +23,7 @@ function AcceptInvitePage() {
       const { data } = await supabase.from("agency_invites").select("email, role, accepted_at, expires_at, agency_id").eq("token", token).maybeSingle();
       setInvite(data);
       if (data) {
-        const { data: a } = await supabase.from("agencies").select("name, slug").eq("id", data.agency_id).maybeSingle();
+        const { data: a } = await supabase.rpc("get_public_agency_by_id", { _id: data.agency_id }).maybeSingle();
         setAgencyName(a?.name ?? "");
       }
       const { data: u } = await supabase.auth.getUser();
@@ -38,7 +38,7 @@ function AcceptInvitePage() {
     setSubmitting(false);
     if (error) return toast.error(error.message);
     toast.success("Convite aceito");
-    const { data: a } = await supabase.from("agencies").select("slug").eq("id", data as unknown as string).maybeSingle();
+    const { data: a } = await supabase.rpc("get_public_agency_by_id", { _id: data as unknown as string }).maybeSingle();
     if (a?.slug) navigate({ to: "/agency/$slug", params: { slug: a.slug } });
   }
 

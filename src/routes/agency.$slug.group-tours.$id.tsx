@@ -233,7 +233,7 @@ function ItineraryEditor({ tourId, days, onUpdate }: { tourId: string; days: Iti
             <div className="font-semibold">{d.title}</div>
             {d.description_md && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{d.description_md}</p>}
           </div>
-          <button onClick={() => handleRemove(d.day_number)} className="text-muted-foreground hover:text-red-500 p-2"><Trash2 className="h-4 w-4" /></button>
+          <button onClick={() => handleRemove(d.day_number)} className="text-muted-foreground hover:text-danger p-2"><Trash2 className="h-4 w-4" /></button>
         </div>
       ))}
 
@@ -346,8 +346,8 @@ function BusSeatManager({ tourId, layoutId, passengers, onChange }: { tourId: st
                       cell.type === "seat" && !isOccupied && "border-border/60 bg-surface hover:border-brand hover:text-brand",
                       cell.type === "seat" && isOccupied && "border-brand bg-brand/10 text-brand",
                       cell.type === "aisle" && "border-dashed border-border/30 bg-transparent text-transparent",
-                      cell.type === "wc" && "border-blue-200 bg-blue-50/50 text-blue-600 opacity-70",
-                      cell.type === "door" && "border-orange-200 bg-orange-50/50 text-orange-600 opacity-70",
+                      cell.type === "wc" && "border-info/30 bg-info-bg text-info opacity-70",
+                      cell.type === "door" && "border-warning/30 bg-warning-bg text-warning opacity-70",
                     )}
                   >
                     {cell.label}

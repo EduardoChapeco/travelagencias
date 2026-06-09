@@ -12,7 +12,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-post", agency_slug, slug],
     queryFn: async () => {
-      const { data: agency } = await supabase.from("agencies").select("id, name").eq("slug", agency_slug).maybeSingle();
+      const { data: agency } = await supabase.rpc("get_public_agency_by_slug", { _slug: agency_slug }).maybeSingle();
       if (!agency) return null;
       const { data: post } = await supabase.from("blog_posts").select("*").eq("agency_id", agency.id).eq("slug", slug).eq("status", "published").maybeSingle();
       return { agency, post };

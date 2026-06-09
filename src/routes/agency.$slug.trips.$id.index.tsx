@@ -99,7 +99,7 @@ function TripOverview() {
              <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Custo Fornecedores</span><span className="font-mono">{money(Number(t.total_cost), t.currency)}</span></div>
              <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
                <span className="text-sm font-semibold">Lucro Líquido Estimado</span>
-               <span className={`font-mono text-base font-bold ${margin > 0 ? "text-emerald-600" : margin < 0 ? "text-red-500" : "text-muted-foreground"}`}>
+               <span className={`font-mono text-base font-bold ${margin > 0 ? "text-success" : margin < 0 ? "text-danger" : "text-muted-foreground"}`}>
                  {margin > 0 ? "+" : ""}{money(margin, t.currency)}
                </span>
              </div>

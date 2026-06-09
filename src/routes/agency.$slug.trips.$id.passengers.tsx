@@ -31,7 +31,7 @@ function PassengersPage() {
 
   const remove = useMutation({
     mutationFn: async (pid: string) => {
-      const { error } = await supabase.from("trip_passengers").delete().eq("id", pid);
+      const { error } = await supabase.from("trip_passengers").update({ deleted_at: new Date().toISOString() }).eq("id", pid);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["passengers", id] }),

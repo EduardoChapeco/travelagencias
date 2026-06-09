@@ -75,29 +75,29 @@
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #fafafb;
+  --foreground: #09090b;
   --surface: #ffffff;
-  --surface-alt: #f1f5f9;
+  --surface-alt: #f4f4f5;
 
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #09090b;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover-foreground: #09090b;
 
-  --primary: #1e293b;
-  --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --primary: #18181b;
+  --primary-foreground: #fafafb;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
 
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
 
   /* Brand da agência — sobrescrível em runtime */
-  --brand: var(--agency-brand, #1e293b);
-  --brand-light: var(--agency-brand-light, #f1f5f9);
+  --brand: var(--agency-brand, #18181b);
+  --brand-light: var(--agency-brand-light, #f4f4f5);
   --brand-foreground: var(--agency-brand-fg, #ffffff);
 
   --success: #10b981;
@@ -110,24 +110,24 @@
   --info-bg: #eff6ff;
 
   --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #fafafb;
 
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --input: #e2e8f0;
-  --ring: #cbd5e1;
-  --overlay: rgb(15 23 42 / 0.38);
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --input: #e4e4e7;
+  --ring: #18181b;
+  --overlay: rgb(9 9 11 / 0.5);
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #1e293b;
+  --sidebar-foreground: #09090b;
+  --sidebar-primary: #18181b;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #cbd5e1;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #09090b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #d4d4d8;
 
   /* Shell */
   --sidebar-w-collapsed: 48px;
@@ -141,35 +141,35 @@
 }
 
 .dark {
-  --background: #0b1220;
-  --foreground: #f8fafc;
-  --surface: #0f172a;
-  --surface-alt: #111a2d;
-  --card: #0f172a;
-  --card-foreground: #f8fafc;
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
-  --primary: #f8fafc;
-  --primary-foreground: #0f172a;
-  --secondary: #1e293b;
-  --secondary-foreground: #f8fafc;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
-  --border: #1e293b;
-  --border-strong: #334155;
-  --input: #1e293b;
-  --ring: #334155;
-  --overlay: rgb(2 6 23 / 0.62);
-  --sidebar: #0f172a;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #f8fafc;
-  --sidebar-primary-foreground: #0f172a;
-  --sidebar-accent: #1e293b;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #1e293b;
-  --sidebar-ring: #334155;
+  --background: #09090b;
+  --foreground: #fafafb;
+  --surface: #09090b;
+  --surface-alt: #18181b;
+  --card: #09090b;
+  --card-foreground: #fafafb;
+  --popover: #09090b;
+  --popover-foreground: #fafafb;
+  --primary: #fafafb;
+  --primary-foreground: #09090b;
+  --secondary: #18181b;
+  --secondary-foreground: #fafafb;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
+  --accent: #18181b;
+  --accent-foreground: #fafafb;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --input: #27272a;
+  --ring: #d4d4d8;
+  --overlay: rgb(9 9 11 / 0.8);
+  --sidebar: #09090b;
+  --sidebar-foreground: #fafafb;
+  --sidebar-primary: #fafafb;
+  --sidebar-primary-foreground: #09090b;
+  --sidebar-accent: #18181b;
+  --sidebar-accent-foreground: #fafafb;
+  --sidebar-border: #27272a;
+  --sidebar-ring: #3f3f46;
   --highlight-a: #22d3ee;
   --highlight-b: #a78bfa;
   --highlight-c: #34d399;
@@ -209,6 +209,10 @@
 }
 
 @layer utilities {
+  .glass {
+    @apply bg-background/80 backdrop-blur-md border border-border/50;
+  }
+
   .dynamic-highlight-border {
     position: relative;
     isolation: isolate;

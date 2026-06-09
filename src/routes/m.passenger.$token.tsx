@@ -55,7 +55,7 @@ function Page() {
         </div>
       </header>
       {done ? (
-        <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-6 text-center text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
+        <div className="rounded-lg border border-success bg-success-bg p-6 text-center text-sm text-success">
           ✓ Dados enviados com sucesso. Pode fechar esta página.
         </div>
       ) : (

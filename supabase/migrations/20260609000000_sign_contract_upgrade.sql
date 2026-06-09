@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION public.sign_contract_with_token(
   _selfie_image text,
   _ip text,
   _user_agent text,
-  _pdf_data text DEFAULT NULL,
+  _pdf_path text DEFAULT NULL,
   _signed_hash text DEFAULT NULL
 )
 RETURNS text
@@ -30,7 +30,7 @@ BEGIN
     signed_at = now(),
     content_hash = coalesce(_signed_hash, md5(_contract.package_summary)),
     signed_hash = md5(_signature_image),
-    pdf_url = _pdf_data, -- Salvando a base64 diretamente (num cenario real isso vai para o Storage bucket, mas por simplicidade mantemos na coluna de teste se for base64)
+    pdf_url = _pdf_path, -- Caminho salvo no bucket storage (ex: contract-pdfs)
     certificate = jsonb_build_object('serial', _serial, 'issued_at', now()),
     signatures = coalesce(signatures, '[]'::jsonb) || jsonb_build_object(
       'signer_name', _signer_name,

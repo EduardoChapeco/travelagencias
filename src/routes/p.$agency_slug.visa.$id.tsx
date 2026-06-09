@@ -21,7 +21,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-visa", agency_slug, id],
     queryFn: async () => {
-      const { data: agency } = await supabase.from("agencies").select("id, name, slug").eq("slug", agency_slug).maybeSingle();
+      const { data: agency } = await supabase.rpc("get_public_agency_by_slug", { _slug: agency_slug }).maybeSingle();
       if (!agency) return null;
       const { data: form } = await supabase.from("lead_forms").select("*").eq("id", id).eq("agency_id", agency.id).eq("is_active", true).maybeSingle();
       return form ? { agency, form: form as unknown as FormDef } : null;

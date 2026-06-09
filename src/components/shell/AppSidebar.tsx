@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Users,
@@ -47,7 +48,7 @@ const items: NavItem[] = [
   { label: "Configurações", segment: "settings", icon: Settings },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ isPinned, onTogglePin }: { isPinned?: boolean; onTogglePin?: () => void }) {
   const navigate = useNavigate();
   const { agency } = useAgency();
   const params = useParams({ strict: false }) as { slug?: string };
@@ -64,13 +65,22 @@ export function AppSidebar() {
 
   return (
     <SlimSidebar
+      isPinned={isPinned}
+      onTogglePin={onTogglePin}
       items={sidebarItems}
       brand={
         <>
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground">
             {(agency?.name ?? "T").charAt(0).toUpperCase()}
           </div>
-          <span className="ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">
+          <span
+            className={cn(
+              "ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold transition duration-200",
+              isPinned
+                ? "translate-x-0 opacity-100"
+                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100"
+            )}
+          >
             {agency?.name ?? "TravelOS"}
           </span>
         </>
@@ -82,7 +92,16 @@ export function AppSidebar() {
           title="Sair"
         >
           <LogOut className="h-[18px] w-[18px] shrink-0" />
-          <span className="translate-x-1 opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">Sair</span>
+          <span
+            className={cn(
+              "translate-x-1 truncate transition duration-200",
+              isPinned
+                ? "translate-x-0 opacity-100"
+                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100"
+            )}
+          >
+            Sair
+          </span>
         </button>
       }
     />

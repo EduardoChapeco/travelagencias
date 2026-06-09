@@ -1,5 +1,5 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -33,42 +33,48 @@ function CashPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "income" | "expense" | "pending">("all");
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
-  const q = useQuery({
+  // Voltar para página 1 ao trocar filtro
+  useEffect(() => { setPage(1); }, [filter]);
+
+  const totalsQ = useQuery({
     enabled: !!agency,
-    queryKey: ["fin", agency?.id, filter],
+    queryKey: ["fin-totals", agency?.id],
     queryFn: async () => {
-      let qb = supabase
-        .from("financial_records")
-        .select("id, type, category, description, amount, currency, status, due_date, paid_at, payment_method, trip_id, created_at")
-        .eq("agency_id", agency!.id)
-        .order("due_date", { ascending: false, nullsFirst: false })
-        .limit(500);
-      if (filter === "income" || filter === "expense") qb = qb.eq("type", filter);
-      if (filter === "pending") qb = qb.eq("status", "pending");
-      const { data, error } = await qb;
+      const { data, error } = await supabase.rpc("calculate_cash_summary", { _agency_id: agency!.id });
       if (error) throw error;
-      return data as unknown as Record_[];
+      return data as { income: number; expense: number; pending: number; net: number };
     },
   });
 
-  const totals = useMemo(() => {
-    const t = { income: 0, expense: 0, pending: 0 };
-    for (const r of q.data ?? []) {
-      if (r.status === "cancelled") continue;
-      if (r.type === "income") t.income += Number(r.amount);
-      else t.expense += Number(r.amount);
-      if (r.status === "pending") t.pending += Number(r.amount);
-    }
-    return t;
-  }, [q.data]);
+  const q = useQuery({
+    enabled: !!agency,
+    queryKey: ["fin-list", agency?.id, filter, page],
+    queryFn: async () => {
+      let qb = supabase
+        .from("financial_records")
+        .select("id, type, category, description, amount, currency, status, due_date, paid_at, payment_method, trip_id, created_at", { count: "exact" })
+        .eq("agency_id", agency!.id)
+        .order("due_date", { ascending: false, nullsFirst: false })
+        .range((page - 1) * pageSize, page * pageSize - 1);
+        
+      if (filter === "income" || filter === "expense") qb = qb.eq("type", filter);
+      if (filter === "pending") qb = qb.eq("status", "pending");
+      
+      const { data, count, error } = await qb;
+      if (error) throw error;
+      return { data: data as unknown as Record_[], count: count ?? 0 };
+    },
+  });
 
   return (
     <>
       <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Card label="Entradas" value={money(totals.income)} tone="success" icon={<ArrowDownCircle className="h-4 w-4" />} />
-        <Card label="Saídas" value={money(totals.expense)} tone="danger" icon={<ArrowUpCircle className="h-4 w-4" />} />
-        <Card label="Saldo líquido" value={money(totals.income - totals.expense)} tone={totals.income - totals.expense >= 0 ? "success" : "danger"} />
+        <Card label="Entradas" value={money(totalsQ.data?.income ?? 0)} tone="success" icon={<ArrowDownCircle className="h-4 w-4" />} />
+        <Card label="Saídas" value={money(totalsQ.data?.expense ?? 0)} tone="danger" icon={<ArrowUpCircle className="h-4 w-4" />} />
+        <Card label="Saldo líquido" value={money(totalsQ.data?.net ?? 0)} tone={(totalsQ.data?.net ?? 0) >= 0 ? "success" : "danger"} />
       </div>
 
       <div className="mb-4 flex items-center justify-between">
@@ -89,11 +95,12 @@ function CashPage() {
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && <EmptyState title="Sem lançamentos" description="Adicione entradas e despesas para acompanhar o caixa." />}
+      {q.data?.data.length === 0 && <EmptyState title="Sem lançamentos" description="Adicione entradas e despesas para acompanhar o caixa." />}
 
-      {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
+      {q.data && q.data.data.length > 0 && (
+        <>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Descrição</th>
@@ -105,7 +112,7 @@ function CashPage() {
               </tr>
             </thead>
             <tbody>
-              {q.data.map((r) => (
+              {q.data.data.map((r) => (
                 <tr key={r.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5">
                     <div className="font-medium">{r.description ?? "—"}</div>
@@ -121,7 +128,7 @@ function CashPage() {
                     </StatusBadge>
                   </td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(r.due_date)}</td>
-                  <td className={`px-3 py-2.5 text-right font-mono text-xs ${r.type === "income" ? "text-emerald-600" : "text-red-500"}`}>
+                  <td className={`px-3 py-2.5 text-right font-mono text-xs ${r.type === "income" ? "text-success" : "text-danger"}`}>
                     {r.type === "expense" ? "−" : "+"}
                     {money(Number(r.amount), r.currency)}
                   </td>
@@ -130,6 +137,30 @@ function CashPage() {
             </tbody>
           </table>
         </div>
+        
+        {/* Controles de Paginação */}
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(q.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton 
+              disabled={page === 1} 
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              className="h-8 px-3 text-xs"
+            >
+              Anterior
+            </GhostButton>
+            <GhostButton 
+              disabled={page * pageSize >= q.data.count} 
+              onClick={() => setPage(p => p + 1)}
+              className="h-8 px-3 text-xs"
+            >
+              Próxima
+            </GhostButton>
+          </div>
+        </div>
+      </>
       )}
 
       {open && agency && (
@@ -147,7 +178,7 @@ function CashPage() {
 }
 
 function Card({ label, value, tone, icon }: { label: string; value: string; tone: "success" | "danger" | "neutral"; icon?: React.ReactNode }) {
-  const color = tone === "success" ? "text-emerald-600" : tone === "danger" ? "text-red-500" : "text-foreground";
+  const color = tone === "success" ? "text-success" : tone === "danger" ? "text-danger" : "text-foreground";
   return (
     <div className="rounded-lg border border-border bg-surface p-4">
       <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">{icon}{label}</div>

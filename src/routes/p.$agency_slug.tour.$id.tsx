@@ -127,8 +127,8 @@ function Page() {
     }
   }
 
-  const includes = Array.isArray(t.includes) ? t.includes : [];
-  const excludes = Array.isArray(t.excludes) ? t.excludes : [];
+  const includes = Array.isArray(t.includes) ? (t.includes as string[]) : [];
+  const excludes = Array.isArray(t.excludes) ? (t.excludes as string[]) : [];
 
   return (
     <div
@@ -205,7 +205,7 @@ function Page() {
                 {seatMap.map((cell, idx) => {
                   if (cell.type !== "seat") {
                     return (
-                      <div key={idx} className={cn("h-10 w-10 flex items-center justify-center text-[10px] rounded", cell.type === "aisle" && "text-transparent", cell.type === "wc" && "bg-blue-50 text-blue-500", cell.type === "door" && "bg-orange-50 text-orange-500")}>
+                      <div key={idx} className={cn("h-10 w-10 flex items-center justify-center text-[10px] rounded", cell.type === "aisle" && "text-transparent", cell.type === "wc" && "bg-info-bg text-info", cell.type === "door" && "bg-warning-bg text-warning")}>
                         {cell.type === "wc" ? "WC" : cell.type === "door" ? "Porta" : ""}
                       </div>
                     );

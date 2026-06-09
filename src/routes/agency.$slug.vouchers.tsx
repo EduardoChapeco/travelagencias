@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, fmtDate } from "@/components/ui/form";
+import { StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/vouchers")({
   head: () => ({ meta: [{ title: "Vouchers · TravelOS" }] }),
@@ -27,19 +28,22 @@ type Voucher = {
 function VouchersPage() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/vouchers" });
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["vouchers", agency?.id],
+    queryKey: ["vouchers", agency?.id, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, count, error } = await supabase
         .from("vouchers")
-        .select("id, trip_id, destination, source_type, template, general_locator, pdf_url, generated_at, created_at, passengers")
+        .select("id, trip_id, destination, source_type, template, general_locator, pdf_url, generated_at, created_at, passengers", { count: "exact" })
         .eq("agency_id", agency!.id)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
-      return data as unknown as Voucher[];
+      return { data: data as unknown as Voucher[], count: count ?? 0 };
     },
   });
 
@@ -51,15 +55,16 @@ function VouchersPage() {
       />
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && (
+      {q.data && q.data.data.length === 0 && (
         <EmptyState
           title="Nenhum voucher emitido"
           description="Gere vouchers manualmente ou importe PDFs da operadora a partir de cada viagem."
         />
       )}
-      {q.data && q.data.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {q.data.map((v) => (
+      {q.data && q.data.data.length > 0 && (
+        <>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {q.data.data.map((v) => (
             <Link
               key={v.id}
               to="/agency/$slug/trips/$id/vouchers"
@@ -79,6 +84,17 @@ function VouchersPage() {
             </Link>
           ))}
         </div>
+        
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(q.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
+            <GhostButton disabled={page * pageSize >= q.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+          </div>
+        </div>
+        </>
       )}
     </>
   );

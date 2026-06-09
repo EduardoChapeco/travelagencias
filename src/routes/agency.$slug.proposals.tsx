@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/proposals")({
   head: () => ({ meta: [{ title: "Cotações · TravelOS" }] }),
@@ -24,19 +25,22 @@ const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" |
 function ProposalsList() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/proposals" });
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const list = useQuery({
     enabled: !!agency,
-    queryKey: ["proposals", agency?.id],
+    queryKey: ["proposals", agency?.id, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, count, error } = await supabase
         .from("proposals")
-        .select("id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id")
+        .select("id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id", { count: "exact" })
         .eq("agency_id", agency!.id)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
-      return data;
+      return { data, count: count ?? 0 };
     },
   });
 
@@ -58,13 +62,14 @@ function ProposalsList() {
 
       {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
-      {list.data && list.data.length === 0 && (
+      {list.data && list.data.data.length === 0 && (
         <EmptyState title="Nenhuma cotação ainda" description="Crie sua primeira proposta comercial." />
       )}
 
-      {list.data && list.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
+      {list.data && list.data.data.length > 0 && (
+        <>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">#</th>
@@ -76,7 +81,7 @@ function ProposalsList() {
               </tr>
             </thead>
             <tbody>
-              {list.data.map((p) => (
+              {list.data.data.map((p) => (
                 <tr key={p.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">#{p.number}</td>
                   <td className="px-3 py-2.5">
@@ -102,6 +107,17 @@ function ProposalsList() {
             </tbody>
           </table>
         </div>
+        
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(list.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
+            <GhostButton disabled={page * pageSize >= list.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+          </div>
+        </div>
+      </>
       )}
     </>
   );

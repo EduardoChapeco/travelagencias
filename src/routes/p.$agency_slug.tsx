@@ -17,7 +17,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal", agency_slug],
     queryFn: async () => {
-      const { data: agency } = await supabase.from("agencies").select("id, name, logo_url, brand_color, brand_color_fg").eq("slug", agency_slug).maybeSingle();
+      const { data: agency } = await supabase.rpc("get_public_agency_by_slug", { _slug: agency_slug }).maybeSingle();
       if (!agency) return { agency: null, company: null, tours: [], posts: [], pages: [] };
       const [company, tours, posts, pages] = await Promise.all([
         supabase.from("company_profiles").select("*").eq("agency_id", agency.id).maybeSingle(),

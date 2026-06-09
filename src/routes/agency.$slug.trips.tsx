@@ -26,19 +26,21 @@ function TripsList() {
   const { slug } = useParams({ from: "/agency/$slug/trips" });
   const qc = useQueryClient();
   const [newOpen, setNewOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const list = useQuery({
     enabled: !!agency,
-    queryKey: ["trips", agency?.id],
+    queryKey: ["trips", agency?.id, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error, count } = await supabase
         .from("trips")
-        .select("id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id")
+        .select("id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id", { count: "exact" })
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
-      return data;
+      return { data: data ?? [], count: count ?? 0 };
     },
   });
 
@@ -58,12 +60,13 @@ function TripsList() {
       />
 
       {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {list.data && list.data.length === 0 && (
+      {list.data && list.data.data.length === 0 && (
         <EmptyState title="Nenhuma viagem ainda" description="Crie a primeira viagem ou converta uma cotação aceita." />
       )}
 
-      {list.data && list.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
+      {list.data && list.data.data.length > 0 && (
+        <>
+          <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
@@ -76,7 +79,7 @@ function TripsList() {
               </tr>
             </thead>
             <tbody>
-              {list.data.map((t) => (
+              {list.data.data.map((t) => (
                 <tr key={t.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">#{t.number}</td>
                   <td className="px-3 py-2.5">
@@ -97,6 +100,17 @@ function TripsList() {
             </tbody>
           </table>
         </div>
+        
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(list.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
+            <GhostButton disabled={page * pageSize >= list.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+          </div>
+        </div>
+      </>
       )}
 
       {newOpen && agency && (

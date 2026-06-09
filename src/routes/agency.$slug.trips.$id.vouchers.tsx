@@ -259,7 +259,7 @@ function TripVouchers() {
 
   const deleteVoucher = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("vouchers").delete().eq("id", id);
+      const { error } = await supabase.from("vouchers").update({ deleted_at: new Date().toISOString() } as any).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

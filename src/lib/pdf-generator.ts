@@ -27,7 +27,7 @@ export async function generateContractHash(
  * Tira uma "foto" da div especificada e converte para PDF.
  * Retorna uma base64 string DataURL do PDF gerado.
  */
-export async function generateContractPdf(elementId: string): Promise<string> {
+export async function generateContractPdf(elementId: string): Promise<Blob> {
   const element = document.getElementById(elementId);
   if (!element) throw new Error("Elemento do contrato não encontrado na DOM.");
 
@@ -56,6 +56,6 @@ export async function generateContractPdf(elementId: string): Promise<string> {
 
   pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
 
-  // Saída em base64 (DataURL)
-  return pdf.output("datauristring");
+  // Saída otimizada em binário (Blob) para upload
+  return pdf.output("blob");
 }

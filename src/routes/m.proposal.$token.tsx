@@ -48,7 +48,7 @@ function PublicProposalView() {
       if (!p) return null;
       const [{ data: items }, { data: agency }] = await Promise.all([
         supabase.from("proposal_items").select("id, kind, title, description, quantity, unit_price, total, start_date, end_date, position").eq("proposal_id", p.id).order("position"),
-        supabase.from("agencies").select("name, logo_url, brand_color, brand_color_fg").eq("id", p.agency_id).maybeSingle(),
+        supabase.rpc("get_public_agency_by_id", { _id: p.agency_id }).maybeSingle(),
       ]);
       // mark as viewed (fire-and-forget)
       if (!p.decided_at) {
@@ -176,8 +176,8 @@ function PublicProposalView() {
         <section className="mt-8">
           {decided ? (
             <div className="rounded-lg border border-border bg-surface p-5 text-center text-sm">
-              {p.status === "accepted" && <span className="font-semibold text-emerald-600">Proposta aceita em {fmtDate(p.decided_at)}.</span>}
-              {p.status === "rejected" && <span className="font-semibold text-red-500">Proposta recusada em {fmtDate(p.decided_at)}.</span>}
+              {p.status === "accepted" && <span className="font-semibold text-success">Proposta aceita em {fmtDate(p.decided_at)}.</span>}
+              {p.status === "rejected" && <span className="font-semibold text-danger">Proposta recusada em {fmtDate(p.decided_at)}.</span>}
               {!["accepted", "rejected"].includes(p.status) && <span>Sua decisão foi registrada.</span>}
             </div>
           ) : (

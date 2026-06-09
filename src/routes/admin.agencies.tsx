@@ -1,35 +1,165 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const agenciesQueryOptions = queryOptions({
+  queryKey: ["admin-agencies"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("agencies")
+      .select("id, slug, name, logo_url, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    const privates = await supabase.from("agency_private").select("agency_id, email, phone, legal_name, document");
+    const pmap = new Map((privates.data ?? []).map((p) => [p.agency_id, p]));
+    return (data ?? []).map((a) => ({ ...a, priv: pmap.get(a.id) }));
+  },
+});
 
 export const Route = createFileRoute("/admin/agencies")({
   head: () => ({ meta: [{ title: "Agências · Admin" }] }),
+  loader: async ({ context: { queryClient } }) => {
+    return queryClient.ensureQueryData(agenciesQueryOptions);
+  },
   component: Page,
 });
 
+const agencySchema = z.object({
+  name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  slug: z.string().min(3, "Slug deve ter no mínimo 3 caracteres").regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens permitidos"),
+  email: z.string().email("E-mail inválido"),
+  cnpj: z.string().optional(),
+  phone: z.string().optional(),
+});
+
+type AgencyForm = z.infer<typeof agencySchema>;
+
 function Page() {
-  const q = useQuery({
-    queryKey: ["admin-agencies"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agencies")
-        .select("id, slug, name, logo_url, created_at")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      const privates = await supabase.from("agency_private").select("agency_id, email, phone, legal_name, document");
-      const pmap = new Map((privates.data ?? []).map((p) => [p.agency_id, p]));
-      return (data ?? []).map((a) => ({ ...a, priv: pmap.get(a.id) }));
-    },
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<AgencyForm>({
+    resolver: zodResolver(agencySchema),
+    defaultValues: { name: "", slug: "", email: "", cnpj: "", phone: "" }
   });
+
+  const q = useQuery(agenciesQueryOptions);
+
+  async function handleCreate(form: AgencyForm) {
+    setLoading(true);
+    setInviteUrl(null);
+    try {
+      const { data, error } = await supabase.rpc("admin_create_agency_and_invite", {
+        _name: form.name,
+        _slug: form.slug,
+        _owner_email: form.email,
+        _cnpj: form.cnpj || null,
+        _phone: form.phone || null,
+      });
+      if (error) throw error;
+      
+      const payload = data as { agency_id: string; invite_token: string };
+      const url = `${window.location.origin}/m/invite/${payload.invite_token}`;
+      setInviteUrl(url);
+      toast.success("Agência provisionada com sucesso!");
+      reset();
+      q.refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar agência");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleCopy() {
+    if (inviteUrl) {
+      navigator.clipboard.writeText(inviteUrl);
+      toast.success("Link copiado para a área de transferência");
+    }
+  }
 
   return (
     <>
-      <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
+      <div className="flex items-center justify-between">
+        <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if(!v) { setInviteUrl(null); reset(); } }}>
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+              <Plus className="h-4 w-4" /> Nova Agência
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Provisionar Nova Agência</DialogTitle>
+            </DialogHeader>
+            {!inviteUrl ? (
+              <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground">Nome da Agência *</label>
+                  <input {...register("name")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: Viagens Inc." />
+                  {errors.name && <span className="text-xs text-red-500">{errors.name.message}</span>}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground">Slug (URL) *</label>
+                  <input {...register("slug")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: viagens-inc" />
+                  {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground">E-mail do Proprietário *</label>
+                  <input type="email" {...register("email")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="dono@agencia.com" />
+                  {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground">CNPJ</label>
+                    <input {...register("cnpj")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground">Telefone</label>
+                    <input {...register("phone")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                  </div>
+                </div>
+                <button disabled={loading} type="submit" className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+                  {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
+                </button>
+              </form>
+            ) : (
+              <div className="mt-4 flex flex-col gap-4">
+                <div className="rounded-md border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-600 dark:text-green-400">
+                  Agência provisionada no banco de dados! Envie o link abaixo para o proprietário definir a senha e acessar a plataforma.
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground">Link de Convite (Owner)</label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <input readOnly value={inviteUrl} className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground" />
+                    <button onClick={handleCopy} className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt">Copiar</button>
+                  </div>
+                </div>
+                <button type="button" onClick={() => { setOpen(false); setInviteUrl(null); }} className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt">Fechar</button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+      {q.isLoading && (
+        <div className="mt-6 flex flex-col gap-2">
+          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+        </div>
+      )}
       {q.data && q.data.length === 0 && <EmptyState title="Sem agências" />}
       {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="mt-6 overflow-hidden rounded-lg border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground">
               <tr><th className="px-3 py-2 text-left">Agência</th><th className="px-3 py-2 text-left">CNPJ</th><th className="px-3 py-2 text-left">Contato</th><th className="px-3 py-2 text-left">Criada</th></tr>

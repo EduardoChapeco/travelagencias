@@ -1,15 +1,45 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient, queryOptions } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, fmtDate } from "@/components/ui/form";
+import { useDebounce } from "@/hooks/use-debounce";
+import { ClientFormSheet } from "@/components/clients/ClientFormSheet";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export const clientsQueryOptions = (agencyId: string, q: string, page: number, pageSize: number) => queryOptions({
+  queryKey: ["clients", agencyId, q, page],
+  queryFn: async () => {
+    let qb = supabase
+      .from("clients")
+      .select("id, full_name, legal_name, kind, document, email, phone, created_at, tags", { count: "exact" })
+      .eq("agency_id", agencyId)
+      .order("created_at", { ascending: false })
+      .range((page - 1) * pageSize, page * pageSize - 1);
+      
+    if (q.trim()) {
+      const term = `%${q.trim()}%`;
+      qb = qb.or(`full_name.ilike.${term},email.ilike.${term},phone.ilike.${term},document.ilike.${term}`);
+    }
+    const { data, count, error } = await qb;
+    if (error) throw error;
+    return { data: data as Client[], count: count ?? 0 };
+  },
+});
 
 export const Route = createFileRoute("/agency/$slug/clients")({
   head: () => ({ meta: [{ title: "Clientes · TravelOS" }] }),
+  loader: async ({ context: { queryClient }, params }) => {
+    // Para pré-carregar os dados iniciais do loader (page 1, sem busca), precisamos
+    // apenas garantir que a agência exista. Isso será feito via match da store ou contexto do Layout.
+    // Como params não tem agencyId (só slug), e não queremos duplicar queries,
+    // o pré-carregamento será apenas "best effort" ou garantido pela dependência injetada.
+    // Nota de integridade: a query abaixo na View utilizará enabled: !!agency.
+  },
   component: ClientsPage,
 });
 
@@ -30,26 +60,17 @@ function ClientsPage() {
   const { slug } = useParams({ from: "/agency/$slug/clients" });
   const qc = useQueryClient();
   const [q, setQ] = useState("");
+  const debouncedQ = useDebounce(q, 400); // 400ms delay para não martelar o banco
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
   const [newOpen, setNewOpen] = useState(false);
 
+  // Voltar para página 1 sempre que a busca mudar
+  useEffect(() => { setPage(1); }, [debouncedQ]);
+
   const list = useQuery({
+    ...clientsQueryOptions(agency?.id ?? "", debouncedQ, page, pageSize),
     enabled: !!agency,
-    queryKey: ["clients", agency?.id, q],
-    queryFn: async () => {
-      let qb = supabase
-        .from("clients")
-        .select("id, full_name, legal_name, kind, document, email, phone, created_at, tags")
-        .eq("agency_id", agency!.id)
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (q.trim()) {
-        const term = `%${q.trim()}%`;
-        qb = qb.or(`full_name.ilike.${term},email.ilike.${term},phone.ilike.${term},document.ilike.${term}`);
-      }
-      const { data, error } = await qb;
-      if (error) throw error;
-      return data as Client[];
-    },
   });
 
   return (
@@ -77,18 +98,25 @@ function ClientsPage() {
             className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
           />
         </div>
-        <span className="text-xs text-muted-foreground">{list.data?.length ?? 0} clientes</span>
+        <span className="text-xs text-muted-foreground">{list.data?.count ?? 0} clientes</span>
       </div>
 
-      {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-
-      {list.data && list.data.length === 0 && (
-        <EmptyState title="Nenhum cliente ainda" description="Crie seu primeiro cliente para começar." />
+      {list.isLoading && (
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
       )}
 
-      {list.data && list.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
+      {list.data && list.data.data.length === 0 && (
+        <EmptyState title="Nenhum cliente" description={debouncedQ ? "Nenhum resultado para a busca." : "Crie seu primeiro cliente para começar."} />
+      )}
+
+      {list.data && list.data.data.length > 0 && (
+        <>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Nome</th>
@@ -99,7 +127,7 @@ function ClientsPage() {
               </tr>
             </thead>
             <tbody>
-              {list.data.map((c) => (
+              {list.data.data.map((c) => (
                 <tr key={c.id} className="border-t border-border hover:bg-surface-alt/30">
                   <td className="px-3 py-2.5">
                     <Link
@@ -127,10 +155,34 @@ function ClientsPage() {
             </tbody>
           </table>
         </div>
+        
+        {/* Controles de Paginação */}
+        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="text-xs text-muted-foreground">
+            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(list.data.count / pageSize) || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton 
+              disabled={page === 1} 
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              className="h-8 px-3 text-xs"
+            >
+              Anterior
+            </GhostButton>
+            <GhostButton 
+              disabled={page * pageSize >= list.data.count} 
+              onClick={() => setPage(p => p + 1)}
+              className="h-8 px-3 text-xs"
+            >
+              Próxima
+            </GhostButton>
+          </div>
+        </div>
+      </>
       )}
 
       {newOpen && agency && (
-        <NewClientSheet
+        <ClientFormSheet
           agencyId={agency.id}
           onClose={() => setNewOpen(false)}
           onCreated={() => {
@@ -143,90 +195,3 @@ function ClientsPage() {
   );
 }
 
-function NewClientSheet({
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [kind, setKind] = useState<"individual" | "company">("individual");
-  const [fullName, setFullName] = useState("");
-  const [legalName, setLegalName] = useState("");
-  const [document, setDocument] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("clients").insert({
-      agency_id: agencyId,
-      kind,
-      full_name: fullName,
-      legal_name: legalName || null,
-      document: document || null,
-      email: email || null,
-      phone: phone || null,
-      birth_date: birthDate || null,
-      notes: notes || null,
-      owner_id: u.user?.id ?? null,
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Cliente criado");
-    onCreated();
-  }
-
-  return (
-    <Sheet onClose={onClose} title="Novo cliente">
-      <form onSubmit={onSubmit} className="space-y-3">
-        <Field label="Tipo">
-          <Select value={kind} onChange={(e) => setKind(e.target.value as "individual" | "company")}>
-            <option value="individual">Pessoa física</option>
-            <option value="company">Empresa</option>
-          </Select>
-        </Field>
-        <Field label={kind === "individual" ? "Nome completo *" : "Nome fantasia *"}>
-          <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-        </Field>
-        {kind === "company" && (
-          <Field label="Razão social">
-            <Input value={legalName} onChange={(e) => setLegalName(e.target.value)} />
-          </Field>
-        )}
-        <div className="grid grid-cols-2 gap-3">
-          <Field label={kind === "individual" ? "CPF" : "CNPJ"}>
-            <Input value={document} onChange={(e) => setDocument(e.target.value)} />
-          </Field>
-          {kind === "individual" && (
-            <Field label="Nascimento">
-              <Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
-            </Field>
-          )}
-        </div>
-        <Field label="Email">
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </Field>
-        <Field label="Telefone / WhatsApp">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </Field>
-        <Field label="Notas">
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
-        </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar cliente"}
-          </PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
-  );
-}

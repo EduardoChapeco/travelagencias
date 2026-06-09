@@ -33,7 +33,7 @@ function Page() {
       <h1 className="mb-1 text-lg font-semibold tracking-tight">Check-in</h1>
       <div className="text-xs text-muted-foreground">PNR {card.pnr ?? "—"} · {card.airline ?? "—"}</div>
       {card.alerts?.length > 0 && (
-        <ul className="mt-4 space-y-2 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+        <ul className="mt-4 space-y-2 rounded-lg border border-warning bg-warning-bg p-4 text-sm text-warning">
           {card.alerts.map((a, i) => <li key={i}>⚠ {a}</li>)}
         </ul>
       )}

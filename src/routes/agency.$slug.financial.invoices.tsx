@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/financial/invoices")({
   component: InvoicesPage,
@@ -23,29 +24,32 @@ type Inv = {
 
 function InvoicesPage() {
   const { agency } = useAgency();
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["invoices", agency?.id],
+    queryKey: ["invoices", agency?.id, page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error, count } = await supabase
         .from("financial_records")
-        .select("id, invoice_number, description, amount, currency, status, due_date, paid_at, created_at")
+        .select("id, invoice_number, description, amount, currency, status, due_date, paid_at, created_at", { count: "exact" })
         .eq("agency_id", agency!.id)
         .not("invoice_number", "is", null)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
-      return data as unknown as Inv[];
+      return { data: (data as unknown as Inv[]) ?? [], count: count ?? 0 };
     },
   });
 
   if (q.isLoading) return <div className="text-sm text-muted-foreground">Carregando…</div>;
-  if (!q.data?.length) return <EmptyState title="Sem faturas" description="Lançamentos com nº de fatura aparecem aqui." />;
+  if (!q.data?.data.length) return <EmptyState title="Sem faturas" description="Lançamentos com nº de fatura aparecem aqui." />;
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full text-sm">
+    <>
+      <div className="overflow-hidden rounded-lg border border-border">
+        <table className="w-full text-sm">
         <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
           <tr>
             <th className="px-3 py-2 font-medium">Fatura</th>
@@ -57,7 +61,7 @@ function InvoicesPage() {
           </tr>
         </thead>
         <tbody>
-          {q.data.map((i) => (
+          {q.data.data.map((i) => (
             <tr key={i.id} className="border-t border-border hover:bg-surface-alt/30">
               <td className="px-3 py-2.5 font-mono text-xs">{i.invoice_number}</td>
               <td className="px-3 py-2.5 text-xs text-muted-foreground">{i.description ?? "—"}</td>
@@ -70,7 +74,18 @@ function InvoicesPage() {
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+      
+      <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+        <div className="text-xs text-muted-foreground">
+          Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(q.data.count / pageSize) || 1}
+        </div>
+        <div className="flex items-center gap-2">
+          <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
+          <GhostButton disabled={page * pageSize >= q.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+        </div>
+      </div>
+    </>
   );
 }

@@ -84,19 +84,15 @@ function Page() {
       const ip = await fetch("https://api.ipify.org?format=json").then((r) => r.json()).then((j) => j.ip).catch(() => "0.0.0.0");
       const timestamp = new Date().toISOString();
       
-      // 1. Snapshot PDF via html2canvas
-      const pdfBase64 = await generateContractPdf("contract-document");
+      // 1. Snapshot PDF via html2canvas (Retorna um Blob)
+      const pdfBlob = await generateContractPdf("contract-document");
 
       // 2. Upload do PDF para o Storage via política pública
       const pdfPath = `${c!.agency_id}/${token}/contrato-${Date.now()}.pdf`;
 
-      // Convert dataURL (base64) para Blob
-      const res = await fetch(pdfBase64);
-      const blob = await res.blob();
-
       const { data: uploadData, error: uploadErr } = await supabase.storage
         .from("contract-pdfs")
-        .upload(pdfPath, blob, {
+        .upload(pdfPath, pdfBlob, {
           contentType: "application/pdf",
           upsert: true
         });

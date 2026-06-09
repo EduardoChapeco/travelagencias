@@ -470,7 +470,7 @@ function FileUploadList({ agencyId, images, onChange }: { agencyId: string; imag
         {images.map((u, i) => (
           <div key={i} className="relative">
             <img src={u} alt="" className="h-12 w-12 rounded object-cover" />
-            <button onClick={() => onChange(images.filter((_, x) => x !== i))} className="absolute -right-1 -top-1 rounded-full bg-red-500 px-1 text-[10px] text-white">×</button>
+            <button onClick={() => onChange(images.filter((_, x) => x !== i))} className="absolute -right-1 -top-1 rounded-full bg-destructive px-1 text-[10px] text-destructive-foreground hover:bg-destructive/80 transition-colors">×</button>
           </div>
         ))}
       </div>
@@ -586,7 +586,7 @@ function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
 
       {(p.includes.length > 0 || p.excludes.length > 0) && (
         <section className="mb-6 grid grid-cols-2 gap-4">
-          {p.includes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">Inclui</h3><ul className="text-xs">{p.includes.map((i, x) => <li key={x}>✓ {i}</li>)}</ul></div>}
+          {p.includes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-success">Inclui</h3><ul className="text-xs">{p.includes.map((i, x) => <li key={x}>✓ {i}</li>)}</ul></div>}
           {p.excludes.length > 0 && <div><h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-red-700">Não inclui</h3><ul className="text-xs">{p.excludes.map((i, x) => <li key={x}>✗ {i}</li>)}</ul></div>}
         </section>
       )}
@@ -642,7 +642,7 @@ function OcrButton({ onExtracted }: { onExtracted: (data: { flights?: Flight[]; 
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = (reader.result as string).split(",")[1];
-        const { data, error } = await supabase.functions.invoke("ocr-proposal", { body: { file_base64: base64, mime: file.type } });
+        const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", { body: { file_base64: base64, mime: file.type, file_name: file.name } });
         if (error) throw error;
         onExtracted(data ?? {});
       };

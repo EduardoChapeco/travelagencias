@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,10 +13,27 @@ serve(async (req) => {
   }
 
   try {
-    const { text, file_name } = await req.json();
+    // 1.5 Validação de Autenticação (Proteção contra abuso)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Missing Authorization header.");
+    }
 
-    if (!text || text.trim() === "") {
-      throw new Error("Texto bruto não enviado ou vazio.");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    // Pega o usuário logado via JWT. Se for inválido, cai no erro.
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      throw new Error("Unauthorized: Invalid JWT token.");
+    }
+    const { text, file_name, file_base64, mime } = await req.json();
+
+    if (!text && !file_base64) {
+      throw new Error("Nenhum arquivo ou texto foi enviado.");
     }
 
     const apiKey = Deno.env.get("GEMINI_API_KEY");
@@ -37,11 +55,22 @@ Regras de Extração:
 6. date_end: A data final do serviço (check-out, retorno). Formato ISO YYYY-MM-DD. Se não achar, null.
 7. passengers: Array de strings contendo o nome completo dos passageiros citados.
 
-Texto Extraído do Arquivo (${file_name}):
-${text.substring(0, 5000)} // Limite seguro para evitar estouro de tokens
+Arquivo recebido: ${file_name || "Desconhecido"}
+Se houver texto OCR fornecido, leia-o abaixo. Se houver um arquivo PDF/Imagem, extraia os dados diretamente da imagem.
+${text ? text.substring(0, 5000) : "Processando arquivo visualmente..."}
 `;
 
-    // 3. Comunicação com a Google Gemini API (ou OpenAI fallback) via REST puro
+    const parts: any[] = [{ text: systemPrompt }];
+    if (file_base64) {
+      parts.push({
+        inlineData: {
+          mimeType: mime || "application/pdf",
+          data: file_base64,
+        },
+      });
+    }
+
+    // 3. Comunicação com a Google Gemini API
     // Usamos o model gemini-1.5-flash pela alta velocidade em extração de textos
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
@@ -49,7 +78,7 @@ ${text.substring(0, 5000)} // Limite seguro para evitar estouro de tokens
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: systemPrompt }] }],
+        contents: [{ parts }],
         generationConfig: {
            temperature: 0.1, // Temperatura baixa para extração determinística e rigorosa
         }
