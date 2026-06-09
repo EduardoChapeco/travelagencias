@@ -125,7 +125,7 @@ function Page() {
         })}
       </section>
 
-      <Sheet open={!!selectedInst} onClose={() => setSelectedInst(null)}>
+      {selectedInst && <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
         {selectedInst && (
           <div className="p-6">
             <div className="mb-8 text-center">
