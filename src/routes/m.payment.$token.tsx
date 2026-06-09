@@ -125,8 +125,8 @@ function Page() {
         })}
       </section>
 
-      {selectedInst && <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
-        {selectedInst && (
+      {selectedInst && (
+        <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
           <div className="p-6">
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-alt text-brand">
@@ -160,8 +160,8 @@ function Page() {
               )}
             </div>
           </div>
-        )}
-      </Sheet>}
+        </Sheet>
+      )}
     </div>
   );
 }
