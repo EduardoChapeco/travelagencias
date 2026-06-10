@@ -75,7 +75,7 @@ function Page() {
     setLoading(true);
     setInviteUrl(null);
     try {
-      const { data, error } = await supabase.rpc("admin_create_agency_and_invite", {
+      const { data, error } = await (supabase.rpc as any)("admin_create_agency_and_invite", {
         _name: form.name,
         _slug: form.slug,
         _owner_email: form.email,

@@ -14,7 +14,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-billing"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("admin_calculate_billing_summary");
+      const { data, error } = await (supabase.rpc as any)("admin_calculate_billing_summary");
       if (error) throw error;
       return data;
     },

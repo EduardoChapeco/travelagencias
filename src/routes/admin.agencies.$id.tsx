@@ -24,7 +24,7 @@ function Page() {
         supabase.from("user_roles").select("user_id, role, created_at").eq("agency_id", id),
         supabase.from("trips").select("id", { count: "exact", head: true }).eq("agency_id", id),
         supabase.from("financial_records").select("amount, type, status").eq("agency_id", id),
-        supabase.from("agency_subscriptions").select("*").eq("agency_id", id).maybeSingle(),
+        (supabase as any).from("agency_subscriptions").select("*").eq("agency_id", id).maybeSingle(),
         supabase.from("plans").select("*").order("sort_order", { ascending: true }),
       ]);
       const userIds = (roles.data ?? []).map((r) => r.user_id);
@@ -117,7 +117,7 @@ function Page() {
               </div>
               <div className="flex justify-between items-center">
                 <dt className="text-muted-foreground">Assentos</dt>
-                <dd className={currentPlan && activeMembers >= currentPlan.max_agents ? "text-danger font-bold" : ""}>
+                <dd className={currentPlan && currentPlan.max_agents !== null && activeMembers >= currentPlan.max_agents ? "text-danger font-bold" : ""}>
                   {activeMembers} / {currentPlan?.max_agents ?? "∞"}
                 </dd>
               </div>
@@ -172,7 +172,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
   // Helper para auditoria imutável (usando a RPC criada para logs rigorosos)
   async function logAuditAction(action: string, metadata: any) {
-    await supabase.rpc("log_audit_event", {
+    await (supabase.rpc as any)("log_audit_event", {
       _agency_id: agency.id,
       _action: action,
       _entity_type: "agency_subscription",
@@ -192,7 +192,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
       return;
     }
 
-    const { error } = await supabase.from("agency_subscriptions").insert({
+    const { error } = await (supabase as any).from("agency_subscriptions").upsert({
       agency_id: agency.id,
       plan_id: freePlan.id,
       status: "trialing",
@@ -218,7 +218,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
       return;
     }
     setBusy(true);
-    const { error } = await supabase.from("agency_subscriptions").update({ plan_id: planId }).eq("agency_id", agency.id);
+    const { error } = await (supabase as any).from("agency_subscriptions").update({ plan_id: planId }).eq("agency_id", agency.id);
     if (!error) {
       await logAuditAction("superadmin_changed_plan", { new_plan_id: planId, plan_name: planName });
       toast.success("Plano atualizado com sucesso!");
@@ -233,7 +233,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
   async function handleStatusChange(newStatus: string) {
     if (!confirm(`ATENÇÃO: Mudar o status para "${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?`)) return;
     setBusy(true);
-    const { error } = await supabase.from("agency_subscriptions").update({ status: newStatus }).eq("agency_id", agency.id);
+    const { error } = await (supabase as any).from("agency_subscriptions").update({ status: newStatus }).eq("agency_id", agency.id);
     if (!error) {
       await logAuditAction("superadmin_changed_status", { new_status: newStatus });
       toast.success(`Status forçado para ${newStatus}`);

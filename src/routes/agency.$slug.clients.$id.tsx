@@ -81,7 +81,7 @@ function ClientDetail() {
     enabled: !!id,
     queryKey: ["client-lgpd", id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("legal_acceptances")
         .select("id, accepted_at, context, document_id")
         .eq("client_id", id)
@@ -108,7 +108,7 @@ function ClientDetail() {
   const timelineEvents = [
     ...(proposalsQ.data ?? []).map(p => ({ type: "proposal", date: p.created_at, data: p })),
     ...(tripsQ.data ?? []).map(t => ({ type: "trip", date: t.created_at, data: t })),
-    ...(lgpdQ.data ?? []).map(l => ({ type: "lgpd", date: l.accepted_at, data: l })),
+    ...(lgpdQ.data ?? []).map((l: any) => ({ type: "lgpd", date: l.accepted_at, data: l })),
     ...(ticketsQ.data ?? []).map(t => ({ type: "ticket", date: t.created_at, data: t })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -146,7 +146,7 @@ function ClientDetail() {
     mutationFn: async () => {
       if (!mergeTargetId) throw new Error("Selecione o cliente para unificar.");
       // this client (id) will be merged INTO mergeTargetId
-      const { error } = await supabase.rpc("merge_clients", { p_target_id: mergeTargetId, p_source_id: id });
+      const { error } = await (supabase.rpc as any)("merge_clients", { p_target_id: mergeTargetId, p_source_id: id });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -173,7 +173,7 @@ function ClientDetail() {
           
           <div className="flex items-center gap-3 mt-2">
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{c.full_name}</h1>
-            <StatusBadge tone={c.kind === "company" ? "primary" : "neutral"}>
+            <StatusBadge tone={c.kind === "company" ? "info" : "neutral"}>
               {c.kind === "company" ? "B2B" : "B2C"}
             </StatusBadge>
             {c.deleted_at && <StatusBadge tone="danger">Arquivado</StatusBadge>}
@@ -328,7 +328,7 @@ function ClientDetail() {
             <div className="text-sm text-muted-foreground text-center py-10">Nenhum histórico registrado ainda.</div>
           ) : (
             <div className="relative border-l border-border ml-3 pl-6 space-y-8 py-2">
-              {timelineEvents.map((event, i) => (
+              {timelineEvents.map((event: any, i) => (
                 <div key={`${event.type}-${i}`} className="relative group">
                   {/* Ícone Flutuante */}
                   <div className="absolute -left-[37px] top-0 bg-background border-2 border-border w-8 h-8 rounded-full flex items-center justify-center ">

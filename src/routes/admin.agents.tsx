@@ -22,7 +22,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-agents", page, search],
     queryFn: async () => {
-      let query = supabase
+      let query = (supabase as any)
         .from("vw_admin_agents")
         .select("*", { count: "exact" });
 

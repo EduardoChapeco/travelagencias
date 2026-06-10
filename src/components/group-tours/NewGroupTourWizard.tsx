@@ -226,6 +226,9 @@ export function NewGroupTourWizard({
             {step === 1 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="grid grid-cols-2 gap-4">
+                  <Field label="Vagas Disponíveis">
+                    <Input type="number" disabled value="" />
+                  </Field>
                   <Field label="Data de Saída *">
                     <Input type="date" value={departure} onChange={(e) => setDeparture(e.target.value)} />
                   </Field>
@@ -359,7 +362,7 @@ export function NewGroupTourWizard({
 
                 <div className="border-t border-border pt-5">
                   <div className="flex items-center justify-between mb-3">
-                    <Field label="Itinerário Dia-a-Dia" />
+                    <h4 className="font-semibold text-sm">Itinerário Dia-a-Dia</h4>
                     <GhostButton type="button" onClick={() => setItinerary([...itinerary, { day: itinerary.length + 1, title: "", description: "" }])} className="h-8 text-xs gap-1.5 border border-border">
                       <Plus className="h-3.5 w-3.5" /> Adicionar Dia
                     </GhostButton>
@@ -430,7 +433,7 @@ export function NewGroupTourWizard({
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Opções de Publicação</h4>
                   
                   <div className="flex items-center gap-3">
-                    <Checkbox id="isPublic" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
+                    <input type="checkbox" id="isPublic" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
                     <label htmlFor="isPublic" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                       Publicar no Portal B2C
                     </label>

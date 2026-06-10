@@ -48,7 +48,7 @@ function CorporatePage() {
     enabled: !!agency,
     queryKey: ["corporate-rfps", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("corporate_rfps")
         .select("*, client:clients(full_name)")
         .eq("agency_id", agency!.id)
@@ -65,7 +65,7 @@ function CorporatePage() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const { error } = await supabase.from("corporate_rfps").update({ status }).eq("id", id);
+      const { error } = await (supabase as any).from("corporate_rfps").update({ status }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

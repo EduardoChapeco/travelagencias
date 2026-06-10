@@ -21,7 +21,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-audit", page, filterAction, filterEntity],
     queryFn: async () => {
-      let query = supabase.from("vw_admin_audit").select("*", { count: "exact" });
+      let query = (supabase as any).from("vw_admin_audit").select("*", { count: "exact" });
 
       if (filterAction) {
         query = query.eq("action", filterAction);

@@ -104,7 +104,7 @@ export function NewVisaWizard({
     setSubmitting(true);
     
     // 1. Criar Visto
-    const { data: visaData, error: visaError } = await supabase.from("visas").insert({
+    const { data: visaData, error: visaError } = await (supabase as any).from("visas").insert({
       agency_id: agencyId,
       client_id: clientId,
       stage_id: firstStageId,

@@ -48,7 +48,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
   const requirementsQ = useQuery({
     queryKey: ["visa-requirements", agencyId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("visa_requirements")
         .select("id, country, visa_type")
         .eq("agency_id", agencyId)
@@ -97,7 +97,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
     <Sheet title="Novo Processo de Visto" onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col h-[calc(100vh-64px)]">
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
-          <Field label="Cliente" required>
+          <Field label="Cliente *">
             <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
               <option value="">Selecione um cliente...</option>
               {clientsQ.data?.map((c) => (
@@ -106,7 +106,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
             </Select>
           </Field>
 
-          <Field label="País de Destino" required>
+          <Field label="Data de Emissão">
             <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Ex: Estados Unidos" />
           </Field>
 
@@ -122,7 +122,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
           <Field label="Requisito / Catálogo (Opcional)">
             <Select value={requirementId} onChange={(e) => setRequirementId(e.target.value)}>
               <option value="">Sem catálogo predefinido</option>
-              {requirementsQ.data?.map((req) => (
+              {requirementsQ.data?.map((req: any) => (
                 <option key={req.id} value={req.id}>{req.country} - {req.visa_type}</option>
               ))}
             </Select>

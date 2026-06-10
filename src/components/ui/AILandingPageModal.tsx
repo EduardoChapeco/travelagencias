@@ -10,7 +10,7 @@ import { Field, PrimaryButton, GhostButton, Textarea } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2 } from "lucide-react";
-import type { PortalBlock } from "@/routes/agency.$slug.portal.pages";
+type PortalBlock = any;
 
 type AILandingPageModalProps = {
   open: boolean;

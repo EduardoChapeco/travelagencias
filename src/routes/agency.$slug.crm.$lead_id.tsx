@@ -116,7 +116,7 @@ function LeadDetailPage() {
   const stage = stagesQ.data?.find((s) => s.id === lead.stage_id);
 
   async function handleConvert() {
-    const { data: clientId, error } = await supabase.rpc("promote_lead_to_client", { _lead_id: lead.id });
+    const { data, error } = await (supabase.rpc as any)("promote_lead_to_client", { _lead_id: lead.id });
     if (error) return toast.error("Erro ao converter lead: " + error.message);
     
     // Apple-like Celebration

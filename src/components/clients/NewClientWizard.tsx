@@ -62,7 +62,7 @@ export function NewClientWizard({
       phone: phone || null,
       birth_date: birthDate || null,
       notes: notes || null,
-      tags: parsedTags.length > 0 ? parsedTags : null,
+      tags: (parsedTags.length > 0 ? parsedTags : null) as any,
       owner_id: u.user?.id ?? null,
     });
 

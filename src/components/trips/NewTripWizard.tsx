@@ -92,6 +92,7 @@ export function NewTripWizard({
       const client = clientsQ.data?.find(c => c.id === clientId);
       if (client) {
         await supabase.from("trip_passengers").insert({
+          agency_id: agencyId,
           trip_id: tripData.id,
           full_name: client.full_name,
           document: client.document || null,
@@ -186,7 +187,7 @@ export function NewTripWizard({
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Status Inicial">
-                    <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                    <Select value={status} onChange={(e) => setStatus(e.target.value as any)}>
                       <option value="planning">Planejamento</option>
                       <option value="confirmed">Confirmada</option>
                       <option value="in_progress">Em andamento</option>

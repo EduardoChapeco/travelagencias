@@ -567,13 +567,14 @@ function NewCard({
     if (!tripId) return toast.error("Selecione uma viagem");
     setSubmitting(true);
     const alertsArr = alerts.split("\n").map((a) => a.trim()).filter(Boolean);
-    const { error } = await supabase.from("boarding_cards").insert({
+    const { data: u } = await supabase.auth.getUser();
+    const { error } = await (supabase as any).from("boarding_cards").insert({
       agency_id: agencyId,
       trip_id: tripId,
       pnr: pnr || null,
       airline: airline || null,
-      status: "pending",
-      position: 0,
+        status: "pending" as any,
+        created_by: u.user?.id as any,
       departure_date: departureDate || null,
       passengers_count: passengersList.length || (paxCount ? parseInt(paxCount) : null),
       alerts: alertsArr,

@@ -49,7 +49,7 @@ export const clientsQueryOptions = (agencyId: string, q: string, page: number, p
           `full_name.ilike.${term},email.ilike.${term},phone.ilike.${term},document.ilike.${term}`,
         );
       }
-      const { data, count, error } = await qb;
+      const { data, count, error } = await (qb as any);
       if (error) throw error;
       return { data: data as Client[], count: count ?? 0 };
     },
@@ -103,7 +103,10 @@ function ClientsPage() {
 
   const restoreMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("clients").update({ deleted_at: null }).eq("id", id);
+      const { error } = await supabase.from("clients").update({
+        // @ts-ignore
+        deleted_at: null,
+      }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

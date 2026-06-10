@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Search, Radar, TrendingUp, Users, MessageSquare, Crosshair, ExternalLink, RefreshCw } from "lucide-react";
+import { Search, Radar, TrendingUp, Users, MessageSquare, Crosshair, ExternalLink, RefreshCw, Sparkles } from "lucide-react";
 import { PrimaryButton, Input } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({

@@ -33,7 +33,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       return {
-        requireAcceptance: !acceptance,
+        requireAcceptance: !records,
         doc: terms,
       };
     },
@@ -41,9 +41,10 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
 
   const acceptMutation = useMutation({
     mutationFn: async (docId: string) => {
-      const { error } = await (supabase.rpc as any)("record_legal_acceptance", {
-        _document_id: docId,
-        _context: "app_login",
+      const { error } = await (supabase as any).from('legal_acceptances').insert({
+        document_id: docId,
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        context: "app_login",
       });
       if (error) throw error;
     },

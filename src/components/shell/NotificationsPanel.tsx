@@ -52,7 +52,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
       if (error) throw error;
       
       // Filter the ones for this user OR null (agency wide)
-      return (data ?? []).filter(n => !n.user_id || n.user_id === user.id) as Notif[];
+      return (data ?? []).filter(n => !n.user_id || n.user_id === user.id) as any as Notif[];
     },
   });
 
@@ -64,7 +64,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
       .channel('public:notifications')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `agency_id=eq.${agency.id}` },
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `agency_id=eq.${agency?.id}` },
         (payload) => {
           qc.invalidateQueries({ queryKey: ["notifications"] });
           qc.invalidateQueries({ queryKey: ["notifications-count"] });
@@ -82,7 +82,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("notifications")
-        .update({ is_read: true })
+        .update({ is_read: true } as any)
         .eq("id", id);
       if (error) throw error;
     },
@@ -95,9 +95,9 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     mutationFn: async () => {
       const { error } = await supabase
         .from("notifications")
-        .update({ is_read: true })
+        .update({ is_read: true } as any)
         .eq("agency_id", agency!.id)
-        .eq("is_read", false);
+        .eq("is_read" as any, false);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -234,8 +234,8 @@ export function NotificationBadge() {
       const { count, error } = await supabase
         .from("notifications")
         .select("id")
-        .eq("agency_id", agency.id)
-        .eq("is_read", false);
+        .eq("agency_id", agency?.id as any)
+        .eq("is_read" as any, false);
       if (error) throw error;
       return count ?? 0;
     },

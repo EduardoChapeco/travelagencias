@@ -87,7 +87,7 @@ function Page() {
         .select("*")
         .order("price_monthly", { ascending: true });
       if (error) throw error;
-      return (data || []) as unknown as Plan[];
+      return (data || []) as any[];
     },
   });
 
@@ -226,13 +226,13 @@ function Page() {
           onSave={async (plan) => {
             let error;
             if (editing) {
-              const res = await supabase.from("plans").update(plan).eq("id", plan.id);
+              const res = await supabase.from("plans").update(plan as any).eq("id", plan.id);
               error = res.error;
             } else {
               // we don't pass an id if it's new so supabase generates it, or we pass the generated one
               // wait, empty plan has a generated id: crypto.randomUUID(), but plans table has id DEFAULT gen_random_uuid()
               // better to let supabase generate it or use the one we generated. Let's just insert everything.
-              const res = await supabase.from("plans").insert(plan);
+              const res = await supabase.from("plans").insert(plan as any);
               error = res.error;
             }
             if (error) {

@@ -26,12 +26,12 @@ function DREPage() {
     enabled: !!agency,
     queryKey: ["dre", agency?.id, period],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("calculate_dre_summary", {
+      const { data, error } = await (supabase.rpc as any)("calculate_dre_summary", {
         _agency_id: agency!.id,
         _period: period,
       });
       if (error) throw error;
-      return data as {
+      return (data as any) as {
         income: number;
         expense: number;
         net: number;

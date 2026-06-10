@@ -56,11 +56,11 @@ function CashPage() {
     enabled: !!agency,
     queryKey: ["fin-totals", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("calculate_cash_summary", {
+      const { data, error } = await (supabase.rpc as any)("calculate_cash_summary", {
         _agency_id: agency!.id,
       });
       if (error) throw error;
-      return data as { income: number; expense: number; pending: number; net: number };
+      return (data as any) as { income: number; expense: number; pending: number; net: number };
     },
   });
 
@@ -290,7 +290,7 @@ function NewRecord({
     e.preventDefault();
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("financial_records").insert({
+    const { error } = await (supabase as any).from("financial_records").insert({
       agency_id: agencyId,
       type,
       category: category || null,
