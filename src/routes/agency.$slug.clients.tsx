@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient, queryOptions } from "@tanstack/react-query";
+import { useQuery, useQueryClient, queryOptions, useMutation } from "@tanstack/react-query";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,7 @@ import { ClientFormSheet } from "@/components/clients/ClientFormSheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
+import { NewClientWizard } from "@/components/clients/NewClientWizard";
 import { Users } from "lucide-react";
 
 export const clientsQueryOptions = (agencyId: string, q: string, page: number, pageSize: number, showDeleted: boolean) =>
@@ -268,7 +269,7 @@ function ClientsPage() {
       )}
 
       {newOpen && agency && (
-        <ClientFormSheet
+        <NewClientWizard
           agencyId={agency.id}
           onClose={() => setNewOpen(false)}
           onCreated={() => {

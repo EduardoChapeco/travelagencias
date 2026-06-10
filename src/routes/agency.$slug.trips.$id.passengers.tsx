@@ -1,19 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Calendar, Contact2, ShieldCheck, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import {
-  Field,
-  Input,
-  Select,
-  PrimaryButton,
-  GhostButton,
-  Sheet,
-  fmtDate,
-} from "@/components/ui/form";
+import { fmtDate, StatusBadge } from "@/components/ui/form";
+import { NewPassengerModal } from "@/components/trips/NewPassengerModal";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: () => ({ meta: [{ title: "Passageiros · TravelOS" }] }),
@@ -35,6 +27,7 @@ function PassengersPage() {
         .select("*")
         .eq("trip_id", id)
         .is("deleted_at", null)
+        .order("is_lead_passenger", { ascending: false }) // Principais primeiro
         .order("created_at");
       if (error) throw error;
       return data;
@@ -52,6 +45,15 @@ function PassengersPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["passengers", id] }),
   });
 
+  const translateKind = (kind: string) => {
+    switch (kind) {
+      case "adult": return "Adulto";
+      case "child": return "Criança (CHD)";
+      case "infant": return "Infante (INF)";
+      default: return kind;
+    }
+  };
+
   return (
     <>
       <Link
@@ -61,75 +63,136 @@ function PassengersPage() {
       >
         <ArrowLeft className="h-3.5 w-3.5" /> Voltar para viagem
       </Link>
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <h1 className="text-xl font-semibold tracking-tight">Passageiros</h1>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Rooming List</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Gerencie os passageiros vinculados a este roteiro.</p>
+        </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+          className="flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
         >
-          <Plus className="h-3.5 w-3.5" /> Adicionar passageiro
+          <Plus className="h-4 w-4" /> Adicionar Passageiro
         </button>
       </div>
 
-      {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+      {list.isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-48 rounded-2xl bg-surface-alt animate-pulse border border-border" />
+          ))}
+        </div>
+      )}
 
       {list.data && list.data.length === 0 && (
-        <div className="rounded-lg border border-dashed border-border p-12 text-center text-xs text-muted-foreground">
-          Nenhum passageiro cadastrado.
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-surface-alt/20 py-24 text-center">
+          <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
+          <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
+          <p className="mt-1 text-sm text-muted-foreground max-w-sm">
+            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o grupo.
+          </p>
         </div>
       )}
 
       {list.data && list.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Nome</th>
-                <th className="px-3 py-2 font-medium">Tipo</th>
-                <th className="px-3 py-2 font-medium">Documento</th>
-                <th className="px-3 py-2 font-medium">Nascimento</th>
-                <th className="px-3 py-2 font-medium">Contato</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.data.map((p: any) => (
-                <tr key={p.id} className="border-t border-border">
-                  <td className="px-3 py-2.5">
-                    <div className="font-medium">{p.full_name}</div>
-                    {p.is_lead_passenger && (
-                      <div className="text-[10px] uppercase text-muted-foreground">
-                        Passageiro principal
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {list.data.map((p: any) => (
+            <div 
+              key={p.id} 
+              className={`group flex flex-col rounded-2xl border bg-surface transition-colors hover:border-brand/40 ${p.is_lead_passenger ? 'border-brand/30' : 'border-border'}`}
+            >
+              {/* Header Card */}
+              <div className="flex items-start justify-between p-5 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? 'bg-brand/10 text-brand' : 'bg-surface-alt text-muted-foreground'}`}>
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="truncate font-bold text-foreground">{p.full_name}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {translateKind(p.kind)}
+                      </span>
+                      {p.is_lead_passenger && (
+                        <StatusBadge tone="info" className="h-5 px-1.5 py-0 text-[9px]">Líder da Reserva</StatusBadge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => remove.mutate(p.id)}
+                  className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all hover:bg-danger/10 hover:text-danger"
+                  title="Remover passageiro"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Body Card */}
+              <div className="p-5 space-y-4 flex-1">
+                {/* Documentação */}
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                    <FileText className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                      {p.document_type ? String(p.document_type).toUpperCase() : "Documento"}
+                    </div>
+                    <div className="text-xs font-mono font-medium truncate">
+                      {p.document || "Não informado"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Nascimento e Nacionalidade */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">Nascimento</div>
+                      <div className="text-xs font-medium truncate">{p.birth_date ? fmtDate(p.birth_date) : "—"}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">Nacionalidade</div>
+                      <div className="text-xs font-medium truncate">{p.nationality || "—"}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contato (Se houver) */}
+                {(p.email || p.phone) && (
+                  <div className="pt-4 mt-2 border-t border-border/50 space-y-2">
+                    {p.email && (
+                      <div className="flex items-center gap-2.5">
+                        <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span className="text-xs text-muted-foreground truncate">{p.email}</span>
                       </div>
                     )}
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{p.kind}</td>
-                  <td className="px-3 py-2.5 font-mono text-xs">
-                    {p.document ?? "—"}{" "}
-                    <span className="text-muted-foreground">{p.document_type ?? ""}</span>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs">{fmtDate(p.birth_date)}</td>
-                  <td className="px-3 py-2.5 text-xs">
-                    <div>{p.email ?? "—"}</div>
-                    <div className="text-muted-foreground">{p.phone ?? ""}</div>
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <button
-                      onClick={() => remove.mutate(p.id)}
-                      className="rounded p-1 text-muted-foreground hover:text-danger"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {p.phone && (
+                      <div className="flex items-center gap-2.5">
+                        <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span className="text-xs text-muted-foreground truncate">{p.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {open && agency && (
-        <NewPassengerSheet
+        <NewPassengerModal
           tripId={id}
           agencyId={agency.id}
           onClose={() => setOpen(false)}
@@ -140,109 +203,5 @@ function PassengersPage() {
         />
       )}
     </>
-  );
-}
-
-function NewPassengerSheet({
-  tripId,
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  tripId: string;
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [fullName, setFullName] = useState("");
-  const [kind, setKind] = useState<"adult" | "child" | "infant">("adult");
-  const [document, setDocument] = useState("");
-  const [documentType, setDocumentType] = useState("passport");
-  const [birthDate, setBirthDate] = useState("");
-  const [nationality, setNationality] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLead, setIsLead] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("trip_passengers").insert({
-      trip_id: tripId,
-      agency_id: agencyId,
-      full_name: fullName,
-      kind,
-      document: document || null,
-      document_type: documentType || null,
-      birth_date: birthDate || null,
-      nationality: nationality || null,
-      email: email || null,
-      phone: phone || null,
-      is_lead_passenger: isLead,
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Passageiro adicionado");
-    onCreated();
-  }
-
-  return (
-    <Sheet onClose={onClose} title="Adicionar passageiro">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Nome completo *">
-          <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-        </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Tipo">
-            <Select
-              value={kind}
-              onChange={(e) => setKind(e.target.value as "adult" | "child" | "infant")}
-            >
-              <option value="adult">Adulto</option>
-              <option value="child">Criança</option>
-              <option value="infant">Infante</option>
-            </Select>
-          </Field>
-          <Field label="Nascimento">
-            <Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
-          </Field>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Doc.">
-            <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
-              <option value="passport">Passaporte</option>
-              <option value="rg">RG</option>
-              <option value="cpf">CPF</option>
-              <option value="cnh">CNH</option>
-            </Select>
-          </Field>
-          <Field label="Número">
-            <Input value={document} onChange={(e) => setDocument(e.target.value)} />
-          </Field>
-        </div>
-        <Field label="Nacionalidade">
-          <Input value={nationality} onChange={(e) => setNationality(e.target.value)} />
-        </Field>
-        <Field label="Email">
-          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </Field>
-        <Field label="Telefone">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </Field>
-        <label className="flex items-center gap-2 text-xs">
-          <input type="checkbox" checked={isLead} onChange={(e) => setIsLead(e.target.checked)} />
-          Passageiro principal
-        </label>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Adicionando…" : "Adicionar"}
-          </PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
   );
 }

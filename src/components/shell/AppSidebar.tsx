@@ -42,7 +42,7 @@ const items: NavItem[] = [
   { label: "Frota & Ônibus", segment: "bus-layouts", icon: Bus },
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
-  { label: "RFPs B2B", segment: "rfps", icon: Briefcase },
+
   { label: "Clientes", segment: "clients", icon: UserRound },
   { label: "Fornecedores", segment: "suppliers", icon: Store },
   { label: "Suporte", segment: "support", icon: LifeBuoy },

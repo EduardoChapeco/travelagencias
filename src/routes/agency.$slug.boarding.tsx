@@ -195,11 +195,31 @@ function BoardingKanbanPage() {
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+            <p className="text-sm text-muted-foreground">Carregando Embarques...</p>
+          </div>
         </div>
       )}
 
-      {q.data && localCards && (
+      {q.isError && (
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-2xl border border-danger/20">
+            <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
+              <X className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground">Erro ao carregar os Embarques</h3>
+            <p className="text-sm text-muted-foreground">
+              Não foi possível carregar as informações do Kanban. O banco de dados pode estar desatualizado, você sincronizou novos commits que exigem aplicar as migrações (npx supabase db push).
+            </p>
+            <div className="w-full text-left bg-background p-3 rounded text-xs font-mono text-danger/80 break-words mt-4">
+              <strong>Query Error:</strong> {(q.error as Error).message}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {q.data && localCards ? (
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div className="mt-4 flex-1 overflow-x-auto overflow-y-hidden px-1 no-scrollbar cursor-grab active:cursor-grabbing pb-4">
             <div className="flex h-full min-w-max gap-4 px-1">
@@ -213,7 +233,7 @@ function BoardingKanbanPage() {
             {activeCard ? <CardView card={activeCard} dragging /> : null}
           </DragOverlay>
         </DndContext>
-      )}
+      ) : null}
 
       {open && agency && (
         <NewCard
@@ -264,8 +284,8 @@ function Column({
         <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default">
           {cards.map((c) => <SortableCard key={c.id} card={c} slug={slug} onCardClick={onCardClick} />)}
           {cards.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-              Arraste um PNR
+            <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground text-center px-4">
+              {stage.id === "pending" ? "Nenhum embarque ativo. Cadastre um PNR para começar." : "Solte um PNR aqui"}
             </div>
           )}
         </div>
@@ -302,7 +322,7 @@ function CardView({
   return (
     <div
       className={`group relative rounded-xl border bg-surface transition-all ${
-        dragging ? "border-brand scale-105 z-50 rotate-2 opacity-90" : isUrgent ? "border-danger/60 shadow-sm hover:border-danger" : "border-border/50 hover:border-brand/40"
+        dragging ? "border-brand scale-105 z-50 rotate-2 opacity-90" : isUrgent ? "border-danger/60 hover:border-danger" : "border-border/50 hover:border-brand/40"
       }`}
     >
       {/* Drag handle area */}

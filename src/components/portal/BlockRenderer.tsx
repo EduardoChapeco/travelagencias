@@ -41,7 +41,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
           ) : (
             <div className="absolute inset-0 bg-brand/5 backdrop-blur-3xl" />
           )}
-          <div className="relative z-10 flex flex-col items-center justify-center p-16 text-center lg:p-32 bg-gradient-to-t from-surface/80 via-transparent to-transparent">
+          <div className="relative z-10 flex flex-col items-center justify-center p-16 text-center lg:p-32 bg-surface/80">
             <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight text-foreground ">
               {b.title}
             </h1>
@@ -143,8 +143,8 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
     case "cta":
       return (
         <section className="mx-auto max-w-5xl w-full my-8">
-          <div className="relative overflow-hidden rounded-3xl bg-brand text-brand-foreground px-6 py-16 text-center shadow-xl">
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+          <div className="relative overflow-hidden rounded-3xl bg-brand text-brand-foreground px-6 py-16 text-center">
+            <div className="absolute inset-0 opacity-10 bg-white/10" />
             <h2 className="relative z-10 text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
               {b.title}
             </h2>

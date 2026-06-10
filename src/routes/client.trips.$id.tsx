@@ -160,7 +160,7 @@ function ClientTripDetail() {
       {/* Header Imersivo */}
       <div className="relative h-[45vh] min-h-[350px] w-full bg-foreground">
         <img src={coverImage} alt="Destino" className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div className="absolute inset-0 bg-background/60" />
         
         <div className="absolute top-6 left-6">
           <Link to="/client/trips" className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/30 transition-all">
@@ -330,7 +330,7 @@ function ClientTripDetail() {
         {/* ABA: EXPLORAR (IA) */}
         {activeTab === "explorar" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-white relative overflow-hidden">
+            <div className="bg-brand rounded-3xl p-8 text-brand-foreground relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
               <Compass className="w-10 h-10 mb-4 opacity-90" />
               <h2 className="text-3xl font-black tracking-tight mb-2">Seu Guia Inteligente</h2>
@@ -502,7 +502,7 @@ function ClientTripDetail() {
                 {memories.map((m: any) => (
                   <div key={m.id} className="aspect-square rounded-2xl overflow-hidden bg-muted group relative">
                     <img src={m.image_url} alt="Memória" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
                       <span className="text-[10px] text-white font-medium">{fmtDate(m.created_at)}</span>
                     </div>
                   </div>

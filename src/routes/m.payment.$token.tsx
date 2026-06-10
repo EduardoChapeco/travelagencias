@@ -119,7 +119,7 @@ function Page() {
         </div>
       </section>
 
-      <section className="space-y-4 relative before:absolute before:inset-0 before:ml-[1.4rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border/60 before:to-transparent">
+      <section className="space-y-4 relative before:absolute before:inset-0 before:ml-[1.4rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-border/60">
         {installments.map((inst, index) => {
           const isPaid = inst.status === "paid";
           const isOverdue = inst.status === "overdue";

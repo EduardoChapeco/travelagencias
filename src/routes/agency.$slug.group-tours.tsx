@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import {
   Field,
   Input,
@@ -172,7 +173,7 @@ function GroupToursPage() {
       )}
 
       {open && agency && (
-        <NewTour
+        <NewGroupTourWizard
           agencyId={agency.id}
           onClose={() => setOpen(false)}
           onCreated={() => {
@@ -185,106 +186,3 @@ function GroupToursPage() {
   );
 }
 
-function NewTour({
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [title, setTitle] = useState("");
-  const [destination, setDestination] = useState("");
-  const [departure, setDeparture] = useState("");
-  const [ret, setRet] = useState("");
-  const [price, setPrice] = useState(0);
-  const [seats, setSeats] = useState(20);
-  const [desc, setDesc] = useState("");
-  const [busLayout, setBusLayout] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const busesQ = useQuery({
-    queryKey: ["bus-layouts", agencyId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("bus_layouts")
-        .select("id, name")
-        .eq("agency_id", agencyId);
-      return data ?? [];
-    },
-  });
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("group_tours").insert({
-      agency_id: agencyId,
-      title,
-      slug: slugify(title) + "-" + Math.random().toString(36).slice(2, 6),
-      destination: destination || null,
-      departure_date: departure || null,
-      return_date: ret || null,
-      base_price: price,
-      total_seats: seats,
-      important_notes: desc || null,
-      bus_layout_id: busLayout || null,
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Excursão criada");
-    onCreated();
-  }
-
-  return (
-    <Sheet onClose={onClose} title="Nova excursão">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Título *">
-          <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
-        </Field>
-        <Field label="Destino">
-          <Input value={destination} onChange={(e) => setDestination(e.target.value)} />
-        </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Saída">
-            <Input type="date" value={departure} onChange={(e) => setDeparture(e.target.value)} />
-          </Field>
-          <Field label="Retorno">
-            <Input type="date" value={ret} onChange={(e) => setRet(e.target.value)} />
-          </Field>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Total de vagas">
-            <Input
-              type="number"
-              min={1}
-              value={seats}
-              onChange={(e) => setSeats(+e.target.value || 0)}
-            />
-          </Field>
-          <Field label="Frota de Ônibus">
-            <Select value={busLayout} onChange={(e) => setBusLayout(e.target.value)}>
-              <option value="">Sem ônibus atrelado</option>
-              {busesQ.data?.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-        </div>
-        <Field label="Descrição">
-          <Textarea value={desc} onChange={(e) => setDesc(e.target.value)} />
-        </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar"}
-          </PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
-  );
-}

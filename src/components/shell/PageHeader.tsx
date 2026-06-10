@@ -34,7 +34,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-surface-alt/20 py-16 px-6 text-center transition-all hover:bg-surface-alt/30 hover:border-border/80">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-alt border border-border/50 text-muted-foreground/60 shadow-sm">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-alt border border-border/50 text-muted-foreground/60">
         <Icon className="h-8 w-8" strokeWidth={1.5} />
       </div>
       <h3 className="text-base font-semibold text-foreground tracking-tight">{title}</h3>

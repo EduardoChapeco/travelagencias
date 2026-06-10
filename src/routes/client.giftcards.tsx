@@ -47,7 +47,7 @@ function Page() {
           {q.data?.map((g) => (
             <div
               key={g.id}
-              className="rounded-lg border border-border bg-gradient-to-br from-primary/10 to-primary/5 p-5"
+              className="rounded-lg border border-border bg-brand/5 p-5"
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-xs">{g.code}</span>

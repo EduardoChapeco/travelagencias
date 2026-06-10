@@ -105,7 +105,7 @@ function RfpDetailPage() {
                <option value="lost">Perdido / Recusado</option>
              </Select>
              {rfp.status === 'negotiating' && (
-                <PrimaryButton className="h-9 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground border-none shadow-sm" onClick={() => {
+                <PrimaryButton className="h-9 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground border-none" onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/p/corporate/approve?token=${rfp.approval_token}`);
                   toast.success("Link de aprovação copiado!");
                 }}>

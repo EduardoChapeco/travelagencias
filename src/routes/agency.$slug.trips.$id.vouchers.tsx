@@ -498,7 +498,7 @@ function TripVouchers() {
               )}
               <button
                 onClick={() => setStoryVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border text-xs bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-500 text-white hover:opacity-90 font-semibold"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
               >
                 <Instagram className="h-3.5 w-3.5" />
                 Story
@@ -529,7 +529,7 @@ function TripVouchers() {
               <div 
                 id="story-canvas" 
                 className="relative overflow-hidden shrink-0 flex flex-col"
-                style={{ width: '400px', height: '711px', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }}
+                style={{ width: '400px', height: '711px', background: '#1e1b4b' }}
               >
                 {/* Decorative Background */}
                 <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />

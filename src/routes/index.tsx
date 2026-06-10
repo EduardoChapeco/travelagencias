@@ -200,7 +200,7 @@ function Landing() {
                   className={cn(
                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8  transition-all hover: hover:-translate-y-1 hover:border-brand/40",
                     i === 0 || i === 3
-                      ? "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-surface to-surface-alt"
+                      ? "md:col-span-2 lg:col-span-2 bg-surface-alt"
                       : "",
                   )}
                 >

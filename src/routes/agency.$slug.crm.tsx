@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, GripVertical, Settings2, Search, Archive, UserPlus, Check, X, Trash2, ArrowRight } from "lucide-react";
+import { Plus, GripVertical, Settings2, Search, Archive, UserPlus, Check, X, Trash2, ArrowRight, KanbanSquare } from "lucide-react";
 import {
   DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
   closestCorners, type DragEndEvent, type DragStartEvent,
@@ -12,7 +12,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
+import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { toast } from "sonner";
 
@@ -125,6 +125,26 @@ function CRMPage() {
       qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["leads", agency?.id] }),
+  });
+
+  const initStages = useMutation({
+    mutationFn: async () => {
+      const defaults = [
+        { name: "Novo Lead", color: "#94A3B8", position: 0 },
+        { name: "Em Contato", color: "#60A5FA", position: 1 },
+        { name: "Cotação Enviada", color: "#FBBF24", position: 2 },
+        { name: "Ganho", color: "#10B981", position: 3, is_won: true },
+        { name: "Perdido", color: "#EF4444", position: 4, is_lost: true },
+      ];
+      for (const s of defaults) {
+        await supabase.from("lead_stages").insert({ agency_id: agency!.id, ...s });
+      }
+    },
+    onSuccess: () => {
+      toast.success("Funil inicializado com sucesso!");
+      qc.invalidateQueries({ queryKey: ["stages", agency?.id] });
+    },
+    onError: (e) => toast.error("Falha ao inicializar funil: " + e.message)
   });
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -275,11 +295,48 @@ function CRMPage() {
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+            <p className="text-sm text-muted-foreground">Carregando CRM...</p>
+          </div>
         </div>
       )}
 
-      {stagesQ.data && localLeads && (
+      {(stagesQ.isError || leadsQ.isError || usersQ.isError) && (
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-2xl border border-danger/20">
+            <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
+              <X className="h-6 w-6" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground">Erro ao carregar o Kanban</h3>
+            <p className="text-sm text-muted-foreground">
+              Não foi possível carregar as informações do CRM. Isso geralmente acontece por falta de permissão ou porque o banco de dados está desatualizado.
+            </p>
+            <div className="w-full text-left bg-background p-3 rounded text-xs font-mono text-danger/80 break-words mt-4">
+              {stagesQ.error && <div><strong>Stages Error:</strong> {(stagesQ.error as Error).message}</div>}
+              {leadsQ.error && <div><strong>Leads Error:</strong> {(leadsQ.error as Error).message}</div>}
+              {usersQ.error && <div><strong>Users Error:</strong> {(usersQ.error as Error).message}</div>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stagesQ.data && stagesQ.data.length === 0 && (
+        <div className="flex-1 p-6">
+          <EmptyState
+            icon={KanbanSquare}
+            title="CRM Não Configurado"
+            description="Seu funil de vendas não possui nenhuma coluna configurada. Inicialize-o agora para começar a gerenciar seus leads."
+            actions={
+              <PrimaryButton onClick={() => initStages.mutate()} disabled={initStages.isPending}>
+                {initStages.isPending ? "Inicializando..." : "Criar Funil Padrão"}
+              </PrimaryButton>
+            }
+          />
+        </div>
+      )}
+
+      {stagesQ.data && stagesQ.data.length > 0 && localLeads && (
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 no-scrollbar cursor-grab active:cursor-grabbing bg-background/50">
             <div className="flex h-full min-w-max gap-6">

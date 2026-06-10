@@ -524,7 +524,7 @@ function PageEditorSheet({
                       <DropdownMenuTrigger asChild>
                         <button
                           type="button"
-                          className="flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-semibold shadow-sm hover:bg-brand/90 transition-colors"
+                          className="flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-semibold hover:bg-brand/90 transition-colors"
                         >
                           <Plus className="h-3.5 w-3.5" /> Adicionar Bloco
                         </button>

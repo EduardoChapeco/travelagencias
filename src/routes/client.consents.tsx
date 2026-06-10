@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Shield, FileText, CheckCircle2, Clock } from "lucide-react";
+import { Shield, FileText, CheckCircle2, Clock, ShieldAlert, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { PrimaryButton, StatusBadge, fmtDate } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/client/consents")({
@@ -82,97 +83,132 @@ function ClientConsentsPage() {
   });
 
   return (
-    <>
-      <PageHeader
-        title="Privacidade e Termos"
-        description="Gerencie seus consentimentos e termos legais vigentes."
-      />
-
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-        <Shield className="h-4 w-4" /> Ações Pendentes
-      </h3>
-
-      {q.data?.missing.length === 0 && (
-        <div className="mb-8 rounded-lg border border-border bg-success-bg/20 p-4 text-center">
-          <CheckCircle2 className="h-6 w-6 text-success mx-auto mb-2" />
-          <div className="text-sm font-medium text-success">Tudo certo!</div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Você não possui nenhum termo obrigatório pendente de aceite.
-          </p>
+    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
+      <header className="flex flex-col gap-2 border-b border-border/50 pb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
+            <Shield className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Central de Privacidade e LGPD
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Visualize, assine e gerencie todos os seus consentimentos e termos legais de forma segura.
+            </p>
+          </div>
         </div>
-      )}
+      </header>
 
-      {q.data && q.data.missing.length > 0 && (
-        <div className="mb-8 space-y-3">
-          {q.data.missing.map((m: any) => (
-            <div
-              key={m.id}
-              className="rounded-xl border border-warning/50 bg-warning-bg/10 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
-            >
-              <div className="flex gap-3">
-                <FileText className="h-5 w-5 text-warning shrink-0" />
-                <div>
-                  <h4 className="text-sm font-bold text-foreground">
-                    {KIND_LABELS[m.kind] || m.kind}{" "}
-                    <span className="text-xs font-normal text-muted-foreground ml-1">
-                      v{m.version}
-                    </span>
-                  </h4>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-lg">
-                    Para continuar utilizando os serviços da agência, é necessário revisar e aceitar
-                    a versão mais recente deste documento.
-                  </p>
-                </div>
-              </div>
-              <PrimaryButton
-                disabled={acceptM.isPending}
-                onClick={() => acceptM.mutate(m.id)}
-                className="w-full md:w-auto shrink-0 bg-warning text-warning-foreground hover:bg-warning/90"
-              >
-                Aceitar Termos
-              </PrimaryButton>
-            </div>
-          ))}
-        </div>
-      )}
+      <div>
+        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4" /> Ações Pendentes
+        </h3>
 
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Histórico de Aceites
-      </h3>
-      {q.data?.acceptances.length === 0 && (
-        <EmptyState title="Sem aceites" description="Nenhum registro de aceite encontrado." />
-      )}
-      <div className="space-y-2">
-        {q.data?.acceptances.map((a: any) => (
-          <div
-            key={a.id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border bg-surface p-4 gap-4"
-          >
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
-              <div>
-                <div className="text-sm font-medium">
-                  {KIND_LABELS[a.policy_documents?.kind] || a.policy_documents?.kind}{" "}
-                  <span className="text-xs text-muted-foreground ml-1">
-                    v{a.policy_documents?.version}
-                  </span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-                  <Clock className="h-3 w-3" /> {fmtDate(a.accepted_at)}
-                  {a.ip_address && (
-                    <span className="text-[10px] font-mono bg-surface-alt px-1.5 py-0.5 rounded border border-border">
-                      IP: {a.ip_address}
-                    </span>
-                  )}
-                </div>
+        {q.isLoading && (
+          <div className="text-sm text-muted-foreground">Verificando conformidade...</div>
+        )}
+
+        {q.data?.missing.length === 0 && (
+          <div className="relative overflow-hidden rounded-2xl border border-success/30 bg-success/5 p-8 text-center transition-all hover:border-success/50">
+            <div className="absolute inset-0 bg-surface-alt/10 pointer-events-none" />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success mb-4">
+                <CheckCircle2 className="h-8 w-8" />
               </div>
-            </div>
-            <div>
-              <StatusBadge tone="success">Vigente</StatusBadge>
+              <h4 className="text-lg font-bold text-success mb-1">Tudo em conformidade!</h4>
+              <p className="text-sm text-success/80 max-w-md">
+                Você não possui nenhum termo obrigatório pendente. Agradecemos por manter seu cadastro atualizado.
+              </p>
             </div>
           </div>
-        ))}
+        )}
+
+        {q.data && q.data.missing.length > 0 && (
+          <div className="grid gap-4">
+            {q.data.missing.map((m: any) => (
+              <div
+                key={m.id}
+                className="group relative flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-2xl border border-warning/40 bg-surface p-6 transition-all hover:border-warning"
+              >
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-l-2xl" />
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-bold text-foreground flex items-center gap-2">
+                      {KIND_LABELS[m.kind] || m.kind}
+                      <span className="inline-flex items-center rounded-full bg-surface-alt px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border border-border">
+                        v{m.version}
+                      </span>
+                    </h4>
+                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-xl">
+                      Para continuar utilizando os serviços da agência e garantirmos a melhor experiência, é necessário revisar e aceitar a versão mais recente deste documento.
+                    </p>
+                  </div>
+                </div>
+                <PrimaryButton
+                  disabled={acceptM.isPending}
+                  onClick={() => acceptM.mutate(m.id)}
+                  className="w-full md:w-auto shrink-0 gap-2 h-11 px-6"
+                >
+                  <Check className="h-4 w-4" /> Aceitar e Assinar
+                </PrimaryButton>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </>
+
+      <div className="pt-4 border-t border-border/50">
+        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+          <Clock className="h-4 w-4" /> Histórico de Aceites (Trilha de Auditoria)
+        </h3>
+        
+        {q.data?.acceptances.length === 0 && (
+          <EmptyState title="Sem aceites históricos" description="Nenhum registro de aceite encontrado na trilha de auditoria." />
+        )}
+        
+        {q.data && q.data.acceptances.length > 0 && (
+          <div className="grid gap-3">
+            {q.data.acceptances.map((a: any) => (
+              <div
+                key={a.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border border-border bg-surface p-5 gap-4 transition-colors hover:border-brand/40"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-success/10 text-success shrink-0">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-foreground">
+                      {KIND_LABELS[a.policy_documents?.kind] || a.policy_documents?.kind}
+                      <span className="text-xs font-medium text-muted-foreground ml-2">
+                        Versão {a.policy_documents?.version}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2 flex flex-wrap items-center gap-3">
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5" /> {fmtDate(a.accepted_at)}
+                      </span>
+                      {a.ip_address && (
+                        <span className="font-mono text-[10px] bg-surface-alt px-2 py-0.5 rounded border border-border">
+                          IP: {a.ip_address}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <StatusBadge tone="success">Assinado Eletronicamente</StatusBadge>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
+

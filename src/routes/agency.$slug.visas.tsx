@@ -15,7 +15,7 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
 import { PrimaryButton, fmtDate, StatusBadge } from "@/components/ui/form";
-import { VisaFormSheet } from "@/components/visas/VisaFormSheet";
+import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
   head: () => ({ meta: [{ title: "Vistos e Passaportes · TravelOS" }] }),
@@ -192,10 +192,10 @@ function VisasPage() {
       </div>
 
       {newOpen && agency && (
-        <VisaFormSheet
+        <NewVisaWizard
           agencyId={agency.id}
           onClose={() => setNewOpen(false)}
-          onSaved={() => {
+          onCreated={() => {
             setNewOpen(false);
             qc.invalidateQueries({ queryKey: ["visas", agency.id] });
           }}

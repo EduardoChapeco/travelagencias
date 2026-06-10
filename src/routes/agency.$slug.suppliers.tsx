@@ -17,6 +17,7 @@ import {
   StatusBadge,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 
 export const Route = createFileRoute("/agency/$slug/suppliers")({
   head: () => ({ meta: [{ title: "Comissões e Fornecedores · TravelOS" }] }),
@@ -145,7 +146,7 @@ function SuppliersPage() {
       )}
 
       {open && agency && (
-        <NewSupplier
+        <NewSupplierWizard
           agencyId={agency.id}
           onClose={() => setOpen(false)}
           onCreated={() => {
@@ -158,119 +159,4 @@ function SuppliersPage() {
   );
 }
 
-function NewSupplier({
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [name, setName] = useState("");
-  const [legalName, setLegalName] = useState("");
-  const [kind, setKind] = useState("operator");
-  const [document, setDocument] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [commission, setCommission] = useState(0);
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("suppliers").insert({
-      agency_id: agencyId,
-      name,
-      legal_name: legalName || null,
-      kind: kind as never,
-      document: document || null,
-      email: email || null,
-      phone: phone || null,
-      commission_rate: commission,
-      notes: notes || null,
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Fornecedor criado");
-    onCreated();
-  }
-
-  return (
-    <Sheet onClose={onClose} title="Novo Fornecedor B2B">
-      <form onSubmit={submit} className="space-y-4">
-        <div className="bg-surface-alt/30 border border-border/50 p-4 rounded-xl space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
-            Dados Cadastrais
-          </h3>
-          <Field label="Nome fantasia (Visível em relatórios) *">
-            <Input required value={name} onChange={(e) => setName(e.target.value)} />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Razão social (Para Contratos)">
-              <Input value={legalName} onChange={(e) => setLegalName(e.target.value)} />
-            </Field>
-            <Field label="CNPJ / Documento">
-              <Input value={document} onChange={(e) => setDocument(e.target.value)} />
-            </Field>
-          </div>
-          <Field label="Categoria do Fornecedor">
-            <Select value={kind} onChange={(e) => setKind(e.target.value)}>
-              <option value="operator">Operadora Turística</option>
-              <option value="airline">Companhia Aérea</option>
-              <option value="hotel">Rede de Hotéis / Acomodação</option>
-              <option value="car_rental">Locadora de Veículos</option>
-              <option value="insurance">Seguradora</option>
-              <option value="transfer">Receptivo / Transfer</option>
-              <option value="tour">DMC / Passeios Locais</option>
-              <option value="visa">Despachante de Vistos</option>
-              <option value="other">Outros</option>
-            </Select>
-          </Field>
-        </div>
-
-        <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-brand mb-2">
-            Contato e Acordos Comerciais
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Markup / Comissão Base (%)">
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                step="0.01"
-                value={commission}
-                onChange={(e) => setCommission(+e.target.value || 0)}
-                className="h-10 text-lg font-mono font-bold text-brand"
-              />
-            </Field>
-            <Field label="Telefone / SLA Helpdesk">
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </Field>
-          </div>
-          <Field label="E-mail (Financeiro / Reservas)">
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </Field>
-          <Field label="Anotações (Condições Especiais)">
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ex: Faturamento 30 dias. Contato do gerente da conta: João."
-            />
-          </Field>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Gravando Acordo…" : "Criar Fornecedor"}
-          </PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
-  );
-}
+// removed inline NewSupplier component

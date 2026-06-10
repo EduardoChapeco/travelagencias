@@ -174,7 +174,7 @@ function Page() {
         {t.cover_image_url ? (
           <div className="relative h-64 md:h-80 w-full overflow-hidden">
             <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-black/50" />
             <div className="absolute bottom-6 left-6 right-6 md:left-12 max-w-4xl mx-auto flex items-end">
               <div className="text-white">
                 <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2">

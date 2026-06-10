@@ -7,7 +7,7 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
 import { PrimaryButton, StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
-import { CorporateRfpFormSheet } from "@/components/corporate/CorporateRfpFormSheet";
+import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWizard";
 
 export const Route = createFileRoute("/agency/$slug/corporate")({
   head: () => ({ meta: [{ title: "Corporate B2B · TravelOS" }] }),
@@ -175,10 +175,10 @@ function CorporatePage() {
       </div>
 
       {newOpen && agency && (
-        <CorporateRfpFormSheet
+        <NewCorporateRfpWizard
           agencyId={agency.id}
           onClose={() => setNewOpen(false)}
-          onSaved={() => {
+          onCreated={() => {
             setNewOpen(false);
             qc.invalidateQueries({ queryKey: ["corporate-rfps", agency.id] });
           }}

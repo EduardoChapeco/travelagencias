@@ -102,7 +102,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
         </p>
       </header>
 
-      <form onSubmit={handleAnalyze} className="relative flex items-center shadow-sm rounded-xl bg-surface border border-border p-2">
+      <form onSubmit={handleAnalyze} className="relative flex items-center rounded-xl bg-surface border border-border p-2">
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
         <input
           value={url}
@@ -196,7 +196,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
           {/* Opportunities */}
           <div className="md:col-span-6">
-            <div className="rounded-2xl border border-brand/30 bg-brand/5 p-6 h-full shadow-inner">
+            <div className="rounded-2xl border border-brand/30 bg-brand/5 p-6 h-full">
               <h3 className="text-sm font-bold uppercase tracking-wider text-brand mb-4 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 Como Superá-los (Oportunidades)
