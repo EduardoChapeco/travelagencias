@@ -105,6 +105,7 @@ import { Route as AgencySlugTripsIdPassengersRouteImport } from './routes/agency
 import { Route as AgencySlugTripsIdFinancialRouteImport } from './routes/agency.$slug.trips.$id.financial'
 import { Route as AgencySlugTripsIdContractRouteImport } from './routes/agency.$slug.trips.$id.contract'
 import { Route as AgencySlugProposalsIdPreviewRouteImport } from './routes/agency.$slug.proposals.$id.preview'
+import { Route as AgencySlugPortalPagesPage_idRouteImport } from './routes/agency.$slug.portal.pages.$page_id'
 
 const ClientRoute = ClientRouteImport.update({
   id: '/client',
@@ -594,6 +595,12 @@ const AgencySlugProposalsIdPreviewRoute =
     path: '/preview',
     getParentRoute: () => AgencySlugProposalsIdRoute,
   } as any)
+const AgencySlugPortalPagesPage_idRoute =
+  AgencySlugPortalPagesPage_idRouteImport.update({
+    id: '/$page_id',
+    path: '/$page_id',
+    getParentRoute: () => AgencySlugPortalPagesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -675,7 +682,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
-  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRoute
+  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRouteWithChildren
   '/agency/$slug/proposals/$id': typeof AgencySlugProposalsIdRouteWithChildren
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -686,6 +693,7 @@ export interface FileRoutesByFullPath {
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/portal/': typeof AgencySlugPortalIndexRoute
   '/p/$agency_slug/kb/': typeof PAgency_slugKbIndexRoute
+  '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/contract': typeof AgencySlugTripsIdContractRoute
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
@@ -767,7 +775,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
-  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRoute
+  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRouteWithChildren
   '/agency/$slug/proposals/$id': typeof AgencySlugProposalsIdRouteWithChildren
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -777,6 +785,7 @@ export interface FileRoutesByTo {
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/portal': typeof AgencySlugPortalIndexRoute
   '/p/$agency_slug/kb': typeof PAgency_slugKbIndexRoute
+  '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/contract': typeof AgencySlugTripsIdContractRoute
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
@@ -865,7 +874,7 @@ export interface FileRoutesById {
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
-  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRoute
+  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRouteWithChildren
   '/agency/$slug/proposals/$id': typeof AgencySlugProposalsIdRouteWithChildren
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -876,6 +885,7 @@ export interface FileRoutesById {
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/portal/': typeof AgencySlugPortalIndexRoute
   '/p/$agency_slug/kb/': typeof PAgency_slugKbIndexRoute
+  '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/contract': typeof AgencySlugTripsIdContractRoute
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
@@ -976,6 +986,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/portal/'
     | '/p/$agency_slug/kb/'
+    | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/contract'
     | '/agency/$slug/trips/$id/financial'
@@ -1067,6 +1078,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/portal'
     | '/p/$agency_slug/kb'
+    | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/contract'
     | '/agency/$slug/trips/$id/financial'
@@ -1165,6 +1177,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/portal/'
     | '/p/$agency_slug/kb/'
+    | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/contract'
     | '/agency/$slug/trips/$id/financial'
@@ -1864,6 +1877,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugProposalsIdPreviewRouteImport
       parentRoute: typeof AgencySlugProposalsIdRoute
     }
+    '/agency/$slug/portal/pages/$page_id': {
+      id: '/agency/$slug/portal/pages/$page_id'
+      path: '/$page_id'
+      fullPath: '/agency/$slug/portal/pages/$page_id'
+      preLoaderRoute: typeof AgencySlugPortalPagesPage_idRouteImport
+      parentRoute: typeof AgencySlugPortalPagesRoute
+    }
   }
 }
 
@@ -2043,15 +2063,28 @@ const AgencySlugGroupToursRouteChildren: AgencySlugGroupToursRouteChildren = {
 const AgencySlugGroupToursRouteWithChildren =
   AgencySlugGroupToursRoute._addFileChildren(AgencySlugGroupToursRouteChildren)
 
+interface AgencySlugPortalPagesRouteChildren {
+  AgencySlugPortalPagesPage_idRoute: typeof AgencySlugPortalPagesPage_idRoute
+}
+
+const AgencySlugPortalPagesRouteChildren: AgencySlugPortalPagesRouteChildren = {
+  AgencySlugPortalPagesPage_idRoute: AgencySlugPortalPagesPage_idRoute,
+}
+
+const AgencySlugPortalPagesRouteWithChildren =
+  AgencySlugPortalPagesRoute._addFileChildren(
+    AgencySlugPortalPagesRouteChildren,
+  )
+
 interface AgencySlugPortalRouteChildren {
   AgencySlugPortalBlogRoute: typeof AgencySlugPortalBlogRoute
-  AgencySlugPortalPagesRoute: typeof AgencySlugPortalPagesRoute
+  AgencySlugPortalPagesRoute: typeof AgencySlugPortalPagesRouteWithChildren
   AgencySlugPortalIndexRoute: typeof AgencySlugPortalIndexRoute
 }
 
 const AgencySlugPortalRouteChildren: AgencySlugPortalRouteChildren = {
   AgencySlugPortalBlogRoute: AgencySlugPortalBlogRoute,
-  AgencySlugPortalPagesRoute: AgencySlugPortalPagesRoute,
+  AgencySlugPortalPagesRoute: AgencySlugPortalPagesRouteWithChildren,
   AgencySlugPortalIndexRoute: AgencySlugPortalIndexRoute,
 }
 
