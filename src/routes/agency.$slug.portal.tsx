@@ -31,7 +31,9 @@ function Page() {
               to={tab.to}
               params={{ slug }}
               className={`-mb-px border-b-2 px-3 py-2 text-xs font-medium transition ${
-                active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                active
+                  ? "border-foreground text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {tab.label}

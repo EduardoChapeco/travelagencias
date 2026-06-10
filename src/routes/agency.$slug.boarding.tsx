@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   Plus, Plane, AlertTriangle, GripVertical, Users, Calendar,
-  CheckSquare, Square, X, ChevronRight, Clock,
+  CheckSquare, Square, X, ChevronRight, Clock, Link as LinkIcon
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -434,6 +434,20 @@ function CardDetailPanel({
               <div className="font-semibold">{fmtDate(card.departure_date)}</div>
             </div>
           )}
+        </div>
+
+        {/* Web Check-in Link Action */}
+        <div className="mb-5">
+          <PrimaryButton 
+            className="w-full h-9 text-xs gap-2 font-bold uppercase tracking-widest bg-brand/10 text-brand hover:bg-brand/20 border-none"
+            onClick={() => {
+              const url = \`\${window.location.origin}/m/checkin/\${card.id}\`;
+              navigator.clipboard.writeText(url);
+              toast.success("Link copiado para a área de transferência!");
+            }}
+          >
+            <LinkIcon className="w-3.5 h-3.5" /> Link Web Check-in (Cliente)
+          </PrimaryButton>
         </div>
 
         {/* CHECKLIST */}

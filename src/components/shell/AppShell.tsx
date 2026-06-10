@@ -5,6 +5,7 @@ import { AppSidebar } from "./AppSidebar";
 import { AIChatPanel } from "./AIChatPanel";
 import { NotificationBadge } from "./NotificationsPanel";
 import { LegalBlocker } from "./LegalBlocker";
+import { CommandMenu } from "./CommandMenu";
 
 export function AppShell({
   title,
@@ -37,6 +38,7 @@ export function AppShell({
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
       <AppSidebar isPinned={isPinned} onTogglePin={togglePin} />
+      <CommandMenu />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
@@ -54,19 +56,24 @@ export function AppShell({
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden items-center gap-2 rounded-md border border-border bg-surface px-2 md:flex">
-              <Search className="h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                placeholder="Buscar…"
-                className="h-8 w-48 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
-              />
+            <div 
+              className="hidden items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
+              onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            >
+              <Search className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
+              <div className="w-48 text-xs text-muted-foreground group-hover:text-foreground flex items-center justify-between">
+                <span>Buscar...</span>
+                <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">⌘K</span>
+              </div>
             </div>
             {actions}
             <NotificationBadge />
             <button
               onClick={() => setAiOpen((v) => !v)}
               className={`flex h-8 items-center gap-1.5 rounded-md border border-border px-2 text-xs font-medium ${
-                aiOpen ? "bg-surface-alt text-foreground" : "bg-surface text-muted-foreground hover:text-foreground"
+                aiOpen
+                  ? "bg-surface-alt text-foreground"
+                  : "bg-surface text-muted-foreground hover:text-foreground"
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -78,9 +85,7 @@ export function AppShell({
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
             <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 py-6">
-              <LegalBlocker>
-                {children ?? <Outlet />}
-              </LegalBlocker>
+              <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </div>
           </main>
           {aiOpen && <AIChatPanel onClose={() => setAiOpen(false)} />}

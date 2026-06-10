@@ -4,10 +4,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
-import {
-  listAIChatMessages,
-  sendAIChatMessage,
-} from "@/lib/api/ai-chat.functions";
+import { listAIChatMessages, sendAIChatMessage } from "@/lib/api/ai-chat.functions";
 
 type ChatMsg = {
   id: string;

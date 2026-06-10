@@ -4,23 +4,21 @@ import jsPDF from "jspdf";
 /**
  * Gera um hash SHA-256 no cliente usando Web Crypto API.
  */
-export async function generateContractHash(
-  payload: {
-    contract_id: string;
-    signer_name: string;
-    signer_document: string;
-    ip: string;
-    timestamp: string;
-    content: string;
-  }
-): Promise<string> {
+export async function generateContractHash(payload: {
+  contract_id: string;
+  signer_name: string;
+  signer_document: string;
+  ip: string;
+  timestamp: string;
+  content: string;
+}): Promise<string> {
   const dataString = JSON.stringify(payload);
   const encoder = new TextEncoder();
   const data = encoder.encode(dataString);
-  
+
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**

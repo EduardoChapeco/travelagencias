@@ -116,7 +116,10 @@ function Landing() {
 
         <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
           <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand ">
-            <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span></span>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+            </span>
             A Nova Era do Turismo B2B
           </div>
 
@@ -125,36 +128,54 @@ function Landing() {
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed font-medium">
-            Gerencie Leads, Operadores, Vouchers, Financeiro DRE e Embarques em um único Workspace Premium.
-            Sem planilhas. Sem confusão.
+            Gerencie Leads, Operadores, Vouchers, Financeiro DRE e Embarques em um único Workspace
+            Premium. Sem planilhas. Sem confusão.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/auth/register" className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-widest text-brand-foreground   transition-all hover:-translate-y-1 hover: hover: overflow-hidden">
-               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-               <span className="relative flex items-center gap-2">Criar minha agência <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+            <Link
+              to="/auth/register"
+              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-widest text-brand-foreground   transition-all hover:-translate-y-1 hover: hover: overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <span className="relative flex items-center gap-2">
+                Criar minha agência{" "}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
             </Link>
-            <Link to="/auth/login" className="inline-flex h-14 items-center justify-center rounded-xl border-2 border-border/50 bg-surface px-8 text-sm font-bold uppercase tracking-widest text-foreground transition-all hover:border-brand/50 hover:bg-brand/5">
+            <Link
+              to="/auth/login"
+              className="inline-flex h-14 items-center justify-center rounded-xl border-2 border-border/50 bg-surface px-8 text-sm font-bold uppercase tracking-widest text-foreground transition-all hover:border-brand/50 hover:bg-brand/5"
+            >
               Acessar Painel
             </Link>
           </div>
 
           <div className="mt-8 flex items-center justify-center gap-4 text-xs font-semibold text-muted-foreground">
-             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-brand"/> Sem cartão de crédito</span>
-             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-brand"/> Setup instantâneo</span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-brand" /> Sem cartão de crédito
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-brand" /> Setup instantâneo
+            </span>
           </div>
         </div>
 
         {/* BENTO STATS */}
         <div className="relative z-10 mx-auto mt-20 max-w-4xl px-6">
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             {stats.map((s, i) => (
-               <div key={i} className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/80 p-8  backdrop-blur-md transition-transform hover:-translate-y-1">
-                 <div className="text-4xl font-extrabold text-foreground">{s.value}</div>
-                 <div className="mt-2 text-xs uppercase tracking-widest font-bold text-muted-foreground">{s.label}</div>
-               </div>
-             ))}
-           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {stats.map((s, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-surface/80 p-8  backdrop-blur-md transition-transform hover:-translate-y-1"
+              >
+                <div className="text-4xl font-extrabold text-foreground">{s.value}</div>
+                <div className="mt-2 text-xs uppercase tracking-widest font-bold text-muted-foreground">
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -177,24 +198,26 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8  transition-all hover: hover:-translate-y-1 hover:border-brand/40",
-                     i === 0 || i === 3 ? "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-surface to-surface-alt" : ""
+                    "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8  transition-all hover: hover:-translate-y-1 hover:border-brand/40",
+                    i === 0 || i === 3
+                      ? "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-surface to-surface-alt"
+                      : "",
                   )}
                 >
                   <div className="absolute right-0 top-0 h-40 w-40 -translate-y-10 translate-x-10 rounded-full bg-brand/5 transition-transform duration-500 group-hover:scale-150" />
-                  
+
                   <div className="relative z-10 flex flex-col h-full">
-                     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 text-brand">
-                       <Icon className="h-6 w-6" strokeWidth={2} />
-                     </div>
-                     <h3 className="text-xl font-bold mb-3">{f.title}</h3>
-                     <p className="text-sm leading-relaxed text-muted-foreground font-medium flex-1">
-                       {f.description}
-                     </p>
-                     
-                     <div className="mt-8 flex items-center text-xs font-bold uppercase tracking-widest text-brand opacity-0 transform translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
-                        Saber mais <ArrowRight className="ml-2 h-4 w-4" />
-                     </div>
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 text-brand">
+                      <Icon className="h-6 w-6" strokeWidth={2} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{f.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground font-medium flex-1">
+                      {f.description}
+                    </p>
+
+                    <div className="mt-8 flex items-center text-xs font-bold uppercase tracking-widest text-brand opacity-0 transform translate-y-2 transition-all group-hover:opacity-100 group-hover:translate-y-0">
+                      Saber mais <ArrowRight className="ml-2 h-4 w-4" />
+                    </div>
                   </div>
                 </div>
               );
@@ -214,8 +237,8 @@ function Landing() {
               Feito para agentes de viagem, não para TI
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Diferente de softwares genéricos, o TravelOS foi construído para o fluxo real de
-              uma agência: do primeiro contato com o cliente até o embarque e pós-viagem.
+              Diferente de softwares genéricos, o TravelOS foi construído para o fluxo real de uma
+              agência: do primeiro contato com o cliente até o embarque e pós-viagem.
             </p>
           </div>
 
@@ -239,22 +262,24 @@ function Landing() {
 
       {/* ── CTA Final Premium ────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-brand py-24 text-brand-foreground">
-         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
-         
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
+
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight drop- mb-6">
             O seu próximo nível em Turismo começa aqui.
           </h2>
           <p className="mt-4 text-lg font-medium opacity-90 max-w-2xl mx-auto mb-10">
-            Diga adeus às planilhas. Configure sua agência em menos de 2 minutos e traga toda a sua equipe para o TravelOS.
+            Diga adeus às planilhas. Configure sua agência em menos de 2 minutos e traga toda a sua
+            equipe para o TravelOS.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
               className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-background px-10 text-sm font-bold uppercase tracking-widest text-brand  transition-all hover:-translate-y-1 hover:)] overflow-hidden"
             >
-              Criar Conta B2B <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              Criar Conta B2B{" "}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/auth/login"

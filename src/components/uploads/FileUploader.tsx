@@ -66,7 +66,9 @@ export function FileUploader({
           const { data } = supabase.storage.from(bucket).getPublicUrl(path);
           url = data.publicUrl;
         } else {
-          const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365);
+          const { data, error } = await supabase.storage
+            .from(bucket)
+            .createSignedUrl(path, 60 * 60 * 24 * 365);
           if (error) throw error;
           url = data.signedUrl;
         }

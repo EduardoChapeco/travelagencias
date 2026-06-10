@@ -24,11 +24,18 @@ const AgencyContext = createContext<Ctx>({
   refresh: () => {},
 });
 
-export function AgencyProvider({ preloadedAgency, children }: { preloadedAgency: Agency; children: ReactNode }) {
+export function AgencyProvider({
+  preloadedAgency,
+  children,
+}: {
+  preloadedAgency: Agency;
+  children: ReactNode;
+}) {
   // Apply runtime brand color tokens
   useEffect(() => {
     const el = document.documentElement;
-    if (preloadedAgency?.brand_color) el.style.setProperty("--agency-brand", preloadedAgency.brand_color);
+    if (preloadedAgency?.brand_color)
+      el.style.setProperty("--agency-brand", preloadedAgency.brand_color);
     if (preloadedAgency?.brand_color_light)
       el.style.setProperty("--agency-brand-light", preloadedAgency.brand_color_light);
     if (preloadedAgency?.brand_color_fg)
@@ -41,7 +48,9 @@ export function AgencyProvider({ preloadedAgency, children }: { preloadedAgency:
   }, [preloadedAgency]);
 
   return (
-    <AgencyContext.Provider value={{ agency: preloadedAgency, loading: false, error: null, refresh: () => {} }}>
+    <AgencyContext.Provider
+      value={{ agency: preloadedAgency, loading: false, error: null, refresh: () => {} }}
+    >
       {children}
     </AgencyContext.Provider>
   );

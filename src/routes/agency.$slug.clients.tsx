@@ -6,30 +6,50 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, fmtDate } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  Sheet,
+  fmtDate,
+} from "@/components/ui/form";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ClientFormSheet } from "@/components/clients/ClientFormSheet";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const clientsQueryOptions = (agencyId: string, q: string, page: number, pageSize: number) => queryOptions({
-  queryKey: ["clients", agencyId, q, page],
-  queryFn: async () => {
-    let qb = supabase
-      .from("clients")
-      .select("id, full_name, legal_name, kind, document, email, phone, created_at, tags", { count: "exact" })
-      .eq("agency_id", agencyId)
-      .order("created_at", { ascending: false })
-      .range((page - 1) * pageSize, page * pageSize - 1);
-      
-    if (q.trim()) {
-      const term = `%${q.trim()}%`;
-      qb = qb.or(`full_name.ilike.${term},email.ilike.${term},phone.ilike.${term},document.ilike.${term}`);
-    }
-    const { data, count, error } = await qb;
-    if (error) throw error;
-    return { data: data as Client[], count: count ?? 0 };
-  },
-});
+export const clientsQueryOptions = (agencyId: string, q: string, page: number, pageSize: number, showDeleted: boolean) =>
+  queryOptions({
+    queryKey: ["clients", agencyId, q, page, showDeleted],
+    queryFn: async () => {
+      let qb = supabase
+        .from("clients")
+        .select("id, full_name, legal_name, kind, document, email, phone, created_at, tags, deleted_at", {
+          count: "exact",
+        })
+        .eq("agency_id", agencyId)
+        .order("created_at", { ascending: false })
+        .range((page - 1) * pageSize, page * pageSize - 1);
+
+      if (showDeleted) {
+        qb = qb.not("deleted_at", "is", null);
+      } else {
+        qb = qb.is("deleted_at", null);
+      }
+
+      if (q.trim()) {
+        const term = `%${q.trim()}%`;
+        qb = qb.or(
+          `full_name.ilike.${term},email.ilike.${term},phone.ilike.${term},document.ilike.${term}`,
+        );
+      }
+      const { data, count, error } = await qb;
+      if (error) throw error;
+      return { data: data as Client[], count: count ?? 0 };
+    },
+  });
 
 export const Route = createFileRoute("/agency/$slug/clients")({
   head: () => ({ meta: [{ title: "Clientes · TravelOS" }] }),
@@ -53,6 +73,7 @@ type Client = {
   phone: string | null;
   created_at: string;
   tags: string[];
+  deleted_at: string | null;
 };
 
 function ClientsPage() {
@@ -64,13 +85,28 @@ function ClientsPage() {
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const [newOpen, setNewOpen] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
 
-  // Voltar para página 1 sempre que a busca mudar
-  useEffect(() => { setPage(1); }, [debouncedQ]);
+  // Voltar para página 1 sempre que a busca ou filtro mudar
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQ, showDeleted]);
 
   const list = useQuery({
-    ...clientsQueryOptions(agency?.id ?? "", debouncedQ, page, pageSize),
+    ...clientsQueryOptions(agency?.id ?? "", debouncedQ, page, pageSize, showDeleted),
     enabled: !!agency,
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("clients").update({ deleted_at: null }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Cliente restaurado com sucesso!");
+      qc.invalidateQueries({ queryKey: ["clients", agency?.id] });
+    },
+    onError: (e) => toast.error(e.message),
   });
 
   return (
@@ -88,17 +124,30 @@ function ClientsPage() {
         }
       />
 
-      <div className="mb-4 flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar por nome, email, telefone ou documento"
-            className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
-          />
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 flex-1 max-w-sm">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Buscar por nome, email, telefone ou documento"
+              className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
+            />
+          </div>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{list.data?.count ?? 0} clientes</span>
         </div>
-        <span className="text-xs text-muted-foreground">{list.data?.count ?? 0} clientes</span>
+        
+        <button
+          onClick={() => setShowDeleted(!showDeleted)}
+          className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
+            showDeleted 
+              ? "bg-danger text-danger-foreground border-danger" 
+              : "bg-surface border-border text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
+        </button>
       </div>
 
       {list.isLoading && (
@@ -110,75 +159,98 @@ function ClientsPage() {
       )}
 
       {list.data && list.data.data.length === 0 && (
-        <EmptyState title="Nenhum cliente" description={debouncedQ ? "Nenhum resultado para a busca." : "Crie seu primeiro cliente para começar."} />
+        <EmptyState
+          title="Nenhum cliente"
+          description={
+            debouncedQ
+              ? "Nenhum resultado para a busca."
+              : "Crie seu primeiro cliente para começar."
+          }
+        />
       )}
 
       {list.data && list.data.data.length > 0 && (
         <>
           <div className="overflow-hidden rounded-lg border border-border">
             <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Nome</th>
-                <th className="px-3 py-2 font-medium">Tipo</th>
-                <th className="px-3 py-2 font-medium">Documento</th>
-                <th className="px-3 py-2 font-medium">Contato</th>
-                <th className="px-3 py-2 font-medium">Criado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.data.data.map((c) => (
-                <tr key={c.id} className="border-t border-border hover:bg-surface-alt/30">
-                  <td className="px-3 py-2.5">
-                    <Link
-                      to="/agency/$slug/clients/$id"
-                      params={{ slug, id: c.id }}
-                      className="font-medium hover:underline"
-                    >
-                      {c.full_name}
-                    </Link>
-                    {c.legal_name && (
-                      <div className="text-xs text-muted-foreground">{c.legal_name}</div>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {c.kind === "individual" ? "Pessoa física" : "Empresa"}
-                  </td>
-                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">{c.document ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    <div>{c.email ?? "—"}</div>
-                    <div>{c.phone ?? ""}</div>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(c.created_at)}</td>
+              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 font-medium">Nome</th>
+                  <th className="px-3 py-2 font-medium">Tipo</th>
+                  <th className="px-3 py-2 font-medium">Documento</th>
+                  <th className="px-3 py-2 font-medium">Contato</th>
+                  <th className="px-3 py-2 font-medium">Criado</th>
+                  {showDeleted && <th className="px-3 py-2 font-medium text-right">Ação</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Controles de Paginação */}
-        <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-          <div className="text-xs text-muted-foreground">
-            Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(list.data.count / pageSize) || 1}
+              </thead>
+              <tbody>
+                {list.data.data.map((c) => (
+                  <tr key={c.id} className="border-t border-border hover:bg-surface-alt/30">
+                    <td className="px-3 py-2.5">
+                      <Link
+                        to="/agency/$slug/clients/$id"
+                        params={{ slug, id: c.id }}
+                        className="font-medium hover:underline"
+                      >
+                        {c.full_name}
+                      </Link>
+                      {c.legal_name && (
+                        <div className="text-xs text-muted-foreground">{c.legal_name}</div>
+                      )}
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                      {c.kind === "individual" ? "Pessoa física" : "Empresa"}
+                    </td>
+                    <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
+                      {c.document ?? "—"}
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                      <div>{c.email ?? "—"}</div>
+                      <div>{c.phone ?? ""}</div>
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                      {fmtDate(c.created_at)}
+                    </td>
+                    {showDeleted && (
+                      <td className="px-3 py-2.5 text-right">
+                        <button 
+                          onClick={() => restoreMutation.mutate(c.id)}
+                          className="text-xs font-semibold text-brand hover:underline"
+                        >
+                          Restaurar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="flex items-center gap-2">
-            <GhostButton 
-              disabled={page === 1} 
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              className="h-8 px-3 text-xs"
-            >
-              Anterior
-            </GhostButton>
-            <GhostButton 
-              disabled={page * pageSize >= list.data.count} 
-              onClick={() => setPage(p => p + 1)}
-              className="h-8 px-3 text-xs"
-            >
-              Próxima
-            </GhostButton>
+
+          {/* Controles de Paginação */}
+          <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+            <div className="text-xs text-muted-foreground">
+              Página <span className="font-medium text-foreground">{page}</span> de{" "}
+              {Math.ceil(list.data.count / pageSize) || 1}
+            </div>
+            <div className="flex items-center gap-2">
+              <GhostButton
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="h-8 px-3 text-xs"
+              >
+                Anterior
+              </GhostButton>
+              <GhostButton
+                disabled={page * pageSize >= list.data.count}
+                onClick={() => setPage((p) => p + 1)}
+                className="h-8 px-3 text-xs"
+              >
+                Próxima
+              </GhostButton>
+            </div>
           </div>
-        </div>
-      </>
+        </>
       )}
 
       {newOpen && agency && (
@@ -194,4 +266,3 @@ function ClientsPage() {
     </>
   );
 }
-

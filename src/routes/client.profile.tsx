@@ -145,9 +145,14 @@ function Page() {
   return (
     <>
       <PageHeader title="Meu perfil" description="Atualize seus dados pessoais e de viagem" />
-      <form onSubmit={save} className="max-w-2xl space-y-6 rounded-lg border border-border bg-surface p-6">
+      <form
+        onSubmit={save}
+        className="max-w-2xl space-y-6 rounded-lg border border-border bg-surface p-6"
+      >
         <section className="space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Identidade</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Identidade
+          </div>
           <FileUploader
             value={form.avatar_url}
             onChange={(u) => setForm({ ...form, avatar_url: u ?? "" })}
@@ -166,16 +171,25 @@ function Page() {
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="E-mail">
-              <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
             </Field>
             <Field label="Telefone">
-              <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              <Input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
             </Field>
           </div>
         </section>
 
         <section className="space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Documentos</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Documentos
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="CPF">
               <Input value={form.cpf} onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
@@ -189,7 +203,10 @@ function Page() {
             </Field>
           </div>
           <Field label="Nacionalidade">
-            <Select value={form.nationality} onChange={(e) => setForm({ ...form, nationality: e.target.value })}>
+            <Select
+              value={form.nationality}
+              onChange={(e) => setForm({ ...form, nationality: e.target.value })}
+            >
               <option value="BR">Brasileira</option>
               <option value="PT">Portuguesa</option>
               <option value="US">Americana</option>
@@ -200,7 +217,9 @@ function Page() {
         </section>
 
         <section className="space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Passaporte</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Passaporte
+          </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Número">
               <Input
@@ -233,8 +252,8 @@ function Page() {
 
         {!me.data?.client && (
           <div className="rounded-md border border-border bg-warning-bg p-3 text-xs text-foreground">
-            Você ainda não está vinculado a uma agência. Algumas informações de viagem serão criadas pelo seu agente
-            quando você fizer sua primeira reserva.
+            Você ainda não está vinculado a uma agência. Algumas informações de viagem serão criadas
+            pelo seu agente quando você fizer sua primeira reserva.
           </div>
         )}
       </form>

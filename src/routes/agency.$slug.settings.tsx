@@ -15,7 +15,11 @@ export const Route = createFileRoute("/agency/$slug/settings")({
 });
 
 const INTEGRATION_PROVIDERS: Array<{ key: string; label: string; hint?: string }> = [
-  { key: "gemini", label: "Gemini API Key", hint: "Para IA e OCR; opcional se quiser usar a chave global" },
+  {
+    key: "gemini",
+    label: "Gemini API Key",
+    hint: "Para IA e OCR; opcional se quiser usar a chave global",
+  },
   { key: "anthropic", label: "Anthropic API Key", hint: "Claude Sonnet — opcional" },
   { key: "openai", label: "OpenAI API Key", hint: "GPT — opcional" },
   { key: "resend", label: "Resend API Key", hint: "Envio de e-mails" },
@@ -35,7 +39,10 @@ function Page() {
   if (!agency) return null;
   return (
     <>
-      <PageHeader title="Configurações" description="Dados cadastrais, equipe, integrações e chaves" />
+      <PageHeader
+        title="Configurações"
+        description="Dados cadastrais, equipe, integrações e chaves"
+      />
       <Tabs defaultValue="general" className="max-w-4xl">
         <TabsList>
           <TabsTrigger value="general">Geral</TabsTrigger>
@@ -131,32 +138,49 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
     <form onSubmit={save} className="mt-4 space-y-4 rounded-lg border border-border bg-surface p-6">
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Nome da agência">
-          <Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <Input
+            required
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
         </Field>
         <Field label="Slug (URL)">
           <Input
             required
             value={form.slug}
-            onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })}
+            onChange={(e) =>
+              setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })
+            }
           />
         </Field>
       </div>
       <Field label="Razão social">
-        <Input value={form.legal_name} onChange={(e) => setForm({ ...form, legal_name: e.target.value })} />
+        <Input
+          value={form.legal_name}
+          onChange={(e) => setForm({ ...form, legal_name: e.target.value })}
+        />
       </Field>
       <Field label="CNPJ / Documento">
-        <Input value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} />
+        <Input
+          value={form.document}
+          onChange={(e) => setForm({ ...form, document: e.target.value })}
+        />
       </Field>
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="E-mail oficial">
-          <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <Input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
         </Field>
         <Field label="Telefone">
           <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
         </Field>
       </div>
       <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-        Criada em {form.created_at ? new Date(form.created_at).toLocaleDateString("pt-BR") : "—"} · Plano: Padrão
+        Criada em {form.created_at ? new Date(form.created_at).toLocaleDateString("pt-BR") : "—"} ·
+        Plano: Padrão
       </div>
       <PrimaryButton disabled={busy}>{busy ? "Salvando…" : "Salvar"}</PrimaryButton>
     </form>
@@ -180,7 +204,10 @@ function TeamTab({ agencyId }: { agencyId: string }) {
       if (error) throw error;
       const ids = (data ?? []).map((r) => r.user_id);
       if (ids.length === 0) return [];
-      const { data: profs } = await supabase.from("profiles").select("id, full_name, avatar_url").in("id", ids);
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, full_name, avatar_url")
+        .in("id", ids);
       const byId = new Map((profs ?? []).map((p) => [p.id, p]));
       return (data ?? []).map((r) => ({ ...r, profile: byId.get(r.user_id) ?? null }));
     },
@@ -233,7 +260,10 @@ function TeamTab({ agencyId }: { agencyId: string }) {
 
   return (
     <div className="mt-4 space-y-4">
-      <form onSubmit={invite} className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-4">
+      <form
+        onSubmit={invite}
+        className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-4"
+      >
         <Input
           type="email"
           placeholder="email@agente.com"
@@ -278,10 +308,13 @@ function TeamTab({ agencyId }: { agencyId: string }) {
           <div className="p-4 text-xs text-muted-foreground">Nenhum convite pendente.</div>
         ) : (
           <ul className="divide-y divide-border">
-            {invites.data!
-              .filter((i) => !i.accepted_at)
+            {invites
+              .data!.filter((i) => !i.accepted_at)
               .map((i) => (
-                <li key={i.id} className="flex items-center justify-between gap-2 px-4 py-2 text-sm">
+                <li
+                  key={i.id}
+                  className="flex items-center justify-between gap-2 px-4 py-2 text-sm"
+                >
                   <div>
                     <div>{i.email}</div>
                     <div className="text-[11px] text-muted-foreground">
@@ -355,12 +388,19 @@ function IntegrationsTab({ agencyId }: { agencyId: string }) {
   return (
     <div className="mt-4 space-y-3">
       <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-        Chaves específicas desta agência. Quando ausentes, o sistema usa as chaves globais cadastradas pelo
-        administrador.
+        Chaves específicas desta agência. Quando ausentes, o sistema usa as chaves globais
+        cadastradas pelo administrador.
       </div>
       {INTEGRATION_PROVIDERS.map((p) => {
         const existing = q.data?.find((k) => k.provider === p.key);
-        return <IntegrationRow key={p.key} provider={p} existing={existing} onSubmit={(v) => upsert(p.key, v)} />;
+        return (
+          <IntegrationRow
+            key={p.key}
+            provider={p}
+            existing={existing}
+            onSubmit={(v) => upsert(p.key, v)}
+          />
+        );
       })}
     </div>
   );
@@ -460,7 +500,10 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
 
   return (
     <div className="mt-4 space-y-4">
-      <form onSubmit={add} className="grid gap-2 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5">
+      <form
+        onSubmit={add}
+        className="grid gap-2 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5"
+      >
         <Field label="Provider">
           <Input
             placeholder="anthropic, openai…"

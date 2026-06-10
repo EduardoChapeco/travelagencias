@@ -2,9 +2,19 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft, Plus, Trash2, TrendingUp, TrendingDown,
-  DollarSign, CreditCard, CheckCircle, Clock, AlertCircle,
-  ChevronDown, ChevronRight, Receipt
+  ArrowLeft,
+  Plus,
+  Trash2,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  CreditCard,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  Receipt,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,11 +80,26 @@ type Trip = {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const INCOME_CATEGORIES = [
-  "Pacote", "Voo", "Hotel", "Transfer", "Passeio", "Seguro", "Taxa", "Outro"
+  "Pacote",
+  "Voo",
+  "Hotel",
+  "Transfer",
+  "Passeio",
+  "Seguro",
+  "Taxa",
+  "Outro",
 ];
 const EXPENSE_CATEGORIES = [
-  "Aéreo", "Hospedagem", "Transfer", "Passeio", "Guia", "Taxa aeroportuária",
-  "Comissão", "Marketing", "Operacional", "Outro"
+  "Aéreo",
+  "Hospedagem",
+  "Transfer",
+  "Passeio",
+  "Guia",
+  "Taxa aeroportuária",
+  "Comissão",
+  "Marketing",
+  "Operacional",
+  "Outro",
 ];
 const PAYMENT_METHODS = [
   ["pix", "Pix"],
@@ -196,7 +221,15 @@ function TripFinancial() {
     onSuccess: () => {
       toast.success("Lançamento adicionado");
       setShowAddRecord(false);
-      setRForm({ category: "", description: "", amount: "", currency: "BRL", payment_method: "", status: "confirmed", due_date: "" });
+      setRForm({
+        category: "",
+        description: "",
+        amount: "",
+        currency: "BRL",
+        payment_method: "",
+        status: "confirmed",
+        due_date: "",
+      });
       qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
       qc.invalidateQueries({ queryKey: ["trip", tripId] });
     },
@@ -205,7 +238,10 @@ function TripFinancial() {
 
   const deleteRecord = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("financial_records").update({ status: "cancelled" } as never).eq("id", id);
+      const { error } = await supabase
+        .from("financial_records")
+        .update({ status: "cancelled" } as never)
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -217,7 +253,12 @@ function TripFinancial() {
 
   // ── Payment plan form ─────────────────────────────────────────────────────────
 
-  const [planForm, setPlanForm] = useState({ total_amount: "", installments: "1", method: "pix", first_due: "" });
+  const [planForm, setPlanForm] = useState({
+    total_amount: "",
+    installments: "1",
+    method: "pix",
+    first_due: "",
+  });
 
   const createPlan = useMutation({
     mutationFn: async () => {
@@ -281,9 +322,7 @@ function TripFinancial() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Gestão Financeira</h2>
-        <button
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-brand  transition-all"
-        >
+        <button className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-brand  transition-all">
           <Plus className="h-3.5 w-3.5" />
           Novo Lançamento
         </button>
@@ -325,7 +364,10 @@ function TripFinancial() {
         total={money(totalIncome, trip?.currency)}
         open={openSection === "income"}
         onToggle={() => setOpenSection(openSection === "income" ? null : "income")}
-        onAdd={() => { setRecordType("income"); setShowAddRecord(true); }}
+        onAdd={() => {
+          setRecordType("income");
+          setShowAddRecord(true);
+        }}
         addLabel="+ Receita"
       >
         <RecordTable
@@ -341,7 +383,10 @@ function TripFinancial() {
         total={money(totalExpense, trip?.currency)}
         open={openSection === "expense"}
         onToggle={() => setOpenSection(openSection === "expense" ? null : "expense")}
-        onAdd={() => { setRecordType("expense"); setShowAddRecord(true); }}
+        onAdd={() => {
+          setRecordType("expense");
+          setShowAddRecord(true);
+        }}
         addLabel="+ Custo"
       >
         <RecordTable
@@ -354,11 +399,7 @@ function TripFinancial() {
       {/* Payment plan */}
       <Section
         title="Plano de Parcelamento"
-        total={
-          planQ.data
-            ? money(planQ.data.total_amount, trip?.currency)
-            : "—"
-        }
+        total={planQ.data ? money(planQ.data.total_amount, trip?.currency) : "—"}
         open={openSection === "plan"}
         onToggle={() => setOpenSection(openSection === "plan" ? null : "plan")}
         onAdd={!planQ.data ? () => setShowPlanForm(true) : undefined}
@@ -396,7 +437,9 @@ function TripFinancial() {
                   onChange={(e) => setPlanForm({ ...planForm, installments: e.target.value })}
                 >
                   {Array.from({ length: 24 }, (_, i) => i + 1).map((n) => (
-                    <option key={n} value={n}>{n}x</option>
+                    <option key={n} value={n}>
+                      {n}x
+                    </option>
                   ))}
                 </Select>
               </Field>
@@ -406,7 +449,9 @@ function TripFinancial() {
                   onChange={(e) => setPlanForm({ ...planForm, method: e.target.value })}
                 >
                   {PAYMENT_METHODS.map(([v, l]) => (
-                    <option key={v} value={v}>{l}</option>
+                    <option key={v} value={v}>
+                      {l}
+                    </option>
                   ))}
                 </Select>
               </Field>
@@ -469,7 +514,9 @@ function TripFinancial() {
               >
                 <option value="">Selecionar…</option>
                 {(recordType === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </Select>
             </Field>
@@ -498,7 +545,11 @@ function TripFinancial() {
                 onChange={(e) => setRForm({ ...rForm, payment_method: e.target.value })}
               >
                 <option value="">—</option>
-                {PAYMENT_METHODS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                {PAYMENT_METHODS.map(([v, l]) => (
+                  <option key={v} value={v}>
+                    {l}
+                  </option>
+                ))}
               </Select>
             </Field>
             <Field label="Vencimento">
@@ -512,7 +563,9 @@ function TripFinancial() {
           <Field label="Status">
             <Select
               value={rForm.status}
-              onChange={(e) => setRForm({ ...rForm, status: e.target.value as "pending" | "confirmed" })}
+              onChange={(e) =>
+                setRForm({ ...rForm, status: e.target.value as "pending" | "confirmed" })
+              }
             >
               <option value="confirmed">Confirmado/Pago</option>
               <option value="pending">Pendente</option>
@@ -564,7 +617,9 @@ function KpiCard({
   return (
     <div className={`rounded-xl border border-border/60 ${bg} p-5 `}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </span>
         {icon}
       </div>
       <div className="font-mono text-2xl font-bold tracking-tight">{value}</div>
@@ -596,7 +651,11 @@ function Section({
           onClick={onToggle}
           className="flex flex-1 items-center gap-3 text-sm font-semibold text-left"
         >
-          {open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+          {open ? (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          )}
           {title}
           <span className="ml-auto font-mono text-sm text-muted-foreground">{total}</span>
         </button>
@@ -625,11 +684,7 @@ function RecordTable({
   currency?: string | undefined;
 }) {
   if (records.length === 0) {
-    return (
-      <div className="py-6 text-center text-sm text-muted-foreground">
-        Nenhum lançamento.
-      </div>
-    );
+    return <div className="py-6 text-center text-sm text-muted-foreground">Nenhum lançamento.</div>;
   }
 
   return (
@@ -705,12 +760,16 @@ function InstallmentTable({
         {sorted.map((inst) => (
           <tr key={inst.id} className="border-b border-border/50 hover:bg-surface-alt/40">
             <td className="py-2 font-mono pr-3">#{inst.number}</td>
-            <td className="py-2 pr-3 text-muted-foreground font-mono">
-              {fmtDate(inst.due_date)}
-            </td>
+            <td className="py-2 pr-3 text-muted-foreground font-mono">{fmtDate(inst.due_date)}</td>
             <td className="py-2 pr-3">
               <StatusBadge tone={INST_STATUS_TONE[inst.status] ?? "neutral"}>
-                {inst.status === "paid" ? "Pago" : inst.status === "late" ? "Atrasado" : inst.status === "waived" ? "Isento" : "Pendente"}
+                {inst.status === "paid"
+                  ? "Pago"
+                  : inst.status === "late"
+                    ? "Atrasado"
+                    : inst.status === "waived"
+                      ? "Isento"
+                      : "Pendente"}
               </StatusBadge>
             </td>
             <td className="py-2 pr-3 text-muted-foreground">
@@ -719,7 +778,9 @@ function InstallmentTable({
             <td className="py-2 text-right font-mono font-semibold">
               {money(inst.amount, currency)}
               {inst.late_fee > 0 && (
-                <div className="text-[10px] text-danger">+{money(inst.late_fee, currency)} juros</div>
+                <div className="text-[10px] text-danger">
+                  +{money(inst.late_fee, currency)} juros
+                </div>
               )}
             </td>
             <td className="py-2 text-right">

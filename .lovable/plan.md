@@ -3,16 +3,18 @@
 - **Build**: `client.documents.tsx` já consulta `source_type` / `generated_at` em `vouchers` (sem `kind` / `issued_at` / `status`). O erro citado **já está corrigido** na versão atual — vou só rodar typecheck/build no início e corrigir o que aparecer.
 - **Tabelas presentes** (39): agencies, agency_invites, agency_private, agency_tags, api_keys, audit_log, blog_posts, boarding_cards, brand_kit, clients, company_profiles, contract_clauses_template, contracts, corporate_clients, coupons, financial_records, gift_cards, group_tour_enrollments, group_tours, knowledge_articles, lead_activities, lead_forms, lead_stages, leads, notifications, payment_installments, payment_plans, portal_pages, profiles, proposal_items, proposals, suppliers, support_tickets, trip_passengers, trips, user_roles, visa_requests, visa_requirements, vouchers.
 - **Faltando do spec**: `plans`, `push_subscriptions`, `global_settings` (landing CMS), `ai_chat_messages` (log/contexto), `ai_rate_limit` (50 msg/h por agência).
-- **Rotas**: 80+ arquivos já presentes (admin/*, agency/*, client/*, m/*, p/*, auth/*, verify). Várias páginas já reais; outras ainda enxutas ou sem editor visual (seat map, portal blocks editor, ai chat real, OCR voucher, PWA).
+- **Rotas**: 80+ arquivos já presentes (admin/_, agency/_, client/_, m/_, p/_, auth/_, verify). Várias páginas já reais; outras ainda enxutas ou sem editor visual (seat map, portal blocks editor, ai chat real, OCR voucher, PWA).
 - **Buckets**: 13 buckets já criados, cobrindo tudo exceto eventualmente `landing-assets` (não obrigatório).
 - **Componentes**: shell limpo (AppShell, AdminShell, ClientShell, AIChatPanel placeholder). Nenhum duplicado visível.
 
 ## Premissas que preciso confirmar antes de codar
 
 1. **AI Chat (Fase C-1)** — o spec diz Anthropic `claude-sonnet-4-20250514`. Lovable AI Gateway **não** expõe Anthropic; só Google/OpenAI. Duas opções: (eu ja pedi desde o inciio para ter orquestrador de chaves openrouter/groq) etc... orquestrador no fornecido pelo admin global e opcional se cada agência quiser ter sua cahve.
-  - **(A) Manter Anthropic real**: você adiciona o secret `ANTHROPIC_API_KEY` (vou solicitar via `secrets--add_secret` no início da Fase C). Backend usa fetch direto para `api.anthropic.com`.
-  - **(B) Usar Lovable AI (Gemini 2.5 Pro)** sem novo secret, mesma arquitetura de tools/contexto.   
-   → **Vou assumir (A)** e pedir o secret. Diga se prefere (B).
+
+- **(A) Manter Anthropic real**: você adiciona o secret `ANTHROPIC_API_KEY` (vou solicitar via `secrets--add_secret` no início da Fase C). Backend usa fetch direto para `api.anthropic.com`.
+- **(B) Usar Lovable AI (Gemini 2.5 Pro)** sem novo secret, mesma arquitetura de tools/contexto.  
+  → **Vou assumir (A)** e pedir o secret. Diga se prefere (B).
+
 2. **Web Push (Fase E-1)** — preciso de `VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY`. Vou gerar e pedir como secret no início da Fase E. (cadastre os campos e deixe para futuramente eu fazer essa integração)...
 3. **WhatsApp / Resend** (notificações 30d/7d/etc) — vou implementar a infra de cron + tabela de schedule + Edge Function de envio com **canal `notifications` (in-app)** sempre, e WhatsApp/Email só disparam se a agência tiver chave em `api_keys`. Sem chave → silenciosamente só in-app. (integração nativa... resend não funciona de verdade)...
 4. **Escopo enorme**. Vou entregar em ondas commitáveis. Cada onda é independente, sem quebrar o build, e o app continua usável entre elas.

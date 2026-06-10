@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft, Send, Clock, AlertTriangle, CheckCircle2,
-  Lock, Unlock, MessageCircle, User, Bot, Paperclip, CheckSquare, Settings2, Globe
+  Lock, Unlock, MessageCircle, User, Bot, Paperclip, CheckSquare, Settings2, Globe, Star, BookOpen
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +39,8 @@ type Ticket = {
   sla_deadline: string | null;
   messages: Msg[];
   agent_id: string | null;
+  csat_score: number | null;
+  csat_comment: string | null;
 };
 
 function slaStatus(deadline: string | null, status: string): "ok" | "warning" | "breach" | "resolved" {
@@ -110,6 +112,16 @@ function TicketDetail() {
 
       return { ...data, messages: messagesData } as unknown as Ticket;
     },
+  });
+
+  const kbArticles = useQuery({
+    enabled: !!agency,
+    queryKey: ["kb", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("knowledge_articles").select("id, title, slug").eq("agency_id", agency!.id).eq("is_internal", false);
+      if (error) throw error;
+      return data || [];
+    }
   });
 
   const update = useMutation({
@@ -184,6 +196,12 @@ function TicketDetail() {
     toast.success("Ticket resolvido");
     qc.invalidateQueries({ queryKey: ["ticket", ticket_id] });
     qc.invalidateQueries({ queryKey: ["tickets", agency?.id] });
+  }
+
+  async function escalateTicket() {
+    if (!confirm("Escalonar para prioridade URGENTE?")) return;
+    update.mutate({ priority: "urgent" });
+    toast.success("Ticket escalonado!");
   }
 
   if (q.isLoading) return <div className="p-10 text-center text-sm text-muted-foreground">Carregando ticket…</div>;
@@ -357,9 +375,28 @@ function TicketDetail() {
               )}
 
               <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 p-3">
-                <GhostButton onClick={() => setAttachOpen(!attachOpen)} className={`h-8 gap-1.5 text-xs ${attachUrl ? "text-primary" : ""}`}>
-                  <Paperclip className="h-3.5 w-3.5" /> {attachUrl ? "Arquivo anexado" : "Anexar"}
-                </GhostButton>
+                <div className="flex items-center gap-2">
+                  <GhostButton onClick={() => setAttachOpen(!attachOpen)} className={`h-8 gap-1.5 text-xs ${attachUrl ? "text-primary" : ""}`}>
+                    <Paperclip className="h-3.5 w-3.5" /> {attachUrl ? "Arquivo anexado" : "Anexar"}
+                  </GhostButton>
+                  
+                  {channel === "public" && kbArticles.data && kbArticles.data.length > 0 && (
+                    <Select 
+                      className="h-8 text-xs max-w-[200px]" 
+                      value="" 
+                      onChange={(e) => {
+                         if (!e.target.value) return;
+                         const link = `${window.location.origin}/p/${slug}/kb/${e.target.value}`;
+                         setReply((prev) => prev + (prev.length > 0 ? "\n\n" : "") + `Veja este artigo na nossa central de ajuda: \n${link}`);
+                      }}
+                    >
+                      <option value="">📖 Inserir Artigo KB...</option>
+                      {kbArticles.data.map(kb => (
+                        <option key={kb.id} value={kb.slug}>{kb.title}</option>
+                      ))}
+                    </Select>
+                  )}
+                </div>
                 <PrimaryButton
                   onClick={postReply}
                   disabled={!reply.trim() || update.isPending}
@@ -394,11 +431,27 @@ function TicketDetail() {
               </div>
             )}
             {t.sla_deadline && (
-              <div className="mt-2 text-xs text-muted-foreground">
+              <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
                 Limite: {fmtDate(t.sla_deadline)}
+                
+                {sla === "breach" && t.priority !== "urgent" && (
+                   <button onClick={escalateTicket} className="text-danger hover:underline font-bold">Escalonar (Tornar Urgente)</button>
+                )}
               </div>
             )}
           </div>
+
+          {(t.status === "resolved" || t.status === "closed") && t.csat_score && (
+            <div className="rounded-lg border border-border bg-surface p-4 shadow-sm flex flex-col items-center justify-center text-center">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Avaliação do Cliente</h3>
+              <div className="flex items-center gap-1 text-yellow-500 mb-2">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} className={\`w-6 h-6 \${s <= t.csat_score! ? "fill-current" : "opacity-20"}\`} />
+                ))}
+              </div>
+              {t.csat_comment && <p className="text-sm italic text-muted-foreground mt-2">"{t.csat_comment}"</p>}
+            </div>
+          )}
 
           <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do Ticket</h3>

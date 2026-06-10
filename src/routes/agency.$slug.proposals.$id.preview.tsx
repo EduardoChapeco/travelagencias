@@ -31,10 +31,47 @@ type Proposal = {
   status: string;
   valid_until: string | null;
   notes: string | null;
-  flights: Array<{ id: string; origin: string; destination: string; date: string; departure_time: string; arrival_time: string; airline: string; flight_number: string; stops: number; baggage_rules: string; price: number }>;
-  hotels: Array<{ id: string; name: string; city: string; checkin: string; checkout: string; meal_plan: string; rooms: Array<{ type: string; qty: number }>; images: string[]; price: number }>;
-  transfers: Array<{ id: string; description: string; date: string; type: string; vehicle: string; price: number; notes: string }>;
-  tours: Array<{ id: string; description: string; date: string; price: number; image_url: string; notes: string }>;
+  flights: Array<{
+    id: string;
+    origin: string;
+    destination: string;
+    date: string;
+    departure_time: string;
+    arrival_time: string;
+    airline: string;
+    flight_number: string;
+    stops: number;
+    baggage_rules: string;
+    price: number;
+  }>;
+  hotels: Array<{
+    id: string;
+    name: string;
+    city: string;
+    checkin: string;
+    checkout: string;
+    meal_plan: string;
+    rooms: Array<{ type: string; qty: number }>;
+    images: string[];
+    price: number;
+  }>;
+  transfers: Array<{
+    id: string;
+    description: string;
+    date: string;
+    type: string;
+    vehicle: string;
+    price: number;
+    notes: string;
+  }>;
+  tours: Array<{
+    id: string;
+    description: string;
+    date: string;
+    price: number;
+    image_url: string;
+    notes: string;
+  }>;
   itinerary: Array<{ id: string; day: string; title: string; description: string }>;
   includes: string[];
   excludes: string[];
@@ -74,8 +111,16 @@ function ProposalPreview() {
     queryKey: ["agency_preview", propQ.data?.agency_id],
     queryFn: async () => {
       const [{ data: ag }, { data: brand }] = await Promise.all([
-        supabase.from("agencies").select("name, logo_url").eq("id", propQ.data!.agency_id).maybeSingle(),
-        supabase.from("brand_kit").select("brand_color, brand_color_fg, font_heading").eq("agency_id", propQ.data!.agency_id).maybeSingle(),
+        supabase
+          .from("agencies")
+          .select("name, logo_url")
+          .eq("id", propQ.data!.agency_id)
+          .maybeSingle(),
+        supabase
+          .from("brand_kit")
+          .select("brand_color, brand_color_fg, font_heading")
+          .eq("agency_id", propQ.data!.agency_id)
+          .maybeSingle(),
       ]);
       return { agency: ag as Agency | null, brand: brand as BrandKit | null };
     },
@@ -93,7 +138,11 @@ function ProposalPreview() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3">
         <p className="text-sm text-muted-foreground">Proposta não encontrada.</p>
-        <Link to="/agency/$slug/proposals" params={{ slug }} className="text-xs text-primary hover:underline">
+        <Link
+          to="/agency/$slug/proposals"
+          params={{ slug }}
+          className="text-xs text-primary hover:underline"
+        >
           ← Voltar às propostas
         </Link>
       </div>
@@ -129,7 +178,10 @@ function ProposalPreview() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { navigator.clipboard.writeText(publicUrl); toast.success("Link copiado"); }}
+            onClick={() => {
+              navigator.clipboard.writeText(publicUrl);
+              toast.success("Link copiado");
+            }}
             className="flex h-7 items-center gap-1.5 rounded-md border border-border px-3 text-xs hover:bg-surface-alt"
           >
             <Copy className="h-3.5 w-3.5" />
@@ -155,7 +207,11 @@ function ProposalPreview() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {agency?.logo_url ? (
-                  <img src={agency.logo_url} alt={agency.name ?? ""} className="h-10 w-10 rounded object-cover" />
+                  <img
+                    src={agency.logo_url}
+                    alt={agency.name ?? ""}
+                    className="h-10 w-10 rounded object-cover"
+                  />
                 ) : (
                   <div
                     className="h-10 w-10 rounded flex items-center justify-center text-sm font-bold"
@@ -165,7 +221,9 @@ function ProposalPreview() {
                   </div>
                 )}
                 <div>
-                  <div className="text-sm font-semibold text-foreground">{agency?.name ?? "Agência"}</div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {agency?.name ?? "Agência"}
+                  </div>
                   <div className="text-xs text-muted-foreground">Cotação #{p.number}</div>
                 </div>
               </div>
@@ -183,8 +241,18 @@ function ProposalPreview() {
             <h1 className="text-2xl font-bold text-foreground tracking-tight">{p.title}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {p.destination ?? "Destino a confirmar"}
-              {p.travel_start && <> · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}</>}
-              {totalPax > 0 && <> · {totalPax} {totalPax === 1 ? "passageiro" : "passageiros"}</>}
+              {p.travel_start && (
+                <>
+                  {" "}
+                  · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
+                </>
+              )}
+              {totalPax > 0 && (
+                <>
+                  {" "}
+                  · {totalPax} {totalPax === 1 ? "passageiro" : "passageiros"}
+                </>
+              )}
             </p>
           </div>
 
@@ -206,11 +274,19 @@ function ProposalPreview() {
                     <tr key={f.id} className="border-b border-border/20">
                       <td className="py-2 font-medium text-foreground">
                         {f.origin} → {f.destination}
-                        {f.stops > 0 && <span className="ml-1 text-muted-foreground">({f.stops} parada{f.stops > 1 ? "s" : ""})</span>}
+                        {f.stops > 0 && (
+                          <span className="ml-1 text-muted-foreground">
+                            ({f.stops} parada{f.stops > 1 ? "s" : ""})
+                          </span>
+                        )}
                       </td>
-                      <td className="py-2 text-muted-foreground">{f.airline} {f.flight_number}</td>
+                      <td className="py-2 text-muted-foreground">
+                        {f.airline} {f.flight_number}
+                      </td>
                       <td className="py-2 text-muted-foreground">{fmtDate(f.date)}</td>
-                      <td className="py-2 text-muted-foreground">{f.departure_time} – {f.arrival_time}</td>
+                      <td className="py-2 text-muted-foreground">
+                        {f.departure_time} – {f.arrival_time}
+                      </td>
                       <td className="py-2 text-right text-muted-foreground">{f.baggage_rules}</td>
                     </tr>
                   ))}
@@ -239,7 +315,10 @@ function ProposalPreview() {
                       {h.rooms.length > 0 && (
                         <div className="mt-1 text-xs text-muted-foreground">
                           {h.rooms.map((r, i) => (
-                            <span key={i}>{r.qty}× {r.type}{i < h.rooms.length - 1 ? ", " : ""}</span>
+                            <span key={i}>
+                              {r.qty}× {r.type}
+                              {i < h.rooms.length - 1 ? ", " : ""}
+                            </span>
                           ))}
                         </div>
                       )}
@@ -256,8 +335,12 @@ function ProposalPreview() {
               <div className="space-y-3">
                 {p.itinerary.map((d) => (
                   <div key={d.id} className="border-l-2 pl-3" style={{ borderColor: accentColor }}>
-                    <div className="text-xs font-semibold text-foreground">{d.day} — {d.title}</div>
-                    <div className="mt-0.5 text-xs text-muted-foreground whitespace-pre-wrap">{d.description}</div>
+                    <div className="text-xs font-semibold text-foreground">
+                      {d.day} — {d.title}
+                    </div>
+                    <div className="mt-0.5 text-xs text-muted-foreground whitespace-pre-wrap">
+                      {d.description}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -270,7 +353,9 @@ function ProposalPreview() {
               <div className="grid grid-cols-2 gap-4">
                 {p.includes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-success">Inclui</div>
+                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-success">
+                      Inclui
+                    </div>
                     <ul className="space-y-1 text-xs">
                       {p.includes.map((item, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
@@ -283,7 +368,9 @@ function ProposalPreview() {
                 )}
                 {p.excludes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-danger">Não inclui</div>
+                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-danger">
+                      Não inclui
+                    </div>
                     <ul className="space-y-1 text-xs">
                       {p.excludes.map((item, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
@@ -335,13 +422,18 @@ function ProposalPreview() {
   );
 }
 
-function Section({ title, color, children }: { title: string; color: string; children: React.ReactNode }) {
+function Section({
+  title,
+  color,
+  children,
+}: {
+  title: string;
+  color: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="px-8 py-5 border-t border-border/50">
-      <h2
-        className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em]"
-        style={{ color }}
-      >
+      <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color }}>
         {title}
       </h2>
       {children}

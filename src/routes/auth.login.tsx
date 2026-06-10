@@ -84,7 +84,10 @@ function LoginPage() {
             />
           </Field>
           <div className="flex justify-end">
-            <Link to="/auth/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">
+            <Link
+              to="/auth/forgot-password"
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
               Esqueci minha senha
             </Link>
           </div>

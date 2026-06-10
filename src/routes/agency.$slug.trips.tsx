@@ -9,7 +9,17 @@ import * as z from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Select, PrimaryButton, GhostButton, Sheet, StatusBadge, money, fmtDate } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  PrimaryButton,
+  GhostButton,
+  Sheet,
+  StatusBadge,
+  money,
+  fmtDate,
+} from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -40,7 +50,10 @@ function TripsList() {
     queryFn: async () => {
       const { data, error, count } = await supabase
         .from("trips")
-        .select("id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id", { count: "exact" })
+        .select(
+          "id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id",
+          { count: "exact" },
+        )
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1);
@@ -53,13 +66,19 @@ function TripsList() {
     {
       accessorKey: "number",
       header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
-      cell: ({ row }) => <span className="font-mono text-xs text-muted-foreground">#{row.original.number}</span>,
+      cell: ({ row }) => (
+        <span className="font-mono text-xs text-muted-foreground">#{row.original.number}</span>
+      ),
     },
     {
       accessorKey: "title",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Título" />,
       cell: ({ row }) => (
-        <Link to="/agency/$slug/trips/$id" params={{ slug: slug as string, id: row.original.id }} className="font-medium hover:underline">
+        <Link
+          to="/agency/$slug/trips/$id"
+          params={{ slug: slug as string, id: row.original.id }}
+          className="font-medium hover:underline"
+        >
           {row.getValue("title")}
         </Link>
       ),
@@ -122,20 +141,23 @@ function TripsList() {
           </div>
         </div>
       )}
-      
+
       {list.data && list.data.data.length === 0 && (
-        <EmptyState title="Nenhuma viagem ainda" description="Crie a primeira viagem ou converta uma cotação aceita." />
+        <EmptyState
+          title="Nenhuma viagem ainda"
+          description="Crie a primeira viagem ou converta uma cotação aceita."
+        />
       )}
 
       {list.data && list.data.data.length > 0 && (
-        <DataTable 
-          columns={columns} 
-          data={list.data.data} 
+        <DataTable
+          columns={columns}
+          data={list.data.data}
           isLoading={list.isFetching}
           pageCount={Math.ceil(list.data.count / pageSize)}
           pagination={{ pageIndex: page - 1, pageSize }}
           onPaginationChange={(updater) => {
-            if (typeof updater === 'function') {
+            if (typeof updater === "function") {
               const newState = updater({ pageIndex: page - 1, pageSize });
               setPage(newState.pageIndex + 1);
             } else {
@@ -159,27 +181,44 @@ function TripsList() {
   );
 }
 
-const tripSchema = z.object({
-  title: z.string().min(3, "O título precisa ter pelo menos 3 caracteres"),
-  destination: z.string().optional(),
-  travel_start: z.string().optional(),
-  travel_end: z.string().optional(),
-  client_id: z.string().optional(),
-  status: z.enum(["planning", "confirmed", "in_progress", "completed", "cancelled"]),
-}).refine((data) => {
-  if (data.travel_start && data.travel_end) {
-    return new Date(data.travel_end) >= new Date(data.travel_start);
-  }
-  return true;
-}, {
-  message: "A data de volta deve ser posterior à data de ida",
-  path: ["travel_end"],
-});
+const tripSchema = z
+  .object({
+    title: z.string().min(3, "O título precisa ter pelo menos 3 caracteres"),
+    destination: z.string().optional(),
+    travel_start: z.string().optional(),
+    travel_end: z.string().optional(),
+    client_id: z.string().optional(),
+    status: z.enum(["planning", "confirmed", "in_progress", "completed", "cancelled"]),
+  })
+  .refine(
+    (data) => {
+      if (data.travel_start && data.travel_end) {
+        return new Date(data.travel_end) >= new Date(data.travel_start);
+      }
+      return true;
+    },
+    {
+      message: "A data de volta deve ser posterior à data de ida",
+      path: ["travel_end"],
+    },
+  );
 
 type TripFormValues = z.infer<typeof tripSchema>;
 
-function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onClose: () => void; onCreated: () => void }) {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TripFormValues>({
+function NewTripSheet({
+  agencyId,
+  onClose,
+  onCreated,
+}: {
+  agencyId: string;
+  onClose: () => void;
+  onCreated: () => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<TripFormValues>({
     resolver: zodResolver(tripSchema),
     defaultValues: {
       title: "",
@@ -188,15 +227,18 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
       travel_end: "",
       client_id: "",
       status: "planning",
-    }
+    },
   });
 
   const clientsQ = useQuery({
     queryKey: ["clients-pick", agencyId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("clients").select("id, full_name")
-        .eq("agency_id", agencyId).order("full_name").limit(500);
+        .from("clients")
+        .select("id, full_name")
+        .eq("agency_id", agencyId)
+        .order("full_name")
+        .limit(500);
       if (error) throw error;
       return data;
     },
@@ -226,9 +268,9 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
     <Sheet onClose={onClose} title="Nova viagem">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Field label="Título *" hint={errors.title?.message}>
-          <Input 
-            {...register("title")} 
-            className={errors.title ? "border-danger focus:ring-danger/20 focus:border-danger" : ""} 
+          <Input
+            {...register("title")}
+            className={errors.title ? "border-danger focus:ring-danger/20 focus:border-danger" : ""}
             placeholder="Ex: Férias em Cancún"
           />
         </Field>
@@ -240,17 +282,23 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
             <Input type="date" {...register("travel_start")} />
           </Field>
           <Field label="Volta" hint={errors.travel_end?.message}>
-            <Input 
-              type="date" 
-              {...register("travel_end")} 
-              className={errors.travel_end ? "border-danger focus:ring-danger/20 focus:border-danger" : ""}
+            <Input
+              type="date"
+              {...register("travel_end")}
+              className={
+                errors.travel_end ? "border-danger focus:ring-danger/20 focus:border-danger" : ""
+              }
             />
           </Field>
         </div>
         <Field label="Cliente associado">
           <Select {...register("client_id")}>
             <option value="">— Sem cliente —</option>
-            {(clientsQ.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
+            {(clientsQ.data ?? []).map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.full_name}
+              </option>
+            ))}
           </Select>
         </Field>
         <Field label="Status inicial">
@@ -262,7 +310,9 @@ function NewTripSheet({ agencyId, onClose, onCreated }: { agencyId: string; onCl
           </Select>
         </Field>
         <div className="flex justify-end gap-2 pt-4 border-t border-border/50">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+          <GhostButton type="button" onClick={onClose}>
+            Cancelar
+          </GhostButton>
           <PrimaryButton type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Criando…" : "Criar viagem"}
           </PrimaryButton>

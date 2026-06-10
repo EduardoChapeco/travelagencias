@@ -44,13 +44,17 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-brand-config"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("api_keys")
-        .select("key_value, label")
-        .eq("provider", "__platform_brand__")
+      const { data, error } = await supabase
+        .from("global_settings")
+        .select("value")
+        .eq("key", "branding_config")
         .maybeSingle();
-      if (data?.key_value) {
-        try { return JSON.parse(data.key_value) as BrandConfig; } catch { return null; }
+      if (data?.value) {
+        try {
+          return data.value as unknown as BrandConfig;
+        } catch {
+          return null;
+        }
       }
       return null;
     },
@@ -66,21 +70,21 @@ function Page() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const val = JSON.stringify(form);
     const existing = q.data !== null && q.data !== undefined;
     const { error } = existing
       ? await supabase
-          .from("api_keys")
-          .update({ key_value: val, label: "Platform Brand Config" })
-          .eq("provider", "__platform_brand__")
-      : await supabase.from("api_keys").insert({
-          provider: "__platform_brand__",
-          label: "Platform Brand Config",
-          key_value: val,
-          agency_id: null,
+          .from("global_settings")
+          .update({ value: form as any })
+          .eq("key", "branding_config")
+      : await supabase.from("global_settings").insert({
+          key: "branding_config",
+          value: form as any,
         });
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Marca global salva");
     qc.invalidateQueries({ queryKey: ["admin-brand-config"] });
   }
@@ -102,7 +106,10 @@ function Page() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Nome do produto">
-                <Input value={form.product_name} onChange={(e) => set("product_name", e.target.value)} />
+                <Input
+                  value={form.product_name}
+                  onChange={(e) => set("product_name", e.target.value)}
+                />
               </Field>
               <Field label="Tagline / Slogan">
                 <Input value={form.tagline} onChange={(e) => set("tagline", e.target.value)} />
@@ -124,7 +131,11 @@ function Page() {
                 </div>
               </Field>
               <Field label="E-mail de suporte">
-                <Input type="email" value={form.support_email} onChange={(e) => set("support_email", e.target.value)} />
+                <Input
+                  type="email"
+                  value={form.support_email}
+                  onChange={(e) => set("support_email", e.target.value)}
+                />
               </Field>
             </div>
           </section>
@@ -137,16 +148,34 @@ function Page() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="URL do Logo global" hint="Endereço público da imagem">
-                <Input type="url" value={form.logo_url} onChange={(e) => set("logo_url", e.target.value)} placeholder="https://..." />
+                <Input
+                  type="url"
+                  value={form.logo_url}
+                  onChange={(e) => set("logo_url", e.target.value)}
+                  placeholder="https://..."
+                />
               </Field>
               <Field label="URL do Favicon" hint="Endereço .ico ou .png 32×32">
-                <Input type="url" value={form.favicon_url} onChange={(e) => set("favicon_url", e.target.value)} placeholder="https://..." />
+                <Input
+                  type="url"
+                  value={form.favicon_url}
+                  onChange={(e) => set("favicon_url", e.target.value)}
+                  placeholder="https://..."
+                />
               </Field>
               <Field label="URL dos Termos de Uso">
-                <Input value={form.terms_url} onChange={(e) => set("terms_url", e.target.value)} placeholder="/termos" />
+                <Input
+                  value={form.terms_url}
+                  onChange={(e) => set("terms_url", e.target.value)}
+                  placeholder="/termos"
+                />
               </Field>
               <Field label="URL da Política de Privacidade">
-                <Input value={form.privacy_url} onChange={(e) => set("privacy_url", e.target.value)} placeholder="/privacidade" />
+                <Input
+                  value={form.privacy_url}
+                  onChange={(e) => set("privacy_url", e.target.value)}
+                  placeholder="/privacidade"
+                />
               </Field>
             </div>
           </section>
@@ -158,7 +187,11 @@ function Page() {
               <h3 className="text-sm font-semibold">Analytics e rastreamento</h3>
             </div>
             <Field label="Google Analytics ID (GA4)">
-              <Input value={form.google_analytics_id} onChange={(e) => set("google_analytics_id", e.target.value)} placeholder="G-XXXXXXXXXX" />
+              <Input
+                value={form.google_analytics_id}
+                onChange={(e) => set("google_analytics_id", e.target.value)}
+                placeholder="G-XXXXXXXXXX"
+              />
             </Field>
           </section>
 
@@ -173,7 +206,9 @@ function Page() {
         {/* PREVIEW */}
         <aside className="h-fit rounded-lg border border-border bg-surface overflow-hidden sticky top-4">
           <div className="border-b border-border px-4 py-3">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Prévia do produto</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Prévia do produto
+            </div>
           </div>
           <div className="p-4 space-y-3">
             <div

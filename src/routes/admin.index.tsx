@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Building2, Users, Luggage, Wallet, TrendingUp, BarChart3,
-  FileText, AlertCircle, Clock, CheckCircle2, ArrowUpRight, Activity,
+  Building2,
+  Users,
+  Luggage,
+  Wallet,
+  TrendingUp,
+  BarChart3,
+  FileText,
+  AlertCircle,
+  Clock,
+  CheckCircle2,
+  ArrowUpRight,
+  Activity,
 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,14 +59,32 @@ function Page() {
         supabase.from("agencies").select("id", { count: "exact", head: true }),
         supabase.from("profiles").select("id", { count: "exact", head: true }),
         supabase.from("trips").select("id", { count: "exact", head: true }),
-        supabase.from("trips").select("id", { count: "exact", head: true }).gte("created_at", monthStart),
+        supabase
+          .from("trips")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", monthStart),
         supabase.from("proposals").select("id", { count: "exact", head: true }),
         supabase.from("contracts").select("id", { count: "exact", head: true }),
-        supabase.from("support_tickets").select("id", { count: "exact", head: true }).in("status", ["open", "in_progress"]),
-        supabase.from("agencies").select("id", { count: "exact", head: true }).gte("created_at", monthStart),
+        supabase
+          .from("support_tickets")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["open", "in_progress"]),
+        supabase
+          .from("agencies")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", monthStart),
         supabase.from("financial_records").select("amount, type, status, created_at"),
-        supabase.from("agencies").select("id, name, slug, created_at, logo_url").order("created_at", { ascending: false }).limit(5),
-        supabase.from("support_tickets").select("id, code, title, priority, status, created_at, agency_id").in("status", ["open", "in_progress"]).order("created_at", { ascending: false }).limit(5),
+        supabase
+          .from("agencies")
+          .select("id, name, slug, created_at, logo_url")
+          .order("created_at", { ascending: false })
+          .limit(5),
+        supabase
+          .from("support_tickets")
+          .select("id, code, title, priority, status, created_at, agency_id")
+          .in("status", ["open", "in_progress"])
+          .order("created_at", { ascending: false })
+          .limit(5),
       ]);
 
       // Revenue by month (last 12)
@@ -64,7 +92,13 @@ function Page() {
       const monthlyRevenue = last12.map(({ label, start }) => {
         const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
         const total = allRecords
-          .filter((r) => r.type === "income" && r.status === "paid" && r.created_at >= start.toISOString() && r.created_at < end.toISOString())
+          .filter(
+            (r) =>
+              r.type === "income" &&
+              r.status === "paid" &&
+              r.created_at >= start.toISOString() &&
+              r.created_at < end.toISOString(),
+          )
           .reduce((s, r) => s + Number(r.amount ?? 0), 0);
         return { label, total };
       });
@@ -156,14 +190,22 @@ function Page() {
       {/* SECONDARY STATS */}
       <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
         <MiniStat icon={FileText} label="Propostas" value={d?.totalProposals ?? "—"} />
-        <MiniStat icon={CheckCircle2} label="Contratos assinados" value={d?.totalContracts ?? "—"} />
+        <MiniStat
+          icon={CheckCircle2}
+          label="Contratos assinados"
+          value={d?.totalContracts ?? "—"}
+        />
         <MiniStat
           icon={AlertCircle}
           label="Tickets abertos"
           value={d?.openTickets ?? "—"}
           urgent={Boolean(d && d.openTickets > 5)}
         />
-        <MiniStat icon={TrendingUp} label="Receita este mês" value={d ? money(d.currentMonthRevenue) : "—"} />
+        <MiniStat
+          icon={TrendingUp}
+          label="Receita este mês"
+          value={d ? money(d.currentMonthRevenue) : "—"}
+        />
       </div>
 
       {/* CHARTS + TABLES */}
@@ -173,14 +215,19 @@ function Page() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <div className="font-semibold">Receita confirmada — 12 meses</div>
-              <div className="text-xs text-muted-foreground">Apenas registros com status "pago"</div>
+              <div className="text-xs text-muted-foreground">
+                Apenas registros com status "pago"
+              </div>
             </div>
             <BarChart3 className="h-5 w-5 text-muted-foreground" />
           </div>
           {d ? (
             <div className="h-[250px] w-full mt-4">
               <ChartContainer config={chartConfig} className="h-full w-full">
-                <BarChart data={d.monthlyRevenue} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart
+                  data={d.monthlyRevenue}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis
                     dataKey="label"
@@ -189,18 +236,20 @@ function Page() {
                     tickMargin={10}
                     fontSize={11}
                   />
-                  <YAxis 
+                  <YAxis
                     tickLine={false}
                     axisLine={false}
                     fontSize={11}
-                    tickFormatter={(val) => `R$ ${(val/1000).toFixed(1)}k`}
+                    tickFormatter={(val) => `R$ ${(val / 1000).toFixed(1)}k`}
                   />
                   <ChartTooltip
                     cursor={{ fill: "var(--color-surface-alt)", opacity: 0.4 }}
-                    content={<ChartTooltipContent 
-                      formatter={(value) => money(Number(value))}
-                      hideIndicator
-                    />}
+                    content={
+                      <ChartTooltipContent
+                        formatter={(value) => money(Number(value))}
+                        hideIndicator
+                      />
+                    }
                   />
                   <Bar
                     dataKey="total"
@@ -220,7 +269,8 @@ function Page() {
               <span className="font-semibold text-foreground">{money(d.currentMonthRevenue)}</span>
               {d.revGrowth !== 0 && (
                 <span className={`ml-1.5 ${d.revGrowth > 0 ? "text-success" : "text-danger"}`}>
-                  ({d.revGrowth > 0 ? "+" : ""}{d.revGrowth}%)
+                  ({d.revGrowth > 0 ? "+" : ""}
+                  {d.revGrowth}%)
                 </span>
               )}
             </div>
@@ -249,15 +299,19 @@ function Page() {
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-alt/50 transition-colors"
                 >
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-alt border border-border overflow-hidden">
-                    {a.logo_url
-                      ? <img src={a.logo_url} alt="" className="h-full w-full object-contain" />
-                      : <Building2 className="h-3.5 w-3.5 text-muted-foreground" />}
+                    {a.logo_url ? (
+                      <img src={a.logo_url} alt="" className="h-full w-full object-contain" />
+                    ) : (
+                      <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="truncate text-xs font-medium">{a.name}</div>
                     <div className="text-[10px] text-muted-foreground">/{a.slug}</div>
                   </div>
-                  <div className="text-[10px] text-muted-foreground shrink-0">{fmtDate(a.created_at)}</div>
+                  <div className="text-[10px] text-muted-foreground shrink-0">
+                    {fmtDate(a.created_at)}
+                  </div>
                 </Link>
               ))}
               {!d && <div className="px-4 py-3 text-xs text-muted-foreground">Carregando…</div>}
@@ -284,7 +338,11 @@ function Page() {
                     <div className="truncate text-xs font-medium">{t.title}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className="font-mono text-[10px] text-muted-foreground">{t.code}</span>
-                      <StatusBadge tone={t.priority === "urgent" || t.priority === "high" ? "danger" : "warning"}>
+                      <StatusBadge
+                        tone={
+                          t.priority === "urgent" || t.priority === "high" ? "danger" : "warning"
+                        }
+                      >
                         {t.priority}
                       </StatusBadge>
                     </div>
@@ -295,7 +353,9 @@ function Page() {
                 </div>
               ))}
               {d?.recentTickets?.length === 0 && (
-                <div className="px-4 py-4 text-center text-xs text-muted-foreground">Nenhum ticket aberto ✓</div>
+                <div className="px-4 py-4 text-center text-xs text-muted-foreground">
+                  Nenhum ticket aberto ✓
+                </div>
               )}
               {!d && <div className="px-4 py-3 text-xs text-muted-foreground">Carregando…</div>}
             </div>
@@ -307,7 +367,14 @@ function Page() {
 }
 
 function StatCard({
-  icon: Icon, label, value, sub, color, bg, href, trend,
+  icon: Icon,
+  label,
+  value,
+  sub,
+  color,
+  bg,
+  href,
+  trend,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -325,12 +392,16 @@ function StatCard({
         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bg} ${color}`}>
           <Icon className="h-4.5 w-4.5" />
         </div>
-        {href && <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
+        {href && (
+          <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+        )}
       </div>
       <div className="text-2xl font-extrabold tracking-tight">{value}</div>
       <div className="mt-0.5 text-xs font-medium text-muted-foreground">{label}</div>
       {sub && (
-        <div className={`mt-1 text-[10px] font-semibold uppercase tracking-wide ${trend !== undefined && trend > 0 ? "text-success" : trend !== undefined && trend < 0 ? "text-danger" : "text-muted-foreground/60"}`}>
+        <div
+          className={`mt-1 text-[10px] font-semibold uppercase tracking-wide ${trend !== undefined && trend > 0 ? "text-success" : trend !== undefined && trend < 0 ? "text-danger" : "text-muted-foreground/60"}`}
+        >
           {sub}
         </div>
       )}
@@ -340,7 +411,10 @@ function StatCard({
 }
 
 function MiniStat({
-  icon: Icon, label, value, urgent,
+  icon: Icon,
+  label,
+  value,
+  urgent,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -348,10 +422,14 @@ function MiniStat({
   urgent?: boolean;
 }) {
   return (
-    <div className={`flex items-center gap-3 rounded-lg border p-3 ${urgent ? "border-danger/30 bg-danger-bg" : "border-border bg-surface"}`}>
+    <div
+      className={`flex items-center gap-3 rounded-lg border p-3 ${urgent ? "border-danger/30 bg-danger-bg" : "border-border bg-surface"}`}
+    >
       <Icon className={`h-4 w-4 shrink-0 ${urgent ? "text-danger" : "text-muted-foreground"}`} />
       <div>
-        <div className={`text-lg font-bold leading-none ${urgent ? "text-danger" : ""}`}>{value}</div>
+        <div className={`text-lg font-bold leading-none ${urgent ? "text-danger" : ""}`}>
+          {value}
+        </div>
         <div className="mt-0.5 text-[10px] text-muted-foreground">{label}</div>
       </div>
     </div>

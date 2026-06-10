@@ -146,7 +146,10 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       body: JSON.stringify({ model, messages, temperature: 0.4 }),
     });
 
-    if (res.status === 429) throw new Error("Limite de uso do provedor de IA atingido. Tente novamente em alguns minutos.");
+    if (res.status === 429)
+      throw new Error(
+        "Limite de uso do provedor de IA atingido. Tente novamente em alguns minutos.",
+      );
     if (res.status === 402) throw new Error("Créditos de IA esgotados. Adicione créditos.");
     if (!res.ok) {
       const txt = await res.text().catch(() => "");

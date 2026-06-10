@@ -7,7 +7,10 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/agency/$slug")({
   ssr: false,
   beforeLoad: async () => {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
     if (error || !session) {
       throw redirect({ to: "/auth/login" });
     }

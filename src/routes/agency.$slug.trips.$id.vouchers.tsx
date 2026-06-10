@@ -9,8 +9,10 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { StatusBadge, fmtDate, Field, Input, Select } from "@/components/ui/form";
+import { StatusBadge, fmtDate, Field, Input, Select, GhostButton, PrimaryButton } from "@/components/ui/form";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
+import html2canvas from "html2canvas";
+import { Instagram } from "lucide-react";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
   head: () => ({ meta: [{ title: "Vouchers · TravelOS" }] }),
@@ -120,6 +122,8 @@ function TripVouchers() {
   const [selected, setSelected] = useState<Voucher | null>(null);
   const [creating, setCreating] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>("flights");
+  const [storyVoucher, setStoryVoucher] = useState<Voucher | null>(null);
+  const [generatingStory, setGeneratingStory] = useState(false);
 
   // ── Queries ──────────────────────────────────────────────────────────────────
 
@@ -321,6 +325,25 @@ function TripVouchers() {
     setOpenSection("flights");
   }
 
+  async function downloadStory() {
+    const el = document.getElementById("story-canvas");
+    if (!el) return;
+    setGeneratingStory(true);
+    try {
+      const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = \`voucher-story-\${storyVoucher?.id}.png\`;
+      a.click();
+      toast.success("Story baixado com sucesso!");
+    } catch (e) {
+      toast.error("Falha ao gerar o Story.");
+    } finally {
+      setGeneratingStory(false);
+    }
+  }
+
   // ─────────────────────────────────────────────────────────────────────────────
 
   const trip = tripQ.data;
@@ -456,6 +479,13 @@ function TripVouchers() {
                 </a>
               )}
               <button
+                onClick={() => setStoryVoucher(v)}
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border text-xs bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-500 text-white hover:opacity-90 font-semibold"
+              >
+                <Instagram className="h-3.5 w-3.5" />
+                Story
+              </button>
+              <button
                 onClick={() => {
                   if (confirm("Remover voucher?")) deleteVoucher.mutate(v.id);
                 }}
@@ -467,6 +497,89 @@ function TripVouchers() {
           </div>
         ))}
       </div>
+
+      {storyVoucher && trip && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="relative flex flex-col items-center gap-4 bg-surface p-6 rounded-2xl border border-border w-full max-w-lg shadow-2xl">
+            <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
+            <p className="text-sm text-muted-foreground text-center">
+              Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes sociais.
+            </p>
+            
+            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-xl overflow-hidden py-4">
+              {/* This is the invisible scaled canvas we take a snapshot of */}
+              <div 
+                id="story-canvas" 
+                className="relative overflow-hidden shrink-0 flex flex-col"
+                style={{ width: '400px', height: '711px', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }}
+              >
+                {/* Decorative Background */}
+                <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />
+                <div className="absolute bottom-[-100px] left-[-100px] w-64 h-64 bg-pink-500/20 blur-[80px] rounded-full" />
+
+                <div className="relative z-10 flex flex-col h-full p-8 text-white">
+                  <div className="flex items-center gap-3 mb-auto">
+                     {agency?.logo_url ? (
+                       <img src={agency.logo_url} alt="Logo" className="h-10 w-auto object-contain bg-white rounded-md p-1" crossOrigin="anonymous" />
+                     ) : (
+                       <span className="font-black text-xl tracking-tighter">{agency?.name}</span>
+                     )}
+                  </div>
+                  
+                  <div className="mt-8 mb-4">
+                    <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">Meu próximo destino</h2>
+                    <h1 className="text-4xl font-black leading-tight drop-shadow-md">
+                      {storyVoucher.destination || trip.destination || "Vou Viajar!"}
+                    </h1>
+                  </div>
+
+                  <div className="flex flex-col gap-3 mt-6">
+                    {storyVoucher.flights.length > 0 && (
+                      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                        <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-2">
+                           <span>Voo Confirmado</span>
+                           <Plane className="w-4 h-4" />
+                        </div>
+                        <div className="flex justify-between items-center text-lg font-bold">
+                           <span>{storyVoucher.flights[0].origin || "Origem"}</span>
+                           <ArrowLeft className="w-4 h-4 rotate-180 text-white/50" />
+                           <span>{storyVoucher.flights[0].destination || "Destino"}</span>
+                        </div>
+                        <div className="text-xs mt-1 text-white/60">
+                           {storyVoucher.flights[0].airline} • {storyVoucher.flights[0].flight_number}
+                        </div>
+                      </div>
+                    )}
+
+                    {storyVoucher.accommodation.length > 0 && (
+                      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                        <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-1">
+                           <span>Hospedagem</span>
+                           <Hotel className="w-4 h-4" />
+                        </div>
+                        <div className="text-base font-bold truncate">{storyVoucher.accommodation[0].name}</div>
+                        <div className="text-xs mt-1 text-white/60 truncate">{storyVoucher.accommodation[0].city}</div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-auto pt-6 text-center">
+                    <p className="text-[10px] uppercase tracking-widest text-white/50 mb-1">Planejado com perfeição por</p>
+                    <p className="text-xs font-bold text-white/80">@{agency?.slug}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex w-full justify-between items-center mt-2">
+              <GhostButton onClick={() => setStoryVoucher(null)}>Fechar</GhostButton>
+              <PrimaryButton onClick={downloadStory} disabled={generatingStory}>
+                {generatingStory ? "Gerando..." : "Baixar Imagem 9:16"}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -101,18 +101,10 @@ function RegisterPage() {
 
         <form onSubmit={onSubmit} className="mt-8 space-y-3">
           <Field label="Seu nome">
-            <Input
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
+            <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </Field>
           <Field label="Nome da agência">
-            <Input
-              required
-              value={agencyName}
-              onChange={(e) => setAgencyName(e.target.value)}
-            />
+            <Input required value={agencyName} onChange={(e) => setAgencyName(e.target.value)} />
             {agencyName && (
               <p className="mt-1 font-mono text-[10px] text-muted-foreground">
                 /agency/{slugify(agencyName)}
@@ -159,7 +151,6 @@ function RegisterPage() {
           </Link>
         </p>
       </div>
-
     </div>
   );
 }

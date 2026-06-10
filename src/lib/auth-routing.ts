@@ -19,7 +19,8 @@ async function loadAgencyById(agencyId: string | null | undefined): Promise<Sign
 }
 
 export async function resolveSignedInAgency(userId?: string): Promise<SignedInAgency | null> {
-  const { data: defaultAgencyId, error: defaultAgencyError } = await supabase.rpc("get_my_agency_id");
+  const { data: defaultAgencyId, error: defaultAgencyError } =
+    await supabase.rpc("get_my_agency_id");
 
   if (!defaultAgencyError) {
     const defaultAgency = await loadAgencyById(defaultAgencyId);

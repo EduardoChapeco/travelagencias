@@ -19,6 +19,7 @@ import {
   Settings,
   LogOut,
   Globe,
+  Briefcase,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -39,6 +40,7 @@ const items: NavItem[] = [
   { label: "Frota & Ônibus", segment: "bus-layouts", icon: Bus },
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
+  { label: "RFPs B2B", segment: "rfps", icon: Briefcase },
   { label: "Clientes", segment: "clients", icon: UserRound },
   { label: "Fornecedores", segment: "suppliers", icon: Store },
   { label: "Suporte", segment: "support", icon: LifeBuoy },
@@ -48,7 +50,13 @@ const items: NavItem[] = [
   { label: "Configurações", segment: "settings", icon: Settings },
 ];
 
-export function AppSidebar({ isPinned, onTogglePin }: { isPinned?: boolean; onTogglePin?: () => void }) {
+export function AppSidebar({
+  isPinned,
+  onTogglePin,
+}: {
+  isPinned?: boolean;
+  onTogglePin?: () => void;
+}) {
   const navigate = useNavigate();
   const { agency } = useAgency();
   const params = useParams({ strict: false }) as { slug?: string };
@@ -78,7 +86,7 @@ export function AppSidebar({ isPinned, onTogglePin }: { isPinned?: boolean; onTo
               "ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold transition duration-200",
               isPinned
                 ? "translate-x-0 opacity-100"
-                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100"
+                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100",
             )}
           >
             {agency?.name ?? "TravelOS"}
@@ -97,7 +105,7 @@ export function AppSidebar({ isPinned, onTogglePin }: { isPinned?: boolean; onTo
               "translate-x-1 truncate transition duration-200",
               isPinned
                 ? "translate-x-0 opacity-100"
-                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100"
+                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100",
             )}
           >
             Sair

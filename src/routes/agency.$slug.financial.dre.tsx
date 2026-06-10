@@ -9,7 +9,14 @@ export const Route = createFileRoute("/agency/$slug/financial/dre")({
   component: DREPage,
 });
 
-type Row = { type: "income" | "expense"; category: string | null; amount: number; status: string; paid_at: string | null; due_date: string | null };
+type Row = {
+  type: "income" | "expense";
+  category: string | null;
+  amount: number;
+  status: string;
+  paid_at: string | null;
+  due_date: string | null;
+};
 
 function DREPage() {
   const { agency } = useAgency();
@@ -19,12 +26,17 @@ function DREPage() {
     enabled: !!agency,
     queryKey: ["dre", agency?.id, period],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("calculate_dre_summary", { 
-        _agency_id: agency!.id, 
-        _period: period 
+      const { data, error } = await supabase.rpc("calculate_dre_summary", {
+        _agency_id: agency!.id,
+        _period: period,
       });
       if (error) throw error;
-      return data as { income: number; expense: number; net: number; byCat: Record<string, { income: number; expense: number }> };
+      return data as {
+        income: number;
+        expense: number;
+        net: number;
+        byCat: Record<string, { income: number; expense: number }>;
+      };
     },
   });
 
@@ -46,15 +58,23 @@ function DREPage() {
       <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
-          <div className="mt-1 font-mono text-xl font-semibold text-success">{money(q.data?.income ?? 0)}</div>
+          <div className="mt-1 font-mono text-xl font-semibold text-success">
+            {money(q.data?.income ?? 0)}
+          </div>
         </div>
         <div className="rounded-lg border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
-          <div className="mt-1 font-mono text-xl font-semibold text-danger">{money(q.data?.expense ?? 0)}</div>
+          <div className="mt-1 font-mono text-xl font-semibold text-danger">
+            {money(q.data?.expense ?? 0)}
+          </div>
         </div>
         <div className="rounded-lg border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Resultado</div>
-          <div className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}>{money(q.data?.net ?? 0)}</div>
+          <div
+            className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
+          >
+            {money(q.data?.net ?? 0)}
+          </div>
         </div>
       </div>
 
@@ -69,18 +89,29 @@ function DREPage() {
             </tr>
           </thead>
           <tbody>
-            {q.data && Object.entries(q.data.byCat)
-              .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
-              .map(([cat, v]) => (
-                <tr key={cat} className="border-t border-border">
-                  <td className="px-3 py-2.5 font-medium">{cat}</td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs text-success">{money(v.income)}</td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs text-danger">{money(v.expense)}</td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs">{money(v.income - v.expense)}</td>
-                </tr>
-              ))}
+            {q.data &&
+              Object.entries(q.data.byCat)
+                .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
+                .map(([cat, v]) => (
+                  <tr key={cat} className="border-t border-border">
+                    <td className="px-3 py-2.5 font-medium">{cat}</td>
+                    <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
+                      {money(v.income)}
+                    </td>
+                    <td className="px-3 py-2.5 text-right font-mono text-xs text-danger">
+                      {money(v.expense)}
+                    </td>
+                    <td className="px-3 py-2.5 text-right font-mono text-xs">
+                      {money(v.income - v.expense)}
+                    </td>
+                  </tr>
+                ))}
             {q.data && Object.keys(q.data.byCat).length === 0 && (
-              <tr><td colSpan={4} className="px-3 py-8 text-center text-xs text-muted-foreground">Sem dados no período.</td></tr>
+              <tr>
+                <td colSpan={4} className="px-3 py-8 text-center text-xs text-muted-foreground">
+                  Sem dados no período.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

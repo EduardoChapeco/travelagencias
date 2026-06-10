@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   flexRender,
@@ -7,7 +7,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -16,21 +16,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-import { GhostButton } from "@/components/ui/form"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Loader2 } from "lucide-react"
+import { GhostButton } from "@/components/ui/form";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUpDown,
+  Loader2,
+} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  isLoading?: boolean
-  pageCount?: number
-  onPaginationChange?: (updater: any) => void
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  isLoading?: boolean;
+  pageCount?: number;
+  onPaginationChange?: (updater: any) => void;
   pagination?: {
-    pageIndex: number
-    pageSize: number
-  }
+    pageIndex: number;
+    pageSize: number;
+  };
 }
 
 export function DataTable<TData, TValue>({
@@ -41,7 +48,7 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   pagination,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const isControlled = pagination !== undefined;
 
@@ -59,7 +66,7 @@ export function DataTable<TData, TValue>({
       sorting,
       ...(isControlled ? { pagination } : {}),
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -70,15 +77,15 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-xs uppercase tracking-wider text-muted-foreground">
+                    <TableHead
+                      key={header.id}
+                      className="text-xs uppercase tracking-wider text-muted-foreground"
+                    >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -109,7 +116,10 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-sm text-muted-foreground">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-sm text-muted-foreground"
+                >
                   Nenhum registro encontrado.
                 </TableCell>
               </TableRow>
@@ -124,8 +134,7 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex w-[100px] items-center justify-center text-xs font-medium">
-            Página {table.getState().pagination.pageIndex + 1} de{" "}
-            {table.getPageCount() || 1}
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount() || 1}
           </div>
           <div className="flex items-center space-x-2">
             <GhostButton
@@ -164,7 +173,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function DataTableColumnHeader<TData, TValue>({
@@ -172,11 +181,11 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: React.HTMLAttributes<HTMLDivElement> & {
-  column: any
-  title: string
+  column: any;
+  title: string;
 }) {
   if (!column.getCanSort()) {
-    return <div className={className}>{title}</div>
+    return <div className={className}>{title}</div>;
   }
 
   return (
@@ -195,5 +204,5 @@ export function DataTableColumnHeader<TData, TValue>({
         )}
       </button>
     </div>
-  )
+  );
 }

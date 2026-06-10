@@ -56,7 +56,10 @@ function ForgotPage() {
               {submitting ? "Enviando…" : "Enviar link"}
             </PrimaryButton>
             <div className="text-center">
-              <Link to="/auth/login" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link
+                to="/auth/login"
+                className="text-xs text-muted-foreground hover:text-foreground"
+              >
                 Voltar para entrar
               </Link>
             </div>

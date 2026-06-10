@@ -1,233 +1,275 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, CheckCircle2, AlertCircle, FileText, Globe, BookUser, Info } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, GripVertical, Search, Globe, FileText, Check, Clock } from "lucide-react";
+import {
+  DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
+  closestCorners, type DragEndEvent, type DragStartEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge, fmtDate, money } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/shell/PageHeader";
+import { toast } from "sonner";
+import { PrimaryButton, fmtDate, StatusBadge } from "@/components/ui/form";
+import { VisaFormSheet } from "@/components/visas/VisaFormSheet";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
-  head: () => ({ meta: [{ title: "Tracker Consular · TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Vistos e Passaportes · TravelOS" }] }),
   component: VisasPage,
 });
 
+type VisaStage = { id: string; name: string; position: number; color: string; is_final: boolean };
 type Visa = {
-  id: string; country: string; visa_type: string | null; status: string;
-  travel_date: string | null; price: number; agency_handling: boolean;
-  passport_number: string | null; client_id: string | null; trip_id: string | null;
-  notes: string | null; clients: { full_name: string } | null;
-};
-
-const STATUS_INFO: Record<string, { label: string; color: string; bg: string }> = {
-  pending_docs: { label: "Aguardando Documentos", color: "text-warning-text", bg: "bg-warning-bg" },
-  docs_ready: { label: "Documentação Pronta", color: "text-info-text", bg: "bg-info-bg" },
-  submitted: { label: "Em Análise Consular", color: "text-brand", bg: "bg-brand/10" },
-  approved: { label: "Visto Aprovado", color: "text-success", bg: "bg-success/10" },
-  denied: { label: "Visto Negado", color: "text-danger", bg: "bg-danger/10" },
-  cancelled: { label: "Cancelado", color: "text-muted-foreground", bg: "bg-surface-alt" },
+  id: string; stage_id: string; client_id: string; country: string; category: string; status: string;
+  position: number; expected_date: string | null; created_at: string;
+  client?: { full_name: string };
 };
 
 function VisasPage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
-  const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [localVisas, setLocalVisas] = useState<Visa[] | null>(null);
+  const [newOpen, setNewOpen] = useState(false);
 
-  const q = useQuery({
+  const stagesQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["visa-stages", agency?.id],
+    queryFn: async () => {
+      // Auto seed se não houver estágios
+      await supabase.rpc("seed_default_visa_stages", { p_agency_id: agency!.id });
+      const { data, error } = await supabase.from("visa_stages").select("*").eq("agency_id", agency!.id).order("position");
+      if (error) throw error;
+      return data as VisaStage[];
+    },
+  });
+
+  const visasQ = useQuery({
     enabled: !!agency,
     queryKey: ["visas", agency?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("visa_requests")
-        .select(`
-          id, country, visa_type, status, travel_date, price, agency_handling, 
-          passport_number, client_id, trip_id, notes,
-          client:clients(full_name)
-        `)
+        .from("visas")
+        .select("*, client:clients(full_name)")
         .eq("agency_id", agency!.id)
-        .order("requested_at", { ascending: false });
+        .is("deleted_at", null)
+        .order("position");
       if (error) throw error;
-      return data as unknown as Visa[];
+      return data as Visa[];
     },
   });
 
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const now = new Date().toISOString();
-      const patch = {
-        status,
-        submitted_at: status === "submitted" ? now : null,
-        approved_at: status === "approved" ? now : null,
-        denied_at: status === "denied" ? now : null,
-      };
-      const { error } = await supabase.from("visa_requests").update(patch).eq("id", id);
-      if (error) throw error;
+  useEffect(() => {
+    if (visasQ.data) setLocalVisas(visasQ.data);
+  }, [visasQ.data]);
+
+  const persistMove = useMutation({
+    mutationFn: async (payload: { visaId: string; toStageId: string; reorderedIds: string[] }) => {
+      const updates = payload.reorderedIds.map((id, idx) =>
+        supabase.from("visas").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
+      );
+      const results = await Promise.all(updates);
+      const firstErr = results.find((r) => r.error);
+      if (firstErr?.error) throw firstErr.error;
     },
-    onSuccess: () => {
-      toast.success("Progresso consular atualizado");
+    onError: (e) => {
+      toast.error(e instanceof Error ? e.message : "Erro ao salvar posição");
       qc.invalidateQueries({ queryKey: ["visas", agency?.id] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao atualizar status"),
   });
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  const stagesById = useMemo(() => {
+    const map: Record<string, Visa[]> = {};
+    (stagesQ.data ?? []).forEach((s) => (map[s.id] = []));
+    (localVisas ?? []).forEach((v) => {
+      if (!map[v.stage_id]) map[v.stage_id] = [];
+      map[v.stage_id].push(v);
+    });
+    Object.values(map).forEach((arr) => arr.sort((a, b) => a.position - b.position));
+    return map;
+  }, [stagesQ.data, localVisas]);
+
+  function findContainerOf(visaId: string): string | null {
+    for (const sid of Object.keys(stagesById)) {
+      if (stagesById[sid].some((v) => v.id === visaId)) return sid;
+    }
+    return null;
+  }
+
+  function onDragStart(e: DragStartEvent) {
+    setActiveId(String(e.active.id));
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    setActiveId(null);
+    const { active, over } = e;
+    if (!over || !localVisas) return;
+    const activeIdStr = String(active.id);
+    const overIdStr = String(over.id);
+
+    const fromStage = findContainerOf(activeIdStr);
+    if (!fromStage) return;
+    
+    const toStage = stagesById[overIdStr] ? overIdStr : findContainerOf(overIdStr);
+    if (!toStage) return;
+
+    const movedVisa = localVisas.find((v) => v.id === activeIdStr);
+    if (!movedVisa) return;
+
+    const sourceList = stagesById[fromStage].filter((v) => v.id !== activeIdStr);
+    let destList = fromStage === toStage ? sourceList.slice() : stagesById[toStage].slice();
+
+    let insertIndex = destList.length;
+    if (stagesById[overIdStr] === undefined) {
+      const overIndex = destList.findIndex((v) => v.id === overIdStr);
+      insertIndex = overIndex >= 0 ? overIndex : destList.length;
+    }
+
+    if (fromStage === toStage) {
+      const currentIndex = stagesById[fromStage].findIndex((v) => v.id === activeIdStr);
+      const overIndex = destList.findIndex((v) => v.id === overIdStr);
+      const newList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
+      destList = newList;
+    } else {
+      destList.splice(insertIndex, 0, { ...movedVisa, stage_id: toStage });
+    }
+
+    const newVisas = localVisas.filter(v => v.stage_id !== fromStage && v.stage_id !== toStage);
+    if (fromStage === toStage) {
+      destList.forEach((v, i) => newVisas.push({ ...v, position: i }));
+    } else {
+      sourceList.forEach((v, i) => newVisas.push({ ...v, position: i }));
+      destList.forEach((v, i) => newVisas.push({ ...v, stage_id: toStage, position: i }));
+    }
+    setLocalVisas(newVisas);
+
+    persistMove.mutate({
+      visaId: activeIdStr,
+      toStageId: toStage,
+      reorderedIds: destList.map((v) => v.id),
+    });
+  }
+
+  const activeVisa = activeId ? (localVisas ?? []).find((v) => v.id === activeId) : null;
+
   return (
-    <div className="flex h-[calc(100vh-4.5rem)] flex-col overflow-hidden">
-      <PageHeader
-        title="Tracker Consular"
-        description="Acompanhamento rigoroso de Burocracia, Passaportes e Vistos Despachantes."
-        actions={
-          <PrimaryButton onClick={() => setOpen(true)} className="gap-2 text-[11px] uppercase tracking-widest font-bold">
-            <Plus className="h-4 w-4" /> Novo Processo
-          </PrimaryButton>
-        }
-      />
+    <div className="flex h-[calc(100vh-64px)] flex-col">
+      <div className="p-4 md:p-8 pb-0">
+        <PageHeader
+          title="Vistos e Passaportes"
+          description="Acompanhamento consular e emissão documental."
+          actions={
+            <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
+              <Plus className="h-3.5 w-3.5" /> Novo Processo
+            </PrimaryButton>
+          }
+        />
+      </div>
 
-      {q.isLoading && (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-        </div>
-      )}
-
-      {q.data?.length === 0 && <EmptyState title="Sem processos consulares" description="Inicie um pedido de Visto para um cliente." />}
-
-      {q.data && q.data.length > 0 && (
-        <div className="mt-4 flex-1 overflow-y-auto px-1 no-scrollbar pb-10">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {q.data.map((v) => {
-               const statusStyle = STATUS_INFO[v.status] || STATUS_INFO.pending_docs;
-               
-               return (
-                  <div key={v.id} className="group flex flex-col justify-between rounded-xl border border-border/50 bg-surface p-5  transition-all hover:border-brand/30 hover:">
-                     <div>
-                        <div className="mb-4 flex items-start justify-between">
-                           <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt ring-1 ring-border ">
-                                 <Globe className="h-5 w-5 text-brand" />
-                              </div>
-                              <div>
-                                 <div className="font-bold text-foreground text-sm">{v.country}</div>
-                                 <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">{v.visa_type || "Geral"}</div>
-                              </div>
-                           </div>
-                        </div>
-
-                        <div className="space-y-3 mb-5">
-                           <div className="flex items-center gap-2">
-                              <BookUser className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm font-medium">{v.clients?.full_name || "Cliente sem cadastro"}</span>
-                           </div>
-                           <div className="flex justify-between items-center bg-surface-alt/30 p-2.5 rounded-lg border border-border/50">
-                              <span className="text-xs text-muted-foreground">Passaporte</span>
-                              <span className="font-mono text-xs font-semibold">{v.passport_number || "A Confirmar"}</span>
-                           </div>
-                        </div>
-                     </div>
-
-                     <div className="pt-4 border-t border-border/50">
-                        <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Progresso do Visto</div>
-                        <Select 
-                          value={v.status} 
-                          onChange={(e) => updateStatus.mutate({ id: v.id, status: e.target.value })}
-                          className={cn("h-8 text-xs font-semibold border-none font-sans", statusStyle.bg, statusStyle.color)}
-                        >
-                          {Object.entries(STATUS_INFO).map(([k, info]) => (
-                             <option key={k} value={k}>{info.label}</option>
-                          ))}
-                        </Select>
-                     </div>
-                  </div>
-               );
-            })}
+      <div className="flex-1 overflow-x-auto p-4 md:p-8 pt-6">
+        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <div className="flex h-full gap-4">
+            {(stagesQ.data ?? []).map((stage) => (
+              <StageColumn key={stage.id} stage={stage} items={stagesById[stage.id] ?? []} />
+            ))}
           </div>
-        </div>
-      )}
+          <DragOverlay>
+            {activeVisa ? <VisaCard visa={activeVisa} isOverlay /> : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
 
-      {open && agency && (
-        <NewVisa agencyId={agency.id} onClose={() => setOpen(false)} onCreated={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["visas", agency.id] }); }} />
+      {newOpen && agency && (
+        <VisaFormSheet
+          agencyId={agency.id}
+          onClose={() => setNewOpen(false)}
+          onSaved={() => {
+            setNewOpen(false);
+            qc.invalidateQueries({ queryKey: ["visas", agency.id] });
+          }}
+        />
       )}
     </div>
   );
 }
 
-function NewVisa({ agencyId, onClose, onCreated }: { agencyId: string; onClose: () => void; onCreated: () => void }) {
-  const [country, setCountry] = useState("");
-  const [type, setType] = useState("");
-  const [travelDate, setTravelDate] = useState("");
-  const [passport, setPassport] = useState("");
-  const [price, setPrice] = useState(0);
-  const [clientId, setClientId] = useState("");
-  const [handling, setHandling] = useState(true);
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const clientsQ = useQuery({
-     queryKey: ["clients-min", agencyId],
-     queryFn: async () => {
-        const { data } = await supabase.from("clients").select("id, full_name, document").eq("agency_id", agencyId).order("full_name");
-        return data || [];
-     }
-  });
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!clientId) return toast.error("Por favor, selecione um cliente.");
-    setSubmitting(true);
-    const { error } = await supabase.from("visa_requests").insert({
-      agency_id: agencyId, country, visa_type: type || null, travel_date: travelDate || null,
-      passport_number: passport || null, price, agency_handling: handling, notes: notes || null,
-      client_id: clientId || null, status: "pending_docs"
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Processo Consular Iniciado");
-    onCreated();
-  }
+function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
+  const { setNodeRef } = useSortable({ id: stage.id, data: { type: "Column", stage } });
 
   return (
-    <Sheet onClose={onClose} title="Novo Processo Consular">
-      <form onSubmit={submit} className="space-y-4 p-2">
-        
-        <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl space-y-3">
-           <h3 className="text-xs font-bold uppercase tracking-widest text-brand mb-2">Dados do Requerente</h3>
-           <Field label="Cliente (CRM) *">
-             <Select required value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                <option value="">Selecione o Titular...</option>
-                {clientsQ.data?.map(c => <option key={c.id} value={c.id}>{c.full_name} ({c.document || "S/Doc"})</option>)}
-             </Select>
-           </Field>
-           <Field label="Nº do Passaporte (Opcional agora)"><Input value={passport} onChange={(e) => setPassport(e.target.value)} placeholder="AB123456" /></Field>
+    <div ref={setNodeRef} className="flex h-full w-80 shrink-0 flex-col rounded-xl bg-surface-alt/50 border border-border">
+      <div className="flex items-center justify-between border-b border-border p-3">
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-3 rounded-full" style={{ backgroundColor: stage.color }} />
+          <h3 className="font-semibold text-sm">{stage.name}</h3>
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface text-[10px] font-medium text-muted-foreground border border-border">
+            {items.length}
+          </span>
         </div>
+      </div>
+      <div className="flex-1 overflow-y-auto p-2">
+        <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <div className="flex flex-col gap-2 min-h-[100px]">
+            {items.map((visa) => (
+              <SortableVisa key={visa.id} visa={visa} />
+            ))}
+          </div>
+        </SortableContext>
+      </div>
+    </div>
+  );
+}
 
-        <div className="bg-surface-alt/30 border border-border/50 p-4 rounded-xl space-y-3">
-           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Alvo do Visto</h3>
-           <div className="grid grid-cols-2 gap-3">
-              <Field label="País de destino *"><Input required value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Estados Unidos" /></Field>
-              <Field label="Tipo de visto"><Input value={type} onChange={(e) => setType(e.target.value)} placeholder="B1/B2 (Turismo)" /></Field>
-           </div>
-           <Field label="Data Prevista da Viagem"><Input type="date" value={travelDate} onChange={(e) => setTravelDate(e.target.value)} /></Field>
-        </div>
+function SortableVisa({ visa }: { visa: Visa }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: visa.id,
+    data: { type: "Visa", visa },
+  });
 
-        <div className="grid grid-cols-2 gap-3 px-1">
-          <Field label="Taxa / Preço do Serviço"><Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(+e.target.value || 0)} /></Field>
-          <Field label="Quem processa o DS?">
-            <Select value={handling ? "agency" : "client"} onChange={(e) => setHandling(e.target.value === "agency")}>
-              <option value="agency">Agência (Despachante)</option>
-              <option value="client">O próprio passageiro</option>
-            </Select>
-          </Field>
-        </div>
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 };
 
-        <Field label="Anotações / Login Consular">
-           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Use este espaço para salvar o Application ID do CEAC, Senhas provisórias..." className="min-h-[100px] font-mono text-xs" />
-        </Field>
-        
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>{submitting ? "Iniciando Processo…" : "Abrir Processo"}</PrimaryButton>
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <VisaCard visa={visa} />
+    </div>
+  );
+}
+
+function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
+  return (
+    <div
+      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-lg border bg-surface p-3 text-left shadow-sm active:cursor-grabbing hover:border-border-strong ${
+        isOverlay ? "rotate-2 scale-105 border-brand/50 shadow-xl" : "border-border"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="font-medium text-sm leading-tight text-foreground">{visa.client?.full_name ?? "Cliente Desconhecido"}</div>
+        <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
+      </div>
+
+      <div className="flex items-center gap-2 mt-1">
+        <StatusBadge tone="primary">
+          <Globe className="mr-1 h-3 w-3 inline" /> {visa.country}
+        </StatusBadge>
+        <span className="text-xs text-muted-foreground">{visa.category}</span>
+      </div>
+
+      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 border-t border-border/50 pt-2">
+        <div className="flex items-center gap-1">
+          <FileText className="h-3 w-3" /> Docs
         </div>
-      </form>
-    </Sheet>
+        {visa.expected_date && (
+          <div className="flex items-center gap-1 text-orange-500">
+            <Clock className="h-3 w-3" /> {fmtDate(visa.expected_date)}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

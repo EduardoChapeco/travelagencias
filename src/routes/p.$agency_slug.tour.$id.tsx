@@ -35,14 +35,27 @@ function Page() {
         .eq("agency_id", agency.id)
         .maybeSingle();
       const tour = tourData as any;
-      if (!tour) return { agency, tour: null, days: [] as TourDay[], layout: null as any, assignedSeats: [] as string[] };
+      if (!tour)
+        return {
+          agency,
+          tour: null,
+          days: [] as TourDay[],
+          layout: null as any,
+          assignedSeats: [] as string[],
+        };
 
-      const days: TourDay[] = Array.isArray(tour.itinerary) ? (tour.itinerary as unknown as TourDay[]) : [];
+      const days: TourDay[] = Array.isArray(tour.itinerary)
+        ? (tour.itinerary as unknown as TourDay[])
+        : [];
 
       let layout: any = null;
       let assignedSeats: string[] = [];
       if (tour.bus_layout_id) {
-        const { data: l } = await supabase.from("bus_layouts").select("*").eq("id", tour.bus_layout_id).maybeSingle();
+        const { data: l } = await supabase
+          .from("bus_layouts")
+          .select("*")
+          .eq("id", tour.bus_layout_id)
+          .maybeSingle();
         if (l) layout = l;
         const { data: assigned } = await supabase
           .from("group_tour_enrollments")
@@ -56,7 +69,13 @@ function Page() {
     },
   });
 
-  const [form, setForm] = useState({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
+  const [form, setForm] = useState({
+    passenger_name: "",
+    passenger_cpf: "",
+    email: "",
+    phone: "",
+    notes: "",
+  });
   const [busy, setBusy] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
@@ -67,10 +86,12 @@ function Page() {
       </div>
     );
   }
-  if (!q.data || !q.data.tour) return <div className="p-10 text-center text-sm">Roteiro não disponível</div>;
+  if (!q.data || !q.data.tour)
+    return <div className="p-10 text-center text-sm">Roteiro não disponível</div>;
 
   const { agency, tour: t, days, layout, assignedSeats } = q.data;
-  const seatMap: SeatCell[] = layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
+  const seatMap: SeatCell[] =
+    layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
 
   async function enroll(e: React.FormEvent) {
     e.preventDefault();
@@ -115,9 +136,16 @@ function Page() {
     }
 
     // 3. Reserve seat counter on the tour.
-    const { data: cur } = await supabase.from("group_tours").select("reserved_seats").eq("id", t.id).maybeSingle();
+    const { data: cur } = await supabase
+      .from("group_tours")
+      .select("reserved_seats")
+      .eq("id", t.id)
+      .maybeSingle();
     if (cur) {
-      await supabase.from("group_tours").update({ reserved_seats: (cur.reserved_seats || 0) + pax }).eq("id", t.id);
+      await supabase
+        .from("group_tours")
+        .update({ reserved_seats: (cur.reserved_seats || 0) + pax })
+        .eq("id", t.id);
     }
 
     setBusy(false);
@@ -135,7 +163,12 @@ function Page() {
   return (
     <div
       className="mx-auto min-h-screen bg-background"
-      style={{ "--color-brand": agency.brand_color, "--color-brand-foreground": agency.brand_color_fg } as React.CSSProperties}
+      style={
+        {
+          "--color-brand": agency.brand_color,
+          "--color-brand-foreground": agency.brand_color_fg,
+        } as React.CSSProperties
+      }
     >
       <div className="relative w-full bg-surface">
         {t.cover_image_url ? (
@@ -144,11 +177,23 @@ function Page() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 md:left-12 max-w-4xl mx-auto flex items-end">
               <div className="text-white">
-                <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2">{t.title}</h1>
+                <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2">
+                  {t.title}
+                </h1>
                 <div className="flex flex-wrap items-center gap-3 text-sm md:text-base font-medium opacity-90">
                   <span>{t.destination}</span>
-                  {t.departure_date && (<><span className="w-1.5 h-1.5 rounded-full bg-white/50" /><span>{new Date(t.departure_date).toLocaleDateString("pt-BR")}</span></>)}
-                  {t.return_date && (<><span>→</span><span>{new Date(t.return_date).toLocaleDateString("pt-BR")}</span></>)}
+                  {t.departure_date && (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                      <span>{new Date(t.departure_date).toLocaleDateString("pt-BR")}</span>
+                    </>
+                  )}
+                  {t.return_date && (
+                    <>
+                      <span>→</span>
+                      <span>{new Date(t.return_date).toLocaleDateString("pt-BR")}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -167,7 +212,9 @@ function Page() {
             <div className="text-3xl font-mono font-bold tracking-tight text-brand">
               {Number(t.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
             </div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1 font-semibold">Por Passageiro</div>
+            <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1 font-semibold">
+              Por Passageiro
+            </div>
           </div>
           {t.important_notes && (
             <div className="bg-brand/5 border border-brand/20 p-4 rounded-xl text-sm leading-relaxed max-w-lg ">
@@ -179,13 +226,22 @@ function Page() {
         <div className="grid gap-8 md:grid-cols-2">
           {days.length > 0 && (
             <section className="space-y-4">
-              <h2 className="text-lg font-bold tracking-tight border-b border-border/50 pb-2">Roteiro Dia a Dia</h2>
+              <h2 className="text-lg font-bold tracking-tight border-b border-border/50 pb-2">
+                Roteiro Dia a Dia
+              </h2>
               <ol className="space-y-3">
                 {days.map((d, i) => (
-                  <li key={i} className="rounded-xl border border-border bg-surface p-4  relative overflow-hidden group hover:border-brand/30 transition-colors">
+                  <li
+                    key={i}
+                    className="rounded-xl border border-border bg-surface p-4  relative overflow-hidden group hover:border-brand/30 transition-colors"
+                  >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-surface-alt group-hover:bg-brand transition-colors" />
-                    <div className="font-bold text-sm text-foreground ml-2">Dia {d.day_number} — {d.title}</div>
-                    <div className="text-xs text-muted-foreground ml-2 mt-2 leading-relaxed">{d.description_md}</div>
+                    <div className="font-bold text-sm text-foreground ml-2">
+                      Dia {d.day_number} — {d.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground ml-2 mt-2 leading-relaxed">
+                      {d.description_md}
+                    </div>
                   </li>
                 ))}
               </ol>
@@ -193,8 +249,26 @@ function Page() {
           )}
           {(includes.length > 0 || excludes.length > 0) && (
             <section className="space-y-3">
-              {includes.length > 0 && <div><h3 className="text-sm font-semibold">Inclui</h3><ul className="text-sm">{includes.map((i) => <li key={i}>✓ {i}</li>)}</ul></div>}
-              {excludes.length > 0 && <div><h3 className="text-sm font-semibold">Não inclui</h3><ul className="text-sm">{excludes.map((i) => <li key={i}>✗ {i}</li>)}</ul></div>}
+              {includes.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold">Inclui</h3>
+                  <ul className="text-sm">
+                    {includes.map((i) => (
+                      <li key={i}>✓ {i}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {excludes.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold">Não inclui</h3>
+                  <ul className="text-sm">
+                    {excludes.map((i) => (
+                      <li key={i}>✗ {i}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </section>
           )}
         </div>
@@ -203,11 +277,25 @@ function Page() {
           <div className="mt-8 rounded-lg border border-border bg-surface p-6">
             <h2 className="text-lg font-semibold mb-4 text-center">Escolha suas Poltronas</h2>
             <div className="flex justify-center">
-              <div style={{ display: "grid", gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`, gap: "8px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`,
+                  gap: "8px",
+                }}
+              >
                 {seatMap.map((cell, idx) => {
                   if (cell.type !== "seat") {
                     return (
-                      <div key={idx} className={cn("h-10 w-10 flex items-center justify-center text-[10px] rounded", cell.type === "aisle" && "text-transparent", cell.type === "wc" && "bg-info-bg text-info", cell.type === "door" && "bg-warning-bg text-warning")}>
+                      <div
+                        key={idx}
+                        className={cn(
+                          "h-10 w-10 flex items-center justify-center text-[10px] rounded",
+                          cell.type === "aisle" && "text-transparent",
+                          cell.type === "wc" && "bg-info-bg text-info",
+                          cell.type === "door" && "bg-warning-bg text-warning",
+                        )}
+                      >
                         {cell.type === "wc" ? "WC" : cell.type === "door" ? "Porta" : ""}
                       </div>
                     );
@@ -219,10 +307,18 @@ function Page() {
                       key={idx}
                       type="button"
                       disabled={isAssigned}
-                      onClick={() => setSelectedSeats((prev) => (isSelected ? prev.filter((s) => s !== cell.label) : [...prev, cell.label]))}
+                      onClick={() =>
+                        setSelectedSeats((prev) =>
+                          isSelected ? prev.filter((s) => s !== cell.label) : [...prev, cell.label],
+                        )
+                      }
                       className={cn(
                         "h-10 w-10 rounded-md border text-xs font-semibold transition-colors flex flex-col items-center justify-center",
-                        isAssigned ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50" : isSelected ? "border-brand bg-brand text-brand-foreground " : "border-border bg-surface hover:border-brand/50 hover:bg-brand/5",
+                        isAssigned
+                          ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                          : isSelected
+                            ? "border-brand bg-brand text-brand-foreground "
+                            : "border-border bg-surface hover:border-brand/50 hover:bg-brand/5",
                       )}
                     >
                       <span>{cell.label}</span>
@@ -232,33 +328,84 @@ function Page() {
               </div>
             </div>
             <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded bg-surface border border-border" /> Livre</div>
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded bg-brand" /> Selecionada</div>
-              <div className="flex items-center gap-1.5"><div className="h-3 w-3 rounded bg-muted" /> Ocupada</div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-surface border border-border" /> Livre
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-brand" /> Selecionada
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-muted" /> Ocupada
+              </div>
             </div>
           </div>
         )}
 
-        <form onSubmit={enroll} className="mt-12 space-y-4 rounded-2xl border-2 border-brand/20 bg-surface p-6  ">
+        <form
+          onSubmit={enroll}
+          className="mt-12 space-y-4 rounded-2xl border-2 border-brand/20 bg-surface p-6  "
+        >
           <div className="mb-2 border-b border-border/50 pb-4">
             <h2 className="text-xl font-bold tracking-tight">Garanta a sua vaga</h2>
-            <p className="text-sm text-muted-foreground">Preencha seus dados e nossa equipe de vendas entrará em contato.</p>
+            <p className="text-sm text-muted-foreground">
+              Preencha seus dados e nossa equipe de vendas entrará em contato.
+            </p>
           </div>
 
-          <Field label="Nome completo *"><Input required value={form.passenger_name} onChange={(e) => setForm({ ...form, passenger_name: e.target.value })} className="h-11" /></Field>
+          <Field label="Nome completo *">
+            <Input
+              required
+              value={form.passenger_name}
+              onChange={(e) => setForm({ ...form, passenger_name: e.target.value })}
+              className="h-11"
+            />
+          </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="E-mail *"><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="h-11" /></Field>
-            <Field label="WhatsApp *"><Input required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="h-11" placeholder="(11) 9..." /></Field>
+            <Field label="E-mail *">
+              <Input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="h-11"
+              />
+            </Field>
+            <Field label="WhatsApp *">
+              <Input
+                required
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="h-11"
+                placeholder="(11) 9..."
+              />
+            </Field>
           </div>
 
-          <Field label="CPF"><Input value={form.passenger_cpf} onChange={(e) => setForm({ ...form, passenger_cpf: e.target.value })} className="h-11" /></Field>
-          <Field label="Dúvidas ou Observações?"><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="min-h-[80px]" /></Field>
+          <Field label="CPF">
+            <Input
+              value={form.passenger_cpf}
+              onChange={(e) => setForm({ ...form, passenger_cpf: e.target.value })}
+              className="h-11"
+            />
+          </Field>
+          <Field label="Dúvidas ou Observações?">
+            <Textarea
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              className="min-h-[80px]"
+            />
+          </Field>
 
-          <PrimaryButton disabled={busy} className="w-full h-12 text-sm uppercase tracking-widest font-bold   hover: transition-">
-            {busy ? "Enviando…" : selectedSeats.length > 0
-              ? `Comprar ${selectedSeats.length} vaga(s) — ${(Number(t.base_price) * selectedSeats.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
-              : "Enviar Interesse"}
+          <PrimaryButton
+            disabled={busy}
+            className="w-full h-12 text-sm uppercase tracking-widest font-bold   hover: transition-"
+          >
+            {busy
+              ? "Enviando…"
+              : selectedSeats.length > 0
+                ? `Comprar ${selectedSeats.length} vaga(s) — ${(Number(t.base_price) * selectedSeats.length).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
+                : "Enviar Interesse"}
           </PrimaryButton>
         </form>
       </div>

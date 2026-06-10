@@ -3,7 +3,13 @@ import { useQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -19,7 +25,9 @@ const agenciesQueryOptions = queryOptions({
       .select("id, slug, name, logo_url, created_at")
       .order("created_at", { ascending: false });
     if (error) throw error;
-    const privates = await supabase.from("agency_private").select("agency_id, email, phone, legal_name, document");
+    const privates = await supabase
+      .from("agency_private")
+      .select("agency_id, email, phone, legal_name, document");
     const pmap = new Map((privates.data ?? []).map((p) => [p.agency_id, p]));
     return (data ?? []).map((a) => ({ ...a, priv: pmap.get(a.id) }));
   },
@@ -35,7 +43,10 @@ export const Route = createFileRoute("/admin/agencies")({
 
 const agencySchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-  slug: z.string().min(3, "Slug deve ter no mínimo 3 caracteres").regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens permitidos"),
+  slug: z
+    .string()
+    .min(3, "Slug deve ter no mínimo 3 caracteres")
+    .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens permitidos"),
   email: z.string().email("E-mail inválido"),
   cnpj: z.string().optional(),
   phone: z.string().optional(),
@@ -48,9 +59,14 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<AgencyForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<AgencyForm>({
     resolver: zodResolver(agencySchema),
-    defaultValues: { name: "", slug: "", email: "", cnpj: "", phone: "" }
+    defaultValues: { name: "", slug: "", email: "", cnpj: "", phone: "" },
   });
 
   const q = useQuery(agenciesQueryOptions);
@@ -67,7 +83,7 @@ function Page() {
         _phone: form.phone || null,
       });
       if (error) throw error;
-      
+
       const payload = data as { agency_id: string; invite_token: string };
       const url = `${window.location.origin}/m/invite/${payload.invite_token}`;
       setInviteUrl(url);
@@ -92,7 +108,16 @@ function Page() {
     <>
       <div className="flex items-center justify-between">
         <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if(!v) { setInviteUrl(null); reset(); } }}>
+        <Dialog
+          open={open}
+          onOpenChange={(v) => {
+            setOpen(v);
+            if (!v) {
+              setInviteUrl(null);
+              reset();
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <button className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
               <Plus className="h-4 w-4" /> Nova Agência
@@ -105,47 +130,105 @@ function Page() {
             {!inviteUrl ? (
               <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground">Nome da Agência *</label>
-                  <input {...register("name")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: Viagens Inc." />
-                  {errors.name && <span className="text-xs text-danger">{errors.name.message}</span>}
+                  <label className="block text-xs font-medium text-muted-foreground">
+                    Nome da Agência *
+                  </label>
+                  <input
+                    {...register("name")}
+                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="Ex: Viagens Inc."
+                  />
+                  {errors.name && (
+                    <span className="text-xs text-danger">{errors.name.message}</span>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground">Slug (URL) *</label>
-                  <input {...register("slug")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="Ex: viagens-inc" />
-                  {errors.slug && <span className="text-xs text-danger">{errors.slug.message}</span>}
+                  <label className="block text-xs font-medium text-muted-foreground">
+                    Slug (URL) *
+                  </label>
+                  <input
+                    {...register("slug")}
+                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="Ex: viagens-inc"
+                  />
+                  {errors.slug && (
+                    <span className="text-xs text-danger">{errors.slug.message}</span>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground">E-mail do Proprietário *</label>
-                  <input type="email" {...register("email")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" placeholder="dono@agencia.com" />
-                  {errors.email && <span className="text-xs text-danger">{errors.email.message}</span>}
+                  <label className="block text-xs font-medium text-muted-foreground">
+                    E-mail do Proprietário *
+                  </label>
+                  <input
+                    type="email"
+                    {...register("email")}
+                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="dono@agencia.com"
+                  />
+                  {errors.email && (
+                    <span className="text-xs text-danger">{errors.email.message}</span>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-muted-foreground">CNPJ</label>
-                    <input {...register("cnpj")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                    <input
+                      {...register("cnpj")}
+                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                    />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-muted-foreground">Telefone</label>
-                    <input {...register("phone")} className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm" />
+                    <label className="block text-xs font-medium text-muted-foreground">
+                      Telefone
+                    </label>
+                    <input
+                      {...register("phone")}
+                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                    />
                   </div>
                 </div>
-                <button disabled={loading} type="submit" className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                >
                   {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
                 </button>
               </form>
             ) : (
               <div className="mt-4 flex flex-col gap-4">
                 <div className="rounded-md border border-success/20 bg-success/10 p-4 text-sm text-success">
-                  Agência provisionada no banco de dados! Envie o link abaixo para o proprietário definir a senha e acessar a plataforma.
+                  Agência provisionada no banco de dados! Envie o link abaixo para o proprietário
+                  definir a senha e acessar a plataforma.
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground">Link de Convite (Owner)</label>
+                  <label className="block text-xs font-medium text-muted-foreground">
+                    Link de Convite (Owner)
+                  </label>
                   <div className="mt-1 flex items-center gap-2">
-                    <input readOnly value={inviteUrl} className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground" />
-                    <button onClick={handleCopy} className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt">Copiar</button>
+                    <input
+                      readOnly
+                      value={inviteUrl}
+                      className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
+                    />
+                    <button
+                      onClick={handleCopy}
+                      className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
+                    >
+                      Copiar
+                    </button>
                   </div>
                 </div>
-                <button type="button" onClick={() => { setOpen(false); setInviteUrl(null); }} className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt">Fechar</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setInviteUrl(null);
+                  }}
+                  className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt"
+                >
+                  Fechar
+                </button>
               </div>
             )}
           </DialogContent>
@@ -162,18 +245,34 @@ function Page() {
         <div className="mt-6 overflow-hidden rounded-lg border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground">
-              <tr><th className="px-3 py-2 text-left">Agência</th><th className="px-3 py-2 text-left">CNPJ</th><th className="px-3 py-2 text-left">Contato</th><th className="px-3 py-2 text-left">Criada</th></tr>
+              <tr>
+                <th className="px-3 py-2 text-left">Agência</th>
+                <th className="px-3 py-2 text-left">CNPJ</th>
+                <th className="px-3 py-2 text-left">Contato</th>
+                <th className="px-3 py-2 text-left">Criada</th>
+              </tr>
             </thead>
             <tbody>
               {q.data.map((a) => (
                 <tr key={a.id} className="border-t border-border">
                   <td className="px-3 py-2.5">
-                    <Link to="/admin/agencies/$id" params={{ id: a.id }} className="font-medium text-foreground hover:underline">{a.name}</Link>
+                    <Link
+                      to="/admin/agencies/$id"
+                      params={{ id: a.id }}
+                      className="font-medium text-foreground hover:underline"
+                    >
+                      {a.name}
+                    </Link>
                     <div className="text-xs text-muted-foreground">/{a.slug}</div>
                   </td>
                   <td className="px-3 py-2.5 font-mono text-xs">{a.priv?.document ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs"><div>{a.priv?.email ?? "—"}</div><div className="text-muted-foreground">{a.priv?.phone ?? ""}</div></td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(a.created_at)}</td>
+                  <td className="px-3 py-2.5 text-xs">
+                    <div>{a.priv?.email ?? "—"}</div>
+                    <div className="text-muted-foreground">{a.priv?.phone ?? ""}</div>
+                  </td>
+                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                    {fmtDate(a.created_at)}
+                  </td>
                 </tr>
               ))}
             </tbody>

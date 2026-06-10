@@ -1,0 +1,303 @@
+# Auditoria Estratégica TravelOS — Plano de Reconstrução Premium
+
+**Modo:** Plano. Nada será implementado até sua aprovação explícita.
+**Base:** leitura direta de 90 rotas, 47 migrations, 45 tabelas, 13 buckets, 28 RPCs, 3 shells, design system, PRDs colados (4.6k linhas) e documentação interna. Nenhuma afirmação sem evidência.
+
+---
+
+## 1. RESUMO EXECUTIVO HONESTO
+
+TravelOS **não é protótipo** — tem 90 rotas reais, 45 tabelas, 28 RPCs, OCR via Edge Function, contratos com WORM trigger, magic-link público, multi-tenant funcional, design tokens sólidos e dark mode completo. **Mas também não é premium ainda.** Tem 4 falhas estruturais críticas, 10 rotas CRUD raso, 6 tabelas órfãs, 9 componentes mortos, ErrorState ausente, search global fantasma e dois módulos inteiros (Plans, Policies, Brand global) **serializados como JSON dentro da tabela `api_keys`** — um anti-padrão grave que precisa ser desfeito.
+
+**Classificação geral por bloco:**
+
+| Bloco | Classe | Justificativa |
+|---|---|---|
+| Auth + Onboarding | SaaS utilizável | Magic link, invites, OAuth — completos |
+| CRM | **Quebrado / Backend oculto** | `leads`/`lead_stages`/`lead_activities` têm RLS ativa **sem nenhuma policy** → SELECT direto retorna `[]` silenciosamente |
+| Cotações/Propostas | SaaS premium | Editor, preview, OCR, capa — sólido |
+| Contratos | SaaS premium | WORM, certificate, verify público, magic link |
+| Vouchers | SaaS utilizável | OCR via Edge Function funciona; falta gerar story 9:16 prometido |
+| Embarques | SaaS utilizável | Kanban com persistência, mas cores hardcoded e drag/drop simples |
+| Financeiro/DRE/Caixa | SaaS utilizável | RPCs reais, paginação correta |
+| Roteiros em grupo | SaaS utilizável | Refatorado recentemente; falta seat-map editor 2D |
+| Vistos / Corporativo | CRUD raso | Lista + sheet, sem timeline, sem documentos |
+| Suporte | SaaS utilizável | SLA trigger + ticket_messages OK; falta escalonamento e KB sugerida |
+| Clientes (360) | CRUD raso | Sem timeline real, sem merge de duplicados, sem soft-delete habilitado em UI |
+| Portal público / CMS | SaaS utilizável | Blocks JSONB renderizando, mas **sem versionamento, sem preview, sem sanitização HTML** |
+| Blog | CRUD raso | Editor existe; falta publicação agendada, tags reais, relacionados, sanitização |
+| Minha Empresa | SaaS utilizável | Cobre quase tudo do spec; falta integração de publicação pública |
+| Admin Master Global | **Encenação visual em 5 sub-rotas** | Plans/Policies/Brand serializados em `api_keys`; Travelers/Trips/Agents/Audit/Contracts são listas read-only com `.limit(200)` sem paginação |
+| Portal do cliente | CRUD raso | Coupons/Giftcards listam tudo sem filtrar por cliente; trips read-only |
+| Mobile (`/m/*`) | SaaS utilizável | `m.checkin` quebrado (TODO no código); resto OK |
+| Design System | SaaS premium (tokens) / Genérico (componentes premium ausentes) | Faltam Timeline, Kanban genérico, Wizard, ⌘K, ErrorState, StatCard |
+| Supabase / segurança | **Risco alto** | 4 tabelas sem policies, 3 tabelas com `USING (true)` público, bucket público sem filtro, 40 tabelas sem `deleted_at` |
+
+**Veredicto:** O sistema está num platô intermediário. Tem ossatura para virar premium em ~9 fases, mas exige **primeiro um saneamento de segurança e arquitetura**, antes de qualquer feature nova.
+
+---
+
+## 2. RELATÓRIO DE EVIDÊNCIA BRUTA — NÃO CONCLUSIVO
+
+### 2.1 Arquivos lidos com evidência
+- 47 migrations em `supabase/migrations/` (até `20260609205001_agency_media_bucket.sql`)
+- `.lovable/plan.md` (99 linhas, plano da onda 0–7)
+- `docs/audit/contracts_vouchers_audit.md`, `docs/roadmap/pr_plan.md`
+- `pasted-2026-06-03T02-07-47-744Z.txt` (PRD oficial, 3244 linhas — visão+DS+schema+stories)
+- Todos os 90 arquivos em `src/routes/` (auditados em batch via subagente)
+- `src/styles.css`, `src/components/ui/*`, `src/components/shell/*`, `src/components/uploads/*`
+- 28 funções SQL listadas no contexto Supabase
+
+### 2.2 Ainda não lidos em profundidade
+- `pasted-2026-06-03T03-01-08-100Z.txt` e `04-02-07-740Z.txt` (mesmo tamanho — provavelmente duplicatas; preciso confirmar se contêm material novo)
+- `supabase/functions/ai-voucher-ocr/index.ts` (Edge Function — declarado mas não auditado neste passe)
+- Diff completo das 47 migrations vs schema atual (algumas migrations podem ter sido superadas)
+- Componentes `src/components/clients/`, `src/components/portal/` em profundidade
+- `src/lib/api/ai-chat.functions.ts`, `src/lib/ocr-ai.ts`, `src/lib/pdf-generator.ts`
+
+### 2.3 Inventário factual
+- **Rotas:** 90 arquivos (12 admin, 41 agency, 10 client, 8 auth, 6 magic `/m/*`, 6 public `/p/*`, 1 verify, 1 index, 1 root, layouts)
+- **Tabelas:** 45 catalogadas
+- **RPCs definidas:** 28 (lista fornecida no contexto)
+- **RPCs chamadas no frontend:** 19 — todas existem ✅
+- **RPCs órfãs:** 9 (notadamente `confirm_payment_with_token`, `public_installments_by_token`, `bootstrap_first_super_admin`, `log_audit_event`, `can_manage_agency_finances`, `check_agency_limits`)
+- **Storage buckets:** 13 — 11 com policies via loop, 2 com policies anon explícitas (`contract-pdfs`, `agency-media`)
+- **Promessas do PRD não evidenciadas no código:** Web Push real, PWA com manifest dinâmico, WebMCP server, cron `30/7/3/1d`, mapa de assentos 2D editor, IA Anthropic real, geração de capa AI, story 9:16 do voucher
+- **Suspeitas de falso positivo encontradas:** `admin.plans`, `admin.policies`, `admin.brand` são **JSON serializado em `api_keys`** com `provider='__platform_*__'` (anti-padrão)
+- **Mock/fake/hardcoded confirmados:** 4 cores hex em `agency.boarding.tsx:43-46`; textos jurídicos de Política e ToS embarcados em `admin.policies.tsx`; `bg-black/80` em 4 overlays de UI
+- **Botões estáticos / fluxo quebrado:** `m.checkin.$token.tsx:22-23` comentário "RLS denies anon, use RPC fallback if missing" **— fallback nunca implementado**; search global no `AppShell.tsx:59` sem handler
+- **Rotas órfãs (sem link no sidebar):** `/agency/$slug/brand`, `/agency/$slug/team`
+- **Tabelas órfãs (sem UI):** `contract_clauses_template` (lida via RPC, OK), `global_settings`, `plans`, `push_subscriptions`, `visa_requirements`, `agency_tags`
+- **Componentes mortos (0 usos):** `carousel`, `hover-card`, `context-menu`, `menubar`, `navigation-menu`, `resizable`, `input-otp`, `toggle-group`, `aspect-ratio`
+
+---
+
+## 3. MATRIZ PRD/PROMPT VS IMPLEMENTAÇÃO REAL (abreviada por espaço)
+
+> Tabela completa por módulo. Status: ✅ OK | 🟡 Parcial | 🔴 Crítico/Falso positivo | ⬜ Não implementado
+
+| Módulo | Promessa PRD | UI | Banco | RLS | Storage | Fluxo E2E | Status | Gravidade |
+|---|---|---|---|---|---|---|---|---|
+| Dashboard agency | KPIs + gráficos | ✅ | ✅ | ✅ | n/a | ✅ | ✅ | Baixa |
+| CRM Kanban | Kanban drag/drop + atividades + estágios custom | Lista (não kanban) | leads + lead_stages + lead_activities | **🔴 RLS sem policies** | n/a | acessa só via RPC `get_crm_leads` | 🔴 **Backend oculto / Quebrado parcial** | **Alta** |
+| Cotações | Editor CMS + preview + capa AI | ✅ | proposals + proposal_items | ✅ | proposal-covers + attachments | ✅ | ✅ | Baixa |
+| Viagens | DRE por viagem, financeiro, vouchers, contrato | ✅ tabs | trips + financial_records + payment_installments | ✅ | ✅ | ✅ | ✅ | Baixa |
+| Embarques | Kanban operacional + checklist + alertas | ✅ kanban | boarding_cards | ✅ | n/a | ✅ | 🟡 cores hardcoded, drag simples | Média |
+| Contratos | WORM + assinatura ICP-B + certificate público | ✅ | contracts | ✅ + trigger | contract-pdfs | ✅ | ✅ (hash do cliente, PR-1 pendente) | Média |
+| Vouchers | OCR AI + story 9:16 PDF/PNG | ✅ OCR | vouchers | ✅ | voucher-sources/pdfs | OCR ok; **story 9:16 ⬜** | 🟡 | Média |
+| Financeiro/DRE/Caixa | RPCs reais, conciliação | ✅ | financial_records + payment_plans | ✅ | financial-receipts | ✅ | ✅ | Baixa |
+| Roteiros em Grupo | Mapa de assentos 2D editor + reservas | ✅ lista/detalhe | group_tours + enrollments | ✅ | group-tour-gallery | seat-map **⬜ editor 2D ausente** | 🟡 | Média |
+| Frota/Bus | Layouts 2D | ✅ | bus_layouts | ✅ | n/a | ✅ | ✅ | Baixa |
+| Vistos | Workflow + documentos + requirements catálogo | ✅ básico | visa_requests, visa_requirements órfão | ✅ | passenger-documents | sem timeline/req-link | 🟡 CRUD raso | Média |
+| Corporativo | RFP, cotações B2B | ✅ básico | corporate_clients | ✅ | — | sem RFP/cotação real | 🟡 CRUD raso | Média |
+| Clientes 360 | Perfil 360 + timeline + merge + soft delete UI | ✅ form | clients (deleted_at existe) | ✅ | client-avatars | sem timeline, sem merge, deleted_at não exposto | 🟡 CRUD raso | Alta |
+| Fornecedores | Cadastro + serviços | ✅ | suppliers | ✅ | — | ✅ | ✅ | Baixa |
+| Suporte | Tickets + thread + SLA + escalonamento | ✅ | support_tickets + ticket_messages | ✅ | support-attachments | thread ✅, SLA trigger ✅, **escalonamento ⬜** | 🟡 | Média |
+| Portal Público (CMS) | Blocos + preview + versionamento + sanitização | ✅ blocks | portal_pages | ✅ | agency-media | **sem preview live, sem versionamento, sem sanitização HTML** | 🟡 | Alta |
+| Blog | Editor + tags + agendamento + relacionados + sanitização | ✅ form | blog_posts | ✅ | blog-covers | sem agendamento, sem tags estruturadas, sem sanitização HTML, sem relacionados | 🟡 CRUD raso | Alta |
+| Base de Conhecimento | Artigos + busca + categorias | ✅ | knowledge_articles | ✅ | — | sem busca full-text, sem categorias estruturadas | 🟡 CRUD raso | Média |
+| Minha Empresa | Identidade + horários + galeria + preview + pub | ✅ form completo | company_profiles | **🔴 SELECT público sem filtro** | agency-media | preview lateral ⬜ | 🟡 + risco | Alta |
+| Configurações | Geral + equipe + integrações + api_keys | ✅ 4 tabs | agencies + agency_private + api_keys | ✅ | — | ✅ | ✅ | Baixa |
+| **Admin Master Global** | Agências, Planos, Políticas, Brand, Audit, Billing | UI existe | **🔴 Plans/Policies/Brand como JSON em api_keys** | parcial | — | parcial | 🔴 **Encenação visual** | **Crítica** |
+| Admin /agents, /travelers, /trips, /contracts, /audit | CRUD + ações + paginação | ✅ lista | ✅ | ✅ | — | **read-only `.limit(200)`** sem paginação/ação | 🟡 CRUD raso | Média |
+| Portal cliente | Perfil, viagens, pagamentos, docs, consentimentos | ✅ | clients + trips + notifications + payment_plans + legal_acceptances | ✅ | client-avatars | coupons/giftcards listam tudo sem filtrar | 🟡 | Média |
+| Auth/Convites/Magic link | Completos | ✅ | ✅ | ✅ | — | ✅ | ✅ | Baixa |
+| LGPD/Aceites versionados | record_legal_acceptance + policy_documents | ✅ | legal_acceptances + policy_documents | ✅ (publico USING true intencional) | — | ✅ | ✅ | Baixa |
+| Logs/Auditoria | Audit por agência + global | ✅ | audit_log | 🟡 global visível a todos | — | sem filtros/export | 🟡 | Média |
+| Feature flags / Planos / Bloqueio agência | check_agency_limits + trg_enforce | ⬜ UI | plans órfã | ✅ | — | RPC existe mas **sem UI funcional** | 🔴 **Backend oculto** | Alta |
+| Web Push / PWA / Cron / WebMCP | Prometidos no plano (Onda 6) | ⬜ | push_subscriptions órfã | ✅ | — | ⬜ | ⬜ Não implementado | Média |
+| AI Chat (panel) | Anthropic real + tools + rate limit + log | ✅ panel | ai_chat_messages + ai_rate_limit | ✅ | — | server fn existe (`src/lib/api/ai-chat.functions.ts` — não auditada em detalhe) | 🟡 | Média |
+| Mídia / Media Library | Picker + galeria reutilizável | ✅ MediaLibraryPicker | agency-media bucket | **🔴 SELECT público sem filtro** | ✅ | ✅ | 🟡 + risco | Alta |
+
+---
+
+## 4. VERIFICAÇÃO DE REALIDADE — PRINCIPAIS GAPS POR MÓDULO
+
+### 4.1 CRM (🔴 backend oculto)
+- Tabelas `leads`, `lead_stages`, `lead_activities` têm RLS habilitada **sem nenhuma policy**.
+- Frontend faz `supabase.from('leads')` em 6 arquivos — todas retornam vazio para `authenticated`. Funciona só via RPC `get_crm_leads`.
+- Não é kanban — é lista. PRD pede Kanban drag/drop.
+- Sem timeline visual de atividades. Sem estágios customizáveis por UI.
+
+### 4.2 Admin Master (🔴 encenação visual)
+- `admin/plans` → grava planos como JSON em `api_keys` com `provider='__platform_plans__'`. **Não é tabela real.** Tabela `plans` existe vazia/não usada.
+- `admin/policies` → conteúdo dos Termos e Política de Privacidade hardcoded como string no `.tsx`. Não usa tabela `policy_documents` real para versionar.
+- `admin/brand` → idem, JSON em `api_keys`. Tabela `global_settings` existe mas órfã.
+- `admin/agents`, `/travelers`, `/trips`, `/contracts`, `/audit` → `SELECT … LIMIT 200`, read-only, sem paginação, sem filtros úteis, sem ações (não revoga role, não bloqueia agência, não exporta).
+
+### 4.3 Portal CMS / Blog (🟡)
+- Renderiza blocks JSONB sim, mas **sem preview live**, sem **versionamento** (`policy_documents` tem versão; `portal_pages` não), sem **sanitização HTML** em `custom_html`/RichText → risco XSS.
+- Blog sem **agendamento (`scheduled_at`)**, sem **tags estruturadas** (provavelmente array text), sem **posts relacionados**, sem **sitemap dinâmico**.
+
+### 4.4 Clientes 360 (🟡 CRUD raso)
+- `clients.deleted_at` existe, mas UI não expõe soft delete nem restore.
+- Sem timeline (trips + proposals + contracts + vouchers + payments num único feed).
+- Sem merge de duplicados.
+- Sem mapa de consentimentos integrado.
+
+### 4.5 Embarques (🟡)
+- Kanban funciona, mas cores de status hardcoded (`#94A3B8`, `#F59E0B`, `#3B82F6`, `#10B981`) em vez de tokens.
+- Sem timeline operacional, sem alertas automáticos (X dias antes do embarque).
+- Drag/drop simples, sem persistência de ordem dentro da coluna.
+
+### 4.6 Suporte (🟡)
+- Thread + SLA trigger OK.
+- **Sem escalonamento** automático no estouro de SLA, **sem sugestão de KB**, **sem comentário interno** (note vs reply), sem CSAT pós-fechamento.
+
+### 4.7 Portal do cliente
+- `client.coupons` lista **todos** os cupons ativos da plataforma sem filtrar por agência do cliente.
+- `client.giftcards` lista read-only, sem comprar/resgatar.
+- `client.trips` read-only, sem tracking de status visual rico.
+
+### 4.8 Mobile `/m/*`
+- `m.checkin.$token.tsx` **quebrado** — comentário no código admite que RLS anon nega e fallback RPC não foi implementado.
+
+### 4.9 Mídia / Storage
+- `agency-media` bucket tem policy `SELECT TO public USING (bucket_id='agency-media')` **sem filtro de pasta/agência** → qualquer anon lista/baixa de qualquer agência.
+
+### 4.10 Segurança Supabase (riscos críticos)
+1. `user_roles` sem policies → falha silenciosa de leitura
+2. `leads`/`lead_stages`/`lead_activities` sem policies → CRM bloqueado por padrão
+3. `company_profiles` SELECT público sem filtro → vaza CNPJ/endereço de todas agências
+4. `global_settings` SELECT público → vaza configurações se houver dado sensível
+5. `agency-media` storage sem filtro de agência
+6. `audit_log` global visível para todos os membros autenticados
+7. Várias `SECURITY DEFINER` sem `SET search_path = public`
+8. 40 de 45 tabelas sem `deleted_at` (sem retenção/LGPD)
+
+---
+
+## 5. AUDITORIA "PREMIUM VS GENÉRICO"
+
+| Módulo | Classificação |
+|---|---|
+| Cotações, Contratos, Financeiro, Roteiros, Frota | **SaaS premium** |
+| Viagens, Embarques, Vouchers, Suporte, Minha Empresa, Auth, LGPD, Configurações | **SaaS utilizável** |
+| CRM, Clientes 360, Vistos, Corporativo, Blog, Portal CMS, Base de Conhecimento, Portal do Cliente, Admin agents/travelers/trips/contracts/audit | **CRUD raso** |
+| Admin Plans, Admin Policies, Admin Brand | **Encenação visual** (JSON em api_keys) |
+| CRM `leads`/`lead_*`, `m/checkin` | **Quebrado parcial / Backend oculto** |
+| Web Push, PWA, Cron 30/7/3/1d, WebMCP, story 9:16 voucher, seat-map 2D editor | **Não implementado** |
+
+---
+
+## 6. PLANO DE RECONSTRUÇÃO PREMIUM — 9 FASES
+
+> Cada fase é commitável, não quebra build, e tem critérios de aceite. Tempo estimado por fase é relativo (S=pequena, M=média, G=grande).
+
+### **Fase A — Saneamento de segurança (G, bloqueante)**
+Corrigir **antes** de qualquer feature nova.
+- A1. Criar policies RLS em `user_roles`, `leads`, `lead_stages`, `lead_activities` (escopadas por `is_agency_member`).
+- A2. Restringir `company_profiles` SELECT por `is_published=true` para anon ou por `is_agency_member` para auth.
+- A3. Restringir `global_settings` SELECT (público apenas para chaves whitelistadas tipo branding; resto só service_role).
+- A4. Corrigir policy `agency_media_public_read` para filtrar por `(storage.foldername(name))[1] = agency_id::text` e `is_published`.
+- A5. Restringir `audit_log` global apenas a `super_admin`.
+- A6. Auditar todas as `SECURITY DEFINER` e adicionar `SET search_path = public` onde faltar.
+- A7. Confirmar via Supabase Dashboard que `REVOKE` em `trip_passengers` foi aplicado.
+- A8. Soft delete (`deleted_at timestamptz`) padronizado em `trips`, `contracts`, `boarding_cards`, `vouchers`, `leads`, `proposals`, `suppliers`, `corporate_clients`, `support_tickets`, `blog_posts`, `portal_pages`, `visa_requests`, `group_tours`, `bus_layouts`, `knowledge_articles`, `lead_forms`, `gift_cards`, `coupons` — com filtro padrão `deleted_at IS NULL` nas queries críticas.
+
+### **Fase B — Fonte da verdade (M)**
+- B1. Reescrever `mem://index.md` (memory) com decisões reais.
+- B2. Reescrever Knowledge file para refletir o estado real auditado, não o aspiracional.
+- B3. Migrar conteúdo de `admin.plans`, `admin.policies`, `admin.brand` do anti-padrão `api_keys` → tabelas reais (`plans`, `policy_documents`, `global_settings`).
+- B4. Remover componentes mortos não-roadmap (`menubar`, `navigation-menu`, `context-menu`) e marcar `input-otp`/`resizable`/`carousel` com plano de uso ou removê-los.
+- B5. Apagar `pasted-*.txt` duplicados se confirmado.
+
+### **Fase C — Design System premium (M)**
+- C1. Criar `ErrorState` + `LoadingState` + `SkeletonTable` + `SkeletonCard` + `StatCard` + `StatusBadge` semântico + `Timeline` + `KanbanBoard` genérico + `WizardSheet` + `CommandPalette` (⌘K usando `command` já presente).
+- C2. Corrigir cores hardcoded em `boarding.tsx`, `sheet.tsx`, `dialog.tsx`, `drawer.tsx`, `alert-dialog.tsx`.
+- C3. Search global no `AppShell` real (⌘K) sobre tabelas-chave.
+- C4. AdminShell e ClientShell ganham `NotificationBadge` + `AIChatPanel` (paridade).
+- C5. Tokens de typography/spacing/z-index/duration adicionados ao `styles.css`.
+
+### **Fase D — Admin Master Global real (G)**
+- D1. `/admin/plans` lê/escreve em `plans` real (CRUD + features + limits + price).
+- D2. `/admin/policies` lê/escreve em `policy_documents` versionado (markdown + versão + publicação + histórico + reverter).
+- D3. `/admin/brand` lê/escreve em `global_settings` estruturado (landing CMS).
+- D4. `/admin/agencies/:id` ganha ações reais: bloquear/desbloquear, suspender plano, forçar reset de senha de owner.
+- D5. `/admin/agents`, `/travelers`, `/trips`, `/contracts`: paginação real (cursor ou offset), filtros por agência/data/status, export CSV.
+- D6. `/admin/audit`: filtros (agência, ação, usuário, período), paginação, export.
+- D7. RPC `check_agency_limits` + `can_manage_agency_finances` ganham UI (badge de uso de plano, banner de limite atingido).
+
+### **Fase E — CRM premium (G)**
+- E1. Kanban drag/drop real persistido em `leads.stage_id` + ordem por coluna.
+- E2. Estágios customizáveis por agência via `lead_stages` (UI).
+- E3. Timeline de atividades por lead (component `Timeline` da Fase C).
+- E4. Lead forms públicos render real + sanitização + consentimento + UTM tracking.
+- E5. Promote-to-client integrado com `promote_lead_to_client` RPC (que já existe).
+- E6. Filtros: estágio, owner, tag, origem, valor, data.
+
+### **Fase F — Clientes 360 + Portal do Cliente premium (M)**
+- F1. Perfil 360: timeline unificada (proposals + contracts + trips + vouchers + payments + tickets + consentimentos) usando `Timeline`.
+- F2. Merge de duplicados (RPC com escolha de campos).
+- F3. Soft delete + restore na UI.
+- F4. Tags reais via `agency_tags` (tabela órfã ganha vida).
+- F5. `client/coupons`: filtrar por cliente; aceitar cupom; histórico de uso.
+- F6. `client/giftcards`: comprar, resgatar, transferir.
+- F7. `client/trips`: status tracking visual rico (timeline da viagem).
+
+### **Fase G — Portal CMS + Blog + Base de Conhecimento premium (G)**
+- G1. CMS: preview live (split-screen), versionamento (`portal_page_versions`), reverter versão, duplicar página, sanitização HTML (DOMPurify) em todo bloco `custom_html`/RichText.
+- G2. Blog: agendamento (`scheduled_at` + cron), tags estruturadas, posts relacionados, sitemap dinâmico, OG image automático.
+- G3. KB: busca full-text (Postgres `tsvector`), categorias estruturadas, votação útil/não-útil.
+- G4. SEO completo: head() por rota pública, sitemap.xml dinâmico, robots.txt por agência.
+- G5. Lead forms: render público + INSERT em `leads` + LGPD consent + UTM.
+
+### **Fase H — Módulos operacionais que viraram CRUD raso (M)**
+- H1. Embarques: tokens semânticos, timeline operacional, alertas (`X dias antes`), persistência de ordem.
+- H2. Vistos: timeline, vincular `visa_requirements` (tabela órfã ganha catálogo curado).
+- H3. Corporativo: RFP simples + cotação B2B.
+- H4. Suporte: escalonamento por estouro de SLA, comentário interno (note vs reply), sugestão de KB no editor, CSAT.
+- H5. Vouchers: gerar story 9:16 (html2canvas scale 3, 400×711) salvando em `voucher-pdfs`.
+- H6. Roteiros em grupo: seat-map 2D editor (grid clicável) salvando em `group_tours.seat_map`.
+
+### **Fase I — Plataforma (M)**
+- I1. PWA real com `vite-plugin-pwa`, service worker, manifest dinâmico por agência via server route `/p/:slug/manifest.json`.
+- I2. Web Push real (VAPID — secrets a configurar).
+- I3. Cron de notificações 30/7/3/1d (boarding) e 7/3/1d (parcelas) e 15d (aniversário) via `pg_cron` chamando `/api/public/cron/run`.
+- I4. WebMCP server em `/mcp` (JSON-RPC 2.0).
+- I5. AI Chat: confirmar Anthropic real OU migrar para Lovable AI (Gemini). Rate limit `ai_rate_limit` + log em `audit_log`.
+- I6. Limpeza final: typecheck, lint, remoção de mortos remanescentes, auditoria de imports.
+
+---
+
+## 7. CRITÉRIOS DE ACEITE (amostra; vou expandir por módulo na fase respectiva)
+
+**CRM pronto:** Kanban drag/drop persistido + estágios custom + timeline + filtros + promote + RLS por agência testado com 2 agências distintas.
+**Blog pronto:** capa real, sanitização XSS, slug único, SEO completo, agendamento, status, preview, página pública, listagem pública, relacionados, logs.
+**Portal CMS pronto:** blocks render + preview live + versionamento + reverter + duplicar + sanitização + leads + consent.
+**Clientes 360 pronto:** timeline + docs + consentimentos + merge + soft delete + tags + integração CRM/cotações/vouchers/contratos.
+**Admin Master pronto:** Plans/Policies/Brand em tabelas reais; ações de bloqueio funcionando; paginação real; export; logs filtráveis.
+**Segurança pronto:** todas as 4 tabelas sem-policy corrigidas; 3 tabelas com SELECT público restritas; storage `agency-media` com filtro de pasta; `SECURITY DEFINER` com `search_path` fixo; `audit_log` global restrito a super_admin.
+
+---
+
+## 8. PERGUNTAS OBRIGATÓRIAS ANTES DE IMPLEMENTAR
+
+Não vou começar até ter resposta nas que se aplicam. Algumas têm default sugerido para acelerar:
+
+1. **Prioridade entre fases:** começar pela **Fase A (segurança, bloqueante)** ou você quer ver paralelamente alguma fase de UI? Sugestão minha: A → D → E (admin + CRM premium), depois G (portal/blog/KB), depois F → H → I.
+2. **Plans/Policies/Brand serializados em `api_keys`:** migrar para tabelas reais quebra dados existentes. Posso escrever migração que **lê o JSON atual, popula `plans`/`policy_documents`/`global_settings` e mantém compat até confirmação**. OK?
+3. **`leads` sem policies:** posso adicionar policies escopadas por `is_agency_member` agora? (Vai destravar o CRM imediatamente.)
+4. **`company_profiles` SELECT público:** o portal público lê isso. Posso adicionar coluna `is_published boolean` e restringir anon a `is_published=true`? Ou usar `agencies.slug` join via RPC?
+5. **`agency-media` storage público:** restringir leitura anon a arquivos cujo path começa com agency_id quebra URLs antigas. Posso aplicar restrição e migrar paths antigos? Ou preferir gerar URLs assinadas?
+6. **AI Chat:** mantém Anthropic (preciso do secret `ANTHROPIC_API_KEY`) ou migra para Lovable AI Gemini? Plan.md atual diz Anthropic.
+7. **Web Push (Fase I):** posso pedir `VAPID_PUBLIC_KEY` e `VAPID_PRIVATE_KEY` quando chegar a hora?
+8. **`pasted-*.txt`:** posso confirmar duplicidade dos dois últimos e remover? Ou são fontes de verdade que precisam virar `docs/prd/*.md`?
+9. **Componentes mortos:** remover `menubar`/`navigation-menu`/`context-menu`/`hover-card` ou prefere manter para uso futuro?
+10. **Rotas órfãs `agency/brand` e `agency/team`:** adicionar ao sidebar ou remover/integrar em `settings`/`company`?
+11. **CRM Kanban:** prefere refatorar a rota atual `agency.$slug.crm.tsx` (substituindo a lista) ou criar `agency.$slug.crm.kanban.tsx` + toggle visual?
+12. **Soft delete na UI:** quer exposição total (lista "Lixeira" por módulo + restore + purge) ou apenas filtro `deleted_at IS NULL` invisível ao usuário?
+
+---
+
+## 9. O QUE NÃO DEVE SER IMPLEMENTADO AINDA
+
+- Qualquer feature da Fase I (Web Push, PWA, WebMCP, cron) antes da Fase A.
+- Substituir `api_keys` JSON-blob de plans/policies/brand sem plano de migração de dados.
+- Refatorar CRM para Kanban antes de adicionar policies em `leads` (ia parecer que "consertou", mas é o RLS).
+- Adicionar mais buckets/RPCs antes de fechar débito de segurança da Fase A.
+- Mexer no contrato/voucher (já são premium); só fazer PR-1 (server-side hash) se você priorizar.
+
+---
+
+**Aguardo aprovação do plano + respostas das 12 perguntas para começar pela Fase A.**

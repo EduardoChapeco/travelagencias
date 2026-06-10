@@ -26,7 +26,10 @@ serve(async (req) => {
     });
 
     // Pega o usuário logado via JWT. Se for inválido, cai no erro.
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) {
       throw new Error("Unauthorized: Invalid JWT token.");
     }
@@ -73,22 +76,22 @@ ${text ? text.substring(0, 5000) : "Processando arquivo visualmente..."}
     // 3. Comunicação com a Google Gemini API
     // Usamos o model gemini-1.5-flash pela alta velocidade em extração de textos
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    
+
     const aiResponse = await fetch(geminiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts }],
         generationConfig: {
-           temperature: 0.1, // Temperatura baixa para extração determinística e rigorosa
-        }
-      })
+          temperature: 0.1, // Temperatura baixa para extração determinística e rigorosa
+        },
+      }),
     });
 
     if (!aiResponse.ok) {
-       const errBody = await aiResponse.text();
-       console.error("Gemini Error: ", errBody);
-       throw new Error("A Inteligência Artificial recusou o processamento ou está indisponível.");
+      const errBody = await aiResponse.text();
+      console.error("Gemini Error: ", errBody);
+      throw new Error("A Inteligência Artificial recusou o processamento ou está indisponível.");
     }
 
     const aiData = await aiResponse.json();
@@ -99,14 +102,16 @@ ${text ? text.substring(0, 5000) : "Processando arquivo visualmente..."}
     }
 
     // 4. Limpeza do JSON (Removendo marcação markdown ```json caso a IA a insira desobedecendo o prompt)
-    resultText = resultText.replace(/```json/g, "").replace(/```/g, "").trim();
+    resultText = resultText
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
     const parsedResult = JSON.parse(resultText);
 
     // 5. Devolve o sucesso para o Frontend B2B
     return new Response(JSON.stringify({ result: parsedResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-
   } catch (error: any) {
     console.error("Erro no processamento de IA:", error);
     return new Response(JSON.stringify({ error: error.message }), {

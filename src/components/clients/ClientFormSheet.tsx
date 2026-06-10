@@ -1,4 +1,12 @@
-import { Sheet, Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import {
+  Sheet,
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+} from "@/components/ui/form";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -30,7 +38,12 @@ export function ClientFormSheet({
 }) {
   const [submitting, setSubmitting] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<ClientForm>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<ClientForm>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
       kind: "individual",
@@ -41,7 +54,7 @@ export function ClientFormSheet({
       phone: "",
       birthDate: "",
       notes: "",
-    }
+    },
   });
 
   const kind = watch("kind");
@@ -62,12 +75,12 @@ export function ClientFormSheet({
       owner_id: u.user?.id ?? null,
     });
     setSubmitting(false);
-    
+
     if (error) {
       toast.error(error.message);
       return;
     }
-    
+
     toast.success("Cliente criado com sucesso!");
     onCreated();
   }
@@ -81,18 +94,20 @@ export function ClientFormSheet({
             <option value="company">Empresa</option>
           </Select>
         </Field>
-        
+
         <Field label={kind === "individual" ? "Nome completo *" : "Nome fantasia *"}>
           <Input {...register("fullName")} />
-          {errors.fullName && <span className="text-xs text-danger">{errors.fullName.message}</span>}
+          {errors.fullName && (
+            <span className="text-xs text-danger">{errors.fullName.message}</span>
+          )}
         </Field>
-        
+
         {kind === "company" && (
           <Field label="Razão social">
             <Input {...register("legalName")} />
           </Field>
         )}
-        
+
         <div className="grid grid-cols-2 gap-3">
           <Field label={kind === "individual" ? "CPF" : "CNPJ"}>
             <Input {...register("document")} />
@@ -103,22 +118,24 @@ export function ClientFormSheet({
             </Field>
           )}
         </div>
-        
+
         <Field label="Email">
           <Input type="email" {...register("email")} />
           {errors.email && <span className="text-xs text-danger">{errors.email.message}</span>}
         </Field>
-        
+
         <Field label="Telefone / WhatsApp">
           <Input {...register("phone")} />
         </Field>
-        
+
         <Field label="Notas">
           <Textarea {...register("notes")} />
         </Field>
-        
+
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+          <GhostButton type="button" onClick={onClose}>
+            Cancelar
+          </GhostButton>
           <PrimaryButton type="submit" disabled={submitting}>
             {submitting ? "Criando…" : "Criar cliente"}
           </PrimaryButton>

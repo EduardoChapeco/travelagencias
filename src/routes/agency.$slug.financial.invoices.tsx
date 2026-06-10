@@ -33,7 +33,10 @@ function InvoicesPage() {
     queryFn: async () => {
       const { data, error, count } = await supabase
         .from("financial_records")
-        .select("id, invoice_number, description, amount, currency, status, due_date, paid_at, created_at", { count: "exact" })
+        .select(
+          "id, invoice_number, description, amount, currency, status, due_date, paid_at, created_at",
+          { count: "exact" },
+        )
         .eq("agency_id", agency!.id)
         .not("invoice_number", "is", null)
         .order("created_at", { ascending: false })
@@ -44,46 +47,76 @@ function InvoicesPage() {
   });
 
   if (q.isLoading) return <div className="text-sm text-muted-foreground">Carregando…</div>;
-  if (!q.data?.data.length) return <EmptyState title="Sem faturas" description="Lançamentos com nº de fatura aparecem aqui." />;
+  if (!q.data?.data.length)
+    return (
+      <EmptyState title="Sem faturas" description="Lançamentos com nº de fatura aparecem aqui." />
+    );
 
   return (
     <>
       <div className="overflow-hidden rounded-lg border border-border">
         <table className="w-full text-sm">
-        <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-          <tr>
-            <th className="px-3 py-2 font-medium">Fatura</th>
-            <th className="px-3 py-2 font-medium">Descrição</th>
-            <th className="px-3 py-2 font-medium">Status</th>
-            <th className="px-3 py-2 font-medium">Vencimento</th>
-            <th className="px-3 py-2 font-medium">Pago em</th>
-            <th className="px-3 py-2 font-medium text-right">Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {q.data.data.map((i) => (
-            <tr key={i.id} className="border-t border-border hover:bg-surface-alt/30">
-              <td className="px-3 py-2.5 font-mono text-xs">{i.invoice_number}</td>
-              <td className="px-3 py-2.5 text-xs text-muted-foreground">{i.description ?? "—"}</td>
-              <td className="px-3 py-2.5">
-                <StatusBadge tone={i.status === "paid" ? "success" : i.status === "overdue" ? "danger" : "warning"}>{i.status}</StatusBadge>
-              </td>
-              <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(i.due_date)}</td>
-              <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(i.paid_at)}</td>
-              <td className="px-3 py-2.5 text-right font-mono text-xs">{money(Number(i.amount), i.currency)}</td>
+          <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+            <tr>
+              <th className="px-3 py-2 font-medium">Fatura</th>
+              <th className="px-3 py-2 font-medium">Descrição</th>
+              <th className="px-3 py-2 font-medium">Status</th>
+              <th className="px-3 py-2 font-medium">Vencimento</th>
+              <th className="px-3 py-2 font-medium">Pago em</th>
+              <th className="px-3 py-2 font-medium text-right">Valor</th>
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {q.data.data.map((i) => (
+              <tr key={i.id} className="border-t border-border hover:bg-surface-alt/30">
+                <td className="px-3 py-2.5 font-mono text-xs">{i.invoice_number}</td>
+                <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                  {i.description ?? "—"}
+                </td>
+                <td className="px-3 py-2.5">
+                  <StatusBadge
+                    tone={
+                      i.status === "paid"
+                        ? "success"
+                        : i.status === "overdue"
+                          ? "danger"
+                          : "warning"
+                    }
+                  >
+                    {i.status}
+                  </StatusBadge>
+                </td>
+                <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(i.due_date)}</td>
+                <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(i.paid_at)}</td>
+                <td className="px-3 py-2.5 text-right font-mono text-xs">
+                  {money(Number(i.amount), i.currency)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
-      
+
       <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
         <div className="text-xs text-muted-foreground">
-          Página <span className="font-medium text-foreground">{page}</span> de {Math.ceil(q.data.count / pageSize) || 1}
+          Página <span className="font-medium text-foreground">{page}</span> de{" "}
+          {Math.ceil(q.data.count / pageSize) || 1}
         </div>
         <div className="flex items-center gap-2">
-          <GhostButton disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="h-8 px-3 text-xs">Anterior</GhostButton>
-          <GhostButton disabled={page * pageSize >= q.data.count} onClick={() => setPage(p => p + 1)} className="h-8 px-3 text-xs">Próxima</GhostButton>
+          <GhostButton
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="h-8 px-3 text-xs"
+          >
+            Anterior
+          </GhostButton>
+          <GhostButton
+            disabled={page * pageSize >= q.data.count}
+            onClick={() => setPage((p) => p + 1)}
+            className="h-8 px-3 text-xs"
+          >
+            Próxima
+          </GhostButton>
         </div>
       </div>
     </>

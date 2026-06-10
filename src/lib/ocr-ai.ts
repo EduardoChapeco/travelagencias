@@ -44,13 +44,17 @@ export async function processVoucherWithAI(file: File): Promise<VoucherAIResult>
   if (file.type === "application/pdf") {
     rawText = await extractTextFromPdf(file);
   } else if (file.type.startsWith("image/")) {
-    throw new Error("A extração de imagem via OCR direto no navegador requer Tesseract.js. No momento, o fluxo otimizado é via PDF das operadoras.");
+    throw new Error(
+      "A extração de imagem via OCR direto no navegador requer Tesseract.js. No momento, o fluxo otimizado é via PDF das operadoras.",
+    );
   } else {
     throw new Error("Formato não suportado para OCR nativo.");
   }
 
   if (!rawText || rawText.trim().length < 10) {
-    throw new Error("O PDF parece ser uma imagem escaneada sem camada de texto (requer OCR visual).");
+    throw new Error(
+      "O PDF parece ser uma imagem escaneada sem camada de texto (requer OCR visual).",
+    );
   }
 
   // 2. Chamada à Inteligência Artificial (Supabase Edge Function)
@@ -61,7 +65,9 @@ export async function processVoucherWithAI(file: File): Promise<VoucherAIResult>
 
   if (error) {
     console.error("Erro na Supabase Edge Function (AI):", error);
-    throw new Error("A Inteligência Artificial não conseguiu processar o documento no servidor. " + error.message);
+    throw new Error(
+      "A Inteligência Artificial não conseguiu processar o documento no servidor. " + error.message,
+    );
   }
 
   return {

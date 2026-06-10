@@ -1,15 +1,15 @@
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Pencil, Trash2, Save, X, MessageSquare, Phone, Mail, CalendarClock, CheckCircle2, StickyNote, ArrowRightLeft, UserCheck } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Save, X, MessageSquare, Phone, Mail, CalendarClock, CheckCircle2, StickyNote, ArrowRightLeft, UserCheck, MapPin, Users, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, fmtDate, money } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/crm/$lead_id")({
-  head: () => ({ meta: [{ title: "Lead · TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Detalhe do Lead · TravelOS" }] }),
   component: LeadDetailPage,
 });
 
@@ -39,6 +39,18 @@ const ACTIVITY_TYPES = [
 function iconFor(type: Activity["type"]) {
   if (type === "stage_change") return ArrowRightLeft;
   return ACTIVITY_TYPES.find((t) => t.v === type)?.icon ?? StickyNote;
+}
+
+function colorFor(type: Activity["type"]) {
+  switch(type) {
+    case "stage_change": return "text-brand";
+    case "whatsapp": return "text-emerald-500";
+    case "call": return "text-blue-500";
+    case "email": return "text-amber-500";
+    case "meeting": return "text-purple-500";
+    case "task": return "text-rose-500";
+    default: return "text-muted-foreground";
+  }
 }
 
 function LeadDetailPage() {
@@ -87,171 +99,212 @@ function LeadDetailPage() {
     },
   });
 
-  if (leadQ.isLoading) return <div className="text-sm text-muted-foreground">Carregando…</div>;
+  if (leadQ.isLoading) return <div className="p-8 text-sm text-muted-foreground">Carregando detalhes do lead...</div>;
   if (!leadQ.data) {
     return (
-      <>
-        <PageHeader title="Lead não encontrado" description="Pode ter sido removido." />
-        <Link to="/agency/$slug/crm" params={{ slug }} className="text-sm text-primary hover:underline">← Voltar ao CRM</Link>
-      </>
+      <div className="p-8 max-w-2xl mx-auto text-center">
+        <h1 className="text-2xl font-bold mb-4">Lead não encontrado</h1>
+        <p className="text-muted-foreground mb-6">Ele pode ter sido arquivado ou excluído.</p>
+        <Link to="/agency/$slug/crm" params={{ slug }} className="inline-flex h-10 items-center justify-center rounded-full bg-surface-alt px-6 text-sm font-medium hover:bg-border/50 transition-colors">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao Kanban
+        </Link>
+      </div>
     );
   }
 
   const lead = leadQ.data;
   const stage = stagesQ.data?.find((s) => s.id === lead.stage_id);
 
+  async function handleConvert() {
+    const { data: clientId, error } = await supabase.rpc("promote_lead_to_client", { _lead_id: lead.id });
+    if (error) return toast.error("Erro ao converter lead: " + error.message);
+    
+    // Apple-like Celebration
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#000000', '#ffffff', '#a8a29e', stage?.color || '#3b82f6'],
+      disableForReducedMotion: true
+    });
+
+    toast.success("Lead convertido para Cliente!");
+    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+  }
+
   return (
-    <>
-      <PageHeader
-        title={lead.name}
-        description={lead.destination ? `${lead.destination} · ${lead.pax_count} pax` : `${lead.pax_count} pax`}
-        actions={
-          <div className="flex items-center gap-2">
-            <Link to="/agency/$slug/crm" params={{ slug }} className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt">
-              <ArrowLeft className="h-3.5 w-3.5" /> CRM
-            </Link>
-            {!editing && (
-              <button onClick={() => setEditing(true)} className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">
-                <Pencil className="h-3.5 w-3.5" /> Editar
-              </button>
-            )}
-          </div>
-        }
-      />
+    <div className="mx-auto max-w-5xl px-6 py-8">
+      {/* Top Nav */}
+      <div className="flex items-center justify-between mb-8">
+        <Link to="/agency/$slug/crm" params={{ slug }} className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" /> Voltar ao Kanban
+        </Link>
+        {!editing && !lead.client_id && (
+          <button onClick={() => setEditing(true)} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-semibold hover:bg-surface-alt transition-colors">
+            <Pencil className="h-3.5 w-3.5" /> Editar Lead
+          </button>
+        )}
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="space-y-6">
-          {editing ? (
-            <LeadForm lead={lead} stages={stagesQ.data ?? []} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); qc.invalidateQueries({ queryKey: ["lead", lead_id] }); qc.invalidateQueries({ queryKey: ["leads", agency?.id] }); }} />
-          ) : (
-            <LeadSummary lead={lead} stage={stage} />
-          )}
-
-          <div>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Atividades</h3>
-            <NewActivity leadId={lead.id} agencyId={lead.agency_id} onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
-            <Timeline activities={activitiesQ.data ?? []} onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
-          </div>
-        </section>
-
-        <aside className="space-y-4">
-          <div className="rounded-lg border border-border bg-surface p-4">
-            <div className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Estágio</div>
-            <div className="mb-2 flex items-center gap-2">
-              {stage && <span className="h-2.5 w-2.5 rounded-full" style={{ background: stage.color }} />}
-              <span className="text-sm font-medium">{stage?.name ?? "—"}</span>
-              {stage?.is_won && <StatusBadge tone="success">ganho</StatusBadge>}
-              {stage?.is_lost && <StatusBadge tone="danger">perdido</StatusBadge>}
-            </div>
-            <Select
-              value={lead.stage_id}
-              onChange={async (e) => {
-                const newStage = e.target.value;
-                if (newStage === lead.stage_id) return;
-                const fromName = stage?.name ?? "—";
-                const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
-                const { error } = await supabase.from("leads").update({ stage_id: newStage }).eq("id", lead.id);
-                if (error) return toast.error(error.message);
-                const u = (await supabase.auth.getUser()).data.user;
-                await supabase.from("lead_activities").insert({
-                  lead_id: lead.id, agency_id: lead.agency_id, author_id: u?.id ?? null,
-                  type: "stage_change", content: `Movido de ${fromName} para ${toName}`,
-                  metadata: { from: lead.stage_id, to: newStage },
-                });
-                qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-                qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
-                qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                toast.success("Estágio atualizado");
-              }}
-            >
-              {stagesQ.data?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </Select>
-
-            {/* Convert to Client Section */}
-            {lead.client_id ? (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide mb-2 flex items-center gap-1.5 text-success">
-                  <UserCheck className="h-3.5 w-3.5" /> Cliente Convertido
-                </div>
-                <PrimaryButton className="w-full justify-center" onClick={() => navigate({ to: "/agency/$slug/clients/$id", params: { slug, id: lead.client_id! } })}>
-                  Acessar Perfil do Cliente
-                </PrimaryButton>
+      {editing ? (
+        <div className="mb-10">
+          <LeadForm lead={lead} stages={stagesQ.data ?? []} onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); qc.invalidateQueries({ queryKey: ["lead", lead_id] }); qc.invalidateQueries({ queryKey: ["leads", agency?.id] }); }} />
+        </div>
+      ) : (
+        <>
+          {/* Hero Section (Minimalist & Premium) */}
+          <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                {stage && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-border text-[10px] font-bold tracking-widest uppercase" style={{ color: stage.color }}>
+                    <span className="w-1.5 h-1.5 rounded-full mr-1.5" style={{ backgroundColor: stage.color }} />
+                    {stage.name}
+                  </span>
+                )}
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                  Criado em {fmtDate(lead.created_at)}
+                </span>
               </div>
-            ) : stage?.is_won ? (
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                  <UserCheck className="h-3.5 w-3.5" /> Ação Necessária
+              
+              <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-4">{lead.name}</h1>
+              
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                {lead.email && <a href={\`mailto:\${lead.email}\`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"><Mail className="h-4 w-4" /> {lead.email}</a>}
+                {lead.phone && <a href={\`https://wa.me/\${lead.phone.replace(/\\D/g, '')}\`} target="_blank" className="flex items-center gap-1.5 text-muted-foreground hover:text-emerald-600 transition-colors"><Phone className="h-4 w-4" /> {lead.phone}</a>}
+              </div>
+            </div>
+
+            <div className="flex flex-col md:items-end gap-3">
+              <div className="flex items-center gap-3">
+                <Badge icon={MapPin} text={lead.destination || "Destino não definido"} />
+                <Badge icon={Users} text={\`\${lead.pax_count} Pax\`} />
+                {lead.estimated_value > 0 && <Badge icon={DollarSign} text={money(lead.estimated_value)} highlight />}
+              </div>
+              <div className="text-xs text-muted-foreground mt-2">
+                Responsável: <span className="font-semibold text-foreground">{ownerQ.data?.full_name ?? "Não atribuído"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action / Conversion Banner */}
+          {lead.client_id ? (
+            <div className="mb-10 rounded-2xl border border-success/30 bg-success/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4 text-success">
+                <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
+                  <UserCheck className="h-5 w-5" />
                 </div>
-                <PrimaryButton 
-                  className="w-full justify-center bg-success text-success-foreground hover:bg-success/90"
-                  onClick={async () => {
-                    const { data: clientId, error } = await supabase.rpc("promote_lead_to_client", { _lead_id: lead.id });
-                    if (error) return toast.error("Erro ao converter lead: " + error.message);
-                    toast.success("Lead convertido para Cliente!");
-                    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                <div>
+                  <h3 className="font-bold">Lead Convertido em Cliente</h3>
+                  <p className="text-sm opacity-80 mt-0.5">A negociação foi um sucesso e o cadastro já foi efetivado.</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => navigate({ to: "/agency/$slug/clients/$id", params: { slug, id: lead.client_id! } })}
+                className="rounded-full bg-success text-success-foreground px-6 py-2.5 text-sm font-bold tracking-wide hover:bg-success/90 transition-colors shrink-0"
+              >
+                Acessar Perfil Oficial
+              </button>
+            </div>
+          ) : stage?.is_won ? (
+            <div className="mb-10 rounded-2xl border border-foreground/10 bg-surface-alt/50 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h3 className="font-bold text-foreground">Ação Requerida</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">O negócio foi dado como ganho. Converta o lead para prosseguir com vendas oficiais.</p>
+              </div>
+              <button 
+                onClick={handleConvert}
+                className="rounded-full bg-foreground text-background px-6 py-2.5 text-sm font-bold tracking-wide hover:opacity-90 transition-opacity shrink-0"
+              >
+                Converter para Cliente
+              </button>
+            </div>
+          ) : null}
+
+          {/* Layout Columns */}
+          <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
+            {/* Timeline Column */}
+            <section>
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                Histórico e Timeline
+              </h2>
+              <NewActivity leadId={lead.id} agencyId={lead.agency_id} onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
+              <div className="mt-8">
+                <Timeline activities={activitiesQ.data ?? []} onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
+              </div>
+            </section>
+
+            {/* Side Column */}
+            <aside className="space-y-6">
+              {/* Change Stage Block */}
+              <div className="rounded-2xl border border-border bg-surface p-5">
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Alterar Estágio</label>
+                <Select
+                  value={lead.stage_id}
+                  className="rounded-xl border-border bg-background h-10 w-full"
+                  onChange={async (e) => {
+                    const newStage = e.target.value;
+                    if (newStage === lead.stage_id) return;
+                    const fromName = stage?.name ?? "—";
+                    const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
+                    const { error } = await supabase.from("leads").update({ stage_id: newStage }).eq("id", lead.id);
+                    if (error) return toast.error(error.message);
+                    const u = (await supabase.auth.getUser()).data.user;
+                    await supabase.from("lead_activities").insert({
+                      lead_id: lead.id, agency_id: lead.agency_id, author_id: u?.id ?? null,
+                      type: "stage_change", content: \`Movido de \${fromName} para \${toName}\`,
+                      metadata: { from: lead.stage_id, to: newStage },
+                    });
+                    qc.invalidateQueries({ queryKey: ["lead", lead_id] });
+                    qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
                     qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
                   }}
                 >
-                  Converter em Cliente
-                </PrimaryButton>
+                  {stagesQ.data?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </Select>
               </div>
-            ) : null}
 
+              {/* Notes Block */}
+              {lead.notes && (
+                <div className="rounded-2xl border border-border bg-surface p-5">
+                  <div className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Anotações do Lead</div>
+                  <p className="whitespace-pre-wrap text-sm text-foreground/80 leading-relaxed">{lead.notes}</p>
+                </div>
+              )}
+              
+              {/* Detailed Info Block */}
+              <div className="rounded-2xl border border-border bg-surface p-5">
+                <div className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Detalhes Fixos</div>
+                <dl className="space-y-3 text-xs">
+                  <Row k="Origem" v={lead.source ?? "—"} />
+                  <Row k="Data Ida" v={lead.travel_start ? fmtDate(lead.travel_start) : "—"} />
+                  <Row k="Data Retorno" v={lead.travel_end ? fmtDate(lead.travel_end) : "—"} />
+                  {lead.closed_at && <Row k="Fechamento" v={fmtDate(lead.closed_at)} />}
+                  {lead.lost_reason && <Row k="Motivo Perda" v={lead.lost_reason} />}
+                </dl>
+              </div>
+            </aside>
           </div>
-
-          <div className="rounded-lg border border-border bg-surface p-4 text-sm">
-            <div className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Resumo</div>
-            <dl className="space-y-2 text-xs">
-              <Row k="Responsável" v={ownerQ.data?.full_name ?? (lead.owner_id ? "—" : "Sem responsável")} />
-              <Row k="Valor estimado" v={money(lead.estimated_value)} />
-              <Row k="Pax" v={String(lead.pax_count)} />
-              <Row k="Origem" v={lead.source ?? "—"} />
-              <Row k="Viagem" v={lead.travel_start ? `${fmtDate(lead.travel_start)} → ${fmtDate(lead.travel_end)}` : "—"} />
-              <Row k="Criado" v={fmtDate(lead.created_at)} />
-              {lead.closed_at && <Row k="Fechado" v={fmtDate(lead.closed_at)} />}
-            </dl>
-          </div>
-        </aside>
-      </div>
-    </>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-2">
-      <dt className="text-muted-foreground">{k}</dt>
-      <dd className="text-right font-medium">{v}</dd>
-    </div>
-  );
-}
-
-function LeadSummary({ lead, stage }: { lead: Lead; stage?: Stage }) {
-  return (
-    <div className="rounded-lg border border-border bg-surface p-5">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Info label="Email" value={lead.email} mono />
-        <Info label="Telefone / WhatsApp" value={lead.phone} mono />
-        <Info label="Destino" value={lead.destination} />
-        <Info label="Estágio" value={stage?.name ?? "—"} />
-        <Info label="Início da viagem" value={lead.travel_start ? fmtDate(lead.travel_start) : null} />
-        <Info label="Fim da viagem" value={lead.travel_end ? fmtDate(lead.travel_end) : null} />
-      </div>
-      {lead.notes && (
-        <div className="mt-5 border-t border-border pt-4">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Anotações</div>
-          <p className="whitespace-pre-wrap text-sm text-foreground/90">{lead.notes}</p>
-        </div>
+        </>
       )}
     </div>
   );
 }
 
-function Info({ label, value, mono }: { label: string; value: string | null | undefined; mono?: boolean }) {
+function Badge({ icon: Icon, text, highlight }: { icon: any; text: string; highlight?: boolean }) {
   return (
-    <div>
-      <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`mt-1 text-sm ${mono ? "font-mono" : ""} ${value ? "" : "text-muted-foreground"}`}>{value || "—"}</div>
+    <div className={\`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium \${highlight ? 'border-foreground text-foreground bg-foreground/5' : 'border-border text-muted-foreground bg-surface'}\`}>
+      <Icon className="h-4 w-4 opacity-70" /> {text}
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-border/40 pb-2 last:border-0 last:pb-0">
+      <dt className="text-muted-foreground">{k}</dt>
+      <dd className="text-right font-medium text-foreground">{v}</dd>
     </div>
   );
 }
@@ -292,41 +345,45 @@ function LeadForm({ lead, stages, onCancel, onSaved }: { lead: Lead; stages: Sta
     }).eq("id", lead.id);
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Lead atualizado");
+    toast.success("Lead atualizado com sucesso!");
     onSaved();
   }
 
   return (
-    <form onSubmit={save} className="space-y-3 rounded-lg border border-border bg-surface p-5">
-      <Field label="Nome *"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Email"><Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></Field>
-        <Field label="Telefone / WhatsApp"><Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></Field>
-      </div>
-      <Field label="Destino"><Input value={f.destination} onChange={(e) => setF({ ...f, destination: e.target.value })} /></Field>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Início"><Input type="date" value={f.travel_start} onChange={(e) => setF({ ...f, travel_start: e.target.value })} /></Field>
-        <Field label="Fim"><Input type="date" value={f.travel_end} onChange={(e) => setF({ ...f, travel_end: e.target.value })} /></Field>
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        <Field label="Pax"><Input type="number" min={1} value={f.pax_count} onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })} /></Field>
-        <Field label="Valor (R$)"><Input type="number" min={0} step="0.01" value={f.estimated_value} onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })} /></Field>
+    <form onSubmit={save} className="space-y-6 rounded-2xl border border-border bg-surface p-8">
+      <h2 className="text-lg font-bold">Editar Lead</h2>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Field label="Nome *"><Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Email"><Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Telefone / WhatsApp"><Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Destino"><Input value={f.destination} onChange={(e) => setF({ ...f, destination: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Início da Viagem"><Input type="date" value={f.travel_start} onChange={(e) => setF({ ...f, travel_start: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Retorno"><Input type="date" value={f.travel_end} onChange={(e) => setF({ ...f, travel_end: e.target.value })} className="rounded-xl h-10" /></Field>
+        <Field label="Pax"><Input type="number" min={1} value={f.pax_count} onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })} className="rounded-xl h-10" /></Field>
+        <Field label="Valor (R$)"><Input type="number" min={0} step="0.01" value={f.estimated_value} onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })} className="rounded-xl h-10" /></Field>
         <Field label="Estágio">
-          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })}>
+          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })} className="rounded-xl h-10">
             {stages.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </Select>
         </Field>
+        <Field label="Origem"><Input value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })} className="rounded-xl h-10" /></Field>
       </div>
-      <Field label="Origem"><Input placeholder="instagram, whatsapp, site, indicação…" value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })} /></Field>
-      <Field label="Motivo de perda (se aplicável)"><Input value={f.lost_reason} onChange={(e) => setF({ ...f, lost_reason: e.target.value })} /></Field>
-      <Field label="Anotações"><Textarea rows={4} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} /></Field>
-      <div className="flex justify-end gap-2 pt-2">
-        <GhostButton type="button" onClick={onCancel}><X className="mr-1 inline h-3.5 w-3.5" /> Cancelar</GhostButton>
-        <PrimaryButton type="submit" disabled={busy}><Save className="mr-1 inline h-3.5 w-3.5" /> {busy ? "Salvando…" : "Salvar"}</PrimaryButton>
+      <Field label="Anotações"><Textarea rows={4} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} className="rounded-xl" /></Field>
+      <Field label="Motivo de perda (se aplicável)"><Input value={f.lost_reason} onChange={(e) => setF({ ...f, lost_reason: e.target.value })} className="rounded-xl h-10" /></Field>
+      
+      <div className="flex justify-end gap-3 pt-4 border-t border-border">
+        <button type="button" onClick={onCancel} className="rounded-full px-6 py-2 text-sm font-medium hover:bg-surface-alt transition-colors">Cancelar</button>
+        <button type="submit" disabled={busy} className="rounded-full bg-foreground text-background px-6 py-2 text-sm font-bold hover:opacity-90 transition-opacity">
+          {busy ? "Salvando…" : "Salvar Alterações"}
+        </button>
       </div>
     </form>
   );
 }
+
+// --------------------------------------------------------------------------------------
+// Timeline Components (Apple/Minimalist Style)
+// --------------------------------------------------------------------------------------
 
 function NewActivity({ leadId, agencyId, onCreated }: { leadId: string; agencyId: string; onCreated: () => void }) {
   const [type, setType] = useState<Activity["type"]>("note");
@@ -348,33 +405,49 @@ function NewActivity({ leadId, agencyId, onCreated }: { leadId: string; agencyId
   }
 
   return (
-    <form onSubmit={submit} className="mb-4 rounded-lg border border-border bg-surface p-3">
-      <div className="mb-2 flex gap-2">
-        <Select value={type} onChange={(e) => setType(e.target.value as Activity["type"])} className="w-40">
-          {ACTIVITY_TYPES.map((t) => <option key={t.v} value={t.v}>{t.label}</option>)}
-        </Select>
+    <form onSubmit={submit} className="rounded-2xl border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow">
+      <Select 
+        value={type} 
+        onChange={(e) => setType(e.target.value as Activity["type"])} 
+        className="w-32 border-0 bg-transparent text-sm focus:ring-0 text-muted-foreground"
+      >
+        {ACTIVITY_TYPES.map((t) => <option key={t.v} value={t.v}>{t.label}</option>)}
+      </Select>
+      <div className="flex-1 border-l border-border/50">
+        <Textarea 
+          rows={1} 
+          placeholder="Registre um novo passo..." 
+          value={content} 
+          onChange={(e) => setContent(e.target.value)} 
+          className="border-0 bg-transparent shadow-none focus:ring-0 resize-none py-3"
+          style={{ minHeight: '44px' }}
+        />
       </div>
-      <Textarea rows={2} placeholder="Registrar atividade…" value={content} onChange={(e) => setContent(e.target.value)} />
-      <div className="mt-2 flex justify-end">
-        <PrimaryButton type="submit" disabled={busy || !content.trim()}>{busy ? "Adicionando…" : "Adicionar"}</PrimaryButton>
-      </div>
+      <button 
+        type="submit" 
+        disabled={busy || !content.trim()}
+        className="m-1 rounded-full bg-foreground text-background px-4 py-2 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
+      >
+        Salvar
+      </button>
     </form>
   );
 }
 
 function Timeline({ activities, onChanged }: { activities: Activity[]; onChanged: () => void }) {
   if (activities.length === 0) {
-    return <div className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">Nenhuma atividade ainda.</div>;
+    return <div className="text-center text-sm text-muted-foreground py-10">Histórico limpo. Nenhuma atividade registrada.</div>;
   }
   return (
-    <ol className="space-y-2">
+    <div className="relative pl-4 border-l border-border/60 space-y-6">
       {activities.map((a) => <ActivityItem key={a.id} activity={a} onChanged={onChanged} />)}
-    </ol>
+    </div>
   );
 }
 
 function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: () => void }) {
   const Icon = iconFor(activity.type);
+  const colorClass = colorFor(activity.type);
   const [edit, setEdit] = useState(false);
   const [content, setContent] = useState(activity.content ?? "");
   const [me, setMe] = useState<string | null>(null);
@@ -386,8 +459,8 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
       const { error } = await supabase.from("lead_activities").update({ content: content.trim() || null }).eq("id", activity.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Atualizado"); setEdit(false); onChanged(); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
+    onSuccess: () => { toast.success("Nota atualizada."); setEdit(false); onChanged(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar."),
   });
 
   const remove = useMutation({
@@ -395,41 +468,46 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
       const { error } = await supabase.from("lead_activities").delete().eq("id", activity.id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Removido"); onChanged(); },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
+    onSuccess: () => { toast.success("Registro removido."); onChanged(); },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover."),
   });
 
   return (
-    <li className="flex gap-3 rounded-md border border-border bg-surface p-3">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" />
+    <div className="relative pl-6">
+      <div className="absolute -left-[17px] top-1 flex h-8 w-8 items-center justify-center rounded-full bg-background border border-border">
+        <Icon className={\`h-3.5 w-3.5 \${colorClass}\`} />
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-            <span className="font-semibold">{ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ?? activity.type.replace("_", " ")}</span>
-            <span>·</span>
-            <span>{new Date(activity.created_at).toLocaleString("pt-BR")}</span>
+      
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-medium text-muted-foreground">
+            {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ?? activity.type.replace("_", " ")}
+            <span className="mx-2 opacity-50">•</span>
+            {new Date(activity.created_at).toLocaleString("pt-BR", { day: '2-digit', month: 'short', hour: '2-digit', minute:'2-digit' })}
           </div>
+          
           {mine && !edit && activity.type !== "stage_change" && (
-            <div className="flex items-center gap-2">
-              <button onClick={() => setEdit(true)} className="text-[11px] text-muted-foreground hover:text-foreground"><Pencil className="h-3 w-3" /></button>
-              <button onClick={() => { if (confirm("Remover atividade?")) remove.mutate(); }} className="text-[11px] text-destructive hover:underline"><Trash2 className="h-3 w-3" /></button>
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onClick={() => setEdit(true)} className="text-muted-foreground hover:text-foreground transition-colors p-1"><Pencil className="h-3 w-3" /></button>
+              <button onClick={() => { if (confirm("Apagar permanentemente este registro?")) remove.mutate(); }} className="text-muted-foreground hover:text-danger transition-colors p-1"><Trash2 className="h-3 w-3" /></button>
             </div>
           )}
         </div>
+        
         {edit ? (
-          <div className="space-y-2">
-            <Textarea rows={2} value={content} onChange={(e) => setContent(e.target.value)} />
+          <div className="mt-2 space-y-3 rounded-2xl border border-border bg-surface p-4">
+            <Textarea rows={2} value={content} onChange={(e) => setContent(e.target.value)} className="rounded-xl border-border/50" />
             <div className="flex justify-end gap-2">
-              <GhostButton type="button" onClick={() => { setEdit(false); setContent(activity.content ?? ""); }}>Cancelar</GhostButton>
-              <PrimaryButton type="button" onClick={() => save.mutate()} disabled={save.isPending}>Salvar</PrimaryButton>
+              <button onClick={() => { setEdit(false); setContent(activity.content ?? ""); }} className="rounded-full px-4 py-1.5 text-xs font-medium hover:bg-surface-alt transition-colors">Cancelar</button>
+              <button onClick={() => save.mutate()} disabled={save.isPending} className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-bold transition-opacity hover:opacity-90">Salvar</button>
             </div>
           </div>
         ) : (
-          <p className="whitespace-pre-wrap text-sm text-foreground/90">{activity.content || <span className="text-muted-foreground">—</span>}</p>
+          <div className={\`mt-1 text-sm text-foreground/90 leading-relaxed \${activity.type === 'stage_change' ? 'font-medium' : ''}\`}>
+            {activity.content || <span className="text-muted-foreground italic">Sem detalhes.</span>}
+          </div>
         )}
       </div>
-    </li>
+    </div>
   );
 }

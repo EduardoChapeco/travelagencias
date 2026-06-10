@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, ChevronDown } from "lucide-react";
+import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Textarea, PrimaryButton, GhostButton, StatusBadge, fmtDate } from "@/components/ui/form";
+import { Field, Input, PrimaryButton, GhostButton, StatusBadge, fmtDate } from "@/components/ui/form";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/admin/policies")({
@@ -14,229 +14,206 @@ export const Route = createFileRoute("/admin/policies")({
 });
 
 type PolicyDoc = {
-  id: string;
+  id?: string;
+  kind: string;
   title: string;
   slug: string;
-  content: string;
+  content_md: string;
   version: string;
   is_published: boolean;
-  published_at: string | null;
-  updated_at: string;
+  effective_at: string | null;
 };
 
-const POLICY_PROVIDER = "__platform_policies__";
-
-const DEFAULT_DOCS: Omit<PolicyDoc, "updated_at">[] = [
+const DEFAULT_DOCS: PolicyDoc[] = [
   {
-    id: "privacy",
+    kind: "privacy",
     title: "Política de Privacidade",
     slug: "privacidade",
     version: "1.0.0",
     is_published: false,
-    published_at: null,
-    content: `# Política de Privacidade
-
-**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}
-
-## 1. Dados coletados
-
-Coletamos os seguintes dados pessoais no uso da plataforma TravelOS:
-
-- Nome completo e e-mail ao criar conta
-- Dados de viagem e passageiros fornecidos pela agência
-- Dados de navegação e uso da plataforma (logs técnicos)
-
-## 2. Finalidade do tratamento
-
-Os dados são usados exclusivamente para:
-
-- Prestação dos serviços contratados
-- Comunicação de suporte e atualizações
-- Melhoria contínua da plataforma
-
-## 3. Compartilhamento
-
-Não vendemos nem compartilhamos dados com terceiros, exceto quando necessário para a operação do serviço (ex.: processadores de pagamento e servidores de hospedagem).
-
-## 4. Direitos do titular
-
-Você pode solicitar acesso, correção, portabilidade ou exclusão dos seus dados pelo e-mail: dpo@travelos.com.br
-
-## 5. Retenção
-
-Dados são retidos pelo período necessário para a prestação do serviço e obrigações legais.
-
-## 6. Contato DPO
-
-Nome: Encarregado de Dados TravelOS  
-E-mail: dpo@travelos.com.br
-`,
+    effective_at: null,
+    content_md: `# Política de Privacidade\n\n**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}\n\n## 1. Dados coletados\n\nColetamos os seguintes dados pessoais no uso da plataforma TravelOS:\n\n- Nome completo e e-mail ao criar conta\n- Dados de viagem e passageiros fornecidos pela agência\n- Dados de navegação e uso da plataforma (logs técnicos)\n\n## 2. Finalidade do tratamento\n\nOs dados são usados exclusivamente para:\n\n- Prestação dos serviços contratados\n- Comunicação de suporte e atualizações\n- Melhoria contínua da plataforma\n\n## 3. Compartilhamento\n\nNão vendemos nem compartilhamos dados com terceiros, exceto quando necessário para a operação do serviço (ex.: processadores de pagamento e servidores de hospedagem).\n\n## 4. Direitos do titular\n\nVocê pode solicitar acesso, correção, portabilidade ou exclusão dos seus dados pelo e-mail: dpo@travelos.com.br\n\n## 5. Retenção\n\nDados são retidos pelo período necessário para a prestação do serviço e obrigações legais.\n\n## 6. Contato DPO\n\nNome: Encarregado de Dados TravelOS  \nE-mail: dpo@travelos.com.br\n`,
   },
   {
-    id: "terms",
+    kind: "terms",
     title: "Termos de Uso",
     slug: "termos",
     version: "1.0.0",
     is_published: false,
-    published_at: null,
-    content: `# Termos de Uso
-
-**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}
-
-## 1. Aceitação
-
-Ao usar o TravelOS, você concorda com estes Termos. Caso discorde, não utilize a plataforma.
-
-## 2. Serviço
-
-O TravelOS é uma plataforma SaaS para gestão de agências de viagens, fornecida mediante assinatura mensal ou anual.
-
-## 3. Obrigações do usuário
-
-- Usar a plataforma de acordo com as leis vigentes
-- Não compartilhar credenciais de acesso
-- Fornecer dados verídicos no cadastro
-- Zelar pelos dados de seus clientes e passageiros
-
-## 4. Propriedade intelectual
-
-Todo o código, marca e conteúdo do TravelOS pertencem à empresa desenvolvedora.
-
-## 5. Limitação de responsabilidade
-
-A plataforma é fornecida "como está". Não nos responsabilizamos por perdas indiretas decorrentes do uso.
-
-## 6. Rescisão
-
-Podemos suspender contas que violem estes termos sem aviso prévio.
-
-## 7. Foro
-
-Fica eleito o foro da comarca de Chapecó/SC para dirimir controvérsias.
-`,
+    effective_at: null,
+    content_md: `# Termos de Uso\n\n**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}\n\n## 1. Aceitação\n\nAo usar o TravelOS, você concorda com estes Termos. Caso discorde, não utilize a plataforma.\n\n## 2. Serviço\n\nO TravelOS é uma plataforma SaaS para gestão de agências de viagens, fornecida mediante assinatura mensal ou anual.\n\n## 3. Obrigações do usuário\n\n- Usar a plataforma de acordo com as leis vigentes\n- Não compartilhar credenciais de acesso\n- Fornecer dados verídicos no cadastro\n- Zelar pelos dados de seus clientes e passageiros\n\n## 4. Propriedade intelectual\n\nTodo o código, marca e conteúdo do TravelOS pertencem à empresa desenvolvedora.\n\n## 5. Limitação de responsabilidade\n\nA plataforma é fornecida "como está". Não nos responsabilizamos por perdas indiretas decorrentes do uso.\n\n## 6. Rescisão\n\nPodemos suspender contas que violem estes termos sem aviso prévio.\n\n## 7. Foro\n\nFica eleito o foro da comarca de Chapecó/SC para dirimir controvérsias.\n`,
   },
   {
-    id: "dpa",
+    kind: "dpa",
     title: "DPA — Acordo de Processamento de Dados",
     slug: "dpa",
     version: "1.0.0",
     is_published: false,
-    published_at: null,
-    content: `# Data Processing Agreement (DPA)
-
-**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}
-
-Este acordo regula o processamento de dados pessoais entre o TravelOS (Processador) e as agências cadastradas (Controladoras), em conformidade com a LGPD (Lei nº 13.709/2018).
-
-## 1. Definições
-
-- **Controlador:** A agência de viagens que coleta e determina o uso dos dados.
-- **Processador:** TravelOS, que processa dados em nome do Controlador.
-
-## 2. Obrigações do Processador
-
-- Processar dados apenas conforme instruções documentadas do Controlador
-- Implementar medidas técnicas e organizacionais adequadas de segurança
-- Notificar o Controlador em caso de incidente de segurança em até 48h
-
-## 3. Subprocessadores
-
-O TravelOS utiliza os seguintes subprocessadores aprovados:
-- Supabase (banco de dados e autenticação) — EUA / conformidade SOC 2
-- Netlify/Vercel (hospedagem) — EUA
-
-## 4. Transferência internacional
-
-Dados podem ser processados em servidores fora do Brasil por subprocessadores com garantias adequadas (SCCs, adequação).
-
-## 5. Direitos dos titulares
-
-O Processador apoia o Controlador no atendimento a solicitações dos titulares de dados.
-
-## 6. Vigência
-
-Este DPA tem a mesma vigência do contrato de assinatura da plataforma.
-`,
+    effective_at: null,
+    content_md: `# Data Processing Agreement (DPA)\n\n**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}\n\nEste acordo regula o processamento de dados pessoais entre o TravelOS (Processador) e as agências cadastradas (Controladoras), em conformidade com a LGPD (Lei nº 13.709/2018).\n\n## 1. Definições\n\n- **Controlador:** A agência de viagens que coleta e determina o uso dos dados.\n- **Processador:** TravelOS, que processa dados em nome do Controlador.\n\n## 2. Obrigações do Processador\n\n- Processar dados apenas conforme instruções documentadas do Controlador\n- Implementar medidas técnicas e organizacionais adequadas de segurança\n- Notificar o Controlador em caso de incidente de segurança em até 48h\n\n## 3. Subprocessadores\n\nO TravelOS utiliza os seguintes subprocessadores aprovados:\n- Supabase (banco de dados e autenticação) — EUA / conformidade SOC 2\n- Netlify/Vercel (hospedagem) — EUA\n\n## 4. Transferência internacional\n\nDados podem ser processados em servidores fora do Brasil por subprocessadores com garantias adequadas (SCCs, adequação).\n\n## 5. Direitos dos titulares\n\nO Processador apoia o Controlador no atendimento a solicitações dos titulares de dados.\n\n## 6. Vigência\n\nEste DPA tem a mesma vigência do contrato de assinatura da plataforma.\n`,
   },
 ];
+
+const META_MAP: Record<string, { title: string, slug: string }> = {
+  privacy: { title: "Política de Privacidade", slug: "privacidade" },
+  terms: { title: "Termos de Uso", slug: "termos" },
+  dpa: { title: "DPA — Acordo de Processamento", slug: "dpa" },
+  cookies: { title: "Política de Cookies", slug: "cookies" },
+  lgpd: { title: "Termos LGPD", slug: "lgpd" },
+};
 
 function Page() {
   const qc = useQueryClient();
   const [docs, setDocs] = useState<PolicyDoc[]>([]);
-  const [activeId, setActiveId] = useState<string>("privacy");
+  const [activeKind, setActiveKind] = useState<string>("privacy");
   const [busy, setBusy] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
 
   const q = useQuery({
     queryKey: ["admin-policies"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("api_keys")
-        .select("key_value")
-        .eq("provider", POLICY_PROVIDER)
-        .maybeSingle();
-      if (data?.key_value) {
-        try { return JSON.parse(data.key_value) as PolicyDoc[]; } catch { return null; }
+      const { data, error } = await supabase
+        .from("policy_documents")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      
+      // Group by kind to get the latest version of each
+      const latestMap = new Map<string, any>();
+      for (const row of (data || [])) {
+        if (!latestMap.has(row.kind)) {
+          latestMap.set(row.kind, row);
+        }
       }
-      return null;
+
+      return DEFAULT_DOCS.map(def => {
+        const dbDoc = latestMap.get(def.kind);
+        if (dbDoc) {
+          return {
+            id: dbDoc.id,
+            kind: dbDoc.kind,
+            title: META_MAP[dbDoc.kind]?.title || def.title,
+            slug: META_MAP[dbDoc.kind]?.slug || def.slug,
+            version: dbDoc.version,
+            content_md: dbDoc.content_md,
+            is_published: dbDoc.is_published ?? false,
+            effective_at: dbDoc.effective_at,
+          };
+        }
+        return def;
+      });
     },
   });
 
   useEffect(() => {
     if (q.data) {
       setDocs(q.data);
-    } else if (!q.isLoading) {
-      // Initialize with defaults
-      setDocs(DEFAULT_DOCS.map((d) => ({ ...d, updated_at: new Date().toISOString() })));
     }
-  }, [q.data, q.isLoading]);
+  }, [q.data]);
 
-  const activeDoc = docs.find((d) => d.id === activeId);
+  const activeDoc = docs.find((d) => d.kind === activeKind);
 
   function updateDoc<K extends keyof PolicyDoc>(k: K, v: PolicyDoc[K]) {
     setDocs((prev) =>
-      prev.map((d) => d.id === activeId ? { ...d, [k]: v, updated_at: new Date().toISOString() } : d)
+      prev.map((d) => d.kind === activeKind ? { ...d, [k]: v } : d)
     );
   }
 
   async function save() {
+    if (!activeDoc) return;
     setBusy(true);
-    const val = JSON.stringify(docs);
-    const existing = q.data !== null && q.data !== undefined;
-    const { error } = existing
-      ? await supabase.from("api_keys").update({ key_value: val }).eq("provider", POLICY_PROVIDER)
-      : await supabase.from("api_keys").insert({
-          provider: POLICY_PROVIDER, label: "Platform Policies", key_value: val, agency_id: null,
-        });
+    
+    // Check if we are updating an existing draft or creating a new record
+    if (activeDoc.id) {
+      // Update existing
+      const { error } = await supabase.from("policy_documents").update({
+        version: activeDoc.version,
+        content_md: activeDoc.content_md,
+      }).eq("id", activeDoc.id);
+      
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Rascunho salvo com sucesso");
+        qc.invalidateQueries({ queryKey: ["admin-policies"] });
+      }
+    } else {
+      // Insert new
+      const { error } = await supabase.from("policy_documents").insert({
+        kind: activeDoc.kind,
+        version: activeDoc.version,
+        content_md: activeDoc.content_md,
+        is_published: false,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Novo rascunho criado");
+        qc.invalidateQueries({ queryKey: ["admin-policies"] });
+      }
+    }
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Políticas salvas");
-    qc.invalidateQueries({ queryKey: ["admin-policies"] });
   }
 
-  async function publish(id: string) {
+  async function saveAsNewVersion() {
+    if (!activeDoc) return;
+    setBusy(true);
+    const newVersion = prompt("Qual a nova versão?", activeDoc.version);
+    if (!newVersion) { setBusy(false); return; }
+    
+    const { error } = await supabase.from("policy_documents").insert({
+      kind: activeDoc.kind,
+      version: newVersion,
+      content_md: activeDoc.content_md,
+      is_published: false,
+    });
+
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Nova versão criada");
+      qc.invalidateQueries({ queryKey: ["admin-policies"] });
+    }
+  }
+
+  async function publish() {
+    if (!activeDoc?.id) {
+      toast.error("Salve o documento antes de publicar.");
+      return;
+    }
+    setBusy(true);
     const now = new Date().toISOString();
-    setDocs((prev) =>
-      prev.map((d) => d.id === id ? { ...d, is_published: true, published_at: now, updated_at: now } : d)
-    );
-    // auto-save
-    const next = docs.map((d) =>
-      d.id === id ? { ...d, is_published: true, published_at: now, updated_at: now } : d
-    );
-    const val = JSON.stringify(next);
-    const existing = q.data !== null && q.data !== undefined;
-    await (existing
-      ? supabase.from("api_keys").update({ key_value: val }).eq("provider", POLICY_PROVIDER)
-      : supabase.from("api_keys").insert({ provider: POLICY_PROVIDER, label: "Platform Policies", key_value: val, agency_id: null }));
-    toast.success("Documento publicado");
-    qc.invalidateQueries({ queryKey: ["admin-policies"] });
+    const { error } = await supabase.from("policy_documents").update({
+      is_published: true,
+      effective_at: now,
+    }).eq("id", activeDoc.id);
+
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Documento publicado!");
+      qc.invalidateQueries({ queryKey: ["admin-policies"] });
+    }
   }
 
-  async function unpublish(id: string) {
-    setDocs((prev) =>
-      prev.map((d) => d.id === id ? { ...d, is_published: false, updated_at: new Date().toISOString() } : d)
-    );
-    toast("Documento despublicado");
+  async function unpublish() {
+    if (!activeDoc?.id) return;
+    setBusy(true);
+    const { error } = await supabase.from("policy_documents").update({
+      is_published: false,
+    }).eq("id", activeDoc.id);
+
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Documento despublicado");
+      qc.invalidateQueries({ queryKey: ["admin-policies"] });
+    }
   }
 
   const icons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -256,16 +233,16 @@ function Page() {
         {/* Sidebar nav */}
         <nav className="space-y-1">
           {docs.map((doc) => {
-            const Icon = icons[doc.id] ?? FileText;
+            const Icon = icons[doc.kind] ?? FileText;
             return (
               <button
-                key={doc.id}
-                onClick={() => setActiveId(doc.id)}
-                className={`flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
-                  activeId === doc.id
+                key={doc.kind}
+                onClick={() => setActiveKind(doc.kind)}
+                className={\`flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors \${
+                  activeKind === doc.kind
                     ? "border-brand/30 bg-brand/5 text-brand font-semibold"
                     : "border-transparent hover:bg-surface-alt text-foreground"
-                }`}
+                }\`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -304,12 +281,12 @@ function Page() {
                 </Field>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5" />
-                  {activeDoc.updated_at ? fmtDate(activeDoc.updated_at) : "—"}
+                  {activeDoc.effective_at ? fmtDate(activeDoc.effective_at) : "Sem publicação"}
                 </div>
-                {activeDoc.is_published && activeDoc.published_at && (
+                {activeDoc.is_published && activeDoc.effective_at && (
                   <div className="text-xs text-success flex items-center gap-1.5">
                     <Eye className="h-3.5 w-3.5" />
-                    Publicado em {fmtDate(activeDoc.published_at)}
+                    Publicado em {fmtDate(activeDoc.effective_at)}
                   </div>
                 )}
               </div>
@@ -323,14 +300,19 @@ function Page() {
                   {previewMode ? "Editar" : "Prévia"}
                 </button>
                 {activeDoc.is_published ? (
-                  <GhostButton type="button" onClick={() => unpublish(activeDoc.id)} className="text-xs">
+                  <GhostButton type="button" onClick={unpublish} className="text-xs">
                     Despublicar
                   </GhostButton>
                 ) : (
-                  <GhostButton type="button" onClick={() => publish(activeDoc.id)} className="text-xs gap-1.5">
+                  <GhostButton type="button" onClick={publish} className="text-xs gap-1.5">
                     <Eye className="h-3.5 w-3.5" /> Publicar
                   </GhostButton>
                 )}
+                
+                <GhostButton type="button" onClick={saveAsNewVersion} disabled={busy} className="gap-1.5 text-xs">
+                  <History className="h-3.5 w-3.5" /> Nova Versão
+                </GhostButton>
+
                 <PrimaryButton type="button" onClick={save} disabled={busy} className="gap-1.5 text-xs">
                   <Save className="h-3.5 w-3.5" />
                   {busy ? "Salvando…" : "Salvar"}
@@ -343,7 +325,7 @@ function Page() {
                 <div
                   className="text-sm leading-relaxed"
                   style={{ fontFamily: "system-ui, sans-serif" }}
-                  dangerouslySetInnerHTML={{ __html: activeDoc.content }}
+                  dangerouslySetInnerHTML={{ __html: activeDoc.content_md }}
                 />
               </div>
             ) : (
@@ -352,8 +334,8 @@ function Page() {
                   <span className="text-xs font-semibold">{activeDoc.title}</span>
                 </div>
                 <RichTextEditor
-                  value={activeDoc.content}
-                  onChange={(v) => updateDoc("content", v)}
+                  value={activeDoc.content_md}
+                  onChange={(v) => updateDoc("content_md", v)}
                 />
               </div>
             )}

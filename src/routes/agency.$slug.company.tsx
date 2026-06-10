@@ -3,13 +3,34 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  Building2, Globe, MapPin, Clock, Share2, Search, Eye, Save,
-  Instagram, Facebook, Youtube, Linkedin, MessageCircle, Phone, Mail, ExternalLink,
+  Building2,
+  Globe,
+  MapPin,
+  Clock,
+  Share2,
+  Search,
+  Eye,
+  Save,
+  Instagram,
+  Facebook,
+  Youtube,
+  Linkedin,
+  MessageCircle,
+  Phone,
+  Mail,
+  ExternalLink,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Textarea, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+} from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 
@@ -25,15 +46,26 @@ const DAY_KEYS: DayKey[] = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
 type BusinessHours = Record<DayKey, { open: string; close: string; closed: boolean }>;
 const defaultHours = (): BusinessHours =>
   Object.fromEntries(
-    DAY_KEYS.map((k, i) => [k, { open: "09:00", close: "18:00", closed: i >= 5 }])
+    DAY_KEYS.map((k, i) => [k, { open: "09:00", close: "18:00", closed: i >= 5 }]),
   ) as BusinessHours;
 
 type Address = {
-  street: string; number: string; complement: string;
-  neighborhood: string; city: string; state: string; zip: string;
+  street: string;
+  number: string;
+  complement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip: string;
 };
 const defaultAddress = (): Address => ({
-  street: "", number: "", complement: "", neighborhood: "", city: "", state: "", zip: "",
+  street: "",
+  number: "",
+  complement: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  zip: "",
 });
 
 type CP = {
@@ -63,12 +95,26 @@ type CP = {
 
 const defaultCP = (agencyName = ""): CP => ({
   name: agencyName,
-  short_description: "", description: "", category: "", cnpj: "",
-  phone: "", whatsapp: "", email: "", website: "",
-  instagram: "", facebook: "", youtube: "", linkedin: "", tiktok: "",
-  google_business_id: "", google_maps_url: "",
-  logo_url: "", cover_image_url: "", gallery: [],
-  address: defaultAddress(), business_hours: defaultHours(),
+  short_description: "",
+  description: "",
+  category: "",
+  cnpj: "",
+  phone: "",
+  whatsapp: "",
+  email: "",
+  website: "",
+  instagram: "",
+  facebook: "",
+  youtube: "",
+  linkedin: "",
+  tiktok: "",
+  google_business_id: "",
+  google_maps_url: "",
+  logo_url: "",
+  cover_image_url: "",
+  gallery: [],
+  address: defaultAddress(),
+  business_hours: defaultHours(),
 });
 
 type Tab = "identity" | "contact" | "location" | "social" | "media" | "hours";
@@ -190,7 +236,10 @@ function Page() {
     }
 
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Perfil da empresa salvo");
     qc.invalidateQueries({ queryKey: ["company_profile", agency.id] });
   }
@@ -290,18 +339,35 @@ function Page() {
               <h3 className="text-sm font-semibold">Contato</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="E-mail comercial">
-                  <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
+                  <Input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => set("email", e.target.value)}
+                  />
                 </Field>
                 <Field label="Telefone fixo">
-                  <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="(49) 3300-0000" />
+                  <Input
+                    value={form.phone}
+                    onChange={(e) => set("phone", e.target.value)}
+                    placeholder="(49) 3300-0000"
+                  />
                 </Field>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="WhatsApp" hint="Com DDI: +55 49 99999-0000">
-                  <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+55 49 99999-0000" />
+                  <Input
+                    value={form.whatsapp}
+                    onChange={(e) => set("whatsapp", e.target.value)}
+                    placeholder="+55 49 99999-0000"
+                  />
                 </Field>
                 <Field label="Site">
-                  <Input type="url" value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://suaagencia.com.br" />
+                  <Input
+                    type="url"
+                    value={form.website}
+                    onChange={(e) => set("website", e.target.value)}
+                    placeholder="https://suaagencia.com.br"
+                  />
                 </Field>
               </div>
             </div>
@@ -313,39 +379,75 @@ function Page() {
               <h3 className="text-sm font-semibold">Localização</h3>
               <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
                 <Field label="Rua / Avenida">
-                  <Input value={form.address.street} onChange={(e) => setAddr("street", e.target.value)} />
+                  <Input
+                    value={form.address.street}
+                    onChange={(e) => setAddr("street", e.target.value)}
+                  />
                 </Field>
                 <Field label="Número">
-                  <Input value={form.address.number} onChange={(e) => setAddr("number", e.target.value)} />
+                  <Input
+                    value={form.address.number}
+                    onChange={(e) => setAddr("number", e.target.value)}
+                  />
                 </Field>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Complemento">
-                  <Input value={form.address.complement} onChange={(e) => setAddr("complement", e.target.value)} placeholder="Sala 101, 2º andar" />
+                  <Input
+                    value={form.address.complement}
+                    onChange={(e) => setAddr("complement", e.target.value)}
+                    placeholder="Sala 101, 2º andar"
+                  />
                 </Field>
                 <Field label="Bairro">
-                  <Input value={form.address.neighborhood} onChange={(e) => setAddr("neighborhood", e.target.value)} />
+                  <Input
+                    value={form.address.neighborhood}
+                    onChange={(e) => setAddr("neighborhood", e.target.value)}
+                  />
                 </Field>
               </div>
               <div className="grid gap-3 sm:grid-cols-[1fr_100px_80px]">
                 <Field label="Cidade">
-                  <Input value={form.address.city} onChange={(e) => setAddr("city", e.target.value)} />
+                  <Input
+                    value={form.address.city}
+                    onChange={(e) => setAddr("city", e.target.value)}
+                  />
                 </Field>
                 <Field label="Estado (UF)">
-                  <Input maxLength={2} value={form.address.state} onChange={(e) => setAddr("state", e.target.value.toUpperCase())} placeholder="SC" />
+                  <Input
+                    maxLength={2}
+                    value={form.address.state}
+                    onChange={(e) => setAddr("state", e.target.value.toUpperCase())}
+                    placeholder="SC"
+                  />
                 </Field>
                 <Field label="CEP">
-                  <Input value={form.address.zip} onChange={(e) => setAddr("zip", e.target.value)} placeholder="89800-000" />
+                  <Input
+                    value={form.address.zip}
+                    onChange={(e) => setAddr("zip", e.target.value)}
+                    placeholder="89800-000"
+                  />
                 </Field>
               </div>
               <div className="border-t border-border pt-4">
-                <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Google</h4>
+                <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Google
+                </h4>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Google Business ID">
-                    <Input value={form.google_business_id} onChange={(e) => set("google_business_id", e.target.value)} placeholder="ChIJ..." />
+                    <Input
+                      value={form.google_business_id}
+                      onChange={(e) => set("google_business_id", e.target.value)}
+                      placeholder="ChIJ..."
+                    />
                   </Field>
                   <Field label="Google Maps URL">
-                    <Input type="url" value={form.google_maps_url} onChange={(e) => set("google_maps_url", e.target.value)} placeholder="https://maps.google.com/..." />
+                    <Input
+                      type="url"
+                      value={form.google_maps_url}
+                      onChange={(e) => set("google_maps_url", e.target.value)}
+                      placeholder="https://maps.google.com/..."
+                    />
                   </Field>
                 </div>
               </div>
@@ -357,13 +459,19 @@ function Page() {
             <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
               <h3 className="text-sm font-semibold">Redes sociais e canais</h3>
               <div className="grid gap-3 sm:grid-cols-2">
-                {([
-                  { key: "instagram", label: "Instagram", placeholder: "@agencia" },
-                  { key: "facebook", label: "Facebook", placeholder: "facebook.com/agencia" },
-                  { key: "youtube", label: "YouTube", placeholder: "youtube.com/@agencia" },
-                  { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/company/agencia" },
-                  { key: "tiktok", label: "TikTok", placeholder: "@agencia" },
-                ] as { key: keyof CP; label: string; placeholder: string }[]).map(({ key, label, placeholder }) => (
+                {(
+                  [
+                    { key: "instagram", label: "Instagram", placeholder: "@agencia" },
+                    { key: "facebook", label: "Facebook", placeholder: "facebook.com/agencia" },
+                    { key: "youtube", label: "YouTube", placeholder: "youtube.com/@agencia" },
+                    {
+                      key: "linkedin",
+                      label: "LinkedIn",
+                      placeholder: "linkedin.com/company/agencia",
+                    },
+                    { key: "tiktok", label: "TikTok", placeholder: "@agencia" },
+                  ] as { key: keyof CP; label: string; placeholder: string }[]
+                ).map(({ key, label, placeholder }) => (
                   <Field key={key} label={label}>
                     <Input
                       value={form[key] as string}
@@ -377,7 +485,12 @@ function Page() {
               <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
                 <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
                 <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
-                <a href={portalUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline">
+                <a
+                  href={portalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline"
+                >
                   <ExternalLink className="h-3 w-3" /> Abrir portal
                 </a>
               </div>
@@ -427,7 +540,9 @@ function Page() {
           {tab === "hours" && (
             <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
               <h3 className="text-sm font-semibold">Horários de atendimento</h3>
-              <p className="text-xs text-muted-foreground">Exibidos no portal público para que clientes saibam quando entrar em contato.</p>
+              <p className="text-xs text-muted-foreground">
+                Exibidos no portal público para que clientes saibam quando entrar em contato.
+              </p>
               <div className="space-y-2">
                 {DAY_KEYS.map((key, i) => {
                   const h = form.business_hours[key];
@@ -460,7 +575,11 @@ function Page() {
                           />
                         </>
                       )}
-                      {h.closed && <span className="text-xs text-muted-foreground italic">Fechado este dia</span>}
+                      {h.closed && (
+                        <span className="text-xs text-muted-foreground italic">
+                          Fechado este dia
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -486,8 +605,15 @@ function Page() {
         {previewOpen && (
           <aside className="shrink-0 rounded-lg border border-border bg-surface overflow-hidden h-fit sticky top-4">
             <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Prévia do portal</span>
-              <a href={portalUrl} target="_blank" rel="noreferrer" className="text-xs text-brand hover:underline flex items-center gap-1">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Prévia do portal
+              </span>
+              <a
+                href={portalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-brand hover:underline flex items-center gap-1"
+              >
                 <ExternalLink className="h-3 w-3" /> Abrir
               </a>
             </div>
@@ -495,42 +621,77 @@ function Page() {
               {/* Prévia Visual do Portal (Em tempo real) */}
               <div className="relative flex h-32 items-end bg-surface-alt overflow-hidden">
                 {form.cover_image_url && (
-                  <img src={form.cover_image_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+                  <img
+                    src={form.cover_image_url}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover opacity-60"
+                  />
                 )}
                 <div className="relative z-10 p-3 w-full">
                   {form.logo_url && (
-                    <img src={form.logo_url} alt="" className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface" />
+                    <img
+                      src={form.logo_url}
+                      alt=""
+                      className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface"
+                    />
                   )}
-                  <div className="font-bold text-sm leading-tight">{form.name || "Nome da agência"}</div>
+                  <div className="font-bold text-sm leading-tight">
+                    {form.name || "Nome da agência"}
+                  </div>
                   {form.short_description && (
-                    <div className="text-[10px] text-muted-foreground line-clamp-1">{form.short_description}</div>
+                    <div className="text-[10px] text-muted-foreground line-clamp-1">
+                      {form.short_description}
+                    </div>
                   )}
                 </div>
               </div>
               {/* Sobre */}
               {form.description && (
                 <div className="p-3 border-b border-border">
-                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Sobre</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    Sobre
+                  </div>
                   <p className="text-[11px] text-foreground line-clamp-3">{form.description}</p>
                 </div>
               )}
               {/* Contato */}
               <div className="p-3 border-b border-border space-y-1">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Contato</div>
-                {form.phone && <div className="flex items-center gap-1.5 text-[11px]"><Phone className="h-3 w-3 text-muted-foreground" />{form.phone}</div>}
-                {form.whatsapp && <div className="flex items-center gap-1.5 text-[11px]"><MessageCircle className="h-3 w-3 text-muted-foreground" />{form.whatsapp}</div>}
-                {form.email && <div className="flex items-center gap-1.5 text-[11px]"><Mail className="h-3 w-3 text-muted-foreground" />{form.email}</div>}
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                  Contato
+                </div>
+                {form.phone && (
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <Phone className="h-3 w-3 text-muted-foreground" />
+                    {form.phone}
+                  </div>
+                )}
+                {form.whatsapp && (
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <MessageCircle className="h-3 w-3 text-muted-foreground" />
+                    {form.whatsapp}
+                  </div>
+                )}
+                {form.email && (
+                  <div className="flex items-center gap-1.5 text-[11px]">
+                    <Mail className="h-3 w-3 text-muted-foreground" />
+                    {form.email}
+                  </div>
+                )}
               </div>
               {/* Horários */}
               <div className="p-3">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Horários</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                  Horários
+                </div>
                 <div className="space-y-0.5">
                   {DAY_KEYS.map((k, i) => {
                     const h = form.business_hours[k];
                     return (
                       <div key={k} className="flex justify-between text-[11px]">
                         <span className="text-muted-foreground">{DAYS[i].slice(0, 3)}</span>
-                        <span className={h.closed ? "text-muted-foreground italic" : ""}>{h.closed ? "Fechado" : `${h.open} – ${h.close}`}</span>
+                        <span className={h.closed ? "text-muted-foreground italic" : ""}>
+                          {h.closed ? "Fechado" : `${h.open} – ${h.close}`}
+                        </span>
                       </div>
                     );
                   })}

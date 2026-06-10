@@ -25,7 +25,7 @@ export function MediaLibraryPicker({
         sortBy: { column: "created_at", order: "desc" },
       });
       if (error) throw error;
-      return data.filter(f => f.name !== ".emptyFolderPlaceholder");
+      return data.filter((f) => f.name !== ".emptyFolderPlaceholder");
     },
   });
 
@@ -47,7 +47,7 @@ export function MediaLibraryPicker({
     },
     onError: () => {
       setUploading(false);
-    }
+    },
   });
 
   if (!open) return null;
@@ -59,7 +59,10 @@ export function MediaLibraryPicker({
           <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-brand" /> Media Library Central
           </h2>
-          <button onClick={() => onOpenChange(false)} className="rounded-full p-2 hover:bg-surface-alt">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="rounded-full p-2 hover:bg-surface-alt"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -92,7 +95,9 @@ export function MediaLibraryPicker({
               </label>
 
               {files?.map((f) => {
-                const url = supabase.storage.from("agency-media").getPublicUrl(`${agency!.id}/${f.name}`).data.publicUrl;
+                const url = supabase.storage
+                  .from("agency-media")
+                  .getPublicUrl(`${agency!.id}/${f.name}`).data.publicUrl;
                 return (
                   <div
                     key={f.id}

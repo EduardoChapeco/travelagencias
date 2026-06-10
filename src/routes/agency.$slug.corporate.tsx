@@ -1,136 +1,189 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Building2 } from "lucide-react";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge, money } from "@/components/ui/form";
+import { toast } from "sonner";
+import { PrimaryButton, StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
+import { CorporateRfpFormSheet } from "@/components/corporate/CorporateRfpFormSheet";
 
 export const Route = createFileRoute("/agency/$slug/corporate")({
-  head: () => ({ meta: [{ title: "Contas corporativas · TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Corporate B2B · TravelOS" }] }),
   component: CorporatePage,
 });
 
-type Corp = { id: string; company_name: string; cnpj: string | null; contact_name: string | null; contact_email: string | null; credit_limit: number; payment_terms: number | null; status: string };
+type RFP = {
+  id: string;
+  client_id: string;
+  title: string;
+  requester_name: string;
+  requester_email: string;
+  destination: string;
+  departure_date: string;
+  budget: number | null;
+  status: string;
+  approval_token: string;
+  created_at: string;
+  client?: { full_name: string };
+};
+
+const STATUS_MAP: Record<string, { label: string, tone: any }> = {
+  pending: { label: "Pendente", tone: "neutral" },
+  quoting: { label: "Em cotação", tone: "warning" },
+  sent_for_approval: { label: "Aguardando Aprovação", tone: "primary" },
+  approved: { label: "Aprovado", tone: "success" },
+  rejected: { label: "Recusado", tone: "danger" },
+};
 
 function CorporatePage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
-  const [open, setOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  const [q, setQ] = useState("");
 
-  const q = useQuery({
+  const rfpsQ = useQuery({
     enabled: !!agency,
-    queryKey: ["corporate", agency?.id],
+    queryKey: ["corporate-rfps", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("corporate_clients").select("id, company_name, cnpj, contact_name, contact_email, credit_limit, payment_terms, status").eq("agency_id", agency!.id).order("company_name");
+      const { data, error } = await supabase
+        .from("corporate_rfps")
+        .select("*, client:clients(full_name)")
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Corp[];
+      return data as RFP[];
     },
   });
 
+  const rfps = (rfpsQ.data || []).filter(r => 
+    r.title.toLowerCase().includes(q.toLowerCase()) || 
+    r.client?.full_name?.toLowerCase().includes(q.toLowerCase())
+  );
+
+  const updateStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string, status: string }) => {
+      const { error } = await supabase.from("corporate_rfps").update({ status }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Status atualizado");
+      qc.invalidateQueries({ queryKey: ["corporate-rfps", agency?.id] });
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const sendForApproval = async (rfp: RFP) => {
+    // Simulando o envio de e-mail alterando o status
+    updateStatus.mutate({ id: rfp.id, status: "sent_for_approval" });
+    toast.success(`E-mail com link de aprovação (Token: ${rfp.approval_token}) simulado.`);
+  };
+
   return (
-    <>
+    <div className="max-w-7xl mx-auto p-4 md:p-8">
       <PageHeader
-        title="Contas corporativas"
-        description="Empresas com política de viagem, faturamento mensal e crédito."
+        title="Corporate B2B"
+        description="Gestão de RFPs (Request for Proposal) e solicitações corporativas."
         actions={
-          <button onClick={() => setOpen(true)} className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">
-            <Plus className="h-3.5 w-3.5" /> Nova conta
-          </button>
+          <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
+            <Plus className="h-3.5 w-3.5" /> Nova RFP
+          </PrimaryButton>
         }
       />
 
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && <EmptyState title="Sem contas corporativas" description="Cadastre empresas para faturamento centralizado." />}
-
-      {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
-              <tr><th className="px-3 py-2">Empresa</th><th className="px-3 py-2">CNPJ</th><th className="px-3 py-2">Contato</th><th className="px-3 py-2 text-right">Crédito</th><th className="px-3 py-2 text-right">Prazo</th><th className="px-3 py-2">Status</th></tr>
-            </thead>
-            <tbody>
-              {q.data.map((c) => (
-                <tr key={c.id} className="border-t border-border">
-                  <td className="px-3 py-2.5"><div className="flex items-center gap-2 font-medium"><Building2 className="h-3.5 w-3.5 text-muted-foreground" /> {c.company_name}</div></td>
-                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">{c.cnpj ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    <div>{c.contact_name ?? "—"}</div>
-                    <div>{c.contact_email}</div>
-                  </td>
-                  <td className="px-3 py-2.5 text-right font-mono text-xs">{money(Number(c.credit_limit))}</td>
-                  <td className="px-3 py-2.5 text-right text-xs">{c.payment_terms ?? 30}d</td>
-                  <td className="px-3 py-2.5"><StatusBadge tone={c.status === "active" ? "success" : "neutral"}>{c.status}</StatusBadge></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="mt-6 mb-6">
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="w-full pl-9 h-10 bg-surface border border-border rounded-lg text-sm"
+            placeholder="Buscar RFP ou empresa..."
+          />
         </div>
+      </div>
+
+      {!rfpsQ.isLoading && rfps.length === 0 && (
+        <EmptyState
+          title="Nenhuma requisição corporativa"
+          description="Inicie um processo de RFP corporativa vinculando uma empresa."
+        />
       )}
 
-      {open && agency && <NewCorp agencyId={agency.id} onClose={() => setOpen(false)} onCreated={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["corporate", agency.id] }); }} />}
-    </>
-  );
-}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {rfps.map((rfp) => (
+          <div key={rfp.id} className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold text-foreground">{rfp.title}</h3>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                  <Building2 className="h-3.5 w-3.5" />
+                  {rfp.client?.full_name}
+                </div>
+              </div>
+              <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
+                {STATUS_MAP[rfp.status]?.label || rfp.status}
+              </StatusBadge>
+            </div>
 
-function NewCorp({ agencyId, onClose, onCreated }: { agencyId: string; onClose: () => void; onCreated: () => void }) {
-  const [name, setName] = useState("");
-  const [cnpj, setCnpj] = useState("");
-  const [contact, setContact] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [credit, setCredit] = useState(0);
-  const [terms, setTerms] = useState(30);
-  const [cycle, setCycle] = useState("monthly");
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+            <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
+              <div>
+                <div className="text-muted-foreground mb-0.5">Solicitante</div>
+                <div className="font-medium truncate" title={rfp.requester_email}>{rfp.requester_name}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground mb-0.5">Destino</div>
+                <div className="font-medium truncate">{rfp.destination}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground mb-0.5">Partida</div>
+                <div className="font-medium">{fmtDate(rfp.departure_date)}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground mb-0.5">Orçamento Máx</div>
+                <div className="font-medium">
+                  {rfp.budget ? rfp.budget.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Em aberto'}
+                </div>
+              </div>
+            </div>
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("corporate_clients").insert({
-      agency_id: agencyId, company_name: name, cnpj: cnpj || null, contact_name: contact || null,
-      contact_email: email || null, contact_phone: phone || null,
-      credit_limit: credit, payment_terms: terms, billing_cycle: cycle,
-      travel_policy: notes ? { notes } : {},
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Conta corporativa criada");
-    onCreated();
-  }
+            <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
+              {rfp.status === 'pending' && (
+                <GhostButton className="text-xs h-8 flex-1" onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}>
+                  Iniciar Cotação
+                </GhostButton>
+              )}
+              {rfp.status === 'quoting' && (
+                <GhostButton className="text-xs h-8 flex-1 text-primary hover:text-primary" onClick={() => sendForApproval(rfp)}>
+                  <Send className="h-3 w-3 mr-1" /> Enviar p/ Aprovação
+                </GhostButton>
+              )}
+              <div className="w-full text-center">
+                <Link
+                  to="/p/corporate/approve"
+                  search={{ token: rfp.approval_token }}
+                  target="_blank"
+                  className="text-[10px] text-muted-foreground hover:underline"
+                >
+                  Abrir link do cliente
+                </Link>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-  return (
-    <Sheet onClose={onClose} title="Nova conta corporativa">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Razão social *"><Input required value={name} onChange={(e) => setName(e.target.value)} /></Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="CNPJ"><Input value={cnpj} onChange={(e) => setCnpj(e.target.value)} /></Field>
-          <Field label="Ciclo de cobrança">
-            <Select value={cycle} onChange={(e) => setCycle(e.target.value)}>
-              <option value="monthly">Mensal</option>
-              <option value="weekly">Semanal</option>
-              <option value="per_trip">Por viagem</option>
-            </Select>
-          </Field>
-        </div>
-        <Field label="Contato responsável"><Input value={contact} onChange={(e) => setContact(e.target.value)} /></Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Email"><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-          <Field label="Telefone"><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></Field>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Limite de crédito"><Input type="number" min={0} step="0.01" value={credit} onChange={(e) => setCredit(+e.target.value || 0)} /></Field>
-          <Field label="Prazo (dias)"><Input type="number" min={0} value={terms} onChange={(e) => setTerms(+e.target.value || 0)} /></Field>
-        </div>
-        <Field label="Política de viagem (resumo)"><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} /></Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>{submitting ? "Criando…" : "Criar conta"}</PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
+      {newOpen && agency && (
+        <CorporateRfpFormSheet
+          agencyId={agency.id}
+          onClose={() => setNewOpen(false)}
+          onSaved={() => {
+            setNewOpen(false);
+            qc.invalidateQueries({ queryKey: ["corporate-rfps", agency.id] });
+          }}
+        />
+      )}
+    </div>
   );
 }

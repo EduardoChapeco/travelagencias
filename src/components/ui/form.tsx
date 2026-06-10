@@ -1,6 +1,19 @@
-import type { ReactNode, InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import type {
+  ReactNode,
+  InputHTMLAttributes,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 
-export function Field({ label, children, hint }: { label: string; hint?: string; children: ReactNode }) {
+export function Field({
+  label,
+  children,
+  hint,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
@@ -48,7 +61,15 @@ export function GhostButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>
   );
 }
 
-export function Sheet({ onClose, title, children }: { onClose: () => void; title: string; children: ReactNode }) {
+export function Sheet({
+  onClose,
+  title,
+  children,
+}: {
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
@@ -62,7 +83,13 @@ export function Sheet({ onClose, title, children }: { onClose: () => void; title
   );
 }
 
-export function StatusBadge({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "success" | "warning" | "danger" | "info" }) {
+export function StatusBadge({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "neutral" | "success" | "warning" | "danger" | "info";
+}) {
   const tones: Record<string, string> = {
     neutral: "bg-surface-alt text-muted-foreground",
     success: "bg-success-bg text-success",
@@ -71,7 +98,9 @@ export function StatusBadge({ children, tone = "neutral" }: { children: ReactNod
     info: "bg-info-bg text-info",
   };
   return (
-    <span className={`inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${tones[tone]}`}>
+    <span
+      className={`inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${tones[tone]}`}
+    >
       {children}
     </span>
   );
@@ -81,4 +110,6 @@ export const money = (n: number, currency = "BRL") =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency }).format(n || 0);
 
 export const fmtDate = (s?: string | null) =>
-  s ? new Date(s).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+  s
+    ? new Date(s).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+    : "—";

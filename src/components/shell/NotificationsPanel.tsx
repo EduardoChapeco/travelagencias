@@ -9,11 +9,11 @@ import { toast } from "sonner";
 
 type Notif = {
   id: string;
-  type: string;
+  icon: string;
   title: string;
-  body: string | null;
-  data: any;
-  read_at: string | null;
+  message: string | null;
+  link_url: string | null;
+  is_read: boolean;
   created_at: string;
 };
 
@@ -37,47 +37,83 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     enabled: !!agency,
     queryKey: ["notifications"],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return [];
+      
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
         .limit(50);
+        
       if (error) throw error;
-      return (data ?? []) as Notif[];
+      
+      // Filter the ones for this user OR null (agency wide)
+      return (data ?? []).filter(n => !n.user_id || n.user_id === user.id) as Notif[];
     },
-    refetchInterval: 60000, // Poll every minute
   });
+
+  // Realtime subscription
+  useEffect(() => {
+    if (!agency?.id) return;
+
+    const channel = supabase
+      .channel('public:notifications')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `agency_id=eq.${agency.id}` },
+        (payload) => {
+          qc.invalidateQueries({ queryKey: ["notifications"] });
+          qc.invalidateQueries({ queryKey: ["notifications-count"] });
+          toast("Nova notificação", { description: payload.new.title });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [agency?.id, qc]);
 
   const markRead = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
-    }
+    },
   });
 
   const markAllRead = useMutation({
     mutationFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { error } = await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", user.id).is("read_at", null);
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("agency_id", agency!.id)
+        .eq("is_read", false);
       if (error) throw error;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications-count"] });
       toast.success("Todas marcadas como lidas");
-    }
+    },
   });
 
-  const unreadCount = q.data?.filter(n => !n.read_at).length ?? 0;
+  const unreadCount = q.data?.filter((n) => !n.is_read).length ?? 0;
 
   return (
-    <div ref={ref} className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-xl">
+    <div
+      ref={ref}
+      className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-xl"
+    >
       <div className="flex items-center justify-between border-b border-border bg-surface-alt/50 px-4 py-3">
         <div className="flex items-center gap-2">
           <Bell className="h-4 w-4 text-muted-foreground" />
@@ -98,43 +134,64 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
               <Check className="h-4 w-4" />
             </button>
           )}
-          <button onClick={onClose} className="rounded p-1 text-muted-foreground hover:bg-surface hover:text-foreground">
+          <button
+            onClick={onClose}
+            className="rounded p-1 text-muted-foreground hover:bg-surface hover:text-foreground"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
       </div>
 
       <div className="flex max-h-[400px] flex-col overflow-y-auto p-2 no-scrollbar">
-        {q.isLoading && <div className="p-4 text-center text-xs text-muted-foreground">Carregando…</div>}
+        {q.isLoading && (
+          <div className="p-4 text-center text-xs text-muted-foreground">Carregando…</div>
+        )}
         {q.data?.length === 0 && (
           <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
             <Bell className="mb-2 h-8 w-8 opacity-20" />
             <p className="text-xs">Você não tem notificações</p>
           </div>
         )}
-        {q.data?.map(n => {
-          const isUnread = !n.read_at;
-          const Icon = n.type === 'alert' ? AlertTriangle : n.type === 'success' ? CheckCircle : Info;
-          const iconColor = n.type === 'alert' ? 'text-warning' : n.type === 'success' ? 'text-success' : 'text-primary';
-          
+        {q.data?.map((n) => {
+          const isUnread = !n.is_read;
+          const Icon =
+            n.icon === "alert" ? AlertTriangle : n.icon === "success" ? CheckCircle : Info;
+          const iconColor =
+            n.icon === "alert"
+              ? "text-warning"
+              : n.icon === "success"
+                ? "text-success"
+                : "text-primary";
+
           return (
-            <div 
-              key={n.id} 
-              className={`relative mb-1 flex gap-3 rounded-lg p-3 transition-colors ${isUnread ? 'bg-surface-alt/50 hover:bg-surface-alt' : 'hover:bg-surface-alt/30 opacity-70'}`}
+            <div
+              key={n.id}
+              className={`relative mb-1 flex gap-3 rounded-lg p-3 transition-colors ${isUnread ? "bg-surface-alt/50 hover:bg-surface-alt" : "hover:bg-surface-alt/30 opacity-70"}`}
             >
               <div className={`mt-0.5 shrink-0 ${iconColor}`}>
                 <Icon className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className={`text-xs font-semibold ${isUnread ? 'text-foreground' : 'text-muted-foreground'}`}>{n.title}</h4>
-                  <span className="shrink-0 text-[10px] text-muted-foreground">{fmtDate(n.created_at)}</span>
+                  <h4
+                    className={`text-xs font-semibold ${isUnread ? "text-foreground" : "text-muted-foreground"}`}
+                  >
+                    {n.title}
+                  </h4>
+                  <span className="shrink-0 text-[10px] text-muted-foreground">
+                    {fmtDate(n.created_at)}
+                  </span>
                 </div>
-                {n.body && <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground line-clamp-2">{n.body}</p>}
-                
-                {n.data?.link && (
-                  <Link 
-                    to={n.data.link}
+                {n.message && (
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+                    {n.message}
+                  </p>
+                )}
+
+                {n.link_url && (
+                  <Link
+                    to={n.link_url}
                     className="mt-2 inline-flex text-[10px] font-medium text-brand hover:underline"
                     onClick={() => {
                       if (isUnread) markRead.mutate(n.id);
@@ -146,7 +203,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
                 )}
               </div>
               {isUnread && (
-                <button 
+                <button
                   onClick={() => markRead.mutate(n.id)}
                   className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-surface hover:text-foreground group-hover:opacity-100"
                   title="Marcar como lida"
@@ -170,17 +227,18 @@ export function NotificationBadge() {
     enabled: !!agency,
     queryKey: ["notifications-count"],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return 0;
       const { count, error } = await supabase
         .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .is("read_at", null);
+        .select("id")
+        .eq("agency_id", agency.id)
+        .eq("is_read", false);
       if (error) throw error;
       return count ?? 0;
     },
-    refetchInterval: 30000, // Poll every 30s
   });
 
   return (
@@ -188,7 +246,9 @@ export function NotificationBadge() {
       <button
         onClick={() => setOpen(!open)}
         className={`relative flex h-8 w-8 items-center justify-center rounded-md border border-border text-xs font-medium ${
-          open ? "bg-surface-alt text-foreground" : "bg-surface text-muted-foreground hover:text-foreground"
+          open
+            ? "bg-surface-alt text-foreground"
+            : "bg-surface text-muted-foreground hover:text-foreground"
         }`}
       >
         <Bell className="h-3.5 w-3.5" />
@@ -198,7 +258,7 @@ export function NotificationBadge() {
           </span>
         ) : null}
       </button>
-      
+
       {open && <NotificationsPanel onClose={() => setOpen(false)} />}
     </div>
   );

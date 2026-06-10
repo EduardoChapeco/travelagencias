@@ -1,4 +1,11 @@
-import { createFileRoute, Link, Outlet, redirect, useLocation, useParams } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useLocation,
+  useParams,
+} from "@tanstack/react-router";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial")({
@@ -24,7 +31,10 @@ function FinancialLayout() {
 
   return (
     <>
-      <PageHeader title="Financeiro" description="Entradas, saídas, faturas e demonstrativo de resultados." />
+      <PageHeader
+        title="Financeiro"
+        description="Entradas, saídas, faturas e demonstrativo de resultados."
+      />
       <div className="mb-5 flex items-center gap-1 border-b border-border">
         {tabs.map((t) => {
           const active = pathname.endsWith(t.to.split("/").pop()!);

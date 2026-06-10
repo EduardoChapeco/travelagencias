@@ -2,9 +2,22 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import {
-  ArrowLeft, FileText, Send, CheckCircle, XCircle,
-  Shield, Copy, Download, ExternalLink, AlertTriangle,
-  ChevronDown, ChevronRight, Plus, Trash2, Pencil, Eye
+  ArrowLeft,
+  FileText,
+  Send,
+  CheckCircle,
+  XCircle,
+  Shield,
+  Copy,
+  Download,
+  ExternalLink,
+  AlertTriangle,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Trash2,
+  Pencil,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -121,7 +134,9 @@ function TripContract() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("trips")
-        .select("id, title, destination, travel_start, travel_end, total_sale, currency, client_id, pax_adults, pax_children, pax_infants, pax_seniors")
+        .select(
+          "id, title, destination, travel_start, travel_end, total_sale, currency, client_id, pax_adults, pax_children, pax_infants, pax_seniors",
+        )
         .eq("id", tripId)
         .maybeSingle();
       if (error) throw error;
@@ -219,7 +234,7 @@ function TripContract() {
           t.travel_end ? `Retorno: ${fmtDate(t.travel_end)}` : null,
         ]
           .filter(Boolean)
-          .join(" · ")
+          .join(" · "),
       );
     }
   }, [contractQ.data, tripQ.data]);
@@ -229,7 +244,9 @@ function TripContract() {
   const totalPax = useMemo(() => {
     const t = tripQ.data;
     if (!t) return 0;
-    return (t.pax_adults ?? 0) + (t.pax_children ?? 0) + (t.pax_infants ?? 0) + (t.pax_seniors ?? 0);
+    return (
+      (t.pax_adults ?? 0) + (t.pax_children ?? 0) + (t.pax_infants ?? 0) + (t.pax_seniors ?? 0)
+    );
   }, [tripQ.data]);
 
   // ── Mutations ─────────────────────────────────────────────────────────────────
@@ -249,9 +266,7 @@ function TripContract() {
             phone: client.phone ?? "",
             cpf: client.cpf ?? "",
             passport_number: client.passport_number ?? "",
-            address: client.address
-              ? Object.values(client.address).filter(Boolean).join(", ")
-              : "",
+            address: client.address ? Object.values(client.address).filter(Boolean).join(", ") : "",
           }
         : {};
 
@@ -402,7 +417,10 @@ function TripContract() {
           {publicUrl && (
             <>
               <button
-                onClick={() => { navigator.clipboard.writeText(publicUrl); toast.success("Link copiado"); }}
+                onClick={() => {
+                  navigator.clipboard.writeText(publicUrl);
+                  toast.success("Link copiado");
+                }}
                 className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt"
               >
                 <Copy className="h-3.5 w-3.5" />
@@ -476,7 +494,10 @@ function TripContract() {
               Assinado em {fmtDate(contract.signed_at)} · Hash:{" "}
               <span className="font-mono">{contract.signed_hash?.slice(0, 16)}…</span>
               {contract.certificate && (
-                <> · Serial: <span className="font-mono">{contract.certificate.serial}</span></>
+                <>
+                  {" "}
+                  · Serial: <span className="font-mono">{contract.certificate.serial}</span>
+                </>
               )}
             </div>
           </div>
@@ -513,7 +534,9 @@ function TripContract() {
             <h2 className="mb-3 text-sm font-semibold">Condições de Pagamento</h2>
             <div className="mb-3 rounded-md bg-surface-alt px-3 py-2 text-sm">
               <span className="text-muted-foreground">Valor total: </span>
-              <span className="font-semibold font-mono">{money(trip.total_sale, trip.currency)}</span>
+              <span className="font-semibold font-mono">
+                {money(trip.total_sale, trip.currency)}
+              </span>
               {totalPax > 0 && (
                 <span className="ml-2 text-xs text-muted-foreground">
                   · {totalPax} passageiro{totalPax !== 1 ? "s" : ""}
@@ -605,7 +628,10 @@ function TripContract() {
                       Adicionar
                     </button>
                     <button
-                      onClick={() => { setEditingCustom(false); setNewClause({ section: "", clause_text: "" }); }}
+                      onClick={() => {
+                        setEditingCustom(false);
+                        setNewClause({ section: "", clause_text: "" });
+                      }}
                       className="h-7 rounded border border-border px-3 text-xs"
                     >
                       Cancelar
@@ -622,9 +648,7 @@ function TripContract() {
               onClick={() => setShowClauses(!showClauses)}
               className="flex w-full items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-surface-alt"
             >
-              <span>
-                Cláusulas Pétreas ({clausesQ.data?.length ?? 49} cláusulas — imutáveis)
-              </span>
+              <span>Cláusulas Pétreas ({clausesQ.data?.length ?? 49} cláusulas — imutáveis)</span>
               {showClauses ? (
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               ) : (
@@ -667,7 +691,9 @@ function TripContract() {
                   <div className="text-muted-foreground">CPF: {clientQ.data.cpf}</div>
                 )}
                 {clientQ.data.passport_number && (
-                  <div className="text-muted-foreground">Passaporte: {clientQ.data.passport_number}</div>
+                  <div className="text-muted-foreground">
+                    Passaporte: {clientQ.data.passport_number}
+                  </div>
                 )}
                 {clientQ.data.email && (
                   <div className="text-muted-foreground">{clientQ.data.email}</div>
@@ -690,9 +716,7 @@ function TripContract() {
                   <li key={p.id} className="text-xs">
                     <span className="font-medium">{p.full_name}</span>
                     {(p.cpf || p.document) && (
-                      <span className="ml-1 text-muted-foreground">
-                        · {p.cpf ?? p.document}
-                      </span>
+                      <span className="ml-1 text-muted-foreground">· {p.cpf ?? p.document}</span>
                     )}
                   </li>
                 ))}
@@ -706,12 +730,23 @@ function TripContract() {
               Viagem
             </h3>
             <div className="space-y-1.5 text-xs">
-              <div><span className="text-muted-foreground">Destino: </span>{trip.destination ?? "—"}</div>
-              <div><span className="text-muted-foreground">Embarque: </span>{fmtDate(trip.travel_start)}</div>
-              <div><span className="text-muted-foreground">Retorno: </span>{fmtDate(trip.travel_end)}</div>
+              <div>
+                <span className="text-muted-foreground">Destino: </span>
+                {trip.destination ?? "—"}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Embarque: </span>
+                {fmtDate(trip.travel_start)}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Retorno: </span>
+                {fmtDate(trip.travel_end)}
+              </div>
               <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
                 <span className="font-semibold">Valor total</span>
-                <span className="font-mono font-semibold">{money(trip.total_sale, trip.currency)}</span>
+                <span className="font-mono font-semibold">
+                  {money(trip.total_sale, trip.currency)}
+                </span>
               </div>
             </div>
           </div>
@@ -743,7 +778,8 @@ function TripContract() {
                 <div className="text-xs text-warning">
                   <div className="font-semibold">Sem cliente vinculado</div>
                   <div className="mt-0.5">
-                    Vincule um cliente à viagem antes de gerar o contrato para preencher os dados automaticamente.
+                    Vincule um cliente à viagem antes de gerar o contrato para preencher os dados
+                    automaticamente.
                   </div>
                 </div>
               </div>

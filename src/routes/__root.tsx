@@ -124,10 +124,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const loc = router.state.location.pathname;
+  const slug = loc.startsWith("/p/")
+    ? loc.split("/")[2]
+    : loc.startsWith("/agency/")
+      ? loc.split("/")[2]
+      : null;
+  const manifestUrl = slug ? `/api/public/manifest?agency=${slug}` : "/api/public/manifest";
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <link rel="manifest" href={manifestUrl} />
       </head>
       <body>
         {children}

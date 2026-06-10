@@ -3,12 +3,31 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  Plus, Edit2, Trash2, Check, X, Zap, Users, HardDrive, BarChart3,
-  Globe, Star, Shield, ChevronDown, ChevronUp,
+  Plus,
+  Edit2,
+  Trash2,
+  Check,
+  X,
+  Zap,
+  Users,
+  HardDrive,
+  BarChart3,
+  Globe,
+  Star,
+  Shield,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Textarea, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+} from "@/components/ui/form";
 
 export const Route = createFileRoute("/admin/plans")({
   head: () => ({ meta: [{ title: "Planos · TravelOS Admin" }] }),
@@ -21,7 +40,7 @@ type Plan = {
   name: string;
   description: string;
   price_monthly: number;
-  price_yearly: number;
+  price_annual: number;
   max_agents: number;
   max_trips_per_month: number;
   max_storage_gb: number;
@@ -31,14 +50,11 @@ type Plan = {
   badge?: string;
 };
 
-// Plans stored as JSON in api_keys table (provider = __platform_plans__)
-const PLAN_PROVIDER = "__platform_plans__";
-
 const EMPTY_PLAN: Omit<Plan, "id"> = {
   name: "",
   description: "",
   price_monthly: 0,
-  price_yearly: 0,
+  price_annual: 0,
   max_agents: 3,
   max_trips_per_month: 50,
   max_storage_gb: 5,
@@ -66,48 +82,37 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-plans"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("api_keys")
-        .select("key_value")
-        .eq("provider", PLAN_PROVIDER)
-        .maybeSingle();
-      if (data?.key_value) {
-        try { return JSON.parse(data.key_value) as Plan[]; } catch { return []; }
-      }
-      return [];
+      const { data, error } = await supabase
+        .from("plans")
+        .select("*")
+        .order("price_monthly", { ascending: true });
+      if (error) throw error;
+      return (data || []) as unknown as Plan[];
     },
   });
 
   const plans: Plan[] = q.data ?? [];
 
-  async function savePlans(next: Plan[]) {
-    const val = JSON.stringify(next);
-    const existing = q.data !== null && q.data !== undefined;
-    const { error } = existing
-      ? await supabase
-          .from("api_keys")
-          .update({ key_value: val })
-          .eq("provider", PLAN_PROVIDER)
-      : await supabase.from("api_keys").insert({
-          provider: PLAN_PROVIDER,
-          label: "Platform Plans",
-          key_value: val,
-          agency_id: null,
-        });
-    if (error) { toast.error(error.message); return false; }
-    qc.invalidateQueries({ queryKey: ["admin-plans"] });
-    return true;
-  }
-
   async function handleDelete(id: string) {
     if (!confirm("Remover este plano?")) return;
-    const ok = await savePlans(plans.filter((p) => p.id !== id));
-    if (ok) toast.success("Plano removido");
+    const { error } = await supabase.from("plans").delete().eq("id", id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Plano removido");
+      qc.invalidateQueries({ queryKey: ["admin-plans"] });
+    }
   }
 
   async function handleToggleActive(plan: Plan) {
-    const ok = await savePlans(plans.map((p) => p.id === plan.id ? { ...p, is_active: !p.is_active } : p));
-    if (ok) toast.success(plan.is_active ? "Plano desativado" : "Plano ativado");
+    const { error } = await supabase
+      .from("plans")
+      .update({ is_active: !plan.is_active })
+      .eq("id", plan.id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success(!plan.is_active ? "Plano ativado" : "Plano desativado");
+      qc.invalidateQueries({ queryKey: ["admin-plans"] });
+    }
   }
 
   return (
@@ -123,7 +128,10 @@ function Page() {
       />
 
       {!q.isLoading && plans.length === 0 && (
-        <EmptyState title="Nenhum plano criado" description="Crie planos para controlar o acesso das agências." />
+        <EmptyState
+          title="Nenhum plano criado"
+          description="Crie planos para controlar o acesso das agências."
+        />
       )}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -156,8 +164,8 @@ function Page() {
             <div className="flex items-end gap-2">
               <div className="text-2xl font-bold tracking-tight">{brl(plan.price_monthly)}</div>
               <div className="text-xs text-muted-foreground mb-1">/mês</div>
-              {plan.price_yearly > 0 && (
-                <div className="text-xs text-success mb-1">{brl(plan.price_yearly)}/ano</div>
+              {plan.price_annual > 0 && (
+                <div className="text-xs text-success mb-1">{brl(plan.price_annual)}/ano</div>
               )}
             </div>
 
@@ -170,9 +178,11 @@ function Page() {
             <div className="space-y-1.5">
               {plan.features.map((f, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs">
-                  {f.included
-                    ? <Check className="h-3.5 w-3.5 text-success shrink-0" />
-                    : <X className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                  {f.included ? (
+                    <Check className="h-3.5 w-3.5 text-success shrink-0" />
+                  ) : (
+                    <X className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  )}
                   <span className={f.included ? "" : "text-muted-foreground"}>{f.label}</span>
                 </div>
               ))}
@@ -209,19 +219,29 @@ function Page() {
         <PlanEditor
           initial={editing ?? { id: crypto.randomUUID(), ...EMPTY_PLAN }}
           isNew={!editing}
-          onClose={() => { setCreating(false); setEditing(null); }}
+          onClose={() => {
+            setCreating(false);
+            setEditing(null);
+          }}
           onSave={async (plan) => {
-            let next: Plan[];
+            let error;
             if (editing) {
-              next = plans.map((p) => p.id === plan.id ? plan : p);
+              const res = await supabase.from("plans").update(plan).eq("id", plan.id);
+              error = res.error;
             } else {
-              next = [...plans, plan];
+              // we don't pass an id if it's new so supabase generates it, or we pass the generated one
+              // wait, empty plan has a generated id: crypto.randomUUID(), but plans table has id DEFAULT gen_random_uuid()
+              // better to let supabase generate it or use the one we generated. Let's just insert everything.
+              const res = await supabase.from("plans").insert(plan);
+              error = res.error;
             }
-            const ok = await savePlans(next);
-            if (ok) {
+            if (error) {
+              toast.error(error.message);
+            } else {
               toast.success(editing ? "Plano atualizado" : "Plano criado");
               setCreating(false);
               setEditing(null);
+              qc.invalidateQueries({ queryKey: ["admin-plans"] });
             }
           }}
         />
@@ -230,7 +250,15 @@ function Page() {
   );
 }
 
-function LimitBadge({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: number }) {
+function LimitBadge({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: number;
+}) {
   return (
     <div className="flex flex-col items-center gap-0.5 text-center">
       <Icon className="h-3.5 w-3.5 text-muted-foreground" />
@@ -254,13 +282,12 @@ function PlanEditor({
   const [plan, setPlan] = useState<Plan>(initial);
   const [busy, setBusy] = useState(false);
 
-  const set = <K extends keyof Plan>(k: K, v: Plan[K]) =>
-    setPlan((p) => ({ ...p, [k]: v }));
+  const set = <K extends keyof Plan>(k: K, v: Plan[K]) => setPlan((p) => ({ ...p, [k]: v }));
 
   const setFeature = (i: number, field: keyof Feature, v: string | boolean) =>
     setPlan((p) => ({
       ...p,
-      features: p.features.map((f, j) => j === i ? { ...f, [field]: v } : f),
+      features: p.features.map((f, j) => (j === i ? { ...f, [field]: v } : f)),
     }));
 
   const addFeature = () =>
@@ -288,41 +315,89 @@ function PlanEditor({
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nome do plano *">
-              <Input required value={plan.name} onChange={(e) => set("name", e.target.value)} placeholder="Starter, Pro, Enterprise…" />
+              <Input
+                required
+                value={plan.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="Starter, Pro, Enterprise…"
+              />
             </Field>
             <Field label="Badge (opcional)">
-              <Input value={plan.badge ?? ""} onChange={(e) => set("badge", e.target.value)} placeholder="Mais popular" />
+              <Input
+                value={plan.badge ?? ""}
+                onChange={(e) => set("badge", e.target.value)}
+                placeholder="Mais popular"
+              />
             </Field>
           </div>
           <Field label="Descrição">
-            <Textarea rows={2} value={plan.description} onChange={(e) => set("description", e.target.value)} />
+            <Textarea
+              rows={2}
+              value={plan.description}
+              onChange={(e) => set("description", e.target.value)}
+            />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Preço mensal (R$)">
-              <Input type="number" min={0} step={0.01} value={plan.price_monthly} onChange={(e) => set("price_monthly", +e.target.value)} />
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={plan.price_monthly}
+                onChange={(e) => set("price_monthly", +e.target.value)}
+              />
             </Field>
             <Field label="Preço anual (R$)">
-              <Input type="number" min={0} step={0.01} value={plan.price_yearly} onChange={(e) => set("price_yearly", +e.target.value)} />
+              <Input
+                type="number"
+                min={0}
+                step={0.01}
+                value={plan.price_annual}
+                onChange={(e) => set("price_annual", +e.target.value)}
+              />
             </Field>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Max agentes">
-              <Input type="number" min={1} value={plan.max_agents} onChange={(e) => set("max_agents", +e.target.value)} />
+              <Input
+                type="number"
+                min={1}
+                value={plan.max_agents}
+                onChange={(e) => set("max_agents", +e.target.value)}
+              />
             </Field>
             <Field label="Viagens/mês">
-              <Input type="number" min={-1} value={plan.max_trips_per_month} onChange={(e) => set("max_trips_per_month", +e.target.value)} />
+              <Input
+                type="number"
+                min={-1}
+                value={plan.max_trips_per_month}
+                onChange={(e) => set("max_trips_per_month", +e.target.value)}
+              />
             </Field>
             <Field label="Storage (GB)">
-              <Input type="number" min={1} value={plan.max_storage_gb} onChange={(e) => set("max_storage_gb", +e.target.value)} />
+              <Input
+                type="number"
+                min={1}
+                value={plan.max_storage_gb}
+                onChange={(e) => set("max_storage_gb", +e.target.value)}
+              />
             </Field>
           </div>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={plan.is_active} onChange={(e) => set("is_active", e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={plan.is_active}
+                onChange={(e) => set("is_active", e.target.checked)}
+              />
               Ativo
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={plan.is_featured} onChange={(e) => set("is_featured", e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={plan.is_featured}
+                onChange={(e) => set("is_featured", e.target.checked)}
+              />
               Destaque (badge)
             </label>
           </div>
@@ -330,7 +405,13 @@ function PlanEditor({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-xs font-medium text-muted-foreground">Features</div>
-              <button type="button" onClick={addFeature} className="text-xs text-brand hover:underline">+ Adicionar</button>
+              <button
+                type="button"
+                onClick={addFeature}
+                className="text-xs text-brand hover:underline"
+              >
+                + Adicionar
+              </button>
             </div>
             <div className="space-y-2">
               {plan.features.map((f, i) => (
@@ -347,7 +428,11 @@ function PlanEditor({
                     placeholder="Nome da feature"
                     className="flex-1"
                   />
-                  <button type="button" onClick={() => removeFeature(i)} className="text-danger hover:text-danger/80">
+                  <button
+                    type="button"
+                    onClick={() => removeFeature(i)}
+                    className="text-danger hover:text-danger/80"
+                  >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -356,7 +441,9 @@ function PlanEditor({
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+            <GhostButton type="button" onClick={onClose}>
+              Cancelar
+            </GhostButton>
             <PrimaryButton type="submit" disabled={busy}>
               {busy ? "Salvando…" : isNew ? "Criar plano" : "Salvar"}
             </PrimaryButton>

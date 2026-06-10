@@ -14,7 +14,7 @@ export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
   component: BusLayoutEditorPage,
 });
 
-type SeatType = 'seat' | 'aisle' | 'door' | 'wc';
+type SeatType = "seat" | "aisle" | "door" | "wc";
 type SeatCell = { r: number; c: number; label: string; type: SeatType };
 
 function BusLayoutEditorPage() {
@@ -29,7 +29,11 @@ function BusLayoutEditorPage() {
     enabled: !!agency,
     queryKey: ["bus-layout", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("bus_layouts").select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase
+        .from("bus_layouts")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -53,9 +57,10 @@ function BusLayoutEditorPage() {
         // Assume column in the middle is aisle if cols is odd and > 2
         const isAisle = cols > 2 && c === Math.floor(cols / 2);
         newMap.push({
-          r, c,
-          type: isAisle ? 'aisle' : 'seat',
-          label: isAisle ? '' : String(seatNumber++).padStart(2, '0')
+          r,
+          c,
+          type: isAisle ? "aisle" : "seat",
+          label: isAisle ? "" : String(seatNumber++).padStart(2, "0"),
         });
       }
     }
@@ -65,13 +70,22 @@ function BusLayoutEditorPage() {
   function handleCellClick(index: number) {
     const newMap = [...map];
     const cell = newMap[index];
-    
+
     // Cycle: seat -> aisle -> wc -> door -> seat
-    if (cell.type === 'seat') { cell.type = 'aisle'; cell.label = ''; }
-    else if (cell.type === 'aisle') { cell.type = 'wc'; cell.label = 'WC'; }
-    else if (cell.type === 'wc') { cell.type = 'door'; cell.label = 'Porta'; }
-    else if (cell.type === 'door') { cell.type = 'seat'; cell.label = '00'; }
-    
+    if (cell.type === "seat") {
+      cell.type = "aisle";
+      cell.label = "";
+    } else if (cell.type === "aisle") {
+      cell.type = "wc";
+      cell.label = "WC";
+    } else if (cell.type === "wc") {
+      cell.type = "door";
+      cell.label = "Porta";
+    } else if (cell.type === "door") {
+      cell.type = "seat";
+      cell.label = "00";
+    }
+
     setMap(newMap);
   }
 
@@ -100,7 +114,11 @@ function BusLayoutEditorPage() {
         description="Clique nas células para alternar entre: Poltrona → Corredor → Banheiro → Porta."
         actions={
           <div className="flex items-center gap-2">
-            <GhostButton onClick={() => generateDefaultMap(l.rows, l.cols)} type="button" className="text-xs h-9">
+            <GhostButton
+              onClick={() => generateDefaultMap(l.rows, l.cols)}
+              type="button"
+              className="text-xs h-9"
+            >
               <RefreshCcw className="h-3.5 w-3.5 mr-1.5" /> Recriar Matriz
             </GhostButton>
             <PrimaryButton onClick={saveLayout} disabled={saving} className="h-9 text-xs">
@@ -111,37 +129,42 @@ function BusLayoutEditorPage() {
       />
 
       <div className="flex justify-center mt-6">
-        <div 
-           className="bg-surface border border-border rounded-xl p-8 "
-           style={{ display: 'grid', gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`, gap: '12px' }}
+        <div
+          className="bg-surface border border-border rounded-xl p-8 "
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`,
+            gap: "12px",
+          }}
         >
           {map.map((cell, idx) => (
-             <div key={`${cell.r}-${cell.c}`} className="relative group">
-                <button
-                  type="button"
-                  onClick={() => handleCellClick(idx)}
-                  className={cn(
-                    "flex h-16 w-16 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-colors focus:outline-none",
-                    cell.type === 'seat' && "border-brand bg-brand/5 text-brand hover:bg-brand/10",
-                    cell.type === 'aisle' && "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt",
-                    cell.type === 'wc' && "border-info/20 bg-info-bg text-info",
-                    cell.type === 'door' && "border-orange-200 bg-orange-50 text-orange-600"
-                  )}
-                >
-                  {cell.type !== 'seat' && cell.label}
-                </button>
-                {cell.type === 'seat' && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <input 
-                      type="text" 
-                      value={cell.label}
-                      onChange={(e) => handleLabelChange(idx, e.target.value)}
-                      className="w-10 text-center bg-transparent font-mono text-sm focus:outline-none pointer-events-auto selection:bg-brand/20"
-                      maxLength={4}
-                    />
-                  </div>
+            <div key={`${cell.r}-${cell.c}`} className="relative group">
+              <button
+                type="button"
+                onClick={() => handleCellClick(idx)}
+                className={cn(
+                  "flex h-16 w-16 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-colors focus:outline-none",
+                  cell.type === "seat" && "border-brand bg-brand/5 text-brand hover:bg-brand/10",
+                  cell.type === "aisle" &&
+                    "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt",
+                  cell.type === "wc" && "border-info/20 bg-info-bg text-info",
+                  cell.type === "door" && "border-orange-200 bg-orange-50 text-orange-600",
                 )}
-             </div>
+              >
+                {cell.type !== "seat" && cell.label}
+              </button>
+              {cell.type === "seat" && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <input
+                    type="text"
+                    value={cell.label}
+                    onChange={(e) => handleLabelChange(idx, e.target.value)}
+                    className="w-10 text-center bg-transparent font-mono text-sm focus:outline-none pointer-events-auto selection:bg-brand/20"
+                    maxLength={4}
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>

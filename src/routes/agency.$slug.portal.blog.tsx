@@ -250,11 +250,13 @@ function BlogSheet({
   const [category, setCategory] = useState(post?.category ?? "");
   const [tagsRaw, setTagsRaw] = useState((post?.tags ?? []).join(", "));
   const [status, setStatus] = useState(post?.status ?? "draft");
+  const [scheduledDate, setScheduledDate] = useState(post?.published_at ? post.published_at.substring(0, 16) : "");
   const [coverUrl, setCoverUrl] = useState(post?.cover_image_url ?? "");
   const [metaTitle, setMetaTitle] = useState(post?.seo?.meta_title ?? "");
   const [metaDesc, setMetaDesc] = useState(post?.seo?.meta_description ?? "");
   const [seoOpen, setSeoOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editorMode, setEditorMode] = useState<"simple" | "advanced">("simple");
 
   // Load full content if editing
   useEffect(() => {
@@ -299,9 +301,11 @@ function BlogSheet({
         meta_description: metaDesc || null,
       },
       published_at:
-        status === "published" && !post?.published_at
-          ? new Date().toISOString()
-          : post?.published_at ?? null,
+        status === "published"
+          ? (post?.published_at ?? new Date().toISOString())
+          : status === "scheduled"
+          ? (scheduledDate ? new Date(scheduledDate).toISOString() : null)
+          : null,
     };
 
     const { error } = post
@@ -384,9 +388,35 @@ function BlogSheet({
               />
             </Field>
 
-            <Field label="Conteúdo">
-              <RichTextEditor value={content} onChange={setContent} />
-            </Field>
+            <div className="rounded-xl border border-border p-4 bg-surface-alt/50 space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
+                <div className="flex bg-surface rounded-full p-1 border border-border">
+                  <button 
+                    type="button" 
+                    onClick={() => setEditorMode("simple")}
+                    className={\`px-3 py-1 text-xs font-semibold rounded-full transition-colors \${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}\`}
+                  >Simples</button>
+                  <button 
+                    type="button" 
+                    onClick={() => setEditorMode("advanced")}
+                    className={\`px-3 py-1 text-xs font-semibold rounded-full transition-colors \${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}\`}
+                  >Avançado</button>
+                </div>
+              </div>
+
+              {editorMode === "simple" ? (
+                <Textarea 
+                  rows={8} 
+                  value={content} 
+                  onChange={(e) => setContent(e.target.value)} 
+                  placeholder="Escreva seu artigo aqui... Dica: Você pode escrever igual num post de Instagram, os parágrafos serão preservados na visualização!"
+                  className="font-medium text-sm leading-relaxed"
+                />
+              ) : (
+                <RichTextEditor value={content} onChange={setContent} />
+              )}
+            </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Categoria">
@@ -416,6 +446,17 @@ function BlogSheet({
                 <option value="scheduled">Agendado</option>
               </select>
             </Field>
+
+            {status === "scheduled" && (
+              <Field label="Data e Hora do Agendamento *" hint="O artigo ficará público automaticamente nesta data">
+                <Input
+                  type="datetime-local"
+                  required
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                />
+              </Field>
+            )}
 
             {/* SEO SECTION */}
             <div className="rounded-lg border border-border">

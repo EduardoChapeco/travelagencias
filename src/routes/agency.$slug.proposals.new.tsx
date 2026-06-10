@@ -103,9 +103,17 @@ function NewProposal() {
       </Link>
       <h1 className="mb-6 text-xl font-semibold tracking-tight">Nova cotação</h1>
 
-      <form onSubmit={onSubmit} className="max-w-2xl space-y-3 rounded-lg border border-border bg-surface p-5">
+      <form
+        onSubmit={onSubmit}
+        className="max-w-2xl space-y-3 rounded-lg border border-border bg-surface p-5"
+      >
         <Field label="Título *">
-          <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Lua de mel em Maldivas" />
+          <Input
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Ex: Lua de mel em Maldivas"
+          />
         </Field>
         <Field label="Destino">
           <Input value={destination} onChange={(e) => setDestination(e.target.value)} />
@@ -115,7 +123,9 @@ function NewProposal() {
             <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
               <option value="">— selecionar —</option>
               {(clientsQ.data ?? []).map((c) => (
-                <option key={c.id} value={c.id}>{c.full_name}</option>
+                <option key={c.id} value={c.id}>
+                  {c.full_name}
+                </option>
               ))}
             </Select>
           </Field>
@@ -123,23 +133,50 @@ function NewProposal() {
             <Select value={leadId} onChange={(e) => setLeadId(e.target.value)}>
               <option value="">— nenhum —</option>
               {(leadsQ.data ?? []).map((l) => (
-                <option key={l.id} value={l.id}>{l.name}</option>
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
               ))}
             </Select>
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Início">
-            <Input type="date" value={travelStart} onChange={(e) => setTravelStart(e.target.value)} />
+            <Input
+              type="date"
+              value={travelStart}
+              onChange={(e) => setTravelStart(e.target.value)}
+            />
           </Field>
           <Field label="Volta">
             <Input type="date" value={travelEnd} onChange={(e) => setTravelEnd(e.target.value)} />
           </Field>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <Field label="Adultos"><Input type="number" min={0} value={adults} onChange={(e) => setAdults(+e.target.value || 0)} /></Field>
-          <Field label="Crianças"><Input type="number" min={0} value={children} onChange={(e) => setChildren(+e.target.value || 0)} /></Field>
-          <Field label="Infantes"><Input type="number" min={0} value={infants} onChange={(e) => setInfants(+e.target.value || 0)} /></Field>
+          <Field label="Adultos">
+            <Input
+              type="number"
+              min={0}
+              value={adults}
+              onChange={(e) => setAdults(+e.target.value || 0)}
+            />
+          </Field>
+          <Field label="Crianças">
+            <Input
+              type="number"
+              min={0}
+              value={children}
+              onChange={(e) => setChildren(+e.target.value || 0)}
+            />
+          </Field>
+          <Field label="Infantes">
+            <Input
+              type="number"
+              min={0}
+              value={infants}
+              onChange={(e) => setInfants(+e.target.value || 0)}
+            />
+          </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Moeda">
@@ -157,7 +194,10 @@ function NewProposal() {
           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
         </Field>
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}>
+          <GhostButton
+            type="button"
+            onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}
+          >
             Cancelar
           </GhostButton>
           <PrimaryButton type="submit" disabled={submitting}>
