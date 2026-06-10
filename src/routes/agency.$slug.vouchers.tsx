@@ -59,7 +59,7 @@ function VouchersPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8">
+    <>
       <PageHeader
         title="Vouchers de Emissão"
         description="Gestão de vouchers consolidados por viagem: voos, hotéis, transfers, passeios e seguros."
@@ -199,7 +199,7 @@ function VouchersPage() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }
 

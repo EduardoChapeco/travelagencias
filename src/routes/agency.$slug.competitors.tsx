@@ -92,7 +92,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="space-y-6">
       <header>
         <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Radar className="w-6 h-6 text-brand" /> Espião de Mercado

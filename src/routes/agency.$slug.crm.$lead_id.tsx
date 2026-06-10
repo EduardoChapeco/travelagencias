@@ -134,7 +134,7 @@ function LeadDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-8">
+    <div className="space-y-8 pb-10">
       {/* Top Nav */}
       <div className="flex items-center justify-between mb-8">
         <Link to="/agency/$slug/crm" params={{ slug }} className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">

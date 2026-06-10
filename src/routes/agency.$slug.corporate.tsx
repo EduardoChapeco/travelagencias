@@ -82,7 +82,7 @@ function CorporatePage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8">
+    <>
       <PageHeader
         title="Corporate B2B"
         description="Gestão de RFPs (Request for Proposal) e solicitações corporativas."
@@ -185,6 +185,6 @@ function CorporatePage() {
           }}
         />
       )}
-    </div>
+    </>
   );
 }

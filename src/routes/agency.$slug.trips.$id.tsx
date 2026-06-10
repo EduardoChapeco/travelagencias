@@ -50,7 +50,7 @@ function TripLayout() {
   const t = tripQ.data;
 
   return (
-    <div className="flex flex-col h-full max-w-6xl mx-auto w-full pb-10">
+    <div className="flex flex-col h-full w-full pb-10">
       <div className="mb-4">
         <Link
           to="/agency/$slug/trips"

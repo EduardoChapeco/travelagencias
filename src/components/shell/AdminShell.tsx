@@ -112,7 +112,7 @@ export function AdminShell() {
         }
       />
       <main className="no-scrollbar min-w-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full px-4 md:px-8 xl:px-12 py-6 md:py-8">
+        <div className="w-full px-4 md:px-8 xl:px-16 py-6 md:py-8">
           <Outlet />
         </div>
       </main>

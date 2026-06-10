@@ -58,7 +58,7 @@ function ContractsPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8">
+    <>
       <PageHeader
         title="Contratos e Assinaturas"
         description="Gestão de contratos digitais gerados a partir das viagens, com rastreabilidade e validade jurídica."
@@ -178,7 +178,7 @@ function ContractsPage() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }
 
