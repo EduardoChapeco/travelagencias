@@ -7,58 +7,58 @@
 -- o que resultava em bypass obrigatório via RPCs.
 DROP POLICY IF EXISTS "Leads are viewable by agency members" ON public.leads;
 CREATE POLICY "Leads are viewable by agency members" ON public.leads
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Leads are insertable by agency members" ON public.leads;
 CREATE POLICY "Leads are insertable by agency members" ON public.leads
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Leads are updatable by agency members" ON public.leads;
 CREATE POLICY "Leads are updatable by agency members" ON public.leads
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Leads are deletable by agency members" ON public.leads;
 CREATE POLICY "Leads are deletable by agency members" ON public.leads
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Lead Stages
 DROP POLICY IF EXISTS "Lead stages viewable by agency members" ON public.lead_stages;
 CREATE POLICY "Lead stages viewable by agency members" ON public.lead_stages
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead stages insertable by agency members" ON public.lead_stages;
 CREATE POLICY "Lead stages insertable by agency members" ON public.lead_stages
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead stages updatable by agency members" ON public.lead_stages;
 CREATE POLICY "Lead stages updatable by agency members" ON public.lead_stages
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead stages deletable by agency members" ON public.lead_stages;
 CREATE POLICY "Lead stages deletable by agency members" ON public.lead_stages
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Lead Activities
 DROP POLICY IF EXISTS "Lead activities viewable by agency members" ON public.lead_activities;
 CREATE POLICY "Lead activities viewable by agency members" ON public.lead_activities
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead activities insertable by agency members" ON public.lead_activities;
 CREATE POLICY "Lead activities insertable by agency members" ON public.lead_activities
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead activities updatable by agency members" ON public.lead_activities;
 CREATE POLICY "Lead activities updatable by agency members" ON public.lead_activities
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "Lead activities deletable by agency members" ON public.lead_activities;
 CREATE POLICY "Lead activities deletable by agency members" ON public.lead_activities
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- 2. Políticas ausentes em user_roles
 DROP POLICY IF EXISTS "User roles viewable by agency members" ON public.user_roles;
 CREATE POLICY "User roles viewable by agency members" ON public.user_roles
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 DROP POLICY IF EXISTS "User roles updatable by agency admins" ON public.user_roles;
 CREATE POLICY "User roles updatable by agency admins" ON public.user_roles
@@ -73,7 +73,7 @@ DROP POLICY IF EXISTS "Profiles are public" ON public.company_profiles;
 CREATE POLICY "Profiles are viewable by public if agency is active" ON public.company_profiles
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.agencies a WHERE a.id = company_profiles.agency_id AND a.status = 'active')
-    OR is_agency_member(agency_id)
+    OR public.is_agency_member(auth.uid(), agency_id)
   );
 
 -- O agency-media bucket vazava arquivos
@@ -121,7 +121,7 @@ SET search_path = public
 AS $$
 BEGIN
   -- Verify access
-  IF NOT is_agency_member(p_agency_id) THEN
+  IF NOT public.is_agency_member(auth.uid(), p_agency_id) THEN
     RAISE EXCEPTION 'Access denied';
   END IF;
 

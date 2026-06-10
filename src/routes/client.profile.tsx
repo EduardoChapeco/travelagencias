@@ -160,7 +160,7 @@ function Page() {
             folder={userId}
             variant="image"
             label="Foto de perfil"
-            publicBucket={false}
+            publicBucket={true}
           />
           <Field label="Nome completo">
             <Input

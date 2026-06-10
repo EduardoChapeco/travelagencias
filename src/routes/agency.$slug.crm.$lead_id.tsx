@@ -419,8 +419,7 @@ function NewActivity({ leadId, agencyId, onCreated }: { leadId: string; agencyId
           placeholder="Registre um novo passo..." 
           value={content} 
           onChange={(e) => setContent(e.target.value)} 
-          className="border-0 bg-transparent focus:ring-0 resize-none py-3"
-          style={{ minHeight: '44px' }}
+          className="border-0 bg-transparent focus:ring-0 resize-none py-3 min-h-[44px]"
         />
       </div>
       <button 

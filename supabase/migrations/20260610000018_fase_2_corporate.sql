@@ -18,16 +18,16 @@ CREATE TABLE IF NOT EXISTS public.corporate_policies (
 ALTER TABLE public.corporate_policies ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Corporate policies viewable by agency members" ON public.corporate_policies
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Corporate policies insertable by agency members" ON public.corporate_policies
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Corporate policies updatable by agency members" ON public.corporate_policies
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Corporate policies deletable by agency members" ON public.corporate_policies
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 
 -- 2. RFPs Corporativas (Request for Proposal / Orçamentos para Empresas)
@@ -55,19 +55,19 @@ CREATE TABLE IF NOT EXISTS public.corporate_rfps (
 ALTER TABLE public.corporate_rfps ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Corporate RFPs viewable by agency members" ON public.corporate_rfps
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Corporate RFPs viewable by public using token" ON public.corporate_rfps
   FOR SELECT USING (true); -- Leitura pública para carregar a página de aprovação via token
 
 CREATE POLICY "Corporate RFPs insertable by agency members" ON public.corporate_rfps
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Corporate RFPs updatable by public using token" ON public.corporate_rfps
   FOR UPDATE USING (true); -- Permitir que a empresa aprove externamente (controlado via RLS/Token)
   
 CREATE POLICY "Corporate RFPs deletable by agency members" ON public.corporate_rfps
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Trigger update_updated_at para RFPs
 CREATE TRIGGER trg_corporate_rfps_updated_at

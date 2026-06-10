@@ -528,8 +528,8 @@ function TripVouchers() {
               {/* This is the invisible scaled canvas we take a snapshot of */}
               <div 
                 id="story-canvas" 
-                className="relative overflow-hidden shrink-0 flex flex-col"
-                style={{ width: '400px', height: '711px', background: '#1e1b4b' }}
+                className="relative overflow-hidden shrink-0 flex flex-col bg-indigo-950"
+                style={{ width: '400px', height: '711px' }}
               >
                 {/* Decorative Background */}
                 <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />

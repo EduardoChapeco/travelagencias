@@ -366,7 +366,7 @@ function BlogSheet({
               bucket="agency-logos"
               folder={`${agencyId}/blog-covers`}
               variant="image"
-              publicBucket={false}
+              publicBucket={true}
             />
 
             <Field label="Título *">

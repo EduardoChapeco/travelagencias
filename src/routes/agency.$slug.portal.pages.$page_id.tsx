@@ -536,7 +536,7 @@ function PageEditorRoute() {
                                   bucket="agency-logos"
                                   folder={`${agency.id}/pages`}
                                   variant="image"
-                                  publicBucket={false}
+                                  publicBucket={true}
                                 />
                               </>
                             )}
@@ -562,7 +562,7 @@ function PageEditorRoute() {
                                     bucket="agency-logos"
                                     folder={`${agency.id}/pages`}
                                     variant="image"
-                                    publicBucket={false}
+                                    publicBucket={true}
                                   />
                                   <Field label="Alinhamento do Texto">
                                     <Select
@@ -588,7 +588,7 @@ function PageEditorRoute() {
                                 bucket="agency-logos"
                                 folder={`${agency.id}/pages`}
                                 max={12}
-                                publicBucket={false}
+                                publicBucket={true}
                               />
                             )}
 

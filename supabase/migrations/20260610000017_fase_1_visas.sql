@@ -17,16 +17,16 @@ CREATE TABLE IF NOT EXISTS public.visa_stages (
 ALTER TABLE public.visa_stages ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Visa stages viewable by agency members" ON public.visa_stages
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa stages insertable by agency members" ON public.visa_stages
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa stages updatable by agency members" ON public.visa_stages
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa stages deletable by agency members" ON public.visa_stages
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- 2. Solicitações de Visto
 CREATE TABLE IF NOT EXISTS public.visas (
@@ -50,16 +50,16 @@ CREATE TABLE IF NOT EXISTS public.visas (
 ALTER TABLE public.visas ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Visas viewable by agency members" ON public.visas
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visas insertable by agency members" ON public.visas
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visas updatable by agency members" ON public.visas
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visas deletable by agency members" ON public.visas
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- 3. Documentos do Visto
 CREATE TABLE IF NOT EXISTS public.visa_documents (
@@ -76,16 +76,16 @@ CREATE TABLE IF NOT EXISTS public.visa_documents (
 ALTER TABLE public.visa_documents ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Visa docs viewable by agency members" ON public.visa_documents
-  FOR SELECT USING (is_agency_member(agency_id));
+  FOR SELECT USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa docs insertable by agency members" ON public.visa_documents
-  FOR INSERT WITH CHECK (is_agency_member(agency_id));
+  FOR INSERT WITH CHECK (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa docs updatable by agency members" ON public.visa_documents
-  FOR UPDATE USING (is_agency_member(agency_id));
+  FOR UPDATE USING (public.is_agency_member(auth.uid(), agency_id));
 
 CREATE POLICY "Visa docs deletable by agency members" ON public.visa_documents
-  FOR DELETE USING (is_agency_member(agency_id));
+  FOR DELETE USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- RPC for triggering default visa stages on new agency or manually
 CREATE OR REPLACE FUNCTION public.seed_default_visa_stages(p_agency_id uuid)

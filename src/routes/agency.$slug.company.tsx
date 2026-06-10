@@ -510,7 +510,7 @@ function Page() {
                   bucket="agency-logos"
                   folder={`${agency.id}/logos`}
                   variant="image"
-                  publicBucket={false}
+                  publicBucket={true}
                 />
 
                 <FileUploader
@@ -520,7 +520,7 @@ function Page() {
                   bucket="agency-logos"
                   folder={`${agency.id}/covers`}
                   variant="image"
-                  publicBucket={false}
+                  publicBucket={true}
                 />
 
                 <MultiFileUploader
@@ -530,7 +530,7 @@ function Page() {
                   bucket="agency-logos"
                   folder={`${agency.id}/gallery`}
                   max={12}
-                  publicBucket={false}
+                  publicBucket={true}
                 />
               </div>
             </div>

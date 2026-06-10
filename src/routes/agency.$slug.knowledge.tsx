@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Textarea, PrimaryButton, GhostButton, Sheet, StatusBadge } from "@/components/ui/form";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/knowledge")({
   head: () => ({ meta: [{ title: "Base de conhecimento · TravelOS" }] }),
@@ -182,9 +183,7 @@ function ArticleSheet({ agencyId, agencySlug, initialData, onClose, onSaved }: {
               {editorMode === "simple" ? (
                 <Textarea rows={8} value={content} onChange={(e) => setContent(e.target.value)} className="font-medium text-sm leading-relaxed" />
               ) : (
-                <div className="bg-background rounded-md border border-input min-h-[300px] p-4 text-sm font-medium text-muted-foreground flex items-center justify-center">
-                  (RichTextEditor: Implemente o componente visual aqui igual no Blog)
-                </div>
+                <RichTextEditor value={content} onChange={setContent} />
               )}
             </div>
 
