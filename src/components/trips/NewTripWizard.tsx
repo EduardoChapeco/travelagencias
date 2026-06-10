@@ -32,7 +32,7 @@ export function NewTripWizard({
   
   const [currency, setCurrency] = useState("BRL");
   const [totalSale, setTotalSale] = useState(0);
-  const [status, setStatus] = useState("planning");
+  const [status, setStatus] = useState<"planning" | "confirmed" | "in_progress" | "completed">("planning");
 
   const clientsQ = useQuery({
     queryKey: ["clients-pick", agencyId],

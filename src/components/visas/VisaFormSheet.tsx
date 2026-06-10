@@ -39,7 +39,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
   const stagesQ = useQuery({
     queryKey: ["visa-stages", agencyId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("visa_stages").select("id").eq("agency_id", agencyId).order("position").limit(1);
+      const { data, error } = await (supabase as any).from("visa_stages").select("*").eq("agency_id", agencyId).order("position").limit(1);
       if (error) throw error;
       return data;
     },
@@ -72,7 +72,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
     }
 
     setBusy(true);
-    const { error } = await supabase.from("visas").insert({
+    const { error } = await (supabase as any).from("visas").insert({
       agency_id: agencyId,
       client_id: clientId,
       stage_id: firstStageId,

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   X, Check, ChevronRight, ChevronLeft, Map, Plane, Bus, Ship, Train, Link as LinkIcon, Plus, Trash2, Upload
 } from "lucide-react";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Checkbox } from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { toast } from "sonner";
 
 function slugify(s: string) {
@@ -50,6 +50,7 @@ export function NewGroupTourWizard({
   const [newInclude, setNewInclude] = useState("");
   const [excludes, setExcludes] = useState<string[]>([]);
   const [newExclude, setNewExclude] = useState("");
+  const [hasFlights, setHasFlights] = useState(false);
 
   const [itinerary, setItinerary] = useState<ItineraryDay[]>([]);
   const [coverUrl, setCoverUrl] = useState("");
@@ -267,6 +268,15 @@ export function NewGroupTourWizard({
                     className="text-lg font-mono text-brand"
                   />
                 </Field>
+                <label className="flex items-center gap-2 text-sm mt-8">
+                  <input
+                    type="checkbox"
+                    checked={hasFlights}
+                    onChange={(e) => setHasFlights(e.target.checked)}
+                    className="rounded border-border text-brand focus:ring-brand"
+                  />
+                  Incluir Voos no Pacote Base
+                </label>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Includes */}

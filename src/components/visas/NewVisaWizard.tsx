@@ -55,7 +55,7 @@ export function NewVisaWizard({
   const stagesQ = useQuery({
     queryKey: ["visa-stages", agencyId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("visa_stages").select("id").eq("agency_id", agencyId).order("position").limit(1);
+      const { data, error } = await (supabase as any).from("visa_stages").select("*").eq("agency_id", agencyId).order("position");
       if (error) throw error;
       return data;
     },
@@ -135,8 +135,7 @@ export function NewVisaWizard({
             .upload(filePath, doc.file);
 
           if (!uploadError) {
-            // Pode estar em bucket privado, salvar path
-            await supabase.from("visa_documents").insert({
+            await (supabase as any).from("visa_documents").insert({
               agency_id: agencyId,
               visa_id: visaData.id,
               title: doc.title,

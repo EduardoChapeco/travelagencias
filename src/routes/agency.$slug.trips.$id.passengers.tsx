@@ -113,9 +113,7 @@ function PassengersPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         {translateKind(p.kind)}
                       </span>
-                      {p.is_lead_passenger && (
-                        <StatusBadge tone="info" className="h-5 px-1.5 py-0 text-[9px]">Líder da Reserva</StatusBadge>
-                      )}
+                        <StatusBadge tone="info">Líder da Reserva</StatusBadge>
                     </div>
                   </div>
                 </div>

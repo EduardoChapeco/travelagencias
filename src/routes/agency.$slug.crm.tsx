@@ -327,7 +327,7 @@ function CRMPage() {
             icon={KanbanSquare}
             title="CRM Não Configurado"
             description="Seu funil de vendas não possui nenhuma coluna configurada. Inicialize-o agora para começar a gerenciar seus leads."
-            actions={
+            action={
               <PrimaryButton onClick={() => initStages.mutate()} disabled={initStages.isPending}>
                 {initStages.isPending ? "Inicializando..." : "Criar Funil Padrão"}
               </PrimaryButton>

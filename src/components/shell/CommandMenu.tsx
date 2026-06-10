@@ -39,7 +39,7 @@ export function CommandMenu() {
     setLoading(true);
 
     const fetchResults = async () => {
-      const { data, error } = await supabase.rpc("global_search", { 
+      const { data, error } = await (supabase.rpc as any)("global_search", { 
         p_agency_id: agency.id, 
         p_term: search 
       });

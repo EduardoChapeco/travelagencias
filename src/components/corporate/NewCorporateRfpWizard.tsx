@@ -81,7 +81,7 @@ export function NewCorporateRfpWizard({
       status: "pending",
     };
 
-    const { error } = await supabase.from("corporate_rfps").insert(payload);
+    const { error } = await (supabase as any).from("corporate_rfps").insert(payload);
     
     setSubmitting(false);
 

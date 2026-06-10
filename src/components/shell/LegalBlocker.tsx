@@ -25,7 +25,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
       if (!terms) return { requireAcceptance: false, doc: null };
 
       // Check if user has accepted this document
-      const { data: acceptance } = await supabase
+      const { data: records, error } = await (supabase as any)
         .from("legal_acceptances")
         .select("id")
         .eq("document_id", terms.id)
@@ -41,7 +41,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
 
   const acceptMutation = useMutation({
     mutationFn: async (docId: string) => {
-      const { error } = await supabase.rpc("record_legal_acceptance", {
+      const { error } = await (supabase.rpc as any)("record_legal_acceptance", {
         _document_id: docId,
         _context: "app_login",
       });

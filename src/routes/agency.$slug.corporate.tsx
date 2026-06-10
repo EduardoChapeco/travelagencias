@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search } from "lucide-react";
@@ -40,6 +40,7 @@ const STATUS_MAP: Record<string, { label: string, tone: any }> = {
 function CorporatePage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [newOpen, setNewOpen] = useState(false);
   const [q, setQ] = useState("");
 
@@ -114,7 +115,7 @@ function CorporatePage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {rfps.map((rfp) => (
           <div key={rfp.id} className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors">
-            <Link to={`/agency/${slug}/corporate/${rfp.id}`} className="flex justify-between items-start group">
+            <div onClick={() => navigate({ to: "/agency/$slug/corporate/$rfp_id", params: { slug: agency!.slug, rfp_id: rfp.id } })} className="flex justify-between items-start group cursor-pointer">
               <div>
                 <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">{rfp.title}</h3>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
@@ -125,7 +126,7 @@ function CorporatePage() {
               <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
                 {STATUS_MAP[rfp.status]?.label || rfp.status}
               </StatusBadge>
-            </Link>
+            </div>
 
             <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
               <div>

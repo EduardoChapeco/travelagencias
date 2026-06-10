@@ -216,7 +216,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
     e.preventDefault();
     setBusy(true);
 
-    const { error } = await supabase.rpc("submit_public_lead", {
+    const { error } = await (supabase.rpc as any)("submit_public_lead", {
       _agency_slug: agencySlug,
       _name: f.name,
       _email: f.email || null,
