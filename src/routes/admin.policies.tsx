@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton, StatusBadge, fmtDate } from "@/components/ui/form";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import DOMPurify from "isomorphic-dompurify";
 
 export const Route = createFileRoute("/admin/policies")({
   head: () => ({ meta: [{ title: "Políticas & LGPD · TravelOS Admin" }] }),
@@ -325,7 +326,7 @@ function Page() {
                 <div
                   className="text-sm leading-relaxed"
                   style={{ fontFamily: "system-ui, sans-serif" }}
-                  dangerouslySetInnerHTML={{ __html: activeDoc.content_md }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(activeDoc.content_md) }}
                 />
               </div>
             ) : (

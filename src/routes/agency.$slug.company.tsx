@@ -224,6 +224,25 @@ function Page() {
       : await supabase.from("company_profiles").insert(payload);
 
     if (!error) {
+      // Sync back to agencies (F-08)
+      const { error: ae } = await supabase
+        .from("agencies")
+        .update({ name: form.name })
+        .eq("id", agency.id);
+      if (ae) throw ae;
+
+      // Sync back to agency_private (F-08)
+      const { error: pe } = await supabase.from("agency_private").upsert(
+        {
+          agency_id: agency.id,
+          email: form.email || null,
+          phone: form.phone || null,
+          document: form.cnpj || null,
+        },
+        { onConflict: "agency_id" }
+      );
+      if (pe) throw pe;
+
       // Log the edit
       await supabase.from("audit_log").insert({
         agency_id: agency.id,

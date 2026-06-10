@@ -125,6 +125,20 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
         { onConflict: "agency_id" },
       );
       if (pe) throw pe;
+
+      // Sync data to company_profiles to maintain integrity (F-08)
+      const { error: cpe } = await supabase.from("company_profiles").upsert(
+        {
+          agency_id: agencyId,
+          name: form.name,
+          cnpj: form.document || null,
+          email: form.email || null,
+          phone: form.phone || null,
+        },
+        { onConflict: "agency_id" }
+      );
+      if (cpe) throw cpe;
+
       toast.success("Configurações salvas");
       refresh();
     } catch (err) {
