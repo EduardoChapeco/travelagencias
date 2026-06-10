@@ -446,7 +446,7 @@ function TicketDetail() {
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Avaliação do Cliente</h3>
               <div className="flex items-center gap-1 text-yellow-500 mb-2">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className={\`w-6 h-6 \${s <= t.csat_score! ? "fill-current" : "opacity-20"}\`} />
+                  <Star key={s} className={`w-6 h-6 ${s <= t.csat_score! ? "fill-current" : "opacity-20"}`} />
                 ))}
               </div>
               {t.csat_comment && <p className="text-sm italic text-muted-foreground mt-2">"{t.csat_comment}"</p>}

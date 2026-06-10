@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-start";
+import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Clock, Eye, Send, Share2 } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
@@ -103,7 +103,7 @@ function PublicBlogPage() {
       {/* Header Minimalista */}
       <header className="border-b border-border bg-background/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <a href={\`/p/\${agency_slug}\`} className="flex items-center gap-2 text-foreground font-bold hover:opacity-80 transition-opacity">
+          <a href={`/p/${agency_slug}`} className="flex items-center gap-2 text-foreground font-bold hover:opacity-80 transition-opacity">
             <ArrowLeft className="w-4 h-4" /> 
             <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center text-[10px] uppercase tracking-widest">{agency.name.charAt(0)}</div>
             <span className="hidden sm:inline text-sm">{agency.name}</span>
@@ -191,7 +191,7 @@ function PublicBlogPage() {
                 <p className="text-lg text-background/80 font-medium leading-relaxed mb-8">
                   Nossos consultores da <strong>{agency.name}</strong> são especialistas e podem montar um roteiro 100% personalizado para você, cuidando de cada detalhe.
                 </p>
-                <LeadCaptureForm agencyId={agency.id} origin={\`Blog: \${post.title}\`} />
+                <LeadCaptureForm agencyId={agency.id} origin={`Blog: ${post.title}`} />
               </div>
               <div className="hidden md:flex justify-center">
                  <div className="w-full aspect-square max-w-[280px] bg-white/5 rounded-full border border-white/10 flex items-center justify-center p-8">

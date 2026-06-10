@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, DangerButton, fmtDate, Textarea } from "@/components/ui/form";
+import { PrimaryButton, fmtDate, Textarea } from "@/components/ui/form";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({
@@ -116,12 +116,12 @@ function CorporateApprovePage() {
                       rows={3}
                     />
                     <div className="flex gap-3">
-                      <DangerButton 
+                      <GhostButton className="text-danger hover:bg-danger/10" 
                         onClick={() => updateStatus.mutate({ status: "rejected", reason: rejectReason })}
                         disabled={updateStatus.isPending || !rejectReason.trim()}
                       >
                         Confirmar Recusa
-                      </DangerButton>
+                      </GhostButton>
                       <button onClick={() => setIsRejecting(false)} className="text-sm text-muted-foreground hover:text-foreground font-medium">
                         Cancelar
                       </button>

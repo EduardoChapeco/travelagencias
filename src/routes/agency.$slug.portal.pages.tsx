@@ -622,5 +622,7 @@ function PageEditorSheet({
           </div>
         </div>
       </div>
+    </div>
+  </div>
   );
 }

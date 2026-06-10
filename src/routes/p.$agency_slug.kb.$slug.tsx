@@ -6,7 +6,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { fmtDate } from "@/components/ui/form";
 
 export const Route = createFileRoute("/p/$agency_slug/kb/$slug")({
-  head: ({ params }) => ({ meta: [{ title: \`Ajuda: \${params.slug}\` }] }),
+  head: ({ params }) => ({ meta: [{ title: `Ajuda: ${params.slug}` }] }),
   component: PublicKnowledgeArticle,
 });
 
@@ -43,7 +43,7 @@ function PublicKnowledgeArticle() {
       <p className="text-muted-foreground text-sm max-w-md">
         Este guia pode ser de uso interno exclusivo ou foi removido pela agência.
       </p>
-      <Link to={\`/p/\${agency_slug}\`} className="mt-6 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
+      <Link to={`/p/${agency_slug}`} className="mt-6 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
         Voltar para o Portal
       </Link>
     </div>
@@ -71,7 +71,7 @@ function PublicKnowledgeArticle() {
     <div className="min-h-screen bg-surface">
       <header className="border-b border-border bg-background sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to={\`/p/\${agency_slug}\`} className="flex items-center gap-2 text-foreground font-semibold hover:text-brand transition-colors text-sm">
+          <Link to={`/p/${agency_slug}`} className="flex items-center gap-2 text-foreground font-semibold hover:text-brand transition-colors text-sm">
             <ArrowLeft className="w-4 h-4" /> 
             Central de Ajuda • {agency.name}
           </Link>

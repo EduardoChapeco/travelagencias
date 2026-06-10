@@ -258,7 +258,7 @@ function ClientDetail() {
               <div className="grid md:grid-cols-2 gap-4">
                 <InfoBlock label="Contato" value={c.phone || c.email ? <>{c.phone} <br/><span className="text-muted-foreground">{c.email}</span></> : "Sem contato"} />
                 <InfoBlock label="Nascimento" value={c.birth_date ? fmtDate(c.birth_date) : "Não informado"} />
-                <InfoBlock label="Documentos Nacionais" value={c.cpf || c.rg ? <>{c.cpf ? \`CPF: \${c.cpf}\` : ''} {c.rg ? \` / RG: \${c.rg}\` : ''}</> : "Não informado"} />
+                <InfoBlock label="Documentos Nacionais" value={c.cpf || c.rg ? <>{c.cpf ? `CPF: ${c.cpf}` : ''} {c.rg ? ` / RG: ${c.rg}` : ''}</> : "Não informado"} />
                 <InfoBlock label="Passaporte" value={c.passport_number ? <>{c.passport_number} <br/><span className="text-muted-foreground text-xs">Vence em: {c.passport_expiry ? fmtDate(c.passport_expiry) : "?"}</span></> : "Não informado"} />
               </div>
               
@@ -301,7 +301,7 @@ function ClientDetail() {
               </div>
 
               <div className="border-t border-border/50 pt-4">
-                <Field label="Arquivos e Fotos Privados (RG, Passaporte)"><MultiFileUploader bucket="passenger-documents" folder={\`clients/\${id}\`} max={10} values={c.document_images ?? []} onChange={(urls) => setForm({ ...form, document_images: urls })} /></Field>
+                <Field label="Arquivos e Fotos Privados (RG, Passaporte)"><MultiFileUploader bucket="passenger-documents" folder={`clients/${id}`} max={10} values={c.document_images ?? []} onChange={(urls) => setForm({ ...form, document_images: urls })} /></Field>
               </div>
 
               <div className="border-t border-border/50 pt-4 grid gap-4">
@@ -329,7 +329,7 @@ function ClientDetail() {
           ) : (
             <div className="relative border-l border-border ml-3 pl-6 space-y-8 py-2">
               {timelineEvents.map((event, i) => (
-                <div key={\`\${event.type}-\${i}\`} className="relative group">
+                <div key={`${event.type}-${i}`} className="relative group">
                   {/* Ícone Flutuante */}
                   <div className="absolute -left-[37px] top-0 bg-background border-2 border-border w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
                     {event.type === 'proposal' && <FileSignature className="h-3.5 w-3.5 text-primary" />}

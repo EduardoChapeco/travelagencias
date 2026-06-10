@@ -5,7 +5,7 @@ import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, Input, GhostButton } from "@/components/ui/form";
-import { useDebounce } from "use-debounce";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/admin/agents")({
   head: () => ({ meta: [{ title: "Agentes · Admin" }] }),
@@ -17,7 +17,7 @@ const PAGE_SIZE = 20;
 function Page() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const [search] = useDebounce(searchInput, 300);
+  const search = useDebounce(searchInput, 300);
 
   const q = useQuery({
     queryKey: ["admin-agents", page, search],
@@ -27,7 +27,7 @@ function Page() {
         .select("*", { count: "exact" });
 
       if (search) {
-        query = query.or(\`user_name.ilike.%\${search}%,agency_name.ilike.%\${search}%\`);
+        query = query.or(`user_name.ilike.%${search}%,agency_name.ilike.%${search}%`);
       }
 
       const from = (page - 1) * PAGE_SIZE;
@@ -97,7 +97,7 @@ function Page() {
             </thead>
             <tbody>
               {q.data.data.map((r: any) => (
-                <tr key={\`\${r.user_id}-\${r.role}-\${r.agency_id ?? ""}\`} className="border-t border-border">
+                <tr key={`${r.user_id}-${r.role}-${r.agency_id ?? ""}`} className="border-t border-border">
                   <td className="px-3 py-2.5 font-medium">{r.user_name ?? "—"}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">{r.agency_name ?? "—"}</td>
                   <td className="px-3 py-2.5 text-xs">{r.role}</td>

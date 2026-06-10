@@ -153,7 +153,7 @@ function ClientTripDetail() {
   const start = trip.travel_start ? new Date(trip.travel_start) : null;
   const daysToTrip = start ? Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
 
-  const coverImage = \`https://source.unsplash.com/1600x900/?\${encodeURIComponent(trip.destination || "travel,resort")}\`;
+  const coverImage = `https://source.unsplash.com/1600x900/?${encodeURIComponent(trip.destination || "travel,resort")}`;
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -274,7 +274,7 @@ function ClientTripDetail() {
                 <AppWidget title="Seus Documentos" icon={<FileText className="h-5 w-5 text-brand" />}>
                   <div className="space-y-3">
                     {contract && (
-                      <a href={\`/m/contract/\${contract.public_token}\`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-2xl bg-surface p-4 border border-border hover:border-foreground transition-colors group">
+                      <a href={`/m/contract/${contract.public_token}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-2xl bg-surface p-4 border border-border hover:border-foreground transition-colors group">
                         <div className="flex items-center gap-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger-bg text-danger"><FileText className="h-6 w-6" /></div>
                           <div>
@@ -304,7 +304,7 @@ function ClientTripDetail() {
                   <AppWidget title="Assistência e Emergência" icon={<Phone className="h-5 w-5 text-danger" />}>
                     <div className="space-y-3">
                       {voucher.emergency_contacts.map((ec: any, i: number) => (
-                        <a key={i} href={\`tel:\${ec.phone}\`} className="flex items-center justify-between rounded-2xl bg-danger/10 p-4 border border-danger/20 hover:bg-danger/20 transition-colors">
+                        <a key={i} href={`tel:${ec.phone}`} className="flex items-center justify-between rounded-2xl bg-danger/10 p-4 border border-danger/20 hover:bg-danger/20 transition-colors">
                           <div>
                             <div className="text-sm font-bold text-danger">{ec.role}</div>
                             <div className="text-xs font-medium text-danger/80">{ec.name}</div>
@@ -364,7 +364,7 @@ function ClientTripDetail() {
                       scrolling="no" 
                       marginHeight={0} 
                       marginWidth={0} 
-                      src={\`https://maps.google.com/maps?q=\${encodeURIComponent(trip.destination || "Brazil")}&t=&z=13&ie=UTF8&iwloc=&output=embed\`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(trip.destination || "Brazil")}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                     />
                   </div>
                 </AppWidget>
@@ -376,7 +376,7 @@ function ClientTripDetail() {
                     {[1, 2, 3].map(i => (
                       <div key={i} className="flex gap-3 items-start border-b border-border/50 pb-4 last:border-0 last:pb-0">
                         <div className="w-16 h-16 rounded-xl bg-muted shrink-0 overflow-hidden">
-                          <img src={\`https://source.unsplash.com/200x200/?landmark,\${trip.destination}\&sig=\${i}\`} alt="Local" className="w-full h-full object-cover" />
+                          <img src={`https://source.unsplash.com/200x200/?landmark,${trip.destination}\&sig=${i}`} alt="Local" className="w-full h-full object-cover" />
                         </div>
                         <div>
                           <div className="text-xs font-bold text-foreground">Ponto Turístico {i}</div>
@@ -434,7 +434,7 @@ function ClientTripDetail() {
                       installments.map((inst: any) => (
                         <div key={inst.id} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-border bg-surface p-4 gap-4">
                           <div className="flex items-center gap-4">
-                            <div className={\`flex h-12 w-12 items-center justify-center rounded-full \${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}\`}>
+                            <div className={`flex h-12 w-12 items-center justify-center rounded-full ${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}>
                               {inst.status === "paid" ? <CheckCircle className="h-6 w-6" /> : inst.status === "late" ? <AlertCircle className="h-6 w-6" /> : <Clock className="h-6 w-6" />}
                             </div>
                             <div>
@@ -446,7 +446,7 @@ function ClientTripDetail() {
                           <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full border-t sm:border-0 border-border/50 pt-3 sm:pt-0">
                             <div className="text-left sm:text-right">
                               <div className="text-base font-black text-foreground">{money(inst.amount, trip.currency)}</div>
-                              <div className={\`text-[10px] uppercase font-bold tracking-wider \${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}\`}>
+                              <div className={`text-[10px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}>
                                 {INST_STATUS[inst.status] ?? inst.status}
                               </div>
                             </div>
@@ -480,7 +480,7 @@ function ClientTripDetail() {
                 <div className="w-full md:w-auto">
                    <MultiFileUploader 
                       bucket="trip-memories" 
-                      folder={\`\${id}\`} 
+                      folder={`${id}`} 
                       max={10} 
                       values={[]} 
                       onChange={(urls) => {
@@ -564,7 +564,7 @@ function TabButton({ label, icon, active, onClick }: { label: string, icon: Reac
   return (
     <button 
       onClick={onClick}
-      className={\`flex items-center gap-2 py-4 border-b-2 font-bold text-sm whitespace-nowrap transition-colors \${active ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}\`}
+      className={`flex items-center gap-2 py-4 border-b-2 font-bold text-sm whitespace-nowrap transition-colors ${active ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
     >
       {icon} {label}
     </button>

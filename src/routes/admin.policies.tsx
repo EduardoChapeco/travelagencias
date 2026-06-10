@@ -238,11 +238,11 @@ function Page() {
               <button
                 key={doc.kind}
                 onClick={() => setActiveKind(doc.kind)}
-                className={\`flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors \${
+                className={`flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
                   activeKind === doc.kind
                     ? "border-brand/30 bg-brand/5 text-brand font-semibold"
                     : "border-transparent hover:bg-surface-alt text-foreground"
-                }\`}
+                }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <div className="flex-1 min-w-0">

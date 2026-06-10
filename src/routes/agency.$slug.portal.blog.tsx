@@ -395,12 +395,12 @@ function BlogSheet({
                   <button 
                     type="button" 
                     onClick={() => setEditorMode("simple")}
-                    className={\`px-3 py-1 text-xs font-semibold rounded-full transition-colors \${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}\`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                   >Simples</button>
                   <button 
                     type="button" 
                     onClick={() => setEditorMode("advanced")}
-                    className={\`px-3 py-1 text-xs font-semibold rounded-full transition-colors \${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}\`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                   >Avançado</button>
                 </div>
               </div>

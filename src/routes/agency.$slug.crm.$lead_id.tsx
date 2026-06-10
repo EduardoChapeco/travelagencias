@@ -171,15 +171,15 @@ function LeadDetailPage() {
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-4">{lead.name}</h1>
               
               <div className="flex flex-wrap items-center gap-4 text-sm">
-                {lead.email && <a href={\`mailto:\${lead.email}\`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"><Mail className="h-4 w-4" /> {lead.email}</a>}
-                {lead.phone && <a href={\`https://wa.me/\${lead.phone.replace(/\\D/g, '')}\`} target="_blank" className="flex items-center gap-1.5 text-muted-foreground hover:text-emerald-600 transition-colors"><Phone className="h-4 w-4" /> {lead.phone}</a>}
+                {lead.email && <a href={`mailto:${lead.email}`} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"><Mail className="h-4 w-4" /> {lead.email}</a>}
+                {lead.phone && <a href={`https://wa.me/${lead.phone.replace(/\\D/g, '')}`} target="_blank" className="flex items-center gap-1.5 text-muted-foreground hover:text-emerald-600 transition-colors"><Phone className="h-4 w-4" /> {lead.phone}</a>}
               </div>
             </div>
 
             <div className="flex flex-col md:items-end gap-3">
               <div className="flex items-center gap-3">
                 <Badge icon={MapPin} text={lead.destination || "Destino não definido"} />
-                <Badge icon={Users} text={\`\${lead.pax_count} Pax\`} />
+                <Badge icon={Users} text={`${lead.pax_count} Pax`} />
                 {lead.estimated_value > 0 && <Badge icon={DollarSign} text={money(lead.estimated_value)} highlight />}
               </div>
               <div className="text-xs text-muted-foreground mt-2">
@@ -253,7 +253,7 @@ function LeadDetailPage() {
                     const u = (await supabase.auth.getUser()).data.user;
                     await supabase.from("lead_activities").insert({
                       lead_id: lead.id, agency_id: lead.agency_id, author_id: u?.id ?? null,
-                      type: "stage_change", content: \`Movido de \${fromName} para \${toName}\`,
+                      type: "stage_change", content: `Movido de ${fromName} para ${toName}`,
                       metadata: { from: lead.stage_id, to: newStage },
                     });
                     qc.invalidateQueries({ queryKey: ["lead", lead_id] });
@@ -294,7 +294,7 @@ function LeadDetailPage() {
 
 function Badge({ icon: Icon, text, highlight }: { icon: any; text: string; highlight?: boolean }) {
   return (
-    <div className={\`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium \${highlight ? 'border-foreground text-foreground bg-foreground/5' : 'border-border text-muted-foreground bg-surface'}\`}>
+    <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium ${highlight ? 'border-foreground text-foreground bg-foreground/5' : 'border-border text-muted-foreground bg-surface'}`}>
       <Icon className="h-4 w-4 opacity-70" /> {text}
     </div>
   );
@@ -475,7 +475,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
   return (
     <div className="relative pl-6">
       <div className="absolute -left-[17px] top-1 flex h-8 w-8 items-center justify-center rounded-full bg-background border border-border">
-        <Icon className={\`h-3.5 w-3.5 \${colorClass}\`} />
+        <Icon className={`h-3.5 w-3.5 ${colorClass}`} />
       </div>
       
       <div className="flex flex-col gap-1.5">
@@ -503,7 +503,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
             </div>
           </div>
         ) : (
-          <div className={\`mt-1 text-sm text-foreground/90 leading-relaxed \${activity.type === 'stage_change' ? 'font-medium' : ''}\`}>
+          <div className={`mt-1 text-sm text-foreground/90 leading-relaxed ${activity.type === 'stage_change' ? 'font-medium' : ''}`}>
             {activity.content || <span className="text-muted-foreground italic">Sem detalhes.</span>}
           </div>
         )}

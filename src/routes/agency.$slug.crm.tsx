@@ -13,7 +13,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, DangerButton } from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { toast } from "sonner";
 
 
@@ -109,7 +109,7 @@ function CRMPage() {
           agency_id: agency!.id,
           author_id: user?.id ?? null,
           type: "stage_change",
-          content: \`Movido de \${fromName} para \${toName}\`,
+          content: `Movido de ${fromName} para ${toName}`,
           metadata: { from: payload.fromStageId, to: payload.toStageId },
         });
       }
@@ -319,7 +319,7 @@ function Column({ stage, leads, slug, users, onArchive, onTransfer }: any) {
   return (
     <div
       ref={setNodeRef}
-      className={\`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 \${isOver ? "border-brand bg-brand/5 shadow-lg" : "border-border/60"}\`}
+      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5 shadow-lg" : "border-border/60"}`}
     >
       <div className="flex flex-col justify-center border-b border-border/50 bg-surface-alt/40 px-5 py-4 rounded-t-2xl">
         <div className="flex items-center justify-between mb-1">
@@ -376,11 +376,11 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
   return (
     <div
       {...(dragAttributes ?? {})}
-      className={\`group relative cursor-grab rounded-xl border bg-surface p-4 shadow-sm transition-all active:cursor-grabbing \${
+      className={`group relative cursor-grab rounded-xl border bg-surface p-4 shadow-sm transition-all active:cursor-grabbing ${
         dragging
           ? "border-brand scale-105 z-50 rotate-3 opacity-95 shadow-xl"
           : "border-border/60 hover:border-brand/50 hover:shadow-md"
-      }\`}
+      }`}
     >
       <div className="flex items-start gap-3">
         <div className="mt-1 text-muted-foreground/30 transition-colors group-hover:text-brand/60">
@@ -589,7 +589,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
 
     if(count && count > 0) {
       // Must prompt to transfer
-      const targetStageId = prompt(\`Este estágio possui \${count} leads ativos. Para deletá-lo, você deve transferi-los. Digite o NOME EXATO do estágio de destino:\`);
+      const targetStageId = prompt(`Este estágio possui ${count} leads ativos. Para deletá-lo, você deve transferi-los. Digite o NOME EXATO do estágio de destino:`);
       if(!targetStageId) return;
       const targetStage = localStages.find(s => s.name.toLowerCase() === targetStageId.toLowerCase() && s.id !== stageId);
       if(!targetStage || targetStage.id.startsWith("temp_")) {
@@ -606,7 +606,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
       const { error: delErr } = await supabase.from('lead_stages').delete().eq('id', stageId);
       if(delErr) { toast.error("Falha ao excluir estágio."); setBusy(false); return; }
       
-      toast.success(\`\${count} leads transferidos para \${targetStage.name} e estágio excluído.\`);
+      toast.success(`${count} leads transferidos para ${targetStage.name} e estágio excluído.`);
       onUpdated();
       onClose();
     } else {

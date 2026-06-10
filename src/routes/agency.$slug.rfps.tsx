@@ -59,7 +59,7 @@ function RfpsPage() {
       // 1. Create trip
       const { data: trip, error: tripError } = await supabase.from("trips").insert({
         agency_id: agency!.id,
-        title: \`Viagem Corp - \${rfp.passenger_name || rfp.company_name}\`,
+        title: `Viagem Corp - ${rfp.passenger_name || rfp.company_name}`,
         destination: rfp.destination,
         status: "quote", // Starts as quote or confirmed? Starts as confirmed if approved
         budget: rfp.budget || 0,

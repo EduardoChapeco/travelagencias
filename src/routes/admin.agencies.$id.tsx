@@ -56,7 +56,7 @@ function Page() {
     <>
       <Link to="/admin/agencies" className="mb-3 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ArrowLeft className="h-3 w-3" /> Voltar para lista</Link>
       <div className="flex items-start justify-between mb-4">
-        <PageHeader title={agency.name} description={\`/\${agency.slug} · criada em \${fmtDate(agency.created_at)}\`} />
+        <PageHeader title={agency.name} description={`/${agency.slug} · criada em ${fmtDate(agency.created_at)}`} />
         <Link 
           to="/agency/$slug" 
           params={{ slug: agency.slug }}
@@ -145,7 +145,7 @@ function Page() {
             </thead>
             <tbody>
               {members.map((m) => (
-                <tr key={\`\${m.user_id}-\${m.role}\`} className="border-t border-border">
+                <tr key={`${m.user_id}-${m.role}`} className="border-t border-border">
                   <td className="px-3 py-2.5">{m.name}</td>
                   <td className="px-3 py-2.5 text-xs">{m.role}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(m.created_at)}</td>
@@ -213,7 +213,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
     const planId = e.target.value;
     if (!planId) return;
     const planName = plans.find((p:any) => p.id === planId)?.name;
-    if (!confirm(\`Tem certeza que deseja forçar a troca para o plano \${planName}?\`)) {
+    if (!confirm(`Tem certeza que deseja forçar a troca para o plano ${planName}?`)) {
       e.target.value = ""; // reset
       return;
     }
@@ -231,12 +231,12 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
   }
 
   async function handleStatusChange(newStatus: string) {
-    if (!confirm(\`ATENÇÃO: Mudar o status para "\${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?\`)) return;
+    if (!confirm(`ATENÇÃO: Mudar o status para "${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?`)) return;
     setBusy(true);
     const { error } = await supabase.from("agency_subscriptions").update({ status: newStatus }).eq("agency_id", agency.id);
     if (!error) {
       await logAuditAction("superadmin_changed_status", { new_status: newStatus });
-      toast.success(\`Status forçado para \${newStatus}\`);
+      toast.success(`Status forçado para ${newStatus}`);
       qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
     } else {
       toast.error(error.message);
@@ -246,7 +246,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
   async function handleResetPassword() {
     if (!priv?.email) return toast.error("Agência sem e-mail do proprietário registrado.");
-    if (!confirm(\`Isso enviará um link de reset de senha imediatamente para \${priv.email}. Confirma?\`)) return;
+    if (!confirm(`Isso enviará um link de reset de senha imediatamente para ${priv.email}. Confirma?`)) return;
     setBusy(true);
     
     // Dispara link nativo do supabase auth publicamente

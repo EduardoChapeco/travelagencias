@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-start";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Instagram, Facebook, Youtube, Linkedin, MapPin, Clock, ExternalLink } from "lucide-react";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";

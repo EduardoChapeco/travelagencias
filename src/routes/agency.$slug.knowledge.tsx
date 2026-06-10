@@ -137,7 +137,7 @@ function ArticleSheet({ agencyId, agencySlug, initialData, onClose, onSaved }: {
   }
 
   const previewUrl = !isInternal && initialData?.slug 
-    ? \`\${window.location.origin}/p/\${agencySlug}/kb/\${initialData.slug}\`
+    ? `${window.location.origin}/p/${agencySlug}/kb/${initialData.slug}`
     : null;
 
   return (
@@ -174,8 +174,8 @@ function ArticleSheet({ agencyId, agencySlug, initialData, onClose, onSaved }: {
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo</label>
                 <div className="flex bg-surface rounded-full p-1 border border-border">
-                  <button type="button" onClick={() => setEditorMode("simple")} className={\`px-3 py-1 text-xs font-semibold rounded-full \${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground"}\`}>Simples</button>
-                  <button type="button" onClick={() => setEditorMode("advanced")} className={\`px-3 py-1 text-xs font-semibold rounded-full \${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground"}\`}>Avançado</button>
+                  <button type="button" onClick={() => setEditorMode("simple")} className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground"}`}>Simples</button>
+                  <button type="button" onClick={() => setEditorMode("advanced")} className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground"}`}>Avançado</button>
                 </div>
               </div>
 

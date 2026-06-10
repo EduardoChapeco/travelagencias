@@ -120,14 +120,14 @@ function MobileCheckinPage() {
                            key={i} 
                            onClick={() => toggle(i)}
                            disabled={saving}
-                           className={\`w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-surface-alt/50 active:bg-surface-alt \${it.done ? "bg-surface-alt/20" : ""}\`}
+                           className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-surface-alt/50 active:bg-surface-alt ${it.done ? "bg-surface-alt/20" : ""}`}
                         >
                            {it.done ? (
                               <CheckSquare className="w-5 h-5 text-success shrink-0" />
                            ) : (
                               <Square className="w-5 h-5 text-muted-foreground shrink-0" />
                            )}
-                           <span className={\`text-sm font-medium \${it.done ? "line-through text-muted-foreground" : "text-foreground"}\`}>
+                           <span className={`text-sm font-medium ${it.done ? "line-through text-muted-foreground" : "text-foreground"}`}>
                               {it.label}
                            </span>
                         </button>

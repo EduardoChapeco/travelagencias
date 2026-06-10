@@ -441,7 +441,7 @@ function CardDetailPanel({
           <PrimaryButton 
             className="w-full h-9 text-xs gap-2 font-bold uppercase tracking-widest bg-brand/10 text-brand hover:bg-brand/20 border-none"
             onClick={() => {
-              const url = \`\${window.location.origin}/m/checkin/\${card.id}\`;
+              const url = `${window.location.origin}/m/checkin/${card.id}`;
               navigator.clipboard.writeText(url);
               toast.success("Link copiado para a área de transferência!");
             }}

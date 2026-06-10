@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UploadCloud, Image as ImageIcon, Check, Loader2, X } from "lucide-react";
-import { useAgency } from "@/hooks/agency-context";
+import { useAgency } from "@/lib/agency-context";
 
 export function MediaLibraryPicker({
   open,

@@ -71,7 +71,7 @@ function ContactPage() {
 
     let finalNotes = f.notes.trim();
     if (utms.source || utms.medium || utms.campaign) {
-      finalNotes += \`\n\n--- Rastreio de Campanha ---\nOrigem: \${utms.source || 'N/A'}\nMídia: \${utms.medium || 'N/A'}\nCampanha: \${utms.campaign || 'N/A'}\`;
+      finalNotes += `\n\n--- Rastreio de Campanha ---\nOrigem: ${utms.source || 'N/A'}\nMídia: ${utms.medium || 'N/A'}\nCampanha: ${utms.campaign || 'N/A'}`;
     }
 
     const { error } = await supabase.rpc('submit_public_lead', {
