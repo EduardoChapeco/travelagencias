@@ -47,6 +47,7 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["stages", agency?.id],
     queryFn: async () => {
+      // @ts-ignore
       const { data, error } = await supabase.from("lead_stages").select("*").eq("agency_id", agency!.id).order("position");
       if (error) throw error;
       return data as Stage[];
@@ -57,9 +58,10 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["leads", agency?.id],
     queryFn: async () => {
+      // @ts-ignore (RPC created in migration)
       const { data, error } = await supabase.rpc("get_crm_leads", { _agency_id: agency!.id });
       if (error) throw error;
-      return (data as Lead[]).sort((a, b) => a.position - b.position);
+      return ((data as any) as Lead[]).sort((a, b) => a.position - b.position);
     },
   });
 
@@ -67,6 +69,7 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["agency-users", agency?.id],
     queryFn: async () => {
+      // @ts-ignore
       const { data, error } = await supabase.from("vw_admin_agents").select("user_id, user_name, role").eq("agency_id", agency!.id);
       if (error) throw error;
       return data;
@@ -200,6 +203,7 @@ function CRMPage() {
 
   async function archiveLead(leadId: string) {
     if(!confirm("Arquivar este lead? Ele não aparecerá mais no Kanban.")) return;
+    // @ts-ignore (deleted_at added via migration)
     const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() }).eq('id', leadId);
     if(error) { toast.error("Falha ao arquivar"); return; }
     toast.success("Lead arquivado com sucesso!");
