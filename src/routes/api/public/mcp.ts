@@ -120,8 +120,7 @@ export const APIRoute = createAPIFileRoute("/api/public/mcp")({
             .from("knowledge_articles")
             .select("title, slug, content")
             .eq("agency_id", agency.id)
-            .eq("is_internal", false)
-            .eq("is_published", true);
+            .eq("is_internal", false);
           if (args.query) {
             q = q.ilike("title", `%${args.query}%`);
           }
