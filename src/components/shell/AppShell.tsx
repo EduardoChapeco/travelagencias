@@ -84,7 +84,7 @@ export function AppShell({
 
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
-            <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 py-6">
+            <div className="mx-auto flex w-full flex-1 flex-col px-4 md:px-8 xl:px-12 py-6 md:py-8">
               <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </div>
           </main>
