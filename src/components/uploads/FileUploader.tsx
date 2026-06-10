@@ -13,6 +13,23 @@ const ACCEPT: Record<Variant, string> = {
   any: "image/*,application/pdf",
 };
 
+// Whitelist of allowed bucket names — prevents accidental uploads to wrong buckets
+const ALLOWED_BUCKETS = new Set([
+  "agency-media",
+  "agency-logos",
+  "proposal-attachments",
+  "voucher-pdfs",
+  "contract-pdfs",
+]);
+
+// Maps variant to allowed MIME prefixes for runtime validation
+const ACCEPT_PREFIXES: Record<Variant, string[]> = {
+  image: ["image/"],
+  pdf: ["application/pdf"],
+  video: ["video/"],
+  any: ["image/", "application/pdf"],
+};
+
 export type FileUploaderProps = {
   value: string | null | undefined;
   onChange: (url: string | null) => void;
@@ -46,6 +63,22 @@ export function FileUploader({
     async (files: FileList | null) => {
       const file = files?.[0];
       if (!file) return;
+
+      // Bucket whitelist check — prevents uploads to unintended buckets
+      if (!ALLOWED_BUCKETS.has(bucket)) {
+        toast.error(`Upload não permitido: bucket "${bucket}" não é autorizado.`);
+        console.error(`[FileUploader] Blocked upload to unauthorized bucket: "${bucket}"`);
+        return;
+      }
+
+      // MIME type validation
+      const allowedPrefixes = ACCEPT_PREFIXES[variant];
+      const mimeOk = allowedPrefixes.some((prefix) => file.type.startsWith(prefix));
+      if (!mimeOk) {
+        toast.error(`Tipo de arquivo não aceito. Use: ${ACCEPT[variant]}`);
+        return;
+      }
+
       const maxMb = LIMITS_MB[variant];
       if (file.size > maxMb * 1024 * 1024) {
         toast.error(`Arquivo excede ${maxMb}MB`);

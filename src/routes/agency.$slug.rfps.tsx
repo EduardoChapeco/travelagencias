@@ -35,7 +35,8 @@ const STATUS_INFO: Record<string, { label: string; tone: "info" | "warning" | "s
 };
 
 function RfpsPage() {
-  const { agency, slug } = useAgency();
+  const { agency } = useAgency();
+  const { slug } = Route.useParams();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -44,7 +45,7 @@ function RfpsPage() {
     enabled: !!agency,
     queryKey: ["rfps", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("corporate_rfps")
         .select("*")
         .eq("agency_id", agency!.id)
@@ -61,14 +62,14 @@ function RfpsPage() {
         agency_id: agency!.id,
         title: `Viagem Corp - ${rfp.passenger_name || rfp.company_name}`,
         destination: rfp.destination,
-        status: "quote", // Starts as quote or confirmed? Starts as confirmed if approved
+        status: "planning", // Starts as quote or confirmed? Starts as confirmed if approved
         budget: rfp.budget || 0,
       }).select("id").single();
       
       if (tripError) throw tripError;
 
       // 2. Update RFP
-      const { error: rfpError } = await supabase.from("corporate_rfps").update({
+      const { error: rfpError } = await (supabase as any).from("corporate_rfps").update({
         status: "converted",
         trip_id: trip.id
       }).eq("id", rfp.id);
@@ -87,7 +88,7 @@ function RfpsPage() {
 
   const updateStatus = useMutation({
      mutationFn: async ({ id, status }: { id: string; status: string }) => {
-        const { error } = await supabase.from("corporate_rfps").update({ status }).eq("id", id);
+        const { error } = await (supabase as any).from("corporate_rfps").update({ status }).eq("id", id);
         if (error) throw error;
      },
      onSuccess: () => {
@@ -116,7 +117,7 @@ function RfpsPage() {
            {q.data.map(rfp => {
               const info = STATUS_INFO[rfp.status] || STATUS_INFO.pending;
               return (
-                 <div key={rfp.id} className="bg-surface border border-border/60 rounded-xl p-5 shadow-sm transition-all hover:border-brand/40 flex flex-col justify-between">
+                 <div key={rfp.id} className="bg-surface border border-border/60 rounded-xl p-5 transition-all hover:border-brand/40 flex flex-col justify-between">
                     <div>
                        <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-2">
@@ -168,7 +169,7 @@ function RfpsPage() {
                                 <PrimaryButton 
                                    onClick={() => convertRfp.mutate(rfp)} 
                                    disabled={convertRfp.isPending}
-                                   className="h-8 text-xs font-bold gap-1 px-3 shadow-sm"
+                                   className="h-8 text-xs font-bold gap-1 px-3 "
                                 >
                                    Converter <ArrowRight className="w-3 h-3"/>
                                 </PrimaryButton>
@@ -232,7 +233,7 @@ function NewRfp({ agencyId, onClose, onCreated }: { agencyId: string; onClose: (
        return;
     }
 
-    const { error } = await supabase.from("corporate_rfps").insert({
+    const { error } = await (supabase as any).from("corporate_rfps").insert({
       agency_id: agencyId, 
       corporate_client_id: clientId || null,
       company_name: finalCompany,

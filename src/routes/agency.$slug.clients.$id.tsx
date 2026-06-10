@@ -331,7 +331,7 @@ function ClientDetail() {
               {timelineEvents.map((event, i) => (
                 <div key={`${event.type}-${i}`} className="relative group">
                   {/* Ícone Flutuante */}
-                  <div className="absolute -left-[37px] top-0 bg-background border-2 border-border w-8 h-8 rounded-full flex items-center justify-center shadow-sm">
+                  <div className="absolute -left-[37px] top-0 bg-background border-2 border-border w-8 h-8 rounded-full flex items-center justify-center ">
                     {event.type === 'proposal' && <FileSignature className="h-3.5 w-3.5 text-primary" />}
                     {event.type === 'trip' && <Calendar className="h-3.5 w-3.5 text-success" />}
                     {event.type === 'lgpd' && <ShieldCheck className="h-3.5 w-3.5 text-warning" />}

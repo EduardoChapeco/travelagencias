@@ -22,6 +22,7 @@ export function CorporateRfpFormSheet({ agencyId, onClose, onSaved }: CorporateR
   const [destination, setDestination] = useState("");
   const [departureDate, setDepartureDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+  const [paxCount, setPaxCount] = useState("");
   const [budget, setBudget] = useState("");
   const [description, setDescription] = useState("");
 
@@ -58,7 +59,10 @@ export function CorporateRfpFormSheet({ agencyId, onClose, onSaved }: CorporateR
       departure_date: departureDate,
       return_date: returnDate || null,
       budget: budget ? Number(budget) : null,
+      budget_estimated: budget ? Number(budget) : null,
+      pax_count: paxCount ? parseInt(paxCount) : 1,
       description,
+      requirements: description,
       status: "pending",
     });
 
@@ -111,9 +115,14 @@ export function CorporateRfpFormSheet({ agencyId, onClose, onSaved }: CorporateR
             </Field>
           </div>
 
-          <Field label="Orçamento Máximo (Opcional)">
-            <Input type="number" step="0.01" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="0.00" />
-          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Orçamento Máximo (Opcional)">
+              <Input type="number" step="0.01" value={budget} onChange={(e) => setBudget(e.target.value)} placeholder="0.00" />
+            </Field>
+            <Field label="Nº Passageiros" required>
+              <Input type="number" min="1" value={paxCount} onChange={(e) => setPaxCount(e.target.value)} placeholder="1" />
+            </Field>
+          </div>
 
           <Field label="Detalhes / Descrição">
             <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />

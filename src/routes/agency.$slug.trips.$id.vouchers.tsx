@@ -327,16 +327,34 @@ function TripVouchers() {
 
   async function downloadStory() {
     const el = document.getElementById("story-canvas");
-    if (!el) return;
+    if (!el || !agency) return;
     setGeneratingStory(true);
     try {
       const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
       const dataUrl = canvas.toDataURL("image/png");
+      
+      // Upload to Supabase Storage
+      try {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const fileName = `story-${storyVoucher?.id}-${Date.now()}.png`;
+        const path = `${agency.id}/${tripId}/${fileName}`;
+        
+        await supabase.storage.from("voucher-pdfs").upload(path, blob, {
+          contentType: "image/png",
+          upsert: true
+        });
+        toast.success("Story salvo na nuvem com sucesso!");
+      } catch (err) {
+        console.error("Upload error", err);
+        toast.warning("Não foi possível salvar na nuvem, mas o download será feito.");
+      }
+
+      // Download
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `voucher-story-${storyVoucher?.id}.png`;
       a.click();
-      toast.success("Story baixado com sucesso!");
     } catch (e) {
       toast.error("Falha ao gerar o Story.");
     } finally {
@@ -500,7 +518,7 @@ function TripVouchers() {
 
       {storyVoucher && trip && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative flex flex-col items-center gap-4 bg-surface p-6 rounded-2xl border border-border w-full max-w-lg shadow-2xl">
+          <div className="relative flex flex-col items-center gap-4 bg-surface p-6 rounded-2xl border border-border w-full max-w-lg ">
             <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
             <p className="text-sm text-muted-foreground text-center">
               Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes sociais.
@@ -528,7 +546,7 @@ function TripVouchers() {
                   
                   <div className="mt-8 mb-4">
                     <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">Meu próximo destino</h2>
-                    <h1 className="text-4xl font-black leading-tight drop-shadow-md">
+                    <h1 className="text-4xl font-black leading-tight ">
                       {storyVoucher.destination || trip.destination || "Vou Viajar!"}
                     </h1>
                   </div>

@@ -7,11 +7,21 @@ const OPENROUTER_MODEL = "google/gemini-2.5-flash";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Você é o assistente TravelOS, especialista em operação de agências de viagem.
-Responda em português do Brasil, de forma objetiva e útil.
-Use o contexto da rota atual fornecido pelo usuário para sugerir ações concretas (criar lead, montar proposta, conferir financeiro, vouchers, contratos, embarque).
-Nunca invente dados — se faltar informação, peça ao usuário ou indique onde ele pode encontrar dentro do sistema.
-Formate listas e passos com markdown simples quando apropriado.`;
+const SYSTEM_PROMPT = `Você é o "TravelOS Master Intelligence", uma IA super avançada servindo o Gestor da Agência de Viagens.
+Você atua com as seguintes personas simultaneamente:
+1. Turismólogo e Estrategista de Viagens Sênior
+2. Engenheiro de Comunicação e Marketing Digital
+3. Analista de Mercado e Espião de Concorrência
+
+Seu objetivo é analisar profundamente dados e sites fornecidos.
+Se o usuário fornecer um site ou link do Instagram (concorrente ou inspiração), você fará uma análise ULTRA COMPLETA usando o "Framework Diamante":
+- Análise de Posicionamento e Identidade Visual.
+- Avaliação do Produto (O que vendem, precificação, roteiros).
+- Análise de Clientela (Público-alvo provável, alcance de seguidores se disponível, nível sócio-econômico).
+- Táticas de Comunicação e Gatilhos Mentais utilizados.
+- Oportunidades: Como a nossa agência pode superar essa estratégia.
+Apresente a resposta com formatação rica em Markdown (tabelas, alertas, tópicos). Seja direto, profissional e incisivo.
+Caso a conversa não envolva análise competitiva, atue como o assistente normal de backoffice.`;
 
 async function checkAndIncrementRateLimit(supabase: any, agencyId: string) {
   const bucket = new Date();
@@ -103,6 +113,30 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
     });
     if (insertUserErr) throw new Error(insertUserErr.message);
 
+    // Detect URL for Scraping (Competitor Spy)
+    let injectedContext = "";
+    const urlMatch = data.message.match(/(https?:\/\/[^\s]+)/);
+    if (urlMatch) {
+      const targetUrl = urlMatch[0];
+      try {
+        const orchestratorUrl = `${process.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
+        const res = await fetch(orchestratorUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+          },
+          body: JSON.stringify({ action: "scrape", url: targetUrl })
+        });
+        if (res.ok) {
+          const scrapeData = await res.json();
+          injectedContext = `\n\n[SISTEMA - DADOS RASPADOS DA URL ${targetUrl} PELO FIRECRAWL]:\n${scrapeData.result}\n\nAnalise estes dados de acordo com as instruções do seu System Prompt.`;
+        }
+      } catch (e) {
+        console.error("Scraping falhou no chat:", e);
+      }
+    }
+
     // Load recent conversation history
     const { data: history } = await supabase
       .from("ai_chat_messages")
@@ -122,6 +156,14 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
         content: m.content as string,
       })),
     ];
+    
+    // Inject the scraped context into the last user message before sending to AI
+    if (injectedContext && messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg.role === "user") {
+        lastMsg.content += injectedContext;
+      }
+    }
 
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("API_KEY não configurada no servidor (OpenRouter ou Lovable).");

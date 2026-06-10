@@ -104,7 +104,7 @@ export function CommandMenu() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-background/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl bg-surface border border-border shadow-2xl rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-2xl bg-surface border border-border rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
         <Command label="Global Search" shouldFilter={false} className="flex flex-col w-full bg-transparent">
           <div className="flex items-center border-b border-border px-4 py-3">
             <Search className="h-5 w-5 text-muted-foreground mr-3" />

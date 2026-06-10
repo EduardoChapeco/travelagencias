@@ -33,10 +33,10 @@ function AcceptInvitePage() {
         .maybeSingle();
       setInvite(data);
       if (data) {
-        const { data: a } = await supabase
+        const { data: a } = await (supabase as any)
           .rpc("get_public_agency_by_id", { _id: data.agency_id })
           .maybeSingle();
-        setAgencyName(a?.name ?? "");
+        setAgencyName((a as any)?.name ?? "");
       }
       const { data: u } = await supabase.auth.getUser();
       setUserEmail(u.user?.email ?? null);
@@ -50,10 +50,10 @@ function AcceptInvitePage() {
     setSubmitting(false);
     if (error) return toast.error(error.message);
     toast.success("Convite aceito");
-    const { data: a } = await supabase
+    const { data: a } = await (supabase as any)
       .rpc("get_public_agency_by_id", { _id: data as unknown as string })
       .maybeSingle();
-    if (a?.slug) navigate({ to: "/agency/$slug", params: { slug: a.slug } });
+    if ((a as any)?.slug) navigate({ to: "/agency/$slug", params: { slug: (a as any).slug } });
   }
 
   if (loading) return <div className="p-8 text-sm text-muted-foreground">Carregando convite…</div>;

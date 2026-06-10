@@ -112,7 +112,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-xl"
+      className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-xl border border-border bg-surface "
     >
       <div className="flex items-center justify-between border-b border-border bg-surface-alt/50 px-4 py-3">
         <div className="flex items-center gap-2">

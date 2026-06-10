@@ -5,17 +5,17 @@ import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
 
 export const Route = createFileRoute("/p/$agency_slug/")({
   loader: async ({ params: { agency_slug } }) => {
-    const { data: agency } = await supabase
+    const { data: agency } = await (supabase as any)
       .rpc("get_public_agency_by_slug", { _slug: agency_slug })
       .maybeSingle();
     if (!agency) return { agency: null, company: null, tours: [], posts: [], homePage: null };
 
     const [company, tours, posts, homePage] = await Promise.all([
-      supabase.from("company_profiles").select("*").eq("agency_id", agency.id).maybeSingle(),
+      supabase.from("company_profiles").select("*").eq("agency_id", (agency as any).id).maybeSingle(),
       supabase
         .from("group_tours")
         .select("id, slug, title, destination, cover_image_url, base_price, departure_date")
-        .eq("agency_id", agency.id)
+        .eq("agency_id", (agency as any).id)
         .eq("is_public", true)
         .in("status", ["open", "confirmed"])
         .order("departure_date")
@@ -23,14 +23,14 @@ export const Route = createFileRoute("/p/$agency_slug/")({
       supabase
         .from("blog_posts")
         .select("id, slug, title, excerpt, cover_image_url, published_at")
-        .eq("agency_id", agency.id)
+        .eq("agency_id", (agency as any).id)
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(6),
       supabase
         .from("portal_pages")
-        .select("blocks, seo")
-        .eq("agency_id", agency.id)
+        .select("blocks:published_blocks, seo:published_seo")
+        .eq("agency_id", (agency as any).id)
         .eq("slug", "home")
         .eq("is_published", true)
         .maybeSingle(),
@@ -120,7 +120,7 @@ function HomePage() {
             <img
               src={agency.logo_url}
               alt={agency.name}
-              className="mb-6 h-28 w-28 rounded-2xl object-cover ring-4 ring-surface shadow-xl"
+              className="mb-6 h-28 w-28 rounded-2xl object-cover ring-4 ring-surface "
             />
           )}
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">{agency.name}</h1>

@@ -102,7 +102,7 @@ function TicketDetail() {
       if (error) throw error;
       if (!data) return null;
 
-      const { data: messagesData, error: msgError } = await supabase
+      const { data: messagesData, error: msgError } = await (supabase as any)
         .from("ticket_messages")
         .select("*")
         .eq("ticket_id", ticket_id)
@@ -118,9 +118,9 @@ function TicketDetail() {
     enabled: !!agency,
     queryKey: ["kb", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("knowledge_articles").select("id, title, slug").eq("agency_id", agency!.id).eq("is_internal", false);
+      const { data, error } = await (supabase as any).from("knowledge_articles").select("id, title, slug").eq("agency_id", agency!.id).eq("is_internal", false);
       if (error) throw error;
-      return data || [];
+      return (data || []) as any[];
     }
   });
 
@@ -143,7 +143,7 @@ function TicketDetail() {
     if (!reply.trim() || !q.data) return;
     const { data: u } = await supabase.auth.getUser();
 
-    const { error: msgError } = await supabase.from("ticket_messages").insert({
+    const { error: msgError } = await (supabase as any).from("ticket_messages").insert({
       ticket_id,
       sender: "agency",
       content: reply.trim(),
@@ -219,7 +219,7 @@ function TicketDetail() {
       </Link>
 
       {/* HEADER */}
-      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between bg-surface p-5 rounded-lg border border-border shadow-sm">
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between bg-surface p-5 rounded-lg border border-border ">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="font-mono text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t.code}</span>
@@ -240,7 +240,7 @@ function TicketDetail() {
             ))}
           </Select>
           {t.status !== "resolved" && t.status !== "closed" && (
-            <PrimaryButton onClick={resolveTicket} className="h-8 text-xs gap-1.5 shadow-sm">
+            <PrimaryButton onClick={resolveTicket} className="h-8 text-xs gap-1.5 ">
               <CheckCircle2 className="h-3.5 w-3.5" /> Resolver
             </PrimaryButton>
           )}
@@ -303,7 +303,7 @@ function TicketDetail() {
                         )}
                       </div>
                       <div
-                        className={`rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
+                        className={`rounded-2xl px-4 py-2.5 text-sm ${
                           m.is_internal
                             ? "bg-warning/10 text-warning-foreground border border-warning/20 rounded-tr-sm"
                             : isAgent
@@ -331,7 +331,7 @@ function TicketDetail() {
           </div>
 
           {t.status !== "closed" && (
-            <div className="mt-6 rounded-lg border border-border bg-surface shadow-sm overflow-hidden focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+            <div className="mt-6 rounded-lg border border-border bg-surface overflow-hidden focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
               <div className="flex border-b border-border bg-surface-alt/30">
                 <button
                   type="button"
@@ -358,7 +358,7 @@ function TicketDetail() {
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
                   placeholder={channel === "public" ? "Escreva sua resposta ao cliente..." : "Registre uma anotação visível apenas para a equipe..."}
-                  className="min-h-[100px] border-0 bg-transparent p-2 text-sm shadow-none focus:ring-0 resize-none"
+                  className="min-h-[100px] border-0 bg-transparent p-2 text-sm focus:ring-0 resize-none"
                 />
               </div>
 
@@ -411,7 +411,7 @@ function TicketDetail() {
 
         {/* SIDEBAR */}
         <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+          <div className="rounded-lg border border-border bg-surface p-4 ">
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">SLA & Prazos</h3>
             {sla === "resolved" ? (
               <div className="flex items-center gap-2 text-sm font-medium text-success">
@@ -442,7 +442,7 @@ function TicketDetail() {
           </div>
 
           {(t.status === "resolved" || t.status === "closed") && t.csat_score && (
-            <div className="rounded-lg border border-border bg-surface p-4 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="rounded-lg border border-border bg-surface p-4 flex flex-col items-center justify-center text-center">
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Avaliação do Cliente</h3>
               <div className="flex items-center gap-1 text-yellow-500 mb-2">
                 {[1, 2, 3, 4, 5].map((s) => (
@@ -453,7 +453,7 @@ function TicketDetail() {
             </div>
           )}
 
-          <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+          <div className="rounded-lg border border-border bg-surface p-4 ">
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do Ticket</h3>
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between">

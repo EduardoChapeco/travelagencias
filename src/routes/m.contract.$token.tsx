@@ -152,13 +152,37 @@ function Page() {
         content: contentToHash,
       });
 
-      // 4. Enviar Payload (apenas com o path do storage)
+      // 4. Upload selfie KYC para o Storage (evita armazenar Base64 no banco)
+      let selfiePath: string | null = null;
+      if (selfie) {
+        const selfieBlob = await fetch(selfie).then((r) => r.blob());
+        const sp = `${c!.agency_id}/${token}/kyc-selfie-${Date.now()}.jpg`;
+        const { error: selfieErr } = await supabase.storage
+          .from("contract-pdfs")
+          .upload(sp, selfieBlob, { contentType: "image/jpeg", upsert: true });
+        if (selfieErr) throw new Error("Erro ao salvar selfie KYC: " + selfieErr.message);
+        selfiePath = sp;
+      }
+
+      // 5. Upload da imagem de assinatura para o Storage
+      let signaturePath: string | null = null;
+      {
+        const sigBlob = await fetch(sig).then((r) => r.blob());
+        const sigp = `${c!.agency_id}/${token}/assinatura-${Date.now()}.png`;
+        const { error: sigErr } = await supabase.storage
+          .from("contract-pdfs")
+          .upload(sigp, sigBlob, { contentType: "image/png", upsert: true });
+        if (sigErr) throw new Error("Erro ao salvar assinatura: " + sigErr.message);
+        signaturePath = sigp;
+      }
+
+      // 6. Enviar Payload (paths do storage, sem Base64)
       const { error } = await supabase.rpc("sign_contract_with_token", {
         _token: token,
         _signer_name: name,
         _signer_document: doc,
-        _signature_image: sig,
-        _selfie_image: selfie,
+        _signature_image: signaturePath as any,
+        _selfie_image: selfiePath as any,
         _ip: ip,
         _user_agent: ua,
         _pdf_path: pdfPath,

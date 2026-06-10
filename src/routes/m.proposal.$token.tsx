@@ -71,7 +71,7 @@ function PublicProposalView() {
           )
           .eq("proposal_id", p.id)
           .order("position"),
-        supabase.rpc("get_public_agency_by_id", { _id: p.agency_id }).maybeSingle(),
+        (supabase as any).rpc("get_public_agency_by_id", { _id: p.agency_id }).maybeSingle(),
       ]);
       // mark as viewed (fire-and-forget)
       if (!p.decided_at) {

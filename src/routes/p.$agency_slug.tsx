@@ -18,7 +18,7 @@ function Layout() {
   const q = useQuery({
     queryKey: ["portal-layout", agency_slug],
     queryFn: async () => {
-      const { data: agency } = await supabase
+      const { data: agency } = await (supabase as any)
         .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
         .maybeSingle();
       if (!agency) return { agency: null, pages: [] };
@@ -26,7 +26,7 @@ function Layout() {
       const { data: pages } = await supabase
         .from("portal_pages")
         .select("slug, title")
-        .eq("agency_id", agency.id)
+        .eq("agency_id", (agency as any).id)
         .eq("is_published", true)
         .order("created_at");
 
@@ -46,8 +46,8 @@ function Layout() {
       className="min-h-screen bg-background flex flex-col"
       style={
         {
-          "--color-brand": agency.brand_color,
-          "--color-brand-foreground": agency.brand_color_fg,
+          "--agency-brand": agency.brand_color || "#18181b",
+          "--agency-brand-fg": agency.brand_color_fg || "#ffffff",
         } as React.CSSProperties
       }
     >

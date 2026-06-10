@@ -34,7 +34,7 @@ function ContactPage() {
   const agencyQ = useQuery({
     queryKey: ["agency-basic", agency_slug],
     queryFn: async () => {
-      const { data, error } = await supabase.from("agencies").select("id, name, logo_url").eq("slug", agency_slug).eq("is_active", true).maybeSingle();
+      const { data, error } = await (supabase as any).from("agencies").select("id, name, logo_url").eq("slug", agency_slug).eq("is_active", true).maybeSingle();
       if (error) throw error;
       return data;
     }
@@ -44,7 +44,7 @@ function ContactPage() {
     enabled: !!agencyQ.data?.id,
     queryKey: ["agency-policies", agencyQ.data?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("policy_documents").select("id, type, version").eq("agency_id", agencyQ.data!.id).eq("is_published", true);
+      const { data } = await (supabase as any).from("policy_documents").select("id, kind, version").eq("is_published", true);
       return data || [];
     }
   });
@@ -74,7 +74,7 @@ function ContactPage() {
       finalNotes += `\n\n--- Rastreio de Campanha ---\nOrigem: ${utms.source || 'N/A'}\nMídia: ${utms.medium || 'N/A'}\nCampanha: ${utms.campaign || 'N/A'}`;
     }
 
-    const { error } = await supabase.rpc('submit_public_lead', {
+    const { error } = await (supabase as any).rpc('submit_public_lead', {
       _agency_slug: agency_slug,
       _name: f.name,
       _email: f.email || null,

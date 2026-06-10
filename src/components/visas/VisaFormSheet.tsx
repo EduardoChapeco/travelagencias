@@ -18,6 +18,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
   const [clientId, setClientId] = useState("");
   const [country, setCountry] = useState("");
   const [category, setCategory] = useState("Turismo");
+  const [requirementId, setRequirementId] = useState("");
   const [expectedDate, setExpectedDate] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -44,6 +45,19 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
     },
   });
 
+  const requirementsQ = useQuery({
+    queryKey: ["visa-requirements", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("visa_requirements")
+        .select("id, country, visa_type")
+        .eq("agency_id", agencyId)
+        .order("country");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!clientId || !country) {
@@ -62,6 +76,7 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
       agency_id: agencyId,
       client_id: clientId,
       stage_id: firstStageId,
+      requirement_id: requirementId || null,
       country,
       category,
       expected_date: expectedDate || null,
@@ -101,6 +116,15 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
               <option value="Estudante">Estudante</option>
               <option value="Trabalho / Negócios">Trabalho / Negócios</option>
               <option value="Residência">Residência</option>
+            </Select>
+          </Field>
+
+          <Field label="Requisito / Catálogo (Opcional)">
+            <Select value={requirementId} onChange={(e) => setRequirementId(e.target.value)}>
+              <option value="">Sem catálogo predefinido</option>
+              {requirementsQ.data?.map((req) => (
+                <option key={req.id} value={req.id}>{req.country} - {req.visa_type}</option>
+              ))}
             </Select>
           </Field>
 

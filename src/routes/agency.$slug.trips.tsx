@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Plus, Plane } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -144,8 +144,9 @@ function TripsList() {
 
       {list.data && list.data.data.length === 0 && (
         <EmptyState
+          icon={Plane}
           title="Nenhuma viagem ainda"
-          description="Crie a primeira viagem ou converta uma cotação aceita."
+          description="Crie a primeira viagem ou converta uma cotação aceita para começar."
         />
       )}
 

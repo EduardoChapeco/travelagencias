@@ -25,7 +25,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-visa", agency_slug, id],
     queryFn: async () => {
-      const { data: rawAgency } = await supabase
+      const { data: rawAgency } = await (supabase as any)
         .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
         .maybeSingle();
       const agency = rawAgency as any;

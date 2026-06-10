@@ -39,6 +39,7 @@ function CRMPage() {
   
   const [searchQuery, setSearchQuery] = useState("");
   const [ownerFilter, setOwnerFilter] = useState("");
+  const [sourceFilter, setSourceFilter] = useState("");
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localLeads, setLocalLeads] = useState<Lead[] | null>(null);
@@ -47,8 +48,7 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["stages", agency?.id],
     queryFn: async () => {
-      // @ts-ignore
-      const { data, error } = await supabase.from("lead_stages").select("*").eq("agency_id", agency!.id).order("position");
+      const { data, error } = await (supabase as any).from("lead_stages").select("*").eq("agency_id", agency!.id).order("position");
       if (error) throw error;
       return data as Stage[];
     },
@@ -58,10 +58,13 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["leads", agency?.id],
     queryFn: async () => {
-      // @ts-ignore (RPC created in migration)
-      const { data, error } = await supabase.rpc("get_crm_leads", { _agency_id: agency!.id });
+      const { data, error } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("agency_id", agency!.id)
+        .is("deleted_at", null);
       if (error) throw error;
-      return ((data as any) as Lead[]).sort((a, b) => a.position - b.position);
+      return (data as unknown as Lead[]).sort((a, b) => a.position - b.position);
     },
   });
 
@@ -69,8 +72,7 @@ function CRMPage() {
     enabled: !!agency,
     queryKey: ["agency-users", agency?.id],
     queryFn: async () => {
-      // @ts-ignore
-      const { data, error } = await supabase.from("vw_admin_agents").select("user_id, user_name, role").eq("agency_id", agency!.id);
+      const { data, error } = await (supabase as any).from("vw_admin_agents").select("user_id, user_name, role").eq("agency_id", agency!.id);
       if (error) throw error;
       return data;
     }
@@ -85,9 +87,10 @@ function CRMPage() {
     return localLeads.filter(l => {
       if (searchQuery && !l.name.toLowerCase().includes(searchQuery.toLowerCase()) && !l.email?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       if (ownerFilter && l.owner_id !== ownerFilter) return false;
+      if (sourceFilter && l.source !== sourceFilter) return false;
       return true;
     });
-  }, [localLeads, searchQuery, ownerFilter]);
+  }, [localLeads, searchQuery, ownerFilter, sourceFilter]);
 
   const persistMove = useMutation({
     mutationFn: async (payload: {
@@ -203,8 +206,7 @@ function CRMPage() {
 
   async function archiveLead(leadId: string) {
     if(!confirm("Arquivar este lead? Ele não aparecerá mais no Kanban.")) return;
-    // @ts-ignore (deleted_at added via migration)
-    const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() }).eq('id', leadId);
+    const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() } as any).eq('id', leadId);
     if(error) { toast.error("Falha ao arquivar"); return; }
     toast.success("Lead arquivado com sucesso!");
     qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
@@ -255,6 +257,18 @@ function CRMPage() {
             {usersQ.data?.map((u: any) => (
               <option key={u.user_id} value={u.user_id}>{u.user_name}</option>
             ))}
+          </select>
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="h-9 w-40 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
+          >
+            <option value="">Todas as Origens</option>
+            <option value="whatsapp">WhatsApp / Telefone</option>
+            <option value="instagram">Instagram / Meta</option>
+            <option value="website">Site / Landing Page</option>
+            <option value="referral">Indicação</option>
+            <option value="walkin">Presencial</option>
           </select>
         </div>
       </div>
@@ -323,15 +337,15 @@ function Column({ stage, leads, slug, users, onArchive, onTransfer }: any) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5 shadow-lg" : "border-border/60"}`}
+      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5 " : "border-border/60"}`}
     >
       <div className="flex flex-col justify-center border-b border-border/50 bg-surface-alt/40 px-5 py-4 rounded-t-2xl">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2.5">
-            <span className="h-3 w-3 rounded-full ring-4 ring-surface shadow-sm" style={{ background: stage.color }} />
+            <span className="h-3 w-3 rounded-full ring-4 ring-surface " style={{ background: stage.color }} />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">{stage.name}</span>
           </div>
-          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border shadow-sm">
+          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border ">
             {leads.length}{(stage.is_won || stage.is_lost) && leads.length >= 50 ? "+" : ""}
           </span>
         </div>
@@ -380,10 +394,10 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
   return (
     <div
       {...(dragAttributes ?? {})}
-      className={`group relative cursor-grab rounded-xl border bg-surface p-4 shadow-sm transition-all active:cursor-grabbing ${
+      className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all active:cursor-grabbing ${
         dragging
-          ? "border-brand scale-105 z-50 rotate-3 opacity-95 shadow-xl"
-          : "border-border/60 hover:border-brand/50 hover:shadow-md"
+          ? "border-brand scale-105 z-50 rotate-3 opacity-95 "
+          : "border-border/60 hover:border-brand/50 "
       }`}
     >
       <div className="flex items-start gap-3">
@@ -425,7 +439,7 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
       {/* Quick Actions overlay (shows on hover) */}
       {!dragging && onArchive && onTransfer && (
         <div 
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-surface/90 backdrop-blur-sm p-1 rounded-md border border-border/50 shadow-sm"
+          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-surface/90 backdrop-blur-sm p-1 rounded-md border border-border/50 "
           onPointerDown={(e) => e.stopPropagation()} 
         >
           {transferMode ? (
@@ -639,7 +653,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-surface border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div className="w-full max-w-2xl bg-surface border border-border rounded-2xl overflow-hidden flex flex-col max-h-[85vh]">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface-alt/30">
           <div>
             <h2 className="text-lg font-bold text-foreground">Configurar Funil (Kanban)</h2>
@@ -654,7 +668,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
           <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Colunas do Pipeline</div>
           
           {localStages.map((s, idx) => (
-            <div key={s.id} className="flex items-center gap-4 bg-background p-3 rounded-lg border border-border shadow-sm">
+            <div key={s.id} className="flex items-center gap-4 bg-background p-3 rounded-lg border border-border ">
               <div className="flex flex-col gap-1 items-center justify-center px-1">
                 <button disabled={idx === 0} onClick={() => {
                   const arr = [...localStages];

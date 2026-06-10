@@ -63,7 +63,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
   if (data?.requireAcceptance && data.doc) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background p-4 sm:p-6 md:p-12">
-        <div className="flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl">
+        <div className="flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface ">
           <div className="border-b border-border bg-surface-alt/50 px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">

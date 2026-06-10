@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Clock, Eye, Send, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, Eye, Send, Share2, BookOpen } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
 import { fmtDate } from "@/components/ui/form";
 import { useState } from "react";
@@ -9,23 +9,38 @@ import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   loader: async ({ params: { agency_slug, slug } }) => {
-    const { data: agency } = await supabase.rpc("get_public_agency_by_slug", { _slug: agency_slug }).maybeSingle();
-    if (!agency) return { agency: null, post: null };
+    const { data: agency } = await (supabase as any)
+      .rpc("get_public_agency_by_slug", { _slug: agency_slug })
+      .maybeSingle();
+    if (!agency) return { agency: null, post: null, related: [] };
     
     const { data: post } = await supabase
       .from("blog_posts")
       .select("*")
-      .eq("agency_id", agency.id)
+      .eq("agency_id", (agency as any).id)
       .eq("slug", slug)
       .eq("status", "published")
       .maybeSingle();
       
     if (post) {
       // Background views increment
-      supabase.rpc("increment_post_views", { p_post_id: post.id }).then();
+      (supabase as any).rpc("increment_post_views", { p_post_id: post.id }).then();
+    }
+
+    let related: any[] = [];
+    if (post && post.tags && post.tags.length > 0) {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("slug, title, cover_image_url, published_at, views, excerpt")
+        .eq("agency_id", (agency as any).id)
+        .eq("status", "published")
+        .neq("id", post.id)
+        .overlaps("tags", post.tags)
+        .limit(3);
+      related = data || [];
     }
     
-    return { agency: agency as any, post: post as any };
+    return { agency: agency as any, post: post as any, related };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.post) return { meta: [{ title: `${params.slug} · Blog` }] };
@@ -73,7 +88,7 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
 
 function PublicBlogPage() {
   const { agency_slug } = Route.useParams();
-  const { agency, post } = Route.useLoaderData();
+  const { agency, post, related } = Route.useLoaderData();
 
   if (!post) return <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
     <div className="text-4xl mb-4">📭</div>
@@ -176,12 +191,42 @@ function PublicBlogPage() {
             )}
           </div>
         </article>
+
+        {/* Artigos Relacionados */}
+        {related && related.length > 0 && (
+          <div className="mt-20 pt-12 border-t border-border">
+            <h3 className="text-2xl font-black tracking-tight mb-8">Artigos Relacionados</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {related.map(r => (
+                <a key={r.slug} href={`/p/${agency_slug}/blog/${r.slug}`} className="group flex flex-col gap-3">
+                  <div className="aspect-video bg-surface-alt rounded-2xl overflow-hidden">
+                    {r.cover_image_url ? (
+                      <img src={r.cover_image_url} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-surface border border-border">
+                        <BookOpen className="w-8 h-8 opacity-20" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg leading-snug group-hover:text-brand transition-colors line-clamp-2">{r.title}</h4>
+                    {r.published_at && (
+                      <div className="text-[11px] text-muted-foreground uppercase tracking-wide mt-2">
+                        {fmtDate(r.published_at)}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Seção de Captura de Leads (Estilo Apple, grande e imersivo) */}
       <section id="fale-conosco" className="border-t border-border bg-surface-alt/50 pb-20 pt-20">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-foreground text-background rounded-[2.5rem] p-8 md:p-14 shadow-2xl relative overflow-hidden">
+          <div className="bg-foreground text-background rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
             
@@ -210,16 +255,33 @@ function PublicBlogPage() {
 function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: string }) {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
+  const [lgpdAccepted, setLgpdAccepted] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const submit = useMutation({
     mutationFn: async (e: React.FormEvent) => {
       e.preventDefault();
-      const { error } = await supabase.rpc("submit_public_lead", {
+      if (!lgpdAccepted) {
+        throw new Error("Você precisa aceitar as Políticas de Privacidade para continuar.");
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const utms = {
+        source: params.get("utm_source") || "",
+        medium: params.get("utm_medium") || "",
+        campaign: params.get("utm_campaign") || ""
+      };
+
+      let finalOrigin = origin;
+      if (utms.source || utms.medium || utms.campaign) {
+        finalOrigin += `\nUTM: ${utms.source}/${utms.medium}/${utms.campaign}`;
+      }
+
+      const { error } = await (supabase as any).rpc("submit_public_lead", {
         p_agency_id: agencyId,
         p_name: name,
         p_contact: contact,
-        p_origin: origin
+        p_origin: finalOrigin
       });
       if (error) throw error;
     },
@@ -236,7 +298,12 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
   }
 
   return (
-    <form onSubmit={submit.mutate} className="space-y-3">
+    <form onSubmit={submit.mutate} className="space-y-4">
+      {submit.isError && (
+        <div className="text-red-400 text-sm font-bold bg-red-400/10 p-3 rounded-xl border border-red-400/20">
+          {(submit.error as Error).message}
+        </div>
+      )}
       <input 
         required 
         value={name} 
@@ -251,10 +318,24 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
         placeholder="Seu WhatsApp ou E-mail" 
         className="w-full h-14 px-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
       />
+      
+      <div className="flex items-start gap-3 px-1">
+        <input 
+          type="checkbox" 
+          id="lgpd" 
+          checked={lgpdAccepted}
+          onChange={(e) => setLgpdAccepted(e.target.checked)}
+          className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-brand focus:ring-brand transition-all cursor-pointer"
+        />
+        <label htmlFor="lgpd" className="text-xs text-white/60 cursor-pointer select-none leading-relaxed">
+          Li e concordo com a coleta dos meus dados para atendimento comercial, conforme as Políticas de Privacidade.
+        </label>
+      </div>
+
       <button 
         type="submit" 
         disabled={submit.isPending}
-        className="w-full h-14 rounded-2xl bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50 mt-2"
+        className="w-full h-14 rounded-2xl bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50"
       >
         {submit.isPending ? "Enviando..." : "Quero Falar com um Consultor"}
       </button>

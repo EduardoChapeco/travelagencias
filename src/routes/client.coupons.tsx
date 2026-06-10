@@ -12,28 +12,49 @@ export const Route = createFileRoute("/client/coupons")({
 function Page() {
   const q = useQuery({
     queryKey: ["client-coupons"],
-    queryFn: async () =>
-      (
-        await supabase
-          .from("coupons")
-          .select("*")
-          .eq("is_active", true)
-          .order("created_at", { ascending: false })
-      ).data ?? [],
+    queryFn: async () => {
+      // 1. Identify authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      // 2. Get the client record(s) for this user to determine their agency
+      //    A user may belong to multiple agencies; we collect all agency_ids
+      const { data: clientRecords } = await supabase
+        .from("clients")
+        .select("agency_id")
+        .eq("user_id", user.id)
+        .is("deleted_at", null);
+
+      if (!clientRecords || clientRecords.length === 0) return [];
+
+      // Collect unique agency IDs
+      const agencyIds = [...new Set(clientRecords.map((c) => c.agency_id))];
+
+      // 3. Fetch only active coupons belonging to the client's agency (or agencies)
+      const { data: coupons } = await supabase
+        .from("coupons")
+        .select("*")
+        .in("agency_id", agencyIds)
+        .eq("is_active", true)
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false });
+
+      return coupons ?? [];
+    },
   });
 
   return (
     <>
       <PageHeader
         title="Cupons disponíveis"
-        description="Códigos promocionais ativos das agências"
+        description="Códigos promocionais ativos da sua agência"
       />
       {q.isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando…</p>
       ) : q.data?.length === 0 ? (
         <EmptyState
           title="Nenhum cupom disponível"
-          description="Quando uma agência criar promoções, elas aparecem aqui."
+          description="Quando sua agência criar promoções, elas aparecerão aqui."
         />
       ) : (
         <div className="grid gap-3 md:grid-cols-2">

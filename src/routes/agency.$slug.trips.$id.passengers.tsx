@@ -30,10 +30,11 @@ function PassengersPage() {
     enabled: !!agency,
     queryKey: ["passengers", id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("trip_passengers")
         .select("*")
         .eq("trip_id", id)
+        .is("deleted_at", null)
         .order("created_at");
       if (error) throw error;
       return data;
@@ -42,7 +43,7 @@ function PassengersPage() {
 
   const remove = useMutation({
     mutationFn: async (pid: string) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("trip_passengers")
         .update({ deleted_at: new Date().toISOString() })
         .eq("id", pid);
@@ -92,7 +93,7 @@ function PassengersPage() {
               </tr>
             </thead>
             <tbody>
-              {list.data.map((p) => (
+              {list.data.map((p: any) => (
                 <tr key={p.id} className="border-t border-border">
                   <td className="px-3 py-2.5">
                     <div className="font-medium">{p.full_name}</div>

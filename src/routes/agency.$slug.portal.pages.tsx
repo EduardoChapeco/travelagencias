@@ -1,7 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, GripVertical, Trash2, Edit2, X, ExternalLink, Globe } from "lucide-react";
+import {
+  Plus,
+  GripVertical,
+  Trash2,
+  Edit2,
+  X,
+  ExternalLink,
+  Globe,
+  Copy,
+  History,
+  LayoutTemplate,
+  Type,
+  Image as ImageIcon,
+  PhoneCall,
+  ListPlus,
+  Megaphone,
+  HelpCircle,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -19,31 +37,25 @@ import {
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { BlockRenderer } from "@/components/portal/BlockRenderer";
+import { PortalBlock, PortalBlockType, BLOCK_DEFAULTS } from "@/lib/cms-types";
+import { PortalBlockSchema } from "@/lib/cms-schemas";
+import { AILandingPageModal } from "@/components/ui/AILandingPageModal";
+import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages")({
   head: () => ({ meta: [{ title: "Páginas do portal · TravelOS" }] }),
   component: PagesPage,
 });
 
-export type PortalBlock =
-  | {
-      id: string;
-      type: "hero";
-      title: string;
-      subtitle: string;
-      bg_image_url: string;
-      cta_label: string;
-      cta_link: string;
-    }
-  | {
-      id: string;
-      type: "text";
-      content: string;
-      align: "left" | "right" | "center";
-      image_url: string;
-    }
-  | { id: string; type: "gallery"; images: string[] }
-  | { id: string; type: "contact"; title: string; text: string };
+// PortalBlock is now imported from @/lib/cms-types — do not redefine locally
 
 type PageRow = {
   id: string;
@@ -84,12 +96,20 @@ function PagesPage() {
   });
 
   async function togglePublish(p: PageRow) {
-    const { error } = await supabase
-      .from("portal_pages")
-      .update({ is_published: !p.is_published })
-      .eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success(p.is_published ? "Página despublicada" : "Página publicada");
+    if (p.is_published) {
+      // Despublicação: UPDATE direto (não precisa snapshottear versão)
+      const { error } = await supabase
+        .from("portal_pages")
+        .update({ is_published: false })
+        .eq("id", p.id);
+      if (error) return toast.error(error.message);
+      toast.success("Página despublicada");
+    } else {
+      // Publicação: usa a RPC que copia rascunho → published_blocks + salva versão
+      const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: p.id });
+      if (error) return toast.error(error.message);
+      toast.success("Página publicada com sucesso!");
+    }
     qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
   }
 
@@ -98,6 +118,13 @@ function PagesPage() {
     const { error } = await supabase.from("portal_pages").delete().eq("id", p.id);
     if (error) return toast.error(error.message);
     toast.success("Página excluída");
+    qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+  }
+
+  async function handleDuplicate(p: PageRow) {
+    const { error } = await (supabase as any).rpc("duplicate_portal_page", { p_page_id: p.id });
+    if (error) return toast.error(error.message);
+    toast.success("Página duplicada com sucesso");
     qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
   }
 
@@ -176,8 +203,16 @@ function PagesPage() {
                       {p.is_published ? "Despublicar" : "Publicar"}
                     </button>
                     <button
+                      onClick={() => handleDuplicate(p)}
+                      className="text-muted-foreground hover:text-foreground"
+                      title="Duplicar"
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </button>
+                    <button
                       onClick={() => deletePage(p)}
                       className="text-muted-foreground hover:text-destructive"
+                      title="Excluir"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -225,33 +260,27 @@ function PageEditorSheet({
   const [metaDesc, setMetaDesc] = useState(initialData?.seo?.meta_description ?? "");
 
   const [submitting, setSubmitting] = useState(false);
-  const [tab, setTab] = useState<"content" | "seo">("content");
+  const [tab, setTab] = useState<"content" | "seo" | "history">("content");
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
-  const addBlock = (type: PortalBlock["type"]) => {
+  const versionsQuery = useQuery({
+    enabled: !!initialData?.id,
+    queryKey: ["portal-page-versions", initialData?.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("portal_page_versions")
+        .select("*")
+        .eq("page_id", initialData!.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const addBlock = (type: PortalBlockType) => {
     const id = Math.random().toString(36).slice(2, 8);
-    let newBlock: PortalBlock;
-    switch (type) {
-      case "hero":
-        newBlock = {
-          id,
-          type: "hero",
-          title: "",
-          subtitle: "",
-          bg_image_url: "",
-          cta_label: "",
-          cta_link: "",
-        };
-        break;
-      case "text":
-        newBlock = { id, type: "text", content: "", align: "left", image_url: "" };
-        break;
-      case "gallery":
-        newBlock = { id, type: "gallery", images: [] };
-        break;
-      case "contact":
-        newBlock = { id, type: "contact", title: "Fale conosco", text: "" };
-        break;
-    }
+    // Uses BLOCK_DEFAULTS from cms-types — single source of truth for initial values
+    const newBlock: PortalBlock = { id, ...BLOCK_DEFAULTS[type] } as PortalBlock;
     setBlocks([...blocks, newBlock]);
   };
 
@@ -264,7 +293,7 @@ function PageEditorSheet({
   };
 
   const moveBlock = (index: number, direction: -1 | 1) => {
-    const newBlocks = [...blocks];
+    const newBlocks: PortalBlock[] = [...blocks];
     if (index + direction < 0 || index + direction >= newBlocks.length) return;
     const temp = newBlocks[index];
     newBlocks[index] = newBlocks[index + direction];
@@ -272,9 +301,21 @@ function PageEditorSheet({
     setBlocks(newBlocks);
   };
 
-  async function submit(e: React.FormEvent) {
+  async function saveDraftOnly(e: React.FormEvent) {
     e.preventDefault();
-    if (!title) return toast.error("O título é obrigatório");
+    try {
+      await saveDraftInternal();
+      toast.success("Rascunho salvo");
+      onSaved();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao salvar");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function saveDraftInternal() {
+    if (!title) throw new Error("O título é obrigatório");
     setSubmitting(true);
 
     const finalSlug = slug || slugify(title);
@@ -291,20 +332,59 @@ function PageEditorSheet({
       },
     };
 
-    const { error } = initialData
-      ? await supabase.from("portal_pages").update(payload).eq("id", initialData.id)
-      : await supabase.from("portal_pages").insert(payload);
+    const validation = PortalPagePayloadSchema.safeParse(payload);
+    if (!validation.success) {
+      const errorMsg = validation.error.errors
+        .map((e) => `${e.path.join(" -> ")}: ${e.message}`)
+        .join(" | ");
+      throw new Error(`Validação falhou: ${errorMsg}`);
+    }
 
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success(initialData ? "Página atualizada" : "Página criada");
-    onSaved();
+    let newPageId = initialData?.id;
+
+    if (initialData) {
+      const { error } = await supabase.from("portal_pages").update(payload).eq("id", initialData.id);
+      if (error) throw error;
+    } else {
+      const { data: newPage, error } = await supabase.from("portal_pages").insert(payload).select().single();
+      if (error) throw error;
+      newPageId = newPage?.id;
+    }
+    return newPageId;
+  }
+
+  async function publishPage(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      const pageId = await saveDraftInternal();
+      if (!pageId) return;
+
+      const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: pageId });
+      if (error) throw error;
+
+      toast.success("Página publicada e versão salva!");
+      onSaved();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao publicar");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function revertVersion(v: any) {
+    if (!confirm("Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.")) return;
+    setTitle(v.title);
+    setBlocks(v.blocks || []);
+    setMetaTitle(v.seo?.meta_title || "");
+    setMetaDesc(v.seo?.meta_description || "");
+    setTab("content");
+    toast.success("Versão carregada no editor. Salve para confirmar.");
   }
 
   return (
     <div className="fixed inset-0 z-50 flex bg-overlay backdrop-blur-sm p-4 md:p-8" onClick={onClose}>
       <div
-        className="flex h-full w-full flex-col rounded-2xl overflow-hidden border border-border shadow-2xl bg-surface"
+        className="flex h-full w-full flex-col rounded-2xl overflow-hidden border border-border bg-surface"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-4 bg-surface-alt shrink-0">
@@ -312,7 +392,7 @@ function PageEditorSheet({
             <h2 className="text-base font-semibold tracking-tight">
               {initialData ? "Editar Página" : "Nova Página"}
             </h2>
-            <StatusBadge tone="primary">Live Preview</StatusBadge>
+            <StatusBadge tone="info">Live Preview</StatusBadge>
           </div>
           <button
             type="button"
@@ -342,10 +422,49 @@ function PageEditorSheet({
             >
               SEO
             </button>
+            {initialData && (
+              <button
+                type="button"
+                onClick={() => setTab("history")}
+                className={`py-3 px-2 text-xs font-medium border-b-2 ${tab === "history" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              >
+                Histórico
+              </button>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-          <form id="page-form" onSubmit={submit} className="space-y-6">
+          <form id="page-form" className="space-y-6">
+            {tab === "history" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold">Versões Salvas</h3>
+                  <p className="text-xs text-muted-foreground">Últimas alterações</p>
+                </div>
+                {versionsQuery.isLoading && <div className="text-xs text-muted-foreground">Carregando histórico...</div>}
+                {versionsQuery.data?.length === 0 && <div className="text-xs text-muted-foreground">Nenhuma versão salva ainda.</div>}
+                {versionsQuery.data?.map((v) => (
+                  <div key={v.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-sm font-medium">{v.title}</span>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          {new Date(v.created_at).toLocaleString()}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => revertVersion(v)}
+                        className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                      >
+                        <History className="w-3 h-3" /> Reverter
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {tab === "seo" && (
               <div className="space-y-4">
                 <Field label="Título SEO" hint="Substitui o título padrão na aba do navegador">
@@ -389,25 +508,58 @@ function PageEditorSheet({
                 </Field>
 
                 <div className="space-y-4 pt-4 border-t border-border">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold">Construtor de Blocos</h3>
-                    <div className="flex gap-2">
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            addBlock(e.target.value as any);
-                            e.target.value = ""; // reset
-                          }
-                        }}
-                        className="h-8 rounded-md border border-input bg-surface px-2 text-xs outline-none focus:border-border-strong"
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <h3 className="text-sm font-semibold">Construtor de Blocos</h3>
+                      <button
+                        type="button"
+                        onClick={() => setAiModalOpen(true)}
+                        className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/20 transition-colors"
                       >
-                        <option value="">+ Adicionar bloco...</option>
-                        <option value="hero">Hero (Capa principal)</option>
-                        <option value="text">Texto com imagem</option>
-                        <option value="gallery">Galeria de fotos</option>
-                        <option value="contact">Contato (Infos)</option>
-                      </select>
+                        <Sparkles className="h-3.5 w-3.5" /> Gerar com IA
+                      </button>
                     </div>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          type="button"
+                          className="flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-semibold shadow-sm hover:bg-brand/90 transition-colors"
+                        >
+                          <Plus className="h-3.5 w-3.5" /> Adicionar Bloco
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Layout Básico</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => addBlock("hero")}>
+                          <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero (Capa principal)
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => addBlock("text")}>
+                          <Type className="w-4 h-4 mr-2 text-muted-foreground" /> Texto com imagem
+                        </DropdownMenuItem>
+                        
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Módulos Específicos</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => addBlock("gallery")}>
+                          <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de fotos
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => addBlock("features")}>
+                          <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais (Features)
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => addBlock("faq")}>
+                          <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas Frequentes (FAQ)
+                        </DropdownMenuItem>
+                        
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel>Conversão</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => addBlock("cta")}>
+                          <Megaphone className="w-4 h-4 mr-2 text-brand" /> Call to Action (Faixa)
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => addBlock("contact")}>
+                          <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato Integrado
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   {blocks.length === 0 && (
@@ -425,7 +577,7 @@ function PageEditorSheet({
                     {blocks.map((block, index) => (
                       <div
                         key={block.id}
-                        className="rounded-lg border border-border bg-surface-alt/20 shadow-sm overflow-hidden"
+                        className="rounded-lg border border-border bg-surface-alt/20 overflow-hidden"
                       >
                         <div className="flex items-center justify-between bg-surface-alt/40 px-3 py-2 border-b border-border">
                           <div className="flex items-center gap-2">
@@ -583,6 +735,164 @@ function PageEditorSheet({
                               </p>
                             </>
                           )}
+
+                          {block.type === "features" && (
+                            <div className="space-y-4">
+                              <Field label="Título da Seção">
+                                <Input
+                                  value={block.title}
+                                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                  placeholder="Ex: Nossos diferenciais"
+                                />
+                              </Field>
+                              <div className="space-y-2">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Itens da Grade</label>
+                                {(block.items || []).map((item, itemIdx) => (
+                                  <div key={itemIdx} className="grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-start border border-border p-2 rounded-lg bg-surface">
+                                    <Input
+                                      className="w-12 text-center px-1"
+                                      placeholder="Icon"
+                                      value={item.icon}
+                                      onChange={(e) => {
+                                        const newItems = [...block.items];
+                                        newItems[itemIdx].icon = e.target.value;
+                                        updateBlock(block.id, { items: newItems });
+                                      }}
+                                    />
+                                    <Input
+                                      placeholder="Título"
+                                      value={item.title}
+                                      onChange={(e) => {
+                                        const newItems = [...block.items];
+                                        newItems[itemIdx].title = e.target.value;
+                                        updateBlock(block.id, { items: newItems });
+                                      }}
+                                    />
+                                    <Input
+                                      placeholder="Descrição breve"
+                                      value={item.description}
+                                      onChange={(e) => {
+                                        const newItems = [...block.items];
+                                        newItems[itemIdx].description = e.target.value;
+                                        updateBlock(block.id, { items: newItems });
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newItems = block.items.filter((_, idx) => idx !== itemIdx);
+                                        updateBlock(block.id, { items: newItems });
+                                      }}
+                                      className="p-2 text-muted-foreground hover:text-destructive"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newItems = [...(block.items || []), { icon: "✨", title: "Novo item", description: "Descrição" }];
+                                    updateBlock(block.id, { items: newItems });
+                                  }}
+                                  className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
+                                >
+                                  + Adicionar Item
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {block.type === "cta" && (
+                            <div className="space-y-4">
+                              <Field label="Título de Impacto (Headline)">
+                                <Input
+                                  value={block.title}
+                                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                />
+                              </Field>
+                              <Field label="Subtítulo">
+                                <Input
+                                  value={block.subtitle}
+                                  onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                                />
+                              </Field>
+                              <div className="grid grid-cols-2 gap-3">
+                                <Field label="Botão (Label)">
+                                  <Input
+                                    value={block.button_label}
+                                    onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
+                                  />
+                                </Field>
+                                <Field label="Botão (Link)">
+                                  <Input
+                                    value={block.button_link}
+                                    onChange={(e) => updateBlock(block.id, { button_link: e.target.value })}
+                                  />
+                                </Field>
+                              </div>
+                            </div>
+                          )}
+
+                          {block.type === "faq" && (
+                            <div className="space-y-4">
+                              <Field label="Título Principal">
+                                <Input
+                                  value={block.title}
+                                  onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                />
+                              </Field>
+                              <div className="space-y-3">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Perguntas e Respostas</label>
+                                {(block.items || []).map((item, itemIdx) => (
+                                  <div key={itemIdx} className="flex gap-2 items-start border border-border p-3 rounded-lg bg-surface">
+                                    <div className="flex-1 space-y-2">
+                                      <Input
+                                        placeholder="Pergunta"
+                                        className="font-medium"
+                                        value={item.question}
+                                        onChange={(e) => {
+                                          const newItems = [...block.items];
+                                          newItems[itemIdx].question = e.target.value;
+                                          updateBlock(block.id, { items: newItems });
+                                        }}
+                                      />
+                                      <Textarea
+                                        placeholder="Resposta"
+                                        rows={2}
+                                        value={item.answer}
+                                        onChange={(e) => {
+                                          const newItems = [...block.items];
+                                          newItems[itemIdx].answer = e.target.value;
+                                          updateBlock(block.id, { items: newItems });
+                                        }}
+                                      />
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newItems = block.items.filter((_, idx) => idx !== itemIdx);
+                                        updateBlock(block.id, { items: newItems });
+                                      }}
+                                      className="p-2 text-muted-foreground hover:text-destructive"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newItems = [...(block.items || []), { question: "Nova Pergunta?", answer: "Sua resposta aqui" }];
+                                    updateBlock(block.id, { items: newItems });
+                                  }}
+                                  className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
+                                >
+                                  + Adicionar Pergunta
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -594,8 +904,11 @@ function PageEditorSheet({
                 <GhostButton type="button" onClick={onClose} disabled={submitting}>
                   Cancelar
                 </GhostButton>
-                <PrimaryButton type="submit" disabled={submitting}>
-                  {submitting ? "Salvando..." : "Salvar Página"}
+                <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting}>
+                  Salvar Rascunho
+                </GhostButton>
+                <PrimaryButton type="button" onClick={publishPage} disabled={submitting}>
+                  {submitting ? "Salvando..." : "Publicar Página"}
                 </PrimaryButton>
               </div>
             </form>
@@ -605,7 +918,7 @@ function PageEditorSheet({
         {/* RIGHT: Live Preview */}
         <div className="w-1/2 bg-background flex flex-col relative overflow-hidden">
           <div className="absolute inset-0 overflow-y-auto pointer-events-none p-4">
-            <div className="border border-border/50 rounded-2xl bg-surface min-h-[800px] shadow-2xl p-4 md:p-8 overflow-hidden scale-[0.85] origin-top">
+            <div className="border border-border/50 rounded-2xl bg-surface min-h-[800px] p-4 md:p-8 overflow-hidden scale-[0.85] origin-top">
               {/* Fake header do portal */}
               <div className="h-16 flex items-center justify-center opacity-50 mb-8 border-b border-border">
                  Menu do Portal 
@@ -622,6 +935,16 @@ function PageEditorSheet({
           </div>
         </div>
       </div>
+      <AILandingPageModal 
+        open={aiModalOpen} 
+        onOpenChange={setAiModalOpen} 
+        onGenerate={(newBlocks: any[]) => {
+          setBlocks([...blocks, ...newBlocks]);
+          if (!title) {
+            setTitle("Landing Page Gerada por IA");
+          }
+        }} 
+      />
     </div>
   </div>
   );

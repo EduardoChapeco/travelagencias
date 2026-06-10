@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, fmtDate, Textarea } from "@/components/ui/form";
+import { PrimaryButton, fmtDate, Textarea, GhostButton } from "@/components/ui/form";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({
@@ -24,19 +24,19 @@ function CorporateApprovePage() {
     queryKey: ["corporate-rfp-approve", token],
     queryFn: async () => {
       // Usamos policy publica com select true
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("corporate_rfps")
         .select("*, agency:agencies(slug, name), client:clients(full_name)")
         .eq("approval_token", token)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return data as any;
     },
   });
 
   const updateStatus = useMutation({
     mutationFn: async ({ status, reason }: { status: string; reason?: string }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("corporate_rfps")
         .update({ 
           status, 
@@ -71,7 +71,7 @@ function CorporateApprovePage() {
       </header>
 
       <main className="flex-1 max-w-3xl mx-auto w-full p-6 md:p-12">
-        <div className="bg-surface border border-border rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-surface border border-border rounded-2xl overflow-hidden">
           <div className="p-8 border-b border-border">
             <div className="flex items-center gap-2 text-sm text-brand font-semibold mb-3">
               <Briefcase className="h-4 w-4" /> REQUISIÇÃO CORPORATIVA

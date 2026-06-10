@@ -296,10 +296,13 @@ function CardView({
   const done = checklist.filter((c) => c.done).length;
   const hasPax = (card.passengers_count ?? 0) > 0;
 
+  const daysToDeparture = card.departure_date ? Math.ceil((new Date(card.departure_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : null;
+  const isUrgent = daysToDeparture !== null && daysToDeparture >= 0 && daysToDeparture <= 3;
+
   return (
     <div
       className={`group relative rounded-xl border bg-surface transition-all ${
-        dragging ? "border-brand scale-105 z-50 rotate-2 opacity-90" : "border-border/50 hover:border-brand/40"
+        dragging ? "border-brand scale-105 z-50 rotate-2 opacity-90" : isUrgent ? "border-danger/60 shadow-sm hover:border-danger" : "border-border/50 hover:border-brand/40"
       }`}
     >
       {/* Drag handle area */}
@@ -344,10 +347,13 @@ function CardView({
       </div>
 
       {/* Alerts */}
-      {card.alerts && card.alerts.length > 0 && (
-        <div className="mx-4 mb-3 flex items-start gap-1.5 rounded-md border border-warning/30 bg-warning-bg/50 px-2 py-1.5 text-[10px] font-semibold text-warning">
+      {(isUrgent || (card.alerts && card.alerts.length > 0)) && (
+        <div className={`mx-4 mb-3 flex items-start gap-1.5 rounded-md border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? 'border-danger/30 bg-danger/5 text-danger' : 'border-warning/30 bg-warning-bg/50 text-warning'}`}>
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-          <div className="flex flex-col">{card.alerts.map((a, i) => <span key={i}>{a}</span>)}</div>
+          <div className="flex flex-col">
+            {isUrgent && <span>Embarque em {daysToDeparture === 0 ? "HOJE" : `${daysToDeparture} dias`}!</span>}
+            {card.alerts?.map((a, i) => <span key={i}>{a}</span>)}
+          </div>
         </div>
       )}
 

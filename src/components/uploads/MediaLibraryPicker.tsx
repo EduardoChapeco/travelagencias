@@ -54,7 +54,7 @@ export function MediaLibraryPicker({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex w-full max-w-4xl max-h-[80vh] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl">
+      <div className="flex w-full max-w-4xl max-h-[80vh] flex-col overflow-hidden rounded-2xl border border-border bg-surface ">
         <div className="flex items-center justify-between border-b border-border p-4">
           <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-brand" /> Media Library Central
@@ -109,7 +109,7 @@ export function MediaLibraryPicker({
                   >
                     <img src={url} alt={f.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-background/0 group-hover:bg-background/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <div className="bg-brand text-brand-foreground rounded-full p-2 shadow-lg">
+                      <div className="bg-brand text-brand-foreground rounded-full p-2 ">
                         <Check className="w-4 h-4" />
                       </div>
                     </div>

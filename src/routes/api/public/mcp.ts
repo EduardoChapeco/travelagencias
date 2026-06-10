@@ -1,4 +1,5 @@
 import { json } from "@tanstack/react-start";
+// @ts-ignore
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -6,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 // Implements JSON-RPC 2.0 for AI agent integration (OpenAI, Claude, Lovable, Google)
 
 export const APIRoute = createAPIFileRoute("/api/public/mcp")({
-  POST: async ({ request }) => {
+  POST: async ({ request }: any) => {
     try {
       const body = await request.json();
 
@@ -115,7 +116,7 @@ export const APIRoute = createAPIFileRoute("/api/public/mcp")({
               result: { content: [{ type: "text", text: "Agency not found." }] },
             });
 
-          let q = supabase
+          let q = (supabase as any)
             .from("knowledge_articles")
             .select("title, slug, content")
             .eq("agency_id", agency.id)
@@ -128,7 +129,7 @@ export const APIRoute = createAPIFileRoute("/api/public/mcp")({
           const { data, error } = await q.limit(5);
           if (error) throw error;
 
-          const text = data
+          const text = (data as any[])
             .map(
               (d) =>
                 `Title: ${d.title}\nURL: /p/${args.agency_slug}/kb/${d.slug}\nExcerpt: ${d.content?.substring(0, 200)}...`,

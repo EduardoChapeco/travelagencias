@@ -99,7 +99,7 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-memories", id],
     queryFn: async () => {
-      const { data } = await supabase.from("trip_memories").select("id, image_url, created_at").eq("trip_id", id).order("created_at", { ascending: false });
+      const { data } = await (supabase as any).from("trip_memories").select("id, image_url, created_at").eq("trip_id", id).order("created_at", { ascending: false });
       return data ?? [];
     },
   });
@@ -107,7 +107,7 @@ function ClientTripDetail() {
   const reqCancel = useMutation({
     mutationFn: async () => {
       if (!userClientInfo?.clients[0]) throw new Error("Cliente principal não detectado");
-      const { error } = await supabase.rpc("request_trip_cancellation", {
+      const { error } = await (supabase as any).rpc("request_trip_cancellation", {
         p_trip_id: tripQ.data.id,
         p_client_id: userClientInfo.clients[0].id,
         p_reason: cancelReason
@@ -131,7 +131,7 @@ function ClientTripDetail() {
         image_url: u
       }));
       if (inserts.length === 0) return;
-      const { error } = await supabase.from("trip_memories").insert(inserts);
+      const { error } = await (supabase as any).from("trip_memories").insert(inserts);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
@@ -176,7 +176,7 @@ function ClientTripDetail() {
               {TRIP_STATUS[trip.status] ?? trip.status}
             </StatusBadge>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-sm">{trip.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight ">{trip.title}</h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-semibold text-white/90">
             {trip.destination && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-light" /> {trip.destination}</span>}
             {trip.travel_start && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4 text-brand-light" /> {fmtDate(trip.travel_start)} → {fmtDate(trip.travel_end)}</span>}
@@ -200,7 +200,7 @@ function ClientTripDetail() {
         {activeTab === "resumo" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {daysToTrip !== null && daysToTrip > 0 && (
-              <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between shadow-lg">
+              <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between ">
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest opacity-80">Contagem Regressiva</div>
                   <div className="text-sm font-medium mt-1">Sua viagem se aproxima! Prepare as malas.</div>
@@ -330,7 +330,7 @@ function ClientTripDetail() {
         {/* ABA: EXPLORAR (IA) */}
         {activeTab === "explorar" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
               <Compass className="w-10 h-10 mb-4 opacity-90" />
               <h2 className="text-3xl font-black tracking-tight mb-2">Seu Guia Inteligente</h2>
@@ -408,7 +408,7 @@ function ClientTripDetail() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1">
-                <div className="bg-foreground rounded-3xl p-6 text-background shadow-xl">
+                <div className="bg-foreground rounded-3xl p-6 text-background ">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-background/50 mb-2">Valor do Pacote</h3>
                   <div className="text-3xl font-black tracking-tight mb-6">{money(trip.total_sale, trip.currency)}</div>
                   
@@ -517,7 +517,7 @@ function ClientTripDetail() {
       {/* Modal Cancelamento */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-surface rounded-3xl w-full max-w-lg shadow-2xl border border-border overflow-hidden">
+          <div className="bg-surface rounded-3xl w-full max-w-lg border border-border overflow-hidden">
             <div className="bg-danger p-6 text-center text-danger-foreground">
               <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
               <h3 className="text-xl font-black tracking-tight">Solicitação de Cancelamento</h3>
@@ -573,7 +573,7 @@ function TabButton({ label, icon, active, onClick }: { label: string, icon: Reac
 
 function AppWidget({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="rounded-3xl bg-surface p-6 border border-border shadow-sm">
+    <div className="rounded-3xl bg-surface p-6 border border-border ">
       <div className="mb-5 flex items-center gap-3">
         {icon}
         <h3 className="text-sm font-black text-foreground tracking-tight">{title}</h3>

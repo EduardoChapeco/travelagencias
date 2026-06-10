@@ -32,6 +32,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
+import { AIItineraryModal, type AIItineraryDay } from "@/components/ui/AIItineraryModal";
 
 const SMALL_INPUT =
   "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
@@ -141,6 +142,7 @@ function ProposalEditor() {
   });
 
   const [draft, setDraft] = useState<Proposal | null>(null);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
   useEffect(() => {
     if (propQ.data) {
       setDraft({
@@ -719,6 +721,14 @@ function ProposalEditor() {
           </Accordion>
 
           <Accordion title={`Itinerário (${draft.itinerary.length} dias)`}>
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => setAiModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/20 transition-colors"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> Gerar com IA
+              </button>
+            </div>
             <ItineraryEditor items={draft.itinerary} onChange={(it) => save({ itinerary: it })} />
             <AddBtn
               onClick={() =>
@@ -826,6 +836,22 @@ function ProposalEditor() {
           </ScalableCanvas>
         </main>
       </div>
+
+      <AIItineraryModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        onGenerate={(days) => {
+          const formattedDays = days.map((d) => ({
+            id: uid(),
+            day: d.day || "",
+            title: d.title || "",
+            description: d.description || "",
+          }));
+          // Append to existing, or replace? Usually better to append if there are items, but replacing is fine.
+          // Let's replace for simplicity if it's empty, or append if not.
+          save({ itinerary: [...(draft.itinerary || []), ...formattedDays] });
+        }}
+      />
     </div>
   );
 }
@@ -1077,28 +1103,66 @@ function SortableItDay({
   onRemove: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
+  const [refining, setRefining] = useState(false);
+
+  async function refineText() {
+    if (!item.description && !item.title) return;
+    setRefining(true);
+    toast.loading("Refinando texto...", { id: `refine-${item.id}` });
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+        body: {
+          action: "completion",
+          prompt: `Melhore este trecho de roteiro de viagem. Torne mais atrativo, luxuoso e vendedor.\n\nTítulo: ${item.title}\nDescrição: ${item.description}\n\nRetorne EXATAMENTE um JSON com as chaves "title" e "description". Sem markdown.`,
+          systemPrompt: "Você é um copywriter de turismo premium. Retorne apenas JSON.",
+          modelPreference: "smart"
+        }
+      });
+      if (error) throw error;
+      const text = data?.result || "";
+      const match = text.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(match ? match[0] : text);
+      onChange({ ...item, title: parsed.title || item.title, description: parsed.description || item.description });
+      toast.success("Texto melhorado!", { id: `refine-${item.id}` });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao refinar", { id: `refine-${item.id}` });
+    } finally {
+      setRefining(false);
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className="mb-2 flex gap-1 rounded-md border border-border bg-surface-alt/40 p-2"
+      className="mb-2 flex gap-1 rounded-md border border-border bg-surface-alt/40 p-2 relative group"
     >
-      <button {...attributes} {...listeners} className="cursor-grab text-muted-foreground">
+      <button {...attributes} {...listeners} className="cursor-grab text-muted-foreground mt-1">
         <GripVertical className="h-4 w-4" />
       </button>
       <div className="flex-1 space-y-1">
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-1 relative">
           <Inp ph="Dia" value={item.day} onChange={(v) => onChange({ ...item, day: v })} />
           <Inp ph="Título" value={item.title} onChange={(v) => onChange({ ...item, title: v })} />
         </div>
-        <textarea
-          className="min-h-[50px] w-full rounded-md border border-input bg-surface px-2.5 py-1.5 text-sm outline-none transition-colors focus:border-border-strong"
-          placeholder="Descrição"
-          defaultValue={item.description}
-          onBlur={(e) => onChange({ ...item, description: e.target.value })}
-        />
+        <div className="relative">
+          <textarea
+            className="min-h-[50px] w-full rounded-md border border-input bg-surface px-2.5 py-1.5 text-sm outline-none transition-colors focus:border-border-strong"
+            placeholder="Descrição"
+            defaultValue={item.description}
+            onBlur={(e) => onChange({ ...item, description: e.target.value })}
+          />
+          <button
+            onClick={refineText}
+            disabled={refining}
+            title="Melhorar com IA"
+            className="absolute bottom-2 right-2 p-1.5 rounded-md bg-brand/10 text-brand hover:bg-brand/20 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+          >
+            <Sparkles className={`h-3.5 w-3.5 ${refining ? "animate-pulse" : ""}`} />
+          </button>
+        </div>
       </div>
-      <button onClick={onRemove} className="text-muted-foreground hover:text-danger">
+      <button onClick={onRemove} className="text-muted-foreground hover:text-danger mt-1">
         <Trash2 className="h-3.5 w-3.5" />
       </button>
     </div>

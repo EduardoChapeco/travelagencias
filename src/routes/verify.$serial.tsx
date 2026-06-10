@@ -38,7 +38,6 @@ function Page() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    // @ts-expect-error Tipagem pendente de atualização no types.ts
     supabase
       .rpc("verify_contract", { _serial: serial as string })
       .then(({ data, error }: { data: any; error: any }) => {

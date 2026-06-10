@@ -113,10 +113,10 @@ function CorporatePage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {rfps.map((rfp) => (
-          <div key={rfp.id} className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3">
-            <div className="flex justify-between items-start">
+          <div key={rfp.id} className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors">
+            <Link to={`/agency/${slug}/corporate/${rfp.id}`} className="flex justify-between items-start group">
               <div>
-                <h3 className="font-semibold text-foreground">{rfp.title}</h3>
+                <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">{rfp.title}</h3>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
                   <Building2 className="h-3.5 w-3.5" />
                   {rfp.client?.full_name}
@@ -125,7 +125,7 @@ function CorporatePage() {
               <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
                 {STATUS_MAP[rfp.status]?.label || rfp.status}
               </StatusBadge>
-            </div>
+            </Link>
 
             <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
               <div>

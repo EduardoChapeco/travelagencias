@@ -20,6 +20,7 @@ import {
   LogOut,
   Globe,
   Briefcase,
+  Radar,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -30,6 +31,7 @@ type NavItem = { label: string; segment: string; icon: typeof LayoutDashboard; e
 const items: NavItem[] = [
   { label: "Dashboard", segment: "", icon: LayoutDashboard, exact: true },
   { label: "CRM", segment: "crm", icon: Users },
+  { label: "Espião de Mercado", segment: "competitors", icon: Radar },
   { label: "Cotações", segment: "proposals", icon: FileText },
   { label: "Viagens", segment: "trips", icon: Luggage },
   { label: "Embarques", segment: "boarding", icon: Plane },

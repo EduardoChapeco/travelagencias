@@ -16,6 +16,7 @@ import {
   Zap,
   Shield,
   Palette,
+  Webhook,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +34,7 @@ const items = [
   { to: "/admin/plans", label: "Planos", icon: Zap },
   { to: "/admin/policies", label: "Políticas & LGPD", icon: Shield },
   { to: "/admin/brand", label: "Marca Global", icon: Palette },
+  { to: "/admin/integrations", label: "Integrações", icon: Webhook },
   { to: "/admin/audit", label: "Auditoria", icon: ScrollText },
 ];
 

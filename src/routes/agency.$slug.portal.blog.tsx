@@ -1,7 +1,7 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Eye, Clock, Tag, BookOpen, ExternalLink, BarChart2, Edit2, X, Search } from "lucide-react";
+import { Plus, Eye, Clock, Tag, BookOpen, ExternalLink, BarChart2, Edit2, X, Search, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -256,7 +256,6 @@ function BlogSheet({
   const [metaDesc, setMetaDesc] = useState(post?.seo?.meta_description ?? "");
   const [seoOpen, setSeoOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [editorMode, setEditorMode] = useState<"simple" | "advanced">("simple");
 
   // Load full content if editing
   useEffect(() => {
@@ -391,31 +390,9 @@ function BlogSheet({
             <div className="rounded-xl border border-border p-4 bg-surface-alt/50 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
-                <div className="flex bg-surface rounded-full p-1 border border-border">
-                  <button 
-                    type="button" 
-                    onClick={() => setEditorMode("simple")}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-                  >Simples</button>
-                  <button 
-                    type="button" 
-                    onClick={() => setEditorMode("advanced")}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-                  >Avançado</button>
-                </div>
               </div>
 
-              {editorMode === "simple" ? (
-                <Textarea 
-                  rows={8} 
-                  value={content} 
-                  onChange={(e) => setContent(e.target.value)} 
-                  placeholder="Escreva seu artigo aqui... Dica: Você pode escrever igual num post de Instagram, os parágrafos serão preservados na visualização!"
-                  className="font-medium text-sm leading-relaxed"
-                />
-              ) : (
-                <RichTextEditor value={content} onChange={setContent} />
-              )}
+              <RichTextEditor value={content} onChange={setContent} />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">

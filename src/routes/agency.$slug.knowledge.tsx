@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, BookOpen } from "lucide-react";
+import { Plus, BookOpen, Edit2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/agency/$slug/knowledge")({
   component: KnowledgePage,
 });
 
-type Article = { id: string; title: string; category: string | null; is_internal: boolean; content: string | null; tags: string[] };
+type Article = { id: string; title: string; slug?: string; views?: number; category: string | null; is_internal: boolean; content: string | null; tags: string[] };
 
 function KnowledgePage() {
   const { agency } = useAgency();
@@ -27,7 +27,7 @@ function KnowledgePage() {
     enabled: !!agency,
     queryKey: ["knowledge", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("knowledge_articles").select("id, title, slug, views, category, is_internal, content, tags").eq("agency_id", agency!.id).order("created_at", { ascending: false });
+      const { data, error } = await (supabase as any).from("knowledge_articles").select("id, title, slug, views, category, is_internal, content, tags").eq("agency_id", agency!.id).order("created_at", { ascending: false });
       if (error) throw error;
       return data as Article[];
     },
@@ -127,8 +127,8 @@ function ArticleSheet({ agencyId, agencySlug, initialData, onClose, onSaved }: {
     };
 
     const { error } = initialData
-      ? await supabase.from("knowledge_articles").update(payload).eq("id", initialData.id)
-      : await supabase.from("knowledge_articles").insert({ ...payload, created_by: u.user?.id ?? null });
+      ? await (supabase as any).from("knowledge_articles").update(payload).eq("id", initialData.id)
+      : await (supabase as any).from("knowledge_articles").insert({ ...payload, created_by: u.user?.id ?? null });
 
     setSubmitting(false);
     if (error) return toast.error(error.message);

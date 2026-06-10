@@ -11,6 +11,14 @@ export const Route = createFileRoute("/client/consents")({
   component: ClientConsentsPage,
 });
 
+const KIND_LABELS: Record<string, string> = {
+  terms: "Termos de Uso",
+  privacy: "Política de Privacidade",
+  cookies: "Política de Cookies",
+  lgpd: "Termo de Consentimento LGPD",
+  dpa: "Acordo de Processamento de Dados (DPA)"
+};
+
 function ClientConsentsPage() {
   const qc = useQueryClient();
 
@@ -27,25 +35,25 @@ function ClientConsentsPage() {
       if (!clients || clients.length === 0) return { acceptances: [], missing: [] };
       const agencyIds = [...new Set(clients.map((c) => c.agency_id))];
 
-      // Pegar documentos obrigatórios dessas agências (LGPD, Termos, etc)
-      const { data: policies } = await supabase
+      // Pegar documentos obrigatórios vigentes (publicados)
+      const { data: policies } = await (supabase as any)
         .from("policy_documents")
-        .select("id, title, version, is_required, url")
-        .in("agency_id", agencyIds)
-        .eq("status", "published");
+        .select("id, kind, version, content_md, effective_at, is_published")
+        .eq("is_published", true);
 
       // Pegar os aceites deste usuário
-      const { data: acceptances } = await supabase
+      const { data: acceptances } = await (supabase as any)
         .from("legal_acceptances")
-        .select("id, document_id, accepted_at, ip_address, policy_documents(title, version)")
+        .select("id, document_id, accepted_at, ip_address, policy_documents(kind, version)")
         .eq("user_id", u.user.id);
 
-      const accMap = new Set(acceptances?.map((a) => a.document_id));
+      const accMap = new Set((acceptances as any[])?.map((a) => a.document_id));
 
-      const missing = (policies || []).filter((p) => !accMap.has(p.id) && p.is_required);
+      // Todos os publicados são obrigatórios para os clientes
+      const missing = ((policies as any[]) || []).filter((p) => !accMap.has(p.id));
 
       return {
-        acceptances: acceptances || [],
+        acceptances: (acceptances as any[]) || [],
         missing: missing || [],
         userId: u.user.id,
       };
@@ -57,10 +65,10 @@ function ClientConsentsPage() {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error("Não autenticado");
 
-      const { error } = await supabase.from("legal_acceptances").insert({
-        document_id: docId,
-        user_id: u.user.id,
-        context: "client_portal",
+      // Usar a RPC que grava IP/UA forenses e funciona com a restrição de RLS
+      const { error } = await (supabase as any).rpc("record_legal_acceptance", {
+        _document_id: docId,
+        _context: "client_portal",
       });
       if (error) throw error;
     },
@@ -68,7 +76,7 @@ function ClientConsentsPage() {
       toast.success("Documento aceito com sucesso");
       qc.invalidateQueries({ queryKey: ["client-consents"] });
     },
-    onError: (err) => {
+    onError: (err: any) => {
       toast.error(err.message);
     },
   });
@@ -96,7 +104,7 @@ function ClientConsentsPage() {
 
       {q.data && q.data.missing.length > 0 && (
         <div className="mb-8 space-y-3">
-          {q.data.missing.map((m) => (
+          {q.data.missing.map((m: any) => (
             <div
               key={m.id}
               className="rounded-xl border border-warning/50 bg-warning-bg/10 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -105,7 +113,7 @@ function ClientConsentsPage() {
                 <FileText className="h-5 w-5 text-warning shrink-0" />
                 <div>
                   <h4 className="text-sm font-bold text-foreground">
-                    {m.title}{" "}
+                    {KIND_LABELS[m.kind] || m.kind}{" "}
                     <span className="text-xs font-normal text-muted-foreground ml-1">
                       v{m.version}
                     </span>
@@ -114,20 +122,10 @@ function ClientConsentsPage() {
                     Para continuar utilizando os serviços da agência, é necessário revisar e aceitar
                     a versão mais recente deste documento.
                   </p>
-                  {m.url && (
-                    <a
-                      href={m.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs text-primary hover:underline mt-2 inline-block font-medium"
-                    >
-                      Ler documento completo
-                    </a>
-                  )}
                 </div>
               </div>
               <PrimaryButton
-                isLoading={acceptM.isPending}
+                disabled={acceptM.isPending}
                 onClick={() => acceptM.mutate(m.id)}
                 className="w-full md:w-auto shrink-0 bg-warning text-warning-foreground hover:bg-warning/90"
               >
@@ -145,7 +143,7 @@ function ClientConsentsPage() {
         <EmptyState title="Sem aceites" description="Nenhum registro de aceite encontrado." />
       )}
       <div className="space-y-2">
-        {q.data?.acceptances.map((a) => (
+        {q.data?.acceptances.map((a: any) => (
           <div
             key={a.id}
             className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-border bg-surface p-4 gap-4"
@@ -154,7 +152,7 @@ function ClientConsentsPage() {
               <CheckCircle2 className="h-5 w-5 text-success mt-0.5" />
               <div>
                 <div className="text-sm font-medium">
-                  {a.policy_documents?.title}{" "}
+                  {KIND_LABELS[a.policy_documents?.kind] || a.policy_documents?.kind}{" "}
                   <span className="text-xs text-muted-foreground ml-1">
                     v{a.policy_documents?.version}
                   </span>

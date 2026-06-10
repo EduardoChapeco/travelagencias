@@ -15,9 +15,11 @@ import {
   Image as ImageIcon,
   Undo,
   Redo,
+  Wand2,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { MediaLibraryPicker } from "../uploads/MediaLibraryPicker";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 export function RichTextEditor({
   value,
@@ -27,6 +29,7 @@ export function RichTextEditor({
   onChange: (v: string) => void;
 }) {
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
   const editor = useEditor({
     extensions: [StarterKit, Link.configure({ openOnClick: false }), Image],
     content: value,
@@ -67,6 +70,15 @@ export function RichTextEditor({
     <div className="border border-input rounded-md overflow-hidden bg-surface">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 border-b border-border p-1 bg-surface-alt/30">
+        <button
+          type="button"
+          onClick={() => setAiModalOpen(true)}
+          className={`${btnClass} text-brand hover:text-brand-foreground hover:bg-brand/10`}
+          title="Gerar conteúdo com IA"
+        >
+          <Wand2 className="w-4 h-4" />
+        </button>
+        <div className="w-px h-4 bg-border mx-1" />
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -160,6 +172,13 @@ export function RichTextEditor({
         onOpenChange={setMediaOpen}
         onSelect={(url) => {
           editor.chain().focus().setImage({ src: url }).run();
+        }}
+      />
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        onGenerate={(html) => {
+          editor.commands.insertContent(html);
         }}
       />
     </div>

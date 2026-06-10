@@ -32,6 +32,7 @@ type Visa = {
 function VisasPage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { slug } = Route.useParams();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localVisas, setLocalVisas] = useState<Visa[] | null>(null);
   const [newOpen, setNewOpen] = useState(false);
@@ -41,8 +42,8 @@ function VisasPage() {
     queryKey: ["visa-stages", agency?.id],
     queryFn: async () => {
       // Auto seed se não houver estágios
-      await supabase.rpc("seed_default_visa_stages", { p_agency_id: agency!.id });
-      const { data, error } = await supabase.from("visa_stages").select("*").eq("agency_id", agency!.id).order("position");
+      await (supabase as any).rpc("seed_default_visa_stages", { p_agency_id: agency!.id });
+      const { data, error } = await (supabase as any).from("visa_stages").select("*").eq("agency_id", agency!.id).order("position");
       if (error) throw error;
       return data as VisaStage[];
     },
@@ -52,7 +53,7 @@ function VisasPage() {
     enabled: !!agency,
     queryKey: ["visas", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("visas")
         .select("*, client:clients(full_name)")
         .eq("agency_id", agency!.id)
@@ -70,7 +71,7 @@ function VisasPage() {
   const persistMove = useMutation({
     mutationFn: async (payload: { visaId: string; toStageId: string; reorderedIds: string[] }) => {
       const updates = payload.reorderedIds.map((id, idx) =>
-        supabase.from("visas").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
+        (supabase as any).from("visas").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
       );
       const results = await Promise.all(updates);
       const firstErr = results.find((r) => r.error);
@@ -165,9 +166,14 @@ function VisasPage() {
           title="Vistos e Passaportes"
           description="Acompanhamento consular e emissão documental."
           actions={
-            <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
-              <Plus className="h-3.5 w-3.5" /> Novo Processo
-            </PrimaryButton>
+            <div className="flex items-center gap-3">
+              <Link to="/agency/$slug/visas-catalog" params={{ slug }} className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors">
+                <FileText className="w-3.5 h-3.5" /> Catálogo
+              </Link>
+              <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
+                <Plus className="h-3.5 w-3.5" /> Novo Processo
+              </PrimaryButton>
+            </div>
           }
         />
       </div>
@@ -244,8 +250,8 @@ function SortableVisa({ visa }: { visa: Visa }) {
 function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
   return (
     <div
-      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-lg border bg-surface p-3 text-left shadow-sm active:cursor-grabbing hover:border-border-strong ${
-        isOverlay ? "rotate-2 scale-105 border-brand/50 shadow-xl" : "border-border"
+      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-lg border bg-surface p-3 text-left active:cursor-grabbing hover:border-border-strong ${
+        isOverlay ? "rotate-2 scale-105 border-brand/50 " : "border-border"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -254,7 +260,7 @@ function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
       </div>
 
       <div className="flex items-center gap-2 mt-1">
-        <StatusBadge tone="primary">
+        <StatusBadge tone="neutral">
           <Globe className="mr-1 h-3 w-3 inline" /> {visa.country}
         </StatusBadge>
         <span className="text-xs text-muted-foreground">{visa.category}</span>

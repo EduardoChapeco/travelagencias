@@ -25,12 +25,12 @@ function MobileCheckinPage() {
   const [checklist, setChecklist] = useState<Item[]>([]);
 
   useEffect(() => {
-    supabase.rpc("get_public_boarding_card", { p_id: token })
-      .then(({ data, error }) => {
+    (supabase as any).rpc("get_public_boarding_card", { p_id: token })
+      .then(({ data, error }: { data: any; error: any }) => {
         if (error) setErr(error.message);
-        else if (!data || data.length === 0) setErr("Cartão de embarque não encontrado ou expirado.");
+        else if (!data || (data as any).length === 0) setErr("Cartão de embarque não encontrado ou expirado.");
         else {
-          const c = data[0] as Card;
+          const c = (data as any)[0] as Card;
           setCard(c);
           setChecklist(c.checklist || []);
         }
@@ -41,7 +41,7 @@ function MobileCheckinPage() {
      const next = checklist.map((c, i) => i === idx ? { ...c, done: !c.done } : c);
      setChecklist(next);
      setSaving(true);
-     const { error } = await supabase.rpc("update_public_boarding_card_checklist", { p_id: token, p_checklist: next });
+     const { error } = await (supabase as any).rpc("update_public_boarding_card_checklist", { p_id: token, p_checklist: next });
      setSaving(false);
      if (error) {
         toast.error("Erro ao sincronizar. Tente novamente.");
@@ -60,17 +60,17 @@ function MobileCheckinPage() {
   return (
     <div className="mx-auto min-h-screen max-w-md bg-surface text-foreground font-sans">
       {/* Header */}
-      <div className="bg-brand text-brand-foreground px-6 py-8 rounded-b-[2.5rem] shadow-md relative overflow-hidden">
+      <div className="bg-brand text-brand-foreground px-6 py-8 rounded-b-[2.5rem] relative overflow-hidden">
          <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-white/10 rounded-full blur-2xl" />
          <div className="relative z-10">
-            <h1 className="mb-1 text-2xl font-black tracking-tight drop-shadow-sm">Check-in</h1>
+            <h1 className="mb-1 text-2xl font-black tracking-tight ">Check-in</h1>
             <p className="text-brand-foreground/80 font-medium text-sm">Acompanhe e confirme os passos para o seu voo.</p>
          </div>
       </div>
 
       <div className="px-6 py-6 space-y-6">
          {/* Flight Info */}
-         <div className="bg-background border border-border/60 rounded-2xl p-5 shadow-sm">
+         <div className="bg-background border border-border/60 rounded-2xl p-5 ">
             <div className="flex items-center justify-between mb-4">
                <div className="flex items-center gap-2 text-brand">
                   <Plane className="w-5 h-5" />
@@ -110,7 +110,7 @@ function MobileCheckinPage() {
                <span className="text-xs font-bold text-brand">{doneCount}/{checklist.length}</span>
             </div>
             
-            <div className="bg-background border border-border/60 rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-background border border-border/60 rounded-2xl overflow-hidden ">
                {checklist.length === 0 ? (
                   <div className="p-6 text-center text-sm text-muted-foreground">Nenhuma etapa definida.</div>
                ) : (

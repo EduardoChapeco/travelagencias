@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth/verify")({
   head: () => ({ meta: [{ title: "Verificação de e-mail · TravelOS" }] }),
@@ -36,8 +37,8 @@ function Page() {
   async function resend() {
     if (!email) return;
     const { error } = await supabase.auth.resend({ type: "signup", email });
-    if (error) alert(error.message);
-    else alert("E-mail reenviado");
+    if (error) toast.error(error.message);
+    else toast.success("E-mail de confirmação reenviado!");
   }
 
   return (

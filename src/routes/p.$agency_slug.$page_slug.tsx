@@ -7,11 +7,42 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/p/$agency_slug/$page_slug")({
-  head: ({ params, routeContext }) => {
-    // If we passed SEO metadata somehow or fetched it earlier, we'd use it here.
+  head: ({ params, context }: any) => {
+    // SEO metadata is resolved via the loader context (populated below)
+    const seo = context?.pageSeo as { meta_title?: string; meta_description?: string } | null;
     return {
-      meta: [{ title: `${params.page_slug} · Portal` }],
+      meta: [
+        {
+          title: seo?.meta_title
+            ? `${seo.meta_title} · Portal`
+            : `${params.page_slug} · Portal`,
+        },
+        ...(seo?.meta_description
+          ? [{ name: "description", content: seo.meta_description }]
+          : []),
+      ],
     };
+  },
+  loader: async ({ params, context }: any) => {
+    // Pre-fetch SEO to inject into head() — critical for server-side SEO rendering
+    try {
+      const { data: agency } = await ((context?.supabase ?? supabase) as any)
+        .rpc("get_public_agency_by_slug", { _slug: params.agency_slug })
+        .maybeSingle();
+      if (!agency) return { pageSeo: null };
+
+      const { data: page } = await (context?.supabase ?? supabase)
+        .from("portal_pages")
+        .select("seo:published_seo")
+        .eq("agency_id", (agency as any).id)
+        .eq("slug", params.page_slug)
+        .eq("is_published", true)
+        .maybeSingle();
+
+      return { pageSeo: (page?.seo as { meta_title?: string; meta_description?: string } | null) ?? null };
+    } catch {
+      return { pageSeo: null };
+    }
   },
   component: DynamicPage,
 });
@@ -22,15 +53,15 @@ function DynamicPage() {
   const q = useQuery({
     queryKey: ["portal-page", agency_slug, page_slug],
     queryFn: async () => {
-      const { data: agency } = await supabase
+      const { data: agency } = await (supabase as any)
         .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
         .maybeSingle();
       if (!agency) return { agency: null, page: null };
 
       const { data: page } = await supabase
         .from("portal_pages")
-        .select("title, blocks, seo")
-        .eq("agency_id", agency.id)
+        .select("title:published_title, blocks:published_blocks, seo:published_seo")
+        .eq("agency_id", (agency as any).id)
         .eq("slug", page_slug as string)
         .eq("is_published", true)
         .maybeSingle();
@@ -62,9 +93,12 @@ function DynamicPage() {
 
   const { page } = q.data;
 
-  // Render the Dynamic Blocks
   return (
     <div className="w-full px-4 sm:px-6">
+      {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
+      {page.title && (
+        <h1 className="sr-only">{page.title}</h1>
+      )}
       <BlockRenderer blocks={(page.blocks || []) as PortalBlock[]} agencySlug={agency_slug} />
     </div>
   );
