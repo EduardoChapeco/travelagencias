@@ -45,7 +45,7 @@ import {
   type Tour, 
   type ItineraryDay 
 } from "@/services/proposals";
-import { useProposalMath } from "@/hooks/use-proposal-math";
+
 
 const SMALL_INPUT =
   "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
@@ -100,8 +100,7 @@ function ProposalEditor() {
     [draft, persist],
   );
 
-  // Auto-recalculate total using the custom hook
-  useProposalMath(draft, setDraft, persist.mutate);
+
 
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;

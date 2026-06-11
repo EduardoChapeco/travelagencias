@@ -96,6 +96,11 @@ export async function updateProposal(id: string, patch: Partial<Proposal>) {
   if (error) throw error;
 }
 
+export async function recalculateProposal(id: string) {
+  const { error } = await (supabase.rpc as any)("recalculate_proposal_totals", { _proposal_id: id });
+  if (error) throw error;
+}
+
 export async function processOcrFile(file: File) {
   return new Promise<{ flights?: Flight[], hotels?: Hotel[], transfers?: Transfer[], tours?: Tour[] }>((resolve, reject) => {
     const reader = new FileReader();
