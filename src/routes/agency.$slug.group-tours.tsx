@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Users } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchGroupTours } from "@/services/tours";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
@@ -58,17 +58,7 @@ function GroupToursPage() {
   const q = useQuery({
     enabled: !!agency,
     queryKey: ["group-tours", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("group_tours")
-        .select(
-          "id, title, destination, departure_date, return_date, base_price, total_seats, reserved_seats, status, is_public, slug, bus_layout_id",
-        )
-        .eq("agency_id", agency!.id)
-        .order("departure_date", { ascending: false, nullsFirst: false });
-      if (error) throw error;
-      return data as Tour[];
-    },
+    queryFn: () => fetchGroupTours(agency!.id),
   });
 
   return (

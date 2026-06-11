@@ -5,6 +5,7 @@ import {
   X, Check, ChevronRight, ChevronLeft, User, Building2, Phone, MapPin
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
 const STEPS = ["Perfil", "Contato", "Endereço e Classificação", "Revisão"];
@@ -78,18 +79,8 @@ export function NewClientWizard({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground">Novo Cliente</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Cadastre passageiros ou contas corporativas.</p>
-          </div>
-          <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Cliente">
+      <p className="text-xs text-muted-foreground mb-4">Cadastre passageiros ou contas corporativas.</p>
 
         {/* Stepper progress */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
@@ -281,7 +272,6 @@ export function NewClientWizard({
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

@@ -1,48 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicAgencyHome } from "@/services/public";
 import { Instagram, Facebook, Youtube, Linkedin, MapPin, Clock, ExternalLink } from "lucide-react";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
 
 export const Route = createFileRoute("/p/$agency_slug/")({
   loader: async ({ params: { agency_slug } }) => {
-    const { data: agency } = await (supabase as any)
-      .rpc("get_public_agency_by_slug", { _slug: agency_slug })
-      .maybeSingle();
-    if (!agency) return { agency: null, company: null, tours: [], posts: [], homePage: null };
-
-    const [company, tours, posts, homePage] = await Promise.all([
-      supabase.from("company_profiles").select("*").eq("agency_id", (agency as any).id).maybeSingle(),
-      supabase
-        .from("group_tours")
-        .select("id, slug, title, destination, cover_image_url, base_price, departure_date")
-        .eq("agency_id", (agency as any).id)
-        .eq("is_public", true)
-        .in("status", ["open", "confirmed"])
-        .order("departure_date")
-        .limit(6),
-      supabase
-        .from("blog_posts")
-        .select("id, slug, title, excerpt, cover_image_url, published_at")
-        .eq("agency_id", (agency as any).id)
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .limit(6),
-      supabase
-        .from("portal_pages")
-        .select("blocks:published_blocks, seo:published_seo")
-        .eq("agency_id", (agency as any).id)
-        .eq("slug", "home")
-        .eq("is_published", true)
-        .maybeSingle(),
-    ]);
-
-    return {
-      agency: agency as any,
-      company: company.data as any,
-      tours: (tours.data as any[]) ?? [],
-      posts: (posts.data as any[]) ?? [],
-      homePage: homePage.data as any,
-    };
+    return fetchPublicAgencyHome(agency_slug);
   },
   head: ({ loaderData }) => {
     if (!loaderData?.agency) return { meta: [{ title: "Agência não encontrada" }] };
@@ -180,7 +143,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl">
             <h2 className="mb-8 text-2xl font-bold tracking-tight">Próximas viagens em grupo</h2>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {tours.map((t) => (
+              {tours.map((t: any) => (
                 <Link
                   key={t.id}
                   to="/p/$agency_slug/tour/$id"
@@ -234,7 +197,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl">
             <h2 className="mb-4 text-xl font-semibold tracking-tight">Blog</h2>
             <div className="grid gap-4 md:grid-cols-3">
-              {posts.map((p) => (
+              {posts.map((p: any) => (
                 <Link
                   key={p.id}
                   to="/p/$agency_slug/blog/$slug"
@@ -334,16 +297,16 @@ function HomePage() {
                       </a>
                     </div>
                   )}
-                  {company.address?.street && (
+                  {company.address && (company.address as any).street && (
                     <div className="pt-2">
                       <span className="text-muted-foreground block text-xs uppercase tracking-wider mb-0.5">
                         Endereço
                       </span>
-                      {company.address.street}, {company.address.number}
-                      {company.address.complement && ` - ${company.address.complement}`}
+                      {(company.address as any).street}, {(company.address as any).number}
+                      {(company.address as any).complement && ` - ${(company.address as any).complement}`}
                       <br />
-                      {company.address.neighborhood} - {company.address.city}/
-                      {company.address.state}
+                      {(company.address as any).neighborhood} - {(company.address as any).city}/
+                      {(company.address as any).state}
                     </div>
                   )}
                 </div>
@@ -356,7 +319,7 @@ function HomePage() {
                   </h2>
                   <div className="space-y-3 text-sm">
                     {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((day) => {
-                      const h = company.business_hours[day];
+                      const h = (company.business_hours as any)[day];
                       if (!h) return null;
                       const labels: Record<string, string> = {
                         seg: "Segunda",

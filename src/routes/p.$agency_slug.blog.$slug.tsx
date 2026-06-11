@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicBlogPost, submitBlogLead } from "@/services/public";
 import { ArrowLeft, Clock, Eye, Send, Share2, BookOpen } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
 import { fmtDate } from "@/components/ui/form";
@@ -9,38 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   loader: async ({ params: { agency_slug, slug } }) => {
-    const { data: agency } = await (supabase as any)
-      .rpc("get_public_agency_by_slug", { _slug: agency_slug })
-      .maybeSingle();
-    if (!agency) return { agency: null, post: null, related: [] };
-    
-    const { data: post } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .eq("agency_id", (agency as any).id)
-      .eq("slug", slug)
-      .eq("status", "published")
-      .maybeSingle();
-      
-    if (post) {
-      // Background views increment
-      (supabase as any).rpc("increment_post_views", { p_post_id: post.id }).then();
-    }
-
-    let related: any[] = [];
-    if (post && post.tags && post.tags.length > 0) {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("slug, title, cover_image_url, published_at, views, excerpt")
-        .eq("agency_id", (agency as any).id)
-        .eq("status", "published")
-        .neq("id", post.id)
-        .overlaps("tags", post.tags)
-        .limit(3);
-      related = data || [];
-    }
-    
-    return { agency: agency as any, post: post as any, related };
+    return fetchPublicBlogPost(agency_slug, slug);
   },
   head: ({ loaderData, params }) => {
     if (!loaderData?.post) return { meta: [{ title: `${params.slug} · Blog` }] };
@@ -197,7 +166,7 @@ function PublicBlogPage() {
           <div className="mt-20 pt-12 border-t border-border">
             <h3 className="text-2xl font-black tracking-tight mb-8">Artigos Relacionados</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {related.map(r => (
+              {related.map((r: any) => (
                 <a key={r.slug} href={`/p/${agency_slug}/blog/${r.slug}`} className="group flex flex-col gap-3">
                   <div className="aspect-video bg-surface-alt rounded-2xl overflow-hidden">
                     {r.cover_image_url ? (
@@ -277,13 +246,7 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
         finalOrigin += `\nUTM: ${utms.source}/${utms.medium}/${utms.campaign}`;
       }
 
-      const { error } = await (supabase as any).rpc("submit_public_lead", {
-        p_agency_id: agencyId,
-        p_name: name,
-        p_contact: contact,
-        p_origin: finalOrigin
-      });
-      if (error) throw error;
+      await submitBlogLead(agencyId, name, contact, finalOrigin);
     },
     onSuccess: () => setSuccess(true),
     onError: (e) => toast.error("Falha ao enviar: " + e.message)

@@ -10,7 +10,7 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
@@ -40,28 +40,13 @@ function VisasPage() {
   const stagesQ = useQuery({
     enabled: !!agency,
     queryKey: ["visa-stages", agency?.id],
-    queryFn: async () => {
-      // Auto seed se não houver estágios
-      await (supabase as any).rpc("seed_default_visa_stages", { p_agency_id: agency!.id });
-      const { data, error } = await (supabase as any).from("visa_stages").select("*").eq("agency_id", agency!.id).order("position");
-      if (error) throw error;
-      return data as VisaStage[];
-    },
+    queryFn: () => fetchVisaStages(agency!.id),
   });
 
   const visasQ = useQuery({
     enabled: !!agency,
     queryKey: ["visas", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("visas")
-        .select("*, client:clients(full_name)")
-        .eq("agency_id", agency!.id)
-        .is("deleted_at", null)
-        .order("position");
-      if (error) throw error;
-      return data as Visa[];
-    },
+    queryFn: () => fetchVisas(agency!.id),
   });
 
   useEffect(() => {
@@ -70,12 +55,7 @@ function VisasPage() {
 
   const persistMove = useMutation({
     mutationFn: async (payload: { visaId: string; toStageId: string; reorderedIds: string[] }) => {
-      const updates = payload.reorderedIds.map((id, idx) =>
-        (supabase as any).from("visas").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
-      );
-      const results = await Promise.all(updates);
-      const firstErr = results.find((r) => r.error);
-      if (firstErr?.error) throw firstErr.error;
+      await persistVisaMove({ ...payload });
     },
     onError: (e) => {
       toast.error(e instanceof Error ? e.message : "Erro ao salvar posição");
@@ -87,7 +67,7 @@ function VisasPage() {
 
   const stagesById = useMemo(() => {
     const map: Record<string, Visa[]> = {};
-    (stagesQ.data ?? []).forEach((s) => (map[s.id] = []));
+    (stagesQ.data ?? []).forEach((s: any) => (map[s.id] = []));
     (localVisas ?? []).forEach((v) => {
       if (!map[v.stage_id]) map[v.stage_id] = [];
       map[v.stage_id].push(v);
@@ -181,7 +161,7 @@ function VisasPage() {
       <div className="flex-1 overflow-x-auto p-4 md:p-8 pt-6">
         <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div className="flex h-full gap-4">
-            {(stagesQ.data ?? []).map((stage) => (
+            {(stagesQ.data ?? []).map((stage: any) => (
               <StageColumn key={stage.id} stage={stage} items={stagesById[stage.id] ?? []} />
             ))}
           </div>

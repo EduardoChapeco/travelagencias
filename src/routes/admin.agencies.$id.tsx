@@ -1,7 +1,14 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, AlertTriangle, KeyRound, Ban, CreditCard, ShieldAlert } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchAdminAgencyDetail,
+  logAdminAuditEvent,
+  provisionAgencyTrial,
+  forceChangeAgencyPlan,
+  forceChangeAgencyStatus,
+  sendOwnerPasswordReset,
+} from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { fmtDate, StatusBadge, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { toast } from "sonner";
@@ -17,32 +24,7 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-agency", id],
-    queryFn: async () => {
-      const [a, p, roles, trips, fin, sub, plans] = await Promise.all([
-        supabase.from("agencies").select("*").eq("id", id).maybeSingle(),
-        supabase.from("agency_private").select("*").eq("agency_id", id).maybeSingle(),
-        supabase.from("user_roles").select("user_id, role, created_at").eq("agency_id", id),
-        supabase.from("trips").select("id", { count: "exact", head: true }).eq("agency_id", id),
-        supabase.from("financial_records").select("amount, type, status").eq("agency_id", id),
-        (supabase as any).from("agency_subscriptions").select("*").eq("agency_id", id).maybeSingle(),
-        supabase.from("plans").select("*").order("sort_order", { ascending: true }),
-      ]);
-      const userIds = (roles.data ?? []).map((r) => r.user_id);
-      const profiles = userIds.length
-        ? (await supabase.from("profiles").select("id, full_name").in("id", userIds)).data ?? []
-        : [];
-      const pmap = new Map(profiles.map((p) => [p.id, p]));
-      const records = fin.data ?? [];
-      const income = records.filter((r) => r.type === "income" && r.status === "paid").reduce((s, r) => s + Number(r.amount), 0);
-      const expense = records.filter((r) => r.type === "expense" && r.status === "paid").reduce((s, r) => s + Number(r.amount), 0);
-      return {
-        agency: a.data, priv: p.data,
-        members: (roles.data ?? []).map((r) => ({ ...r, name: pmap.get(r.user_id)?.full_name ?? "—" })),
-        tripsCount: trips.count ?? 0, income, expense,
-        subscription: sub.data,
-        plans: plans.data ?? [],
-      };
-    },
+    queryFn: () => fetchAdminAgencyDetail(id),
   });
 
   if (!q.data) return <div className="text-sm text-muted-foreground p-6">Carregando dados completos da agência…</div>;
@@ -170,15 +152,8 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
 
-  // Helper para auditoria imutável (usando a RPC criada para logs rigorosos)
   async function logAuditAction(action: string, metadata: any) {
-    await (supabase.rpc as any)("log_audit_event", {
-      _agency_id: agency.id,
-      _action: action,
-      _entity_type: "agency_subscription",
-      _entity_id: agency.id,
-      _metadata: metadata
-    });
+    await logAdminAuditEvent(agency.id, action, metadata);
   }
 
   async function handleProvisionTrial() {
@@ -192,18 +167,12 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
       return;
     }
 
-    const { error } = await (supabase as any).from("agency_subscriptions").upsert({
-      agency_id: agency.id,
-      plan_id: freePlan.id,
-      status: "trialing",
-      trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
-    });
-
-    if (!error) {
+    try {
+      await provisionAgencyTrial(agency.id, freePlan.id);
       await logAuditAction("superadmin_provisioned_trial", { plan_id: freePlan.id });
       toast.success("Assinatura provisionada.");
       qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } else {
+    } catch (error: any) {
       toast.error(error.message);
     }
     setBusy(false);
@@ -218,12 +187,12 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
       return;
     }
     setBusy(true);
-    const { error } = await (supabase as any).from("agency_subscriptions").update({ plan_id: planId }).eq("agency_id", agency.id);
-    if (!error) {
+    try {
+      await forceChangeAgencyPlan(agency.id, planId);
       await logAuditAction("superadmin_changed_plan", { new_plan_id: planId, plan_name: planName });
       toast.success("Plano atualizado com sucesso!");
       qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } else {
+    } catch (error: any) {
       toast.error(error.message);
     }
     setBusy(false);
@@ -233,12 +202,12 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
   async function handleStatusChange(newStatus: string) {
     if (!confirm(`ATENÇÃO: Mudar o status para "${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?`)) return;
     setBusy(true);
-    const { error } = await (supabase as any).from("agency_subscriptions").update({ status: newStatus }).eq("agency_id", agency.id);
-    if (!error) {
+    try {
+      await forceChangeAgencyStatus(agency.id, newStatus);
       await logAuditAction("superadmin_changed_status", { new_status: newStatus });
       toast.success(`Status forçado para ${newStatus}`);
       qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } else {
+    } catch (error: any) {
       toast.error(error.message);
     }
     setBusy(false);
@@ -249,13 +218,11 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
     if (!confirm(`Isso enviará um link de reset de senha imediatamente para ${priv.email}. Confirma?`)) return;
     setBusy(true);
     
-    // Dispara link nativo do supabase auth publicamente
-    const { error } = await supabase.auth.resetPasswordForEmail(priv.email);
-    
-    if (!error) {
+    try {
+      await sendOwnerPasswordReset(priv.email);
       await logAuditAction("superadmin_requested_password_reset", { target_email: priv.email });
       toast.success("E-mail de recuperação enviado para o proprietário!");
-    } else {
+    } catch (error: any) {
       toast.error(error.message);
     }
     setBusy(false);

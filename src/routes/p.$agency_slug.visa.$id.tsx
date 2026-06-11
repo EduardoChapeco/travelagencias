@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicLeadForm, submitPublicLeadForm } from "@/services/public";
 import { Field, Input, PrimaryButton, Textarea } from "@/components/ui/form";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
@@ -25,20 +25,9 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-visa", agency_slug, id],
     queryFn: async () => {
-      const { data: rawAgency } = await (supabase as any)
-        .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
-        .maybeSingle();
-      const agency = rawAgency as any;
-      if (!agency) return null;
-      const { data: rawForm } = await supabase
-        .from("lead_forms")
-        .select("*")
-        .eq("id", id)
-        .eq("agency_id", agency.id)
-        .eq("is_active", true)
-        .maybeSingle();
-      const form = rawForm as any;
-      return form ? { agency, form: form as unknown as FormDef } : null;
+      const data = await fetchPublicLeadForm(agency_slug as string, id as string);
+      if (!data) return null;
+      return { agency: data.agency, form: data.form as unknown as FormDef };
     },
   });
 
@@ -59,30 +48,21 @@ function Page() {
       toast.error("Formulário sem estágio CRM configurado");
       return;
     }
-    const { data: leadData, error: leadErr } = await supabase
-      .from("leads")
-      .insert({
-        agency_id: agency.id,
-        name: values.name ?? "",
-        email: values.email ?? "",
-        phone: values.phone ?? "",
-        destination: values.destination ?? null,
-        source: `form:${form.slug}`,
-        notes: Object.entries(values)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join("\n"),
-        stage_id: form.target_stage_id,
-      })
-      .select("id");
-    if (!leadErr && leadData) {
-      await supabase
-        .from("lead_forms")
-        .update({ submissions_count: (form.submissions_count ?? 0) + 1 })
-        .eq("id", form.id);
-      setDoneLeadId(leadData[0].id);
-    }
+    const { error, leadId } = await submitPublicLeadForm(
+      agency.id,
+      form.id,
+      form.target_stage_id,
+      form.slug,
+      values,
+      form.submissions_count ?? 0
+    );
+
     setBusy(false);
-    if (leadErr) toast.error(leadErr.message);
+    if (!error && leadId) {
+      setDoneLeadId(leadId);
+    } else if (error) {
+      toast.error(error.message || "Erro ao enviar form");
+    }
   }
 
   if (doneLeadId) {

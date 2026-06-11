@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicContractByToken, fetchPublicInstallmentsByToken, type PublicInstallment as Installment } from "@/services/payment";
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { PrimaryButton, Sheet } from "@/components/ui/form";
@@ -10,16 +10,7 @@ export const Route = createFileRoute("/m/payment/$token")({
   component: Page,
 });
 
-// Tipagem baseada na migration
-type Installment = {
-  id: string;
-  amount: number;
-  due_date: string;
-  status: "pending" | "paid" | "overdue" | "cancelled";
-  payment_method: string | null;
-  external_link: string | null;
-  paid_at: string | null;
-};
+// Tipagem importada do serviço
 
 // Como é uma rota pública, em produção ela chamará um RPC (como o do contrato).
 // Mas para esta implementação da Fase D, faremos a busca da tabela (supondo política ajustada ou uso de um ID ofuscado)
@@ -34,28 +25,21 @@ function Page() {
     // Agora o sistema está 100% livre de Mocks. Consumimos a Stored Procedure RPC "public_installments_by_token"
     // Esta função contorna o RLS das tabelas de pagamento para permitir que clientes anônimos visualizem seus boletos via token do convite.
     const fetchInstallments = async () => {
-      const { data: contractData } = await supabase.rpc("public_contract_by_token", {
-        _token: token,
-      });
+      try {
+        const contractData = await fetchPublicContractByToken(token);
+        if (!contractData || contractData.length === 0) {
+          setErr("Pacote não encontrado ou Token inválido.");
+          setIsLoading(false);
+          return;
+        }
 
-      if (!contractData || contractData.length === 0) {
-        setErr("Pacote não encontrado ou Token inválido.");
-        setIsLoading(false);
-        return;
-      }
-
-      // Chamada real ao banco de dados para os boletos:
-      const { data: paymentData, error: payErr } = await supabase.rpc(
-        "public_payment_by_token" as never,
-        { _token: token } as never,
-      );
-
-      if (payErr) {
+        const paymentData = await fetchPublicInstallmentsByToken(token);
+        setInstallments(paymentData);
+      } catch (payErr) {
         setErr("Erro ao buscar carnê digital.");
-      } else {
-        setInstallments((paymentData as unknown as Installment[]) || []);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchInstallments();

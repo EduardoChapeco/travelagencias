@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { verifyContract } from "@/services/public";
 
 export const Route = createFileRoute("/verify/$serial")({
   head: ({ params }) => ({
@@ -38,17 +38,12 @@ function Page() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase
-      .rpc("verify_contract", { _serial: serial as string })
-      .then(({ data, error }: { data: any; error: any }) => {
-        if (error) {
-          setErr(error.message);
-          return;
-        }
-        const r = (data as Row[])?.[0];
+    verifyContract(serial as string)
+      .then((r) => {
         if (!r) setErr("Certificado não encontrado");
         else setRow(r);
-      });
+      })
+      .catch((e) => setErr(e.message));
   }, [serial]);
 
   return (

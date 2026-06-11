@@ -1,25 +1,21 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
+
 import { Field, Input, PrimaryButton, GhostButton, Select, Textarea } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
 
+import { SheetPage } from "./sheet";
+
 export type AIItineraryDay = { day: string; title: string; description: string };
 
-type AIItineraryModalProps = {
+type AIItinerarySheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (days: AIItineraryDay[]) => void;
 };
 
-export function AIItineraryModal({ open, onOpenChange, onGenerate }: AIItineraryModalProps) {
+export function AIItinerarySheet({ open, onOpenChange, onGenerate }: AIItinerarySheetProps) {
   const [tab, setTab] = useState<"topic" | "url">("topic");
   const [topic, setTopic] = useState("");
   const [url, setUrl] = useState("");
@@ -100,19 +96,17 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="w-5 h-5 text-brand" /> 
-            Construtor de Roteiros IA
-          </DialogTitle>
-          <DialogDescription>
-            Crie um itinerário completo em segundos a partir de uma ideia ou de um link de referência.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex border-b border-border mb-4">
+    <SheetPage isOpen={open} onClose={() => onOpenChange(false)} title="Construtor de Roteiros IA" width="450px">
+      <div className="mb-6 space-y-1">
+        <div className="flex items-center gap-2 text-brand font-bold">
+          <Wand2 className="w-5 h-5" /> 
+          Mágico
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Crie um itinerário completo em segundos a partir de uma ideia ou de um link de referência.
+        </p>
+      </div>
+          <div className="flex border-b border-border mb-4">
           <button
             type="button"
             className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
@@ -181,7 +175,6 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
             </PrimaryButton>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+    </SheetPage>
   );
 }

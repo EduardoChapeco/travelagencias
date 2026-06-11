@@ -5,7 +5,7 @@ import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Calendar, Contact2, ShieldC
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
-import { NewPassengerModal } from "@/components/trips/NewPassengerModal";
+import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: () => ({ meta: [{ title: "Passageiros · TravelOS" }] }),
@@ -190,7 +190,7 @@ function PassengersPage() {
       )}
 
       {open && agency && (
-        <NewPassengerModal
+        <NewPassengerSheet
           tripId={id}
           agencyId={agency.id}
           onClose={() => setOpen(false)}

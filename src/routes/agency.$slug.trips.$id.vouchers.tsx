@@ -7,100 +7,30 @@ import {
   ChevronRight, Upload, Trash2, Edit2, Eye
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge, fmtDate, Field, Input, Select, GhostButton, PrimaryButton } from "@/components/ui/form";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 import html2canvas from "html2canvas";
 import { Instagram } from "lucide-react";
+import {
+  fetchVoucherTrip,
+  fetchTripVouchers,
+  fetchTripPassengers,
+  saveVoucherData,
+  deleteVoucherData,
+  uploadVoucherSourceFile,
+  uploadVoucherStoryImage,
+  type Voucher,
+  type VoucherTrip as Trip,
+  type TripPassenger as Passenger,
+} from "@/services/vouchers";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
   head: () => ({ meta: [{ title: "Vouchers · TravelOS" }] }),
   component: TripVouchers,
 });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type VoucherFlight = {
-  locator: string;
-  airline: string;
-  flight_number: string;
-  origin: string;
-  destination: string;
-  date: string;
-  departure_time: string;
-  arrival_time: string;
-  class: string;
-  baggage: string;
-};
-
-type VoucherAccommodation = {
-  name: string;
-  city: string;
-  address: string;
-  phone: string;
-  checkin: string;
-  checkout: string;
-  room_type: string;
-  meal_plan: string;
-  confirmation: string;
-};
-
-type VoucherTransfer = {
-  type: string;
-  date: string;
-  origin: string;
-  destination: string;
-  vehicle: string;
-  supplier: string;
-  confirmation: string;
-};
-
-type VoucherPassenger = {
-  name: string;
-  document: string;
-  seat?: string;
-};
-
-type Voucher = {
-  id: string;
-  trip_id: string;
-  agency_id: string;
-  source_type: "operator_pdf" | "manual";
-  source_file_url: string | null;
-  destination: string | null;
-  general_locator: string | null;
-  observations: string | null;
-  cover_image_url: string | null;
-  template: "navy" | "minimal" | "brand";
-  passengers: VoucherPassenger[];
-  flights: VoucherFlight[];
-  accommodation: VoucherAccommodation[];
-  transfers: VoucherTransfer[];
-  tours: Array<{ name: string; date: string; duration: string; guide: string; meeting_point: string }>;
-  insurance: { provider?: string; policy_number?: string; phone?: string; coverage?: string };
-  emergency_contacts: Array<{ name: string; phone: string; role: string }>;
-  pdf_url: string | null;
-  generated_at: string | null;
-  created_at: string;
-};
-
-type Trip = {
-  id: string;
-  title: string;
-  destination: string | null;
-  travel_start: string | null;
-  travel_end: string | null;
-  airline: string | null;
-  pnr: string | null;
-};
-
-type Passenger = {
-  id: string;
-  full_name: string;
-  document: string | null;
-  cpf: string | null;
-};
+// ─── Remove inlined types (now imported from service) ────────────────────────
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -130,42 +60,19 @@ function TripVouchers() {
   const tripQ = useQuery({
     enabled: !!agency,
     queryKey: ["trip", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, destination, travel_start, travel_end, airline, pnr")
-        .eq("id", tripId)
-        .maybeSingle();
-      if (error) throw error;
-      return data as Trip | null;
-    },
+    queryFn: () => fetchVoucherTrip(tripId),
   });
 
   const vouchersQ = useQuery({
     enabled: !!agency,
     queryKey: ["vouchers_trip", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("vouchers")
-        .select("*")
-        .eq("trip_id", tripId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as Voucher[];
-    },
+    queryFn: () => fetchTripVouchers(tripId),
   });
 
   const passengersQ = useQuery({
     enabled: !!agency,
     queryKey: ["passengers", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trip_passengers")
-        .select("id, full_name, document, cpf")
-        .eq("trip_id", tripId);
-      if (error) throw error;
-      return (data ?? []) as Passenger[];
-    },
+    queryFn: () => fetchTripPassengers(tripId),
   });
 
   // ── Draft state for new/editing voucher ──────────────────────────────────────
@@ -244,13 +151,7 @@ function TripVouchers() {
         emergency_contacts: draft.emergency_contacts ?? [],
       };
 
-      if (selected?.id) {
-        const { error } = await supabase.from("vouchers").update(payload as never).eq("id", selected.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("vouchers").insert(payload);
-        if (error) throw error;
-      }
+      await saveVoucherData(payload, selected?.id);
     },
     onSuccess: () => {
       toast.success(selected?.id ? "Voucher atualizado" : "Voucher criado");
@@ -262,10 +163,7 @@ function TripVouchers() {
   });
 
   const deleteVoucher = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("vouchers").update({ deleted_at: new Date().toISOString() } as any).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => deleteVoucherData(id),
     onSuccess: () => {
       toast.success("Voucher removido");
       if (selected?.id === deleteVoucher.variables) { setSelected(null); setCreating(false); }
@@ -277,19 +175,9 @@ function TripVouchers() {
   const uploadSourcePdf = useMutation({
     mutationFn: async (file: File) => {
       if (!agency) throw new Error("Sem agência");
-      const path = `${agency.id}/${tripId}/${uid()}-${file.name}`;
       
       toast.loading("Enviando arquivo original…", { id: "ocr" });
-      const { error: upErr } = await supabase.storage
-        .from("voucher-sources")
-        .upload(path, file, { upsert: true });
-      if (upErr) throw upErr;
-
-      const { data: signed } = await supabase.storage
-        .from("voucher-sources")
-        .createSignedUrl(path, 60 * 60 * 24 * 365);
-
-      if (!signed?.signedUrl) throw new Error("Erro ao gerar URL segura do arquivo.");
+      const signedUrl = await uploadVoucherSourceFile(agency.id, tripId, file);
 
       // OCR Inteligente via PDF.js + AI Edge Function
       toast.loading("Inteligência Artificial Lendo PDF…", { id: "ocr" });
@@ -303,14 +191,14 @@ function TripVouchers() {
           destination: aiResult.title || d.destination,
           general_locator: aiResult.locator || d.general_locator,
           observations: "Extraído via IA OCR\n\nProvedor: " + (aiResult.provider || "") + "\n\nTexto Bruto:\n" + (aiResult.raw_extracted_text?.substring(0, 400) || ""),
-          source_file_url: signed.signedUrl, 
+          source_file_url: signedUrl, 
           source_type: "operator_pdf" as const 
         }));
         
         toast.success("Dados estruturados pela IA com sucesso!", { id: "ocr" });
       } catch (err: any) {
         toast.warning(err.message || "A IA não conseguiu ler os dados exatos. O arquivo foi salvo, mas preencha manualmente.", { id: "ocr", duration: 5000 });
-        setDraft((d) => ({ ...d, source_file_url: signed.signedUrl, source_type: "operator_pdf" as const }));
+        setDraft((d) => ({ ...d, source_file_url: signedUrl, source_type: "operator_pdf" as const }));
       }
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro crítico no upload.", { id: "ocr" }),
@@ -337,13 +225,9 @@ function TripVouchers() {
       try {
         const res = await fetch(dataUrl);
         const blob = await res.blob();
-        const fileName = `story-${storyVoucher?.id}-${Date.now()}.png`;
-        const path = `${agency.id}/${tripId}/${fileName}`;
-        
-        await supabase.storage.from("voucher-pdfs").upload(path, blob, {
-          contentType: "image/png",
-          upsert: true
-        });
+        if (storyVoucher?.id) {
+          await uploadVoucherStoryImage(agency.id, tripId, storyVoucher.id, blob);
+        }
         toast.success("Story salvo na nuvem com sucesso!");
       } catch (err) {
         console.error("Upload error", err);
@@ -517,8 +401,8 @@ function TripVouchers() {
       </div>
 
       {storyVoucher && trip && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative flex flex-col items-center gap-4 bg-surface p-6 rounded-2xl border border-border w-full max-w-lg ">
+        <div className="fixed inset-0 z-[100] flex justify-end bg-black/80 backdrop-blur-sm" onClick={() => setStoryVoucher(null)}>
+          <div className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border bg-surface p-6 animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
             <p className="text-sm text-muted-foreground text-center">
               Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes sociais.

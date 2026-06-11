@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
 
 export const Route = createFileRoute("/agency/$slug/proposals/new")({
   head: () => ({ meta: [{ title: "Nova cotação · TravelOS" }] }),
@@ -34,62 +35,45 @@ function NewProposal() {
   const clientsQ = useQuery({
     enabled: !!agency,
     queryKey: ["clients-pick", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clients")
-        .select("id, full_name")
-        .eq("agency_id", agency!.id)
-        .order("full_name")
-        .limit(500);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchClientsPick(agency!.id),
   });
 
   const leadsQ = useQuery({
     enabled: !!agency,
     queryKey: ["leads-pick", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("id, name")
-        .eq("agency_id", agency!.id)
-        .order("created_at", { ascending: false })
-        .limit(500);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchLeadsPick(agency!.id),
   });
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!agency) return;
     setSubmitting(true);
-    const { data: u } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from("proposals")
-      .insert({
-        agency_id: agency.id,
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      const payload = {
         title,
-        destination: destination || null,
-        client_id: clientId || null,
-        lead_id: leadId || null,
-        travel_start: travelStart || null,
-        travel_end: travelEnd || null,
+        destination: destination || undefined,
+        client_id: clientId || undefined,
+        lead_id: leadId || undefined,
+        travel_start: travelStart || undefined,
+        travel_end: travelEnd || undefined,
         pax_adults: adults,
         pax_children: children,
         pax_infants: infants,
         currency,
-        valid_until: validUntil || null,
-        notes: notes || null,
-        owner_id: u.user?.id ?? null,
-      })
-      .select("id")
-      .single();
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Cotação criada");
-    navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id: data.id } });
+        valid_until: validUntil || undefined,
+        notes: notes || undefined,
+      };
+      
+      const { id } = await createProposal(agency.id, payload, u.user?.id);
+      
+      toast.success("Cotação criada com sucesso!");
+      navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id } });
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao criar cotação.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (

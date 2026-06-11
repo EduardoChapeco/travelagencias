@@ -5,6 +5,7 @@ import {
   X, Check, ChevronRight, ChevronLeft, Map, Plane, Bus, Ship, Train, Link as LinkIcon, Plus, Trash2, Upload
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
 function slugify(s: string) {
@@ -152,18 +153,8 @@ export function NewGroupTourWizard({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex h-full max-h-[85vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground">Nova Excursão em Grupo</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Configure as informações do seu pacote passo a passo.</p>
-          </div>
-          <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <SheetPage isOpen={true} onClose={onClose} title="Nova Excursão em Grupo">
+      <p className="text-xs text-muted-foreground mb-4">Configure as informações do seu pacote passo a passo.</p>
 
         {/* Stepper progress */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
@@ -476,7 +467,6 @@ export function NewGroupTourWizard({
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

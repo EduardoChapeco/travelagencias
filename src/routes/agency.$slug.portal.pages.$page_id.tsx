@@ -39,7 +39,9 @@ import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { BlockRenderer } from "@/components/portal/BlockRenderer";
 import { PortalBlock, PortalBlockType, BLOCK_DEFAULTS } from "@/lib/cms-types";
 import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
-import { AILandingPageModal } from "@/components/ui/AILandingPageModal";
+import { AILandingPageSheet } from "@/components/ui/AILandingPageSheet";
+import { fetchPortalPage, fetchPortalPageVersions, savePortalPageDraft, publishPortalPage } from "@/services/portal";
+import { useBlockEditor } from "@/hooks/use-block-editor";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -53,16 +55,6 @@ export const Route = createFileRoute("/agency/$slug/portal/pages/$page_id")({
   head: () => ({ meta: [{ title: "Editor de Página · TravelOS" }] }),
   component: PageEditorRoute,
 });
-
-type PageRow = {
-  id: string;
-  slug: string;
-  title: string;
-  is_published: boolean;
-  template: string | null;
-  blocks: any;
-  seo: any;
-};
 
 function slugify(s: string) {
   return s
@@ -84,23 +76,24 @@ function PageEditorRoute() {
   const { data: initialData, isLoading } = useQuery({
     enabled: !!agency && !isNew,
     queryKey: ["portal-page", page_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portal_pages")
-        .select("*")
-        .eq("id", page_id)
-        .single();
-      if (error) throw error;
-      return data as PageRow;
-    },
+    queryFn: () => fetchPortalPage(page_id),
   });
 
   const [title, setTitle] = useState("");
   const [pageSlug, setPageSlug] = useState("");
   const [template, setTemplate] = useState("default");
-  const [blocks, setBlocks] = useState<PortalBlock[]>([]);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
+
+  const {
+    blocks,
+    setBlocks,
+    setInitialBlocks,
+    addBlock,
+    updateBlock,
+    removeBlock,
+    moveBlock,
+  } = useBlockEditor();
 
   const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<"content" | "seo" | "history">("content");
@@ -112,24 +105,16 @@ function PageEditorRoute() {
       setTitle(initialData.title || "");
       setPageSlug(initialData.slug || "");
       setTemplate(initialData.template || "default");
-      setBlocks(initialData.blocks || []);
+      setInitialBlocks(initialData.blocks || []);
       setMetaTitle(initialData.seo?.meta_title || "");
       setMetaDesc(initialData.seo?.meta_description || "");
     }
-  }, [initialData, isNew]);
+  }, [initialData, isNew, setInitialBlocks]);
 
   const versionsQuery = useQuery({
     enabled: !!initialData?.id && !isNew,
     queryKey: ["portal-page-versions", initialData?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("portal_page_versions")
-        .select("*")
-        .eq("page_id", initialData!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as any[];
-    },
+    queryFn: () => fetchPortalPageVersions(initialData!.id),
   });
 
   if (isLoading) {
@@ -137,66 +122,20 @@ function PageEditorRoute() {
   }
   if (!agency) return null;
 
-  const addBlock = (type: PortalBlockType) => {
-    const id = Math.random().toString(36).slice(2, 8);
-    const newBlock: PortalBlock = { id, ...BLOCK_DEFAULTS[type] } as PortalBlock;
-    setBlocks([...blocks, newBlock]);
-  };
-
-  const updateBlock = (id: string, updates: Partial<PortalBlock>) => {
-    setBlocks(blocks.map((b) => (b.id === id ? ({ ...b, ...updates } as PortalBlock) : b)));
-  };
-
-  const removeBlock = (id: string) => {
-    setBlocks(blocks.filter((b) => b.id !== id));
-  };
-
-  const moveBlock = (index: number, direction: -1 | 1) => {
-    const newBlocks: PortalBlock[] = [...blocks];
-    if (index + direction < 0 || index + direction >= newBlocks.length) return;
-    const temp = newBlocks[index];
-    newBlocks[index] = newBlocks[index + direction];
-    newBlocks[index + direction] = temp;
-    setBlocks(newBlocks);
-  };
-
   async function saveDraftInternal() {
-    if (!title) throw new Error("O título é obrigatório");
     setSubmitting(true);
-
     const finalSlug = pageSlug || slugify(title);
-
-    const payload = {
-      agency_id: agency!.id,
+    
+    return await savePortalPageDraft(
+      agency!.id,
+      initialData?.id || null,
+      isNew,
       title,
-      slug: finalSlug,
+      finalSlug,
       template,
-      blocks: blocks as any,
-      seo: {
-        meta_title: metaTitle,
-        meta_description: metaDesc,
-      },
-    };
-
-    const validation = PortalPagePayloadSchema.safeParse(payload);
-    if (!validation.success) {
-      const errorMsg = validation.error.errors
-        .map((e) => `${e.path.join(" -> ")}: ${e.message}`)
-        .join(" | ");
-      throw new Error(`Validação falhou: ${errorMsg}`);
-    }
-
-    let newPageId = isNew ? null : initialData?.id;
-
-    if (!isNew && newPageId) {
-      const { error } = await supabase.from("portal_pages").update(payload).eq("id", newPageId);
-      if (error) throw error;
-    } else {
-      const { data: newPage, error } = await supabase.from("portal_pages").insert(payload).select().single();
-      if (error) throw error;
-      newPageId = newPage?.id;
-    }
-    return newPageId;
+      blocks,
+      { meta_title: metaTitle, meta_description: metaDesc }
+    );
   }
 
   async function saveDraftOnly(e: React.FormEvent) {
@@ -222,8 +161,7 @@ function PageEditorRoute() {
       const newPageId = await saveDraftInternal();
       if (!newPageId) return;
 
-      const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: newPageId });
-      if (error) throw error;
+      await publishPortalPage(newPageId);
 
       toast.success("Página publicada e versão salva!");
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
@@ -238,7 +176,7 @@ function PageEditorRoute() {
   async function revertVersion(v: any) {
     if (!confirm("Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.")) return;
     setTitle(v.title);
-    setBlocks(v.blocks || []);
+    setInitialBlocks(v.blocks || []);
     setMetaTitle(v.seo?.meta_title || "");
     setMetaDesc(v.seo?.meta_description || "");
     setTab("content");
@@ -258,7 +196,7 @@ function PageEditorRoute() {
           </button>
           <div>
             <h1 className="text-sm font-semibold text-foreground">
-              {isNew ? "Criar Nova Página" : `Editando: ${title}`}
+              {isNew ? "Criar Nova P├ígina" : `Editando: ${title}`}
             </h1>
           </div>
           {!isNew && initialData?.is_published && (
@@ -274,7 +212,7 @@ function PageEditorRoute() {
             Salvar Rascunho
           </GhostButton>
           <PrimaryButton type="button" onClick={publishPage} disabled={submitting}>
-            {submitting ? "Salvando..." : "Publicar Página"}
+            {submitting ? "Salvando..." : "Publicar P├ígina"}
           </PrimaryButton>
         </div>
       </div>
@@ -290,7 +228,7 @@ function PageEditorRoute() {
               onClick={() => setTab("content")}
               className={`py-3 px-2 text-xs font-medium border-b-2 ${tab === "content" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
-              Conteúdo & Blocos
+              Conte├║do & Blocos
             </button>
             <button
               type="button"
@@ -305,7 +243,7 @@ function PageEditorRoute() {
                 onClick={() => setTab("history")}
                 className={`py-3 px-2 text-xs font-medium border-b-2 ${tab === "history" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
               >
-                Histórico
+                Hist├│rico
               </button>
             )}
           </div>
@@ -315,11 +253,11 @@ function PageEditorRoute() {
               {tab === "history" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold">Versões Salvas</h3>
-                    <p className="text-xs text-muted-foreground">Últimas alterações</p>
+                    <h3 className="text-sm font-semibold">Vers├Áes Salvas</h3>
+                    <p className="text-xs text-muted-foreground">├Ültimas altera├º├Áes</p>
                   </div>
-                  {versionsQuery.isLoading && <div className="text-xs text-muted-foreground">Carregando histórico...</div>}
-                  {versionsQuery.data?.length === 0 && <div className="text-xs text-muted-foreground">Nenhuma versão salva ainda.</div>}
+                  {versionsQuery.isLoading && <div className="text-xs text-muted-foreground">Carregando hist├│rico...</div>}
+                  {versionsQuery.data?.length === 0 && <div className="text-xs text-muted-foreground">Nenhuma vers├úo salva ainda.</div>}
                   {versionsQuery.data?.map((v) => (
                     <div key={v.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30">
                       <div className="flex justify-between items-center">
@@ -344,14 +282,14 @@ function PageEditorRoute() {
 
               {tab === "seo" && (
                 <div className="space-y-4">
-                  <Field label="Título SEO" hint="Substitui o título padrão na aba do navegador">
+                  <Field label="T├¡tulo SEO" hint="Substitui o t├¡tulo padr├úo na aba do navegador">
                     <Input
                       value={metaTitle}
                       onChange={(e) => setMetaTitle(e.target.value)}
                       placeholder={title}
                     />
                   </Field>
-                  <Field label="Descrição SEO" hint="Aparece no Google e compartilhamentos">
+                  <Field label="Descri├º├úo SEO" hint="Aparece no Google e compartilhamentos">
                     <Textarea
                       value={metaDesc}
                       onChange={(e) => setMetaDesc(e.target.value)}
@@ -364,7 +302,7 @@ function PageEditorRoute() {
               {tab === "content" && (
                 <div className="space-y-6">
                   <div className="grid gap-4">
-                    <Field label="Título interno *">
+                    <Field label="T├¡tulo interno *">
                       <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
                     </Field>
                     <Field label="URL (Slug)">
@@ -378,8 +316,8 @@ function PageEditorRoute() {
 
                   <Field label="Template">
                     <Select value={template} onChange={(e) => setTemplate(e.target.value)}>
-                      <option value="default">Padrão</option>
-                      <option value="about">Sobre nós</option>
+                      <option value="default">Padr├úo</option>
+                      <option value="about">Sobre n├│s</option>
                       <option value="contact">Contato</option>
                     </Select>
                   </Field>
@@ -400,7 +338,7 @@ function PageEditorRoute() {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56">
-                          <DropdownMenuLabel>Layout Básico</DropdownMenuLabel>
+                          <DropdownMenuLabel>Layout B├ísico</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("hero")}>
                             <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero (Capa principal)
                           </DropdownMenuItem>
@@ -409,7 +347,7 @@ function PageEditorRoute() {
                           </DropdownMenuItem>
                           
                           <DropdownMenuSeparator />
-                          <DropdownMenuLabel>Módulos Específicos</DropdownMenuLabel>
+                          <DropdownMenuLabel>M├│dulos Espec├¡ficos</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("gallery")}>
                             <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de fotos
                           </DropdownMenuItem>
@@ -421,7 +359,7 @@ function PageEditorRoute() {
                           </DropdownMenuItem>
                           
                           <DropdownMenuSeparator />
-                          <DropdownMenuLabel>Conversão</DropdownMenuLabel>
+                          <DropdownMenuLabel>Convers├úo</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("cta")}>
                             <Megaphone className="w-4 h-4 mr-2 text-brand" /> Call to Action (Faixa)
                           </DropdownMenuItem>
@@ -437,7 +375,7 @@ function PageEditorRoute() {
                       onClick={() => setAiModalOpen(true)}
                       className="w-full flex items-center justify-center gap-2 rounded-lg border border-brand/20 bg-brand/5 py-2 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors"
                     >
-                      <Sparkles className="h-3.5 w-3.5" /> Auto-gerar página com IA
+                      <Sparkles className="h-3.5 w-3.5" /> Auto-gerar p├ígina com IA
                     </button>
 
                     {blocks.length === 0 && (
@@ -470,7 +408,7 @@ function PageEditorRoute() {
                                 disabled={index === 0}
                                 className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
                               >
-                                ↑
+                                Ôåæ
                               </button>
                               <button
                                 type="button"
@@ -478,7 +416,7 @@ function PageEditorRoute() {
                                 disabled={index === blocks.length - 1}
                                 className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
                               >
-                                ↓
+                                Ôåô
                               </button>
                               <button
                                 type="button"
@@ -493,13 +431,13 @@ function PageEditorRoute() {
                           <div className="p-4 space-y-4">
                             {block.type === "hero" && (
                               <>
-                                <Field label="Título (Headline)">
+                                <Field label="T├¡tulo (Headline)">
                                   <Input
                                     value={block.title}
                                     onChange={(e) => updateBlock(block.id, { title: e.target.value })}
                                   />
                                 </Field>
-                                <Field label="Subtítulo">
+                                <Field label="Subt├¡tulo">
                                   <Input
                                     value={block.subtitle}
                                     onChange={(e) =>
@@ -508,7 +446,7 @@ function PageEditorRoute() {
                                   />
                                 </Field>
                                 <div className="grid grid-cols-2 gap-3">
-                                  <Field label="Botão (Label)">
+                                  <Field label="Bot├úo (Label)">
                                     <Input
                                       value={block.cta_label}
                                       onChange={(e) =>
@@ -517,7 +455,7 @@ function PageEditorRoute() {
                                       placeholder="Ex: Ver pacotes"
                                     />
                                   </Field>
-                                  <Field label="Botão (Link)">
+                                  <Field label="Bot├úo (Link)">
                                     <Input
                                       value={block.cta_link}
                                       onChange={(e) =>
@@ -543,7 +481,7 @@ function PageEditorRoute() {
 
                             {block.type === "text" && (
                               <>
-                                <Field label="Conteúdo (Markdown)">
+                                <Field label="Conte├║do (Markdown)">
                                   <Textarea
                                     value={block.content}
                                     onChange={(e) =>
@@ -571,8 +509,8 @@ function PageEditorRoute() {
                                         updateBlock(block.id, { align: e.target.value as any })
                                       }
                                     >
-                                      <option value="left">Esquerda (Imagem à direita)</option>
-                                      <option value="right">Direita (Imagem à esquerda)</option>
+                                      <option value="left">Esquerda (Imagem ├á direita)</option>
+                                      <option value="right">Direita (Imagem ├á esquerda)</option>
                                       <option value="center">Centralizado</option>
                                     </Select>
                                   </Field>
@@ -594,13 +532,13 @@ function PageEditorRoute() {
 
                             {block.type === "contact" && (
                               <>
-                                <Field label="Título da seção">
+                                <Field label="T├¡tulo da se├º├úo">
                                   <Input
                                     value={block.title}
                                     onChange={(e) => updateBlock(block.id, { title: e.target.value })}
                                   />
                                 </Field>
-                                <Field label="Texto de introdução">
+                                <Field label="Texto de introdu├º├úo">
                                   <Textarea
                                     value={block.text}
                                     onChange={(e) => updateBlock(block.id, { text: e.target.value })}
@@ -608,15 +546,15 @@ function PageEditorRoute() {
                                   />
                                 </Field>
                                 <p className="text-[10px] text-muted-foreground mt-1">
-                                  Este bloco puxará automaticamente as redes sociais e o formulário de
-                                  lead da agência no portal público.
+                                  Este bloco puxar├í automaticamente as redes sociais e o formul├írio de
+                                  lead da ag├¬ncia no portal p├║blico.
                                 </p>
                               </>
                             )}
 
                             {block.type === "features" && (
                               <div className="space-y-4">
-                                <Field label="Título da Seção">
+                                <Field label="T├¡tulo da Se├º├úo">
                                   <Input
                                     value={block.title}
                                     onChange={(e) => updateBlock(block.id, { title: e.target.value })}
@@ -638,7 +576,7 @@ function PageEditorRoute() {
                                         }}
                                       />
                                       <Input
-                                        placeholder="Título"
+                                        placeholder="T├¡tulo"
                                         value={item.title}
                                         onChange={(e) => {
                                           const newItems = [...block.items];
@@ -647,7 +585,7 @@ function PageEditorRoute() {
                                         }}
                                       />
                                       <Input
-                                        placeholder="Descrição breve"
+                                        placeholder="Descri├º├úo breve"
                                         value={item.description}
                                         onChange={(e) => {
                                           const newItems = [...block.items];
@@ -670,7 +608,7 @@ function PageEditorRoute() {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const newItems = [...(block.items || []), { icon: "✨", title: "Novo item", description: "Descrição" }];
+                                      const newItems = [...(block.items || []), { icon: "Ô£¿", title: "Novo item", description: "Descri├º├úo" }];
                                       updateBlock(block.id, { items: newItems });
                                     }}
                                     className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
@@ -683,26 +621,26 @@ function PageEditorRoute() {
 
                             {block.type === "cta" && (
                               <div className="space-y-4">
-                                <Field label="Título de Impacto (Headline)">
+                                <Field label="T├¡tulo de Impacto (Headline)">
                                   <Input
                                     value={block.title}
                                     onChange={(e) => updateBlock(block.id, { title: e.target.value })}
                                   />
                                 </Field>
-                                <Field label="Subtítulo">
+                                <Field label="Subt├¡tulo">
                                   <Input
                                     value={block.subtitle}
                                     onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
                                   />
                                 </Field>
                                 <div className="grid grid-cols-2 gap-3">
-                                  <Field label="Botão (Label)">
+                                  <Field label="Bot├úo (Label)">
                                     <Input
                                       value={block.button_label}
                                       onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
                                     />
                                   </Field>
-                                  <Field label="Botão (Link)">
+                                  <Field label="Bot├úo (Link)">
                                     <Input
                                       value={block.button_link}
                                       onChange={(e) => updateBlock(block.id, { button_link: e.target.value })}
@@ -714,7 +652,7 @@ function PageEditorRoute() {
 
                             {block.type === "faq" && (
                               <div className="space-y-4">
-                                <Field label="Título Principal">
+                                <Field label="T├¡tulo Principal">
                                   <Input
                                     value={block.title}
                                     onChange={(e) => updateBlock(block.id, { title: e.target.value })}
@@ -803,8 +741,8 @@ function PageEditorRoute() {
               {blocks.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-[500px] text-muted-foreground">
                   <LayoutTemplate className="w-12 h-12 mb-4 opacity-20" />
-                  <p className="text-sm font-medium">Sua página está vazia</p>
-                  <p className="text-xs mt-1">Adicione blocos pelo painel esquerdo para começar a montar o layout.</p>
+                  <p className="text-sm font-medium">Sua p├ígina est├í vazia</p>
+                  <p className="text-xs mt-1">Adicione blocos pelo painel esquerdo para come├ºar a montar o layout.</p>
                 </div>
               )}
             </div>
@@ -812,7 +750,7 @@ function PageEditorRoute() {
         </div>
       </div>
       
-      <AILandingPageModal 
+      <AILandingPageSheet 
         open={aiModalOpen} 
         onOpenChange={setAiModalOpen} 
         onGenerate={(newBlocks: any[]) => {

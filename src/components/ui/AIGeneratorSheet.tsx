@@ -1,23 +1,19 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
+
 import { Field, Input, PrimaryButton, GhostButton, Select, Textarea } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
 
-type AIGeneratorModalProps = {
+import { SheetPage } from "./sheet";
+
+type AIGeneratorSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (html: string) => void;
 };
 
-export function AIGeneratorModal({ open, onOpenChange, onGenerate }: AIGeneratorModalProps) {
+export function AIGeneratorSheet({ open, onOpenChange, onGenerate }: AIGeneratorSheetProps) {
   const [tab, setTab] = useState<"topic" | "url">("topic");
   const [topic, setTopic] = useState("");
   const [url, setUrl] = useState("");
@@ -82,19 +78,17 @@ Contexto fornecido: ${context}`;
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="w-5 h-5 text-brand" /> 
-            Redator de Artigos IA
-          </DialogTitle>
-          <DialogDescription>
-            Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex border-b border-border mb-4">
+    <SheetPage isOpen={open} onClose={() => onOpenChange(false)} title="Redator de Artigos IA" width="450px">
+      <div className="mb-6 space-y-1">
+        <div className="flex items-center gap-2 text-brand font-bold">
+          <Wand2 className="w-5 h-5" /> 
+          Gerador Inteligente
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
+        </p>
+      </div>
+          <div className="flex border-b border-border mb-4">
           <button
             type="button"
             className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
@@ -151,7 +145,6 @@ Contexto fornecido: ${context}`;
             </PrimaryButton>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+    </SheetPage>
   );
 }

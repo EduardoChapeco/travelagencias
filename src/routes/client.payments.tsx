@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientPayments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { money, fmtDate, StatusBadge } from "@/components/ui/form";
 
@@ -12,29 +12,7 @@ export const Route = createFileRoute("/client/payments")({
 function ClientPaymentsPage() {
   const q = useQuery({
     queryKey: ["client-payments"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return [];
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id")
-        .eq("user_id", u.user.id);
-      const ids = (clients ?? []).map((c) => c.id);
-      if (!ids.length) return [];
-      const { data: plans } = await supabase
-        .from("payment_plans")
-        .select("id")
-        .in("client_id", ids);
-      const planIds = (plans ?? []).map((p) => p.id);
-      if (!planIds.length) return [];
-      const { data, error } = await supabase
-        .from("payment_installments")
-        .select("id, number, amount, due_date, status, payment_method, paid_at, payment_plan_id")
-        .in("payment_plan_id", planIds)
-        .order("due_date");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchClientPayments(),
   });
 
   return (

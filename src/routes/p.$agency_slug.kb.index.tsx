@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicAgencyForKb, fetchKbArticles } from "@/services/public";
 import { ArrowLeft, BookOpen, Search, HelpCircle, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -15,42 +15,13 @@ function PublicKnowledgeBase() {
 
   const qAgency = useQuery({
     queryKey: ["public-agency", agency_slug],
-    queryFn: async () => {
-      const { data } = await (supabase as any)
-        .rpc("get_public_agency_by_slug", { _slug: agency_slug })
-        .maybeSingle();
-      return data as {
-        id: string;
-        name: string;
-        slug: string;
-        logo_url: string | null;
-        brand_color: string | null;
-        brand_color_fg: string | null;
-      } | null;
-    },
+    queryFn: () => fetchPublicAgencyForKb(agency_slug as string),
   });
 
   const qArticles = useQuery({
     enabled: !!qAgency.data?.id,
     queryKey: ["public-kb", qAgency.data?.id, search],
-    queryFn: async () => {
-      if (search.trim()) {
-        const { data } = await (supabase as any).rpc("search_knowledge_articles", {
-          p_agency_id: qAgency.data!.id,
-          p_query: search,
-          p_is_internal: false,
-        });
-        return (data || []) as any[];
-      } else {
-        const { data } = await (supabase as any)
-          .from("knowledge_articles")
-          .select("id, title, slug, category, views")
-          .eq("agency_id", qAgency.data!.id)
-          .eq("is_internal", false)
-          .order("views", { ascending: false });
-        return (data || []) as any[];
-      }
-    },
+    queryFn: () => fetchKbArticles(qAgency.data!.id, search || undefined),
   });
 
   if (qAgency.isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Carregando...</div>;

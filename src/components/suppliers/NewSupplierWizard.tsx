@@ -5,6 +5,7 @@ import {
   X, Check, ChevronRight, ChevronLeft, Building2, Percent, PhoneCall, Mail, FileText
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
 const STEPS = ["Identidade B2B", "Comercial & Markups", "Contatos (SLA)"];
@@ -73,18 +74,8 @@ export function NewSupplierWizard({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground">Novo Parceiro de Negócios (B2B)</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Cadastre operadoras, hotéis e consolidadoras com seus acordos.</p>
-          </div>
-          <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Parceiro de Negócios (B2B)">
+      <p className="text-xs text-muted-foreground mb-4">Cadastre operadoras, hotéis e consolidadoras com seus acordos.</p>
 
         {/* Stepper progress */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
@@ -215,7 +206,6 @@ export function NewSupplierWizard({
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

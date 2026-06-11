@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { MediaLibraryPicker } from "../uploads/MediaLibraryPicker";
-import { AIGeneratorModal } from "./AIGeneratorModal";
+import { AIGeneratorSheet } from "./AIGeneratorSheet";
 
 export function RichTextEditor({
   value,
@@ -174,12 +174,10 @@ export function RichTextEditor({
           editor.chain().focus().setImage({ src: url }).run();
         }}
       />
-      <AIGeneratorModal
+      <AIGeneratorSheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}
-        onGenerate={(html) => {
-          editor.commands.insertContent(html);
-        }}
+        onGenerate={(html) => editor.commands.insertContent(html)}
       />
     </div>
   );

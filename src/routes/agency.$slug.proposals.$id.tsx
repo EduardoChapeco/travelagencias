@@ -32,7 +32,20 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
-import { AIItineraryModal, type AIItineraryDay } from "@/components/ui/AIItineraryModal";
+import { AIItinerarySheet, type AIItineraryDay } from "@/components/ui/AIItinerarySheet";
+import { 
+  fetchProposal, 
+  updateProposal, 
+  processOcrFile, 
+  refineItineraryText,
+  type Proposal, 
+  type Flight, 
+  type Hotel, 
+  type Transfer, 
+  type Tour, 
+  type ItineraryDay 
+} from "@/services/proposals";
+
 
 const SMALL_INPUT =
   "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
@@ -41,85 +54,6 @@ export const Route = createFileRoute("/agency/$slug/proposals/$id")({
   head: () => ({ meta: [{ title: "Editor de Proposta · TravelOS" }] }),
   component: ProposalEditor,
 });
-
-// ===== Types =====
-type Flight = {
-  id: string;
-  origin: string;
-  destination: string;
-  date: string;
-  departure_time: string;
-  arrival_time: string;
-  airline: string;
-  flight_number: string;
-  stops: number;
-  baggage_rules: string;
-  price: number;
-};
-type HotelRoom = { type: string; qty: number };
-type Hotel = {
-  id: string;
-  name: string;
-  city: string;
-  checkin: string;
-  checkout: string;
-  meal_plan: string;
-  rooms: HotelRoom[];
-  images: string[];
-  price: number;
-};
-type Transfer = {
-  id: string;
-  description: string;
-  date: string;
-  type: "private" | "shared";
-  vehicle: string;
-  price: number;
-  notes: string;
-};
-type Tour = {
-  id: string;
-  description: string;
-  date: string;
-  price: number;
-  image_url: string;
-  notes: string;
-};
-type ItineraryDay = { id: string; day: string; title: string; description: string };
-
-type Proposal = {
-  id: string;
-  number: number;
-  title: string;
-  status: string;
-  destination: string | null;
-  travel_start: string | null;
-  travel_end: string | null;
-  pax_adults: number;
-  pax_seniors: number;
-  pax_children: number;
-  pax_infants: number;
-  currency: string;
-  subtotal: number;
-  discount: number;
-  total: number;
-  valid_until: string | null;
-  notes: string | null;
-  terms: string | null;
-  public_token: string;
-  agency_id: string;
-  flights: Flight[];
-  hotels: Hotel[];
-  transfers: Transfer[];
-  tours: Tour[];
-  itinerary: ItineraryDay[];
-  includes: string[];
-  excludes: string[];
-  pix_discount_percent: number;
-  installments_card: number;
-  installments_boleto: number;
-  template: string;
-};
 
 const uid = () => Math.random().toString(36).slice(2, 11);
 
@@ -130,19 +64,12 @@ function ProposalEditor() {
 
   const propQ = useQuery({
     queryKey: ["proposal", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("proposals")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
-      if (error) throw error;
-      return data as unknown as Proposal | null;
-    },
+    queryFn: () => fetchProposal(id),
   });
 
   const [draft, setDraft] = useState<Proposal | null>(null);
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  
   useEffect(() => {
     if (propQ.data) {
       setDraft({
@@ -158,21 +85,8 @@ function ProposalEditor() {
     }
   }, [propQ.data]);
 
-  const total = useMemo(() => {
-    if (!draft) return 0;
-    const sum = (arr: Array<{ price?: number }>) =>
-      arr.reduce((s, x) => s + (Number(x.price) || 0), 0);
-    return sum(draft.flights) + sum(draft.hotels) + sum(draft.transfers) + sum(draft.tours);
-  }, [draft]);
-
   const persist = useMutation({
-    mutationFn: async (patch: Partial<Proposal>) => {
-      const { error } = await supabase
-        .from("proposals")
-        .update(patch as never)
-        .eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (patch: Partial<Proposal>) => updateProposal(id, patch),
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["proposal", id] }),
   });
@@ -186,19 +100,7 @@ function ProposalEditor() {
     [draft, persist],
   );
 
-  // Auto-recalculate total whenever items change
-  useEffect(() => {
-    if (!draft) return;
-    if (Number(draft.total) !== Number(total) || Number(draft.subtotal) !== Number(total)) {
-      const discountValue = total * (Number(draft.pix_discount_percent) / 100);
-      const finalTotal = Math.max(0, total - discountValue);
-      persist.mutate({ subtotal: total, discount: discountValue, total: finalTotal });
-      setDraft((d) =>
-        d ? { ...d, subtotal: total, discount: discountValue, total: finalTotal } : d,
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [total, draft?.pix_discount_percent]);
+
 
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;
@@ -837,7 +739,7 @@ function ProposalEditor() {
         </main>
       </div>
 
-      <AIItineraryModal
+      <AIItinerarySheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}
         onGenerate={(days) => {
@@ -847,9 +749,7 @@ function ProposalEditor() {
             title: d.title || "",
             description: d.description || "",
           }));
-          // Append to existing, or replace? Usually better to append if there are items, but replacing is fine.
-          // Let's replace for simplicity if it's empty, or append if not.
-          save({ itinerary: [...(draft.itinerary || []), ...formattedDays] });
+          save({ itinerary: [...(draft!.itinerary || []), ...formattedDays] });
         }}
       />
     </div>
@@ -1110,19 +1010,8 @@ function SortableItDay({
     setRefining(true);
     toast.loading("Refinando texto...", { id: `refine-${item.id}` });
     try {
-      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-        body: {
-          action: "completion",
-          prompt: `Melhore este trecho de roteiro de viagem. Torne mais atrativo, luxuoso e vendedor.\n\nTítulo: ${item.title}\nDescrição: ${item.description}\n\nRetorne EXATAMENTE um JSON com as chaves "title" e "description". Sem markdown.`,
-          systemPrompt: "Você é um copywriter de turismo premium. Retorne apenas JSON.",
-          modelPreference: "smart"
-        }
-      });
-      if (error) throw error;
-      const text = data?.result || "";
-      const match = text.match(/\{[\s\S]*\}/);
-      const parsed = JSON.parse(match ? match[0] : text);
-      onChange({ ...item, title: parsed.title || item.title, description: parsed.description || item.description });
+      const parsed = await refineItineraryText(item.title, item.description);
+      onChange({ ...item, title: parsed.title, description: parsed.description });
       toast.success("Texto melhorado!", { id: `refine-${item.id}` });
     } catch (err: any) {
       toast.error(err.message || "Erro ao refinar", { id: `refine-${item.id}` });
@@ -1501,18 +1390,8 @@ function OcrButton({
     if (!files || !files[0]) return;
     setBusy(true);
     try {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = (reader.result as string).split(",")[1];
-        const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
-          body: { file_base64: base64, mime: file.type, file_name: file.name },
-        });
-        if (error) throw error;
-        onExtracted(data ?? {});
-      };
-      reader.onerror = () => toast.error("Erro ao ler arquivo");
-      reader.readAsDataURL(file);
+      const data = await processOcrFile(files[0]);
+      onExtracted(data);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro no OCR");
     } finally {

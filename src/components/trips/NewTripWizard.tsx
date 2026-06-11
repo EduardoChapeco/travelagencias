@@ -5,6 +5,7 @@ import {
   X, Check, ChevronRight, ChevronLeft, Plane, User, MapPin, CalendarDays, DollarSign, Tag
 } from "lucide-react";
 import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
 const STEPS = ["Destino e Datas", "Passageiros", "Financeiro e Status", "Revisão"];
@@ -108,18 +109,8 @@ export function NewTripWizard({
   const selectedClient = clientsQ.data?.find(c => c.id === clientId);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-foreground">Novo Roteiro de Viagem</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Gestão completa de viagens, orçamentos e passageiros.</p>
-          </div>
-          <button onClick={onClose} className="rounded-full p-2 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Roteiro de Viagem">
+      <p className="text-xs text-muted-foreground mb-4">Gestão completa de viagens, orçamentos e passageiros.</p>
 
         {/* Stepper progress */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
@@ -293,7 +284,6 @@ export function NewTripWizard({
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

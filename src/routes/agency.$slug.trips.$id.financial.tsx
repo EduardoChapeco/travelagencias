@@ -1,8 +1,7 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft,
   Plus,
   Trash2,
   TrendingUp,
@@ -10,72 +9,33 @@ import {
   DollarSign,
   CreditCard,
   CheckCircle,
-  Clock,
-  AlertCircle,
   ChevronDown,
   ChevronRight,
-  Receipt,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge, money, fmtDate, Field, Input, Select } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
+import {
+  fetchTripSummary,
+  fetchFinancialRecords,
+  fetchPaymentPlan,
+  addFinancialRecord,
+  cancelFinancialRecord,
+  createPaymentPlan,
+  markInstallmentPaid,
+  type FinancialRecord,
+  type PaymentInstallment,
+  type TripSummary,
+} from "@/services/trips";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
   head: () => ({ meta: [{ title: "Financeiro da Viagem · TravelOS" }] }),
   component: TripFinancial,
 });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Remove inlined types (now imported from service) ────────────────────────
 
-type FinancialRecord = {
-  id: string;
-  trip_id: string;
-  agency_id: string;
-  type: "income" | "expense" | "transfer";
-  category: string | null;
-  description: string | null;
-  amount: number;
-  currency: string;
-  amount_brl: number | null;
-  payment_method: string | null;
-  status: "pending" | "confirmed" | "cancelled";
-  due_date: string | null;
-  paid_at: string | null;
-  receipt_url: string | null;
-  invoice_number: string | null;
-  created_at: string;
-};
-
-type PaymentInstallment = {
-  id: string;
-  payment_plan_id: string;
-  number: number;
-  due_date: string;
-  amount: number;
-  status: "pending" | "paid" | "late" | "waived";
-  paid_at: string | null;
-  payment_method: string | null;
-  late_fee: number;
-};
-
-type PaymentPlan = {
-  id: string;
-  trip_id: string;
-  client_id: string | null;
-  total_amount: number;
-  status: string;
-};
-
-type Trip = {
-  id: string;
-  title: string;
-  total_sale: number;
-  total_cost: number;
-  total_paid: number;
-  currency: string;
-};
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -135,45 +95,19 @@ function TripFinancial() {
   const tripQ = useQuery({
     enabled: !!agency,
     queryKey: ["trip", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, total_sale, total_cost, total_paid, currency")
-        .eq("id", tripId)
-        .maybeSingle();
-      if (error) throw error;
-      return data as Trip | null;
-    },
+    queryFn: () => fetchTripSummary(tripId),
   });
 
   const recordsQ = useQuery({
     enabled: !!agency,
     queryKey: ["financial_records_trip", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("financial_records")
-        .select("*")
-        .eq("trip_id", tripId)
-        .order("due_date", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as FinancialRecord[];
-    },
+    queryFn: () => fetchFinancialRecords(tripId),
   });
 
   const planQ = useQuery({
     enabled: !!agency,
     queryKey: ["payment_plan_trip", tripId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("payment_plans")
-        .select("*, payment_installments(*)")
-        .eq("trip_id", tripId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data as (PaymentPlan & { payment_installments: PaymentInstallment[] }) | null;
-    },
+    queryFn: () => fetchPaymentPlan(tripId),
   });
 
   // ── Derived numbers ───────────────────────────────────────────────────────────
@@ -201,35 +135,23 @@ function TripFinancial() {
   });
 
   const addRecord = useMutation({
-    mutationFn: async () => {
-      if (!agency) throw new Error("Sem agência");
-      const { error } = await supabase.from("financial_records").insert({
-        agency_id: agency.id,
-        trip_id: tripId,
+    mutationFn: () =>
+      addFinancialRecord({
+        agencyId: agency!.id,
+        tripId,
         type: recordType,
         category: rForm.category || null,
         description: rForm.description || null,
         amount: parseFloat(rForm.amount) || 0,
-        amount_brl: parseFloat(rForm.amount) || 0,
         currency: rForm.currency,
         payment_method: rForm.payment_method || null,
         status: rForm.status,
         due_date: rForm.due_date || null,
-      });
-      if (error) throw error;
-    },
+      }),
     onSuccess: () => {
-      toast.success("Lançamento adicionado");
+      toast.success("Lancamento adicionado");
       setShowAddRecord(false);
-      setRForm({
-        category: "",
-        description: "",
-        amount: "",
-        currency: "BRL",
-        payment_method: "",
-        status: "confirmed",
-        due_date: "",
-      });
+      setRForm({ category: "", description: "", amount: "", currency: "BRL", payment_method: "", status: "confirmed", due_date: "" });
       qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
       qc.invalidateQueries({ queryKey: ["trip", tripId] });
     },
@@ -237,13 +159,7 @@ function TripFinancial() {
   });
 
   const deleteRecord = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("financial_records")
-        .update({ status: "cancelled" } as never)
-        .eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => cancelFinancialRecord(id),
     onSuccess: () => {
       toast.success("Lançamento removido");
       qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
@@ -261,37 +177,15 @@ function TripFinancial() {
   });
 
   const createPlan = useMutation({
-    mutationFn: async () => {
-      if (!agency) throw new Error("Sem agência");
-      const total = parseFloat(planForm.total_amount) || 0;
-      const n = parseInt(planForm.installments) || 1;
-      const per = Math.round((total / n) * 100) / 100;
-      const firstDue = new Date(planForm.first_due);
-
-      const { data: plan, error: planErr } = await supabase
-        .from("payment_plans")
-        .insert({ agency_id: agency.id, trip_id: tripId, total_amount: total, status: "active" })
-        .select("id")
-        .single();
-      if (planErr) throw planErr;
-
-      const installments = Array.from({ length: n }, (_, i) => {
-        const due = new Date(firstDue);
-        due.setMonth(due.getMonth() + i);
-        return {
-          payment_plan_id: plan.id,
-          agency_id: agency.id,
-          number: i + 1,
-          due_date: due.toISOString().slice(0, 10),
-          amount: i === n - 1 ? Math.round((total - per * (n - 1)) * 100) / 100 : per,
-          status: "pending" as const,
-          payment_method: planForm.method,
-        };
-      });
-
-      const { error: instErr } = await supabase.from("payment_installments").insert(installments);
-      if (instErr) throw instErr;
-    },
+    mutationFn: () =>
+      createPaymentPlan({
+        agencyId: agency!.id,
+        tripId,
+        totalAmount: parseFloat(planForm.total_amount) || 0,
+        installmentsCount: parseInt(planForm.installments) || 1,
+        method: planForm.method,
+        firstDueDate: planForm.first_due,
+      }),
     onSuccess: () => {
       toast.success("Plano de parcelamento criado");
       setShowPlanForm(false);
@@ -301,13 +195,7 @@ function TripFinancial() {
   });
 
   const markPaid = useMutation({
-    mutationFn: async (instId: string) => {
-      const { error } = await supabase
-        .from("payment_installments")
-        .update({ status: "paid", paid_at: new Date().toISOString() } as never)
-        .eq("id", instId);
-      if (error) throw error;
-    },
+    mutationFn: (instId: string) => markInstallmentPaid(instId),
     onSuccess: () => {
       toast.success("Parcela marcada como paga");
       qc.invalidateQueries({ queryKey: ["payment_plan_trip", tripId] });

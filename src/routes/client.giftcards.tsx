@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientGiftCards } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money } from "@/components/ui/form";
 
@@ -12,24 +12,7 @@ export const Route = createFileRoute("/client/giftcards")({
 function Page() {
   const q = useQuery({
     queryKey: ["client-giftcards"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return [];
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id")
-        .eq("user_id", u.user.id);
-      const ids = (clients ?? []).map((c) => c.id);
-      if (!ids.length) return [];
-      const { data } = await supabase
-        .from("gift_cards")
-        .select("*")
-        .or(
-          `purchased_by_client_id.in.(${ids.join(",")}),redeemed_by_client_id.in.(${ids.join(",")})`,
-        )
-        .order("created_at", { ascending: false });
-      return data ?? [];
-    },
+    queryFn: () => fetchClientGiftCards(),
   });
 
   return (

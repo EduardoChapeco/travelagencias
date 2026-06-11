@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Plane, CreditCard, FileText, Gift, Shield } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientDashboard } from "@/services/client-area";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { money, fmtDate } from "@/components/ui/form";
 
@@ -13,30 +13,7 @@ export const Route = createFileRoute("/client/")({
 function ClientHome() {
   const q = useQuery({
     queryKey: ["client-dashboard"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return { trips: [], pending: 0, notifs: 0 };
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id")
-        .eq("user_id", u.user.id);
-      const ids = (clients ?? []).map((c) => c.id);
-      const [trips, notifs] = await Promise.all([
-        ids.length
-          ? supabase
-              .from("trips")
-              .select("id, code, title, travel_start, status, total_sale, currency")
-              .in("client_id", ids)
-              .order("travel_start", { ascending: false })
-              .limit(3)
-          : Promise.resolve({ data: [] }),
-        supabase
-          .from("notifications")
-          .select("id", { count: "exact", head: true })
-          .is("read_at", null),
-      ]);
-      return { trips: trips.data ?? [], notifs: notifs.count ?? 0, pending: 0 };
-    },
+    queryFn: () => fetchClientDashboard(),
   });
 
   return (

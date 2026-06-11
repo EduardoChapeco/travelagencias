@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicTour, enrollPublicTour } from "@/services/public";
 import { Field, Input, PrimaryButton, Textarea } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
@@ -20,52 +20,8 @@ function Page() {
   const q = useQuery({
     queryKey: ["portal-tour", agency_slug, id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("agencies")
-        .select("id, name, slug, brand_color, brand_color_fg")
-        .eq("slug", agency_slug)
-        .maybeSingle();
-      const agency = data as any;
-      if (!agency) return null;
-
-      const { data: tourData } = await supabase
-        .from("group_tours")
-        .select("*")
-        .eq("id", id)
-        .eq("agency_id", agency.id)
-        .maybeSingle();
-      const tour = tourData as any;
-      if (!tour)
-        return {
-          agency,
-          tour: null,
-          days: [] as TourDay[],
-          layout: null as any,
-          assignedSeats: [] as string[],
-        };
-
-      const days: TourDay[] = Array.isArray(tour.itinerary)
-        ? (tour.itinerary as unknown as TourDay[])
-        : [];
-
-      let layout: any = null;
-      let assignedSeats: string[] = [];
-      if (tour.bus_layout_id) {
-        const { data: l } = await supabase
-          .from("bus_layouts")
-          .select("*")
-          .eq("id", tour.bus_layout_id)
-          .maybeSingle();
-        if (l) layout = l;
-        const { data: assigned } = await supabase
-          .from("group_tour_enrollments")
-          .select("seat_number")
-          .eq("group_tour_id", id)
-          .not("seat_number", "is", null);
-        assignedSeats = (assigned || []).map((a) => a.seat_number).filter((s): s is string => !!s);
-      }
-
-      return { agency, tour, days, layout, assignedSeats };
+      const data = await fetchPublicTour(agency_slug as string, id as string);
+      return data;
     },
   });
 
@@ -103,50 +59,15 @@ function Page() {
     const pax = Math.max(1, selectedSeats.length);
     const unitPrice = Number(t.base_price) || 0;
 
-    // 1. One enrollment row per seat/passenger (matches schema).
-    const rows = (selectedSeats.length > 0 ? selectedSeats : [null]).map((seat) => ({
-      agency_id: agency.id,
-      group_tour_id: t.id,
-      passenger_name: form.passenger_name,
-      passenger_cpf: form.passenger_cpf || null,
-      seat_number: seat,
-      total_paid: 0,
-      status: "pending",
-      notes: form.notes || null,
-    }));
-    const { error: bErr } = await supabase.from("group_tour_enrollments").insert(rows);
-
-    // 2. CRM lead for the salesperson
-    const { data: stages } = await supabase
-      .from("lead_stages")
-      .select("id")
-      .eq("agency_id", agency.id)
-      .order("position")
-      .limit(1);
-    if (stages && stages.length > 0) {
-      await supabase.from("leads").insert({
-        agency_id: agency.id,
-        stage_id: stages[0].id,
-        name: form.passenger_name,
-        email: form.email || null,
-        phone: form.phone || null,
-        destination: `Interesse: ${t.title}`,
-        estimated_value: unitPrice * pax,
-      });
-    }
-
-    // 3. Reserve seat counter on the tour.
-    const { data: cur } = await supabase
-      .from("group_tours")
-      .select("reserved_seats")
-      .eq("id", t.id)
-      .maybeSingle();
-    if (cur) {
-      await supabase
-        .from("group_tours")
-        .update({ reserved_seats: (cur.reserved_seats || 0) + pax })
-        .eq("id", t.id);
-    }
+    const { error: bErr } = await enrollPublicTour(
+      agency.id,
+      t.id,
+      form,
+      selectedSeats,
+      unitPrice,
+      pax,
+      t.title
+    );
 
     setBusy(false);
     if (bErr) toast.error(bErr.message);
@@ -230,7 +151,7 @@ function Page() {
                 Roteiro Dia a Dia
               </h2>
               <ol className="space-y-3">
-                {days.map((d, i) => (
+                {days.map((d: any, i: number) => (
                   <li
                     key={i}
                     className="rounded-xl border border-border bg-surface p-4  relative overflow-hidden group hover:border-brand/30 transition-colors"
