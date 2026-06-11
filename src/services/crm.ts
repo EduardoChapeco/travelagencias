@@ -106,12 +106,12 @@ export async function persistLeadMove(payload: {
   agencyId: string;
   stages: Stage[];
 }) {
-  const updates = payload.reorderedIds.map((id, idx) =>
-    supabase.from("leads").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
-  );
-  const results = await Promise.all(updates);
-  const firstErr = results.find((r) => r.error);
-  if (firstErr?.error) throw firstErr.error;
+  const { error } = await (supabase.rpc as any)("persist_lead_move", {
+    _lead_id: payload.leadId,
+    _to_stage_id: payload.toStageId,
+    _reordered_ids: payload.reorderedIds,
+  });
+  if (error) throw error;
 
   if (payload.fromStageId !== payload.toStageId) {
     const fromName = payload.stages.find((s) => s.id === payload.fromStageId)?.name ?? "—";
@@ -149,19 +149,11 @@ export async function createLead(agencyId: string, f: any) {
 }
 
 export async function saveStageUpdates(agencyId: string, localStages: Stage[]) {
-  const updates = localStages.map((s, idx) => {
-    if (s.id.startsWith("temp_")) {
-      return supabase.from('lead_stages').insert({
-        agency_id: agencyId, name: s.name, color: s.color, position: idx, is_won: s.is_won, is_lost: s.is_lost
-      });
-    } else {
-      return supabase.from('lead_stages').update({ name: s.name, color: s.color, position: idx }).eq('id', s.id);
-    }
+  const { error } = await (supabase.rpc as any)("save_lead_stages_updates", {
+    _agency_id: agencyId,
+    _stages: localStages as any,
   });
-
-  const results = await Promise.all(updates);
-  const err = results.find(r => r.error);
-  if(err) throw err.error;
+  if (error) throw error;
 }
 
 export async function getLeadsCountInStage(stageId: string): Promise<number> {

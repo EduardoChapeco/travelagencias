@@ -84,15 +84,16 @@ export async function fetchTripPassengersMin(tripId: string): Promise<PassengerM
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 export async function updateBoardingCardPositions(
+  cardId: string,
   toStatus: string,
   reorderedIds: string[]
 ): Promise<void> {
-  const updates = reorderedIds.map((id, idx) =>
-    supabase.from("boarding_cards").update({ status: toStatus, position: idx }).eq("id", id)
-  );
-  const results = await Promise.all(updates);
-  const firstErr = results.find((r) => r.error);
-  if (firstErr?.error) throw new Error(firstErr.error.message);
+  const { error } = await (supabase.rpc as any)("persist_boarding_card_move", {
+    _card_id: cardId,
+    _to_status: toStatus,
+    _reordered_ids: reorderedIds,
+  });
+  if (error) throw new Error(error.message);
 }
 
 export async function updateBoardingCardChecklist(cardId: string, checklist: ChecklistItem[]): Promise<void> {

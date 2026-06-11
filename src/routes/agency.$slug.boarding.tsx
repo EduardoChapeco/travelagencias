@@ -70,7 +70,7 @@ function BoardingKanbanPage() {
 
   const persistMove = useMutation({
     mutationFn: async (payload: { cardId: string; toStatus: string; reorderedIds: string[] }) => {
-      await updateBoardingCardPositions(payload.toStatus, payload.reorderedIds);
+      await updateBoardingCardPositions(payload.cardId, payload.toStatus, payload.reorderedIds);
     },
     onError: (e) => {
       toast.error("Erro ao salvar card");

@@ -22,10 +22,10 @@ export async function fetchVisas(agencyId: string) {
 }
 
 export async function persistVisaMove(payload: { visaId: string; toStageId: string; reorderedIds: string[] }) {
-  const updates = payload.reorderedIds.map((id, idx) =>
-    (supabase as any).from("visas").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
-  );
-  const results = await Promise.all(updates);
-  const firstErr = results.find((r) => r.error);
-  if (firstErr?.error) throw firstErr.error;
+  const { error } = await (supabase.rpc as any)("persist_visa_move", {
+    _visa_id: payload.visaId,
+    _to_stage_id: payload.toStageId,
+    _reordered_ids: payload.reorderedIds,
+  });
+  if (error) throw error;
 }
