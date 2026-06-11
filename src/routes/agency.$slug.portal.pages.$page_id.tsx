@@ -40,6 +40,8 @@ import { BlockRenderer } from "@/components/portal/BlockRenderer";
 import { PortalBlock, PortalBlockType, BLOCK_DEFAULTS } from "@/lib/cms-types";
 import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
 import { AILandingPageSheet } from "@/components/ui/AILandingPageSheet";
+import { fetchPortalPage, fetchPortalPageVersions, savePortalPageDraft, publishPortalPage } from "@/services/portal";
+import { useBlockEditor } from "@/hooks/use-block-editor";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -50,19 +52,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/$page_id")({
-  head: () => ({ meta: [{ title: "Editor de P├ígina ┬À TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Editor de Página · TravelOS" }] }),
   component: PageEditorRoute,
 });
-
-type PageRow = {
-  id: string;
-  slug: string;
-  title: string;
-  is_published: boolean;
-  template: string | null;
-  blocks: any;
-  seo: any;
-};
 
 function slugify(s: string) {
   return s
@@ -84,23 +76,24 @@ function PageEditorRoute() {
   const { data: initialData, isLoading } = useQuery({
     enabled: !!agency && !isNew,
     queryKey: ["portal-page", page_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portal_pages")
-        .select("*")
-        .eq("id", page_id)
-        .single();
-      if (error) throw error;
-      return data as PageRow;
-    },
+    queryFn: () => fetchPortalPage(page_id),
   });
 
   const [title, setTitle] = useState("");
   const [pageSlug, setPageSlug] = useState("");
   const [template, setTemplate] = useState("default");
-  const [blocks, setBlocks] = useState<PortalBlock[]>([]);
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
+
+  const {
+    blocks,
+    setBlocks,
+    setInitialBlocks,
+    addBlock,
+    updateBlock,
+    removeBlock,
+    moveBlock,
+  } = useBlockEditor();
 
   const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<"content" | "seo" | "history">("content");
@@ -112,24 +105,16 @@ function PageEditorRoute() {
       setTitle(initialData.title || "");
       setPageSlug(initialData.slug || "");
       setTemplate(initialData.template || "default");
-      setBlocks(initialData.blocks || []);
+      setInitialBlocks(initialData.blocks || []);
       setMetaTitle(initialData.seo?.meta_title || "");
       setMetaDesc(initialData.seo?.meta_description || "");
     }
-  }, [initialData, isNew]);
+  }, [initialData, isNew, setInitialBlocks]);
 
   const versionsQuery = useQuery({
     enabled: !!initialData?.id && !isNew,
     queryKey: ["portal-page-versions", initialData?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("portal_page_versions")
-        .select("*")
-        .eq("page_id", initialData!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as any[];
-    },
+    queryFn: () => fetchPortalPageVersions(initialData!.id),
   });
 
   if (isLoading) {
@@ -137,66 +122,20 @@ function PageEditorRoute() {
   }
   if (!agency) return null;
 
-  const addBlock = (type: PortalBlockType) => {
-    const id = Math.random().toString(36).slice(2, 8);
-    const newBlock: PortalBlock = { id, ...BLOCK_DEFAULTS[type] } as PortalBlock;
-    setBlocks([...blocks, newBlock]);
-  };
-
-  const updateBlock = (id: string, updates: Partial<PortalBlock>) => {
-    setBlocks(blocks.map((b) => (b.id === id ? ({ ...b, ...updates } as PortalBlock) : b)));
-  };
-
-  const removeBlock = (id: string) => {
-    setBlocks(blocks.filter((b) => b.id !== id));
-  };
-
-  const moveBlock = (index: number, direction: -1 | 1) => {
-    const newBlocks: PortalBlock[] = [...blocks];
-    if (index + direction < 0 || index + direction >= newBlocks.length) return;
-    const temp = newBlocks[index];
-    newBlocks[index] = newBlocks[index + direction];
-    newBlocks[index + direction] = temp;
-    setBlocks(newBlocks);
-  };
-
   async function saveDraftInternal() {
-    if (!title) throw new Error("O t├¡tulo ├® obrigat├│rio");
     setSubmitting(true);
-
     const finalSlug = pageSlug || slugify(title);
-
-    const payload = {
-      agency_id: agency!.id,
+    
+    return await savePortalPageDraft(
+      agency!.id,
+      initialData?.id || null,
+      isNew,
       title,
-      slug: finalSlug,
+      finalSlug,
       template,
-      blocks: blocks as any,
-      seo: {
-        meta_title: metaTitle,
-        meta_description: metaDesc,
-      },
-    };
-
-    const validation = PortalPagePayloadSchema.safeParse(payload);
-    if (!validation.success) {
-      const errorMsg = validation.error.errors
-        .map((e) => `${e.path.join(" -> ")}: ${e.message}`)
-        .join(" | ");
-      throw new Error(`Valida├º├úo falhou: ${errorMsg}`);
-    }
-
-    let newPageId = isNew ? null : initialData?.id;
-
-    if (!isNew && newPageId) {
-      const { error } = await supabase.from("portal_pages").update(payload).eq("id", newPageId);
-      if (error) throw error;
-    } else {
-      const { data: newPage, error } = await supabase.from("portal_pages").insert(payload).select().single();
-      if (error) throw error;
-      newPageId = newPage?.id;
-    }
-    return newPageId;
+      blocks,
+      { meta_title: metaTitle, meta_description: metaDesc }
+    );
   }
 
   async function saveDraftOnly(e: React.FormEvent) {
@@ -222,10 +161,9 @@ function PageEditorRoute() {
       const newPageId = await saveDraftInternal();
       if (!newPageId) return;
 
-      const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: newPageId });
-      if (error) throw error;
+      await publishPortalPage(newPageId);
 
-      toast.success("P├ígina publicada e vers├úo salva!");
+      toast.success("Página publicada e versão salva!");
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
       navigate({ to: "/agency/$slug/portal/pages", params: { slug } });
     } catch (err: any) {
@@ -236,13 +174,13 @@ function PageEditorRoute() {
   }
 
   async function revertVersion(v: any) {
-    if (!confirm("Tem certeza que deseja reverter a p├ígina para esta vers├úo? Todo o conte├║do atual ser├í substitu├¡do.")) return;
+    if (!confirm("Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.")) return;
     setTitle(v.title);
-    setBlocks(v.blocks || []);
+    setInitialBlocks(v.blocks || []);
     setMetaTitle(v.seo?.meta_title || "");
     setMetaDesc(v.seo?.meta_description || "");
     setTab("content");
-    toast.success("Vers├úo carregada no editor. Salve para confirmar.");
+    toast.success("Versão carregada no editor. Salve para confirmar.");
   }
 
   return (

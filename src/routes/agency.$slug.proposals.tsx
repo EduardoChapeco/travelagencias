@@ -2,10 +2,10 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
+import { fetchProposalsList } from "@/services/proposals";
 
 export const Route = createFileRoute("/agency/$slug/proposals")({
   head: () => ({ meta: [{ title: "Cotações · TravelOS" }] }),
@@ -31,20 +31,7 @@ function ProposalsList() {
   const list = useQuery({
     enabled: !!agency,
     queryKey: ["proposals", agency?.id, page],
-    queryFn: async () => {
-      const { data, count, error } = await supabase
-        .from("proposals")
-        .select(
-          "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id",
-          { count: "exact" },
-        )
-        .eq("agency_id", agency!.id)
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
-      if (error) throw error;
-      return { data, count: count ?? 0 };
-    },
+    queryFn: () => fetchProposalsList(agency!.id, page, pageSize),
   });
 
   return (

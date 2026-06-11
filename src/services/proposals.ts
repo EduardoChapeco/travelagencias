@@ -131,3 +131,103 @@ export async function refineItineraryText(title: string, description: string): P
   const parsed = JSON.parse(match ? match[0] : text);
   return { title: parsed.title || title, description: parsed.description || description };
 }
+
+export interface CreateProposalPayload {
+  title: string;
+  destination?: string;
+  client_id?: string;
+  lead_id?: string;
+  travel_start?: string;
+  travel_end?: string;
+  pax_adults: number;
+  pax_children: number;
+  pax_infants: number;
+  currency: string;
+  valid_until?: string;
+  notes?: string;
+}
+
+export async function createProposal(
+  agencyId: string,
+  payload: CreateProposalPayload,
+  ownerId?: string | null
+): Promise<{ id: string }> {
+  const insertData = {
+    agency_id: agencyId,
+    title: payload.title,
+    destination: payload.destination || null,
+    client_id: payload.client_id || null,
+    lead_id: payload.lead_id || null,
+    travel_start: payload.travel_start || null,
+    travel_end: payload.travel_end || null,
+    pax_adults: payload.pax_adults,
+    pax_children: payload.pax_children,
+    pax_infants: payload.pax_infants,
+    currency: payload.currency || 'BRL',
+    valid_until: payload.valid_until || null,
+    notes: payload.notes || null,
+    owner_id: ownerId || null,
+    // Safely enforce defaults for JSONB NOT NULL fields
+    flights: [],
+    hotels: [],
+    transfers: [],
+    tours: [],
+    itinerary: [],
+    includes: [],
+    excludes: [],
+  };
+
+  const { data, error } = await supabase
+    .from("proposals")
+    .insert(insertData as any)
+    .select("id")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as { id: string };
+}
+
+export async function fetchProposalsList(
+  agencyId: string,
+  page: number,
+  pageSize: number
+): Promise<{ data: any[]; count: number }> {
+  const { data, count, error } = await supabase
+    .from("proposals")
+    .select(
+      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id",
+      { count: "exact" }
+    )
+    .eq("agency_id", agencyId)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  if (error) throw new Error(error.message);
+  return { data: data ?? [], count: count ?? 0 };
+}
+
+export async function fetchClientsPick(agencyId: string) {
+  const { data, error } = await supabase
+    .from("clients")
+    .select("id, full_name")
+    .eq("agency_id", agencyId)
+    .order("full_name")
+    .limit(500);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function fetchLeadsPick(agencyId: string) {
+  const { data, error } = await supabase
+    .from("leads")
+    .select("id, name")
+    .eq("agency_id", agencyId)
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
