@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientCoupons } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/form";
 
@@ -12,35 +12,7 @@ export const Route = createFileRoute("/client/coupons")({
 function Page() {
   const q = useQuery({
     queryKey: ["client-coupons"],
-    queryFn: async () => {
-      // 1. Identify authenticated user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
-
-      // 2. Get the client record(s) for this user to determine their agency
-      //    A user may belong to multiple agencies; we collect all agency_ids
-      const { data: clientRecords } = await supabase
-        .from("clients")
-        .select("agency_id")
-        .eq("user_id", user.id)
-        .is("deleted_at", null);
-
-      if (!clientRecords || clientRecords.length === 0) return [];
-
-      // Collect unique agency IDs
-      const agencyIds = [...new Set(clientRecords.map((c) => c.agency_id))];
-
-      // 3. Fetch only active coupons belonging to the client's agency (or agencies)
-      const { data: coupons } = await supabase
-        .from("coupons")
-        .select("*")
-        .in("agency_id", agencyIds)
-        .eq("is_active", true)
-        .is("deleted_at", null)
-        .order("created_at", { ascending: false });
-
-      return coupons ?? [];
-    },
+    queryFn: () => fetchClientCoupons(),
   });
 
   return (

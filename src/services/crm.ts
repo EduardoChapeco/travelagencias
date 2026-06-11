@@ -22,7 +22,28 @@ export type Lead = {
   source: string | null;
   position: number; 
   created_at: string;
+  // Extended fields from the DB schema
+  agency_id: string;
+  client_id: string | null;
+  notes: string | null;
+  travel_start: string | null;
+  travel_end: string | null;
+  closed_at: string | null;
+  lost_reason: string | null;
+  [key: string]: unknown;
 };
+
+export type Activity = {
+  id: string;
+  lead_id: string;
+  author_id: string | null;
+  agency_id: string;
+  type: string;
+  content: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+};
+
 
 export async function fetchStages(agencyId: string): Promise<Stage[]> {
   const { data, error } = await supabase
@@ -156,5 +177,58 @@ export async function moveLeadsToStage(fromStageId: string, toStageId: string) {
 
 export async function deleteStage(stageId: string) {
   const { error } = await supabase.from('lead_stages').delete().eq('id', stageId);
+  if (error) throw error;
+}
+
+// ─── Lead Details & Activities ────────────────────────────────────────────────
+
+export async function fetchLeadById(leadId: string): Promise<Lead | null> {
+  const { data, error } = await supabase.from("leads").select("*").eq("id", leadId).maybeSingle();
+  if (error) throw error;
+  return data as Lead | null;
+}
+
+export async function fetchLeadActivities(leadId: string): Promise<Activity[]> {
+  const { data, error } = await supabase.from("lead_activities").select("*").eq("lead_id", leadId).order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as unknown as Activity[];
+}
+
+export async function fetchLeadOwnerProfile(ownerId: string) {
+  const { data } = await supabase.from("profiles").select("full_name, avatar_url").eq("id", ownerId).maybeSingle();
+  return data;
+}
+
+export async function promoteLeadToClient(leadId: string) {
+  const { data, error } = await (supabase.rpc as any)("promote_lead_to_client", { _lead_id: leadId });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateLead(leadId: string, payload: Partial<Lead>) {
+  const { error } = await supabase.from("leads").update(payload as any).eq("id", leadId);
+  if (error) throw error;
+}
+
+export async function addLeadActivity(payload: { leadId: string; agencyId: string; type: string; content: string; metadata?: any }) {
+  const user = (await supabase.auth.getUser()).data.user;
+  const { error } = await (supabase as any).from("lead_activities").insert({
+    lead_id: payload.leadId,
+    agency_id: payload.agencyId,
+    author_id: user?.id ?? null,
+    type: payload.type,
+    content: payload.content,
+    metadata: payload.metadata,
+  });
+  if (error) throw error;
+}
+
+export async function updateLeadActivity(activityId: string, content: string | null) {
+  const { error } = await supabase.from("lead_activities").update({ content } as any).eq("id", activityId);
+  if (error) throw error;
+}
+
+export async function deleteLeadActivity(activityId: string) {
+  const { error } = await supabase.from("lead_activities").delete().eq("id", activityId);
   if (error) throw error;
 }

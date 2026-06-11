@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicDynamicPage, fetchPublicDynamicPageSeo } from "@/services/public";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
 import { GhostButton } from "@/components/ui/form";
 import { Link } from "@tanstack/react-router";
@@ -23,28 +23,9 @@ export const Route = createFileRoute("/p/$agency_slug/$page_slug")({
       ],
     };
   },
-  loader: async ({ params, context }: any) => {
-    // Pre-fetch SEO to inject into head() — critical for server-side SEO rendering
-    try {
-      const { data: agency } = await ((context?.supabase ?? supabase) as any)
-        .rpc("get_public_agency_by_slug", { _slug: params.agency_slug })
-        .maybeSingle();
-      if (!agency) return { pageSeo: null };
-
-      const { data: page } = await (context?.supabase ?? supabase)
-        .from("portal_pages")
-        .select("seo:published_seo")
-        .eq("agency_id", (agency as any).id)
-        .eq("slug", params.page_slug)
-        .eq("is_published", true)
-        .maybeSingle();
-
-      return { pageSeo: (page?.seo as { meta_title?: string; meta_description?: string } | null) ?? null };
-    } catch {
-      return { pageSeo: null };
-    }
+  loader: async ({ params }: any) => {
+    return { pageSeo: await fetchPublicDynamicPageSeo(params.agency_slug, params.page_slug) };
   },
-  component: DynamicPage,
 });
 
 function DynamicPage() {
@@ -52,25 +33,7 @@ function DynamicPage() {
 
   const q = useQuery({
     queryKey: ["portal-page", agency_slug, page_slug],
-    queryFn: async () => {
-      const { data: agency } = await (supabase as any)
-        .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
-        .maybeSingle();
-      if (!agency) return { agency: null, page: null };
-
-      const { data: page } = await supabase
-        .from("portal_pages")
-        .select("title:published_title, blocks:published_blocks, seo:published_seo")
-        .eq("agency_id", (agency as any).id)
-        .eq("slug", page_slug as string)
-        .eq("is_published", true)
-        .maybeSingle();
-
-      return {
-        agency: agency as any,
-        page: page as any,
-      };
-    },
+    queryFn: () => fetchPublicDynamicPage(agency_slug as string, page_slug as string),
   });
 
   if (q.isLoading)

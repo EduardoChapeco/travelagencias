@@ -8,7 +8,11 @@ import {
   Compass, Camera, Image as ImageIcon, Map, Lightbulb, Ban
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { 
+  fetchClientTripDetail, fetchClientVouchers, fetchClientContracts,
+  fetchClientPaymentPlans, fetchClientTripPassengers, fetchClientTripMemories,
+  requestTripCancellation, addTripMemories
+} from "@/services/client-area";
 import { fmtDate, money, StatusBadge } from "@/components/ui/form";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 
@@ -30,109 +34,57 @@ function ClientTripDetail() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
 
-  const { data: userClientInfo } = useQuery({
-    queryKey: ["client-ids-trip", id],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) throw new Error("Não autenticado");
-      const { data: clients } = await supabase.from("clients").select("id, agency_id").eq("user_id", u.user.id);
-      return { user_id: u.user.id, clients: clients ?? [] };
-    },
-  });
-
-  const clientIds = userClientInfo?.clients.map(c => c.id) ?? [];
-
   const tripQ = useQuery({
-    enabled: clientIds.length > 0,
     queryKey: ["client-trip", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, code, destination, travel_start, travel_end, status, total_sale, total_paid, currency, notes, airline, pnr, operator, agency_id")
-        .eq("id", id)
-        .in("client_id", clientIds)
-        .maybeSingle();
-      if (error) throw error;
-      return data as any;
-    },
+    queryFn: () => fetchClientTripDetail(id),
   });
 
   const voucherQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-voucher", id],
-    queryFn: async () => {
-      const { data } = await supabase.from("vouchers").select("*").eq("trip_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle();
-      return data as any;
-    },
+    queryFn: () => fetchClientVouchers(id),
   });
 
   const contractQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-contract", id],
-    queryFn: async () => {
-      const { data } = await supabase.from("contracts").select("*").eq("trip_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle();
-      return data as any;
-    },
+    queryFn: () => fetchClientContracts(id),
   });
 
   const installmentsQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-installments", id],
-    queryFn: async () => {
-      const { data: plans } = await supabase.from("payment_plans").select("id").eq("trip_id", id).limit(1).maybeSingle();
-      if (!plans) return [];
-      const { data: insts } = await supabase.from("payment_installments").select("*").eq("payment_plan_id", plans.id).order("number");
-      return insts ?? [];
-    },
+    queryFn: () => fetchClientPaymentPlans(id),
   });
 
   const passengersQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-passengers", id],
-    queryFn: async () => {
-      const { data } = await supabase.from("trip_passengers").select("*").eq("trip_id", id);
-      return data ?? [];
-    },
+    queryFn: () => fetchClientTripPassengers(id),
   });
 
   const memoriesQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-memories", id],
-    queryFn: async () => {
-      const { data } = await (supabase as any).from("trip_memories").select("id, image_url, created_at").eq("trip_id", id).order("created_at", { ascending: false });
-      return data ?? [];
-    },
+    queryFn: () => fetchClientTripMemories(id),
   });
 
   const reqCancel = useMutation({
     mutationFn: async () => {
-      if (!userClientInfo?.clients[0]) throw new Error("Cliente principal não detectado");
-      const { error } = await (supabase as any).rpc("request_trip_cancellation", {
-        p_trip_id: tripQ.data.id,
-        p_client_id: userClientInfo.clients[0].id,
-        p_reason: cancelReason
-      });
-      if (error) throw error;
+      try {
+        await requestTripCancellation(id, cancelReason);
+        toast.success("Solicitação enviada. A agência entrará em contato em breve.");
+        setCancelReason("");
+        setShowCancelModal(false);
+      } catch (e: any) {
+        toast.error(e.message);
+      }
     },
-    onSuccess: () => {
-      toast.success("Solicitação enviada. Um consultor entrará em contato.");
-      setShowCancelModal(false);
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
 
   const uploadMemory = useMutation({
     mutationFn: async (urls: string[]) => {
-      if (!userClientInfo?.clients[0]) return;
-      const inserts = urls.map(u => ({
-        agency_id: tripQ.data.agency_id,
-        trip_id: tripQ.data.id,
-        client_id: userClientInfo.clients[0].id,
-        image_url: u
-      }));
-      if (inserts.length === 0) return;
-      const { error } = await (supabase as any).from("trip_memories").insert(inserts);
-      if (error) throw error;
+      await addTripMemories(id, urls);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
   });
@@ -140,9 +92,9 @@ function ClientTripDetail() {
   if (tripQ.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground">Carregando Viagem...</div>;
   if (!tripQ.data) return <div className="py-20 text-center text-sm text-muted-foreground">Viagem não encontrada.</div>;
 
-  const trip = tripQ.data;
-  const voucher = voucherQ.data;
-  const contract = contractQ.data;
+  const trip = tripQ.data as any;
+  const voucher = (voucherQ.data as any)?.[0];
+  const contract = (contractQ.data as any)?.[0];
   const installments = installmentsQ.data ?? [];
   const passengers = passengersQ.data ?? [];
   const memories = memoriesQ.data ?? [];

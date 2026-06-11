@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchKbArticle, voteKbArticle } from "@/services/public";
 import { ArrowLeft, BookOpen, Info, ThumbsUp, ThumbsDown } from "lucide-react";
 import DOMPurify from "isomorphic-dompurify";
 import { fmtDate } from "@/components/ui/form";
@@ -18,26 +18,7 @@ function PublicKnowledgeArticle() {
 
   const q = useQuery({
     queryKey: ["kb-article", agency_slug, slug],
-    queryFn: async () => {
-      const { data: agency } = await (supabase as any)
-        .rpc("get_public_agency_by_slug", { _slug: agency_slug })
-        .maybeSingle();
-      if (!agency) return null;
-
-      const { data: article } = await (supabase as any)
-        .from("knowledge_articles")
-        .select("*")
-        .eq("agency_id", (agency as any).id)
-        .eq("slug", slug)
-        .eq("is_internal", false)
-        .maybeSingle();
-
-      if (article) {
-        (supabase as any).rpc("increment_ka_views", { p_article_id: article.id }).then();
-      }
-
-      return { agency, article };
-    },
+    queryFn: () => fetchKbArticle(agency_slug as string, slug as string),
   });
 
   if (q.isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Carregando guia...</div>;
@@ -76,11 +57,7 @@ function PublicKnowledgeArticle() {
 
   const voteMutation = useMutation({
     mutationFn: async (isUpvote: boolean) => {
-      const { error } = await (supabase as any).rpc("vote_knowledge_article", {
-        p_article_id: article.id,
-        p_is_upvote: isUpvote
-      });
-      if (error) throw error;
+      await voteKbArticle(article.id, isUpvote);
     },
     onSuccess: (_, isUpvote) => {
       setVoted(isUpvote ? "up" : "down");

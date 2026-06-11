@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Plus, Trash2, KeyRound } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAgencySettings, saveSettings, fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchTeamMembers, fetchTeamInvites, inviteTeamMember, deleteTeamInvite } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton, Select } from "@/components/ui/form";
@@ -84,24 +84,21 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
   const q = useQuery({
     queryKey: ["agency-full", agencyId],
     queryFn: async () => {
-      const [{ data: a }, { data: p }] = await Promise.all([
-        supabase.from("agencies").select("*").eq("id", agencyId).maybeSingle(),
-        supabase.from("agency_private").select("*").eq("agency_id", agencyId).maybeSingle(),
-      ]);
-      return { a, p };
+      const data = await fetchAgencySettings(agencyId);
+      return data;
     },
   });
 
   useEffect(() => {
-    if (!q.data?.a) return;
+    if (!q.data?.agency) return;
     setForm({
-      name: q.data.a.name,
-      slug: q.data.a.slug,
-      email: q.data.p?.email ?? "",
-      phone: q.data.p?.phone ?? "",
-      legal_name: q.data.p?.legal_name ?? "",
-      document: q.data.p?.document ?? "",
-      created_at: q.data.a.created_at ?? "",
+      name: q.data.agency.name,
+      slug: q.data.agency.slug,
+      email: q.data.priv?.email ?? "",
+      phone: q.data.priv?.phone ?? "",
+      legal_name: q.data.priv?.legal_name ?? "",
+      document: q.data.priv?.document ?? "",
+      created_at: q.data.agency.created_at ?? "",
     });
   }, [q.data]);
 
@@ -109,38 +106,17 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
     e.preventDefault();
     setBusy(true);
     try {
-      const { error: ae } = await supabase
-        .from("agencies")
-        .update({ name: form.name, slug: form.slug })
-        .eq("id", agencyId);
-      if (ae) throw ae;
-      const { error: pe } = await supabase.from("agency_private").upsert(
-        {
-          agency_id: agencyId,
-          email: form.email,
-          phone: form.phone,
-          legal_name: form.legal_name,
-          document: form.document,
-        },
-        { onConflict: "agency_id" },
+      await saveSettings(
+        agencyId, 
+        { name: form.name, slug: form.slug },
+        { email: form.email, phone: form.phone, document: form.document, legal_name: form.legal_name },
+        null
       );
-      if (pe) throw pe;
-
-      // Sync data to company_profiles to maintain integrity (F-08)
-      const { error: cpe } = await supabase.from("company_profiles").upsert(
-        {
-          agency_id: agencyId,
-          name: form.name,
-          cnpj: form.document || null,
-          email: form.email || null,
-          phone: form.phone || null,
-        },
-        { onConflict: "agency_id" }
-      );
-      if (cpe) throw cpe;
-
       toast.success("Configurações salvas");
       refresh();
+      if (form.slug !== q.data?.agency?.slug) {
+        window.location.href = `/agency/${form.slug}/settings`;
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Falha ao salvar");
     } finally {
@@ -210,34 +186,12 @@ function TeamTab({ agencyId }: { agencyId: string }) {
 
   const members = useQuery({
     queryKey: ["team-members", agencyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("id, user_id, role, created_at")
-        .eq("agency_id", agencyId);
-      if (error) throw error;
-      const ids = (data ?? []).map((r) => r.user_id);
-      if (ids.length === 0) return [];
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("id, full_name, avatar_url")
-        .in("id", ids);
-      const byId = new Map((profs ?? []).map((p) => [p.id, p]));
-      return (data ?? []).map((r) => ({ ...r, profile: byId.get(r.user_id) ?? null }));
-    },
+    queryFn: () => fetchTeamMembers(agencyId),
   });
 
   const invites = useQuery({
     queryKey: ["team-invites", agencyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agency_invites")
-        .select("id, email, role, token, expires_at, accepted_at, created_at")
-        .eq("agency_id", agencyId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchTeamInvites(agencyId),
   });
 
   async function invite(e: React.FormEvent) {
@@ -245,12 +199,7 @@ function TeamTab({ agencyId }: { agencyId: string }) {
     if (!email) return;
     setBusy(true);
     try {
-      const { data, error } = await supabase
-        .from("agency_invites")
-        .insert({ agency_id: agencyId, email, role: role as "agency_admin" | "agent" })
-        .select("token")
-        .single();
-      if (error) throw error;
+      const data = await inviteTeamMember(agencyId, email, role);
       const url = `${window.location.origin}/m/invite/${data.token}`;
       await navigator.clipboard.writeText(url).catch(() => {});
       toast.success("Convite gerado — link copiado");
@@ -264,11 +213,12 @@ function TeamTab({ agencyId }: { agencyId: string }) {
   }
 
   async function revokeInvite(id: string) {
-    const { error } = await supabase.from("agency_invites").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await deleteTeamInvite(id);
       toast.success("Convite removido");
       qc.invalidateQueries({ queryKey: ["team-invites", agencyId] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao revogar");
     }
   }
 
@@ -369,33 +319,22 @@ function IntegrationsTab({ agencyId }: { agencyId: string }) {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["agency-api-keys", agencyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("api_keys")
-        .select("id, provider, label, key_value, monthly_limit, is_active")
-        .eq("agency_id", agencyId);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchApiKeys(agencyId),
   });
 
   async function upsert(provider: string, value: string) {
     if (!value.trim()) return;
-    const existing = q.data?.find((k) => k.provider === provider);
-    const payload = {
-      agency_id: agencyId,
-      provider,
-      label: INTEGRATION_PROVIDERS.find((p) => p.key === provider)?.label ?? provider,
-      key_value: value.trim(),
-      is_active: true,
-    };
-    const { error } = existing
-      ? await supabase.from("api_keys").update(payload).eq("id", existing.id)
-      : await supabase.from("api_keys").insert(payload);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await saveApiKey(agencyId, {
+        provider,
+        label: INTEGRATION_PROVIDERS.find((p) => p.key === provider)?.label ?? provider,
+        key_value: value.trim(),
+        is_active: true
+      });
       toast.success("Chave salva");
       qc.invalidateQueries({ queryKey: ["agency-api-keys", agencyId] });
+    } catch (e: any) {
+      toast.error(e.message);
     }
   }
 
@@ -467,49 +406,49 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
 
   const q = useQuery({
     queryKey: ["agency-api-keys-list", agencyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("api_keys")
-        .select("*")
-        .eq("agency_id", agencyId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchApiKeys(agencyId),
   });
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
     if (!form.provider || !form.key_value) return;
     setBusy(true);
-    const { error } = await supabase.from("api_keys").insert({
-      agency_id: agencyId,
-      provider: form.provider,
-      label: form.label || form.provider,
-      key_value: form.key_value,
-      monthly_limit: form.monthly_limit ? Number(form.monthly_limit) : null,
-      is_active: true,
-    });
-    setBusy(false);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await saveApiKey(agencyId, {
+        provider: form.provider,
+        label: form.label || form.provider,
+        key_value: form.key_value,
+        monthly_limit: form.monthly_limit ? Number(form.monthly_limit) : null,
+        is_active: true,
+      });
       toast.success("Chave adicionada");
       setForm({ provider: "", label: "", key_value: "", monthly_limit: "" });
       qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setBusy(false);
     }
   }
 
   async function toggle(id: string, is_active: boolean) {
-    const { error } = await supabase.from("api_keys").update({ is_active }).eq("id", id);
-    if (error) toast.error(error.message);
-    else qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+    try {
+      await toggleApiKey(id, is_active);
+      qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
   }
 
   async function remove(id: string) {
     if (!window.confirm("Remover esta chave?")) return;
-    const { error } = await supabase.from("api_keys").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+    try {
+      await deleteApiKey(id);
+      toast.success("Chave removida");
+      qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
   }
 
   return (

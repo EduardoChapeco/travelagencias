@@ -5,6 +5,11 @@ import { ArrowLeft, Pencil, Trash2, Save, X, MessageSquare, Phone, Mail, Calenda
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { supabase } from "@/integrations/supabase/client";
+import { 
+  fetchStages, fetchLeadById, fetchLeadActivities, fetchLeadOwnerProfile, 
+  promoteLeadToClient, updateLead, addLeadActivity, updateLeadActivity, 
+  deleteLeadActivity, type Stage, type Lead 
+} from "@/services/crm";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, fmtDate, money } from "@/components/ui/form";
 
@@ -13,15 +18,7 @@ export const Route = createFileRoute("/agency/$slug/crm/$lead_id")({
   component: LeadDetailPage,
 });
 
-type Stage = { id: string; name: string; color: string; is_won: boolean; is_lost: boolean };
-type Lead = {
-  id: string; agency_id: string; stage_id: string; owner_id: string | null;
-  name: string; email: string | null; phone: string | null; destination: string | null;
-  travel_start: string | null; travel_end: string | null; pax_count: number;
-  estimated_value: number; source: string | null; notes: string | null;
-  created_at: string; updated_at: string; closed_at: string | null; lost_reason: string | null;
-  client_id: string | null;
-};
+// Tipos agora vêm do serviço
 type Activity = {
   id: string; type: "note" | "stage_change" | "call" | "email" | "whatsapp" | "meeting" | "task";
   content: string | null; author_id: string | null; created_at: string; metadata: Record<string, unknown>;
@@ -63,40 +60,25 @@ function LeadDetailPage() {
   const stagesQ = useQuery({
     enabled: !!agency,
     queryKey: ["stages", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("lead_stages").select("id, name, color, is_won, is_lost").eq("agency_id", agency!.id).order("position");
-      if (error) throw error;
-      return data as Stage[];
-    },
+    queryFn: () => fetchStages(agency!.id),
   });
 
   const leadQ = useQuery({
     enabled: !!agency,
     queryKey: ["lead", lead_id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("leads").select("*").eq("id", lead_id).maybeSingle();
-      if (error) throw error;
-      return data as Lead | null;
-    },
+    queryFn: () => fetchLeadById(lead_id),
   });
 
   const activitiesQ = useQuery({
     enabled: !!lead_id,
     queryKey: ["lead-activities", lead_id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("lead_activities").select("*").eq("lead_id", lead_id).order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as Activity[];
-    },
+    queryFn: () => fetchLeadActivities(lead_id),
   });
 
   const ownerQ = useQuery({
     enabled: !!leadQ.data?.owner_id,
     queryKey: ["profile", leadQ.data?.owner_id],
-    queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("full_name, avatar_url").eq("id", leadQ.data!.owner_id!).maybeSingle();
-      return data;
-    },
+    queryFn: () => fetchLeadOwnerProfile(leadQ.data!.owner_id!),
   });
 
   if (leadQ.isLoading) return <div className="p-8 text-sm text-muted-foreground">Carregando detalhes do lead...</div>;
@@ -116,8 +98,11 @@ function LeadDetailPage() {
   const stage = stagesQ.data?.find((s) => s.id === lead.stage_id);
 
   async function handleConvert() {
-    const { data, error } = await (supabase.rpc as any)("promote_lead_to_client", { _lead_id: lead.id });
-    if (error) return toast.error("Erro ao converter lead: " + error.message);
+    try {
+      await promoteLeadToClient(lead.id);
+    } catch (error: any) {
+      return toast.error("Erro ao converter lead: " + error.message);
+    }
     
     // Apple-like Celebration
     confetti({
@@ -231,7 +216,7 @@ function LeadDetailPage() {
               </h2>
               <NewActivity leadId={lead.id} agencyId={lead.agency_id} onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
               <div className="mt-8">
-                <Timeline activities={activitiesQ.data ?? []} onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
+                <Timeline activities={(activitiesQ.data as any) ?? []} onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })} />
               </div>
             </section>
 
@@ -248,17 +233,19 @@ function LeadDetailPage() {
                     if (newStage === lead.stage_id) return;
                     const fromName = stage?.name ?? "—";
                     const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
-                    const { error } = await supabase.from("leads").update({ stage_id: newStage }).eq("id", lead.id);
-                    if (error) return toast.error(error.message);
-                    const u = (await supabase.auth.getUser()).data.user;
-                    await supabase.from("lead_activities").insert({
-                      lead_id: lead.id, agency_id: lead.agency_id, author_id: u?.id ?? null,
-                      type: "stage_change", content: `Movido de ${fromName} para ${toName}`,
-                      metadata: { from: lead.stage_id, to: newStage },
-                    });
-                    qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-                    qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
-                    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                    try {
+                      await updateLead(lead.id, { stage_id: newStage });
+                      await addLeadActivity({
+                        leadId: lead.id, agencyId: lead.agency_id, type: "stage_change",
+                        content: `Movido de ${fromName} para ${toName}`,
+                        metadata: { from: lead.stage_id, to: newStage }
+                      });
+                      qc.invalidateQueries({ queryKey: ["lead", lead_id] });
+                      qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
+                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                    } catch (error: any) {
+                      toast.error(error.message);
+                    }
                   }}
                 >
                   {stagesQ.data?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -329,24 +316,28 @@ function LeadForm({ lead, stages, onCancel, onSaved }: { lead: Lead; stages: Sta
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.from("leads").update({
-      name: f.name,
-      email: f.email || null,
-      phone: f.phone || null,
-      destination: f.destination || null,
-      travel_start: f.travel_start || null,
-      travel_end: f.travel_end || null,
-      pax_count: f.pax_count,
-      estimated_value: f.estimated_value,
-      source: f.source || null,
-      notes: f.notes || null,
-      stage_id: f.stage_id,
-      lost_reason: f.lost_reason || null,
-    }).eq("id", lead.id);
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Lead atualizado com sucesso!");
-    onSaved();
+    try {
+      await updateLead(lead.id, {
+        name: f.name,
+        email: f.email || null,
+        phone: f.phone || null,
+        destination: f.destination || null,
+        travel_start: f.travel_start || null,
+        travel_end: f.travel_end || null,
+        pax_count: f.pax_count,
+        estimated_value: f.estimated_value,
+        source: f.source || null,
+        notes: f.notes || null,
+        stage_id: f.stage_id,
+        lost_reason: f.lost_reason || null,
+      });
+      toast.success("Lead atualizado com sucesso!");
+      onSaved();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -394,14 +385,17 @@ function NewActivity({ leadId, agencyId, onCreated }: { leadId: string; agencyId
     e.preventDefault();
     if (!content.trim()) return;
     setBusy(true);
-    const u = (await supabase.auth.getUser()).data.user;
-    const { error } = await supabase.from("lead_activities").insert({
-      lead_id: leadId, agency_id: agencyId, author_id: u?.id ?? null, type, content: content.trim(),
-    });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    setContent("");
-    onCreated();
+    try {
+      await addLeadActivity({
+        leadId, agencyId, type, content: content.trim()
+      });
+      setContent("");
+      onCreated();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -455,8 +449,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
 
   const save = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("lead_activities").update({ content: content.trim() || null }).eq("id", activity.id);
-      if (error) throw error;
+      await updateLeadActivity(activity.id, content.trim() || null);
     },
     onSuccess: () => { toast.success("Nota atualizada."); setEdit(false); onChanged(); },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar."),
@@ -464,8 +457,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
 
   const remove = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("lead_activities").delete().eq("id", activity.id);
-      if (error) throw error;
+      await deleteLeadActivity(activity.id);
     },
     onSuccess: () => { toast.success("Registro removido."); onChanged(); },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover."),

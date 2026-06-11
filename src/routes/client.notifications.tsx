@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientNotifications, markNotificationRead, markAllNotificationsRead } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { GhostButton } from "@/components/ui/form";
 
@@ -14,27 +14,17 @@ function Page() {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["notifications"],
-    queryFn: async () =>
-      (
-        await supabase
-          .from("notifications")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(100)
-      ).data ?? [],
+    queryFn: () => fetchClientNotifications(),
   });
 
   async function markRead(id: string) {
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+    await markNotificationRead(id);
     qc.invalidateQueries({ queryKey: ["notifications"] });
   }
   async function markAll() {
     const ids = q.data?.filter((n) => !n.read_at).map((n) => n.id) ?? [];
     if (!ids.length) return;
-    await supabase
-      .from("notifications")
-      .update({ read_at: new Date().toISOString() })
-      .in("id", ids);
+    await markAllNotificationsRead(ids);
     qc.invalidateQueries({ queryKey: ["notifications"] });
   }
 

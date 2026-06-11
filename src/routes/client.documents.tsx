@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, Download } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientDocuments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
 
@@ -13,30 +13,7 @@ export const Route = createFileRoute("/client/documents")({
 function ClientDocumentsPage() {
   const q = useQuery({
     queryKey: ["client-documents"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return { contracts: [], vouchers: [] };
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id, agency_id")
-        .eq("user_id", u.user.id);
-      const ids = (clients ?? []).map((c) => c.id);
-      if (!ids.length) return { contracts: [], vouchers: [] };
-      const { data: trips } = await supabase.from("trips").select("id").in("client_id", ids);
-      const tripIds = (trips ?? []).map((t) => t.id);
-      if (!tripIds.length) return { contracts: [], vouchers: [] };
-      const [contracts, vouchers] = await Promise.all([
-        supabase
-          .from("contracts")
-          .select("id, status, signed_at, pdf_url, total_value")
-          .in("trip_id", tripIds),
-        supabase
-          .from("vouchers")
-          .select("id, source_type, pdf_url, generated_at")
-          .in("trip_id", tripIds),
-      ]);
-      return { contracts: contracts.data ?? [], vouchers: vouchers.data ?? [] };
-    },
+    queryFn: () => fetchClientDocuments(),
   });
 
   return (

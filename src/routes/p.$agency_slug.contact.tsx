@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import confetti from "canvas-confetti";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicAgencyBasic, fetchPublicAgencyPolicies, submitPublicLead } from "@/services/public";
 
 export const Route = createFileRoute("/p/$agency_slug/contact")({
   head: () => ({ meta: [{ title: "Fale Conosco" }] }),
@@ -33,20 +33,13 @@ function ContactPage() {
 
   const agencyQ = useQuery({
     queryKey: ["agency-basic", agency_slug],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any).from("agencies").select("id, name, logo_url").eq("slug", agency_slug).eq("is_active", true).maybeSingle();
-      if (error) throw error;
-      return data;
-    }
+    queryFn: () => fetchPublicAgencyBasic(agency_slug as string)
   });
 
   const policiesQ = useQuery({
     enabled: !!agencyQ.data?.id,
     queryKey: ["agency-policies", agencyQ.data?.id],
-    queryFn: async () => {
-      const { data } = await (supabase as any).from("policy_documents").select("id, kind, version").eq("is_published", true);
-      return data || [];
-    }
+    queryFn: () => fetchPublicAgencyPolicies()
   });
 
   useEffect(() => {
@@ -74,36 +67,33 @@ function ContactPage() {
       finalNotes += `\n\n--- Rastreio de Campanha ---\nOrigem: ${utms.source || 'N/A'}\nMídia: ${utms.medium || 'N/A'}\nCampanha: ${utms.campaign || 'N/A'}`;
     }
 
-    const { error } = await (supabase as any).rpc('submit_public_lead', {
-      _agency_slug: agency_slug,
-      _name: f.name,
-      _email: f.email || null,
-      _phone: f.phone || null,
-      _destination: f.destination || null,
-      _travel_start: f.travel_start || null,
-      _travel_end: f.travel_end || null,
-      _pax_count: f.pax_count,
-      _estimated_value: parseFloat(f.estimated_value) || 0,
-      _source: utms.source || 'website',
-      _notes: finalNotes || null
-    });
-
-    setBusy(false);
-
-    if (error) {
-      setErrorMsg("Ocorreu um erro ao enviar seu contato: " + error.message);
-      return;
+    try {
+      await submitPublicLead({
+        agency_slug: agency_slug as string,
+        name: f.name,
+        email: f.email || null,
+        phone: f.phone || null,
+        destination: f.destination || null,
+        travel_start: f.travel_start || null,
+        travel_end: f.travel_end || null,
+        pax_count: f.pax_count,
+        estimated_value: parseFloat(f.estimated_value) || 0,
+        source: utms.source || 'website',
+        notes: finalNotes || null,
+      });
+      setSubmitted(true);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#000000', '#ffffff', '#a8a29e'],
+        disableForReducedMotion: true
+      });
+    } catch (err: any) {
+      setErrorMsg("Ocorreu um erro ao enviar seu contato: " + (err?.message || String(err)));
+    } finally {
+      setBusy(false);
     }
-
-    // Success!
-    setSubmitted(true);
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#000000', '#ffffff', '#a8a29e'],
-      disableForReducedMotion: true
-    });
   }
 
   if (agencyQ.isLoading) {

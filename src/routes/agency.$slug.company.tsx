@@ -20,7 +20,7 @@ import {
   Mail,
   ExternalLink,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchCompanyProfile, saveCompanyProfile } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import {
@@ -139,11 +139,8 @@ function Page() {
     enabled: !!agency,
     queryKey: ["company_profile", agency?.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("company_profiles")
-        .select("*")
-        .eq("agency_id", agency!.id)
-        .maybeSingle();
+      if (!agency) return null;
+      const data = await fetchCompanyProfile(agency.id);
       return data;
     },
   });
@@ -193,7 +190,7 @@ function Page() {
     e.preventDefault();
     if (!agency) return;
     setBusy(true);
-    const { data: user } = await supabase.auth.getUser();
+
     const payload = {
       agency_id: agency.id,
       name: form.name,
@@ -219,48 +216,23 @@ function Page() {
       business_hours: form.business_hours,
     };
 
-    const { error } = q.data
-      ? await supabase.from("company_profiles").update(payload).eq("agency_id", agency.id)
-      : await supabase.from("company_profiles").insert(payload);
+    const agencyPayload = { name: form.name };
+    const privatePayload = {
+      agency_id: agency.id,
+      email: form.email || null,
+      phone: form.phone || null,
+      document: form.cnpj || null,
+    };
 
-    if (!error) {
-      // Sync back to agencies (F-08)
-      const { error: ae } = await supabase
-        .from("agencies")
-        .update({ name: form.name })
-        .eq("id", agency.id);
-      if (ae) throw ae;
-
-      // Sync back to agency_private (F-08)
-      const { error: pe } = await supabase.from("agency_private").upsert(
-        {
-          agency_id: agency.id,
-          email: form.email || null,
-          phone: form.phone || null,
-          document: form.cnpj || null,
-        },
-        { onConflict: "agency_id" }
-      );
-      if (pe) throw pe;
-
-      // Log the edit
-      await supabase.from("audit_log").insert({
-        agency_id: agency.id,
-        actor_id: user.user?.id,
-        actor_type: "agent",
-        action: "company_profile_updated",
-        entity_type: "company_profiles",
-        metadata: { editor_email: user.user?.email },
-      });
-    }
-
-    setBusy(false);
-    if (error) {
+    try {
+      await saveCompanyProfile(agency.id, payload, agencyPayload, privatePayload);
+      toast.success("Perfil da empresa atualizado com sucesso!");
+      qc.invalidateQueries({ queryKey: ["company", agency?.id] });
+    } catch (error: any) {
       toast.error(error.message);
-      return;
+    } finally {
+      setBusy(false);
     }
-    toast.success("Perfil da empresa salvo");
-    qc.invalidateQueries({ queryKey: ["company_profile", agency.id] });
   }
 
   const portalUrl = agency ? `${window.location.origin}/p/${agency.slug}` : "";

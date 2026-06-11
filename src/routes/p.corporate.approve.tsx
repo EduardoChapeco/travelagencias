@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchCorporateRfp, updateCorporateRfpStatus } from "@/services/public";
 import { PrimaryButton, fmtDate, Textarea, GhostButton } from "@/components/ui/form";
 import { toast } from "sonner";
 
@@ -22,31 +22,12 @@ function CorporateApprovePage() {
   const rfpQ = useQuery({
     enabled: !!token,
     queryKey: ["corporate-rfp-approve", token],
-    queryFn: async () => {
-      // Usamos policy publica com select true
-      const { data, error } = await (supabase as any)
-        .from("corporate_rfps")
-        .select("*, agency:agencies(slug, name), client:clients(full_name)")
-        .eq("approval_token", token)
-        .maybeSingle();
-      if (error) throw error;
-      return data as any;
-    },
+    queryFn: () => fetchCorporateRfp(token!),
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ status, reason }: { status: string; reason?: string }) => {
-      const { error } = await (supabase as any)
-        .from("corporate_rfps")
-        .update({ 
-          status, 
-          rejection_reason: reason || null,
-          approved_at: status === 'approved' ? new Date().toISOString() : null,
-          approved_by: rfpQ.data?.requester_email 
-        })
-        .eq("approval_token", token);
-      if (error) throw error;
-    },
+    mutationFn: ({ status, reason }: { status: string; reason?: string }) =>
+      updateCorporateRfpStatus(token!, status, reason, rfpQ.data?.requester_email),
     onSuccess: () => {
       toast.success("Resposta enviada com sucesso!");
       rfpQ.refetch();

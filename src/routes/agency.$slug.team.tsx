@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchTeamMembers, fetchTeamInvites, inviteTeamMember, deleteTeamInvite, removeTeamMember, changeTeamMemberRole } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
@@ -47,70 +47,44 @@ function TeamPage() {
   const members = useQuery({
     enabled: !!agency,
     queryKey: ["team-members", agency?.id],
-    queryFn: async () => {
-      const { data: roles, error } = await supabase
-        .from("user_roles")
-        .select("user_id, role, created_at")
-        .eq("agency_id", agency!.id)
-        .order("created_at");
-      if (error) throw error;
-      const ids = (roles ?? []).map((r) => r.user_id);
-      if (ids.length === 0) return [] as Member[];
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("id, full_name, avatar_url")
-        .in("id", ids);
-      const map = new Map((profs ?? []).map((p) => [p.id, p]));
-      return (roles ?? []).map((r) => ({
-        ...r,
-        full_name: map.get(r.user_id)?.full_name ?? null,
-        avatar_url: map.get(r.user_id)?.avatar_url ?? null,
-      })) as Member[];
-    },
+    queryFn: () => fetchTeamMembers(agency!.id),
   });
 
   const invites = useQuery({
     enabled: !!agency,
     queryKey: ["team-invites", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agency_invites")
-        .select("id, email, role, token, accepted_at, expires_at, created_at")
-        .eq("agency_id", agency!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as Invite[];
-    },
+    queryFn: () => fetchTeamInvites(agency!.id),
   });
 
   async function changeRole(userId: string, role: string) {
     if (!agency) return;
-    const { error } = await supabase
-      .from("user_roles")
-      .update({ role: role as never })
-      .eq("agency_id", agency.id)
-      .eq("user_id", userId);
-    if (error) return toast.error(error.message);
-    toast.success("Papel atualizado");
-    qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
+    try {
+      await changeTeamMemberRole(agency.id, userId, role);
+      toast.success("Papel atualizado");
+      qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
   async function removeMember(userId: string) {
     if (!agency || !confirm("Remover este membro?")) return;
-    const { error } = await supabase
-      .from("user_roles")
-      .delete()
-      .eq("agency_id", agency.id)
-      .eq("user_id", userId);
-    if (error) return toast.error(error.message);
-    toast.success("Removido");
-    qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
+    try {
+      await removeTeamMember(agency.id, userId);
+      toast.success("Removido");
+      qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
-  async function deleteInvite(id: string) {
-    const { error } = await supabase.from("agency_invites").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    qc.invalidateQueries({ queryKey: ["team-invites", agency?.id] });
+  async function deleteInviteById(id: string) {
+    try {
+      await deleteTeamInvite(id);
+      qc.invalidateQueries({ queryKey: ["team-invites", agency?.id] });
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }
 
   function copyInvite(token: string) {
@@ -154,7 +128,7 @@ function TeamPage() {
               {members.data?.map((m) => (
                 <tr key={m.user_id} className="border-t border-border">
                   <td className="px-3 py-2.5 font-medium">
-                    {m.full_name ?? (
+                    {(m as any).profile?.full_name ?? (m as any).full_name ?? (
                       <span className="font-mono text-xs text-muted-foreground">
                         {m.user_id.slice(0, 8)}…
                       </span>
@@ -232,7 +206,7 @@ function TeamPage() {
                         </button>
                       )}
                       <button
-                        onClick={() => deleteInvite(i.id)}
+                        onClick={() => deleteInviteById(i.id)}
                         className="text-xs text-destructive hover:underline"
                       >
                         Cancelar
@@ -276,25 +250,15 @@ function NewInvite({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const { data: u } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from("agency_invites")
-      .insert({
-        agency_id: agencyId,
-        email: email.trim().toLowerCase(),
-        role: role as never,
-        invited_by: u.user?.id ?? null,
-      })
-      .select("token")
-      .maybeSingle();
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    if (data?.token) {
-      const url = `${window.location.origin}/m/invite/${data.token}`;
-      navigator.clipboard.writeText(url);
-      toast.success("Convite criado · link copiado");
+    try {
+      await inviteTeamMember(agencyId, email, role);
+      toast.success("Convite criado");
+      onCreated();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setSubmitting(false);
     }
-    onCreated();
   }
 
   return (

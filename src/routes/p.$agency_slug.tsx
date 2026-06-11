@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPublicAgencyLayout } from "@/services/public";
 
 export const Route = createFileRoute("/p/$agency_slug")({
   head: ({ params }) => ({
@@ -17,21 +17,7 @@ function Layout() {
 
   const q = useQuery({
     queryKey: ["portal-layout", agency_slug],
-    queryFn: async () => {
-      const { data: agency } = await (supabase as any)
-        .rpc("get_public_agency_by_slug", { _slug: agency_slug as string })
-        .maybeSingle();
-      if (!agency) return { agency: null, pages: [] };
-
-      const { data: pages } = await supabase
-        .from("portal_pages")
-        .select("slug, title")
-        .eq("agency_id", (agency as any).id)
-        .eq("is_published", true)
-        .order("created_at");
-
-      return { agency: agency as any, pages: pages as any[] };
-    },
+    queryFn: () => fetchPublicAgencyLayout(agency_slug as string),
   });
 
   if (q.isLoading)

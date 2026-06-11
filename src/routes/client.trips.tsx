@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Plane } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchClientTrips } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, money, StatusBadge } from "@/components/ui/form";
 
@@ -13,25 +13,7 @@ export const Route = createFileRoute("/client/trips")({
 function ClientTripsPage() {
   const q = useQuery({
     queryKey: ["client-trips"],
-    queryFn: async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return [];
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id, agency_id")
-        .eq("user_id", u.user.id);
-      const ids = (clients ?? []).map((c) => c.id);
-      if (ids.length === 0) return [];
-      const { data, error } = await supabase
-        .from("trips")
-        .select(
-          "id, code, title, destination, travel_start, travel_end, status, total_sale, currency",
-        )
-        .in("client_id", ids)
-        .order("travel_start", { ascending: false, nullsFirst: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchClientTrips(),
   });
 
   return (
