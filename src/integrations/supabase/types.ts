@@ -373,6 +373,7 @@ export type Database = {
           created_at: string
           departure_date: string | null
           id: string
+          passengers_count: number | null
           pnr: string | null
           position: number
           status: string
@@ -387,6 +388,7 @@ export type Database = {
           created_at?: string
           departure_date?: string | null
           id?: string
+          passengers_count?: number | null
           pnr?: string | null
           position?: number
           status?: string
@@ -401,6 +403,7 @@ export type Database = {
           created_at?: string
           departure_date?: string | null
           id?: string
+          passengers_count?: number | null
           pnr?: string | null
           position?: number
           status?: string
