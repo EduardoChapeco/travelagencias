@@ -3,7 +3,14 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
-import { fetchTeamMembers, fetchTeamInvites, inviteTeamMember, deleteTeamInvite, removeTeamMember, changeTeamMemberRole } from "@/services/settings";
+import {
+  fetchTeamMembers,
+  fetchTeamInvites,
+  inviteTeamMember,
+  deleteTeamInvite,
+  removeTeamMember,
+  changeTeamMemberRole,
+} from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {

@@ -36,7 +36,6 @@ export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
 
 // ─── Remove inlined types (now imported from service) ────────────────────────
 
-
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const INCOME_CATEGORIES = [
@@ -151,7 +150,15 @@ function TripFinancial() {
     onSuccess: () => {
       toast.success("Lancamento adicionado");
       setShowAddRecord(false);
-      setRForm({ category: "", description: "", amount: "", currency: "BRL", payment_method: "", status: "confirmed", due_date: "" });
+      setRForm({
+        category: "",
+        description: "",
+        amount: "",
+        currency: "BRL",
+        payment_method: "",
+        status: "confirmed",
+        due_date: "",
+      });
       qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
       qc.invalidateQueries({ queryKey: ["trip", tripId] });
     },

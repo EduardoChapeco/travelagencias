@@ -24,9 +24,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import {
-  StatusBadge,
-} from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/form";
 import { PortalBlockSchema } from "@/lib/cms-schemas";
 import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
 
@@ -115,7 +113,12 @@ function PagesPage() {
         description="Construa páginas estáticas usando o editor de blocos dinâmicos."
         actions={
           <button
-            onClick={() => navigate({ to: "/agency/$slug/portal/pages/$page_id", params: { slug: agency!.slug, page_id: "new" } })}
+            onClick={() =>
+              navigate({
+                to: "/agency/$slug/portal/pages/$page_id",
+                params: { slug: agency!.slug, page_id: "new" },
+              })
+            }
             className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" /> Nova página
@@ -151,7 +154,12 @@ function PagesPage() {
                 >
                   <td
                     className="px-3 py-2.5 font-medium cursor-pointer hover:text-brand transition-colors"
-                    onClick={() => navigate({ to: "/agency/$slug/portal/pages/$page_id", params: { slug: agency!.slug, page_id: p.id } })}
+                    onClick={() =>
+                      navigate({
+                        to: "/agency/$slug/portal/pages/$page_id",
+                        params: { slug: agency!.slug, page_id: p.id },
+                      })
+                    }
                   >
                     {p.title}
                   </td>

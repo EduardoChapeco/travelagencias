@@ -226,7 +226,10 @@ function Page() {
           onSave={async (plan) => {
             let error;
             if (editing) {
-              const res = await supabase.from("plans").update(plan as any).eq("id", plan.id);
+              const res = await supabase
+                .from("plans")
+                .update(plan as any)
+                .eq("id", plan.id);
               error = res.error;
             } else {
               // we don't pass an id if it's new so supabase generates it, or we pass the generated one

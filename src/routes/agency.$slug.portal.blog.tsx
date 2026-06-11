@@ -1,13 +1,33 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Eye, Clock, Tag, BookOpen, ExternalLink, BarChart2, Edit2, X, Search, Sparkles, Wand2 } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Clock,
+  Tag,
+  BookOpen,
+  ExternalLink,
+  BarChart2,
+  Edit2,
+  X,
+  Search,
+  Sparkles,
+  Wand2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
-  Field, Input, Select, Textarea, PrimaryButton, GhostButton, StatusBadge, fmtDate,
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+  fmtDate,
 } from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
@@ -71,7 +91,9 @@ function BlogPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blog_posts")
-        .select("id, slug, title, excerpt, cover_image_url, status, published_at, views, category, tags, author_id, seo")
+        .select(
+          "id, slug, title, excerpt, cover_image_url, status, published_at, views, category, tags, author_id, seo",
+        )
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -112,7 +134,11 @@ function BlogPage() {
           { label: "Total de artigos", value: stats.total, icon: BookOpen },
           { label: "Publicados", value: stats.published, icon: Eye },
           { label: "Rascunhos", value: stats.drafts, icon: Edit2 },
-          { label: "Visualizações totais", value: stats.views.toLocaleString("pt-BR"), icon: BarChart2 },
+          {
+            label: "Visualizações totais",
+            value: stats.views.toLocaleString("pt-BR"),
+            icon: BarChart2,
+          },
         ].map((s) => (
           <div key={s.label} className="rounded-lg border border-border bg-surface p-4">
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -136,7 +162,7 @@ function BlogPage() {
                 : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
             }`}
           >
-            {s === "all" ? "Todos" : STATUS_LABEL[s] ?? s}
+            {s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s)}
           </button>
         ))}
       </div>
@@ -146,7 +172,11 @@ function BlogPage() {
       {!q.isLoading && filtered.length === 0 && (
         <EmptyState
           title="Nenhum artigo"
-          description={filterStatus === "all" ? "Crie seu primeiro artigo para atrair tráfego orgânico." : `Sem artigos com status "${filterStatus}".`}
+          description={
+            filterStatus === "all"
+              ? "Crie seu primeiro artigo para atrair tráfego orgânico."
+              : `Sem artigos com status "${filterStatus}".`
+          }
         />
       )}
 
@@ -189,10 +219,14 @@ function BlogPage() {
                 <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-2">
                     {p.category && (
-                      <span className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">{p.category}</span>
+                      <span className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
+                        {p.category}
+                      </span>
                     )}
                     {p.tags?.slice(0, 2).map((t) => (
-                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5">{t}</span>
+                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5">
+                        {t}
+                      </span>
                     ))}
                   </div>
                   <div className="flex items-center gap-1">
@@ -250,7 +284,9 @@ function BlogSheet({
   const [category, setCategory] = useState(post?.category ?? "");
   const [tagsRaw, setTagsRaw] = useState((post?.tags ?? []).join(", "));
   const [status, setStatus] = useState(post?.status ?? "draft");
-  const [scheduledDate, setScheduledDate] = useState(post?.published_at ? post.published_at.substring(0, 16) : "");
+  const [scheduledDate, setScheduledDate] = useState(
+    post?.published_at ? post.published_at.substring(0, 16) : "",
+  );
   const [coverUrl, setCoverUrl] = useState(post?.cover_image_url ?? "");
   const [metaTitle, setMetaTitle] = useState(post?.seo?.meta_title ?? "");
   const [metaDesc, setMetaDesc] = useState(post?.seo?.meta_description ?? "");
@@ -275,12 +311,13 @@ function BlogSheet({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim()) { toast.error("Título é obrigatório"); return; }
+    if (!title.trim()) {
+      toast.error("Título é obrigatório");
+      return;
+    }
     setSubmitting(true);
 
-    const slug =
-      post?.slug ??
-      slugify(title) + "-" + Math.random().toString(36).slice(2, 6);
+    const slug = post?.slug ?? slugify(title) + "-" + Math.random().toString(36).slice(2, 6);
     const tags = tagsRaw
       .split(",")
       .map((t) => t.trim())
@@ -303,8 +340,10 @@ function BlogSheet({
         status === "published"
           ? (post?.published_at ?? new Date().toISOString())
           : status === "scheduled"
-          ? (scheduledDate ? new Date(scheduledDate).toISOString() : null)
-          : null,
+            ? scheduledDate
+              ? new Date(scheduledDate).toISOString()
+              : null
+            : null,
     };
 
     const { error } = post
@@ -312,7 +351,10 @@ function BlogSheet({
       : await supabase.from("blog_posts").insert({ ...payload, agency_id: agencyId });
 
     setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success(post ? "Artigo atualizado" : "Artigo criado");
     onSaved();
   }
@@ -425,7 +467,10 @@ function BlogSheet({
             </Field>
 
             {status === "scheduled" && (
-              <Field label="Data e Hora do Agendamento *" hint="O artigo ficará público automaticamente nesta data">
+              <Field
+                label="Data e Hora do Agendamento *"
+                hint="O artigo ficará público automaticamente nesta data"
+              >
                 <Input
                   type="datetime-local"
                   required
@@ -461,7 +506,10 @@ function BlogSheet({
                       {metaTitle.length}/60
                     </span>
                   </Field>
-                  <Field label="Meta description" hint="Padrão: resumo do artigo. Máx 160 caracteres">
+                  <Field
+                    label="Meta description"
+                    hint="Padrão: resumo do artigo. Máx 160 caracteres"
+                  >
                     <Textarea
                       rows={2}
                       value={metaDesc}
@@ -491,10 +539,7 @@ function BlogSheet({
                     .split(",")
                     .filter(Boolean)
                     .map((t) => (
-                      <span
-                        key={t}
-                        className="rounded bg-surface-alt px-1.5 py-0.5 font-medium"
-                      >
+                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
                         {t.trim()}
                       </span>
                     ))}
@@ -509,12 +554,7 @@ function BlogSheet({
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
-          <PrimaryButton
-            type="submit"
-            form="blog-form"
-            disabled={submitting}
-            className="gap-1.5"
-          >
+          <PrimaryButton type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
             {submitting ? "Salvando…" : post ? "Salvar alterações" : "Criar artigo"}
           </PrimaryButton>
         </div>

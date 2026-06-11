@@ -11,8 +11,11 @@ const corsHeaders = {
 async function getCryptoKey(password: string) {
   const enc = new TextEncoder();
   return await crypto.subtle.importKey(
-    "raw", enc.encode(password.padEnd(32, '0').substring(0, 32)),
-    { name: "AES-GCM" }, false, ["encrypt", "decrypt"]
+    "raw",
+    enc.encode(password.padEnd(32, "0").substring(0, 32)),
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt"],
   );
 }
 async function decryptData(encodedBase64: string, password: string) {
@@ -66,7 +69,8 @@ serve(async (req) => {
 
     let groqKey = "";
     if (gs?.value?.payload) {
-      const encryptionKey = Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
+      const encryptionKey =
+        Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
       try {
         const decryptedString = await decryptData(gs.value.payload, encryptionKey);
         const keys = JSON.parse(decryptedString);
@@ -117,7 +121,8 @@ ${text ? text.substring(0, 5000) : "Processando arquivo visualmente..."}
       try {
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
         const aiResponse = await fetch(geminiUrl, {
-          method: "POST", headers: { "Content-Type": "application/json" },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.1 } }),
         });
         if (aiResponse.ok) {
@@ -126,37 +131,46 @@ ${text ? text.substring(0, 5000) : "Processando arquivo visualmente..."}
         } else {
           console.error("Gemini failed:", await aiResponse.text());
         }
-      } catch (e) { console.error("Gemini request failed", e); }
+      } catch (e) {
+        console.error("Gemini request failed", e);
+      }
     }
 
     // Fallback: GROQ (Llama 3.2 Vision)
     if (!resultText && groqKey) {
       try {
-         const groqPayload: any = {
-           model: "llama-3.2-11b-vision-preview",
-           messages: [
-             {
-               role: "user",
-               content: [
-                 { type: "text", text: systemPrompt },
-                 file_base64 ? { type: "image_url", image_url: { url: `data:${mime || "image/jpeg"};base64,${file_base64}` } } : null
-               ].filter(Boolean)
-             }
-           ],
-           temperature: 0.1
-         };
-         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-           method: "POST",
-           headers: { "Authorization": `Bearer ${groqKey}`, "Content-Type": "application/json" },
-           body: JSON.stringify(groqPayload)
-         });
-         if (res.ok) {
-            const aiData = await res.json();
-            resultText = aiData.choices[0].message.content;
-         } else {
-            console.error("Groq failed:", await res.text());
-         }
-      } catch (e) { console.error("Groq request failed", e); }
+        const groqPayload: any = {
+          model: "llama-3.2-11b-vision-preview",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: systemPrompt },
+                file_base64
+                  ? {
+                      type: "image_url",
+                      image_url: { url: `data:${mime || "image/jpeg"};base64,${file_base64}` },
+                    }
+                  : null,
+              ].filter(Boolean),
+            },
+          ],
+          temperature: 0.1,
+        };
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${groqKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify(groqPayload),
+        });
+        if (res.ok) {
+          const aiData = await res.json();
+          resultText = aiData.choices[0].message.content;
+        } else {
+          console.error("Groq failed:", await res.text());
+        }
+      } catch (e) {
+        console.error("Groq request failed", e);
+      }
     }
 
     if (!resultText) {

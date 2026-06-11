@@ -42,4 +42,3 @@ export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>,
     return typeof value === "function" ? value.bind(_supabase) : value;
   },
 });
-

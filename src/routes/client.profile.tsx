@@ -2,7 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { fetchClientProfile, saveClientProfile, updateClientPassword } from "@/services/client-area";
+import {
+  fetchClientProfile,
+  saveClientProfile,
+  updateClientPassword,
+} from "@/services/client-area";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton, Select } from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";

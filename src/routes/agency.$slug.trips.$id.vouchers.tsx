@@ -2,13 +2,35 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft, Plus, Ticket, Download, Plane, Hotel,
-  Bus, Umbrella, Phone, User, MapPin, ChevronDown,
-  ChevronRight, Upload, Trash2, Edit2, Eye
+  ArrowLeft,
+  Plus,
+  Ticket,
+  Download,
+  Plane,
+  Hotel,
+  Bus,
+  Umbrella,
+  Phone,
+  User,
+  MapPin,
+  ChevronDown,
+  ChevronRight,
+  Upload,
+  Trash2,
+  Edit2,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
-import { StatusBadge, fmtDate, Field, Input, Select, GhostButton, PrimaryButton } from "@/components/ui/form";
+import {
+  StatusBadge,
+  fmtDate,
+  Field,
+  Input,
+  Select,
+  GhostButton,
+  PrimaryButton,
+} from "@/components/ui/form";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 import html2canvas from "html2canvas";
 import { Instagram } from "lucide-react";
@@ -100,18 +122,20 @@ function TripVouchers() {
       general_locator: trip.pnr ?? "",
       observations: "",
       flights: trip.airline
-        ? [{
-            locator: trip.pnr ?? "",
-            airline: trip.airline,
-            flight_number: "",
-            origin: "",
-            destination: trip.destination ?? "",
-            date: trip.travel_start ?? "",
-            departure_time: "",
-            arrival_time: "",
-            class: "Economy",
-            baggage: "23kg",
-          }]
+        ? [
+            {
+              locator: trip.pnr ?? "",
+              airline: trip.airline,
+              flight_number: "",
+              origin: "",
+              destination: trip.destination ?? "",
+              date: trip.travel_start ?? "",
+              departure_time: "",
+              arrival_time: "",
+              class: "Economy",
+              baggage: "23kg",
+            },
+          ]
         : [],
       accommodation: [],
       transfers: [],
@@ -166,7 +190,10 @@ function TripVouchers() {
     mutationFn: (id: string) => deleteVoucherData(id),
     onSuccess: () => {
       toast.success("Voucher removido");
-      if (selected?.id === deleteVoucher.variables) { setSelected(null); setCreating(false); }
+      if (selected?.id === deleteVoucher.variables) {
+        setSelected(null);
+        setCreating(false);
+      }
       qc.invalidateQueries({ queryKey: ["vouchers_trip", tripId] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
@@ -175,33 +202,46 @@ function TripVouchers() {
   const uploadSourcePdf = useMutation({
     mutationFn: async (file: File) => {
       if (!agency) throw new Error("Sem agência");
-      
+
       toast.loading("Enviando arquivo original…", { id: "ocr" });
       const signedUrl = await uploadVoucherSourceFile(agency.id, tripId, file);
 
       // OCR Inteligente via PDF.js + AI Edge Function
       toast.loading("Inteligência Artificial Lendo PDF…", { id: "ocr" });
-      
+
       try {
         const aiResult = await processVoucherWithAI(file);
-        
+
         // Convertendo o resultado da IA em preenchimento inteligente de Voucher
-        setDraft((d) => ({ 
-          ...d, 
+        setDraft((d) => ({
+          ...d,
           destination: aiResult.title || d.destination,
           general_locator: aiResult.locator || d.general_locator,
-          observations: "Extraído via IA OCR\n\nProvedor: " + (aiResult.provider || "") + "\n\nTexto Bruto:\n" + (aiResult.raw_extracted_text?.substring(0, 400) || ""),
-          source_file_url: signedUrl, 
-          source_type: "operator_pdf" as const 
+          observations:
+            "Extraído via IA OCR\n\nProvedor: " +
+            (aiResult.provider || "") +
+            "\n\nTexto Bruto:\n" +
+            (aiResult.raw_extracted_text?.substring(0, 400) || ""),
+          source_file_url: signedUrl,
+          source_type: "operator_pdf" as const,
         }));
-        
+
         toast.success("Dados estruturados pela IA com sucesso!", { id: "ocr" });
       } catch (err: any) {
-        toast.warning(err.message || "A IA não conseguiu ler os dados exatos. O arquivo foi salvo, mas preencha manualmente.", { id: "ocr", duration: 5000 });
-        setDraft((d) => ({ ...d, source_file_url: signedUrl, source_type: "operator_pdf" as const }));
+        toast.warning(
+          err.message ||
+            "A IA não conseguiu ler os dados exatos. O arquivo foi salvo, mas preencha manualmente.",
+          { id: "ocr", duration: 5000 },
+        );
+        setDraft((d) => ({
+          ...d,
+          source_file_url: signedUrl,
+          source_type: "operator_pdf" as const,
+        }));
       }
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro crítico no upload.", { id: "ocr" }),
+    onError: (e) =>
+      toast.error(e instanceof Error ? e.message : "Erro crítico no upload.", { id: "ocr" }),
   });
 
   // ── Edit existing ─────────────────────────────────────────────────────────────
@@ -220,7 +260,7 @@ function TripVouchers() {
     try {
       const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
       const dataUrl = canvas.toDataURL("image/png");
-      
+
       // Upload to Supabase Storage
       try {
         const res = await fetch(dataUrl);
@@ -262,7 +302,10 @@ function TripVouchers() {
         setOpenSection={setOpenSection}
         onSave={() => saveVoucher.mutate()}
         saving={saveVoucher.isPending}
-        onCancel={() => { setCreating(false); setSelected(null); }}
+        onCancel={() => {
+          setCreating(false);
+          setSelected(null);
+        }}
         onUploadPdf={(file) => uploadSourcePdf.mutate(file)}
         slug={slug}
         tripId={tripId}
@@ -277,7 +320,9 @@ function TripVouchers() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
         <button
-          onClick={() => { if (trip) initNewVoucher(trip, passengersQ.data ?? []); }}
+          onClick={() => {
+            if (trip) initNewVoucher(trip, passengersQ.data ?? []);
+          }}
           className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand"
         >
           <Plus className="h-3.5 w-3.5" />
@@ -297,7 +342,9 @@ function TripVouchers() {
             Crie um voucher manualmente ou importe um PDF da operadora.
           </div>
           <button
-            onClick={() => { if (trip) initNewVoucher(trip, passengersQ.data ?? []); }}
+            onClick={() => {
+              if (trip) initNewVoucher(trip, passengersQ.data ?? []);
+            }}
             className="mt-4 flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -401,19 +448,26 @@ function TripVouchers() {
       </div>
 
       {storyVoucher && trip && (
-        <div className="fixed inset-0 z-[100] flex justify-end bg-black/80 backdrop-blur-sm" onClick={() => setStoryVoucher(null)}>
-          <div className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border bg-surface p-6 animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-[100] flex justify-end bg-black/80 backdrop-blur-sm"
+          onClick={() => setStoryVoucher(null)}
+        >
+          <div
+            className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border bg-surface p-6 animate-in slide-in-from-right duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
             <p className="text-sm text-muted-foreground text-center">
-              Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes sociais.
+              Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas
+              redes sociais.
             </p>
-            
+
             <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-xl overflow-hidden py-4">
               {/* This is the invisible scaled canvas we take a snapshot of */}
-              <div 
-                id="story-canvas" 
+              <div
+                id="story-canvas"
                 className="relative overflow-hidden shrink-0 flex flex-col bg-indigo-950"
-                style={{ width: '400px', height: '711px' }}
+                style={{ width: "400px", height: "711px" }}
               >
                 {/* Decorative Background */}
                 <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />
@@ -421,15 +475,22 @@ function TripVouchers() {
 
                 <div className="relative z-10 flex flex-col h-full p-8 text-white">
                   <div className="flex items-center gap-3 mb-auto">
-                     {agency?.logo_url ? (
-                       <img src={agency.logo_url} alt="Logo" className="h-10 w-auto object-contain bg-white rounded-md p-1" crossOrigin="anonymous" />
-                     ) : (
-                       <span className="font-black text-xl tracking-tighter">{agency?.name}</span>
-                     )}
+                    {agency?.logo_url ? (
+                      <img
+                        src={agency.logo_url}
+                        alt="Logo"
+                        className="h-10 w-auto object-contain bg-white rounded-md p-1"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <span className="font-black text-xl tracking-tighter">{agency?.name}</span>
+                    )}
                   </div>
-                  
+
                   <div className="mt-8 mb-4">
-                    <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">Meu próximo destino</h2>
+                    <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">
+                      Meu próximo destino
+                    </h2>
                     <h1 className="text-4xl font-black leading-tight ">
                       {storyVoucher.destination || trip.destination || "Vou Viajar!"}
                     </h1>
@@ -439,16 +500,17 @@ function TripVouchers() {
                     {storyVoucher.flights.length > 0 && (
                       <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
                         <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-2">
-                           <span>Voo Confirmado</span>
-                           <Plane className="w-4 h-4" />
+                          <span>Voo Confirmado</span>
+                          <Plane className="w-4 h-4" />
                         </div>
                         <div className="flex justify-between items-center text-lg font-bold">
-                           <span>{storyVoucher.flights[0].origin || "Origem"}</span>
-                           <ArrowLeft className="w-4 h-4 rotate-180 text-white/50" />
-                           <span>{storyVoucher.flights[0].destination || "Destino"}</span>
+                          <span>{storyVoucher.flights[0].origin || "Origem"}</span>
+                          <ArrowLeft className="w-4 h-4 rotate-180 text-white/50" />
+                          <span>{storyVoucher.flights[0].destination || "Destino"}</span>
                         </div>
                         <div className="text-xs mt-1 text-white/60">
-                           {storyVoucher.flights[0].airline} • {storyVoucher.flights[0].flight_number}
+                          {storyVoucher.flights[0].airline} •{" "}
+                          {storyVoucher.flights[0].flight_number}
                         </div>
                       </div>
                     )}
@@ -456,17 +518,23 @@ function TripVouchers() {
                     {storyVoucher.accommodation.length > 0 && (
                       <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
                         <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-1">
-                           <span>Hospedagem</span>
-                           <Hotel className="w-4 h-4" />
+                          <span>Hospedagem</span>
+                          <Hotel className="w-4 h-4" />
                         </div>
-                        <div className="text-base font-bold truncate">{storyVoucher.accommodation[0].name}</div>
-                        <div className="text-xs mt-1 text-white/60 truncate">{storyVoucher.accommodation[0].city}</div>
+                        <div className="text-base font-bold truncate">
+                          {storyVoucher.accommodation[0].name}
+                        </div>
+                        <div className="text-xs mt-1 text-white/60 truncate">
+                          {storyVoucher.accommodation[0].city}
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <div className="mt-auto pt-6 text-center">
-                    <p className="text-[10px] uppercase tracking-widest text-white/50 mb-1">Planejado com perfeição por</p>
+                    <p className="text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                      Planejado com perfeição por
+                    </p>
                     <p className="text-xs font-bold text-white/80">@{agency?.slug}</p>
                   </div>
                 </div>
@@ -517,7 +585,19 @@ function VoucherEditor({
     setOpenSection(openSection === key ? null : key);
   }
 
-  function Section({ id, label, icon, count, children }: { id: string; label: string; icon: React.ReactNode; count?: number; children: React.ReactNode }) {
+  function Section({
+    id,
+    label,
+    icon,
+    count,
+    children,
+  }: {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+    count?: number;
+    children: React.ReactNode;
+  }) {
     const open = openSection === id;
     return (
       <div className="rounded-lg border border-border bg-surface">
@@ -525,7 +605,11 @@ function VoucherEditor({
           onClick={() => toggle(id)}
           className="flex w-full items-center gap-2 px-4 py-3 text-sm font-semibold hover:bg-surface-alt"
         >
-          {open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+          {open ? (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          )}
           {icon}
           {label}
           {count !== undefined && (
@@ -548,8 +632,13 @@ function VoucherEditor({
     <div className="bg-surface border border-border/60 rounded-xl p-6 ">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-           <button onClick={onCancel} className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-surface-alt transition-colors"><ArrowLeft className="h-4 w-4" /></button>
-           <h2 className="text-lg font-semibold">{isEdit ? "Editar Voucher" : "Novo Voucher"}</h2>
+          <button
+            onClick={onCancel}
+            className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-surface-alt transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <h2 className="text-lg font-semibold">{isEdit ? "Editar Voucher" : "Novo Voucher"}</h2>
         </div>
         <div className="flex gap-2">
           {/* Upload PDF Inteligente */}
@@ -560,13 +649,12 @@ function VoucherEditor({
               type="file"
               accept="application/pdf"
               className="hidden"
-              onChange={(e) => { if (e.target.files?.[0]) onUploadPdf(e.target.files[0]); }}
+              onChange={(e) => {
+                if (e.target.files?.[0]) onUploadPdf(e.target.files[0]);
+              }}
             />
           </label>
-          <button
-            onClick={onCancel}
-            className="h-8 rounded-md border border-border px-3 text-xs"
-          >
+          <button onClick={onCancel} className="h-8 rounded-md border border-border px-3 text-xs">
             Cancelar
           </button>
           <button
@@ -599,7 +687,9 @@ function VoucherEditor({
           <Field label="Template">
             <Select
               value={draft.template ?? "navy"}
-              onChange={(e) => setDraft((d) => ({ ...d, template: e.target.value as Voucher["template"] }))}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, template: e.target.value as Voucher["template"] }))
+              }
             >
               <option value="navy">Azul Marinho</option>
               <option value="minimal">Minimalista</option>
@@ -616,22 +706,54 @@ function VoucherEditor({
         </div>
 
         {/* Passengers */}
-        <Section id="passengers" label="Passageiros" icon={<User className="h-3.5 w-3.5 text-muted-foreground" />} count={passengers.length}>
+        <Section
+          id="passengers"
+          label="Passageiros"
+          icon={<User className="h-3.5 w-3.5 text-muted-foreground" />}
+          count={passengers.length}
+        >
           {passengers.map((p, i) => (
             <div key={i} className="grid grid-cols-3 gap-2 rounded-md border border-border p-2">
               <Field label="Nome">
-                <Input value={p.name} onChange={(e) => { const arr = [...passengers]; arr[i] = { ...p, name: e.target.value }; setDraft((d) => ({ ...d, passengers: arr })); }} />
+                <Input
+                  value={p.name}
+                  onChange={(e) => {
+                    const arr = [...passengers];
+                    arr[i] = { ...p, name: e.target.value };
+                    setDraft((d) => ({ ...d, passengers: arr }));
+                  }}
+                />
               </Field>
               <Field label="Documento">
-                <Input value={p.document ?? ""} onChange={(e) => { const arr = [...passengers]; arr[i] = { ...p, document: e.target.value }; setDraft((d) => ({ ...d, passengers: arr })); }} />
+                <Input
+                  value={p.document ?? ""}
+                  onChange={(e) => {
+                    const arr = [...passengers];
+                    arr[i] = { ...p, document: e.target.value };
+                    setDraft((d) => ({ ...d, passengers: arr }));
+                  }}
+                />
               </Field>
               <Field label="Assento">
-                <Input value={p.seat ?? ""} onChange={(e) => { const arr = [...passengers]; arr[i] = { ...p, seat: e.target.value }; setDraft((d) => ({ ...d, passengers: arr })); }} placeholder="—" />
+                <Input
+                  value={p.seat ?? ""}
+                  onChange={(e) => {
+                    const arr = [...passengers];
+                    arr[i] = { ...p, seat: e.target.value };
+                    setDraft((d) => ({ ...d, passengers: arr }));
+                  }}
+                  placeholder="—"
+                />
               </Field>
             </div>
           ))}
           <button
-            onClick={() => setDraft((d) => ({ ...d, passengers: [...passengers, { name: "", document: "", seat: "" }] }))}
+            onClick={() =>
+              setDraft((d) => ({
+                ...d,
+                passengers: [...passengers, { name: "", document: "", seat: "" }],
+              }))
+            }
             className="mt-1 flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
           >
             <Plus className="h-3.5 w-3.5" />+ Passageiro
@@ -639,57 +761,356 @@ function VoucherEditor({
         </Section>
 
         {/* Flights */}
-        <Section id="flights" label="Voos" icon={<Plane className="h-3.5 w-3.5 text-muted-foreground" />} count={flights.length}>
+        <Section
+          id="flights"
+          label="Voos"
+          icon={<Plane className="h-3.5 w-3.5 text-muted-foreground" />}
+          count={flights.length}
+        >
           {flights.map((f, i) => (
             <div key={i} className="rounded-md border border-border p-3 space-y-2">
               <div className="grid grid-cols-2 gap-2">
-                <Field label="Cia aérea"><Input value={f.airline} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, airline: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Voo nº"><Input value={f.flight_number} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, flight_number: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Origem"><Input value={f.origin} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, origin: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} placeholder="GRU" /></Field>
-                <Field label="Destino"><Input value={f.destination} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, destination: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} placeholder="LIS" /></Field>
-                <Field label="Data"><Input type="date" value={f.date} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, date: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Localizador"><Input value={f.locator} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, locator: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Saída"><Input type="time" value={f.departure_time} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, departure_time: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Chegada"><Input type="time" value={f.arrival_time} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, arrival_time: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} /></Field>
-                <Field label="Classe"><Select value={f.class} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, class: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }}><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First</option></Select></Field>
-                <Field label="Bagagem"><Input value={f.baggage} onChange={(e) => { const arr = [...flights]; arr[i] = { ...f, baggage: e.target.value }; setDraft((d) => ({ ...d, flights: arr })); }} placeholder="23kg" /></Field>
+                <Field label="Cia aérea">
+                  <Input
+                    value={f.airline}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, airline: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Voo nº">
+                  <Input
+                    value={f.flight_number}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, flight_number: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Origem">
+                  <Input
+                    value={f.origin}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, origin: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                    placeholder="GRU"
+                  />
+                </Field>
+                <Field label="Destino">
+                  <Input
+                    value={f.destination}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, destination: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                    placeholder="LIS"
+                  />
+                </Field>
+                <Field label="Data">
+                  <Input
+                    type="date"
+                    value={f.date}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, date: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Localizador">
+                  <Input
+                    value={f.locator}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, locator: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Saída">
+                  <Input
+                    type="time"
+                    value={f.departure_time}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, departure_time: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Chegada">
+                  <Input
+                    type="time"
+                    value={f.arrival_time}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, arrival_time: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Classe">
+                  <Select
+                    value={f.class}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, class: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                  >
+                    <option>Economy</option>
+                    <option>Premium Economy</option>
+                    <option>Business</option>
+                    <option>First</option>
+                  </Select>
+                </Field>
+                <Field label="Bagagem">
+                  <Input
+                    value={f.baggage}
+                    onChange={(e) => {
+                      const arr = [...flights];
+                      arr[i] = { ...f, baggage: e.target.value };
+                      setDraft((d) => ({ ...d, flights: arr }));
+                    }}
+                    placeholder="23kg"
+                  />
+                </Field>
               </div>
-              <button onClick={() => setDraft((d) => ({ ...d, flights: flights.filter((_, x) => x !== i) }))} className="text-xs text-danger hover:underline flex items-center gap-1"><Trash2 className="h-3 w-3" />Remover voo</button>
+              <button
+                onClick={() =>
+                  setDraft((d) => ({ ...d, flights: flights.filter((_, x) => x !== i) }))
+                }
+                className="text-xs text-danger hover:underline flex items-center gap-1"
+              >
+                <Trash2 className="h-3 w-3" />
+                Remover voo
+              </button>
             </div>
           ))}
-          <button onClick={() => setDraft((d) => ({ ...d, flights: [...flights, { locator: "", airline: "", flight_number: "", origin: "", destination: "", date: "", departure_time: "", arrival_time: "", class: "Economy", baggage: "23kg" }] }))} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"><Plus className="h-3.5 w-3.5" />+ Voo</button>
+          <button
+            onClick={() =>
+              setDraft((d) => ({
+                ...d,
+                flights: [
+                  ...flights,
+                  {
+                    locator: "",
+                    airline: "",
+                    flight_number: "",
+                    origin: "",
+                    destination: "",
+                    date: "",
+                    departure_time: "",
+                    arrival_time: "",
+                    class: "Economy",
+                    baggage: "23kg",
+                  },
+                ],
+              }))
+            }
+            className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+          >
+            <Plus className="h-3.5 w-3.5" />+ Voo
+          </button>
         </Section>
 
         {/* Accommodation */}
-        <Section id="accommodation" label="Hospedagem" icon={<Hotel className="h-3.5 w-3.5 text-muted-foreground" />} count={accommodation.length}>
+        <Section
+          id="accommodation"
+          label="Hospedagem"
+          icon={<Hotel className="h-3.5 w-3.5 text-muted-foreground" />}
+          count={accommodation.length}
+        >
           {accommodation.map((h, i) => (
             <div key={i} className="rounded-md border border-border p-3 space-y-2">
               <div className="grid grid-cols-2 gap-2">
-                <Field label="Hotel"><Input value={h.name} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, name: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
-                <Field label="Cidade"><Input value={h.city} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, city: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
-                <Field label="Check-in"><Input type="date" value={h.checkin} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, checkin: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
-                <Field label="Check-out"><Input type="date" value={h.checkout} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, checkout: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
-                <Field label="Tipo de quarto"><Input value={h.room_type} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, room_type: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} placeholder="Duplo standard" /></Field>
-                <Field label="Regime"><Input value={h.meal_plan} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, meal_plan: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} placeholder="Café incluso" /></Field>
-                <Field label="Confirmação"><Input value={h.confirmation} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, confirmation: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
-                <Field label="Telefone hotel"><Input value={h.phone} onChange={(e) => { const arr = [...accommodation]; arr[i] = { ...h, phone: e.target.value }; setDraft((d) => ({ ...d, accommodation: arr })); }} /></Field>
+                <Field label="Hotel">
+                  <Input
+                    value={h.name}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, name: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Cidade">
+                  <Input
+                    value={h.city}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, city: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Check-in">
+                  <Input
+                    type="date"
+                    value={h.checkin}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, checkin: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Check-out">
+                  <Input
+                    type="date"
+                    value={h.checkout}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, checkout: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Tipo de quarto">
+                  <Input
+                    value={h.room_type}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, room_type: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                    placeholder="Duplo standard"
+                  />
+                </Field>
+                <Field label="Regime">
+                  <Input
+                    value={h.meal_plan}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, meal_plan: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                    placeholder="Café incluso"
+                  />
+                </Field>
+                <Field label="Confirmação">
+                  <Input
+                    value={h.confirmation}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, confirmation: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
+                <Field label="Telefone hotel">
+                  <Input
+                    value={h.phone}
+                    onChange={(e) => {
+                      const arr = [...accommodation];
+                      arr[i] = { ...h, phone: e.target.value };
+                      setDraft((d) => ({ ...d, accommodation: arr }));
+                    }}
+                  />
+                </Field>
               </div>
-              <button onClick={() => setDraft((d) => ({ ...d, accommodation: accommodation.filter((_, x) => x !== i) }))} className="text-xs text-danger hover:underline flex items-center gap-1"><Trash2 className="h-3 w-3" />Remover hotel</button>
+              <button
+                onClick={() =>
+                  setDraft((d) => ({
+                    ...d,
+                    accommodation: accommodation.filter((_, x) => x !== i),
+                  }))
+                }
+                className="text-xs text-danger hover:underline flex items-center gap-1"
+              >
+                <Trash2 className="h-3 w-3" />
+                Remover hotel
+              </button>
             </div>
           ))}
-          <button onClick={() => setDraft((d) => ({ ...d, accommodation: [...accommodation, { name: "", city: "", address: "", phone: "", checkin: "", checkout: "", room_type: "", meal_plan: "", confirmation: "" }] }))} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"><Plus className="h-3.5 w-3.5" />+ Hotel</button>
+          <button
+            onClick={() =>
+              setDraft((d) => ({
+                ...d,
+                accommodation: [
+                  ...accommodation,
+                  {
+                    name: "",
+                    city: "",
+                    address: "",
+                    phone: "",
+                    checkin: "",
+                    checkout: "",
+                    room_type: "",
+                    meal_plan: "",
+                    confirmation: "",
+                  },
+                ],
+              }))
+            }
+            className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+          >
+            <Plus className="h-3.5 w-3.5" />+ Hotel
+          </button>
         </Section>
 
         {/* Contacts de emergência */}
-        <Section id="emergency" label="Contatos de Emergência" icon={<Phone className="h-3.5 w-3.5 text-muted-foreground" />} count={(draft.emergency_contacts ?? []).length}>
+        <Section
+          id="emergency"
+          label="Contatos de Emergência"
+          icon={<Phone className="h-3.5 w-3.5 text-muted-foreground" />}
+          count={(draft.emergency_contacts ?? []).length}
+        >
           {(draft.emergency_contacts ?? []).map((c, i) => (
             <div key={i} className="grid grid-cols-3 gap-2">
-              <Field label="Nome"><Input value={c.name} onChange={(e) => { const arr = [...(draft.emergency_contacts ?? [])]; arr[i] = { ...c, name: e.target.value }; setDraft((d) => ({ ...d, emergency_contacts: arr })); }} /></Field>
-              <Field label="Telefone"><Input value={c.phone} onChange={(e) => { const arr = [...(draft.emergency_contacts ?? [])]; arr[i] = { ...c, phone: e.target.value }; setDraft((d) => ({ ...d, emergency_contacts: arr })); }} /></Field>
-              <Field label="Papel"><Input value={c.role} onChange={(e) => { const arr = [...(draft.emergency_contacts ?? [])]; arr[i] = { ...c, role: e.target.value }; setDraft((d) => ({ ...d, emergency_contacts: arr })); }} placeholder="Guia / Operadora / Seguradora" /></Field>
+              <Field label="Nome">
+                <Input
+                  value={c.name}
+                  onChange={(e) => {
+                    const arr = [...(draft.emergency_contacts ?? [])];
+                    arr[i] = { ...c, name: e.target.value };
+                    setDraft((d) => ({ ...d, emergency_contacts: arr }));
+                  }}
+                />
+              </Field>
+              <Field label="Telefone">
+                <Input
+                  value={c.phone}
+                  onChange={(e) => {
+                    const arr = [...(draft.emergency_contacts ?? [])];
+                    arr[i] = { ...c, phone: e.target.value };
+                    setDraft((d) => ({ ...d, emergency_contacts: arr }));
+                  }}
+                />
+              </Field>
+              <Field label="Papel">
+                <Input
+                  value={c.role}
+                  onChange={(e) => {
+                    const arr = [...(draft.emergency_contacts ?? [])];
+                    arr[i] = { ...c, role: e.target.value };
+                    setDraft((d) => ({ ...d, emergency_contacts: arr }));
+                  }}
+                  placeholder="Guia / Operadora / Seguradora"
+                />
+              </Field>
             </div>
           ))}
-          <button onClick={() => setDraft((d) => ({ ...d, emergency_contacts: [...(d.emergency_contacts ?? []), { name: "", phone: "", role: "" }] }))} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"><Plus className="h-3.5 w-3.5" />+ Contato</button>
+          <button
+            onClick={() =>
+              setDraft((d) => ({
+                ...d,
+                emergency_contacts: [
+                  ...(d.emergency_contacts ?? []),
+                  { name: "", phone: "", role: "" },
+                ],
+              }))
+            }
+            className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+          >
+            <Plus className="h-3.5 w-3.5" />+ Contato
+          </button>
         </Section>
       </div>
     </div>

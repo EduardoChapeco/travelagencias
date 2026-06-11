@@ -1,7 +1,18 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, User, Mail, Phone, Calendar, Contact2, ShieldCheck, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Contact2,
+  ShieldCheck,
+  FileText,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
@@ -47,10 +58,14 @@ function PassengersPage() {
 
   const translateKind = (kind: string) => {
     switch (kind) {
-      case "adult": return "Adulto";
-      case "child": return "Criança (CHD)";
-      case "infant": return "Infante (INF)";
-      default: return kind;
+      case "adult":
+        return "Adulto";
+      case "child":
+        return "Criança (CHD)";
+      case "infant":
+        return "Infante (INF)";
+      default:
+        return kind;
     }
   };
 
@@ -66,7 +81,9 @@ function PassengersPage() {
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Rooming List</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Gerencie os passageiros vinculados a este roteiro.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Gerencie os passageiros vinculados a este roteiro.
+          </p>
         </div>
         <button
           onClick={() => setOpen(true)}
@@ -78,8 +95,11 @@ function PassengersPage() {
 
       {list.isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-48 rounded-2xl bg-surface-alt animate-pulse border border-border" />
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-48 rounded-2xl bg-surface-alt animate-pulse border border-border"
+            />
           ))}
         </div>
       )}
@@ -89,7 +109,8 @@ function PassengersPage() {
           <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o grupo.
+            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o
+            grupo.
           </p>
         </div>
       )}
@@ -97,14 +118,16 @@ function PassengersPage() {
       {list.data && list.data.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {list.data.map((p: any) => (
-            <div 
-              key={p.id} 
-              className={`group flex flex-col rounded-2xl border bg-surface transition-colors hover:border-brand/40 ${p.is_lead_passenger ? 'border-brand/30' : 'border-border'}`}
+            <div
+              key={p.id}
+              className={`group flex flex-col rounded-2xl border bg-surface transition-colors hover:border-brand/40 ${p.is_lead_passenger ? "border-brand/30" : "border-border"}`}
             >
               {/* Header Card */}
               <div className="flex items-start justify-between p-5 border-b border-border/50">
                 <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? 'bg-brand/10 text-brand' : 'bg-surface-alt text-muted-foreground'}`}>
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? "bg-brand/10 text-brand" : "bg-surface-alt text-muted-foreground"}`}
+                  >
                     <User className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
@@ -113,7 +136,7 @@ function PassengersPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         {translateKind(p.kind)}
                       </span>
-                        <StatusBadge tone="info">Líder da Reserva</StatusBadge>
+                      <StatusBadge tone="info">Líder da Reserva</StatusBadge>
                     </div>
                   </div>
                 </div>
@@ -150,17 +173,23 @@ function PassengersPage() {
                       <Calendar className="h-3.5 w-3.5" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">Nascimento</div>
-                      <div className="text-xs font-medium truncate">{p.birth_date ? fmtDate(p.birth_date) : "—"}</div>
+                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                        Nascimento
+                      </div>
+                      <div className="text-xs font-medium truncate">
+                        {p.birth_date ? fmtDate(p.birth_date) : "—"}
+                      </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
                       <ShieldCheck className="h-3.5 w-3.5" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">Nacionalidade</div>
+                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                        Nacionalidade
+                      </div>
                       <div className="text-xs font-medium truncate">{p.nationality || "—"}</div>
                     </div>
                   </div>

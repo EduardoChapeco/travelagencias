@@ -3,7 +3,18 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Plus, Trash2, KeyRound } from "lucide-react";
-import { fetchAgencySettings, saveSettings, fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchTeamMembers, fetchTeamInvites, inviteTeamMember, deleteTeamInvite } from "@/services/settings";
+import {
+  fetchAgencySettings,
+  saveSettings,
+  fetchApiKeys,
+  saveApiKey,
+  toggleApiKey,
+  deleteApiKey,
+  fetchTeamMembers,
+  fetchTeamInvites,
+  inviteTeamMember,
+  deleteTeamInvite,
+} from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton, Select } from "@/components/ui/form";
@@ -107,10 +118,15 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
     setBusy(true);
     try {
       await saveSettings(
-        agencyId, 
+        agencyId,
         { name: form.name, slug: form.slug },
-        { email: form.email, phone: form.phone, document: form.document, legal_name: form.legal_name },
-        null
+        {
+          email: form.email,
+          phone: form.phone,
+          document: form.document,
+          legal_name: form.legal_name,
+        },
+        null,
       );
       toast.success("Configurações salvas");
       refresh();
@@ -329,7 +345,7 @@ function IntegrationsTab({ agencyId }: { agencyId: string }) {
         provider,
         label: INTEGRATION_PROVIDERS.find((p) => p.key === provider)?.label ?? provider,
         key_value: value.trim(),
-        is_active: true
+        is_active: true,
       });
       toast.success("Chave salva");
       qc.invalidateQueries({ queryKey: ["agency-api-keys", agencyId] });

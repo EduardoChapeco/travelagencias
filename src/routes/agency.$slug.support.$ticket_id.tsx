@@ -2,13 +2,34 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft, Send, Clock, AlertTriangle, CheckCircle2,
-  Lock, Unlock, MessageCircle, User, Bot, Paperclip, CheckSquare, Settings2, Globe, Star, BookOpen
+  ArrowLeft,
+  Send,
+  Clock,
+  AlertTriangle,
+  CheckCircle2,
+  Lock,
+  Unlock,
+  MessageCircle,
+  User,
+  Bot,
+  Paperclip,
+  CheckSquare,
+  Settings2,
+  Globe,
+  Star,
+  BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { Select, Textarea, PrimaryButton, GhostButton, StatusBadge, fmtDate } from "@/components/ui/form";
+import {
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+  fmtDate,
+} from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 
 export const Route = createFileRoute("/agency/$slug/support/$ticket_id")({
@@ -43,7 +64,10 @@ type Ticket = {
   csat_comment: string | null;
 };
 
-function slaStatus(deadline: string | null, status: string): "ok" | "warning" | "breach" | "resolved" {
+function slaStatus(
+  deadline: string | null,
+  status: string,
+): "ok" | "warning" | "breach" | "resolved" {
   if (status === "resolved" || status === "closed") return "resolved";
   if (!deadline) return "ok";
   const diff = new Date(deadline).getTime() - Date.now();
@@ -96,7 +120,9 @@ function TicketDetail() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("support_tickets")
-        .select("id, code, title, description, type, priority, status, created_at, sla_deadline, agent_id")
+        .select(
+          "id, code, title, description, type, priority, status, created_at, sla_deadline, agent_id",
+        )
         .eq("id", ticket_id)
         .maybeSingle();
       if (error) throw error;
@@ -118,10 +144,14 @@ function TicketDetail() {
     enabled: !!agency,
     queryKey: ["kb", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("knowledge_articles").select("id, title, slug").eq("agency_id", agency!.id).eq("is_internal", false);
+      const { data, error } = await (supabase as any)
+        .from("knowledge_articles")
+        .select("id, title, slug")
+        .eq("agency_id", agency!.id)
+        .eq("is_internal", false);
       if (error) throw error;
       return (data || []) as any[];
-    }
+    },
   });
 
   const update = useMutation({
@@ -148,16 +178,18 @@ function TicketDetail() {
       sender: "agency",
       content: reply.trim(),
       attachments: attachUrl ? [attachUrl] : [],
-      is_internal: channel === "internal"
+      is_internal: channel === "internal",
     });
 
     if (msgError) return toast.error(msgError.message);
 
     // Auto-advance status on first reply
     const newStatus =
-      q.data.status === "open" ? "in_progress" :
-      channel === "public" && q.data.status === "waiting_client" ? "in_progress" :
-      q.data.status;
+      q.data.status === "open"
+        ? "in_progress"
+        : channel === "public" && q.data.status === "waiting_client"
+          ? "in_progress"
+          : q.data.status;
 
     if (newStatus !== q.data.status) {
       const { error } = await supabase
@@ -204,8 +236,12 @@ function TicketDetail() {
     toast.success("Ticket escalonado!");
   }
 
-  if (q.isLoading) return <div className="p-10 text-center text-sm text-muted-foreground">Carregando ticket…</div>;
-  if (!q.data) return <div className="p-10 text-center text-sm text-muted-foreground">Ticket não encontrado.</div>;
+  if (q.isLoading)
+    return <div className="p-10 text-center text-sm text-muted-foreground">Carregando ticket…</div>;
+  if (!q.data)
+    return (
+      <div className="p-10 text-center text-sm text-muted-foreground">Ticket não encontrado.</div>
+    );
 
   const t = q.data;
   const messages = (t.messages ?? []) as Msg[];
@@ -214,7 +250,11 @@ function TicketDetail() {
 
   return (
     <>
-      <Link to="/agency/$slug/support" params={{ slug }} className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+      <Link
+        to="/agency/$slug/support"
+        params={{ slug }}
+        className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Voltar para lista de tickets
       </Link>
 
@@ -222,9 +262,21 @@ function TicketDetail() {
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between bg-surface p-5 rounded-lg border border-border ">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t.code}</span>
+            <span className="font-mono text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {t.code}
+            </span>
             <StatusBadge tone={PRIORITY_TONE[t.priority]}>{t.priority}</StatusBadge>
-            <StatusBadge tone={t.status === "resolved" ? "success" : t.status === "in_progress" ? "info" : "warning"}>{STATUS_LABEL[t.status] || t.status}</StatusBadge>
+            <StatusBadge
+              tone={
+                t.status === "resolved"
+                  ? "success"
+                  : t.status === "in_progress"
+                    ? "info"
+                    : "warning"
+              }
+            >
+              {STATUS_LABEL[t.status] || t.status}
+            </StatusBadge>
           </div>
           <h1 className="text-xl font-bold tracking-tight text-foreground">{t.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t.description || "Sem descrição"}</p>
@@ -236,7 +288,9 @@ function TicketDetail() {
             className="h-8 w-40 text-xs bg-surface-alt border-border"
           >
             {Object.entries(STATUS_LABEL).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
+              <option key={k} value={k}>
+                {v}
+              </option>
             ))}
           </Select>
           {t.status !== "resolved" && t.status !== "closed" && (
@@ -275,7 +329,7 @@ function TicketDetail() {
               visibleMessages.map((m) => {
                 const isAgent = m.sender === "agency";
                 const isSystem = m.sender === "system";
-                
+
                 if (isSystem) {
                   return (
                     <div key={m.id} className="flex justify-center my-4">
@@ -289,10 +343,14 @@ function TicketDetail() {
 
                 return (
                   <div key={m.id} className={`flex gap-3 ${isAgent ? "flex-row-reverse" : ""}`}>
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isAgent ? "bg-primary/10 text-primary" : "bg-surface-alt text-muted-foreground"}`}>
+                    <div
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isAgent ? "bg-primary/10 text-primary" : "bg-surface-alt text-muted-foreground"}`}
+                    >
                       {isAgent ? <Globe className="h-4 w-4" /> : <User className="h-4 w-4" />}
                     </div>
-                    <div className={`flex max-w-[85%] flex-col ${isAgent ? "items-end" : "items-start"}`}>
+                    <div
+                      className={`flex max-w-[85%] flex-col ${isAgent ? "items-end" : "items-start"}`}
+                    >
                       <div className="mb-1 flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
                         <span className="text-foreground">{isAgent ? "Agência" : "Cliente"}</span>
                         <span>{fmtDate(m.created_at)}</span>
@@ -307,16 +365,22 @@ function TicketDetail() {
                           m.is_internal
                             ? "bg-warning/10 text-warning-foreground border border-warning/20 rounded-tr-sm"
                             : isAgent
-                            ? "bg-primary text-primary-foreground rounded-tr-sm"
-                            : "bg-surface border border-border rounded-tl-sm text-foreground"
+                              ? "bg-primary text-primary-foreground rounded-tr-sm"
+                              : "bg-surface border border-border rounded-tl-sm text-foreground"
                         }`}
                       >
                         <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
-                        
+
                         {m.attachments && m.attachments.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-current/10 space-y-2">
                             {m.attachments.map((url, i) => (
-                              <a key={i} href={url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs opacity-90 hover:opacity-100 hover:underline font-medium">
+                              <a
+                                key={i}
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1.5 text-xs opacity-90 hover:opacity-100 hover:underline font-medium"
+                              >
                                 <Paperclip className="h-3.5 w-3.5" /> Anexo {i + 1}
                               </a>
                             ))}
@@ -337,7 +401,9 @@ function TicketDetail() {
                   type="button"
                   onClick={() => setChannel("public")}
                   className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-medium transition-colors ${
-                    channel === "public" ? "bg-surface text-foreground border-b-2 border-primary" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    channel === "public"
+                      ? "bg-surface text-foreground border-b-2 border-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
                   }`}
                 >
                   <Unlock className="h-3.5 w-3.5" /> Resposta ao Cliente
@@ -346,7 +412,9 @@ function TicketDetail() {
                   type="button"
                   onClick={() => setChannel("internal")}
                   className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-medium transition-colors ${
-                    channel === "internal" ? "bg-warning/10 text-warning-foreground border-b-2 border-warning" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    channel === "internal"
+                      ? "bg-warning/10 text-warning-foreground border-b-2 border-warning"
+                      : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
                   }`}
                 >
                   <Lock className="h-3.5 w-3.5" /> Nota Interna (Privado)
@@ -357,7 +425,11 @@ function TicketDetail() {
                 <Textarea
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
-                  placeholder={channel === "public" ? "Escreva sua resposta ao cliente..." : "Registre uma anotação visível apenas para a equipe..."}
+                  placeholder={
+                    channel === "public"
+                      ? "Escreva sua resposta ao cliente..."
+                      : "Registre uma anotação visível apenas para a equipe..."
+                  }
                   className="min-h-[100px] border-0 bg-transparent p-2 text-sm focus:ring-0 resize-none"
                 />
               </div>
@@ -376,23 +448,33 @@ function TicketDetail() {
 
               <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 p-3">
                 <div className="flex items-center gap-2">
-                  <GhostButton onClick={() => setAttachOpen(!attachOpen)} className={`h-8 gap-1.5 text-xs ${attachUrl ? "text-primary" : ""}`}>
+                  <GhostButton
+                    onClick={() => setAttachOpen(!attachOpen)}
+                    className={`h-8 gap-1.5 text-xs ${attachUrl ? "text-primary" : ""}`}
+                  >
                     <Paperclip className="h-3.5 w-3.5" /> {attachUrl ? "Arquivo anexado" : "Anexar"}
                   </GhostButton>
-                  
+
                   {channel === "public" && kbArticles.data && kbArticles.data.length > 0 && (
-                    <Select 
-                      className="h-8 text-xs max-w-[200px]" 
-                      value="" 
+                    <Select
+                      className="h-8 text-xs max-w-[200px]"
+                      value=""
                       onChange={(e) => {
-                         if (!e.target.value) return;
-                         const link = `${window.location.origin}/p/${slug}/kb/${e.target.value}`;
-                         setReply((prev) => prev + (prev.length > 0 ? "\n\n" : "") + `Veja este artigo na nossa central de ajuda: \n${link}`);
+                        if (!e.target.value) return;
+                        const link = `${window.location.origin}/p/${slug}/kb/${e.target.value}`;
+                        setReply(
+                          (prev) =>
+                            prev +
+                            (prev.length > 0 ? "\n\n" : "") +
+                            `Veja este artigo na nossa central de ajuda: \n${link}`,
+                        );
                       }}
                     >
                       <option value="">📖 Inserir Artigo KB...</option>
-                      {kbArticles.data.map(kb => (
-                        <option key={kb.id} value={kb.slug}>{kb.title}</option>
+                      {kbArticles.data.map((kb) => (
+                        <option key={kb.id} value={kb.slug}>
+                          {kb.title}
+                        </option>
                       ))}
                     </Select>
                   )}
@@ -402,7 +484,8 @@ function TicketDetail() {
                   disabled={!reply.trim() || update.isPending}
                   className={`h-8 gap-1.5 text-xs ${channel === "internal" ? "bg-warning hover:bg-warning/90 text-warning-foreground" : ""}`}
                 >
-                  <Send className="h-3.5 w-3.5" /> {channel === "internal" ? "Salvar nota interna" : "Enviar resposta"}
+                  <Send className="h-3.5 w-3.5" />{" "}
+                  {channel === "internal" ? "Salvar nota interna" : "Enviar resposta"}
                 </PrimaryButton>
               </div>
             </div>
@@ -412,7 +495,9 @@ function TicketDetail() {
         {/* SIDEBAR */}
         <div className="space-y-4">
           <div className="rounded-lg border border-border bg-surface p-4 ">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">SLA & Prazos</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              SLA & Prazos
+            </h3>
             {sla === "resolved" ? (
               <div className="flex items-center gap-2 text-sm font-medium text-success">
                 <CheckCircle2 className="h-4 w-4" /> Resolvido dentro do prazo
@@ -433,9 +518,13 @@ function TicketDetail() {
             {t.sla_deadline && (
               <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
                 Limite: {fmtDate(t.sla_deadline)}
-                
                 {sla === "breach" && t.priority !== "urgent" && (
-                   <button onClick={escalateTicket} className="text-danger hover:underline font-bold">Escalonar (Tornar Urgente)</button>
+                  <button
+                    onClick={escalateTicket}
+                    className="text-danger hover:underline font-bold"
+                  >
+                    Escalonar (Tornar Urgente)
+                  </button>
                 )}
               </div>
             )}
@@ -443,18 +532,27 @@ function TicketDetail() {
 
           {(t.status === "resolved" || t.status === "closed") && t.csat_score && (
             <div className="rounded-lg border border-border bg-surface p-4 flex flex-col items-center justify-center text-center">
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Avaliação do Cliente</h3>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Avaliação do Cliente
+              </h3>
               <div className="flex items-center gap-1 text-yellow-500 mb-2">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className={`w-6 h-6 ${s <= t.csat_score! ? "fill-current" : "opacity-20"}`} />
+                  <Star
+                    key={s}
+                    className={`w-6 h-6 ${s <= t.csat_score! ? "fill-current" : "opacity-20"}`}
+                  />
                 ))}
               </div>
-              {t.csat_comment && <p className="text-sm italic text-muted-foreground mt-2">"{t.csat_comment}"</p>}
+              {t.csat_comment && (
+                <p className="text-sm italic text-muted-foreground mt-2">"{t.csat_comment}"</p>
+              )}
             </div>
           )}
 
           <div className="rounded-lg border border-border bg-surface p-4 ">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Detalhes do Ticket</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Detalhes do Ticket
+            </h3>
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Categoria:</span>

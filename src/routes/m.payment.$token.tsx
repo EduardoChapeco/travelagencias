@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { fetchPublicContractByToken, fetchPublicInstallmentsByToken, type PublicInstallment as Installment } from "@/services/payment";
+import {
+  fetchPublicContractByToken,
+  fetchPublicInstallmentsByToken,
+  type PublicInstallment as Installment,
+} from "@/services/payment";
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { PrimaryButton, Sheet } from "@/components/ui/form";

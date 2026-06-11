@@ -53,8 +53,14 @@ export function MediaLibraryPicker({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => onOpenChange(false)}>
-      <div className="flex h-full w-full max-w-3xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-[200] flex justify-end bg-background/80 backdrop-blur-sm"
+      onClick={() => onOpenChange(false)}
+    >
+      <div
+        className="flex h-full w-full max-w-3xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex shrink-0 items-center justify-between border-b border-border p-5">
           <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-brand" /> Media Library Central

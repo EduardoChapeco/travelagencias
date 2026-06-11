@@ -22,13 +22,17 @@ export async function fetchAdminAgencyDetail(agencyId: string): Promise<AdminAge
     supabase.from("user_roles").select("user_id, role, created_at").eq("agency_id", agencyId),
     supabase.from("trips").select("id", { count: "exact", head: true }).eq("agency_id", agencyId),
     supabase.from("financial_records").select("amount, type, status").eq("agency_id", agencyId),
-    (supabase as any).from("agency_subscriptions").select("*").eq("agency_id", agencyId).maybeSingle(),
+    (supabase as any)
+      .from("agency_subscriptions")
+      .select("*")
+      .eq("agency_id", agencyId)
+      .maybeSingle(),
     supabase.from("plans").select("*").order("sort_order", { ascending: true }),
   ]);
 
   const userIds = (roles.data ?? []).map((r: any) => r.user_id);
   const profiles = userIds.length
-    ? (await supabase.from("profiles").select("id, full_name").in("id", userIds)).data ?? []
+    ? ((await supabase.from("profiles").select("id, full_name").in("id", userIds)).data ?? [])
     : [];
   const pmap = new Map(profiles.map((p: any) => [p.id, p]));
   const records = fin.data ?? [];
@@ -56,7 +60,11 @@ export async function fetchAdminAgencyDetail(agencyId: string): Promise<AdminAge
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export async function logAdminAuditEvent(agencyId: string, action: string, metadata: any): Promise<void> {
+export async function logAdminAuditEvent(
+  agencyId: string,
+  action: string,
+  metadata: any,
+): Promise<void> {
   const { error } = await (supabase.rpc as any)("log_audit_event", {
     _agency_id: agencyId,
     _action: action,

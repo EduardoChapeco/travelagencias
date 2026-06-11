@@ -54,7 +54,7 @@ function Page() {
       form.target_stage_id,
       form.slug,
       values,
-      form.submissions_count ?? 0
+      form.submissions_count ?? 0,
     );
 
     setBusy(false);

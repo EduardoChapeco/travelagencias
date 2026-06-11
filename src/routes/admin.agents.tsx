@@ -22,9 +22,7 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-agents", page, search],
     queryFn: async () => {
-      let query = (supabase as any)
-        .from("vw_admin_agents")
-        .select("*", { count: "exact" });
+      let query = (supabase as any).from("vw_admin_agents").select("*", { count: "exact" });
 
       if (search) {
         query = query.or(`user_name.ilike.%${search}%,agency_name.ilike.%${search}%`);
@@ -54,14 +52,14 @@ function Page() {
 
   return (
     <>
-      <PageHeader 
-        title="Agentes" 
-        description="Todos os usuários com função em alguma agência." 
+      <PageHeader
+        title="Agentes"
+        description="Todos os usuários com função em alguma agência."
         actions={
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar agente ou agência..." 
+            <Input
+              placeholder="Buscar agente ou agência..."
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
@@ -78,9 +76,13 @@ function Page() {
       )}
 
       {!q.isLoading && totalCount === 0 && (
-        <EmptyState 
-          title={search ? "Nenhum agente encontrado" : "Sem agentes"} 
-          description={search ? "Tente buscar com outros termos." : "Nenhum usuário logado na plataforma ainda."} 
+        <EmptyState
+          title={search ? "Nenhum agente encontrado" : "Sem agentes"}
+          description={
+            search
+              ? "Tente buscar com outros termos."
+              : "Nenhum usuário logado na plataforma ainda."
+          }
         />
       )}
 
@@ -97,25 +99,37 @@ function Page() {
             </thead>
             <tbody>
               {q.data.data.map((r: any) => (
-                <tr key={`${r.user_id}-${r.role}-${r.agency_id ?? ""}`} className="border-t border-border">
+                <tr
+                  key={`${r.user_id}-${r.role}-${r.agency_id ?? ""}`}
+                  className="border-t border-border"
+                >
                   <td className="px-3 py-2.5 font-medium">{r.user_name ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{r.agency_name ?? "—"}</td>
+                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                    {r.agency_name ?? "—"}
+                  </td>
                   <td className="px-3 py-2.5 text-xs">{r.role}</td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{fmtDate(r.created_at)}</td>
+                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                    {fmtDate(r.created_at)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          
+
           {/* Pagination Controls */}
           <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
             <div className="text-xs text-muted-foreground">
-              Mostrando <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a <span className="font-medium text-foreground">{Math.min(page * PAGE_SIZE, totalCount)}</span> de <span className="font-medium text-foreground">{totalCount}</span> agentes
+              Mostrando{" "}
+              <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}
+              <span className="font-medium text-foreground">
+                {Math.min(page * PAGE_SIZE, totalCount)}
+              </span>{" "}
+              de <span className="font-medium text-foreground">{totalCount}</span> agentes
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton 
-                disabled={page === 1} 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+              <GhostButton
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -123,9 +137,9 @@ function Page() {
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <GhostButton 
-                disabled={page >= totalPages} 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              <GhostButton
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />

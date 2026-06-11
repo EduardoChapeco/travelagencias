@@ -31,7 +31,7 @@ function DREPage() {
         _period: period,
       });
       if (error) throw error;
-      return (data as any) as {
+      return data as any as {
         income: number;
         expense: number;
         net: number;

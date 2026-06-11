@@ -169,7 +169,7 @@ export async function submitPublicLeadForm(
   targetStageId: string,
   formSlug: string,
   values: any,
-  submissionsCount: number
+  submissionsCount: number,
 ) {
   const { data: leadData, error: leadErr } = await (supabase as any)
     .from("leads")
@@ -230,7 +230,9 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
       .select("seat_number")
       .eq("group_tour_id", tourId)
       .not("seat_number", "is", null);
-    assignedSeats = (assigned || []).map((a: any) => a.seat_number).filter((s: any): s is string => !!s);
+    assignedSeats = (assigned || [])
+      .map((a: any) => a.seat_number)
+      .filter((s: any): s is string => !!s);
   }
 
   return { agency, tour, days, layout, assignedSeats };
@@ -239,11 +241,17 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
 export async function enrollPublicTour(
   agencyId: string,
   tourId: string,
-  values: { passenger_name: string; passenger_cpf?: string; email?: string; phone?: string; notes?: string },
+  values: {
+    passenger_name: string;
+    passenger_cpf?: string;
+    email?: string;
+    phone?: string;
+    notes?: string;
+  },
   selectedSeats: string[],
   unitPrice: number,
   pax: number,
-  destination: string
+  destination: string,
 ) {
   // 1. Enrollments
   const rows = (selectedSeats.length > 0 ? selectedSeats : [null]).map((seat) => ({
@@ -298,7 +306,14 @@ export async function fetchPublicAgencyForKb(slug: string) {
   const { data } = await (supabase as any)
     .rpc("get_public_agency_by_slug", { _slug: slug })
     .maybeSingle();
-  return data as { id: string; name: string; slug: string; logo_url: string | null; brand_color: string | null; brand_color_fg: string | null } | null;
+  return data as {
+    id: string;
+    name: string;
+    slug: string;
+    logo_url: string | null;
+    brand_color: string | null;
+    brand_color_fg: string | null;
+  } | null;
 }
 
 export async function fetchKbArticles(agencyId: string, search?: string) {
@@ -384,7 +399,12 @@ export async function fetchPublicBlogPost(agencySlug: string, postSlug: string) 
   return { agency, post, related };
 }
 
-export async function submitBlogLead(agencyId: string, name: string, contact: string, origin: string) {
+export async function submitBlogLead(
+  agencyId: string,
+  name: string,
+  contact: string,
+  origin: string,
+) {
   const { error } = await (supabase as any).rpc("submit_public_lead", {
     p_agency_id: agencyId,
     p_name: name,
@@ -449,4 +469,3 @@ export async function updateCorporateRfpStatus(
     .eq("approval_token", token);
   if (error) throw error;
 }
-

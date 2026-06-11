@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
-import { 
-  PointerSensor, 
-  useSensor, 
-  useSensors, 
-  type DragStartEvent, 
-  type DragEndEvent 
+import {
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Lead, Stage } from "@/services/crm";
@@ -22,7 +22,13 @@ type UseCrmKanbanProps = {
   }) => void;
 };
 
-export function useCrmKanban({ localLeads, setLocalLeads, filteredLeads, stages, onPersistMove }: UseCrmKanbanProps) {
+export function useCrmKanban({
+  localLeads,
+  setLocalLeads,
+  filteredLeads,
+  stages,
+  onPersistMove,
+}: UseCrmKanbanProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -58,7 +64,7 @@ export function useCrmKanban({ localLeads, setLocalLeads, filteredLeads, stages,
 
     const fromStage = findContainerOf(activeIdStr);
     if (!fromStage) return;
-    
+
     const toStage = stagesById[overIdStr] ? overIdStr : findContainerOf(overIdStr);
     if (!toStage) return;
 
@@ -77,20 +83,24 @@ export function useCrmKanban({ localLeads, setLocalLeads, filteredLeads, stages,
     if (fromStage === toStage) {
       const currentIndex = stagesById[fromStage].findIndex((l) => l.id === activeIdStr);
       const overIndex = destList.findIndex((l) => l.id === overIdStr);
-      const newList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
+      const newList = arrayMove(
+        stagesById[fromStage],
+        currentIndex,
+        overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1,
+      );
       destList = newList;
     } else {
       destList.splice(insertIndex, 0, { ...movedLead, stage_id: toStage });
     }
 
-    const newLeads = localLeads.filter(l => l.stage_id !== fromStage && l.stage_id !== toStage);
+    const newLeads = localLeads.filter((l) => l.stage_id !== fromStage && l.stage_id !== toStage);
     if (fromStage === toStage) {
       destList.forEach((l, i) => newLeads.push({ ...l, position: i }));
     } else {
       sourceList.forEach((l, i) => newLeads.push({ ...l, position: i }));
       destList.forEach((l, i) => newLeads.push({ ...l, stage_id: toStage, position: i }));
     }
-    
+
     // Optimistic local update
     setLocalLeads(newLeads);
 
@@ -110,6 +120,6 @@ export function useCrmKanban({ localLeads, setLocalLeads, filteredLeads, stages,
     activeLead,
     stagesById,
     onDragStart,
-    onDragEnd
+    onDragEnd,
   };
 }

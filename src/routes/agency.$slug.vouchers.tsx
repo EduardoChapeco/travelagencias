@@ -52,10 +52,11 @@ function VouchersPage() {
     },
   });
 
-  const filteredVouchers = (q.data?.data || []).filter(v => 
-    !qSearch || 
-    (v.destination?.toLowerCase().includes(qSearch.toLowerCase()) || 
-     v.general_locator?.toLowerCase().includes(qSearch.toLowerCase()))
+  const filteredVouchers = (q.data?.data || []).filter(
+    (v) =>
+      !qSearch ||
+      v.destination?.toLowerCase().includes(qSearch.toLowerCase()) ||
+      v.general_locator?.toLowerCase().includes(qSearch.toLowerCase()),
   );
 
   return (
@@ -78,7 +79,7 @@ function VouchersPage() {
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground p-8">Carregando vouchers…</div>}
-      
+
       {q.data && q.data.data.length === 0 && (
         <EmptyState
           title="Nenhum voucher emitido"
@@ -102,13 +103,17 @@ function VouchersPage() {
                 <div className="p-5 border-b border-dashed border-border/60 bg-brand/5 relative">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
-                      {v.template === 'flight' ? <Plane className="h-5 w-5" /> : <Ticket className="h-5 w-5" />}
+                      {v.template === "flight" ? (
+                        <Plane className="h-5 w-5" />
+                      ) : (
+                        <Ticket className="h-5 w-5" />
+                      )}
                     </div>
                     <StatusBadge tone={v.source_type === "operator_pdf" ? "info" : "neutral"}>
                       {v.source_type === "operator_pdf" ? "PDF Importado" : "Gerado via OS"}
                     </StatusBadge>
                   </div>
-                  
+
                   <div className="space-y-1">
                     <h3 className="text-lg font-bold text-foreground line-clamp-1">
                       {v.destination ?? "Destino Indefinido"}
@@ -159,7 +164,7 @@ function VouchersPage() {
                       <Eye className="h-4 w-4" /> Visualizar Roteiro
                     </Link>
                     {v.pdf_url && (
-                      <a 
+                      <a
                         href={v.pdf_url}
                         target="_blank"
                         rel="noreferrer"
@@ -202,4 +207,3 @@ function VouchersPage() {
     </>
   );
 }
-

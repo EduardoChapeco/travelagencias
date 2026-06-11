@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
-import { fetchClientNotifications, markNotificationRead, markAllNotificationsRead } from "@/services/client-area";
+import {
+  fetchClientNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+} from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { GhostButton } from "@/components/ui/form";
 

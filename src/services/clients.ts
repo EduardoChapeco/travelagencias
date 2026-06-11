@@ -70,12 +70,19 @@ export type ClientTicket = {
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 export async function fetchClient(clientId: string): Promise<Client | null> {
-  const { data, error } = await supabase.from("clients").select("*").eq("id", clientId).maybeSingle();
+  const { data, error } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("id", clientId)
+    .maybeSingle();
   if (error) throw new Error(error.message);
   return data as Client | null;
 }
 
-export async function fetchClientsForMerge(agencyId: string, excludeClientId: string): Promise<MinClient[]> {
+export async function fetchClientsForMerge(
+  agencyId: string,
+  excludeClientId: string,
+): Promise<MinClient[]> {
   const { data, error } = await supabase
     .from("clients")
     .select("id, full_name, email, document")
@@ -107,7 +114,9 @@ export async function fetchClientTrips(clientId: string): Promise<ClientTrip[]> 
   return (data ?? []) as ClientTrip[];
 }
 
-export async function fetchClientLegalAcceptances(clientId: string): Promise<ClientLegalAcceptance[]> {
+export async function fetchClientLegalAcceptances(
+  clientId: string,
+): Promise<ClientLegalAcceptance[]> {
   const { data, error } = await (supabase as any)
     .from("legal_acceptances")
     .select("id, accepted_at, context, document_id")
@@ -129,8 +138,14 @@ export async function fetchClientTickets(clientId: string): Promise<ClientTicket
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export async function updateClientProfile(clientId: string, patch: Record<string, unknown>): Promise<void> {
-  const { error } = await supabase.from("clients").update(patch as never).eq("id", clientId);
+export async function updateClientProfile(
+  clientId: string,
+  patch: Record<string, unknown>,
+): Promise<void> {
+  const { error } = await supabase
+    .from("clients")
+    .update(patch as never)
+    .eq("id", clientId);
   if (error) throw new Error(error.message);
 }
 
@@ -143,6 +158,9 @@ export async function archiveClient(clientId: string): Promise<void> {
 }
 
 export async function mergeClients(sourceId: string, targetId: string): Promise<void> {
-  const { error } = await (supabase.rpc as any)("merge_clients", { p_target_id: targetId, p_source_id: sourceId });
+  const { error } = await (supabase.rpc as any)("merge_clients", {
+    p_target_id: targetId,
+    p_source_id: sourceId,
+  });
   if (error) throw new Error(error.message);
 }

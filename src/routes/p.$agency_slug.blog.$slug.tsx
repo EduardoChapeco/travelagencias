@@ -14,7 +14,7 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   head: ({ loaderData, params }) => {
     if (!loaderData?.post) return { meta: [{ title: `${params.slug} · Blog` }] };
     const { post, agency } = loaderData;
-    
+
     const title = `${post.title} | ${agency.name}`;
     const desc = post.excerpt || `Leia ${post.title} no blog da ${agency.name}`;
     const url = `https://travelos.com/p/${agency.slug}/blog/${post.slug}`;
@@ -23,16 +23,18 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": post.title,
-      "image": image ? [image] : [],
-      "datePublished": post.published_at,
-      "dateModified": post.updated_at || post.published_at,
-      "author": [{
+      headline: post.title,
+      image: image ? [image] : [],
+      datePublished: post.published_at,
+      dateModified: post.updated_at || post.published_at,
+      author: [
+        {
           "@type": "Organization",
-          "name": agency.name,
-          "url": `https://travelos.com/p/${agency.slug}`
-      }],
-      "description": desc
+          name: agency.name,
+          url: `https://travelos.com/p/${agency.slug}`,
+        },
+      ],
+      description: desc,
     };
 
     return {
@@ -48,8 +50,8 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
         {
           type: "application/ld+json",
           children: JSON.stringify(jsonLd),
-        }
-      ]
+        },
+      ],
     };
   },
   component: PublicBlogPage,
@@ -59,21 +61,28 @@ function PublicBlogPage() {
   const { agency_slug } = Route.useParams();
   const { agency, post, related } = Route.useLoaderData();
 
-  if (!post) return <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-    <div className="text-4xl mb-4">📭</div>
-    <h2 className="text-xl font-bold tracking-tight mb-2">Artigo não encontrado</h2>
-    <p className="text-muted-foreground text-sm">Este conteúdo pode ter sido movido ou removido pela agência.</p>
-  </div>;
+  if (!post)
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <div className="text-4xl mb-4">📭</div>
+        <h2 className="text-xl font-bold tracking-tight mb-2">Artigo não encontrado</h2>
+        <p className="text-muted-foreground text-sm">
+          Este conteúdo pode ter sido movido ou removido pela agência.
+        </p>
+      </div>
+    );
 
   // Renderizador inteligente: Se tem HTML, faz sanitize. Se é plain-text, transforma \n em br.
   const isHtml = post.content && /<[a-z][\s\S]*>/i.test(post.content);
   const renderContent = () => {
     if (!post.content) return null;
     if (isHtml) {
-      return <div 
-        className="prose prose-lg prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand prose-p:leading-relaxed dark:prose-invert max-w-none"
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
-      />;
+      return (
+        <div
+          className="prose prose-lg prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand prose-p:leading-relaxed dark:prose-invert max-w-none"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+        />
+      );
     }
     return (
       <div className="text-lg leading-relaxed text-foreground/90 whitespace-pre-wrap font-medium">
@@ -87,19 +96,30 @@ function PublicBlogPage() {
       {/* Header Minimalista */}
       <header className="border-b border-border bg-background/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <a href={`/p/${agency_slug}`} className="flex items-center gap-2 text-foreground font-bold hover:opacity-80 transition-opacity">
-            <ArrowLeft className="w-4 h-4" /> 
-            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center text-[10px] uppercase tracking-widest">{agency.name.charAt(0)}</div>
+          <a
+            href={`/p/${agency_slug}`}
+            className="flex items-center gap-2 text-foreground font-bold hover:opacity-80 transition-opacity"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center text-[10px] uppercase tracking-widest">
+              {agency.name.charAt(0)}
+            </div>
             <span className="hidden sm:inline text-sm">{agency.name}</span>
           </a>
           <div className="flex items-center gap-3">
-            <button onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-              toast.success("Link copiado para compartilhar!");
-            }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-bold hover:bg-surface transition-colors">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success("Link copiado para compartilhar!");
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-bold hover:bg-surface transition-colors"
+            >
               <Share2 className="w-3 h-3" /> Compartilhar
             </button>
-            <a href="#fale-conosco" className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity">
+            <a
+              href="#fale-conosco"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity"
+            >
               Viajar com a Agência
             </a>
           </div>
@@ -123,7 +143,7 @@ function PublicBlogPage() {
                 {post.excerpt}
               </p>
             )}
-            
+
             <div className="flex items-center justify-center gap-4 mt-8 text-xs font-bold text-muted-foreground uppercase tracking-wider">
               {post.published_at && (
                 <span className="flex items-center gap-1.5">
@@ -139,7 +159,11 @@ function PublicBlogPage() {
           {/* Cover Image */}
           {post.cover_image_url && (
             <div className="mb-12 rounded-3xl overflow-hidden bg-surface border border-border">
-              <img src={post.cover_image_url} alt={post.title} className="w-full object-cover max-h-[60vh]" />
+              <img
+                src={post.cover_image_url}
+                alt={post.title}
+                className="w-full object-cover max-h-[60vh]"
+              />
             </div>
           )}
 
@@ -150,9 +174,14 @@ function PublicBlogPage() {
             {/* Tags */}
             {post.tags?.length > 0 && (
               <div className="mt-12 pt-6 border-t border-border flex flex-wrap gap-2">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mr-2 self-center">Assuntos:</span>
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mr-2 self-center">
+                  Assuntos:
+                </span>
                 {post.tags.map((t: string) => (
-                  <span key={t} className="rounded-full bg-surface-alt px-3 py-1.5 text-xs font-semibold text-foreground">
+                  <span
+                    key={t}
+                    className="rounded-full bg-surface-alt px-3 py-1.5 text-xs font-semibold text-foreground"
+                  >
                     #{t}
                   </span>
                 ))}
@@ -167,10 +196,18 @@ function PublicBlogPage() {
             <h3 className="text-2xl font-black tracking-tight mb-8">Artigos Relacionados</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map((r: any) => (
-                <a key={r.slug} href={`/p/${agency_slug}/blog/${r.slug}`} className="group flex flex-col gap-3">
+                <a
+                  key={r.slug}
+                  href={`/p/${agency_slug}/blog/${r.slug}`}
+                  className="group flex flex-col gap-3"
+                >
                   <div className="aspect-video bg-surface-alt rounded-2xl overflow-hidden">
                     {r.cover_image_url ? (
-                      <img src={r.cover_image_url} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img
+                        src={r.cover_image_url}
+                        alt={r.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-surface border border-border">
                         <BookOpen className="w-8 h-8 opacity-20" />
@@ -178,7 +215,9 @@ function PublicBlogPage() {
                     )}
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg leading-snug group-hover:text-brand transition-colors line-clamp-2">{r.title}</h4>
+                    <h4 className="font-bold text-lg leading-snug group-hover:text-brand transition-colors line-clamp-2">
+                      {r.title}
+                    </h4>
                     {r.published_at && (
                       <div className="text-[11px] text-muted-foreground uppercase tracking-wide mt-2">
                         {fmtDate(r.published_at)}
@@ -198,19 +237,22 @@ function PublicBlogPage() {
           <div className="bg-foreground text-background rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
-            
+
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-4">Gostou deste destino?</h2>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-4">
+                  Gostou deste destino?
+                </h2>
                 <p className="text-lg text-background/80 font-medium leading-relaxed mb-8">
-                  Nossos consultores da <strong>{agency.name}</strong> são especialistas e podem montar um roteiro 100% personalizado para você, cuidando de cada detalhe.
+                  Nossos consultores da <strong>{agency.name}</strong> são especialistas e podem
+                  montar um roteiro 100% personalizado para você, cuidando de cada detalhe.
                 </p>
                 <LeadCaptureForm agencyId={agency.id} origin={`Blog: ${post.title}`} />
               </div>
               <div className="hidden md:flex justify-center">
-                 <div className="w-full aspect-square max-w-[280px] bg-white/5 rounded-full border border-white/10 flex items-center justify-center p-8">
-                    <Send className="w-full h-full text-white/20 -rotate-12" />
-                 </div>
+                <div className="w-full aspect-square max-w-[280px] bg-white/5 rounded-full border border-white/10 flex items-center justify-center p-8">
+                  <Send className="w-full h-full text-white/20 -rotate-12" />
+                </div>
               </div>
             </div>
           </div>
@@ -238,7 +280,7 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
       const utms = {
         source: params.get("utm_source") || "",
         medium: params.get("utm_medium") || "",
-        campaign: params.get("utm_campaign") || ""
+        campaign: params.get("utm_campaign") || "",
       };
 
       let finalOrigin = origin;
@@ -249,7 +291,7 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
       await submitBlogLead(agencyId, name, contact, finalOrigin);
     },
     onSuccess: () => setSuccess(true),
-    onError: (e) => toast.error("Falha ao enviar: " + e.message)
+    onError: (e) => toast.error("Falha ao enviar: " + e.message),
   });
 
   if (success) {
@@ -267,36 +309,40 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
           {(submit.error as Error).message}
         </div>
       )}
-      <input 
-        required 
-        value={name} 
-        onChange={e => setName(e.target.value)}
-        placeholder="Seu nome" 
+      <input
+        required
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Seu nome"
         className="w-full h-14 px-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
       />
-      <input 
-        required 
-        value={contact} 
-        onChange={e => setContact(e.target.value)}
-        placeholder="Seu WhatsApp ou E-mail" 
+      <input
+        required
+        value={contact}
+        onChange={(e) => setContact(e.target.value)}
+        placeholder="Seu WhatsApp ou E-mail"
         className="w-full h-14 px-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
       />
-      
+
       <div className="flex items-start gap-3 px-1">
-        <input 
-          type="checkbox" 
-          id="lgpd" 
+        <input
+          type="checkbox"
+          id="lgpd"
           checked={lgpdAccepted}
           onChange={(e) => setLgpdAccepted(e.target.checked)}
           className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-brand focus:ring-brand transition-all cursor-pointer"
         />
-        <label htmlFor="lgpd" className="text-xs text-white/60 cursor-pointer select-none leading-relaxed">
-          Li e concordo com a coleta dos meus dados para atendimento comercial, conforme as Políticas de Privacidade.
+        <label
+          htmlFor="lgpd"
+          className="text-xs text-white/60 cursor-pointer select-none leading-relaxed"
+        >
+          Li e concordo com a coleta dos meus dados para atendimento comercial, conforme as
+          Políticas de Privacidade.
         </label>
       </div>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         disabled={submit.isPending}
         className="w-full h-14 rounded-2xl bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50"
       >

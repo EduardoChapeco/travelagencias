@@ -2,21 +2,49 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Plus, Plane, AlertTriangle, GripVertical, Users, Calendar,
-  CheckSquare, Square, X, ChevronRight, Clock, Link as LinkIcon
+  Plus,
+  Plane,
+  AlertTriangle,
+  GripVertical,
+  Users,
+  Calendar,
+  CheckSquare,
+  Square,
+  X,
+  ChevronRight,
+  Clock,
+  Link as LinkIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
-  DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
-  closestCorners, type DragEndEvent, type DragStartEvent,
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+  type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import {
-  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, fmtDate } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  Sheet,
+  fmtDate,
+} from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/boarding")({
   head: () => ({ meta: [{ title: "Kanban Operacional de Embarque · TravelOS" }] }),
@@ -99,7 +127,9 @@ function BoardingKanbanPage() {
     return null;
   }
 
-  function onDragStart(e: DragStartEvent) { setActiveId(String(e.active.id)); }
+  function onDragStart(e: DragStartEvent) {
+    setActiveId(String(e.active.id));
+  }
 
   function onDragEnd(e: DragEndEvent) {
     setActiveId(null);
@@ -128,20 +158,30 @@ function BoardingKanbanPage() {
     if (fromStage === toStage) {
       const currentIndex = stagesById[fromStage].findIndex((c) => c.id === activeIdStr);
       const overIndex = destList.findIndex((c) => c.id === overIdStr);
-      destList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
+      destList = arrayMove(
+        stagesById[fromStage],
+        currentIndex,
+        overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1,
+      );
     } else {
       destList.splice(insertIndex, 0, { ...movedCard, status: toStage });
     }
 
     const newCards: Card[] = [];
     Object.keys(stagesById).forEach((sid) => {
-      if (sid === fromStage && fromStage !== toStage) sourceList.forEach((c, i) => newCards.push({ ...c, position: i }));
-      else if (sid === toStage) destList.forEach((c, i) => newCards.push({ ...c, status: toStage, position: i }));
+      if (sid === fromStage && fromStage !== toStage)
+        sourceList.forEach((c, i) => newCards.push({ ...c, position: i }));
+      else if (sid === toStage)
+        destList.forEach((c, i) => newCards.push({ ...c, status: toStage, position: i }));
       else stagesById[sid].forEach((c, i) => newCards.push({ ...c, position: i }));
     });
     setLocalCards(newCards);
 
-    persistMove.mutate({ cardId: activeIdStr, toStatus: toStage, reorderedIds: destList.map((c) => c.id) });
+    persistMove.mutate({
+      cardId: activeIdStr,
+      toStatus: toStage,
+      reorderedIds: destList.map((c) => c.id),
+    });
   }
 
   const activeCard = activeId ? (localCards ?? []).find((c) => c.id === activeId) : null;
@@ -152,7 +192,10 @@ function BoardingKanbanPage() {
         title="Kanban de Embarque"
         description="Controle operacional: do Check-in ao Desembarque. Arraste as reservas."
         actions={
-          <PrimaryButton onClick={() => setOpen(true)} className="gap-2 text-[11px] uppercase tracking-widest font-bold">
+          <PrimaryButton
+            onClick={() => setOpen(true)}
+            className="gap-2 text-[11px] uppercase tracking-widest font-bold"
+          >
             <Plus className="h-4 w-4" /> Cadastrar PNR
           </PrimaryButton>
         }
@@ -175,7 +218,9 @@ function BoardingKanbanPage() {
             </div>
             <h3 className="text-lg font-bold text-foreground">Erro ao carregar os Embarques</h3>
             <p className="text-sm text-muted-foreground">
-              Não foi possível carregar as informações do Kanban. O banco de dados pode estar desatualizado, você sincronizou novos commits que exigem aplicar as migrações (npx supabase db push).
+              Não foi possível carregar as informações do Kanban. O banco de dados pode estar
+              desatualizado, você sincronizou novos commits que exigem aplicar as migrações (npx
+              supabase db push).
             </p>
             <div className="w-full text-left bg-background p-3 rounded text-xs font-mono text-danger/80 break-words mt-4">
               <strong>Query Error:</strong> {(q.error as Error).message}
@@ -185,18 +230,29 @@ function BoardingKanbanPage() {
       )}
 
       {q.data && localCards ? (
-        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
           <div className="mt-4 flex-1 overflow-x-auto overflow-y-hidden px-1 no-scrollbar cursor-grab active:cursor-grabbing pb-4">
             <div className="flex h-full min-w-max gap-4 px-1">
               {BOARDING_STAGES.map((stage) => {
                 const items = stagesById[stage.id] ?? [];
-                return <Column key={stage.id} stage={stage} cards={items} slug={slug} onCardClick={setDetail} />;
+                return (
+                  <Column
+                    key={stage.id}
+                    stage={stage}
+                    cards={items}
+                    slug={slug}
+                    onCardClick={setDetail}
+                  />
+                );
               })}
             </div>
           </div>
-          <DragOverlay>
-            {activeCard ? <CardView card={activeCard} dragging /> : null}
-          </DragOverlay>
+          <DragOverlay>{activeCard ? <CardView card={activeCard} dragging /> : null}</DragOverlay>
         </DndContext>
       ) : null}
 
@@ -205,7 +261,10 @@ function BoardingKanbanPage() {
           agencyId={agency.id}
           trips={trips.data ?? []}
           onClose={() => setOpen(false)}
-          onCreated={() => { setOpen(false); qc.invalidateQueries({ queryKey: ["boarding", agency.id] }); }}
+          onCreated={() => {
+            setOpen(false);
+            qc.invalidateQueries({ queryKey: ["boarding", agency.id] });
+          }}
         />
       )}
 
@@ -225,9 +284,14 @@ function BoardingKanbanPage() {
 }
 
 function Column({
-  stage, cards, slug, onCardClick,
+  stage,
+  cards,
+  slug,
+  onCardClick,
 }: {
-  stage: any; cards: Card[]; slug: string;
+  stage: any;
+  cards: Card[];
+  slug: string;
   onCardClick: (card: Card) => void;
 }) {
   const { setNodeRef, isOver } = useSortable({ id: stage.id, data: { type: "column" } });
@@ -238,8 +302,13 @@ function Column({
     >
       <div className="flex items-center justify-between border-b border-border/50 bg-surface-alt/20 px-4 py-3">
         <div className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full ring-2 ring-surface" style={{ background: stage.color }} />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">{stage.name}</span>
+          <span
+            className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
+            style={{ background: stage.color }}
+          />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">
+            {stage.name}
+          </span>
           <span className="flex h-5 items-center justify-center rounded-md bg-surface-alt px-2 text-[10px] font-bold text-muted-foreground ring-1 ring-border/50">
             {cards.length}
           </span>
@@ -247,10 +316,14 @@ function Column({
       </div>
       <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default">
-          {cards.map((c) => <SortableCard key={c.id} card={c} slug={slug} onCardClick={onCardClick} />)}
+          {cards.map((c) => (
+            <SortableCard key={c.id} card={c} slug={slug} onCardClick={onCardClick} />
+          ))}
           {cards.length === 0 && (
             <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground text-center px-4">
-              {stage.id === "pending" ? "Nenhum embarque ativo. Cadastre um PNR para começar." : "Solte um PNR aqui"}
+              {stage.id === "pending"
+                ? "Nenhum embarque ativo. Cadastre um PNR para começar."
+                : "Solte um PNR aqui"}
             </div>
           )}
         </div>
@@ -260,34 +333,66 @@ function Column({
 }
 
 function SortableCard({
-  card, slug, onCardClick,
-}: { card: Card; slug: string; onCardClick: (card: Card) => void }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: card.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 };
+  card,
+  slug,
+  onCardClick,
+}: {
+  card: Card;
+  slug: string;
+  onCardClick: (card: Card) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card.id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
   return (
     <div ref={setNodeRef} style={style} className="touch-none">
-      <CardView card={card} slug={slug} dragAttributes={{ ...attributes, ...listeners }} onCardClick={onCardClick} />
+      <CardView
+        card={card}
+        slug={slug}
+        dragAttributes={{ ...attributes, ...listeners }}
+        onCardClick={onCardClick}
+      />
     </div>
   );
 }
 
 function CardView({
-  card, slug, dragAttributes, dragging, onCardClick,
+  card,
+  slug,
+  dragAttributes,
+  dragging,
+  onCardClick,
 }: {
-  card: Card; slug?: string; dragAttributes?: any; dragging?: boolean;
+  card: Card;
+  slug?: string;
+  dragAttributes?: any;
+  dragging?: boolean;
   onCardClick?: (card: Card) => void;
 }) {
   const checklist = (card.checklist ?? []) as ChecklistItem[];
   const done = checklist.filter((c) => c.done).length;
   const hasPax = (card.passengers_count ?? 0) > 0;
 
-  const daysToDeparture = card.departure_date ? Math.ceil((new Date(card.departure_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) : null;
+  const daysToDeparture = card.departure_date
+    ? Math.ceil(
+        (new Date(card.departure_date).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
+      )
+    : null;
   const isUrgent = daysToDeparture !== null && daysToDeparture >= 0 && daysToDeparture <= 3;
 
   return (
     <div
       className={`group relative rounded-xl border bg-surface transition-all ${
-        dragging ? "border-brand scale-105 z-50 rotate-2 opacity-90" : isUrgent ? "border-danger/60 hover:border-danger" : "border-border/50 hover:border-brand/40"
+        dragging
+          ? "border-brand scale-105 z-50 rotate-2 opacity-90"
+          : isUrgent
+            ? "border-danger/60 hover:border-danger"
+            : "border-border/50 hover:border-brand/40"
       }`}
     >
       {/* Drag handle area */}
@@ -301,11 +406,17 @@ function CardView({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Plane className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="font-mono text-sm font-bold text-foreground">{card.pnr || "S/ PNR"}</span>
+            <span className="font-mono text-sm font-bold text-foreground">
+              {card.pnr || "S/ PNR"}
+            </span>
           </div>
-          <div className="text-xs text-muted-foreground mt-0.5">{card.airline || "Cia não informada"}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {card.airline || "Cia não informada"}
+          </div>
           {(card as any).trip_title && (
-            <div className="mt-1 text-[10px] text-muted-foreground line-clamp-1">{(card as any).trip_title}</div>
+            <div className="mt-1 text-[10px] text-muted-foreground line-clamp-1">
+              {(card as any).trip_title}
+            </div>
           )}
         </div>
       </div>
@@ -314,30 +425,45 @@ function CardView({
       <div className="flex items-center gap-3 px-4 pb-2 text-[11px] text-muted-foreground">
         {hasPax && (
           <span className="flex items-center gap-1">
-            <Users className="h-3 w-3" />{card.passengers_count} pax
+            <Users className="h-3 w-3" />
+            {card.passengers_count} pax
           </span>
         )}
         {card.departure_date && (
           <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />{fmtDate(card.departure_date)}
+            <Calendar className="h-3 w-3" />
+            {fmtDate(card.departure_date)}
           </span>
         )}
         {checklist.length > 0 && (
-          <span className={`flex items-center gap-1 ml-auto font-semibold ${
-            done === checklist.length ? "text-success" : done > 0 ? "text-warning" : "text-muted-foreground"
-          }`}>
-            <CheckSquare className="h-3 w-3" />{done}/{checklist.length}
+          <span
+            className={`flex items-center gap-1 ml-auto font-semibold ${
+              done === checklist.length
+                ? "text-success"
+                : done > 0
+                  ? "text-warning"
+                  : "text-muted-foreground"
+            }`}
+          >
+            <CheckSquare className="h-3 w-3" />
+            {done}/{checklist.length}
           </span>
         )}
       </div>
 
       {/* Alerts */}
       {(isUrgent || (card.alerts && card.alerts.length > 0)) && (
-        <div className={`mx-4 mb-3 flex items-start gap-1.5 rounded-md border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? 'border-danger/30 bg-danger/5 text-danger' : 'border-warning/30 bg-warning-bg/50 text-warning'}`}>
+        <div
+          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-md border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
+        >
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           <div className="flex flex-col">
-            {isUrgent && <span>Embarque em {daysToDeparture === 0 ? "HOJE" : `${daysToDeparture} dias`}!</span>}
-            {card.alerts?.map((a, i) => <span key={i}>{a}</span>)}
+            {isUrgent && (
+              <span>Embarque em {daysToDeparture === 0 ? "HOJE" : `${daysToDeparture} dias`}!</span>
+            )}
+            {card.alerts?.map((a, i) => (
+              <span key={i}>{a}</span>
+            ))}
           </div>
         </div>
       )}
@@ -360,13 +486,17 @@ function CardDetailPanel({
   card,
   onClose,
   onUpdated,
-}: { card: DetailCard; onClose: () => void; onUpdated: () => void }) {
+}: {
+  card: DetailCard;
+  onClose: () => void;
+  onUpdated: () => void;
+}) {
   const [checklist, setChecklist] = useState<ChecklistItem[]>(card.checklist ?? []);
   const [newItem, setNewItem] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function toggleItem(i: number) {
-    const next = checklist.map((c, j) => j === i ? { ...c, done: !c.done } : c);
+    const next = checklist.map((c, j) => (j === i ? { ...c, done: !c.done } : c));
     setChecklist(next);
     await updateBoardingCardChecklist(card.id, next);
   }
@@ -398,7 +528,11 @@ function CardDetailPanel({
             <div className="font-mono text-sm font-bold">{card.pnr || "Sem PNR"}</div>
             <div className="text-xs text-muted-foreground">{card.airline || "—"}</div>
           </div>
-          <button type="button" onClick={onClose} className="rounded border border-border p-1 hover:bg-surface-alt">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded border border-border p-1 hover:bg-surface-alt"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -407,7 +541,9 @@ function CardDetailPanel({
         {card.trip_title && (
           <div className="mb-4 rounded-lg border border-border bg-surface-alt/40 p-3 text-xs">
             <div className="font-semibold">{card.trip_title}</div>
-            {card.trip_destination && <div className="text-muted-foreground">{card.trip_destination}</div>}
+            {card.trip_destination && (
+              <div className="text-muted-foreground">{card.trip_destination}</div>
+            )}
           </div>
         )}
 
@@ -415,13 +551,19 @@ function CardDetailPanel({
         <div className="mb-5 grid grid-cols-2 gap-3 text-xs">
           {card.passengers_count != null && (
             <div className="rounded-lg border border-border bg-surface p-3">
-              <div className="flex items-center gap-1.5 text-muted-foreground mb-1"><Users className="h-3.5 w-3.5" />Passageiros</div>
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                <Users className="h-3.5 w-3.5" />
+                Passageiros
+              </div>
               <div className="text-xl font-bold">{card.passengers_count}</div>
             </div>
           )}
           {card.departure_date && (
             <div className="rounded-lg border border-border bg-surface p-3">
-              <div className="flex items-center gap-1.5 text-muted-foreground mb-1"><Calendar className="h-3.5 w-3.5" />Embarque</div>
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
+                <Calendar className="h-3.5 w-3.5" />
+                Embarque
+              </div>
               <div className="font-semibold">{fmtDate(card.departure_date)}</div>
             </div>
           )}
@@ -429,7 +571,7 @@ function CardDetailPanel({
 
         {/* Web Check-in Link Action */}
         <div className="mb-5">
-          <PrimaryButton 
+          <PrimaryButton
             className="w-full h-9 text-xs gap-2 font-bold uppercase tracking-widest bg-brand/10 text-brand hover:bg-brand/20 border-none"
             onClick={() => {
               const url = `${window.location.origin}/m/checkin/${card.id}`;
@@ -444,22 +586,32 @@ function CardDetailPanel({
         {/* CHECKLIST */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Checklist operacional</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Checklist operacional
+            </h3>
             {checklist.length > 0 && (
-              <span className={`text-[11px] font-semibold ${
-                done === checklist.length ? "text-success" : "text-warning"
-              }`}>{done}/{checklist.length} concluídos</span>
+              <span
+                className={`text-[11px] font-semibold ${
+                  done === checklist.length ? "text-success" : "text-warning"
+                }`}
+              >
+                {done}/{checklist.length} concluídos
+              </span>
             )}
           </div>
           <div className="space-y-2">
             {checklist.map((item, i) => (
               <div key={i} className="flex items-center gap-2 group/item">
                 <button type="button" onClick={() => toggleItem(i)} className="shrink-0">
-                  {item.done
-                    ? <CheckSquare className="h-4 w-4 text-success" />
-                    : <Square className="h-4 w-4 text-muted-foreground" />}
+                  {item.done ? (
+                    <CheckSquare className="h-4 w-4 text-success" />
+                  ) : (
+                    <Square className="h-4 w-4 text-muted-foreground" />
+                  )}
                 </button>
-                <span className={`flex-1 text-sm ${item.done ? "line-through text-muted-foreground" : ""}`}>
+                <span
+                  className={`flex-1 text-sm ${item.done ? "line-through text-muted-foreground" : ""}`}
+                >
                   {item.label}
                 </span>
                 <button
@@ -477,7 +629,12 @@ function CardDetailPanel({
               type="text"
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addItem(); } }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addItem();
+                }
+              }}
               placeholder="Novo item…"
               className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong"
             />
@@ -497,7 +654,11 @@ function CardDetailPanel({
             <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-warning">
               <AlertTriangle className="h-3.5 w-3.5" /> Alertas
             </div>
-            {card.alerts.map((a, i) => <div key={i} className="text-xs text-warning">{a}</div>)}
+            {card.alerts.map((a, i) => (
+              <div key={i} className="text-xs text-warning">
+                {a}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -506,8 +667,16 @@ function CardDetailPanel({
 }
 
 function NewCard({
-  agencyId, trips, onClose, onCreated,
-}: { agencyId: string; trips: any[]; onClose: () => void; onCreated: () => void }) {
+  agencyId,
+  trips,
+  onClose,
+  onCreated,
+}: {
+  agencyId: string;
+  trips: any[];
+  onClose: () => void;
+  onCreated: () => void;
+}) {
   const [tripId, setTripId] = useState(trips[0]?.id ?? "");
   const [pnr, setPnr] = useState("");
   const [airline, setAirline] = useState("");
@@ -528,8 +697,11 @@ function NewCard({
     e.preventDefault();
     if (!tripId) return toast.error("Selecione uma viagem");
     setSubmitting(true);
-    const alertsArr = alerts.split("\n").map((a) => a.trim()).filter(Boolean);
-    
+    const alertsArr = alerts
+      .split("\n")
+      .map((a) => a.trim())
+      .filter(Boolean);
+
     try {
       await createBoardingCard({
         agencyId,
@@ -556,7 +728,12 @@ function NewCard({
         <Field label="Viagem Atrelada *">
           <Select required value={tripId} onChange={(e) => setTripId(e.target.value)}>
             <option value="">Selecione…</option>
-            {trips.map((t) => <option key={t.id} value={t.id}>{t.code ? `${t.code} - ` : ""}{t.title}</option>)}
+            {trips.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.code ? `${t.code} - ` : ""}
+                {t.title}
+              </option>
+            ))}
           </Select>
         </Field>
         <div className="grid grid-cols-2 gap-3">
@@ -564,15 +741,29 @@ function NewCard({
             <Input value={pnr} onChange={(e) => setPnr(e.target.value)} placeholder="ABC123" />
           </Field>
           <Field label="Companhia / Operadora">
-            <Input value={airline} onChange={(e) => setAirline(e.target.value)} placeholder="LATAM, GOL…" />
+            <Input
+              value={airline}
+              onChange={(e) => setAirline(e.target.value)}
+              placeholder="LATAM, GOL…"
+            />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Data de embarque">
-            <Input type="date" value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} />
+            <Input
+              type="date"
+              value={departureDate}
+              onChange={(e) => setDepartureDate(e.target.value)}
+            />
           </Field>
           <Field label="Nº de passageiros">
-            <Input type="number" min={1} value={paxCount} onChange={(e) => setPaxCount(e.target.value)} placeholder="10" />
+            <Input
+              type="number"
+              min={1}
+              value={paxCount}
+              onChange={(e) => setPaxCount(e.target.value)}
+              placeholder="10"
+            />
           </Field>
         </div>
         <Field label="Alertas (um por linha)" hint="Ex: Passaporte vencendo, visto pendente">
@@ -585,22 +776,32 @@ function NewCard({
         </Field>
         <div className="rounded-lg border border-border bg-surface-alt/40 p-3">
           <div className="mb-1.5 text-[11px] font-semibold text-muted-foreground">
-            {passengersList.length > 0 ? `Checklist gerado de ${passengersList.length} passageiros reais:` : 'Checklist padrão gerado automaticamente:'}
+            {passengersList.length > 0
+              ? `Checklist gerado de ${passengersList.length} passageiros reais:`
+              : "Checklist padrão gerado automaticamente:"}
           </div>
           <div className="space-y-1">
-            {passengersList.length > 0 ? passengersList.map((p, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
-                <Square className="h-3 w-3 text-brand" /> {p.full_name}
-              </div>
-            )) : (
+            {passengersList.length > 0 ? (
+              passengersList.map((p, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium"
+                >
+                  <Square className="h-3 w-3 text-brand" /> {p.full_name}
+                </div>
+              ))
+            ) : (
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <AlertTriangle className="h-3 w-3 text-warning" /> Sem passageiros na viagem. Usando checklist genérico.
+                <AlertTriangle className="h-3 w-3 text-warning" /> Sem passageiros na viagem. Usando
+                checklist genérico.
               </div>
             )}
           </div>
         </div>
         <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-          <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+          <GhostButton type="button" onClick={onClose}>
+            Cancelar
+          </GhostButton>
           <PrimaryButton type="submit" disabled={submitting}>
             {submitting ? "Processando…" : "Adicionar à Fila"}
           </PrimaryButton>

@@ -1,5 +1,5 @@
 import { json } from "@tanstack/react-start";
-// @ts-ignore
+// @ts-expect-error - ignored
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { supabase } from "@/integrations/supabase/client";
 

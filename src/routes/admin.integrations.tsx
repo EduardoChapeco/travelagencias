@@ -52,7 +52,7 @@ function Page() {
           firecrawl_key: "••••••••••••••••",
           stell_key: "••••••••••••••••",
           vapid_public_key: "Configurado na Nuvem",
-          vapid_private_key: "••••••••••••••••"
+          vapid_private_key: "••••••••••••••••",
         } as IntegrationsConfig;
       }
       return null;
@@ -68,16 +68,20 @@ function Page() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    
+
     // Check if user is just submitting the asterisks (no change). We don't want to re-encrypt asterisks!
     if (form.openrouter_key === "••••••••••••••••") {
-       toast.error("Você precisa colar as chaves reais para salvar. Apague os asteriscos e cole a chave nova.");
-       return;
+      toast.error(
+        "Você precisa colar as chaves reais para salvar. Apague os asteriscos e cole a chave nova.",
+      );
+      return;
     }
 
     setBusy(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("Sem sessão ativa.");
 
       const response = await fetch(
@@ -89,7 +93,7 @@ function Page() {
             Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({ keys: form }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -153,7 +157,10 @@ function Page() {
                 className="font-mono"
               />
             </Field>
-            <Field label="Stell.dev API Key" hint="Navegação autônoma em websites (Headless Browser IA)">
+            <Field
+              label="Stell.dev API Key"
+              hint="Navegação autônoma em websites (Headless Browser IA)"
+            >
               <Input
                 type="password"
                 value={form.stell_key}

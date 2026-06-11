@@ -58,7 +58,13 @@ export type Voucher = {
   flights: VoucherFlight[];
   accommodation: VoucherAccommodation[];
   transfers: VoucherTransfer[];
-  tours: Array<{ name: string; date: string; duration: string; guide: string; meeting_point: string }>;
+  tours: Array<{
+    name: string;
+    date: string;
+    duration: string;
+    guide: string;
+    meeting_point: string;
+  }>;
   insurance: { provider?: string; policy_number?: string; phone?: string; coverage?: string };
   emergency_contacts: Array<{ name: string; phone: string; role: string }>;
   pdf_url: string | null;
@@ -117,7 +123,10 @@ export async function fetchTripPassengers(tripId: string): Promise<TripPassenger
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export async function saveVoucherData(payload: Partial<Voucher>, selectedId?: string): Promise<void> {
+export async function saveVoucherData(
+  payload: Partial<Voucher>,
+  selectedId?: string,
+): Promise<void> {
   if (selectedId) {
     const { error } = await (supabase as any).from("vouchers").update(payload).eq("id", selectedId);
     if (error) throw new Error(error.message);
@@ -140,7 +149,7 @@ export async function deleteVoucherData(id: string): Promise<void> {
 export async function uploadVoucherSourceFile(
   agencyId: string,
   tripId: string,
-  file: File
+  file: File,
 ): Promise<string> {
   const uid = Math.random().toString(36).slice(2, 9);
   const path = `${agencyId}/${tripId}/${uid}-${file.name}`;
@@ -164,7 +173,7 @@ export async function uploadVoucherStoryImage(
   agencyId: string,
   tripId: string,
   voucherId: string,
-  blob: Blob
+  blob: Blob,
 ): Promise<void> {
   const fileName = `story-${voucherId}-${Date.now()}.png`;
   const path = `${agencyId}/${tripId}/${fileName}`;

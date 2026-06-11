@@ -25,7 +25,7 @@ type ContractRow = {
   client_data: { name?: string } | null;
 };
 
-const STATUS_MAP: Record<string, { label: string, tone: any }> = {
+const STATUS_MAP: Record<string, { label: string; tone: any }> = {
   draft: { label: "Rascunho", tone: "neutral" },
   sent: { label: "Enviado", tone: "info" },
   viewed: { label: "Visualizado", tone: "warning" },
@@ -64,8 +64,10 @@ function ContractsPage() {
         description="Gestão de contratos digitais gerados a partir das viagens, com rastreabilidade e validade jurídica."
       />
 
-      {q.isLoading && <div className="text-sm text-muted-foreground p-8">Carregando cadeia de custódia…</div>}
-      
+      {q.isLoading && (
+        <div className="text-sm text-muted-foreground p-8">Carregando cadeia de custódia…</div>
+      )}
+
       {q.data?.data.length === 0 && (
         <EmptyState
           title="Nenhum contrato gerado"
@@ -78,16 +80,27 @@ function ContractsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {q.data.data.map((c) => {
               const statusInfo = STATUS_MAP[c.status] || { label: c.status, tone: "neutral" };
-              
+
               return (
-                <div key={c.id} className="group flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:border-brand/40">
+                <div
+                  key={c.id}
+                  className="group flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:border-brand/40"
+                >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-xl border border-border",
-                        c.status === 'signed' ? "bg-success/10 text-success" : "bg-surface-alt text-muted-foreground"
-                      )}>
-                        {c.status === 'signed' ? <FileSignature className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
+                      <div
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-xl border border-border",
+                          c.status === "signed"
+                            ? "bg-success/10 text-success"
+                            : "bg-surface-alt text-muted-foreground",
+                        )}
+                      >
+                        {c.status === "signed" ? (
+                          <FileSignature className="h-5 w-5" />
+                        ) : (
+                          <FileText className="h-5 w-5" />
+                        )}
                       </div>
                       <div>
                         <h3 className="font-bold text-foreground line-clamp-1 group-hover:text-brand transition-colors">
@@ -112,7 +125,10 @@ function ContractsPage() {
                       <span className="flex items-center gap-2 text-muted-foreground font-medium">
                         <User className="h-4 w-4" /> Cliente
                       </span>
-                      <span className="font-semibold text-foreground truncate max-w-[140px]" title={c.client_data?.name}>
+                      <span
+                        className="font-semibold text-foreground truncate max-w-[140px]"
+                        title={c.client_data?.name}
+                      >
                         {c.client_data?.name ?? "Não identificado"}
                       </span>
                     </div>
@@ -181,4 +197,3 @@ function ContractsPage() {
     </>
   );
 }
-

@@ -35,13 +35,16 @@ export const FeaturesBlockSchema = z.object({
   id: z.string(),
   type: z.literal("features"),
   title: z.string().max(200, "Título muito longo").default(""),
-  items: z.array(
-    z.object({
-      icon: z.string().max(50, "Ícone muito longo").default(""),
-      title: z.string().max(200, "Título do item muito longo").default(""),
-      description: z.string().max(1000, "Descrição do item muito longa").default(""),
-    })
-  ).max(20, "No máximo 20 diferenciais").default([]),
+  items: z
+    .array(
+      z.object({
+        icon: z.string().max(50, "Ícone muito longo").default(""),
+        title: z.string().max(200, "Título do item muito longo").default(""),
+        description: z.string().max(1000, "Descrição do item muito longa").default(""),
+      }),
+    )
+    .max(20, "No máximo 20 diferenciais")
+    .default([]),
 });
 
 export const CtaBlockSchema = z.object({
@@ -57,12 +60,15 @@ export const FaqBlockSchema = z.object({
   id: z.string(),
   type: z.literal("faq"),
   title: z.string().max(300, "Título muito longo").default(""),
-  items: z.array(
-    z.object({
-      question: z.string().max(500, "Pergunta muito longa").default(""),
-      answer: z.string().max(3000, "Resposta muito longa").default(""),
-    })
-  ).max(50, "No máximo 50 perguntas").default([]),
+  items: z
+    .array(
+      z.object({
+        question: z.string().max(500, "Pergunta muito longa").default(""),
+        answer: z.string().max(3000, "Resposta muito longa").default(""),
+      }),
+    )
+    .max(50, "No máximo 50 perguntas")
+    .default([]),
 });
 
 export const PortalBlockSchema = z.discriminatedUnion("type", [
@@ -82,8 +88,10 @@ export const PortalPagePayloadSchema = z.object({
   slug: z.string().min(1, "O slug é obrigatório").max(200, "Slug muito longo"),
   template: z.string().max(50).nullable().default("default"),
   blocks: PortalBlocksArraySchema,
-  seo: z.object({
-    meta_title: z.string().max(200, "Título SEO muito longo").optional().nullable(),
-    meta_description: z.string().max(1000, "Descrição SEO muito longa").optional().nullable(),
-  }).optional(),
+  seo: z
+    .object({
+      meta_title: z.string().max(200, "Título SEO muito longo").optional().nullable(),
+      meta_description: z.string().max(1000, "Descrição SEO muito longa").optional().nullable(),
+    })
+    .optional(),
 });

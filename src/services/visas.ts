@@ -21,7 +21,11 @@ export async function fetchVisas(agencyId: string) {
   return data;
 }
 
-export async function persistVisaMove(payload: { visaId: string; toStageId: string; reorderedIds: string[] }) {
+export async function persistVisaMove(payload: {
+  visaId: string;
+  toStageId: string;
+  reorderedIds: string[];
+}) {
   const { error } = await (supabase.rpc as any)("persist_visa_move", {
     _visa_id: payload.visaId,
     _to_stage_id: payload.toStageId,

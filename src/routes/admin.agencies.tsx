@@ -102,126 +102,137 @@ function Page() {
     <>
       <div className="flex items-center justify-between">
         <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
-        <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
           <Plus className="h-4 w-4" /> Nova Agência
         </button>
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => {
+        <div
+          className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm"
+          onClick={() => {
             setOpen(false);
             setInviteUrl(null);
             reset();
-          }}>
-          <div className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+          }}
+        >
+          <div
+            className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface animate-in slide-in-from-right duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
               <h2 className="text-xl font-bold text-foreground">Provisionar Nova Agência</h2>
             </div>
             <div className="p-6 overflow-y-auto">
-            {!inviteUrl ? (
-              <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground">
-                    Nome da Agência *
-                  </label>
-                  <input
-                    {...register("name")}
-                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                    placeholder="Ex: Viagens Inc."
-                  />
-                  {errors.name && (
-                    <span className="text-xs text-danger">{errors.name.message}</span>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground">
-                    Slug (URL) *
-                  </label>
-                  <input
-                    {...register("slug")}
-                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                    placeholder="Ex: viagens-inc"
-                  />
-                  {errors.slug && (
-                    <span className="text-xs text-danger">{errors.slug.message}</span>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground">
-                    E-mail do Proprietário *
-                  </label>
-                  <input
-                    type="email"
-                    {...register("email")}
-                    className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                    placeholder="dono@agencia.com"
-                  />
-                  {errors.email && (
-                    <span className="text-xs text-danger">{errors.email.message}</span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+              {!inviteUrl ? (
+                <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-muted-foreground">CNPJ</label>
+                    <label className="block text-xs font-medium text-muted-foreground">
+                      Nome da Agência *
+                    </label>
                     <input
-                      {...register("cnpj")}
+                      {...register("name")}
                       className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      placeholder="Ex: Viagens Inc."
                     />
+                    {errors.name && (
+                      <span className="text-xs text-danger">{errors.name.message}</span>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-muted-foreground">
-                      Telefone
+                      Slug (URL) *
                     </label>
                     <input
-                      {...register("phone")}
+                      {...register("slug")}
                       className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      placeholder="Ex: viagens-inc"
                     />
+                    {errors.slug && (
+                      <span className="text-xs text-danger">{errors.slug.message}</span>
+                    )}
                   </div>
-                </div>
-                <button
-                  disabled={loading}
-                  type="submit"
-                  className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
-                >
-                  {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
-                </button>
-              </form>
-            ) : (
-              <div className="mt-4 flex flex-col gap-4">
-                <div className="rounded-md border border-success/20 bg-success/10 p-4 text-sm text-success">
-                  Agência provisionada no banco de dados! Envie o link abaixo para o proprietário
-                  definir a senha e acessar a plataforma.
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-muted-foreground">
-                    Link de Convite (Owner)
-                  </label>
-                  <div className="mt-1 flex items-center gap-2">
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground">
+                      E-mail do Proprietário *
+                    </label>
                     <input
-                      readOnly
-                      value={inviteUrl}
-                      className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
+                      type="email"
+                      {...register("email")}
+                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      placeholder="dono@agencia.com"
                     />
-                    <button
-                      onClick={handleCopy}
-                      className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
-                    >
-                      Copiar
-                    </button>
+                    {errors.email && (
+                      <span className="text-xs text-danger">{errors.email.message}</span>
+                    )}
                   </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-muted-foreground">
+                        CNPJ
+                      </label>
+                      <input
+                        {...register("cnpj")}
+                        className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-muted-foreground">
+                        Telefone
+                      </label>
+                      <input
+                        {...register("phone")}
+                        className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    disabled={loading}
+                    type="submit"
+                    className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                  >
+                    {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
+                  </button>
+                </form>
+              ) : (
+                <div className="mt-4 flex flex-col gap-4">
+                  <div className="rounded-md border border-success/20 bg-success/10 p-4 text-sm text-success">
+                    Agência provisionada no banco de dados! Envie o link abaixo para o proprietário
+                    definir a senha e acessar a plataforma.
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground">
+                      Link de Convite (Owner)
+                    </label>
+                    <div className="mt-1 flex items-center gap-2">
+                      <input
+                        readOnly
+                        value={inviteUrl}
+                        className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
+                      />
+                      <button
+                        onClick={handleCopy}
+                        className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
+                      >
+                        Copiar
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setInviteUrl(null);
+                    }}
+                    className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt"
+                  >
+                    Fechar
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpen(false);
-                    setInviteUrl(null);
-                  }}
-                  className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt"
-                >
-                  Fechar
-                </button>
-              </div>
-            )}
+              )}
             </div>
           </div>
         </div>

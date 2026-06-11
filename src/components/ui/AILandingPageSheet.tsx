@@ -53,7 +53,7 @@ Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque T
           action: "completion",
           prompt: "Por favor, retorne agora o array JSON contendo todos os blocos.",
           systemPrompt,
-          modelPreference: "smart"
+          modelPreference: "smart",
         },
       });
 
@@ -82,22 +82,26 @@ Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque T
   }
 
   return (
-    <SheetPage 
-      isOpen={open} 
-      onClose={() => onOpenChange(false)} 
+    <SheetPage
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
       title="Arquiteto de Landing Pages IA"
       width="clamp(400px, 40vw, 600px)"
     >
       <div className="mb-6 bg-surface-alt/50 p-4 rounded-xl border border-border">
         <p className="text-sm text-muted-foreground flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-brand" />
-          Deixe o Growth Hacker da Inteligência Artificial desenhar sua página focada em conversão em poucos segundos.
+          Deixe o Growth Hacker da Inteligência Artificial desenhar sua página focada em conversão
+          em poucos segundos.
         </p>
       </div>
 
       <form onSubmit={handleGenerate} className="space-y-4">
-        <Field label="Descreva o que quer vender" hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais.">
-          <Textarea 
+        <Field
+          label="Descreva o que quer vender"
+          hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais."
+        >
+          <Textarea
             placeholder="Digite o objetivo da sua página..."
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
@@ -110,7 +114,7 @@ Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque T
             Cancelar
           </GhostButton>
           <PrimaryButton type="submit" disabled={loading} className="gap-2">
-            <Wand2 className="w-4 h-4" /> 
+            <Wand2 className="w-4 h-4" />
             {loading ? "Montando Estrutura..." : "Gerar Landing Page Inteira"}
           </PrimaryButton>
         </div>

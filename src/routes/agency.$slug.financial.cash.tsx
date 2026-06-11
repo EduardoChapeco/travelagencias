@@ -60,7 +60,7 @@ function CashPage() {
         _agency_id: agency!.id,
       });
       if (error) throw error;
-      return (data as any) as { income: number; expense: number; pending: number; net: number };
+      return data as any as { income: number; expense: number; pending: number; net: number };
     },
   });
 

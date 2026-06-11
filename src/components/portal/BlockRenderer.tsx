@@ -127,7 +127,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
           )}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {b.items?.map((item, i) => (
-              <div key={i} className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50">
+              <div
+                key={i}
+                className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4">
                   {/* Simplification: render a generic icon or the text if we don't have dynamic lucide imports yet */}
                   <div className="font-bold text-lg">{item.icon || "✨"}</div>
@@ -186,7 +189,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
           )}
           <div className="space-y-4">
             {b.items?.map((item, i) => (
-              <details key={i} className="group rounded-2xl border border-border bg-surface px-6 py-4 [&_summary::-webkit-details-marker]:hidden">
+              <details
+                key={i}
+                className="group rounded-2xl border border-border bg-surface px-6 py-4 [&_summary::-webkit-details-marker]:hidden"
+              >
                 <summary className="flex cursor-pointer items-center justify-between font-semibold text-lg">
                   {item.question}
                   <span className="ml-4 flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground group-open:rotate-180 transition-transform">
@@ -236,7 +242,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
       toast.error("Erro ao enviar: " + error.message);
       return;
     }
-    
+
     setSubmitted(true);
     toast.success("Mensagem enviada com sucesso!");
   }
@@ -255,7 +261,8 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
           </div>
           <h3 className="text-2xl font-bold mb-2">Tudo certo!</h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Recebemos sua mensagem. Um de nossos consultores especialistas entrará em contato em breve.
+            Recebemos sua mensagem. Um de nossos consultores especialistas entrará em contato em
+            breve.
           </p>
         </div>
       ) : (
@@ -308,7 +315,9 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
               disabled={busy}
               className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-foreground text-background font-bold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
             >
-              {busy ? "Enviando..." : (
+              {busy ? (
+                "Enviando..."
+              ) : (
                 <>
                   <Send className="w-4 h-4" /> Enviar Mensagem
                 </>

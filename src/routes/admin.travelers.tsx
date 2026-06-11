@@ -25,7 +25,7 @@ function Page() {
       let query = supabase
         .from("clients")
         .select("id, full_name, email, phone, agency_id, created_at", { count: "exact" });
-      
+
       if (search) {
         query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
       }
@@ -44,9 +44,9 @@ function Page() {
         ? ((await supabase.from("agencies").select("id, name").in("id", aids)).data ?? [])
         : [];
       const amap = new Map(ags.map((a) => [a.id, a.name]));
-      return { 
+      return {
         data: (data ?? []).map((c) => ({ ...c, agency_name: amap.get(c.agency_id) ?? "—" })),
-        count: count ?? 0 
+        count: count ?? 0,
       };
     },
     placeholderData: (prev) => prev,
@@ -67,8 +67,8 @@ function Page() {
         actions={
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar por nome ou e-mail..." 
+            <Input
+              placeholder="Buscar por nome ou e-mail..."
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
@@ -79,8 +79,12 @@ function Page() {
           </div>
         }
       />
-      {q.isLoading && !q.data && <div className="text-sm text-muted-foreground p-6 text-center">Carregando viajantes...</div>}
-      {!q.isLoading && totalCount === 0 && <EmptyState title={search ? "Nenhum viajante encontrado" : "Sem viajantes"} />}
+      {q.isLoading && !q.data && (
+        <div className="text-sm text-muted-foreground p-6 text-center">Carregando viajantes...</div>
+      )}
+      {!q.isLoading && totalCount === 0 && (
+        <EmptyState title={search ? "Nenhum viajante encontrado" : "Sem viajantes"} />
+      )}
       {q.data && totalCount > 0 && (
         <div className="overflow-hidden rounded-lg border border-border bg-surface">
           <table className="w-full text-sm">
@@ -110,12 +114,17 @@ function Page() {
           </table>
           <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
             <div className="text-xs text-muted-foreground">
-              Mostrando <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a <span className="font-medium text-foreground">{Math.min(page * PAGE_SIZE, totalCount)}</span> de <span className="font-medium text-foreground">{totalCount}</span> viajantes
+              Mostrando{" "}
+              <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}
+              <span className="font-medium text-foreground">
+                {Math.min(page * PAGE_SIZE, totalCount)}
+              </span>{" "}
+              de <span className="font-medium text-foreground">{totalCount}</span> viajantes
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton 
-                disabled={page === 1} 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+              <GhostButton
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -123,9 +132,9 @@ function Page() {
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <GhostButton 
-                disabled={page >= totalPages} 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              <GhostButton
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />

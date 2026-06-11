@@ -22,14 +22,16 @@ export async function processVoucherWithAI(file: File): Promise<VoucherAIResult>
       try {
         const result = reader.result as string;
         const base64 = result.split(",")[1];
-        
+
         const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
           body: { file_base64: base64, mime: file.type, file_name: file.name },
         });
 
         if (error) {
           console.error("Erro na Supabase Edge Function (AI):", error);
-          throw new Error("A Inteligência Artificial não conseguiu processar o documento. " + error.message);
+          throw new Error(
+            "A Inteligência Artificial não conseguiu processar o documento. " + error.message,
+          );
         }
 
         resolve(data.result as VoucherAIResult);

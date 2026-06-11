@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error - ignored
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -29,12 +29,12 @@ export const APIRoute = createAPIFileRoute("/api/public/sitemap/$agency_slug")({
         .eq("agency_id", (agency as any).id)
         .eq("is_published", true)
         .neq("slug", "home");
-      
+
       pages?.forEach((p) => {
         urls.push({
           loc: `${baseUrl}/${p.slug}`,
           lastmod: p.updated_at,
-          priority: "0.8"
+          priority: "0.8",
         });
       });
 
@@ -44,12 +44,12 @@ export const APIRoute = createAPIFileRoute("/api/public/sitemap/$agency_slug")({
         .select("slug, updated_at")
         .eq("agency_id", (agency as any).id)
         .eq("status", "published");
-      
+
       posts?.forEach((p) => {
         urls.push({
           loc: `${baseUrl}/blog/${p.slug}`,
           lastmod: p.updated_at,
-          priority: "0.7"
+          priority: "0.7",
         });
       });
 
@@ -59,12 +59,12 @@ export const APIRoute = createAPIFileRoute("/api/public/sitemap/$agency_slug")({
         .select("slug, updated_at")
         .eq("agency_id", agency!.id)
         .eq("is_internal", false);
-      
+
       (kb as any[])?.forEach((k) => {
         urls.push({
           loc: `${baseUrl}/kb/${k.slug}`,
           lastmod: k.updated_at,
-          priority: "0.6"
+          priority: "0.6",
         });
       });
 
@@ -75,20 +75,24 @@ export const APIRoute = createAPIFileRoute("/api/public/sitemap/$agency_slug")({
         .eq("agency_id", (agency as any).id)
         .eq("is_public", true)
         .in("status", ["open", "confirmed"]);
-      
+
       tours?.forEach((t) => {
         urls.push({
           loc: `${baseUrl}/tour/${t.id}`,
           lastmod: t.updated_at,
-          priority: "0.9"
+          priority: "0.9",
         });
       });
 
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url>
+${urls
+  .map(
+    (u) => `  <url>
     <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${new Date(u.lastmod).toISOString()}</lastmod>` : ""}${u.priority ? `\n    <priority>${u.priority}</priority>` : ""}
-  </url>`).join("\n")}
+  </url>`,
+  )
+  .join("\n")}
 </urlset>`;
 
       return new Response(xml, {
@@ -98,7 +102,6 @@ ${urls.map((u) => `  <url>
           "Cache-Control": "public, max-age=3600",
         },
       });
-
     } catch (e: any) {
       return new Response(e.message, { status: 500 });
     }

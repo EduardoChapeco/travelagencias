@@ -41,18 +41,18 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return [];
-      
+
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
         .limit(50);
-        
+
       if (error) throw error;
-      
+
       // Filter the ones for this user OR null (agency wide)
-      return (data ?? []).filter(n => !n.user_id || n.user_id === user.id) as any as Notif[];
+      return (data ?? []).filter((n) => !n.user_id || n.user_id === user.id) as any as Notif[];
     },
   });
 
@@ -61,15 +61,20 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     if (!agency?.id) return;
 
     const channel = supabase
-      .channel('public:notifications')
+      .channel("public:notifications")
       .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `agency_id=eq.${agency?.id}` },
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `agency_id=eq.${agency?.id}`,
+        },
         (payload) => {
           qc.invalidateQueries({ queryKey: ["notifications"] });
           qc.invalidateQueries({ queryKey: ["notifications-count"] });
           toast("Nova notificação", { description: payload.new.title });
-        }
+        },
       )
       .subscribe();
 

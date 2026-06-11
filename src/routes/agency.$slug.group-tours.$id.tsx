@@ -368,40 +368,61 @@ function ItineraryEditor({
   }
 
   async function generateWithAI() {
-    if (!aiInput.trim()) return toast.warning("Forneça uma referência (URL de pacote ou texto base)!");
+    if (!aiInput.trim())
+      return toast.warning("Forneça uma referência (URL de pacote ou texto base)!");
     setAiGenerating(true);
     toast.loading("IA minerando e redigindo...", { id: "ai-itinerary" });
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       let scrapedContext = "";
       if (aiInput.startsWith("http")) {
-        const scrapeRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`, {
-          method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${session?.access_token}` },
-          body: JSON.stringify({ action: "scrape", url: aiInput })
-        });
+        const scrapeRes = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+            body: JSON.stringify({ action: "scrape", url: aiInput }),
+          },
+        );
         if (!scrapeRes.ok) throw new Error("Falha no Scraping (Firecrawl)");
         const scrapeData = await scrapeRes.json();
         scrapedContext = scrapeData.result;
       }
 
       const prompt = `Crie um roteiro de viagem passo a passo em formato JSON baseado em: ${aiInput}\nConteúdo extraído da web (se houver): ${scrapedContext}\n\nRetorne EXATAMENTE UM ARRAY DE OBJETOS com os campos "day_number" (number), "title" (string) e "description_md" (string com formatação markdown rica). Exemplo de formato: [{"day_number": 1, "title": "Chegada em Paris", "description_md": "Passeio..."}]`;
-      
-      const compRes = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`, {
-        method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${session?.access_token}` },
-        body: JSON.stringify({ 
-          action: "completion", 
-          prompt, 
-          systemPrompt: "Você é um Especialista em Roteiros de Viagem focado em montar programações dia a dia. Retorne apenas JSON.",
-          modelPreference: "smart" 
-        })
-      });
+
+      const compRes = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({
+            action: "completion",
+            prompt,
+            systemPrompt:
+              "Você é um Especialista em Roteiros de Viagem focado em montar programações dia a dia. Retorne apenas JSON.",
+            modelPreference: "smart",
+          }),
+        },
+      );
 
       if (!compRes.ok) throw new Error("Falha na geração do roteiro");
       const compData = await compRes.json();
-      
-      const text = compData.result.replace(/```json/g, "").replace(/```/g, "").trim();
+
+      const text = compData.result
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
       const payload = JSON.parse(text);
 
       if (!Array.isArray(payload)) throw new Error("A IA não retornou uma lista válida.");
@@ -426,21 +447,35 @@ function ItineraryEditor({
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-primary">Construtor Mágico de Roteiro</span>
           </div>
-          <button type="button" onClick={() => setAiOpen(!aiOpen)} className="text-xs font-medium text-primary hover:underline">
+          <button
+            type="button"
+            onClick={() => setAiOpen(!aiOpen)}
+            className="text-xs font-medium text-primary hover:underline"
+          >
             {aiOpen ? "Ocultar" : "Usar IA"}
           </button>
         </div>
-        
+
         {aiOpen && (
           <div className="space-y-3 pt-2">
-            <Textarea 
-              placeholder="Ex: Cole o link de um pacote concorrente OU digite 'Roteiro de 7 dias em Roma focado no Vaticano e Gastronomia'" 
-              value={aiInput} onChange={(e) => setAiInput(e.target.value)} rows={2} 
+            <Textarea
+              placeholder="Ex: Cole o link de um pacote concorrente OU digite 'Roteiro de 7 dias em Roma focado no Vaticano e Gastronomia'"
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+              rows={2}
             />
-            <PrimaryButton type="button" onClick={generateWithAI} disabled={aiGenerating} className="w-full gap-2">
-              <Wand2 className="h-4 w-4" /> {aiGenerating ? "Minerando e Redigindo Roteiro..." : "Gerar Itinerário Completo"}
+            <PrimaryButton
+              type="button"
+              onClick={generateWithAI}
+              disabled={aiGenerating}
+              className="w-full gap-2"
+            >
+              <Wand2 className="h-4 w-4" />{" "}
+              {aiGenerating ? "Minerando e Redigindo Roteiro..." : "Gerar Itinerário Completo"}
             </PrimaryButton>
-            <p className="text-[10px] text-muted-foreground text-center">Isso irá sobrescrever os dias atuais do roteiro.</p>
+            <p className="text-[10px] text-muted-foreground text-center">
+              Isso irá sobrescrever os dias atuais do roteiro.
+            </p>
           </div>
         )}
       </div>

@@ -303,7 +303,8 @@ function HomePage() {
                         Endereço
                       </span>
                       {(company.address as any).street}, {(company.address as any).number}
-                      {(company.address as any).complement && ` - ${(company.address as any).complement}`}
+                      {(company.address as any).complement &&
+                        ` - ${(company.address as any).complement}`}
                       <br />
                       {(company.address as any).neighborhood} - {(company.address as any).city}/
                       {(company.address as any).state}

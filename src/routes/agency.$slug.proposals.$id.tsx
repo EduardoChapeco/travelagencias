@@ -33,19 +33,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
 import { AIItinerarySheet, type AIItineraryDay } from "@/components/ui/AIItinerarySheet";
-import { 
-  fetchProposal, 
-  updateProposal, 
-  processOcrFile, 
+import {
+  fetchProposal,
+  updateProposal,
+  processOcrFile,
   refineItineraryText,
-  type Proposal, 
-  type Flight, 
-  type Hotel, 
-  type Transfer, 
-  type Tour, 
-  type ItineraryDay 
+  type Proposal,
+  type Flight,
+  type Hotel,
+  type Transfer,
+  type Tour,
+  type ItineraryDay,
 } from "@/services/proposals";
-
 
 const SMALL_INPUT =
   "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
@@ -69,7 +68,7 @@ function ProposalEditor() {
 
   const [draft, setDraft] = useState<Proposal | null>(null);
   const [aiModalOpen, setAiModalOpen] = useState(false);
-  
+
   useEffect(() => {
     if (propQ.data) {
       setDraft({
@@ -99,8 +98,6 @@ function ProposalEditor() {
     },
     [draft, persist],
   );
-
-
 
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;

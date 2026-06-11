@@ -2,7 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Search, Radar, TrendingUp, Users, MessageSquare, Crosshair, ExternalLink, RefreshCw, Sparkles } from "lucide-react";
+import {
+  Search,
+  Radar,
+  TrendingUp,
+  Users,
+  MessageSquare,
+  Crosshair,
+  ExternalLink,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
 import { PrimaryButton, Input } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
@@ -31,23 +41,26 @@ function CompetitorSpy() {
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
     if (!url.trim()) return toast.warning("Forneça a URL do concorrente.");
-    
+
     setLoading(true);
     setAnalysis(null);
 
     try {
       toast.loading("Iniciando varredura (Scraping)...", { id: "spy" });
-      const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke("ai-orchestrator", {
-        body: { action: "scrape", url },
-      });
+      const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke(
+        "ai-orchestrator",
+        {
+          body: { action: "scrape", url },
+        },
+      );
       if (scrapeErr) throw scrapeErr;
       if (scrapeData?.error) throw new Error(scrapeData.error);
-      
+
       const context = scrapeData.result;
       if (!context) throw new Error("Conteúdo não encontrado ou bloqueado.");
 
       toast.loading("Processando inteligência de mercado...", { id: "spy" });
-      
+
       const systemPrompt = `Você é um Estrategista Chefe de Inteligência Competitiva no mercado de Turismo.
 Analise os dados extraídos do site/perfil de uma agência de viagens concorrente.
 Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em volta, só o JSON):
@@ -64,25 +77,28 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
   "opportunities_for_us": ["Como podemos vencê-los 1", "Como podemos superá-los 2"]
 }`;
 
-      const { data: compData, error: compErr } = await supabase.functions.invoke("ai-orchestrator", {
-        body: {
-          action: "completion",
-          prompt: `Dados extraídos do concorrente (${url}):\n\n${context}`,
-          systemPrompt,
-          modelPreference: "smart"
+      const { data: compData, error: compErr } = await supabase.functions.invoke(
+        "ai-orchestrator",
+        {
+          body: {
+            action: "completion",
+            prompt: `Dados extraídos do concorrente (${url}):\n\n${context}`,
+            systemPrompt,
+            modelPreference: "smart",
+          },
         },
-      });
+      );
 
       if (compErr) throw compErr;
       if (compData?.error) throw new Error(compData.error);
-      
+
       const text = compData.result || "";
       const match = text.match(/\{[\s\S]*\}/);
       if (!match) throw new Error("A IA não retornou um formato válido de análise.");
-      
+
       const parsed = JSON.parse(match[0]) as CompetitorAnalysis;
       setAnalysis(parsed);
-      
+
       toast.success("Análise de Concorrente concluída com sucesso!", { id: "spy" });
     } catch (err: any) {
       toast.error(err.message || "Erro ao espiar concorrente.", { id: "spy" });
@@ -98,11 +114,15 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           <Radar className="w-6 h-6 text-brand" /> Espião de Mercado
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Forneça a URL do website oficial de uma agência concorrente para receber uma auditoria instantânea de inteligência competitiva.
+          Forneça a URL do website oficial de uma agência concorrente para receber uma auditoria
+          instantânea de inteligência competitiva.
         </p>
       </header>
 
-      <form onSubmit={handleAnalyze} className="relative flex items-center rounded-xl bg-surface border border-border p-2">
+      <form
+        onSubmit={handleAnalyze}
+        className="relative flex items-center rounded-xl bg-surface border border-border p-2"
+      >
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
         <input
           value={url}
@@ -120,37 +140,54 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
       {analysis && (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          
           {/* Header Card */}
           <div className="md:col-span-12 rounded-2xl border border-border bg-surface overflow-hidden">
             <div className="bg-brand/5 p-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">{analysis.name}</h2>
                 <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><Crosshair className="w-4 h-4" /> {analysis.city}</span>
-                  <span className="flex items-center gap-1"><TrendingUp className="w-4 h-4" /> {analysis.niche}</span>
+                  <span className="flex items-center gap-1">
+                    <Crosshair className="w-4 h-4" /> {analysis.city}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <TrendingUp className="w-4 h-4" /> {analysis.niche}
+                  </span>
                 </div>
               </div>
-              <a href={url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-brand hover:underline">
+              <a
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+              >
                 Visitar Site <ExternalLink className="w-4 h-4" />
               </a>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
               <div className="p-6 space-y-2">
                 <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   <Users className="w-4 h-4" /> Público Alvo
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">{analysis.target_audience}</p>
+                <p className="text-sm text-foreground leading-relaxed">
+                  {analysis.target_audience}
+                </p>
               </div>
               <div className="p-6 space-y-2">
                 <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   <MessageSquare className="w-4 h-4" /> Comunicação
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">{analysis.communication_tone}</p>
+                <p className="text-sm text-foreground leading-relaxed">
+                  {analysis.communication_tone}
+                </p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {analysis.mental_triggers.map(t => (
-                    <span key={t} className="px-2 py-1 text-[10px] font-semibold bg-surface-alt border border-border rounded-full">{t}</span>
+                  {analysis.mental_triggers.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-1 text-[10px] font-semibold bg-surface-alt border border-border rounded-full"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -158,7 +195,9 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
                 <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   <TrendingUp className="w-4 h-4" /> Posicionamento
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">{analysis.estimated_pricing}</p>
+                <p className="text-sm text-foreground leading-relaxed">
+                  {analysis.estimated_pricing}
+                </p>
               </div>
             </div>
           </div>
@@ -167,8 +206,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           <div className="md:col-span-6 space-y-6">
             <div className="rounded-2xl border border-border bg-surface p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-success"></div>
-                O que eles fazem bem
+                <div className="w-2 h-2 rounded-full bg-success"></div>O que eles fazem bem
               </h3>
               <ul className="space-y-3">
                 {analysis.strengths.map((s, i) => (
@@ -213,7 +251,6 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
               </ul>
             </div>
           </div>
-
         </div>
       )}
     </div>

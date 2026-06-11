@@ -13,13 +13,9 @@ export const Route = createFileRoute("/p/$agency_slug/$page_slug")({
     return {
       meta: [
         {
-          title: seo?.meta_title
-            ? `${seo.meta_title} · Portal`
-            : `${params.page_slug} · Portal`,
+          title: seo?.meta_title ? `${seo.meta_title} · Portal` : `${params.page_slug} · Portal`,
         },
-        ...(seo?.meta_description
-          ? [{ name: "description", content: seo.meta_description }]
-          : []),
+        ...(seo?.meta_description ? [{ name: "description", content: seo.meta_description }] : []),
       ],
     };
   },
@@ -59,9 +55,7 @@ function DynamicPage() {
   return (
     <div className="w-full px-4 sm:px-6">
       {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
-      {page.title && (
-        <h1 className="sr-only">{page.title}</h1>
-      )}
+      {page.title && <h1 className="sr-only">{page.title}</h1>}
       <BlockRenderer blocks={(page.blocks || []) as PortalBlock[]} agencySlug={agency_slug} />
     </div>
   );

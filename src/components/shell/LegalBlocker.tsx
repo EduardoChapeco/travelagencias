@@ -41,7 +41,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
 
   const acceptMutation = useMutation({
     mutationFn: async (docId: string) => {
-      const { error } = await (supabase as any).from('legal_acceptances').insert({
+      const { error } = await (supabase as any).from("legal_acceptances").insert({
         document_id: docId,
         user_id: (await supabase.auth.getUser()).data.user?.id,
         context: "app_login",

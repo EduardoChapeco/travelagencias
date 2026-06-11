@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { X, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  Sheet,
+} from "@/components/ui/form";
 import { toast } from "sonner";
 
 type VisaFormSheetProps = {
@@ -14,7 +22,7 @@ type VisaFormSheetProps = {
 export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
-  
+
   const [clientId, setClientId] = useState("");
   const [country, setCountry] = useState("");
   const [category, setCategory] = useState("Turismo");
@@ -39,7 +47,12 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
   const stagesQ = useQuery({
     queryKey: ["visa-stages", agencyId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("visa_stages").select("*").eq("agency_id", agencyId).order("position").limit(1);
+      const { data, error } = await (supabase as any)
+        .from("visa_stages")
+        .select("*")
+        .eq("agency_id", agencyId)
+        .order("position")
+        .limit(1);
       if (error) throw error;
       return data;
     },
@@ -101,13 +114,19 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
             <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
               <option value="">Selecione um cliente...</option>
               {clientsQ.data?.map((c) => (
-                <option key={c.id} value={c.id}>{c.full_name} {c.document ? `(${c.document})` : ""}</option>
+                <option key={c.id} value={c.id}>
+                  {c.full_name} {c.document ? `(${c.document})` : ""}
+                </option>
               ))}
             </Select>
           </Field>
 
           <Field label="Data de Emissão">
-            <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Ex: Estados Unidos" />
+            <Input
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              placeholder="Ex: Estados Unidos"
+            />
           </Field>
 
           <Field label="Categoria">
@@ -123,22 +142,35 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
             <Select value={requirementId} onChange={(e) => setRequirementId(e.target.value)}>
               <option value="">Sem catálogo predefinido</option>
               {requirementsQ.data?.map((req: any) => (
-                <option key={req.id} value={req.id}>{req.country} - {req.visa_type}</option>
+                <option key={req.id} value={req.id}>
+                  {req.country} - {req.visa_type}
+                </option>
               ))}
             </Select>
           </Field>
 
           <Field label="Data Esperada da Viagem (Opcional)">
-            <Input type="date" value={expectedDate} onChange={(e) => setExpectedDate(e.target.value)} />
+            <Input
+              type="date"
+              value={expectedDate}
+              onChange={(e) => setExpectedDate(e.target.value)}
+            />
           </Field>
 
           <Field label="Observações">
-            <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} placeholder="Ex: Cliente tem viagem marcada e urgência..." />
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              placeholder="Ex: Cliente tem viagem marcada e urgência..."
+            />
           </Field>
         </div>
 
         <div className="border-t border-border p-4 bg-surface flex justify-end gap-2 shrink-0">
-          <GhostButton type="button" onClick={onClose} disabled={busy}>Cancelar</GhostButton>
+          <GhostButton type="button" onClick={onClose} disabled={busy}>
+            Cancelar
+          </GhostButton>
           <PrimaryButton type="submit" disabled={busy} className="gap-2">
             <Save className="h-4 w-4" /> Iniciar Processo
           </PrimaryButton>

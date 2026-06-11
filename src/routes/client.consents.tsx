@@ -17,7 +17,7 @@ const KIND_LABELS: Record<string, string> = {
   privacy: "Política de Privacidade",
   cookies: "Política de Cookies",
   lgpd: "Termo de Consentimento LGPD",
-  dpa: "Acordo de Processamento de Dados (DPA)"
+  dpa: "Acordo de Processamento de Dados (DPA)",
 };
 
 function ClientConsentsPage() {
@@ -94,7 +94,8 @@ function ClientConsentsPage() {
               Central de Privacidade e LGPD
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Visualize, assine e gerencie todos os seus consentimentos e termos legais de forma segura.
+              Visualize, assine e gerencie todos os seus consentimentos e termos legais de forma
+              segura.
             </p>
           </div>
         </div>
@@ -118,7 +119,8 @@ function ClientConsentsPage() {
               </div>
               <h4 className="text-lg font-bold text-success mb-1">Tudo em conformidade!</h4>
               <p className="text-sm text-success/80 max-w-md">
-                Você não possui nenhum termo obrigatório pendente. Agradecemos por manter seu cadastro atualizado.
+                Você não possui nenhum termo obrigatório pendente. Agradecemos por manter seu
+                cadastro atualizado.
               </p>
             </div>
           </div>
@@ -144,7 +146,9 @@ function ClientConsentsPage() {
                       </span>
                     </h4>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-xl">
-                      Para continuar utilizando os serviços da agência e garantirmos a melhor experiência, é necessário revisar e aceitar a versão mais recente deste documento.
+                      Para continuar utilizando os serviços da agência e garantirmos a melhor
+                      experiência, é necessário revisar e aceitar a versão mais recente deste
+                      documento.
                     </p>
                   </div>
                 </div>
@@ -165,11 +169,14 @@ function ClientConsentsPage() {
         <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
           <Clock className="h-4 w-4" /> Histórico de Aceites (Trilha de Auditoria)
         </h3>
-        
+
         {q.data?.acceptances.length === 0 && (
-          <EmptyState title="Sem aceites históricos" description="Nenhum registro de aceite encontrado na trilha de auditoria." />
+          <EmptyState
+            title="Sem aceites históricos"
+            description="Nenhum registro de aceite encontrado na trilha de auditoria."
+          />
         )}
-        
+
         {q.data && q.data.acceptances.length > 0 && (
           <div className="grid gap-3">
             {q.data.acceptances.map((a: any) => (
@@ -211,4 +218,3 @@ function ClientConsentsPage() {
     </div>
   );
 }
-

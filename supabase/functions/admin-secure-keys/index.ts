@@ -13,10 +13,10 @@ async function getCryptoKey(password: string) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    enc.encode(password.padEnd(32, '0').substring(0, 32)), // 256-bit key
+    enc.encode(password.padEnd(32, "0").substring(0, 32)), // 256-bit key
     { name: "AES-GCM" },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
   return keyMaterial;
 }
@@ -25,17 +25,13 @@ async function encryptData(data: string, password: string) {
   const key = await getCryptoKey(password);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encoded = new TextEncoder().encode(data);
-  const ciphertext = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
-    key,
-    encoded
-  );
-  
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
+
   // Combina IV e Ciphertext e converte para base64
   const payload = new Uint8Array(iv.length + ciphertext.byteLength);
   payload.set(iv, 0);
   payload.set(new Uint8Array(ciphertext), iv.length);
-  
+
   return encode(payload);
 }
 
@@ -54,15 +50,18 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized.");
 
     // Checar se é admin
     const { data: roleData } = await supabaseClient
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'master')
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "master")
       .maybeSingle();
 
     if (!roleData) {
@@ -72,20 +71,22 @@ serve(async (req) => {
     const { keys } = await req.json();
     if (!keys) throw new Error("Missing keys payload");
 
-    // Usa a MASTER_ENCRYPTION_KEY do Supabase Secrets. 
+    // Usa a MASTER_ENCRYPTION_KEY do Supabase Secrets.
     // Se não existir na máquina local durante desenvolvimento, usa um fallback estrito (apenas para dev).
-    const encryptionKey = Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
+    const encryptionKey =
+      Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
 
     // Encriptar o objeto JSON inteiro
     const encryptedString = await encryptData(JSON.stringify(keys), encryptionKey);
 
     // Salvar na global_settings
-    const { error: dbError } = await supabaseClient
-      .from("global_settings")
-      .upsert({
+    const { error: dbError } = await supabaseClient.from("global_settings").upsert(
+      {
         key: "integrations_config_encrypted",
-        value: { payload: encryptedString, is_encrypted: true }
-      }, { onConflict: "key" });
+        value: { payload: encryptedString, is_encrypted: true },
+      },
+      { onConflict: "key" },
+    );
 
     if (dbError) throw dbError;
 

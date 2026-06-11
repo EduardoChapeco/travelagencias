@@ -29,7 +29,7 @@ type RFP = {
   client?: { full_name: string };
 };
 
-const STATUS_MAP: Record<string, { label: string, tone: any }> = {
+const STATUS_MAP: Record<string, { label: string; tone: any }> = {
   pending: { label: "Pendente", tone: "neutral" },
   quoting: { label: "Em cotação", tone: "warning" },
   sent_for_approval: { label: "Aguardando Aprovação", tone: "primary" },
@@ -58,14 +58,18 @@ function CorporatePage() {
     },
   });
 
-  const rfps = (rfpsQ.data || []).filter(r => 
-    r.title.toLowerCase().includes(q.toLowerCase()) || 
-    r.client?.full_name?.toLowerCase().includes(q.toLowerCase())
+  const rfps = (rfpsQ.data || []).filter(
+    (r) =>
+      r.title.toLowerCase().includes(q.toLowerCase()) ||
+      r.client?.full_name?.toLowerCase().includes(q.toLowerCase()),
   );
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const { error } = await (supabase as any).from("corporate_rfps").update({ status }).eq("id", id);
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await (supabase as any)
+        .from("corporate_rfps")
+        .update({ status })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -114,10 +118,23 @@ function CorporatePage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {rfps.map((rfp) => (
-          <div key={rfp.id} className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors">
-            <div onClick={() => navigate({ to: "/agency/$slug/corporate/$rfp_id", params: { slug: agency!.slug, rfp_id: rfp.id } })} className="flex justify-between items-start group cursor-pointer">
+          <div
+            key={rfp.id}
+            className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
+          >
+            <div
+              onClick={() =>
+                navigate({
+                  to: "/agency/$slug/corporate/$rfp_id",
+                  params: { slug: agency!.slug, rfp_id: rfp.id },
+                })
+              }
+              className="flex justify-between items-start group cursor-pointer"
+            >
               <div>
-                <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">{rfp.title}</h3>
+                <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">
+                  {rfp.title}
+                </h3>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
                   <Building2 className="h-3.5 w-3.5" />
                   {rfp.client?.full_name}
@@ -131,7 +148,9 @@ function CorporatePage() {
             <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
               <div>
                 <div className="text-muted-foreground mb-0.5">Solicitante</div>
-                <div className="font-medium truncate" title={rfp.requester_email}>{rfp.requester_name}</div>
+                <div className="font-medium truncate" title={rfp.requester_email}>
+                  {rfp.requester_name}
+                </div>
               </div>
               <div>
                 <div className="text-muted-foreground mb-0.5">Destino</div>
@@ -144,19 +163,27 @@ function CorporatePage() {
               <div>
                 <div className="text-muted-foreground mb-0.5">Orçamento Máx</div>
                 <div className="font-medium">
-                  {rfp.budget ? rfp.budget.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Em aberto'}
+                  {rfp.budget
+                    ? rfp.budget.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                    : "Em aberto"}
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
-              {rfp.status === 'pending' && (
-                <GhostButton className="text-xs h-8 flex-1" onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}>
+              {rfp.status === "pending" && (
+                <GhostButton
+                  className="text-xs h-8 flex-1"
+                  onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}
+                >
                   Iniciar Cotação
                 </GhostButton>
               )}
-              {rfp.status === 'quoting' && (
-                <GhostButton className="text-xs h-8 flex-1 text-primary hover:text-primary" onClick={() => sendForApproval(rfp)}>
+              {rfp.status === "quoting" && (
+                <GhostButton
+                  className="text-xs h-8 flex-1 text-primary hover:text-primary"
+                  onClick={() => sendForApproval(rfp)}
+                >
                   <Send className="h-3 w-3 mr-1" /> Enviar p/ Aprovação
                 </GhostButton>
               )}

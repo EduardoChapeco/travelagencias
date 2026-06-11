@@ -56,14 +56,18 @@ export function AppShell({
           </div>
 
           <div className="flex items-center gap-2">
-            <div 
+            <div
               className="hidden items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
-              onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+              onClick={() =>
+                document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
+              }
             >
               <Search className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
               <div className="w-48 text-xs text-muted-foreground group-hover:text-foreground flex items-center justify-between">
                 <span>Buscar...</span>
-                <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">⌘K</span>
+                <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">
+                  ⌘K
+                </span>
               </div>
             </div>
             {actions}

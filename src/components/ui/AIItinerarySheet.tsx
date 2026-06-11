@@ -36,9 +36,12 @@ export function AIItinerarySheet({ open, onOpenChange, onGenerate }: AIItinerary
       // 1. Scrape se for URL
       if (tab === "url") {
         toast.loading("Lendo o conteúdo da URL (Scraping)...", { id: "ai-itinerary" });
-        const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke("ai-orchestrator", {
-          body: { action: "scrape", url },
-        });
+        const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke(
+          "ai-orchestrator",
+          {
+            body: { action: "scrape", url },
+          },
+        );
         if (scrapeErr) throw scrapeErr;
         if (scrapeData?.error) throw new Error(scrapeData.error);
         context = scrapeData.result;
@@ -59,25 +62,28 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
   { "day": "Dia 02", "title": "Tour histórico", "description": "..." }
 ]`;
 
-      const { data: compData, error: compErr } = await supabase.functions.invoke("ai-orchestrator", {
-        body: {
-          action: "completion",
-          prompt: "Por favor, gere o roteiro de viagem em formato JSON agora.",
-          systemPrompt,
-          modelPreference: "smart"
+      const { data: compData, error: compErr } = await supabase.functions.invoke(
+        "ai-orchestrator",
+        {
+          body: {
+            action: "completion",
+            prompt: "Por favor, gere o roteiro de viagem em formato JSON agora.",
+            systemPrompt,
+            modelPreference: "smart",
+          },
         },
-      });
+      );
 
       if (compErr) throw compErr;
       if (compData?.error) throw new Error(compData.error);
-      
+
       const resultText = compData.result || "";
       const jsonMatch = resultText.match(/\[\s*\{[\s\S]*\}\s*\]/);
       let parsed = [];
-      
+
       try {
         parsed = JSON.parse(jsonMatch ? jsonMatch[0] : resultText);
-      } catch(e) {
+      } catch (e) {
         throw new Error("A IA não retornou um formato JSON válido. Tente novamente.");
       }
 
@@ -96,85 +102,93 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
   }
 
   return (
-    <SheetPage isOpen={open} onClose={() => onOpenChange(false)} title="Construtor de Roteiros IA" width="450px">
+    <SheetPage
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
+      title="Construtor de Roteiros IA"
+      width="450px"
+    >
       <div className="mb-6 space-y-1">
         <div className="flex items-center gap-2 text-brand font-bold">
-          <Wand2 className="w-5 h-5" /> 
+          <Wand2 className="w-5 h-5" />
           Mágico
         </div>
         <p className="text-xs text-muted-foreground">
           Crie um itinerário completo em segundos a partir de uma ideia ou de um link de referência.
         </p>
       </div>
-          <div className="flex border-b border-border mb-4">
-          <button
-            type="button"
-            className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
-            onClick={() => setTab("topic")}
+      <div className="flex border-b border-border mb-4">
+        <button
+          type="button"
+          className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
+          onClick={() => setTab("topic")}
+        >
+          <Sparkles className="w-4 h-4" /> Nova Ideia
+        </button>
+        <button
+          type="button"
+          className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "url" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
+          onClick={() => setTab("url")}
+        >
+          <LinkIcon className="w-4 h-4" /> A partir de um Link
+        </button>
+      </div>
+
+      <form onSubmit={handleGenerate} className="space-y-4">
+        {tab === "topic" ? (
+          <Field label="Destino ou Tema do Roteiro">
+            <Textarea
+              placeholder="Ex: 5 dias em Paris focado em alta gastronomia e moda..."
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              rows={3}
+            />
+          </Field>
+        ) : (
+          <Field
+            label="URL de Referência"
+            hint="A IA lerá o site (ex: roteiro de um concorrente ou blog) e o reescreverá para você."
           >
-            <Sparkles className="w-4 h-4" /> Nova Ideia
-          </button>
-          <button
-            type="button"
-            className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "url" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
-            onClick={() => setTab("url")}
-          >
-            <LinkIcon className="w-4 h-4" /> A partir de um Link
-          </button>
+            <Input
+              placeholder="https://viagemeturismo.com/roteiro-paris"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              type="url"
+            />
+          </Field>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Quantidade de Dias">
+            <Input
+              type="number"
+              min={1}
+              max={30}
+              value={daysCount}
+              onChange={(e) => setDaysCount(e.target.value)}
+            />
+          </Field>
+          <Field label="Tom e Estilo">
+            <Select value={tone} onChange={(e) => setTone(e.target.value)}>
+              <option value="luxuoso e exclusivo">Luxuoso e Exclusivo</option>
+              <option value="aventureiro e dinâmico">Aventureiro e Dinâmico</option>
+              <option value="romântico e relaxante">Romântico e Relaxante</option>
+              <option value="cultural e histórico">Cultural e Histórico</option>
+              <option value="econômico e prático">Econômico e Prático</option>
+            </Select>
+          </Field>
         </div>
 
-        <form onSubmit={handleGenerate} className="space-y-4">
-          {tab === "topic" ? (
-            <Field label="Destino ou Tema do Roteiro">
-              <Textarea 
-                placeholder="Ex: 5 dias em Paris focado em alta gastronomia e moda..."
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                rows={3}
-              />
-            </Field>
-          ) : (
-            <Field label="URL de Referência" hint="A IA lerá o site (ex: roteiro de um concorrente ou blog) e o reescreverá para você.">
-              <Input 
-                placeholder="https://viagemeturismo.com/roteiro-paris"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                type="url"
-              />
-            </Field>
-          )}
-
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Quantidade de Dias">
-              <Input 
-                type="number"
-                min={1}
-                max={30}
-                value={daysCount}
-                onChange={(e) => setDaysCount(e.target.value)}
-              />
-            </Field>
-            <Field label="Tom e Estilo">
-              <Select value={tone} onChange={(e) => setTone(e.target.value)}>
-                <option value="luxuoso e exclusivo">Luxuoso e Exclusivo</option>
-                <option value="aventureiro e dinâmico">Aventureiro e Dinâmico</option>
-                <option value="romântico e relaxante">Romântico e Relaxante</option>
-                <option value="cultural e histórico">Cultural e Histórico</option>
-                <option value="econômico e prático">Econômico e Prático</option>
-              </Select>
-            </Field>
-          </div>
-
-          <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-            <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
-              Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit" disabled={loading} className="gap-2">
-              <Wand2 className="w-4 h-4" /> 
-              {loading ? "Minerando..." : "Gerar Itinerário"}
-            </PrimaryButton>
-          </div>
-        </form>
+        <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
+          <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
+            Cancelar
+          </GhostButton>
+          <PrimaryButton type="submit" disabled={loading} className="gap-2">
+            <Wand2 className="w-4 h-4" />
+            {loading ? "Minerando..." : "Gerar Itinerário"}
+          </PrimaryButton>
+        </div>
+      </form>
     </SheetPage>
   );
 }

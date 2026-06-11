@@ -79,11 +79,7 @@ export type Proposal = {
 };
 
 export async function fetchProposal(id: string): Promise<Proposal | null> {
-  const { data, error } = await supabase
-    .from("proposals")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("proposals").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data as unknown as Proposal | null;
 }
@@ -97,12 +93,19 @@ export async function updateProposal(id: string, patch: Partial<Proposal>) {
 }
 
 export async function recalculateProposal(id: string) {
-  const { error } = await (supabase.rpc as any)("recalculate_proposal_totals", { _proposal_id: id });
+  const { error } = await (supabase.rpc as any)("recalculate_proposal_totals", {
+    _proposal_id: id,
+  });
   if (error) throw error;
 }
 
 export async function processOcrFile(file: File) {
-  return new Promise<{ flights?: Flight[], hotels?: Hotel[], transfers?: Transfer[], tours?: Tour[] }>((resolve, reject) => {
+  return new Promise<{
+    flights?: Flight[];
+    hotels?: Hotel[];
+    transfers?: Transfer[];
+    tours?: Tour[];
+  }>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async () => {
       try {
@@ -121,14 +124,17 @@ export async function processOcrFile(file: File) {
   });
 }
 
-export async function refineItineraryText(title: string, description: string): Promise<{ title: string, description: string }> {
+export async function refineItineraryText(
+  title: string,
+  description: string,
+): Promise<{ title: string; description: string }> {
   const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
     body: {
       action: "completion",
       prompt: `Melhore este trecho de roteiro de viagem. Torne mais atrativo, luxuoso e vendedor.\n\nTítulo: ${title}\nDescrição: ${description}\n\nRetorne EXATAMENTE um JSON com as chaves "title" e "description". Sem markdown.`,
       systemPrompt: "Você é um copywriter de turismo premium. Retorne apenas JSON.",
-      modelPreference: "smart"
-    }
+      modelPreference: "smart",
+    },
   });
   if (error) throw error;
   const text = data?.result || "";
@@ -155,7 +161,7 @@ export interface CreateProposalPayload {
 export async function createProposal(
   agencyId: string,
   payload: CreateProposalPayload,
-  ownerId?: string | null
+  ownerId?: string | null,
 ): Promise<{ id: string }> {
   const insertData = {
     agency_id: agencyId,
@@ -168,7 +174,7 @@ export async function createProposal(
     pax_adults: payload.pax_adults,
     pax_children: payload.pax_children,
     pax_infants: payload.pax_infants,
-    currency: payload.currency || 'BRL',
+    currency: payload.currency || "BRL",
     valid_until: payload.valid_until || null,
     notes: payload.notes || null,
     owner_id: ownerId || null,
@@ -198,13 +204,13 @@ export async function createProposal(
 export async function fetchProposalsList(
   agencyId: string,
   page: number,
-  pageSize: number
+  pageSize: number,
 ): Promise<{ data: any[]; count: number }> {
   const { data, count, error } = await supabase
     .from("proposals")
     .select(
       "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id",
-      { count: "exact" }
+      { count: "exact" },
     )
     .eq("agency_id", agencyId)
     .is("deleted_at", null)

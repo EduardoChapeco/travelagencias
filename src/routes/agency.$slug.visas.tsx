@@ -3,11 +3,20 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Plus, GripVertical, Search, Globe, FileText, Check, Clock } from "lucide-react";
 import {
-  DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
-  closestCorners, type DragEndEvent, type DragStartEvent,
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+  type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import {
-  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
@@ -24,8 +33,15 @@ export const Route = createFileRoute("/agency/$slug/visas")({
 
 type VisaStage = { id: string; name: string; position: number; color: string; is_final: boolean };
 type Visa = {
-  id: string; stage_id: string; client_id: string; country: string; category: string; status: string;
-  position: number; expected_date: string | null; created_at: string;
+  id: string;
+  stage_id: string;
+  client_id: string;
+  country: string;
+  category: string;
+  status: string;
+  position: number;
+  expected_date: string | null;
+  created_at: string;
   client?: { full_name: string };
 };
 
@@ -96,7 +112,7 @@ function VisasPage() {
 
     const fromStage = findContainerOf(activeIdStr);
     if (!fromStage) return;
-    
+
     const toStage = stagesById[overIdStr] ? overIdStr : findContainerOf(overIdStr);
     if (!toStage) return;
 
@@ -115,13 +131,17 @@ function VisasPage() {
     if (fromStage === toStage) {
       const currentIndex = stagesById[fromStage].findIndex((v) => v.id === activeIdStr);
       const overIndex = destList.findIndex((v) => v.id === overIdStr);
-      const newList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
+      const newList = arrayMove(
+        stagesById[fromStage],
+        currentIndex,
+        overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1,
+      );
       destList = newList;
     } else {
       destList.splice(insertIndex, 0, { ...movedVisa, stage_id: toStage });
     }
 
-    const newVisas = localVisas.filter(v => v.stage_id !== fromStage && v.stage_id !== toStage);
+    const newVisas = localVisas.filter((v) => v.stage_id !== fromStage && v.stage_id !== toStage);
     if (fromStage === toStage) {
       destList.forEach((v, i) => newVisas.push({ ...v, position: i }));
     } else {
@@ -147,7 +167,11 @@ function VisasPage() {
           description="Acompanhamento consular e emissão documental."
           actions={
             <div className="flex items-center gap-3">
-              <Link to="/agency/$slug/visas-catalog" params={{ slug }} className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors">
+              <Link
+                to="/agency/$slug/visas-catalog"
+                params={{ slug }}
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+              >
                 <FileText className="w-3.5 h-3.5" /> Catálogo
               </Link>
               <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
@@ -159,15 +183,18 @@ function VisasPage() {
       </div>
 
       <div className="flex-1 overflow-x-auto p-4 md:p-8 pt-6">
-        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
           <div className="flex h-full gap-4">
             {(stagesQ.data ?? []).map((stage: any) => (
               <StageColumn key={stage.id} stage={stage} items={stagesById[stage.id] ?? []} />
             ))}
           </div>
-          <DragOverlay>
-            {activeVisa ? <VisaCard visa={activeVisa} isOverlay /> : null}
-          </DragOverlay>
+          <DragOverlay>{activeVisa ? <VisaCard visa={activeVisa} isOverlay /> : null}</DragOverlay>
         </DndContext>
       </div>
 
@@ -189,7 +216,10 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
   const { setNodeRef } = useSortable({ id: stage.id, data: { type: "Column", stage } });
 
   return (
-    <div ref={setNodeRef} className="flex h-full w-80 shrink-0 flex-col rounded-xl bg-surface-alt/50 border border-border">
+    <div
+      ref={setNodeRef}
+      className="flex h-full w-80 shrink-0 flex-col rounded-xl bg-surface-alt/50 border border-border"
+    >
       <div className="flex items-center justify-between border-b border-border p-3">
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full" style={{ backgroundColor: stage.color }} />
@@ -218,7 +248,11 @@ function SortableVisa({ visa }: { visa: Visa }) {
     data: { type: "Visa", visa },
   });
 
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 };
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -235,7 +269,9 @@ function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="font-medium text-sm leading-tight text-foreground">{visa.client?.full_name ?? "Cliente Desconhecido"}</div>
+        <div className="font-medium text-sm leading-tight text-foreground">
+          {visa.client?.full_name ?? "Cliente Desconhecido"}
+        </div>
         <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
 

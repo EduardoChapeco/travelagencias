@@ -9,7 +9,9 @@ export const Route = createFileRoute("/admin")({
    * Even if AdminShell's client-side check is bypassed, this beforeLoad runs first.
    */
   beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // Not authenticated — redirect to login
     if (!user) {

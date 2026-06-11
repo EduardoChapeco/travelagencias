@@ -26,11 +26,7 @@ export type PageVersionRow = {
 };
 
 export async function fetchPortalPage(pageId: string): Promise<PageRow> {
-  const { data, error } = await supabase
-    .from("portal_pages")
-    .select("*")
-    .eq("id", pageId)
-    .single();
+  const { data, error } = await supabase.from("portal_pages").select("*").eq("id", pageId).single();
   if (error) throw new Error(error.message);
   return data as unknown as PageRow;
 }
@@ -53,7 +49,7 @@ export async function savePortalPageDraft(
   slug: string,
   template: string,
   blocks: PortalBlock[],
-  seo: { meta_title: string; meta_description: string }
+  seo: { meta_title: string; meta_description: string },
 ): Promise<string> {
   if (!title) throw new Error("O título é obrigatório");
 
@@ -77,7 +73,10 @@ export async function savePortalPageDraft(
   let finalPageId = isNew ? null : pageId;
 
   if (!isNew && finalPageId) {
-    const { error } = await supabase.from("portal_pages").update(payload as any).eq("id", finalPageId);
+    const { error } = await supabase
+      .from("portal_pages")
+      .update(payload as any)
+      .eq("id", finalPageId);
     if (error) throw new Error(error.message);
   } else {
     const { data: newPage, error } = await supabase
@@ -88,7 +87,7 @@ export async function savePortalPageDraft(
     if (error) throw new Error(error.message);
     finalPageId = newPage?.id;
   }
-  
+
   if (!finalPageId) {
     throw new Error("Falha ao recuperar o ID da página salva");
   }

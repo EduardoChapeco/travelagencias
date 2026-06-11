@@ -11,11 +11,20 @@ export async function fetchAgencySettings(agencyId: string) {
 }
 
 export async function fetchCompanyProfile(agencyId: string) {
-  const { data } = await supabase.from("company_profiles").select("*").eq("agency_id", agencyId).maybeSingle();
+  const { data } = await supabase
+    .from("company_profiles")
+    .select("*")
+    .eq("agency_id", agencyId)
+    .maybeSingle();
   return data;
 }
 
-export async function saveCompanyProfile(agencyId: string, payload: any, agencyPayload: any, privatePayload: any) {
+export async function saveCompanyProfile(
+  agencyId: string,
+  payload: any,
+  agencyPayload: any,
+  privatePayload: any,
+) {
   const existing = await fetchCompanyProfile(agencyId);
   const u = (await supabase.auth.getUser()).data.user;
 
@@ -28,17 +37,25 @@ export async function saveCompanyProfile(agencyId: string, payload: any, agencyP
   if (agencyPayload) {
     await supabase.from("agencies").update(agencyPayload).eq("id", agencyId);
   }
-  
+
   if (privatePayload) {
     await supabase.from("agency_private").upsert({ agency_id: agencyId, ...privatePayload });
   }
 
   await (supabase as any).from("audit_log").insert({
-    agency_id: agencyId, user_id: u?.id, action: "update_company_profile", details: payload
+    agency_id: agencyId,
+    user_id: u?.id,
+    action: "update_company_profile",
+    details: payload,
   });
 }
 
-export async function saveSettings(agencyId: string, payload: any, agencyPayload: any, privatePayload: any) {
+export async function saveSettings(
+  agencyId: string,
+  payload: any,
+  agencyPayload: any,
+  privatePayload: any,
+) {
   // Aliased to saveCompanyProfile as they share logic
   return saveCompanyProfile(agencyId, payload, agencyPayload, privatePayload);
 }
@@ -54,7 +71,12 @@ export async function fetchApiKeys(agencyId: string, provider?: string) {
 }
 
 export async function saveApiKey(agencyId: string, payload: any) {
-  const existing = await supabase.from("api_keys").select("id").eq("agency_id", agencyId).eq("provider", payload.provider).maybeSingle();
+  const existing = await supabase
+    .from("api_keys")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("provider", payload.provider)
+    .maybeSingle();
   if (existing.data) {
     const { error } = await supabase.from("api_keys").update(payload).eq("id", existing.data.id);
     if (error) throw error;
@@ -123,14 +145,19 @@ export async function deleteTeamInvite(id: string) {
 }
 
 export async function removeTeamMember(agencyId: string, userId: string) {
-  const { error } = await supabase.from("user_roles").delete().eq("agency_id", agencyId).eq("user_id", userId);
+  const { error } = await supabase
+    .from("user_roles")
+    .delete()
+    .eq("agency_id", agencyId)
+    .eq("user_id", userId);
   if (error) throw error;
 }
 
 export async function changeTeamMemberRole(agencyId: string, userId: string, role: string) {
-  const { error } = await (supabase as any).from("user_roles").update({ role }).eq("agency_id", agencyId).eq("user_id", userId);
+  const { error } = await (supabase as any)
+    .from("user_roles")
+    .update({ role })
+    .eq("agency_id", agencyId)
+    .eq("user_id", userId);
   if (error) throw error;
 }
-
-
-

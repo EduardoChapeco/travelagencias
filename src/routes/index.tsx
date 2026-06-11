@@ -199,9 +199,7 @@ function Landing() {
                   key={f.title}
                   className={cn(
                     "group relative overflow-hidden rounded-3xl border border-border/50 bg-surface p-8  transition-all hover: hover:-translate-y-1 hover:border-brand/40",
-                    i === 0 || i === 3
-                      ? "md:col-span-2 lg:col-span-2 bg-surface-alt"
-                      : "",
+                    i === 0 || i === 3 ? "md:col-span-2 lg:col-span-2 bg-surface-alt" : "",
                   )}
                 >
                   <div className="absolute right-0 top-0 h-40 w-40 -translate-y-10 translate-x-10 rounded-full bg-brand/5 transition-transform duration-500 group-hover:scale-150" />

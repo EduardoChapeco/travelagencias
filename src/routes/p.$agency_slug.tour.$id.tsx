@@ -66,7 +66,7 @@ function Page() {
       selectedSeats,
       unitPrice,
       pax,
-      t.title
+      t.title,
     );
 
     setBusy(false);

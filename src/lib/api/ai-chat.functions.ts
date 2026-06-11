@@ -124,9 +124,9 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+            Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
           },
-          body: JSON.stringify({ action: "scrape", url: targetUrl })
+          body: JSON.stringify({ action: "scrape", url: targetUrl }),
         });
         if (res.ok) {
           const scrapeData = await res.json();
@@ -156,7 +156,7 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
         content: m.content as string,
       })),
     ];
-    
+
     // Inject the scraped context into the last user message before sending to AI
     if (injectedContext && messages.length > 0) {
       const lastMsg = messages[messages.length - 1];

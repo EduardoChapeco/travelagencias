@@ -26,11 +26,13 @@ function Page() {
         .from("trips")
         .select(
           "id, code, title, status, destination, travel_start, total_sale, currency, agency_id",
-          { count: "exact" }
+          { count: "exact" },
         );
 
       if (search) {
-        query = query.or(`title.ilike.%${search}%,code.ilike.%${search}%,destination.ilike.%${search}%`);
+        query = query.or(
+          `title.ilike.%${search}%,code.ilike.%${search}%,destination.ilike.%${search}%`,
+        );
       }
 
       const from = (page - 1) * PAGE_SIZE;
@@ -49,7 +51,7 @@ function Page() {
       const amap = new Map(ags.map((a) => [a.id, a.name]));
       return {
         data: (data ?? []).map((t) => ({ ...t, agency_name: amap.get(t.agency_id) ?? "—" })),
-        count: count ?? 0
+        count: count ?? 0,
       };
     },
     placeholderData: (prev) => prev,
@@ -64,14 +66,14 @@ function Page() {
 
   return (
     <>
-      <PageHeader 
-        title="Viagens" 
-        description="Últimas viagens registradas em todas as agências." 
+      <PageHeader
+        title="Viagens"
+        description="Últimas viagens registradas em todas as agências."
         actions={
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar viagem, código ou destino..." 
+            <Input
+              placeholder="Buscar viagem, código ou destino..."
               value={searchInput}
               onChange={(e) => {
                 setSearchInput(e.target.value);
@@ -82,8 +84,12 @@ function Page() {
           </div>
         }
       />
-      {q.isLoading && !q.data && <div className="text-sm text-muted-foreground p-6 text-center">Carregando viagens...</div>}
-      {!q.isLoading && totalCount === 0 && <EmptyState title={search ? "Nenhuma viagem encontrada" : "Sem viagens"} />}
+      {q.isLoading && !q.data && (
+        <div className="text-sm text-muted-foreground p-6 text-center">Carregando viagens...</div>
+      )}
+      {!q.isLoading && totalCount === 0 && (
+        <EmptyState title={search ? "Nenhuma viagem encontrada" : "Sem viagens"} />
+      )}
       {q.data && totalCount > 0 && (
         <div className="overflow-hidden rounded-lg border border-border bg-surface">
           <table className="w-full text-sm">
@@ -123,12 +129,17 @@ function Page() {
           </table>
           <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
             <div className="text-xs text-muted-foreground">
-              Mostrando <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a <span className="font-medium text-foreground">{Math.min(page * PAGE_SIZE, totalCount)}</span> de <span className="font-medium text-foreground">{totalCount}</span> viagens
+              Mostrando{" "}
+              <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}
+              <span className="font-medium text-foreground">
+                {Math.min(page * PAGE_SIZE, totalCount)}
+              </span>{" "}
+              de <span className="font-medium text-foreground">{totalCount}</span> viagens
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton 
-                disabled={page === 1} 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+              <GhostButton
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -136,9 +147,9 @@ function Page() {
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <GhostButton 
-                disabled={page >= totalPages} 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              <GhostButton
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />

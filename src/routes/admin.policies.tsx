@@ -4,7 +4,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History } from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, PrimaryButton, GhostButton, StatusBadge, fmtDate } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+  fmtDate,
+} from "@/components/ui/form";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import DOMPurify from "isomorphic-dompurify";
 import {
@@ -43,9 +50,7 @@ function Page() {
   const activeDoc = docs.find((d) => d.kind === activeKind);
 
   function updateDoc<K extends keyof PolicyDoc>(k: K, v: PolicyDoc[K]) {
-    setDocs((prev) =>
-      prev.map((d) => (d.kind === activeKind ? { ...d, [k]: v } : d))
-    );
+    setDocs((prev) => prev.map((d) => (d.kind === activeKind ? { ...d, [k]: v } : d)));
   }
 
   async function save() {
@@ -79,7 +84,10 @@ function Page() {
   }
 
   async function publish() {
-    if (!activeDoc?.id) { toast.error("Salve antes de publicar."); return; }
+    if (!activeDoc?.id) {
+      toast.error("Salve antes de publicar.");
+      return;
+    }
     setBusy(true);
     try {
       await publishPolicy(activeDoc.id);
@@ -181,7 +189,11 @@ function Page() {
                   onClick={() => setPreviewMode((v) => !v)}
                   className="flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt"
                 >
-                  {previewMode ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  {previewMode ? (
+                    <EyeOff className="h-3.5 w-3.5" />
+                  ) : (
+                    <Eye className="h-3.5 w-3.5" />
+                  )}
                   {previewMode ? "Editar" : "Previa"}
                 </button>
                 {activeDoc.is_published ? (
@@ -193,10 +205,20 @@ function Page() {
                     <Eye className="h-3.5 w-3.5" /> Publicar
                   </GhostButton>
                 )}
-                <GhostButton type="button" onClick={saveAsNewVersion} disabled={busy} className="gap-1.5 text-xs">
+                <GhostButton
+                  type="button"
+                  onClick={saveAsNewVersion}
+                  disabled={busy}
+                  className="gap-1.5 text-xs"
+                >
                   <History className="h-3.5 w-3.5" /> Nova Versao
                 </GhostButton>
-                <PrimaryButton type="button" onClick={save} disabled={busy} className="gap-1.5 text-xs">
+                <PrimaryButton
+                  type="button"
+                  onClick={save}
+                  disabled={busy}
+                  className="gap-1.5 text-xs"
+                >
                   <Save className="h-3.5 w-3.5" />
                   {busy ? "Salvando..." : "Salvar"}
                 </PrimaryButton>

@@ -41,4 +41,3 @@ export const supabaseAdmin = new Proxy({} as ReturnType<typeof createSupabaseAdm
     return typeof value === "function" ? value.bind(_supabaseAdmin) : value;
   },
 });
-

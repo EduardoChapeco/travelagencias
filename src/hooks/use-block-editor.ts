@@ -15,9 +15,7 @@ export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
   }, []);
 
   const updateBlock = useCallback((id: string, updates: Partial<PortalBlock>) => {
-    setBlocks((prev) =>
-      prev.map((b) => (b.id === id ? ({ ...b, ...updates } as PortalBlock) : b))
-    );
+    setBlocks((prev) => prev.map((b) => (b.id === id ? ({ ...b, ...updates } as PortalBlock) : b)));
   }, []);
 
   const removeBlock = useCallback((id: string) => {

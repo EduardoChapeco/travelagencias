@@ -1,26 +1,26 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type Stage = { 
-  id: string; 
-  name: string; 
-  position: number; 
-  color: string; 
-  is_won: boolean; 
-  is_lost: boolean; 
+export type Stage = {
+  id: string;
+  name: string;
+  position: number;
+  color: string;
+  is_won: boolean;
+  is_lost: boolean;
 };
 
 export type Lead = {
-  id: string; 
-  stage_id: string; 
-  owner_id: string | null; 
-  name: string; 
-  email: string | null; 
+  id: string;
+  stage_id: string;
+  owner_id: string | null;
+  name: string;
+  email: string | null;
   phone: string | null;
-  destination: string | null; 
-  estimated_value: number; 
-  pax_count: number; 
+  destination: string | null;
+  estimated_value: number;
+  pax_count: number;
   source: string | null;
-  position: number; 
+  position: number;
   created_at: string;
   // Extended fields from the DB schema
   agency_id: string;
@@ -43,7 +43,6 @@ export type Activity = {
   metadata: Record<string, unknown> | null;
   created_at: string;
 };
-
 
 export async function fetchStages(agencyId: string): Promise<Stage[]> {
   const { data, error } = await supabase
@@ -89,12 +88,15 @@ export async function initDefaultStages(agencyId: string) {
 }
 
 export async function archiveLead(leadId: string) {
-  const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() } as any).eq('id', leadId);
+  const { error } = await supabase
+    .from("leads")
+    .update({ deleted_at: new Date().toISOString() } as any)
+    .eq("id", leadId);
   if (error) throw error;
 }
 
 export async function transferLead(leadId: string, newOwnerId: string) {
-  const { error } = await supabase.from('leads').update({ owner_id: newOwnerId }).eq('id', leadId);
+  const { error } = await supabase.from("leads").update({ owner_id: newOwnerId }).eq("id", leadId);
   if (error) throw error;
 }
 
@@ -157,18 +159,25 @@ export async function saveStageUpdates(agencyId: string, localStages: Stage[]) {
 }
 
 export async function getLeadsCountInStage(stageId: string): Promise<number> {
-  const { count, error } = await supabase.from('leads').select('*', { count: 'exact', head: true }).eq('stage_id', stageId).is('deleted_at', null);
+  const { count, error } = await supabase
+    .from("leads")
+    .select("*", { count: "exact", head: true })
+    .eq("stage_id", stageId)
+    .is("deleted_at", null);
   if (error) throw error;
   return count || 0;
 }
 
 export async function moveLeadsToStage(fromStageId: string, toStageId: string) {
-  const { error } = await supabase.from('leads').update({ stage_id: toStageId }).eq('stage_id', fromStageId);
+  const { error } = await supabase
+    .from("leads")
+    .update({ stage_id: toStageId })
+    .eq("stage_id", fromStageId);
   if (error) throw error;
 }
 
 export async function deleteStage(stageId: string) {
-  const { error } = await supabase.from('lead_stages').delete().eq('id', stageId);
+  const { error } = await supabase.from("lead_stages").delete().eq("id", stageId);
   if (error) throw error;
 }
 
@@ -181,28 +190,47 @@ export async function fetchLeadById(leadId: string): Promise<Lead | null> {
 }
 
 export async function fetchLeadActivities(leadId: string): Promise<Activity[]> {
-  const { data, error } = await supabase.from("lead_activities").select("*").eq("lead_id", leadId).order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("lead_activities")
+    .select("*")
+    .eq("lead_id", leadId)
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data as unknown as Activity[];
 }
 
 export async function fetchLeadOwnerProfile(ownerId: string) {
-  const { data } = await supabase.from("profiles").select("full_name, avatar_url").eq("id", ownerId).maybeSingle();
+  const { data } = await supabase
+    .from("profiles")
+    .select("full_name, avatar_url")
+    .eq("id", ownerId)
+    .maybeSingle();
   return data;
 }
 
 export async function promoteLeadToClient(leadId: string) {
-  const { data, error } = await (supabase.rpc as any)("promote_lead_to_client", { _lead_id: leadId });
+  const { data, error } = await (supabase.rpc as any)("promote_lead_to_client", {
+    _lead_id: leadId,
+  });
   if (error) throw error;
   return data;
 }
 
 export async function updateLead(leadId: string, payload: Partial<Lead>) {
-  const { error } = await supabase.from("leads").update(payload as any).eq("id", leadId);
+  const { error } = await supabase
+    .from("leads")
+    .update(payload as any)
+    .eq("id", leadId);
   if (error) throw error;
 }
 
-export async function addLeadActivity(payload: { leadId: string; agencyId: string; type: string; content: string; metadata?: any }) {
+export async function addLeadActivity(payload: {
+  leadId: string;
+  agencyId: string;
+  type: string;
+  content: string;
+  metadata?: any;
+}) {
   const user = (await supabase.auth.getUser()).data.user;
   const { error } = await (supabase as any).from("lead_activities").insert({
     lead_id: payload.leadId,
@@ -216,7 +244,10 @@ export async function addLeadActivity(payload: { leadId: string; agencyId: strin
 }
 
 export async function updateLeadActivity(activityId: string, content: string | null) {
-  const { error } = await supabase.from("lead_activities").update({ content } as any).eq("id", activityId);
+  const { error } = await supabase
+    .from("lead_activities")
+    .update({ content } as any)
+    .eq("id", activityId);
   if (error) throw error;
 }
 

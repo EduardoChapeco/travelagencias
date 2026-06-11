@@ -40,7 +40,12 @@ import { BlockRenderer } from "@/components/portal/BlockRenderer";
 import { PortalBlock, PortalBlockType, BLOCK_DEFAULTS } from "@/lib/cms-types";
 import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
 import { AILandingPageSheet } from "@/components/ui/AILandingPageSheet";
-import { fetchPortalPage, fetchPortalPageVersions, savePortalPageDraft, publishPortalPage } from "@/services/portal";
+import {
+  fetchPortalPage,
+  fetchPortalPageVersions,
+  savePortalPageDraft,
+  publishPortalPage,
+} from "@/services/portal";
 import { useBlockEditor } from "@/hooks/use-block-editor";
 import {
   DropdownMenu,
@@ -70,7 +75,7 @@ function PageEditorRoute() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { slug, page_id } = Route.useParams();
-  
+
   const isNew = page_id === "new";
 
   const { data: initialData, isLoading } = useQuery({
@@ -85,15 +90,8 @@ function PageEditorRoute() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
 
-  const {
-    blocks,
-    setBlocks,
-    setInitialBlocks,
-    addBlock,
-    updateBlock,
-    removeBlock,
-    moveBlock,
-  } = useBlockEditor();
+  const { blocks, setBlocks, setInitialBlocks, addBlock, updateBlock, removeBlock, moveBlock } =
+    useBlockEditor();
 
   const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<"content" | "seo" | "history">("content");
@@ -125,7 +123,7 @@ function PageEditorRoute() {
   async function saveDraftInternal() {
     setSubmitting(true);
     const finalSlug = pageSlug || slugify(title);
-    
+
     return await savePortalPageDraft(
       agency!.id,
       initialData?.id || null,
@@ -134,7 +132,7 @@ function PageEditorRoute() {
       finalSlug,
       template,
       blocks,
-      { meta_title: metaTitle, meta_description: metaDesc }
+      { meta_title: metaTitle, meta_description: metaDesc },
     );
   }
 
@@ -144,9 +142,12 @@ function PageEditorRoute() {
       const newPageId = await saveDraftInternal();
       toast.success("Rascunho salvo");
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
-      
+
       if (isNew && newPageId) {
-        navigate({ to: "/agency/$slug/portal/pages/$page_id", params: { slug, page_id: newPageId } });
+        navigate({
+          to: "/agency/$slug/portal/pages/$page_id",
+          params: { slug, page_id: newPageId },
+        });
       }
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar");
@@ -174,7 +175,12 @@ function PageEditorRoute() {
   }
 
   async function revertVersion(v: any) {
-    if (!confirm("Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.")) return;
+    if (
+      !confirm(
+        "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
+      )
+    )
+      return;
     setTitle(v.title);
     setInitialBlocks(v.blocks || []);
     setMetaTitle(v.seo?.meta_title || "");
@@ -206,7 +212,7 @@ function PageEditorRoute() {
             <StatusBadge tone="neutral">Rascunho</StatusBadge>
           )}
         </div>
-        
+
         <div className="flex items-center gap-3">
           <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting}>
             Salvar Rascunho
@@ -219,7 +225,6 @@ function PageEditorRoute() {
 
       {/* Main Studio Area */}
       <div className="flex flex-1 overflow-hidden">
-        
         {/* Left Sidebar: Controls & Settings */}
         <div className="w-[400px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
           <div className="flex border-b border-border px-6 shrink-0 bg-surface">
@@ -256,10 +261,19 @@ function PageEditorRoute() {
                     <h3 className="text-sm font-semibold">Vers├Áes Salvas</h3>
                     <p className="text-xs text-muted-foreground">├Ültimas altera├º├Áes</p>
                   </div>
-                  {versionsQuery.isLoading && <div className="text-xs text-muted-foreground">Carregando hist├│rico...</div>}
-                  {versionsQuery.data?.length === 0 && <div className="text-xs text-muted-foreground">Nenhuma vers├úo salva ainda.</div>}
+                  {versionsQuery.isLoading && (
+                    <div className="text-xs text-muted-foreground">Carregando hist├│rico...</div>
+                  )}
+                  {versionsQuery.data?.length === 0 && (
+                    <div className="text-xs text-muted-foreground">
+                      Nenhuma vers├úo salva ainda.
+                    </div>
+                  )}
                   {versionsQuery.data?.map((v) => (
-                    <div key={v.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30">
+                    <div
+                      key={v.id}
+                      className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30"
+                    >
                       <div className="flex justify-between items-center">
                         <div>
                           <span className="text-sm font-medium">{v.title}</span>
@@ -327,7 +341,7 @@ function PageEditorRoute() {
                       <div className="flex items-center gap-4">
                         <h3 className="text-sm font-semibold">Construtor de Blocos</h3>
                       </div>
-                      
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
@@ -340,36 +354,41 @@ function PageEditorRoute() {
                         <DropdownMenuContent align="end" className="w-56">
                           <DropdownMenuLabel>Layout B├ísico</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("hero")}>
-                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero (Capa principal)
+                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero
+                            (Capa principal)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("text")}>
                             <Type className="w-4 h-4 mr-2 text-muted-foreground" /> Texto com imagem
                           </DropdownMenuItem>
-                          
+
                           <DropdownMenuSeparator />
                           <DropdownMenuLabel>M├│dulos Espec├¡ficos</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("gallery")}>
-                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de fotos
+                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de
+                            fotos
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("features")}>
-                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais (Features)
+                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais
+                            (Features)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("faq")}>
-                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas Frequentes (FAQ)
+                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas
+                            Frequentes (FAQ)
                           </DropdownMenuItem>
-                          
+
                           <DropdownMenuSeparator />
                           <DropdownMenuLabel>Convers├úo</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("cta")}>
                             <Megaphone className="w-4 h-4 mr-2 text-brand" /> Call to Action (Faixa)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("contact")}>
-                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato Integrado
+                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato
+                            Integrado
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                    
+
                     <button
                       type="button"
                       onClick={() => setAiModalOpen(true)}
@@ -434,7 +453,9 @@ function PageEditorRoute() {
                                 <Field label="T├¡tulo (Headline)">
                                   <Input
                                     value={block.title}
-                                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { title: e.target.value })
+                                    }
                                   />
                                 </Field>
                                 <Field label="Subt├¡tulo">
@@ -535,19 +556,23 @@ function PageEditorRoute() {
                                 <Field label="T├¡tulo da se├º├úo">
                                   <Input
                                     value={block.title}
-                                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { title: e.target.value })
+                                    }
                                   />
                                 </Field>
                                 <Field label="Texto de introdu├º├úo">
                                   <Textarea
                                     value={block.text}
-                                    onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { text: e.target.value })
+                                    }
                                     rows={2}
                                   />
                                 </Field>
                                 <p className="text-[10px] text-muted-foreground mt-1">
-                                  Este bloco puxar├í automaticamente as redes sociais e o formul├írio de
-                                  lead da ag├¬ncia no portal p├║blico.
+                                  Este bloco puxar├í automaticamente as redes sociais e o
+                                  formul├írio de lead da ag├¬ncia no portal p├║blico.
                                 </p>
                               </>
                             )}
@@ -557,14 +582,21 @@ function PageEditorRoute() {
                                 <Field label="T├¡tulo da Se├º├úo">
                                   <Input
                                     value={block.title}
-                                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { title: e.target.value })
+                                    }
                                     placeholder="Ex: Nossos diferenciais"
                                   />
                                 </Field>
                                 <div className="space-y-2">
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Itens da Grade</label>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Itens da Grade
+                                  </label>
                                   {(block.items || []).map((item, itemIdx) => (
-                                    <div key={itemIdx} className="grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-start border border-border p-2 rounded-lg bg-surface">
+                                    <div
+                                      key={itemIdx}
+                                      className="grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-start border border-border p-2 rounded-lg bg-surface"
+                                    >
                                       <Input
                                         className="w-12 text-center px-1"
                                         placeholder="Icon"
@@ -596,7 +628,9 @@ function PageEditorRoute() {
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          const newItems = block.items.filter((_, idx) => idx !== itemIdx);
+                                          const newItems = block.items.filter(
+                                            (_, idx) => idx !== itemIdx,
+                                          );
                                           updateBlock(block.id, { items: newItems });
                                         }}
                                         className="p-2 text-muted-foreground hover:text-destructive"
@@ -608,7 +642,14 @@ function PageEditorRoute() {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const newItems = [...(block.items || []), { icon: "Ô£¿", title: "Novo item", description: "Descri├º├úo" }];
+                                      const newItems = [
+                                        ...(block.items || []),
+                                        {
+                                          icon: "Ô£¿",
+                                          title: "Novo item",
+                                          description: "Descri├º├úo",
+                                        },
+                                      ];
                                       updateBlock(block.id, { items: newItems });
                                     }}
                                     className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
@@ -624,26 +665,34 @@ function PageEditorRoute() {
                                 <Field label="T├¡tulo de Impacto (Headline)">
                                   <Input
                                     value={block.title}
-                                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { title: e.target.value })
+                                    }
                                   />
                                 </Field>
                                 <Field label="Subt├¡tulo">
                                   <Input
                                     value={block.subtitle}
-                                    onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { subtitle: e.target.value })
+                                    }
                                   />
                                 </Field>
                                 <div className="grid grid-cols-2 gap-3">
                                   <Field label="Bot├úo (Label)">
                                     <Input
                                       value={block.button_label}
-                                      onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
+                                      onChange={(e) =>
+                                        updateBlock(block.id, { button_label: e.target.value })
+                                      }
                                     />
                                   </Field>
                                   <Field label="Bot├úo (Link)">
                                     <Input
                                       value={block.button_link}
-                                      onChange={(e) => updateBlock(block.id, { button_link: e.target.value })}
+                                      onChange={(e) =>
+                                        updateBlock(block.id, { button_link: e.target.value })
+                                      }
                                     />
                                   </Field>
                                 </div>
@@ -655,13 +704,20 @@ function PageEditorRoute() {
                                 <Field label="T├¡tulo Principal">
                                   <Input
                                     value={block.title}
-                                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                                    onChange={(e) =>
+                                      updateBlock(block.id, { title: e.target.value })
+                                    }
                                   />
                                 </Field>
                                 <div className="space-y-3">
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Perguntas e Respostas</label>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">
+                                    Perguntas e Respostas
+                                  </label>
                                   {(block.items || []).map((item, itemIdx) => (
-                                    <div key={itemIdx} className="flex gap-2 items-start border border-border p-3 rounded-lg bg-surface">
+                                    <div
+                                      key={itemIdx}
+                                      className="flex gap-2 items-start border border-border p-3 rounded-lg bg-surface"
+                                    >
                                       <div className="flex-1 space-y-2">
                                         <Input
                                           placeholder="Pergunta"
@@ -687,7 +743,9 @@ function PageEditorRoute() {
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          const newItems = block.items.filter((_, idx) => idx !== itemIdx);
+                                          const newItems = block.items.filter(
+                                            (_, idx) => idx !== itemIdx,
+                                          );
                                           updateBlock(block.id, { items: newItems });
                                         }}
                                         className="p-2 text-muted-foreground hover:text-destructive"
@@ -699,7 +757,10 @@ function PageEditorRoute() {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      const newItems = [...(block.items || []), { question: "Nova Pergunta?", answer: "Sua resposta aqui" }];
+                                      const newItems = [
+                                        ...(block.items || []),
+                                        { question: "Nova Pergunta?", answer: "Sua resposta aqui" },
+                                      ];
                                       updateBlock(block.id, { items: newItems });
                                     }}
                                     className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
@@ -725,14 +786,14 @@ function PageEditorRoute() {
           <div className="w-full max-w-5xl h-full bg-surface border border-border rounded-xl shadow-none overflow-y-auto ring-1 ring-border relative">
             {/* Minimalist browser bar */}
             <div className="sticky top-0 z-20 flex h-10 w-full items-center border-b border-border bg-surface px-4 shadow-none">
-               <div className="flex gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-                  <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-                  <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-               </div>
-               <div className="mx-auto px-4 py-0.5 text-[10px] font-medium text-muted-foreground bg-surface-alt rounded-md border border-border">
-                 {agency.slug}.travelos.com/{pageSlug || "preview"}
-               </div>
+              <div className="flex gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
+              </div>
+              <div className="mx-auto px-4 py-0.5 text-[10px] font-medium text-muted-foreground bg-surface-alt rounded-md border border-border">
+                {agency.slug}.travelos.com/{pageSlug || "preview"}
+              </div>
             </div>
 
             <div className="w-full min-h-full">
@@ -742,23 +803,25 @@ function PageEditorRoute() {
                 <div className="flex flex-col items-center justify-center h-[500px] text-muted-foreground">
                   <LayoutTemplate className="w-12 h-12 mb-4 opacity-20" />
                   <p className="text-sm font-medium">Sua p├ígina est├í vazia</p>
-                  <p className="text-xs mt-1">Adicione blocos pelo painel esquerdo para come├ºar a montar o layout.</p>
+                  <p className="text-xs mt-1">
+                    Adicione blocos pelo painel esquerdo para come├ºar a montar o layout.
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      
-      <AILandingPageSheet 
-        open={aiModalOpen} 
-        onOpenChange={setAiModalOpen} 
+
+      <AILandingPageSheet
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
         onGenerate={(newBlocks: any[]) => {
           setBlocks([...blocks, ...newBlocks]);
           if (!title) {
             setTitle("Landing Page Gerada por IA");
           }
-        }} 
+        }}
       />
     </div>
   );

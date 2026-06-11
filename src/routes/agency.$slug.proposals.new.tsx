@@ -64,9 +64,9 @@ function NewProposal() {
         valid_until: validUntil || undefined,
         notes: notes || undefined,
       };
-      
+
       const { id } = await createProposal(agency.id, payload, u.user?.id);
-      
+
       toast.success("Cotação criada com sucesso!");
       navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id } });
     } catch (error: any) {

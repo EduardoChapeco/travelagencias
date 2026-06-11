@@ -10,11 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export interface ComboboxOption {
   value: string;
@@ -50,11 +46,16 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
-          className={cn("w-full justify-between font-normal bg-surface hover:bg-surface-alt", className)}
+          className={cn(
+            "w-full justify-between font-normal bg-surface hover:bg-surface-alt",
+            className,
+          )}
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
-            : <span className="text-muted-foreground">{placeholder}</span>}
+          {value ? (
+            options.find((option) => option.value === value)?.label
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -76,7 +77,7 @@ export function Combobox({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100 text-brand" : "opacity-0"
+                      value === option.value ? "opacity-100 text-brand" : "opacity-0",
                     )}
                   />
                   {option.label}

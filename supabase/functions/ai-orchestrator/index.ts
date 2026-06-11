@@ -12,10 +12,10 @@ async function getCryptoKey(password: string) {
   const enc = new TextEncoder();
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
-    enc.encode(password.padEnd(32, '0').substring(0, 32)),
+    enc.encode(password.padEnd(32, "0").substring(0, 32)),
     { name: "AES-GCM" },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
   return keyMaterial;
 }
@@ -26,11 +26,7 @@ async function decryptData(encodedBase64: string, password: string) {
   const iv = payload.slice(0, 12);
   const ciphertext = payload.slice(12);
 
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
-    key,
-    ciphertext
-  );
+  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
   return new TextDecoder().decode(decrypted);
 }
 
@@ -57,7 +53,10 @@ serve(async (req) => {
     });
 
     if (!isServiceRole) {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) throw new Error("Unauthorized.");
     }
 
@@ -72,7 +71,8 @@ serve(async (req) => {
       throw new Error("API Keys not configured in global_settings.");
     }
 
-    const encryptionKey = Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
+    const encryptionKey =
+      Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
     const decryptedString = await decryptData(gs.value.payload, encryptionKey);
     const keys = JSON.parse(decryptedString);
 
@@ -82,26 +82,29 @@ serve(async (req) => {
     // --- Action: TEXT COMPLETION (AI Fallback logic) ---
     if (action === "completion") {
       const { prompt, systemPrompt, modelPreference } = body; // modelPreference = 'fast' (Groq) or 'smart' (Gemini/OpenRouter)
-      
+
       let aiResult = null;
       let usedProvider = "";
 
       // Try GEMINI first (if configured in env)
-      if (modelPreference !== 'fast' && Deno.env.get("GEMINI_API_KEY")) {
-         try {
-           const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`;
-           const res = await fetch(geminiUrl, {
-             method: "POST", headers: { "Content-Type": "application/json" },
-             body: JSON.stringify({
-               contents: [{ parts: [{ text: `${systemPrompt}\n\n${prompt}` }] }],
-             })
-           });
-           if (res.ok) {
-             const data = await res.json();
-             aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text;
-             usedProvider = "gemini";
-           }
-         } catch(e) { console.error("Gemini failed", e); }
+      if (modelPreference !== "fast" && Deno.env.get("GEMINI_API_KEY")) {
+        try {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`;
+          const res = await fetch(geminiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `${systemPrompt}\n\n${prompt}` }] }],
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            usedProvider = "gemini";
+          }
+        } catch (e) {
+          console.error("Gemini failed", e);
+        }
       }
 
       // Fallback: GROQ (Llama 3)
@@ -109,21 +112,26 @@ serve(async (req) => {
         try {
           const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
-            headers: { "Authorization": `Bearer ${keys.groq_key}`, "Content-Type": "application/json" },
+            headers: {
+              Authorization: `Bearer ${keys.groq_key}`,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
               model: "llama3-70b-8192",
               messages: [
                 { role: "system", content: systemPrompt || "You are a helpful assistant." },
-                { role: "user", content: prompt }
-              ]
-            })
+                { role: "user", content: prompt },
+              ],
+            }),
           });
           if (res.ok) {
             const data = await res.json();
             aiResult = data.choices[0].message.content;
             usedProvider = "groq";
           }
-        } catch(e) { console.error("Groq failed", e); }
+        } catch (e) {
+          console.error("Groq failed", e);
+        }
       }
 
       // Fallback: OpenRouter
@@ -131,21 +139,26 @@ serve(async (req) => {
         try {
           const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
-            headers: { "Authorization": `Bearer ${keys.openrouter_key}`, "Content-Type": "application/json" },
+            headers: {
+              Authorization: `Bearer ${keys.openrouter_key}`,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
               model: "anthropic/claude-3-haiku",
               messages: [
                 { role: "system", content: systemPrompt || "You are a helpful assistant." },
-                { role: "user", content: prompt }
-              ]
-            })
+                { role: "user", content: prompt },
+              ],
+            }),
           });
           if (res.ok) {
             const data = await res.json();
             aiResult = data.choices[0].message.content;
             usedProvider = "openrouter";
           }
-        } catch(e) { console.error("OpenRouter failed", e); }
+        } catch (e) {
+          console.error("OpenRouter failed", e);
+        }
       }
 
       if (!aiResult) throw new Error("All AI providers failed or are not configured.");
@@ -158,12 +171,18 @@ serve(async (req) => {
     // --- Action: SCRAPE (Firecrawl / Stell) ---
     if (action === "scrape") {
       const { url, useStell } = body;
-      
+
       if (useStell && keys.stell_key) {
-         // Placeholder for Stell.dev integration
-         return new Response(JSON.stringify({ result: `Scraped via Stell.dev (Simulated). Content of ${url}`, provider: "stell" }), {
-           headers: { ...corsHeaders, "Content-Type": "application/json" },
-         });
+        // Placeholder for Stell.dev integration
+        return new Response(
+          JSON.stringify({
+            result: `Scraped via Stell.dev (Simulated). Content of ${url}`,
+            provider: "stell",
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
 
       if (keys.firecrawl_key) {
@@ -171,23 +190,29 @@ serve(async (req) => {
         const res = await fetch("https://api.firecrawl.dev/v0/scrape", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${keys.firecrawl_key}`,
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${keys.firecrawl_key}`,
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url }),
         });
-        
+
         if (!res.ok) {
           const err = await res.json();
           throw new Error(`Firecrawl Error: ${err.error || res.statusText}`);
         }
-        
+
         const data = await res.json();
-        return new Response(JSON.stringify({ result: data.data?.markdown || data.data?.content || "", provider: "firecrawl" }), {
-           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            result: data.data?.markdown || data.data?.content || "",
+            provider: "firecrawl",
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       }
-      
+
       throw new Error("No scraper keys configured.");
     }
 

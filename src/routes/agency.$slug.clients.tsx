@@ -24,15 +24,24 @@ import { ColumnDef } from "@tanstack/react-table";
 import { NewClientWizard } from "@/components/clients/NewClientWizard";
 import { Users } from "lucide-react";
 
-export const clientsQueryOptions = (agencyId: string, q: string, page: number, pageSize: number, showDeleted: boolean) =>
+export const clientsQueryOptions = (
+  agencyId: string,
+  q: string,
+  page: number,
+  pageSize: number,
+  showDeleted: boolean,
+) =>
   queryOptions({
     queryKey: ["clients", agencyId, q, page, showDeleted],
     queryFn: async () => {
       let qb = supabase
         .from("clients")
-        .select("id, full_name, legal_name, kind, document, email, phone, created_at, tags, deleted_at", {
-          count: "exact",
-        })
+        .select(
+          "id, full_name, legal_name, kind, document, email, phone, created_at, tags, deleted_at",
+          {
+            count: "exact",
+          },
+        )
         .eq("agency_id", agencyId)
         .order("created_at", { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1);
@@ -103,10 +112,13 @@ function ClientsPage() {
 
   const restoreMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("clients").update({
-        // @ts-ignore
-        deleted_at: null,
-      }).eq("id", id);
+      const { error } = await supabase
+        .from("clients")
+        .update({
+          // @ts-ignore
+          deleted_at: null,
+        })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -151,7 +163,9 @@ function ClientsPage() {
       accessorKey: "document",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Documento" />,
       cell: ({ row }) => (
-        <span className="font-mono text-xs text-muted-foreground">{row.original.document ?? "—"}</span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {row.original.document ?? "—"}
+        </span>
       ),
     },
     {
@@ -219,14 +233,16 @@ function ClientsPage() {
               className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
             />
           </div>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">{list.data?.count ?? 0} clientes</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            {list.data?.count ?? 0} clientes
+          </span>
         </div>
-        
+
         <button
           onClick={() => setShowDeleted(!showDeleted)}
           className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
-            showDeleted 
-              ? "bg-danger text-danger-foreground border-danger" 
+            showDeleted
+              ? "bg-danger text-danger-foreground border-danger"
               : "bg-surface border-border text-muted-foreground hover:text-foreground"
           }`}
         >

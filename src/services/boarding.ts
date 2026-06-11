@@ -36,13 +36,15 @@ export type PassengerMin = {
 export async function fetchBoardingCards(agencyId: string): Promise<BoardingCard[]> {
   const { data, error } = await supabase
     .from("boarding_cards")
-    .select("id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count")
+    .select(
+      "id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count",
+    )
     .eq("agency_id", agencyId)
     .order("position");
   if (error) throw new Error(error.message);
 
   const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
-  let tripMap: Record<string, { title: string; destination?: string }> = {};
+  const tripMap: Record<string, { title: string; destination?: string }> = {};
 
   if (tripIds.length > 0) {
     const { data: trips } = await supabase
@@ -86,7 +88,7 @@ export async function fetchTripPassengersMin(tripId: string): Promise<PassengerM
 export async function updateBoardingCardPositions(
   cardId: string,
   toStatus: string,
-  reorderedIds: string[]
+  reorderedIds: string[],
 ): Promise<void> {
   const { error } = await (supabase.rpc as any)("persist_boarding_card_move", {
     _card_id: cardId,
@@ -96,7 +98,10 @@ export async function updateBoardingCardPositions(
   if (error) throw new Error(error.message);
 }
 
-export async function updateBoardingCardChecklist(cardId: string, checklist: ChecklistItem[]): Promise<void> {
+export async function updateBoardingCardChecklist(
+  cardId: string,
+  checklist: ChecklistItem[],
+): Promise<void> {
   const { error } = await supabase
     .from("boarding_cards")
     .update({ checklist: checklist as never })
@@ -116,7 +121,8 @@ export type CreateBoardingCardPayload = {
 };
 
 export async function createBoardingCard(payload: CreateBoardingCardPayload): Promise<void> {
-  const { agencyId, tripId, pnr, airline, departureDate, paxCount, alerts, passengersList } = payload;
+  const { agencyId, tripId, pnr, airline, departureDate, paxCount, alerts, passengersList } =
+    payload;
   const { data: u } = await supabase.auth.getUser();
 
   const checklist =

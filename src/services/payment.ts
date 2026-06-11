@@ -17,7 +17,10 @@ export async function fetchPublicContractByToken(token: string): Promise<any> {
 }
 
 export async function fetchPublicInstallmentsByToken(token: string): Promise<PublicInstallment[]> {
-  const { data, error } = await supabase.rpc("public_payment_by_token" as never, { _token: token } as never);
+  const { data, error } = await supabase.rpc(
+    "public_payment_by_token" as never,
+    { _token: token } as never,
+  );
   if (error) throw new Error(error.message);
   return (data as unknown as PublicInstallment[]) || [];
 }

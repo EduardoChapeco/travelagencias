@@ -60,7 +60,7 @@ export type PortalBlockType = PortalBlock["type"];
 
 /** Default empty values for each block type */
 export const BLOCK_DEFAULTS: {
-  [K in PortalBlockType]: Omit<Extract<PortalBlock, { type: K }>, "id">
+  [K in PortalBlockType]: Omit<Extract<PortalBlock, { type: K }>, "id">;
 } = {
   hero: {
     type: "hero",
