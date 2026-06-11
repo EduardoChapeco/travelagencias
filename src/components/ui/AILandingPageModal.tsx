@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
+import { SheetPage } from "./sheet";
 import { Field, PrimaryButton, GhostButton, Textarea } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -88,39 +82,39 @@ Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque T
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Wand2 className="w-5 h-5 text-brand" /> 
-            Arquiteto de Landing Pages IA
-          </DialogTitle>
-          <DialogDescription>
-            Deixe o Growth Hacker da nossa Inteligência Artificial desenhar sua página focada em conversão em poucos segundos.
-          </DialogDescription>
-        </DialogHeader>
+    <SheetPage 
+      isOpen={open} 
+      onClose={() => onOpenChange(false)} 
+      title="Arquiteto de Landing Pages IA"
+      width="clamp(400px, 40vw, 600px)"
+    >
+      <div className="mb-6 bg-surface-alt/50 p-4 rounded-xl border border-border">
+        <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <Wand2 className="w-4 h-4 text-brand" />
+          Deixe o Growth Hacker da Inteligência Artificial desenhar sua página focada em conversão em poucos segundos.
+        </p>
+      </div>
 
-        <form onSubmit={handleGenerate} className="space-y-4 pt-2">
-          <Field label="Descreva o que quer vender" hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais.">
-            <Textarea 
-              placeholder="Digite o objetivo da sua página..."
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              rows={4}
-            />
-          </Field>
+      <form onSubmit={handleGenerate} className="space-y-4">
+        <Field label="Descreva o que quer vender" hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais.">
+          <Textarea 
+            placeholder="Digite o objetivo da sua página..."
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            rows={4}
+          />
+        </Field>
 
-          <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-            <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
-              Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit" disabled={loading} className="gap-2">
-              <Wand2 className="w-4 h-4" /> 
-              {loading ? "Montando Estrutura..." : "Gerar Landing Page Inteira"}
-            </PrimaryButton>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
+          <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
+            Cancelar
+          </GhostButton>
+          <PrimaryButton type="submit" disabled={loading} className="gap-2">
+            <Wand2 className="w-4 h-4" /> 
+            {loading ? "Montando Estrutura..." : "Gerar Landing Page Inteira"}
+          </PrimaryButton>
+        </div>
+      </form>
+    </SheetPage>
   );
 }
