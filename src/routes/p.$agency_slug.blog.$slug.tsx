@@ -166,7 +166,7 @@ function PublicBlogPage() {
           <div className="mt-20 pt-12 border-t border-border">
             <h3 className="text-2xl font-black tracking-tight mb-8">Artigos Relacionados</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {related.map(r => (
+              {related.map((r: any) => (
                 <a key={r.slug} href={`/p/${agency_slug}/blog/${r.slug}`} className="group flex flex-col gap-3">
                   <div className="aspect-video bg-surface-alt rounded-2xl overflow-hidden">
                     {r.cover_image_url ? (

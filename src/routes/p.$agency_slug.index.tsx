@@ -143,7 +143,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl">
             <h2 className="mb-8 text-2xl font-bold tracking-tight">Próximas viagens em grupo</h2>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {tours.map((t) => (
+              {tours.map((t: any) => (
                 <Link
                   key={t.id}
                   to="/p/$agency_slug/tour/$id"
@@ -197,7 +197,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl">
             <h2 className="mb-4 text-xl font-semibold tracking-tight">Blog</h2>
             <div className="grid gap-4 md:grid-cols-3">
-              {posts.map((p) => (
+              {posts.map((p: any) => (
                 <Link
                   key={p.id}
                   to="/p/$agency_slug/blog/$slug"
