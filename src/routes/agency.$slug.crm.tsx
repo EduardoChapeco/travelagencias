@@ -709,9 +709,9 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-surface border border-border rounded-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface-alt/30">
+    <div className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+        <div className="px-6 py-5 border-b border-border flex shrink-0 items-center justify-between bg-surface-alt/30">
           <div>
             <h2 className="text-lg font-bold text-foreground">Configurar Funil (Kanban)</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Renomeie, mude cores ou crie novas colunas.</p>

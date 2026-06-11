@@ -517,8 +517,8 @@ function TripVouchers() {
       </div>
 
       {storyVoucher && trip && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative flex flex-col items-center gap-4 bg-surface p-6 rounded-2xl border border-border w-full max-w-lg ">
+        <div className="fixed inset-0 z-[100] flex justify-end bg-black/80 backdrop-blur-sm" onClick={() => setStoryVoucher(null)}>
+          <div className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border bg-surface p-6 animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
             <p className="text-sm text-muted-foreground text-center">
               Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes sociais.

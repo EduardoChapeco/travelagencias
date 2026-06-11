@@ -516,9 +516,9 @@ function ClientTripDetail() {
 
       {/* Modal Cancelamento */}
       {showCancelModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-surface rounded-3xl w-full max-w-lg border border-border overflow-hidden">
-            <div className="bg-danger p-6 text-center text-danger-foreground">
+        <div className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => setShowCancelModal(false)}>
+          <div className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-danger p-6 text-center text-danger-foreground shrink-0">
               <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
               <h3 className="text-xl font-black tracking-tight">Solicitação de Cancelamento</h3>
             </div>

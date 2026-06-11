@@ -3,13 +3,7 @@ import { useQuery, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -108,25 +102,22 @@ function Page() {
     <>
       <div className="flex items-center justify-between">
         <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
-        <Dialog
-          open={open}
-          onOpenChange={(v) => {
-            setOpen(v);
-            if (!v) {
-              setInviteUrl(null);
-              reset();
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <button className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-              <Plus className="h-4 w-4" /> Nova Agência
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Provisionar Nova Agência</DialogTitle>
-            </DialogHeader>
+        <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+          <Plus className="h-4 w-4" /> Nova Agência
+        </button>
+      </div>
+
+      {open && (
+        <div className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => {
+            setOpen(false);
+            setInviteUrl(null);
+            reset();
+          }}>
+          <div className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+            <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
+              <h2 className="text-xl font-bold text-foreground">Provisionar Nova Agência</h2>
+            </div>
+            <div className="p-6 overflow-y-auto">
             {!inviteUrl ? (
               <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
                 <div>
@@ -231,9 +222,10 @@ function Page() {
                 </button>
               </div>
             )}
-          </DialogContent>
-        </Dialog>
-      </div>
+            </div>
+          </div>
+        </div>
+      )}
       {q.isLoading && (
         <div className="mt-6 flex flex-col gap-2">
           <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>

@@ -97,10 +97,10 @@ export function NewCorporateRfpWizard({
   const selectedClient = clientsQ.data?.find(c => c.id === clientId);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex h-full max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+    <div className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-5">
           <div>
             <h2 className="text-xl font-bold text-foreground">Nova Requisição (RFP) Corporativa</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Módulo B2B: Cotação estruturada para clientes empresariais.</p>

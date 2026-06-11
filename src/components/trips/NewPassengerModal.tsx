@@ -49,10 +49,10 @@ export function NewPassengerModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+    <div className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
         {/* Header Flat */}
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
               <UserPlus className="h-5 w-5" />

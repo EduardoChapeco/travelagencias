@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
+
 import { Field, Input, PrimaryButton, GhostButton, Select, Textarea } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -81,20 +75,23 @@ Contexto fornecido: ${context}`;
     }
   }
 
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <div className="fixed inset-0 z-[200] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => onOpenChange(false)}>
+      <div className="flex h-full w-full max-w-md flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
+        <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Wand2 className="w-5 h-5 text-brand" /> 
             Redator de Artigos IA
-          </DialogTitle>
-          <DialogDescription>
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
             Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </div>
 
-        <div className="flex border-b border-border mb-4">
+        <div className="p-6 overflow-y-auto flex-1">
+          <div className="flex border-b border-border mb-4">
           <button
             type="button"
             className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
@@ -151,7 +148,8 @@ Contexto fornecido: ${context}`;
             </PrimaryButton>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }
