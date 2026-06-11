@@ -14,7 +14,6 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet, fmtDate } from "@/components/ui/form";
@@ -24,20 +23,18 @@ export const Route = createFileRoute("/agency/$slug/boarding")({
   component: BoardingKanbanPage,
 });
 
-type ChecklistItem = { label: string; done: boolean };
-type Card = {
-  id: string;
-  pnr: string | null;
-  airline: string | null;
-  status: string;
-  alerts: string[];
-  trip_id: string;
-  position: number;
-  checklist: ChecklistItem[];
-  departure_date?: string | null;
-  passengers_count?: number | null;
-};
-type DetailCard = Card & { trip_title?: string; trip_destination?: string };
+import {
+  fetchBoardingCards,
+  fetchBoardingTrips,
+  fetchTripPassengersMin,
+  updateBoardingCardPositions,
+  updateBoardingCardChecklist,
+  createBoardingCard,
+  type BoardingCard as Card,
+  type ChecklistItem,
+} from "@/services/boarding";
+
+type DetailCard = Card;
 
 const BOARDING_STAGES = [
   { id: "pending", name: "Pendente", color: "#94A3B8" },
@@ -58,40 +55,13 @@ function BoardingKanbanPage() {
   const q = useQuery({
     enabled: !!agency,
     queryKey: ["boarding", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("boarding_cards")
-        .select("id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count")
-        .eq("agency_id", agency!.id)
-        .order("position");
-      if (error) throw error;
-      // Also fetch trip info to enrich cards
-      const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
-      let tripMap: Record<string, { title: string; destination?: string }> = {};
-      if (tripIds.length > 0) {
-        const { data: trips } = await supabase
-          .from("trips")
-          .select("id, title, destination")
-          .in("id", tripIds);
-        (trips ?? []).forEach((t: any) => { tripMap[t.id] = { title: t.title, destination: t.destination }; });
-      }
-      return (data ?? []).map((c: any) => ({
-        ...c,
-        checklist: c.checklist ?? [],
-        trip_title: tripMap[c.trip_id]?.title,
-        trip_destination: tripMap[c.trip_id]?.destination,
-      })) as Card[];
-    },
+    queryFn: () => fetchBoardingCards(agency!.id),
   });
 
   const trips = useQuery({
     enabled: !!agency,
     queryKey: ["trips-min", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("trips").select("id, code, title").eq("agency_id", agency!.id).limit(100);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchBoardingTrips(agency!.id),
   });
 
   useEffect(() => {
@@ -100,12 +70,7 @@ function BoardingKanbanPage() {
 
   const persistMove = useMutation({
     mutationFn: async (payload: { cardId: string; toStatus: string; reorderedIds: string[] }) => {
-      const updates = payload.reorderedIds.map((id, idx) =>
-        supabase.from("boarding_cards").update({ status: payload.toStatus, position: idx }).eq("id", id)
-      );
-      const results = await Promise.all(updates);
-      const firstErr = results.find((r) => r.error);
-      if (firstErr?.error) throw firstErr.error;
+      await updateBoardingCardPositions(payload.toStatus, payload.reorderedIds);
     },
     onError: (e) => {
       toast.error("Erro ao salvar card");
@@ -403,7 +368,7 @@ function CardDetailPanel({
   async function toggleItem(i: number) {
     const next = checklist.map((c, j) => j === i ? { ...c, done: !c.done } : c);
     setChecklist(next);
-    await supabase.from("boarding_cards").update({ checklist: next as never }).eq("id", card.id);
+    await updateBoardingCardChecklist(card.id, next);
   }
 
   async function addItem() {
@@ -411,13 +376,13 @@ function CardDetailPanel({
     const next = [...checklist, { label: newItem.trim(), done: false }];
     setChecklist(next);
     setNewItem("");
-    await supabase.from("boarding_cards").update({ checklist: next as never }).eq("id", card.id);
+    await updateBoardingCardChecklist(card.id, next);
   }
 
   async function removeItem(i: number) {
     const next = checklist.filter((_, j) => j !== i);
     setChecklist(next);
-    await supabase.from("boarding_cards").update({ checklist: next as never }).eq("id", card.id);
+    await updateBoardingCardChecklist(card.id, next);
   }
 
   const done = checklist.filter((c) => c.done).length;
@@ -554,10 +519,7 @@ function NewCard({
   const paxQ = useQuery({
     enabled: !!tripId,
     queryKey: ["boarding-pax", tripId],
-    queryFn: async () => {
-      const { data } = await supabase.from("trip_passengers").select("id, full_name, document").eq("trip_id", tripId);
-      return data ?? [];
-    }
+    queryFn: () => fetchTripPassengersMin(tripId),
   });
 
   const passengersList = paxQ.data ?? [];
@@ -567,29 +529,25 @@ function NewCard({
     if (!tripId) return toast.error("Selecione uma viagem");
     setSubmitting(true);
     const alertsArr = alerts.split("\n").map((a) => a.trim()).filter(Boolean);
-    const { data: u } = await supabase.auth.getUser();
-    const { error } = await (supabase as any).from("boarding_cards").insert({
-      agency_id: agencyId,
-      trip_id: tripId,
-      pnr: pnr || null,
-      airline: airline || null,
-        status: "pending" as any,
-        created_by: u.user?.id as any,
-      departure_date: departureDate || null,
-      passengers_count: passengersList.length || (paxCount ? parseInt(paxCount) : null),
-      alerts: alertsArr,
-      checklist: passengersList.length > 0 
-        ? passengersList.map(p => ({ label: `Check-in: ${p.full_name} (${p.document || 'S/Doc'})`, done: false, passenger_id: p.id }))
-        : [
-            { label: "Bilhetes emitidos", done: false },
-            { label: "Check-in online realizado", done: false },
-            { label: "Documentos verificados", done: false }
-          ],
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Card criado no Kanban");
-    onCreated();
+    
+    try {
+      await createBoardingCard({
+        agencyId,
+        tripId,
+        pnr: pnr || null,
+        airline: airline || null,
+        departureDate: departureDate || null,
+        paxCount: paxCount || null,
+        alerts: alertsArr,
+        passengersList,
+      });
+      toast.success("Card criado no Kanban");
+      onCreated();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
