@@ -6,8 +6,9 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const SUPABASE_URL = typeof process !== "undefined" ? process.env?.SUPABASE_URL : undefined;
+  const SUPABASE_SERVICE_ROLE_KEY =
+    typeof process !== "undefined" ? process.env?.SUPABASE_SERVICE_ROLE_KEY : undefined;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     const missing = [
@@ -34,8 +35,10 @@ let _supabaseAdmin: ReturnType<typeof createSupabaseAdminClient> | undefined;
 // SECURITY: Only use this for trusted server-side operations, never expose to client code
 // Import like: import { supabaseAdmin } from "@/integrations/supabase/client.server";
 export const supabaseAdmin = new Proxy({} as ReturnType<typeof createSupabaseAdminClient>, {
-  get(_, prop, receiver) {
+  get(_, prop) {
     if (!_supabaseAdmin) _supabaseAdmin = createSupabaseAdminClient();
-    return Reflect.get(_supabaseAdmin, prop, receiver);
+    const value = Reflect.get(_supabaseAdmin, prop);
+    return typeof value === "function" ? value.bind(_supabaseAdmin) : value;
   },
 });
+
