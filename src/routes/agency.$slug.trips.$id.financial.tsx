@@ -116,7 +116,25 @@ function TripFinancial() {
   const records = recordsQ.data ?? [];
   const income = records.filter((r) => r.type === "income" && r.status !== "cancelled");
   const expenses = records.filter((r) => r.type === "expense" && r.status !== "cancelled");
-  const t  const addRecord = useMutation({
+  const totalIncome = income.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
+  const totalExpense = expenses.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
+  const margin = totalIncome - totalExpense;
+  const marginPct = totalIncome > 0 ? ((margin / totalIncome) * 100).toFixed(1) : "0.0";
+  const outstanding = (trip?.total_sale ?? 0) - (trip?.total_paid ?? 0);
+
+  // ── Record form state ─────────────────────────────────────────────────────────
+
+  const [rForm, setRForm] = useState({
+    category: "",
+    description: "",
+    amount: "",
+    currency: "BRL",
+    payment_method: "",
+    status: "confirmed" as "pending" | "confirmed",
+    due_date: "",
+  });
+
+  const addRecord = useMutation({
     mutationFn: () =>
       addFinancialRecord({
         agencyId: agency!.id,
@@ -143,19 +161,22 @@ function TripFinancial() {
   const deleteRecord = useMutation({
     mutationFn: (id: string) => cancelFinancialRecord(id),
     onSuccess: () => {
-      toast.success("Lancamento removido");
+      toast.success("Lançamento removido");
       qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
-d: "",
-        status: "confirmed",
-        due_date: "",
-      });
-      qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
-      qc.invalidateQueries({ queryKey: ["trip", tripId] });
-    },
-    onEr  const createPlan = useMutation({
+
+  // ── Payment plan form ─────────────────────────────────────────────────────────
+
+  const [planForm, setPlanForm] = useState({
+    total_amount: "",
+    installments: "1",
+    method: "pix",
+    first_due: "",
+  });
+
+  const createPlan = useMutation({
     mutationFn: () =>
       createPaymentPlan({
         agencyId: agency!.id,
@@ -165,26 +186,6 @@ d: "",
         method: planForm.method,
         firstDueDate: planForm.first_due,
       }),
-    onSuccess: () => {
-      toast.success("Plano de parcelamento criado");
-      setShowPlanForm(false);
-      qc.invalidateQueries({ queryKey: ["payment_plan_trip", tripId] });
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
-  });
-
-  const markPaid = useMutation({
-    mutationFn: (instId: string) => markInstallmentPaid(instId),
-    onSuccess: () => {
-      toast.success("Parcela marcada como paga");
-      qc.invalidateQueries({ queryKey: ["payment_plan_trip", tripId] });
-      qc.invalidateQueries({ queryKey: ["trip", tripId] });
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
-  });
-ments);
-      if (instErr) throw instErr;
-    },
     onSuccess: () => {
       toast.success("Plano de parcelamento criado");
       setShowPlanForm(false);

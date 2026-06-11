@@ -119,10 +119,10 @@ export async function fetchTripPassengers(tripId: string): Promise<TripPassenger
 
 export async function saveVoucherData(payload: Partial<Voucher>, selectedId?: string): Promise<void> {
   if (selectedId) {
-    const { error } = await supabase.from("vouchers").update(payload as never).eq("id", selectedId);
+    const { error } = await (supabase as any).from("vouchers").update(payload).eq("id", selectedId);
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await supabase.from("vouchers").insert(payload);
+    const { error } = await (supabase as any).from("vouchers").insert(payload);
     if (error) throw new Error(error.message);
   }
 }

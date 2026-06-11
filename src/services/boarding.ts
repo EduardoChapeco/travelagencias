@@ -131,7 +131,7 @@ export async function createBoardingCard(payload: CreateBoardingCardPayload): Pr
           { label: "Documentos verificados", done: false },
         ];
 
-  const { error } = await supabase.from("boarding_cards").insert({
+  const { error } = await (supabase as any).from("boarding_cards").insert({
     agency_id: agencyId,
     trip_id: tripId,
     pnr: pnr || null,

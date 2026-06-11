@@ -3,10 +3,20 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Save, Edit3, Trash2, Merge, X, Check, FileText, Calendar, FileSignature, ShieldCheck, Ticket as TicketIcon } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, fmtDate, money, StatusBadge } from "@/components/ui/form";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
+import {
+  fetchClient,
+  fetchClientsForMerge,
+  fetchClientProposals,
+  fetchClientTrips,
+  fetchClientLegalAcceptances,
+  fetchClientTickets,
+  updateClientProfile,
+  archiveClient,
+  mergeClients,
+} from "@/services/clients";
 
 export const Route = createFileRoute("/agency/$slug/clients/$id")({
   head: () => ({ meta: [{ title: "Cliente · TravelOS" }] }),
@@ -26,83 +36,37 @@ function ClientDetail() {
   const clientQ = useQuery({
     enabled: !!agency,
     queryKey: ["client", id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("clients").select("*").eq("id", id).maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchClient(id),
   });
 
   const allClientsQ = useQuery({
     enabled: isMerging,
     queryKey: ["clients-for-merge", agency?.id, id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clients")
-        .select("id, full_name, email, document")
-        .eq("agency_id", agency!.id)
-        .is("deleted_at", null)
-        .neq("id", id)
-        .order("full_name");
-      if (error) throw error;
-      return data ?? [];
-    }
+    queryFn: () => fetchClientsForMerge(agency!.id, id),
   });
 
   const proposalsQ = useQuery({
     enabled: !!agency,
     queryKey: ["client-proposals", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("proposals")
-        .select("id, number, title, status, total, currency, created_at")
-        .eq("client_id", id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchClientProposals(id),
   });
 
   const tripsQ = useQuery({
     enabled: !!agency,
     queryKey: ["client-trips", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, number, title, status, travel_start, travel_end, total_sale, currency, created_at")
-        .eq("client_id", id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchClientTrips(id),
   });
 
   const lgpdQ = useQuery({
     enabled: !!id,
     queryKey: ["client-lgpd", id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("legal_acceptances")
-        .select("id, accepted_at, context, document_id")
-        .eq("client_id", id)
-        .order("accepted_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchClientLegalAcceptances(id),
   });
 
   const ticketsQ = useQuery({
     enabled: !!agency,
     queryKey: ["client-tickets", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("support_tickets")
-        .select("id, code, title, status, created_at")
-        .eq("client_id", id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchClientTickets(id),
   });
 
   const timelineEvents = [
@@ -118,10 +82,7 @@ function ClientDetail() {
   }, [clientQ.data]);
 
   const save = useMutation({
-    mutationFn: async (patch: Record<string, unknown>) => {
-      const { error } = await supabase.from("clients").update(patch as never).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (patch: Record<string, unknown>) => updateClientProfile(id, patch),
     onSuccess: () => {
       toast.success("Perfil atualizado");
       setIsEditing(false);
@@ -131,10 +92,7 @@ function ClientDetail() {
   });
 
   const softDelete = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("clients").update({ deleted_at: new Date().toISOString() } as never).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: () => archiveClient(id),
     onSuccess: () => {
       toast.success("Cliente arquivado com segurança.");
       navigate({ to: "/agency/$slug/clients", params: { slug } });
@@ -142,12 +100,10 @@ function ClientDetail() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao deletar"),
   });
 
-  const mergeClients = useMutation({
+  const mergeClientsMutation = useMutation({
     mutationFn: async () => {
       if (!mergeTargetId) throw new Error("Selecione o cliente para unificar.");
-      // this client (id) will be merged INTO mergeTargetId
-      const { error } = await (supabase.rpc as any)("merge_clients", { p_target_id: mergeTargetId, p_source_id: id });
-      if (error) throw error;
+      await mergeClients(id, mergeTargetId);
     },
     onSuccess: () => {
       toast.success("Clientes unificados com sucesso!");
@@ -237,11 +193,11 @@ function ClientDetail() {
               </select>
             </div>
             <button 
-              onClick={() => { if(confirm("Confirmar a unificação? Esta ação moverá todo o histórico.")) mergeClients.mutate(); }}
-              disabled={!mergeTargetId || mergeClients.isPending}
+              onClick={() => { if(confirm("Confirmar a unificação? Esta ação moverá todo o histórico.")) mergeClientsMutation.mutate(); }}
+              disabled={!mergeTargetId || mergeClientsMutation.isPending}
               className="h-12 px-6 rounded-full bg-warning text-warning-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {mergeClients.isPending ? "Unificando..." : "Confirmar Unificação"}
+              {mergeClientsMutation.isPending ? "Unificando..." : "Confirmar Unificação"}
             </button>
             <button onClick={() => setIsMerging(false)} className="h-12 px-4 rounded-full border border-border text-sm font-bold">Cancelar</button>
           </div>
