@@ -1,8 +1,4 @@
-import * as pdfjsLib from "pdfjs-dist";
 import { supabase } from "@/integrations/supabase/client";
-
-// Configura o worker do PDF.js para funcionar no navegador
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 export interface VoucherAIResult {
   title: string;
@@ -16,62 +12,32 @@ export interface VoucherAIResult {
 }
 
 /**
- * Lê o arquivo PDF no navegador e extrai todo o texto bruto
- */
-async function extractTextFromPdf(file: File): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let fullText = "";
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-    const pageText = textContent.items.map((item: any) => item.str).join(" ");
-    fullText += pageText + "\n";
-  }
-
-  return fullText;
-}
-
-/**
- * Processa um arquivo (PDF ou Imagem) extraindo texto e enviando para a Inteligência Artificial
- * realizar a leitura contextual e devolver o JSON sanitizado para o Voucher.
+ * Processa um arquivo (PDF ou Imagem) enviando o conteúdo binário em base64
+ * para a Edge Function, que fará a extração e análise usando IA.
  */
 export async function processVoucherWithAI(file: File): Promise<VoucherAIResult> {
-  let rawText = "";
+  return new Promise<VoucherAIResult>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const result = reader.result as string;
+        const base64 = result.split(",")[1];
+        
+        const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
+          body: { file_base64: base64, mime: file.type, file_name: file.name },
+        });
 
-  // 1. Extração de Texto
-  if (file.type === "application/pdf") {
-    rawText = await extractTextFromPdf(file);
-  } else if (file.type.startsWith("image/")) {
-    throw new Error(
-      "A extração de imagem via OCR direto no navegador requer Tesseract.js. No momento, o fluxo otimizado é via PDF das operadoras.",
-    );
-  } else {
-    throw new Error("Formato não suportado para OCR nativo.");
-  }
+        if (error) {
+          console.error("Erro na Supabase Edge Function (AI):", error);
+          throw new Error("A Inteligência Artificial não conseguiu processar o documento. " + error.message);
+        }
 
-  if (!rawText || rawText.trim().length < 10) {
-    throw new Error(
-      "O PDF parece ser uma imagem escaneada sem camada de texto (requer OCR visual).",
-    );
-  }
-
-  // 2. Chamada à Inteligência Artificial (Supabase Edge Function)
-  // A Edge Function "ai-voucher-ocr" usará o OpenAI/Gemini para ler o `rawText` e devolver a interface VoucherAIResult
-  const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
-    body: { text: rawText, file_name: file.name },
+        resolve(data.result as VoucherAIResult);
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = () => reject(new Error("Erro ao ler o arquivo localmente."));
+    reader.readAsDataURL(file);
   });
-
-  if (error) {
-    console.error("Erro na Supabase Edge Function (AI):", error);
-    throw new Error(
-      "A Inteligência Artificial não conseguiu processar o documento no servidor. " + error.message,
-    );
-  }
-
-  return {
-    ...data.result,
-    raw_extracted_text: rawText,
-  } as VoucherAIResult;
 }

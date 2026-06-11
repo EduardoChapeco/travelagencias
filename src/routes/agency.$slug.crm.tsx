@@ -1,33 +1,27 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, GripVertical, Settings2, Search, Archive, UserPlus, Check, X, Trash2, ArrowRight, KanbanSquare } from "lucide-react";
-import {
-  DndContext, DragOverlay, PointerSensor, useSensor, useSensors,
-  closestCorners, type DragEndEvent, type DragStartEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
-} from "@dnd-kit/sortable";
+import { Plus, GripVertical, Settings2, Search, Archive, UserPlus, X, Trash2, KanbanSquare } from "lucide-react";
+import { DndContext, DragOverlay, closestCorners } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { toast } from "sonner";
-
+import { useCrmKanban } from "@/hooks/use-crm-kanban";
+import { 
+  fetchStages, fetchLeads, fetchAgencyUsers, initDefaultStages, 
+  persistLeadMove, archiveLead as archiveLeadService, 
+  transferLead as transferLeadService, createLead, saveStageUpdates, 
+  getLeadsCountInStage, moveLeadsToStage, deleteStage as deleteStageService,
+  type Stage, type Lead 
+} from "@/services/crm";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
   head: () => ({ meta: [{ title: "CRM · TravelOS" }] }),
   component: CRMPage,
 });
-
-type Stage = { id: string; name: string; position: number; color: string; is_won: boolean; is_lost: boolean };
-type Lead = {
-  id: string; stage_id: string; owner_id: string | null; name: string; email: string | null; phone: string | null;
-  destination: string | null; estimated_value: number; pax_count: number; source: string | null;
-  position: number; created_at: string;
-};
 
 function CRMPage() {
   const { agency } = useAgency();
@@ -41,41 +35,24 @@ function CRMPage() {
   const [ownerFilter, setOwnerFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
 
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [localLeads, setLocalLeads] = useState<Lead[] | null>(null);
 
   const stagesQ = useQuery({
     enabled: !!agency,
     queryKey: ["stages", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any).from("lead_stages").select("*").eq("agency_id", agency!.id).order("position");
-      if (error) throw error;
-      return data as Stage[];
-    },
+    queryFn: () => fetchStages(agency!.id),
   });
 
   const leadsQ = useQuery({
     enabled: !!agency,
     queryKey: ["leads", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .eq("agency_id", agency!.id)
-        .is("deleted_at", null);
-      if (error) throw error;
-      return (data as unknown as Lead[]).sort((a, b) => a.position - b.position);
-    },
+    queryFn: () => fetchLeads(agency!.id),
   });
 
   const usersQ = useQuery({
     enabled: !!agency,
     queryKey: ["agency-users", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any).from("vw_admin_agents").select("user_id, user_name, role").eq("agency_id", agency!.id);
-      if (error) throw error;
-      return data;
-    }
+    queryFn: () => fetchAgencyUsers(agency!.id),
   });
 
   useEffect(() => {
@@ -93,32 +70,8 @@ function CRMPage() {
   }, [localLeads, searchQuery, ownerFilter, sourceFilter]);
 
   const persistMove = useMutation({
-    mutationFn: async (payload: {
-      leadId: string;
-      fromStageId: string;
-      toStageId: string;
-      reorderedIds: string[];
-    }) => {
-      const updates = payload.reorderedIds.map((id, idx) =>
-        supabase.from("leads").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
-      );
-      const results = await Promise.all(updates);
-      const firstErr = results.find((r) => r.error);
-      if (firstErr?.error) throw firstErr.error;
-
-      if (payload.fromStageId !== payload.toStageId) {
-        const fromName = stagesQ.data?.find((s) => s.id === payload.fromStageId)?.name ?? "—";
-        const toName = stagesQ.data?.find((s) => s.id === payload.toStageId)?.name ?? "—";
-        const user = (await supabase.auth.getUser()).data.user;
-        await supabase.from("lead_activities").insert({
-          lead_id: payload.leadId,
-          agency_id: agency!.id,
-          author_id: user?.id ?? null,
-          type: "stage_change",
-          content: `Movido de ${fromName} para ${toName}`,
-          metadata: { from: payload.fromStageId, to: payload.toStageId },
-        });
-      }
+    mutationFn: (payload: { leadId: string; fromStageId: string; toStageId: string; reorderedIds: string[] }) => {
+      return persistLeadMove({ ...payload, agencyId: agency!.id, stages: stagesQ.data ?? [] });
     },
     onError: (e) => {
       toast.error(e instanceof Error ? e.message : "Erro ao salvar posição");
@@ -127,19 +80,16 @@ function CRMPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["leads", agency?.id] }),
   });
 
+  const { sensors, activeLead, stagesById, onDragStart, onDragEnd } = useCrmKanban({
+    localLeads,
+    setLocalLeads,
+    filteredLeads,
+    stages: stagesQ.data ?? [],
+    onPersistMove: (payload) => persistMove.mutate(payload)
+  });
+
   const initStages = useMutation({
-    mutationFn: async () => {
-      const defaults = [
-        { name: "Novo Lead", color: "#94A3B8", position: 0 },
-        { name: "Em Contato", color: "#60A5FA", position: 1 },
-        { name: "Cotação Enviada", color: "#FBBF24", position: 2 },
-        { name: "Ganho", color: "#10B981", position: 3, is_won: true },
-        { name: "Perdido", color: "#EF4444", position: 4, is_lost: true },
-      ];
-      for (const s of defaults) {
-        await supabase.from("lead_stages").insert({ agency_id: agency!.id, ...s });
-      }
-    },
+    mutationFn: () => initDefaultStages(agency!.id),
     onSuccess: () => {
       toast.success("Funil inicializado com sucesso!");
       qc.invalidateQueries({ queryKey: ["stages", agency?.id] });
@@ -147,96 +97,25 @@ function CRMPage() {
     onError: (e) => toast.error("Falha ao inicializar funil: " + e.message)
   });
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
-
-  const stagesById = useMemo(() => {
-    const map: Record<string, Lead[]> = {};
-    (stagesQ.data ?? []).forEach((s) => (map[s.id] = []));
-    (filteredLeads ?? []).forEach((l) => {
-      if (!map[l.stage_id]) map[l.stage_id] = [];
-      map[l.stage_id].push(l);
-    });
-    Object.values(map).forEach((arr) => arr.sort((a, b) => a.position - b.position));
-    return map;
-  }, [stagesQ.data, filteredLeads]);
-
-  function findContainerOf(leadId: string): string | null {
-    for (const sid of Object.keys(stagesById)) {
-      if (stagesById[sid].some((l) => l.id === leadId)) return sid;
-    }
-    return null;
-  }
-
-  function onDragStart(e: DragStartEvent) {
-    setActiveId(String(e.active.id));
-  }
-
-  function onDragEnd(e: DragEndEvent) {
-    setActiveId(null);
-    const { active, over } = e;
-    if (!over || !localLeads) return;
-    const activeIdStr = String(active.id);
-    const overIdStr = String(over.id);
-
-    const fromStage = findContainerOf(activeIdStr);
-    if (!fromStage) return;
-    
-    const toStage = stagesById[overIdStr] ? overIdStr : findContainerOf(overIdStr);
-    if (!toStage) return;
-
-    const movedLead = localLeads.find((l) => l.id === activeIdStr);
-    if (!movedLead) return;
-
-    const sourceList = stagesById[fromStage].filter((l) => l.id !== activeIdStr);
-    let destList = fromStage === toStage ? sourceList.slice() : stagesById[toStage].slice();
-
-    let insertIndex = destList.length;
-    if (stagesById[overIdStr] === undefined) {
-      const overIndex = destList.findIndex((l) => l.id === overIdStr);
-      insertIndex = overIndex >= 0 ? overIndex : destList.length;
-    }
-
-    if (fromStage === toStage) {
-      const currentIndex = stagesById[fromStage].findIndex((l) => l.id === activeIdStr);
-      const overIndex = destList.findIndex((l) => l.id === overIdStr);
-      const newList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
-      destList = newList;
-    } else {
-      destList.splice(insertIndex, 0, { ...movedLead, stage_id: toStage });
-    }
-
-    const newLeads = localLeads.filter(l => l.stage_id !== fromStage && l.stage_id !== toStage);
-    if (fromStage === toStage) {
-      destList.forEach((l, i) => newLeads.push({ ...l, position: i }));
-    } else {
-      sourceList.forEach((l, i) => newLeads.push({ ...l, position: i }));
-      destList.forEach((l, i) => newLeads.push({ ...l, stage_id: toStage, position: i }));
-    }
-    setLocalLeads(newLeads);
-
-    persistMove.mutate({
-      leadId: activeIdStr,
-      fromStageId: fromStage,
-      toStageId: toStage,
-      reorderedIds: destList.map((l) => l.id),
-    });
-  }
-
-  const activeLead = activeId ? (localLeads ?? []).find((l) => l.id === activeId) : null;
-
   async function archiveLead(leadId: string) {
     if(!confirm("Arquivar este lead? Ele não aparecerá mais no Kanban.")) return;
-    const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() } as any).eq('id', leadId);
-    if(error) { toast.error("Falha ao arquivar"); return; }
-    toast.success("Lead arquivado com sucesso!");
-    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+    try {
+      await archiveLeadService(leadId);
+      toast.success("Lead arquivado com sucesso!");
+      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+    } catch(error) {
+      toast.error("Falha ao arquivar");
+    }
   }
 
   async function transferLead(leadId: string, newOwnerId: string) {
-    const { error } = await supabase.from('leads').update({ owner_id: newOwnerId }).eq('id', leadId);
-    if(error) { toast.error("Falha ao transferir"); return; }
-    toast.success("Lead transferido com sucesso!");
-    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+    try {
+      await transferLeadService(leadId, newOwnerId);
+      toast.success("Lead transferido com sucesso!");
+      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+    } catch(error) {
+      toast.error("Falha ao transferir");
+    }
   }
 
   return (
@@ -257,7 +136,6 @@ function CRMPage() {
           </div>
         </div>
         
-        {/* Filtros */}
         <div className="flex flex-wrap items-center gap-3 pb-3">
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -387,22 +265,17 @@ function CRMPage() {
 
 function Column({ stage, leads, slug, users, onArchive, onTransfer }: any) {
   const { setNodeRef, isOver } = useSortable({ id: stage.id, data: { type: "column" } });
-  
-  // Calcula o valor estimado total do estágio
   const totalValue = leads.reduce((sum: number, l: any) => sum + (l.estimated_value || 0), 0);
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5 " : "border-border/60"}`}
-    >
+    <div ref={setNodeRef} className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5" : "border-border/60"}`}>
       <div className="flex flex-col justify-center border-b border-border/50 bg-surface-alt/40 px-5 py-4 rounded-t-2xl">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2.5">
-            <span className="h-3 w-3 rounded-full ring-4 ring-surface " style={{ background: stage.color }} />
+            <span className="h-3 w-3 rounded-full ring-4 ring-surface" style={{ background: stage.color }} />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">{stage.name}</span>
           </div>
-          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border ">
+          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border">
             {leads.length}{(stage.is_won || stage.is_lost) && leads.length >= 50 ? "+" : ""}
           </span>
         </div>
@@ -444,7 +317,6 @@ function SortableLead({ lead, slug, users, onArchive, onTransfer }: any) {
 }
 
 function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, onTransfer }: any) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [transferMode, setTransferMode] = useState(false);
   const ownerName = users?.find((u:any) => u.user_id === lead.owner_id)?.user_name?.split(' ')[0] ?? "Sem Dono";
 
@@ -452,9 +324,7 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
     <div
       {...(dragAttributes ?? {})}
       className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all active:cursor-grabbing ${
-        dragging
-          ? "border-brand scale-105 z-50 rotate-3 opacity-95 "
-          : "border-border/60 hover:border-brand/50 "
+        dragging ? "border-brand scale-105 z-50 rotate-3 opacity-95" : "border-border/60 hover:border-brand/50"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -467,7 +337,7 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
               to="/agency/$slug/crm/$lead_id"
               params={{ slug, lead_id: lead.id }}
               className="block truncate text-sm font-bold text-foreground hover:text-brand transition-colors"
-              onPointerDown={(e) => e.stopPropagation()} // prevent drag start when clicking link
+              onPointerDown={(e) => e.stopPropagation()}
             >
               {lead.name}
             </Link>
@@ -493,10 +363,9 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
         </div>
       </div>
 
-      {/* Quick Actions overlay (shows on hover) */}
       {!dragging && onArchive && onTransfer && (
         <div 
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-surface/90 backdrop-blur-sm p-1 rounded-md border border-border/50 "
+          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-surface/90 backdrop-blur-sm p-1 rounded-md border border-border/50"
           onPointerDown={(e) => e.stopPropagation()} 
         >
           {transferMode ? (
@@ -530,10 +399,6 @@ function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, 
   );
 }
 
-// --------------------------------------------------------------------------------------
-// New Lead Form
-// --------------------------------------------------------------------------------------
-
 function NewLeadSheet({
   agencyId, stages, onClose, onCreated,
 }: { agencyId: string; stages: Stage[]; onClose: () => void; onCreated: () => void }) {
@@ -552,24 +417,15 @@ function NewLeadSheet({
     e.preventDefault();
     if (!f.stage_id) return;
     setSubmitting(true);
-    const user = (await supabase.auth.getUser()).data.user;
-    const { error } = await supabase.from("leads").insert({
-      agency_id: agencyId, stage_id: f.stage_id, owner_id: user?.id,
-      name: f.name,
-      email: f.email || null,
-      phone: f.phone || null,
-      destination: f.destination || null,
-      travel_start: f.travel_start || null,
-      travel_end: f.travel_end || null,
-      pax_count: f.pax_count,
-      estimated_value: f.estimated_value,
-      source: f.source || null,
-      notes: f.notes || null,
-    });
-    setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Lead criado com sucesso!");
-    onCreated();
+    try {
+      await createLead(agencyId, f);
+      toast.success("Lead criado com sucesso!");
+      onCreated();
+    } catch(error: any) {
+      toast.error(error.message || "Erro ao criar lead");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -616,40 +472,21 @@ function NewLeadSheet({
   );
 }
 
-// --------------------------------------------------------------------------------------
-// Stage Settings Modal (Funil Configuration)
-// --------------------------------------------------------------------------------------
-
 function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId: string; stages: Stage[]; onClose: () => void; onUpdated: () => void }) {
   const [busy, setBusy] = useState(false);
   const [localStages, setLocalStages] = useState<Stage[]>(stages);
 
   async function handleSave() {
     setBusy(true);
-    // Persist all stage modifications
-    const updates = localStages.map((s, idx) => {
-      if (s.id.startsWith("temp_")) {
-        // new stage
-        return supabase.from('lead_stages').insert({
-          agency_id: agencyId, name: s.name, color: s.color, position: idx, is_won: s.is_won, is_lost: s.is_lost
-        });
-      } else {
-        // update existing
-        return supabase.from('lead_stages').update({ name: s.name, color: s.color, position: idx }).eq('id', s.id);
-      }
-    });
-
-    const results = await Promise.all(updates);
-    const err = results.find(r => r.error);
-    if(err) {
-      toast.error(err.error?.message || "Falha ao salvar estágios.");
+    try {
+      await saveStageUpdates(agencyId, localStages);
+      toast.success("Funil atualizado com sucesso.");
+      onUpdated();
+      onClose();
+    } catch(err: any) {
+      toast.error(err.message || "Falha ao salvar estágios.");
       setBusy(false);
-      return;
     }
-
-    toast.success("Funil atualizado com sucesso.");
-    onUpdated();
-    onClose();
   }
 
   async function handleDelete(stageId: string) {
@@ -658,42 +495,35 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
       return;
     }
 
-    // Check if stage has leads
-    const { count, error } = await supabase.from('leads').select('*', { count: 'exact', head: true }).eq('stage_id', stageId).is('deleted_at', null);
-    if(error) { toast.error("Falha ao verificar leads."); return; }
-
-    if(count && count > 0) {
-      // Must prompt to transfer
-      const targetStageId = prompt(`Este estágio possui ${count} leads ativos. Para deletá-lo, você deve transferi-los. Digite o NOME EXATO do estágio de destino:`);
-      if(!targetStageId) return;
-      const targetStage = localStages.find(s => s.name.toLowerCase() === targetStageId.toLowerCase() && s.id !== stageId);
-      if(!targetStage || targetStage.id.startsWith("temp_")) {
-        toast.error("Estágio de destino inválido ou inexistente.");
-        return;
-      }
-      
-      setBusy(true);
-      // Transfer leads
-      const { error: moveErr } = await supabase.from('leads').update({ stage_id: targetStage.id }).eq('stage_id', stageId);
-      if(moveErr) { toast.error("Falha ao mover leads."); setBusy(false); return; }
-      
-      // Delete stage
-      const { error: delErr } = await supabase.from('lead_stages').delete().eq('id', stageId);
-      if(delErr) { toast.error("Falha ao excluir estágio."); setBusy(false); return; }
-      
-      toast.success(`${count} leads transferidos para ${targetStage.name} e estágio excluído.`);
-      onUpdated();
-      onClose();
-    } else {
-      // Safely delete empty stage
-      if(confirm("Tem certeza que deseja excluir este estágio vazio?")) {
+    try {
+      const count = await getLeadsCountInStage(stageId);
+      if(count > 0) {
+        const targetStageId = prompt(`Este estágio possui ${count} leads ativos. Para deletá-lo, você deve transferi-los. Digite o NOME EXATO do estágio de destino:`);
+        if(!targetStageId) return;
+        const targetStage = localStages.find(s => s.name.toLowerCase() === targetStageId.toLowerCase() && s.id !== stageId);
+        if(!targetStage || targetStage.id.startsWith("temp_")) {
+          toast.error("Estágio de destino inválido ou inexistente.");
+          return;
+        }
+        
         setBusy(true);
-        const { error: delErr } = await supabase.from('lead_stages').delete().eq('id', stageId);
-        if(delErr) { toast.error("Falha ao excluir estágio."); setBusy(false); return; }
-        toast.success("Estágio excluído.");
+        await moveLeadsToStage(stageId, targetStage.id);
+        await deleteStageService(stageId);
+        toast.success(`${count} leads transferidos para ${targetStage.name} e estágio excluído.`);
         onUpdated();
         onClose();
+      } else {
+        if(confirm("Tem certeza que deseja excluir este estágio vazio?")) {
+          setBusy(true);
+          await deleteStageService(stageId);
+          toast.success("Estágio excluído.");
+          onUpdated();
+          onClose();
+        }
       }
+    } catch(err: any) {
+      toast.error(err.message || "Erro na operação");
+      setBusy(false);
     }
   }
 
@@ -725,7 +555,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
           <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Colunas do Pipeline</div>
           
           {localStages.map((s, idx) => (
-            <div key={s.id} className="flex items-center gap-4 bg-background p-3 rounded-lg border border-border ">
+            <div key={s.id} className="flex items-center gap-4 bg-background p-3 rounded-lg border border-border">
               <div className="flex flex-col gap-1 items-center justify-center px-1">
                 <button disabled={idx === 0} onClick={() => {
                   const arr = [...localStages];
@@ -750,7 +580,7 @@ function StageSettingsModal({ agencyId, stages, onClose, onUpdated }: { agencyId
                 value={s.name} 
                 onChange={e => setLocalStages(curr => curr.map(x => x.id === s.id ? {...x, name: e.target.value} : x))}
                 className="flex-1"
-                disabled={s.is_won || s.is_lost} // System columns are locked by default
+                disabled={s.is_won || s.is_lost}
               />
 
               <div className="flex items-center w-24">

@@ -1,0 +1,160 @@
+import { supabase } from "@/integrations/supabase/client";
+
+export type Stage = { 
+  id: string; 
+  name: string; 
+  position: number; 
+  color: string; 
+  is_won: boolean; 
+  is_lost: boolean; 
+};
+
+export type Lead = {
+  id: string; 
+  stage_id: string; 
+  owner_id: string | null; 
+  name: string; 
+  email: string | null; 
+  phone: string | null;
+  destination: string | null; 
+  estimated_value: number; 
+  pax_count: number; 
+  source: string | null;
+  position: number; 
+  created_at: string;
+};
+
+export async function fetchStages(agencyId: string): Promise<Stage[]> {
+  const { data, error } = await supabase
+    .from("lead_stages")
+    .select("*")
+    .eq("agency_id", agencyId)
+    .order("position");
+  if (error) throw error;
+  return data as Stage[];
+}
+
+export async function fetchLeads(agencyId: string): Promise<Lead[]> {
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*")
+    .eq("agency_id", agencyId)
+    .is("deleted_at", null);
+  if (error) throw error;
+  return (data as unknown as Lead[]).sort((a, b) => a.position - b.position);
+}
+
+export async function fetchAgencyUsers(agencyId: string) {
+  const { data, error } = await supabase
+    .from("vw_admin_agents")
+    .select("user_id, user_name, role")
+    .eq("agency_id", agencyId);
+  if (error) throw error;
+  return data;
+}
+
+export async function initDefaultStages(agencyId: string) {
+  const defaults = [
+    { name: "Novo Lead", color: "#94A3B8", position: 0 },
+    { name: "Em Contato", color: "#60A5FA", position: 1 },
+    { name: "Cotação Enviada", color: "#FBBF24", position: 2 },
+    { name: "Ganho", color: "#10B981", position: 3, is_won: true },
+    { name: "Perdido", color: "#EF4444", position: 4, is_lost: true },
+  ];
+  for (const s of defaults) {
+    const { error } = await supabase.from("lead_stages").insert({ agency_id: agencyId, ...s });
+    if (error) throw error;
+  }
+}
+
+export async function archiveLead(leadId: string) {
+  const { error } = await supabase.from('leads').update({ deleted_at: new Date().toISOString() } as any).eq('id', leadId);
+  if (error) throw error;
+}
+
+export async function transferLead(leadId: string, newOwnerId: string) {
+  const { error } = await supabase.from('leads').update({ owner_id: newOwnerId }).eq('id', leadId);
+  if (error) throw error;
+}
+
+export async function persistLeadMove(payload: {
+  leadId: string;
+  fromStageId: string;
+  toStageId: string;
+  reorderedIds: string[];
+  agencyId: string;
+  stages: Stage[];
+}) {
+  const updates = payload.reorderedIds.map((id, idx) =>
+    supabase.from("leads").update({ stage_id: payload.toStageId, position: idx }).eq("id", id)
+  );
+  const results = await Promise.all(updates);
+  const firstErr = results.find((r) => r.error);
+  if (firstErr?.error) throw firstErr.error;
+
+  if (payload.fromStageId !== payload.toStageId) {
+    const fromName = payload.stages.find((s) => s.id === payload.fromStageId)?.name ?? "—";
+    const toName = payload.stages.find((s) => s.id === payload.toStageId)?.name ?? "—";
+    const user = (await supabase.auth.getUser()).data.user;
+    await supabase.from("lead_activities").insert({
+      lead_id: payload.leadId,
+      agency_id: payload.agencyId,
+      author_id: user?.id ?? null,
+      type: "stage_change",
+      content: `Movido de ${fromName} para ${toName}`,
+      metadata: { from: payload.fromStageId, to: payload.toStageId },
+    });
+  }
+}
+
+export async function createLead(agencyId: string, f: any) {
+  const user = (await supabase.auth.getUser()).data.user;
+  const { error } = await supabase.from("leads").insert({
+    agency_id: agencyId,
+    stage_id: f.stage_id,
+    owner_id: user?.id,
+    name: f.name,
+    email: f.email || null,
+    phone: f.phone || null,
+    destination: f.destination || null,
+    travel_start: f.travel_start || null,
+    travel_end: f.travel_end || null,
+    pax_count: f.pax_count,
+    estimated_value: f.estimated_value,
+    source: f.source || null,
+    notes: f.notes || null,
+  });
+  if (error) throw error;
+}
+
+export async function saveStageUpdates(agencyId: string, localStages: Stage[]) {
+  const updates = localStages.map((s, idx) => {
+    if (s.id.startsWith("temp_")) {
+      return supabase.from('lead_stages').insert({
+        agency_id: agencyId, name: s.name, color: s.color, position: idx, is_won: s.is_won, is_lost: s.is_lost
+      });
+    } else {
+      return supabase.from('lead_stages').update({ name: s.name, color: s.color, position: idx }).eq('id', s.id);
+    }
+  });
+
+  const results = await Promise.all(updates);
+  const err = results.find(r => r.error);
+  if(err) throw err.error;
+}
+
+export async function getLeadsCountInStage(stageId: string): Promise<number> {
+  const { count, error } = await supabase.from('leads').select('*', { count: 'exact', head: true }).eq('stage_id', stageId).is('deleted_at', null);
+  if (error) throw error;
+  return count || 0;
+}
+
+export async function moveLeadsToStage(fromStageId: string, toStageId: string) {
+  const { error } = await supabase.from('leads').update({ stage_id: toStageId }).eq('stage_id', fromStageId);
+  if (error) throw error;
+}
+
+export async function deleteStage(stageId: string) {
+  const { error } = await supabase.from('lead_stages').delete().eq('id', stageId);
+  if (error) throw error;
+}
