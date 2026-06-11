@@ -32,7 +32,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
-import { AIItineraryModal, type AIItineraryDay } from "@/components/ui/AIItineraryModal";
+import { AIItinerarySheet, type AIItineraryDay } from "@/components/ui/AIItinerarySheet";
 
 const SMALL_INPUT =
   "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
@@ -837,7 +837,7 @@ function ProposalEditor() {
         </main>
       </div>
 
-      <AIItineraryModal
+      <AIItinerarySheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}
         onGenerate={(days) => {
@@ -847,9 +847,7 @@ function ProposalEditor() {
             title: d.title || "",
             description: d.description || "",
           }));
-          // Append to existing, or replace? Usually better to append if there are items, but replacing is fine.
-          // Let's replace for simplicity if it's empty, or append if not.
-          save({ itinerary: [...(draft.itinerary || []), ...formattedDays] });
+          save({ itinerary: [...(draft!.itinerary || []), ...formattedDays] });
         }}
       />
     </div>

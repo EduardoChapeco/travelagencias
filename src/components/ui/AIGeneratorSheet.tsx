@@ -5,13 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
 
-type AIGeneratorModalProps = {
+import { SheetPage } from "./sheet";
+
+type AIGeneratorSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (html: string) => void;
 };
 
-export function AIGeneratorModal({ open, onOpenChange, onGenerate }: AIGeneratorModalProps) {
+export function AIGeneratorSheet({ open, onOpenChange, onGenerate }: AIGeneratorSheetProps) {
   const [tab, setTab] = useState<"topic" | "url">("topic");
   const [topic, setTopic] = useState("");
   const [url, setUrl] = useState("");
@@ -75,22 +77,17 @@ Contexto fornecido: ${context}`;
     }
   }
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => onOpenChange(false)}>
-      <div className="flex h-full w-full max-w-md flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
-        <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Wand2 className="w-5 h-5 text-brand" /> 
-            Redator de Artigos IA
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
-          </p>
+    <SheetPage isOpen={open} onClose={() => onOpenChange(false)} title="Redator de Artigos IA" width="450px">
+      <div className="mb-6 space-y-1">
+        <div className="flex items-center gap-2 text-brand font-bold">
+          <Wand2 className="w-5 h-5" /> 
+          Gerador Inteligente
         </div>
-
-        <div className="p-6 overflow-y-auto flex-1">
+        <p className="text-xs text-muted-foreground">
+          Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
+        </p>
+      </div>
           <div className="flex border-b border-border mb-4">
           <button
             type="button"
@@ -148,8 +145,6 @@ Contexto fornecido: ${context}`;
             </PrimaryButton>
           </div>
         </form>
-        </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

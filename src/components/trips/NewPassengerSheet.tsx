@@ -3,8 +3,9 @@ import { toast } from "sonner";
 import { X, UserPlus, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 
-export function NewPassengerModal({
+export function NewPassengerSheet({
   tripId,
   agencyId,
   onClose,
@@ -49,26 +50,13 @@ export function NewPassengerModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
-        {/* Header Flat */}
-        <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface-alt/30 px-6 py-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
-              <UserPlus className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold tracking-tight text-foreground">Novo Passageiro</h2>
-              <p className="text-xs font-medium text-muted-foreground">Adicionar à Rooming List</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-alt hover:text-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Passageiro">
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
+          <UserPlus className="h-5 w-5" />
         </div>
+        <p className="text-sm font-medium text-muted-foreground">Adicionar à Rooming List</p>
+      </div>
 
         {/* Content Form */}
         <form onSubmit={submit} className="flex flex-col">
@@ -158,7 +146,6 @@ export function NewPassengerModal({
             </PrimaryButton>
           </div>
         </form>
-      </div>
-    </div>
+    </SheetPage>
   );
 }

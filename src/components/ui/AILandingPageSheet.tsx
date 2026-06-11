@@ -6,13 +6,13 @@ import { toast } from "sonner";
 import { Wand2 } from "lucide-react";
 type PortalBlock = any;
 
-type AILandingPageModalProps = {
+type AILandingPageSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (blocks: PortalBlock[]) => void;
 };
 
-export function AILandingPageModal({ open, onOpenChange, onGenerate }: AILandingPageModalProps) {
+export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILandingPageSheetProps) {
   const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
 

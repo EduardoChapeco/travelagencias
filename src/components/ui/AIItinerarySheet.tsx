@@ -5,15 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
 
+import { SheetPage } from "./sheet";
+
 export type AIItineraryDay = { day: string; title: string; description: string };
 
-type AIItineraryModalProps = {
+type AIItinerarySheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (days: AIItineraryDay[]) => void;
 };
 
-export function AIItineraryModal({ open, onOpenChange, onGenerate }: AIItineraryModalProps) {
+export function AIItinerarySheet({ open, onOpenChange, onGenerate }: AIItinerarySheetProps) {
   const [tab, setTab] = useState<"topic" | "url">("topic");
   const [topic, setTopic] = useState("");
   const [url, setUrl] = useState("");
@@ -93,22 +95,17 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
     }
   }
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex justify-end bg-background/80 backdrop-blur-sm" onClick={() => onOpenChange(false)}>
-      <div className="flex h-full w-full max-w-md flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300" onClick={(e) => e.stopPropagation()}>
-        <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Wand2 className="w-5 h-5 text-brand" /> 
-            Construtor de Roteiros IA
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            Crie um itinerário completo em segundos a partir de uma ideia ou de um link de referência.
-          </p>
+    <SheetPage isOpen={open} onClose={() => onOpenChange(false)} title="Construtor de Roteiros IA" width="450px">
+      <div className="mb-6 space-y-1">
+        <div className="flex items-center gap-2 text-brand font-bold">
+          <Wand2 className="w-5 h-5" /> 
+          Mágico
         </div>
-
-        <div className="p-6 overflow-y-auto flex-1">
+        <p className="text-xs text-muted-foreground">
+          Crie um itinerário completo em segundos a partir de uma ideia ou de um link de referência.
+        </p>
+      </div>
           <div className="flex border-b border-border mb-4">
           <button
             type="button"
@@ -178,8 +175,6 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
             </PrimaryButton>
           </div>
         </form>
-        </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }
