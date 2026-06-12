@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CheckCircle2, Send } from "lucide-react";
@@ -82,7 +82,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             <div
               className="prose prose-sm md:prose-base dark:prose-invert"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(b.content.replace(/\n/g, "<br/>")),
+                __html: sanitizeHtml(b.content.replace(/\n/g, "<br/>")),
               }}
             />
           </div>

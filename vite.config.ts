@@ -8,7 +8,10 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  nitro: { preset: "cloudflare-pages" },
+  nitro: { 
+    preset: "cloudflare-pages",
+    errorHandler: "./src/nitro-error-handler.ts"
+  },
   plugins: [
     VitePWA({
       registerType: "autoUpdate",

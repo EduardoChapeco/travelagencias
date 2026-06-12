@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { fetchPublicBlogPost, submitBlogLead } from "@/services/public";
 import { ArrowLeft, Clock, Eye, Send, Share2, BookOpen } from "lucide-react";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { fmtDate } from "@/components/ui/form";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -80,7 +80,7 @@ function PublicBlogPage() {
       return (
         <div
           className="prose prose-lg prose-headings:font-bold prose-headings:tracking-tight prose-a:text-brand prose-p:leading-relaxed dark:prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
         />
       );
     }

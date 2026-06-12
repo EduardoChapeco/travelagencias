@@ -15,6 +15,37 @@ if (typeof globalThis.addEventListener === "function") {
   );
 }
 
+// Monkey patch console methods to capture swallowed React SSR errors
+const originalConsole = {
+  error: console.error,
+  warn: console.warn,
+  log: console.log,
+  info: console.info,
+};
+
+function intercept(...args: any[]) {
+  if (args[0]) {
+    record(args[0]);
+  }
+}
+
+console.error = function (...args: any[]) {
+  intercept(...args);
+  originalConsole.error.apply(console, args);
+};
+console.warn = function (...args: any[]) {
+  intercept(...args);
+  originalConsole.warn.apply(console, args);
+};
+console.log = function (...args: any[]) {
+  intercept(...args);
+  originalConsole.log.apply(console, args);
+};
+console.info = function (...args: any[]) {
+  intercept(...args);
+  originalConsole.info.apply(console, args);
+};
+
 export function consumeLastCapturedError(): unknown {
   if (!lastCapturedError) return undefined;
   if (Date.now() - lastCapturedError.at > TTL_MS) {

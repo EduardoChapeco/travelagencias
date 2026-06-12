@@ -13,7 +13,7 @@ import {
   fmtDate,
 } from "@/components/ui/form";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import {
   fetchPolicies,
   savePolicyDraft,
@@ -230,7 +230,7 @@ function Page() {
                 <div
                   className="text-sm leading-relaxed"
                   style={{ fontFamily: "system-ui, sans-serif" }}
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(activeDoc.content_md) }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeDoc.content_md) }}
                 />
               </div>
             ) : (

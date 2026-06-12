@@ -119,12 +119,15 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
     if (urlMatch) {
       const targetUrl = urlMatch[0];
       try {
-        const orchestratorUrl = `${import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
+        const _processEnv = typeof process !== "undefined" ? process.env : {};
+        const orchestratorUrl = `${import.meta.env.VITE_SUPABASE_URL || _processEnv.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
+        
+        console.log("Chamando ai-orchestrator em:", orchestratorUrl);
         const res = await fetch(orchestratorUrl, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || _processEnv.SUPABASE_SERVICE_ROLE_KEY}`,
           },
           body: JSON.stringify({ action: "scrape", url: targetUrl }),
         });
@@ -165,10 +168,12 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       }
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY || process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("API_KEY não configurada no servidor (OpenRouter ou Lovable).");
-
-    const isOpenRouter = !!process.env.OPENROUTER_API_KEY;
+    const _processEnv = typeof process !== "undefined" ? process.env : {};
+    const apiKey = _processEnv.OPENROUTER_API_KEY || _processEnv.LOVABLE_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing AI API key. Configure OPENROUTER_API_KEY or LOVABLE_API_KEY.");
+    }
+    const isOpenRouter = !!_processEnv.OPENROUTER_API_KEY;
     const url = isOpenRouter ? OPENROUTER_URL : GATEWAY_URL;
     const model = isOpenRouter ? OPENROUTER_MODEL : "google/gemini-2.5-flash";
 

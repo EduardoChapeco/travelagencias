@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchKbArticle, voteKbArticle } from "@/services/public";
 import { ArrowLeft, BookOpen, Info, ThumbsUp, ThumbsDown } from "lucide-react";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { fmtDate } from "@/components/ui/form";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -66,7 +66,7 @@ function PublicKnowledgeArticle() {
       return (
         <div
           className="prose prose-base sm:prose-lg prose-headings:font-bold prose-a:text-brand dark:prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
         />
       );
     }
