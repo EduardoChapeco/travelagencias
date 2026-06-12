@@ -70,6 +70,7 @@ CREATE POLICY "client_relationships_policy" ON public.client_relationships
   ));
 
 -- 4. RPC para buscar detalhes do lead de forma pública (atualizada com novos campos)
+DROP FUNCTION IF EXISTS public.public_lead_by_id(uuid);
 CREATE OR REPLACE FUNCTION public.public_lead_by_id(_lead_id uuid)
 RETURNS TABLE (
   id uuid,

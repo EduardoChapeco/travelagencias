@@ -72,4 +72,4 @@ CREATE POLICY "Corporate RFPs deletable by agency members" ON public.corporate_r
 -- Trigger update_updated_at para RFPs
 CREATE TRIGGER trg_corporate_rfps_updated_at
 BEFORE UPDATE ON public.corporate_rfps
-FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();

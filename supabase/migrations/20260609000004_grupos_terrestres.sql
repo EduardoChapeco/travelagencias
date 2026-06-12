@@ -59,7 +59,7 @@ ALTER TABLE group_bookings ENABLE ROW LEVEL SECURITY;
 
 -- Agency admins can manage all their group trips
 CREATE POLICY "Manage own group trips" ON group_trips
-FOR ALL USING (agency_id IN (SELECT agency_id FROM agency_users WHERE user_id = auth.uid()));
+FOR ALL USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Public can read published group trips
 CREATE POLICY "Public read group trips" ON group_trips
@@ -68,7 +68,7 @@ FOR SELECT USING (is_public = true AND status = 'published');
 -- Agency admins can manage trip days
 CREATE POLICY "Manage trip days" ON group_trip_days
 FOR ALL USING (group_trip_id IN (
-    SELECT id FROM group_trips WHERE agency_id IN (SELECT agency_id FROM agency_users WHERE user_id = auth.uid())
+    SELECT id FROM group_trips WHERE public.is_agency_member(auth.uid(), agency_id)
 ));
 
 -- Public can read published trip days
@@ -80,7 +80,7 @@ FOR SELECT USING (group_trip_id IN (
 -- Agency admins can manage bookings
 CREATE POLICY "Manage group bookings" ON group_bookings
 FOR ALL USING (group_trip_id IN (
-    SELECT id FROM group_trips WHERE agency_id IN (SELECT agency_id FROM agency_users WHERE user_id = auth.uid())
+    SELECT id FROM group_trips WHERE public.is_agency_member(auth.uid(), agency_id)
 ));
 
 -- Public can create bookings

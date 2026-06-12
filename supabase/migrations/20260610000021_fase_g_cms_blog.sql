@@ -70,11 +70,16 @@ $$;
 GRANT EXECUTE ON FUNCTION public.duplicate_portal_page(uuid) TO authenticated;
 
 -- 4. Full Text Search na Base de Conhecimento (G4)
+CREATE OR REPLACE FUNCTION public.tags_to_string(tags text[])
+RETURNS text LANGUAGE sql IMMUTABLE AS $$
+  SELECT coalesce(array_to_string(tags, ' '), '');
+$$;
+
 ALTER TABLE public.knowledge_articles ADD COLUMN IF NOT EXISTS search_vector tsvector GENERATED ALWAYS AS (
-  setweight(to_tsvector('portuguese', coalesce(title, '')), 'A') ||
-  setweight(to_tsvector('portuguese', coalesce(category, '')), 'B') ||
-  setweight(to_tsvector('portuguese', coalesce(array_to_string(tags, ' '), '')), 'C') ||
-  setweight(to_tsvector('portuguese', coalesce(content, '')), 'D')
+  setweight(to_tsvector('portuguese'::regconfig, coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('portuguese'::regconfig, coalesce(category, '')), 'B') ||
+  setweight(to_tsvector('portuguese'::regconfig, public.tags_to_string(tags)), 'C') ||
+  setweight(to_tsvector('portuguese'::regconfig, coalesce(content, '')), 'D')
 ) STORED;
 
 CREATE INDEX IF NOT EXISTS knowledge_articles_search_idx ON public.knowledge_articles USING GIN (search_vector);

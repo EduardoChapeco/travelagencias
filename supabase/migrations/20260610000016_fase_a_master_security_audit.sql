@@ -62,17 +62,17 @@ CREATE POLICY "User roles viewable by agency members" ON public.user_roles
 
 DROP POLICY IF EXISTS "User roles updatable by agency admins" ON public.user_roles;
 CREATE POLICY "User roles updatable by agency admins" ON public.user_roles
-  FOR ALL USING (has_role_in_agency(agency_id, 'admin'));
+  FOR ALL USING (public.can_manage_agency_finances(agency_id));
 
 -- 3. Vazamento B2B em company_profiles e agency-media
 -- O company_profiles tinha um `USING (true)` que vazava todas as agências.
 -- Agora só vaza se is_published for true (embora essa flag n exista explicitamente em company_profiles, usaremos a verificação de se a agency tem status ativo).
--- Actually, agencies is the one with the slug and status.
+-- Actually, agency subscriptions is the one with the status.
 -- Let's replace the global USING (true) on company_profiles with a safer one.
 DROP POLICY IF EXISTS "Profiles are public" ON public.company_profiles;
 CREATE POLICY "Profiles are viewable by public if agency is active" ON public.company_profiles
   FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.agencies a WHERE a.id = company_profiles.agency_id AND a.status = 'active')
+    EXISTS (SELECT 1 FROM public.agency_subscriptions s WHERE s.agency_id = company_profiles.agency_id AND s.status IN ('active', 'trialing'))
     OR public.is_agency_member(auth.uid(), agency_id)
   );
 
@@ -84,7 +84,7 @@ CREATE POLICY "agency_media_public_read" ON storage.objects
     bucket_id = 'agency-media' 
     AND (
       -- Permitir acesso público se o tenant for ativo
-      EXISTS (SELECT 1 FROM public.agencies a WHERE a.id::text = (storage.foldername(name))[1] AND a.status = 'active')
+      EXISTS (SELECT 1 FROM public.agency_subscriptions s WHERE s.agency_id::text = (storage.foldername(name))[1] AND s.status IN ('active', 'trialing'))
       OR
       -- Permitir se o arquivo tiver uma pasta genérica "public" dentro do agency_id
       (storage.foldername(name))[2] = 'public'
@@ -95,13 +95,12 @@ CREATE POLICY "agency_media_public_read" ON storage.objects
 DROP POLICY IF EXISTS "Audit logs viewable by agency members" ON public.audit_log;
 CREATE POLICY "Audit logs viewable by agency admins" ON public.audit_log
   FOR SELECT USING (
-    has_role_in_agency(agency_id, 'admin') 
-    OR 
-    EXISTS (SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role = 'super_admin')
+    public.can_manage_agency_finances(agency_id)
   );
 
 -- 5. Função de bypass (SECURITY DEFINER) - fix search_path
 -- Atualiza `get_crm_leads` (se existir) para search_path seguro
+DROP FUNCTION IF EXISTS public.get_crm_leads(uuid);
 CREATE OR REPLACE FUNCTION public.get_crm_leads(p_agency_id uuid)
 RETURNS TABLE (
   id uuid,

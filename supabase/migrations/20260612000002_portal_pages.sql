@@ -15,6 +15,20 @@ CREATE TABLE IF NOT EXISTS public.portal_pages (
   UNIQUE(agency_id, slug)
 );
 
+-- Upgrade existing table if it was created in an earlier migration
+ALTER TABLE public.portal_pages
+  ADD COLUMN IF NOT EXISTS description TEXT,
+  ADD COLUMN IF NOT EXISTS cover_image_url TEXT,
+  ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'roteiro',
+  ADD COLUMN IF NOT EXISTS content JSONB DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS canvas_format TEXT DEFAULT 'web-page',
+  ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'draft',
+  ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;
+
+-- Ensure foreign key constraint is active
+ALTER TABLE public.portal_pages DROP CONSTRAINT IF EXISTS portal_pages_agency_id_fkey;
+ALTER TABLE public.portal_pages ADD CONSTRAINT portal_pages_agency_id_fkey FOREIGN KEY (agency_id) REFERENCES public.agencies(id) ON DELETE CASCADE;
+
 -- RLS
 ALTER TABLE public.portal_pages ENABLE ROW LEVEL SECURITY;
 

@@ -19,15 +19,13 @@ ALTER TABLE public.booking_installments ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de RLS
 CREATE POLICY "Super Admins access all installments" ON public.booking_installments FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.users u WHERE u.id = auth.uid() AND u.global_role = 'super_admin')
+  public.has_role(auth.uid(), 'super_admin'::public.app_role)
 );
 
 CREATE POLICY "Agency users access their own trip installments" ON public.booking_installments FOR ALL USING (
   EXISTS (
     SELECT 1 FROM public.trips t
-    WHERE t.id = booking_installments.trip_id AND t.agency_id IN (
-      SELECT agency_id FROM public.users WHERE id = auth.uid()
-    )
+    WHERE t.id = booking_installments.trip_id AND public.is_agency_member(auth.uid(), t.agency_id)
   )
 );
 

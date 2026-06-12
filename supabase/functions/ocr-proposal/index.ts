@@ -155,7 +155,7 @@ ${text ? text.substring(0, 10000) : "Use a imagem enviada para leitura visual OC
       attempt++;
       try {
         if (geminiApiKey) {
-          const geminiUrl = \`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\${geminiApiKey}\`;
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
           const aiResponse = await fetch(geminiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -166,7 +166,7 @@ ${text ? text.substring(0, 10000) : "Use a imagem enviada para leitura visual OC
             const aiData = await aiResponse.json();
             resultText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
           } else if (aiResponse.status === 429) {
-            console.warn(\`Gemini rate limit na tentativa \${attempt}\`);
+            console.warn(`Gemini rate limit na tentativa ${attempt}`);
             await sleep(attempt * 2000);
             continue;
           } else {
@@ -192,7 +192,7 @@ ${text ? text.substring(0, 10000) : "Use a imagem enviada para leitura visual OC
                 file_base64
                   ? {
                       type: "image_url",
-                      image_url: { url: \`data:\${mime || "image/jpeg"};base64,\${file_base64}\` },
+                      image_url: { url: `data:${mime || "image/jpeg"};base64,${file_base64}` },
                     }
                   : null,
               ].filter(Boolean),
@@ -202,7 +202,7 @@ ${text ? text.substring(0, 10000) : "Use a imagem enviada para leitura visual OC
         };
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
-          headers: { Authorization: \`Bearer \${groqKey}\`, "Content-Type": "application/json" },
+          headers: { Authorization: `Bearer ${groqKey}`, "Content-Type": "application/json" },
           body: JSON.stringify(groqPayload),
         });
         if (res.ok) {

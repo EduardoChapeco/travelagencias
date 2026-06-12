@@ -33,7 +33,7 @@ ALTER TABLE bus_seat_assignments ENABLE ROW LEVEL SECURITY;
 
 -- Agency admins can manage bus layouts
 CREATE POLICY "Manage bus layouts" ON bus_layouts
-FOR ALL USING (agency_id IN (SELECT agency_id FROM agency_users WHERE user_id = auth.uid()));
+FOR ALL USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Public can read bus layouts if attached to a published trip
 CREATE POLICY "Public read bus layouts" ON bus_layouts
@@ -44,7 +44,7 @@ FOR SELECT USING (id IN (
 -- Agency admins can manage assignments
 CREATE POLICY "Manage seat assignments" ON bus_seat_assignments
 FOR ALL USING (group_trip_id IN (
-    SELECT id FROM group_trips WHERE agency_id IN (SELECT agency_id FROM agency_users WHERE user_id = auth.uid())
+    SELECT id FROM group_trips WHERE public.is_agency_member(auth.uid(), agency_id)
 ));
 
 -- Public can insert or update assignments during booking process

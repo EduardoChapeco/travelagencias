@@ -86,11 +86,12 @@ CREATE POLICY "System can manage insights" ON lead_insights
   FOR ALL USING (is_agency_member(auth.uid(), agency_id));
 
 -- Trigger para atualizar timestamps
-CREATE TRIGGER update_omnichannel_sessions_updated_at BEFORE UPDATE ON omnichannel_sessions FOR EACH ROW EXECUTE FUNCTION update_modified_column();
-CREATE TRIGGER update_omnichannel_messages_updated_at BEFORE UPDATE ON omnichannel_messages FOR EACH ROW EXECUTE FUNCTION update_modified_column();
-CREATE TRIGGER update_lead_insights_updated_at BEFORE UPDATE ON lead_insights FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER update_omnichannel_sessions_updated_at BEFORE UPDATE ON omnichannel_sessions FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+CREATE TRIGGER update_omnichannel_messages_updated_at BEFORE UPDATE ON omnichannel_messages FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+CREATE TRIGGER update_lead_insights_updated_at BEFORE UPDATE ON lead_insights FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- 6. Atualizar a RPC de captura pública para salvar rastreamentos (fbclid, utm)
+DROP FUNCTION IF EXISTS public.public_save_lead(uuid, jsonb);
 CREATE OR REPLACE FUNCTION public.public_save_lead(_lead_id uuid, _payload jsonb)
 RETURNS void
 LANGUAGE plpgsql

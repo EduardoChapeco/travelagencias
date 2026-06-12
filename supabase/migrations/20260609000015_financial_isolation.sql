@@ -85,9 +85,9 @@ DROP POLICY IF EXISTS "Super Admins access all installments" ON public.booking_i
 
 CREATE POLICY "booking strict read" ON public.booking_installments FOR SELECT TO authenticated
   USING (
-    public.can_manage_agency_finances(agency_id) OR
+    public.can_manage_agency_finances((SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) OR
     (
-      public.is_agency_member(auth.uid(), agency_id) AND (
+      public.is_agency_member(auth.uid(), (SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) AND (
         trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid())
       )
     )
@@ -95,9 +95,9 @@ CREATE POLICY "booking strict read" ON public.booking_installments FOR SELECT TO
 
 CREATE POLICY "booking strict insert" ON public.booking_installments FOR INSERT TO authenticated
   WITH CHECK (
-    public.can_manage_agency_finances(agency_id) OR
+    public.can_manage_agency_finances((SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) OR
     (
-      public.is_agency_member(auth.uid(), agency_id) AND (
+      public.is_agency_member(auth.uid(), (SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) AND (
         trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid())
       )
     )
@@ -105,16 +105,16 @@ CREATE POLICY "booking strict insert" ON public.booking_installments FOR INSERT 
 
 CREATE POLICY "booking strict update" ON public.booking_installments FOR UPDATE TO authenticated
   USING (
-    public.can_manage_agency_finances(agency_id) OR
+    public.can_manage_agency_finances((SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) OR
     (
-      public.is_agency_member(auth.uid(), agency_id) AND (
+      public.is_agency_member(auth.uid(), (SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)) AND (
         trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid())
       )
     )
   );
 
 CREATE POLICY "booking strict delete" ON public.booking_installments FOR DELETE TO authenticated
-  USING (public.can_manage_agency_finances(agency_id));
+  USING (public.can_manage_agency_finances((SELECT t.agency_id FROM public.trips t WHERE t.id = booking_installments.trip_id)));
 
 
 -- =========================================================================
@@ -166,16 +166,17 @@ DROP POLICY IF EXISTS "contracts insert" ON public.contracts;
 DROP POLICY IF EXISTS "contracts update" ON public.contracts;
 DROP POLICY IF EXISTS "contracts delete" ON public.contracts;
 
--- Agente só lê contratos atrelados às viagens/propostas das quais ele é dono, 
--- ou se o contrato possuir created_by = auth.uid().
+-- Agente só lê contratos atrelados às viagens/propostas das quais ele é dono.
 CREATE POLICY "contracts strict read" ON public.contracts FOR SELECT TO authenticated
   USING (
     public.can_manage_agency_finances(agency_id) OR
     (
       public.is_agency_member(auth.uid(), agency_id) AND (
-        created_by = auth.uid() OR 
-        trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid()) OR
-        proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        trip_id IN (
+          SELECT id FROM public.trips 
+          WHERE owner_id = auth.uid() OR 
+                proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        )
       )
     )
   );
@@ -185,9 +186,11 @@ CREATE POLICY "contracts strict insert" ON public.contracts FOR INSERT TO authen
     public.can_manage_agency_finances(agency_id) OR
     (
       public.is_agency_member(auth.uid(), agency_id) AND (
-        (trip_id IS NULL AND proposal_id IS NULL AND created_by = auth.uid()) OR 
-        trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid()) OR
-        proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        trip_id IN (
+          SELECT id FROM public.trips 
+          WHERE owner_id = auth.uid() OR 
+                proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        )
       )
     )
   );
@@ -197,9 +200,11 @@ CREATE POLICY "contracts strict update" ON public.contracts FOR UPDATE TO authen
     public.can_manage_agency_finances(agency_id) OR
     (
       public.is_agency_member(auth.uid(), agency_id) AND (
-        created_by = auth.uid() OR 
-        trip_id IN (SELECT id FROM public.trips WHERE owner_id = auth.uid()) OR
-        proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        trip_id IN (
+          SELECT id FROM public.trips 
+          WHERE owner_id = auth.uid() OR 
+                proposal_id IN (SELECT id FROM public.proposals WHERE owner_id = auth.uid())
+        )
       )
     )
   );

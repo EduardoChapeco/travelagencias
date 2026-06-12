@@ -17,8 +17,7 @@ create policy "ticket_messages_agency_select" on public.ticket_messages
   using (
     exists (
       select 1 from public.support_tickets st
-      join public.agency_members am on am.agency_id = st.agency_id
-      where st.id = ticket_messages.ticket_id and am.user_id = auth.uid()
+      where st.id = ticket_messages.ticket_id and public.is_agency_member(auth.uid(), st.agency_id)
     )
   );
 
@@ -27,8 +26,7 @@ create policy "ticket_messages_agency_insert" on public.ticket_messages
   with check (
     exists (
       select 1 from public.support_tickets st
-      join public.agency_members am on am.agency_id = st.agency_id
-      where st.id = ticket_messages.ticket_id and am.user_id = auth.uid()
+      where st.id = ticket_messages.ticket_id and public.is_agency_member(auth.uid(), st.agency_id)
     )
   );
 
