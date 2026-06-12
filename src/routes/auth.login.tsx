@@ -15,11 +15,31 @@ export const Route = createFileRoute("/auth/login")({
   component: LoginPage,
 });
 
+function translateAuthError(msg: string): string {
+  if (msg.includes("Invalid login credentials") || msg.includes("invalid_credentials")) {
+    return "E-mail ou senha incorretos. Verifique e tente novamente.";
+  }
+  if (msg.includes("Email not confirmed")) {
+    return "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.";
+  }
+  if (msg.includes("Too many requests") || msg.includes("over_request_rate_limit")) {
+    return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+  }
+  if (msg.includes("User not found")) {
+    return "Nenhum usuário encontrado com este e-mail.";
+  }
+  if (msg.includes("signup_disabled")) {
+    return "Cadastro desativado no momento. Contate o administrador.";
+  }
+  return msg;
+}
+
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -29,37 +49,88 @@ function LoginPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function showError(msg: string) {
+    setErrorMsg(msg);
+    toast.error(msg);
+    console.error("[auth.login] error:", msg);
+  }
+
   async function redirectToDefault() {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
+    try {
+      const { data, error: userError } = await supabase.auth.getUser();
 
-    // Checks if the user is confirmed, just in case
-    if (!data.user.email_confirmed_at) {
-      toast.error("Por favor, verifique seu e-mail antes de continuar.");
-      return;
+      if (userError) {
+        console.error("[auth.login] getUser error:", userError);
+        showError("Erro ao verificar sessão: " + userError.message);
+        return;
+      }
+
+      if (!data.user) return;
+
+      // Email confirmation check
+      if (!data.user.email_confirmed_at) {
+        // Sign out and show message
+        await supabase.auth.signOut();
+        showError(
+          "Confirme seu e-mail antes de continuar. Verifique sua caixa de entrada e clique no link de confirmação."
+        );
+        return;
+      }
+
+      // Resolve agency
+      let agency = null;
+      try {
+        agency = await resolveSignedInAgency(data.user.id);
+      } catch (agencyErr: any) {
+        console.error("[auth.login] resolveSignedInAgency threw:", agencyErr);
+        // Non-fatal: tell user to set up their agency
+        toast.info("Configure sua agência para continuar.");
+        navigate({ to: "/auth/onboarding", replace: true });
+        return;
+      }
+
+      // No agency or onboarding incomplete
+      if (!agency || agency.onboarding_completed === false) {
+        toast.info(
+          "Sua conta foi criada! Configure sua agência para começar a usar o TravelOS."
+        );
+        navigate({ to: "/auth/onboarding", replace: true });
+        return;
+      }
+
+      // Success — go to dashboard
+      navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
+    } catch (err: any) {
+      console.error("[auth.login] redirectToDefault unexpected error:", err);
+      showError(
+        err?.message || "Ocorreu um erro inesperado ao redirecionar. Tente novamente."
+      );
     }
-
-    const agency = await resolveSignedInAgency(data.user.id);
-
-    // If no agency is attached, or the agency onboarding is incomplete
-    if (!agency || agency.onboarding_completed === false) {
-      navigate({ to: "/auth/onboarding", replace: true });
-      return;
-    }
-
-    navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setErrorMsg(null);
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        showError(translateAuthError(error.message));
+        return;
+      }
+
+      await redirectToDefault();
+    } catch (err: any) {
+      console.error("[auth.login] onSubmit caught:", err);
+      showError(err?.message || "Erro inesperado ao realizar login. Tente novamente.");
+    } finally {
+      setSubmitting(false);
     }
-    await redirectToDefault();
   }
 
   return (
@@ -75,23 +146,40 @@ function LoginPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Entrar</h1>
         <p className="mt-1 text-sm text-muted-foreground">Acesse sua agência ou conta.</p>
 
+        {errorMsg && (
+          <div
+            role="alert"
+            className="mt-4 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            {errorMsg}
+          </div>
+        )}
+
         <form onSubmit={onSubmit} className="mt-8 space-y-3">
           <Field label="Email">
             <Input
+              id="login-email"
               type="email"
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrorMsg(null);
+              }}
             />
           </Field>
           <Field label="Senha">
             <Input
+              id="login-password"
               type="password"
               required
               autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setErrorMsg(null);
+              }}
             />
           </Field>
           <div className="flex justify-end">
@@ -102,7 +190,12 @@ function LoginPage() {
               Esqueci minha senha
             </Link>
           </div>
-          <PrimaryButton type="submit" disabled={submitting} className="w-full">
+          <PrimaryButton
+            id="login-submit"
+            type="submit"
+            disabled={submitting}
+            className="w-full"
+          >
             {submitting ? "Entrando…" : "Entrar"}
           </PrimaryButton>
         </form>
