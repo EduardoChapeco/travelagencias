@@ -213,7 +213,7 @@ export async function fetchProposalsList(
       { count: "exact" },
     )
     .eq("agency_id", agencyId)
-    .is("deleted_at", null)
+    // NOTE: proposals table has no deleted_at column — no soft-delete filter needed
     .order("created_at", { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
