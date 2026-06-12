@@ -56,6 +56,8 @@ import { Route as MInviteTokenRouteImport } from './routes/m.invite.$token'
 import { Route as MContractTokenRouteImport } from './routes/m.contract.$token'
 import { Route as MCheckinTokenRouteImport } from './routes/m.checkin.$token'
 import { Route as ClientTripsIdRouteImport } from './routes/client.trips.$id'
+import { Route as ApiPublicMcpRouteImport } from './routes/api/public/mcp'
+import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AgencySlugVouchersRouteImport } from './routes/agency.$slug.vouchers'
 import { Route as AgencySlugVisasCatalogRouteImport } from './routes/agency.$slug.visas-catalog'
 import { Route as AgencySlugVisasRouteImport } from './routes/agency.$slug.visas'
@@ -85,6 +87,7 @@ import { Route as PAgency_slugVisaIdRouteImport } from './routes/p.$agency_slug.
 import { Route as PAgency_slugTourIdRouteImport } from './routes/p.$agency_slug.tour.$id'
 import { Route as PAgency_slugKbSlugRouteImport } from './routes/p.$agency_slug.kb.$slug'
 import { Route as PAgency_slugBlogSlugRouteImport } from './routes/p.$agency_slug.blog.$slug'
+import { Route as ApiPublicSitemapAgency_slugRouteImport } from './routes/api/public/sitemap.$agency_slug'
 import { Route as AgencySlugTripsIdRouteImport } from './routes/agency.$slug.trips.$id'
 import { Route as AgencySlugSupportTicket_idRouteImport } from './routes/agency.$slug.support.$ticket_id'
 import { Route as AgencySlugProposalsNewRouteImport } from './routes/agency.$slug.proposals.new'
@@ -342,6 +345,16 @@ const ClientTripsIdRoute = ClientTripsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ClientTripsRoute,
 } as any)
+const ApiPublicMcpRoute = ApiPublicMcpRouteImport.update({
+  id: '/api/public/mcp',
+  path: '/api/public/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
+  id: '/api/public/manifest',
+  path: '/api/public/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgencySlugVouchersRoute = AgencySlugVouchersRouteImport.update({
   id: '/vouchers',
   path: '/vouchers',
@@ -487,6 +500,12 @@ const PAgency_slugBlogSlugRoute = PAgency_slugBlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => PAgency_slugRoute,
 } as any)
+const ApiPublicSitemapAgency_slugRoute =
+  ApiPublicSitemapAgency_slugRouteImport.update({
+    id: '/api/public/sitemap/$agency_slug',
+    path: '/api/public/sitemap/$agency_slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AgencySlugTripsIdRoute = AgencySlugTripsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -661,6 +680,8 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/visas': typeof AgencySlugVisasRoute
   '/agency/$slug/visas-catalog': typeof AgencySlugVisasCatalogRoute
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -687,6 +708,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
   '/agency/$slug/trips/$id': typeof AgencySlugTripsIdRouteWithChildren
+  '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
@@ -754,6 +776,8 @@ export interface FileRoutesByTo {
   '/agency/$slug/visas': typeof AgencySlugVisasRoute
   '/agency/$slug/visas-catalog': typeof AgencySlugVisasCatalogRoute
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -779,6 +803,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/proposals/$id': typeof AgencySlugProposalsIdRouteWithChildren
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
+  '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
@@ -853,6 +878,8 @@ export interface FileRoutesById {
   '/agency/$slug/visas': typeof AgencySlugVisasRoute
   '/agency/$slug/visas-catalog': typeof AgencySlugVisasCatalogRoute
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
+  '/api/public/manifest': typeof ApiPublicManifestRoute
+  '/api/public/mcp': typeof ApiPublicMcpRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -879,6 +906,7 @@ export interface FileRoutesById {
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
   '/agency/$slug/trips/$id': typeof AgencySlugTripsIdRouteWithChildren
+  '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
@@ -954,6 +982,8 @@ export interface FileRouteTypes {
     | '/agency/$slug/visas'
     | '/agency/$slug/visas-catalog'
     | '/agency/$slug/vouchers'
+    | '/api/public/manifest'
+    | '/api/public/mcp'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -980,6 +1010,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/support/$ticket_id'
     | '/agency/$slug/trips/$id'
+    | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
     | '/p/$agency_slug/tour/$id'
@@ -1047,6 +1078,8 @@ export interface FileRouteTypes {
     | '/agency/$slug/visas'
     | '/agency/$slug/visas-catalog'
     | '/agency/$slug/vouchers'
+    | '/api/public/manifest'
+    | '/api/public/mcp'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -1072,6 +1105,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/$id'
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/support/$ticket_id'
+    | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
     | '/p/$agency_slug/tour/$id'
@@ -1145,6 +1179,8 @@ export interface FileRouteTypes {
     | '/agency/$slug/visas'
     | '/agency/$slug/visas-catalog'
     | '/agency/$slug/vouchers'
+    | '/api/public/manifest'
+    | '/api/public/mcp'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -1171,6 +1207,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/support/$ticket_id'
     | '/agency/$slug/trips/$id'
+    | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
     | '/p/$agency_slug/tour/$id'
@@ -1194,6 +1231,8 @@ export interface RootRouteChildren {
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
   VerifySerialRoute: typeof VerifySerialRoute
+  ApiPublicManifestRoute: typeof ApiPublicManifestRoute
+  ApiPublicMcpRoute: typeof ApiPublicMcpRoute
   MCheckinTokenRoute: typeof MCheckinTokenRoute
   MContractTokenRoute: typeof MContractTokenRoute
   MInviteTokenRoute: typeof MInviteTokenRoute
@@ -1201,6 +1240,7 @@ export interface RootRouteChildren {
   MPaymentTokenRoute: typeof MPaymentTokenRoute
   MProposalTokenRoute: typeof MProposalTokenRoute
   PCorporateApproveRoute: typeof PCorporateApproveRoute
+  ApiPublicSitemapAgency_slugRoute: typeof ApiPublicSitemapAgency_slugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1534,6 +1574,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientTripsIdRouteImport
       parentRoute: typeof ClientTripsRoute
     }
+    '/api/public/mcp': {
+      id: '/api/public/mcp'
+      path: '/api/public/mcp'
+      fullPath: '/api/public/mcp'
+      preLoaderRoute: typeof ApiPublicMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/manifest': {
+      id: '/api/public/manifest'
+      path: '/api/public/manifest'
+      fullPath: '/api/public/manifest'
+      preLoaderRoute: typeof ApiPublicManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agency/$slug/vouchers': {
       id: '/agency/$slug/vouchers'
       path: '/vouchers'
@@ -1736,6 +1790,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$agency_slug/blog/$slug'
       preLoaderRoute: typeof PAgency_slugBlogSlugRouteImport
       parentRoute: typeof PAgency_slugRoute
+    }
+    '/api/public/sitemap/$agency_slug': {
+      id: '/api/public/sitemap/$agency_slug'
+      path: '/api/public/sitemap/$agency_slug'
+      fullPath: '/api/public/sitemap/$agency_slug'
+      preLoaderRoute: typeof ApiPublicSitemapAgency_slugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/agency/$slug/trips/$id': {
       id: '/agency/$slug/trips/$id'
@@ -2249,6 +2310,8 @@ const rootRouteChildren: RootRouteChildren = {
   AgencySlugRoute: AgencySlugRouteWithChildren,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
   VerifySerialRoute: VerifySerialRoute,
+  ApiPublicManifestRoute: ApiPublicManifestRoute,
+  ApiPublicMcpRoute: ApiPublicMcpRoute,
   MCheckinTokenRoute: MCheckinTokenRoute,
   MContractTokenRoute: MContractTokenRoute,
   MInviteTokenRoute: MInviteTokenRoute,
@@ -2256,6 +2319,7 @@ const rootRouteChildren: RootRouteChildren = {
   MPaymentTokenRoute: MPaymentTokenRoute,
   MProposalTokenRoute: MProposalTokenRoute,
   PCorporateApproveRoute: PCorporateApproveRoute,
+  ApiPublicSitemapAgency_slugRoute: ApiPublicSitemapAgency_slugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

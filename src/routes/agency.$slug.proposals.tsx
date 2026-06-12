@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -6,8 +6,16 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
 import { fetchProposalsList } from "@/services/proposals";
+import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+
+import { z } from "zod";
+
+const proposalsSearchSchema = z.object({
+  new: z.preprocess((val) => val === "true" || val === true, z.boolean()).optional(),
+});
 
 export const Route = createFileRoute("/agency/$slug/proposals")({
+  validateSearch: proposalsSearchSchema,
   head: () => ({ meta: [{ title: "Cotações · TravelOS" }] }),
   component: ProposalsList,
 });
@@ -25,7 +33,10 @@ const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" |
 function ProposalsList() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/proposals" });
+  const search = Route.useSearch();
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const [newOpen, setNewOpen] = useState(!!search.new);
   const pageSize = 20;
 
   const list = useQuery({
@@ -40,13 +51,12 @@ function ProposalsList() {
         title="Cotações"
         description="Propostas comerciais enviadas a clientes e leads."
         actions={
-          <Link
-            to="/agency/$slug/proposals/new"
-            params={{ slug }}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+          <button
+            onClick={() => setNewOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Nova cotação
-          </Link>
+          </button>
         }
       />
 
@@ -132,6 +142,17 @@ function ProposalsList() {
             </div>
           </div>
         </>
+      )}
+
+      {newOpen && (
+        <NewProposalSheet
+          isOpen={newOpen}
+          onClose={() => setNewOpen(false)}
+          onCreated={(id) => {
+            setNewOpen(false);
+            navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id } });
+          }}
+        />
       )}
     </>
   );

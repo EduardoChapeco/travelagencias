@@ -319,7 +319,7 @@ function Dashboard() {
               Ações Rápidas
             </h3>
             <div className="space-y-2">
-              <QuickLink to={`/agency/${slug}/proposals/new`} label="Nova Cotação" />
+              <QuickLink to={`/agency/${slug}/proposals?new=true`} label="Nova Cotação" />
               <QuickLink to={`/agency/${slug}/crm`} label="Acessar Pipeline" />
               <QuickLink to={`/agency/${slug}/financial`} label="Tesouraria e DRE" />
               <QuickLink to={`/agency/${slug}/brand`} label="Personalizar Vitrine" />
