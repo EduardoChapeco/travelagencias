@@ -119,12 +119,12 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
     if (urlMatch) {
       const targetUrl = urlMatch[0];
       try {
-        const orchestratorUrl = `${process.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
+        const orchestratorUrl = `${import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
         const res = await fetch(orchestratorUrl, {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY}`,
           },
           body: JSON.stringify({ action: "scrape", url: targetUrl }),
         });
