@@ -1,20 +1,13 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   Plus,
-  GripVertical,
   Settings2,
-  Search,
-  Archive,
-  UserPlus,
   X,
   Trash2,
   KanbanSquare,
 } from "lucide-react";
-import { DndContext, DragOverlay, closestCorners } from "@dnd-kit/core";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import {
@@ -44,6 +37,8 @@ import {
   type Stage,
   type Lead,
 } from "@/services/crm";
+import { CrmFilterBar } from "@/components/crm/CrmFilterBar";
+import { CrmKanbanBoard } from "@/components/crm/CrmKanbanBoard";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
   head: () => ({ meta: [{ title: "CRM · TravelOS" }] }),
@@ -181,41 +176,15 @@ function CRMPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 pb-3">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome ou e-mail..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-9 text-xs"
-            />
-          </div>
-          <select
-            value={ownerFilter}
-            onChange={(e) => setOwnerFilter(e.target.value)}
-            className="h-9 w-48 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
-          >
-            <option value="">Todos os Responsáveis</option>
-            {usersQ.data?.map((u: any) => (
-              <option key={u.user_id} value={u.user_id}>
-                {u.user_name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={sourceFilter}
-            onChange={(e) => setSourceFilter(e.target.value)}
-            className="h-9 w-40 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
-          >
-            <option value="">Todas as Origens</option>
-            <option value="whatsapp">WhatsApp / Telefone</option>
-            <option value="instagram">Instagram / Meta</option>
-            <option value="website">Site / Landing Page</option>
-            <option value="referral">Indicação</option>
-            <option value="walkin">Presencial</option>
-          </select>
-        </div>
+        <CrmFilterBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          ownerFilter={ownerFilter}
+          setOwnerFilter={setOwnerFilter}
+          sourceFilter={sourceFilter}
+          setSourceFilter={setSourceFilter}
+          users={usersQ.data ?? []}
+        />
       </div>
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
@@ -275,37 +244,18 @@ function CRMPage() {
       )}
 
       {stagesQ.data && stagesQ.data.length > 0 && localLeads && (
-        <DndContext
+        <CrmKanbanBoard
+          stages={stagesQ.data}
+          stagesById={stagesById}
+          slug={slug}
+          users={usersQ.data ?? []}
           sensors={sensors}
-          collisionDetection={closestCorners}
+          activeLead={activeLead}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
-        >
-          <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 no-scrollbar cursor-grab active:cursor-grabbing bg-background/50">
-            <div className="flex h-full min-w-max gap-6">
-              {stagesQ.data.map((stage) => {
-                const items = stagesById[stage.id] ?? [];
-                return (
-                  <Column
-                    key={stage.id}
-                    stage={stage}
-                    leads={items}
-                    slug={slug}
-                    users={usersQ.data ?? []}
-                    onArchive={archiveLead}
-                    onTransfer={transferLead}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          <DragOverlay>
-            {activeLead ? (
-              <LeadCardView lead={activeLead} dragging users={usersQ.data ?? []} />
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+          onArchive={archiveLead}
+          onTransfer={transferLead}
+        />
       )}
 
       {newOpen && agency && (
@@ -327,189 +277,6 @@ function CRMPage() {
           onClose={() => setSettingsOpen(false)}
           onUpdated={() => qc.invalidateQueries({ queryKey: ["stages", agency.id] })}
         />
-      )}
-    </div>
-  );
-}
-
-function Column({ stage, leads, slug, users, onArchive, onTransfer }: any) {
-  const { setNodeRef, isOver } = useSortable({ id: stage.id, data: { type: "column" } });
-  const totalValue = leads.reduce((sum: number, l: any) => sum + (l.estimated_value || 0), 0);
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5" : "border-border/60"}`}
-    >
-      <div className="flex flex-col justify-center border-b border-border/50 bg-surface-alt/40 px-5 py-4 rounded-t-2xl">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2.5">
-            <span
-              className="h-3 w-3 rounded-full ring-4 ring-surface"
-              style={{ background: stage.color }}
-            />
-            <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
-              {stage.name}
-            </span>
-          </div>
-          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border">
-            {leads.length}
-            {(stage.is_won || stage.is_lost) && leads.length >= 50 ? "+" : ""}
-          </span>
-        </div>
-        {totalValue > 0 && (
-          <div className="text-[11px] font-medium text-muted-foreground mt-1 ml-5">
-            Pipeline:{" "}
-            <span className="text-foreground font-bold">
-              R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-            </span>
-          </div>
-        )}
-      </div>
-      <SortableContext items={leads.map((l: any) => l.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 space-y-3.5 overflow-y-auto p-4 no-scrollbar cursor-default">
-          {leads.map((lead: any) => (
-            <SortableLead
-              key={lead.id}
-              lead={lead}
-              slug={slug}
-              users={users}
-              onArchive={onArchive}
-              onTransfer={onTransfer}
-            />
-          ))}
-          {(stage.is_won || stage.is_lost) && leads.length >= 50 && (
-            <div className="text-center text-[10px] text-muted-foreground pt-3 font-medium uppercase tracking-wider">
-              Apenas os últimos 50 visíveis
-            </div>
-          )}
-          {leads.length === 0 && (
-            <div className="flex h-32 items-center justify-center rounded-xl border-2 border-dashed border-border/60 bg-surface/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/40">
-              Solte leads aqui
-            </div>
-          )}
-        </div>
-      </SortableContext>
-    </div>
-  );
-}
-
-function SortableLead({ lead, slug, users, onArchive, onTransfer }: any) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: lead.id,
-  });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.3 : 1,
-  };
-  return (
-    <div ref={setNodeRef} style={style} className="touch-none">
-      <LeadCardView
-        lead={lead}
-        slug={slug}
-        dragAttributes={{ ...attributes, ...listeners }}
-        users={users}
-        onArchive={onArchive}
-        onTransfer={onTransfer}
-      />
-    </div>
-  );
-}
-
-function LeadCardView({ lead, slug, dragAttributes, dragging, users, onArchive, onTransfer }: any) {
-  const [transferMode, setTransferMode] = useState(false);
-  const ownerName =
-    users?.find((u: any) => u.user_id === lead.owner_id)?.user_name?.split(" ")[0] ?? "Sem Dono";
-
-  return (
-    <div
-      {...(dragAttributes ?? {})}
-      className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all active:cursor-grabbing ${
-        dragging
-          ? "border-brand scale-105 z-50 rotate-3 opacity-95"
-          : "border-border/60 hover:border-brand/50"
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div className="mt-1 text-muted-foreground/30 transition-colors group-hover:text-brand/60">
-          <GripVertical className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          {slug && !dragging ? (
-            <Link
-              to="/agency/$slug/crm/$lead_id"
-              params={{ slug, lead_id: lead.id }}
-              className="block truncate text-sm font-bold text-foreground hover:text-brand transition-colors"
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              {lead.name}
-            </Link>
-          ) : (
-            <div className="truncate text-sm font-bold text-foreground">{lead.name}</div>
-          )}
-          {lead.destination && (
-            <div className="mt-1 truncate text-xs font-medium text-muted-foreground">
-              {lead.destination} · {lead.pax_count} pax
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mt-3">
-            <span className="inline-flex items-center rounded-full bg-surface-alt px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border border-border/50">
-              {ownerName}
-            </span>
-            {lead.estimated_value > 0 && (
-              <span className="shrink-0 font-mono text-[11px] font-bold text-brand">
-                R${Math.round(lead.estimated_value).toLocaleString("pt-BR")}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {!dragging && onArchive && onTransfer && (
-        <div
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-surface/90 backdrop-blur-sm p-1 rounded-md border border-border/50"
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          {transferMode ? (
-            <select
-              className="text-[10px] h-6 rounded border border-border bg-background px-1 focus:outline-brand"
-              onChange={(e) => {
-                if (e.target.value) {
-                  onTransfer(lead.id, e.target.value);
-                  setTransferMode(false);
-                }
-              }}
-              onBlur={() => setTransferMode(false)}
-              autoFocus
-            >
-              <option value="">Transferir para...</option>
-              {users.map((u: any) => (
-                <option key={u.user_id} value={u.user_id}>
-                  {u.user_name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <>
-              <button
-                onClick={() => setTransferMode(true)}
-                className="p-1 text-muted-foreground hover:text-brand hover:bg-brand/10 rounded transition-colors"
-                title="Transferir Lead"
-              >
-                <UserPlus className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => onArchive(lead.id)}
-                className="p-1 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded transition-colors"
-                title="Arquivar Lead"
-              >
-                <Archive className="h-3.5 w-3.5" />
-              </button>
-            </>
-          )}
-        </div>
       )}
     </div>
   );
@@ -855,10 +622,11 @@ function StageSettingsModal({
           ))}
 
           <GhostButton
+            type="button"
             onClick={handleAdd}
-            className="w-full mt-4 border-2 border-dashed border-border text-xs uppercase tracking-widest font-bold"
+            className="w-full mt-4 border-2 border-dashed border-border text-xs uppercase tracking-widest font-bold animate-pulse"
           >
-            <Plus className="h-4 w-4 mr-2" /> Adicionar Estágio
+            <Plus className="h-4 w-4 mr-2 inline" /> Adicionar Estágio
           </GhostButton>
         </div>
 
@@ -867,10 +635,10 @@ function StageSettingsModal({
             Nota: Não é possível excluir estágios de sistema (Ganho/Perdido).
           </p>
           <div className="flex gap-3">
-            <GhostButton onClick={onClose} disabled={busy}>
+            <GhostButton type="button" onClick={onClose} disabled={busy}>
               Cancelar
             </GhostButton>
-            <PrimaryButton onClick={handleSave} disabled={busy} className="w-32">
+            <PrimaryButton type="button" onClick={handleSave} disabled={busy} className="w-32">
               {busy ? "Salvando..." : "Salvar Funil"}
             </PrimaryButton>
           </div>
