@@ -76,6 +76,16 @@ export type Proposal = {
   installments_card: number;
   installments_boleto: number;
   template: string;
+  cover_image_url?: string | null;
+  map_image_url?: string | null;
+  agent_name?: string | null;
+  agent_photo_url?: string | null;
+  agent_whatsapp?: string | null;
+  custom_payments?: any[] | null;
+  waypoints?: any[] | null;
+  extra_pages?: any[] | null;
+  canvas_format?: string;
+  cover_prompt?: string | null;
 };
 
 export async function fetchProposal(id: string): Promise<Proposal | null> {
@@ -99,22 +109,37 @@ export async function recalculateProposal(id: string) {
   if (error) throw error;
 }
 
-export async function processOcrFile(file: File) {
+export async function processOcrFile(file: File, proposal_id?: string, agency_id?: string) {
   return new Promise<{
     flights?: Flight[];
     hotels?: Hotel[];
     transfers?: Transfer[];
     tours?: Tour[];
+    itinerary?: ItineraryDay[];
+    includes?: string[];
+    excludes?: string[];
+    emergency_contacts?: any[];
+    insurance?: any;
+    destination?: string;
+    pax?: string[];
+    locator?: string;
+    notes?: string;
   }>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         const base64 = (reader.result as string).split(",")[1];
-        const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
-          body: { file_base64: base64, mime: file.type, file_name: file.name },
+        const { data, error } = await supabase.functions.invoke("ocr-proposal", {
+          body: { 
+            file_base64: base64, 
+            mime: file.type, 
+            file_name: file.name,
+            proposal_id,
+            agency_id
+          },
         });
         if (error) throw error;
-        resolve(data ?? {});
+        resolve(data?.result ?? {});
       } catch (err) {
         reject(err);
       }
@@ -122,6 +147,24 @@ export async function processOcrFile(file: File) {
     reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
     reader.readAsDataURL(file);
   });
+}
+
+export type UnsplashPhoto = {
+  id: string;
+  url_regular: string;
+  url_full: string;
+  url_thumb: string;
+  photographer: string;
+  photographer_url: string;
+  alt: string;
+};
+
+export async function searchUnsplash(query: string): Promise<UnsplashPhoto[]> {
+  const { data, error } = await supabase.functions.invoke("search-unsplash", {
+    body: { query },
+  });
+  if (error) throw error;
+  return data?.photos || [];
 }
 
 export async function refineItineraryText(
@@ -151,6 +194,7 @@ export interface CreateProposalPayload {
   travel_start?: string;
   travel_end?: string;
   pax_adults: number;
+  pax_seniors?: number;
   pax_children: number;
   pax_infants: number;
   currency: string;
@@ -172,6 +216,7 @@ export async function createProposal(
     travel_start: payload.travel_start || null,
     travel_end: payload.travel_end || null,
     pax_adults: payload.pax_adults,
+    pax_seniors: payload.pax_seniors ?? 0,
     pax_children: payload.pax_children,
     pax_infants: payload.pax_infants,
     currency: payload.currency || "BRL",
@@ -209,7 +254,7 @@ export async function fetchProposalsList(
   const { data, count, error } = await supabase
     .from("proposals")
     .select(
-      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id",
+      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token",
       { count: "exact" },
     )
     .eq("agency_id", agencyId)
@@ -242,3 +287,99 @@ export async function fetchLeadsPick(agencyId: string) {
   if (error) throw new Error(error.message);
   return data ?? [];
 }
+
+export async function duplicateProposal(proposalId: string): Promise<{ id: string }> {
+  // Fetch existing proposal
+  const existing = await fetchProposal(proposalId);
+  if (!existing) throw new Error("Proposta não encontrada para duplicação");
+
+  // Create a payload without the id, public_token, created_at, etc.
+  const insertData = {
+    ...existing,
+    title: `${existing.title} (Cópia)`,
+    status: "draft",
+    decided_at: null,
+    viewed_at: null,
+  };
+  
+  delete (insertData as any).id;
+  delete (insertData as any).public_token;
+  delete (insertData as any).created_at;
+  delete (insertData as any).updated_at;
+
+  const { data, error } = await supabase
+    .from("proposals")
+    .insert(insertData as any)
+    .select("id")
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as { id: string };
+}
+
+export async function deleteProposal(proposalId: string): Promise<void> {
+  const { error } = await supabase
+    .from("proposals")
+    .delete()
+    .eq("id", proposalId);
+    
+  if (error) throw new Error(error.message);
+}
+
+/**
+ * Generate PDF via Supabase Edge Function (Puppeteer / high quality).
+ * Returns the public URL of the generated PDF stored in proposals-exports bucket.
+ */
+export async function generateProposalPdfViaServer(
+  proposalId: string,
+  proposalNumber: number,
+): Promise<string> {
+  const { data, error } = await supabase.functions.invoke("generate-proposal-pdf", {
+    body: { proposalId },
+  });
+  if (error) throw new Error(error.message ?? "Erro ao gerar PDF no servidor");
+  if (!data?.url) throw new Error("PDF gerado, mas URL não retornada pelo servidor");
+  return data.url as string;
+}
+
+/**
+ * Suggest includes and excludes list via AI based on proposal destination, hotels, flights, tours.
+ */
+export async function suggestIncludesExcludesViaAI(
+  proposal: Proposal,
+): Promise<{ includes: string[]; excludes: string[] }> {
+  const hotelsText = proposal.hotels?.map(h => h.name).join(", ") || "nenhum";
+  const flightsText = proposal.flights?.map(f => `${f.origin}/${f.destination}`).join(", ") || "nenhum";
+  const transfersText = proposal.transfers?.length ? `${proposal.transfers.length} transfers` : "nenhum";
+  const toursText = proposal.tours?.map(t => t.description).join(", ") || "nenhum";
+
+  const prompt = `Com base na seguinte proposta de viagem:
+- Destino: ${proposal.destination || "Vários destinos"}
+- Hotéis: ${hotelsText}
+- Voos: ${flightsText}
+- Transfers: ${transfersText}
+- Passeios: ${toursText}
+
+Sugira uma lista de itens que normalmente estariam incluídos nesta viagem e itens comumente excluídos.
+Retorne EXATAMENTE um JSON com as chaves "includes" e "excludes", que são arrays de strings (com frases curtas, ex: "Hospedagem com café da manhã", "Seguro viagem", "Passeios opcionais"). Retorne apenas o JSON.`;
+
+  const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: {
+      action: "completion",
+      prompt,
+      systemPrompt: "Você é um consultor de viagens experiente e premium. Retorne apenas JSON.",
+      modelPreference: "smart",
+    },
+  });
+
+  if (error) throw error;
+  const text = data?.result || "";
+  const match = text.match(/\{[\s\S]*\}/);
+  const parsed = JSON.parse(match ? match[0] : text);
+  return {
+    includes: Array.isArray(parsed.includes) ? parsed.includes : [],
+    excludes: Array.isArray(parsed.excludes) ? parsed.excludes : [],
+  };
+}
+
+

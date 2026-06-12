@@ -38,6 +38,8 @@ O TravelOS passou por múltiplos ciclos de refatoração, reescrita e correção
 
 **Este documento não declara o sistema bom nem ruim.** Declara que a única forma honesta de saber é executar as matrizes deste relatório contra o código atual. Tudo o que a IA disse anteriormente — "premium", "blindado", "enterprise", "impecável" — deve ser tratado como **não comprovado** até auditoria.
 
+> **ATUALIZAÇÃO (Sessão Atual):** O módulo de **Cotações/Propostas (Studio Premium Master v31)** passou por auditoria e refatoração completa. Foi implementada uma fonte única da verdade financeira (`pricing.ts`), o padrão de Adapter/ViewModel (`adapters.ts`) e a engine de exportação em múltiplos formatos (PDF/PNG multipágina/JPEG). Os 6 templates originais foram reconstruídos para usar esses padrões sem duplicação lógica. O status do módulo "Cotações/Propostas" agora é considerado **Concluído e Validado**, mas todo o resto do sistema ainda aguarda auditoria e execução seguindo este relatório.
+
 ---
 
 ## 2. Contexto do problema
@@ -228,7 +230,7 @@ Fluxos críticos a cobrir manualmente antes de qualquer release:
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Dashboard | Visão consolidada | KPIs em tempo real | parcial | `agency.$slug.index.tsx` | ✓ | múltiplas | ✓ | a validar | a validar | ? | ? | ? | n/a | ? | não | Não analisado | Médio | Auditar queries |
 | CRM | Kanban premium | Kanban + atividades | parcial | `agency.$slug.crm.tsx` | ✓ (lista) | `leads`, `lead_stages`, `lead_activities` | ✓ | inclui `deleted_at` historicamente | sem `deleted_at` em algum momento | **Sim (histórico)** | parcial | **policies parciais** | n/a | parcial | não | Parcial | Alto | Refatorar para Kanban + policies completas |
-| Cotações/Propostas | Builder + preview público | Premium | parcial | `agency.$slug.proposals*.tsx` | ✓ | `proposals`, `proposal_items` | ✓ | a validar | a validar | ? | sim | sim | `proposal-attachments`, `proposal-covers` | ? | não | Não analisado | Médio | Auditar |
+| Cotações/Propostas | Builder + preview público | Premium | parcial | `agency.$slug.proposals*.tsx` | ✓ | `proposals`, `proposal_items` | ✓ | pricing/adapters | OK | Não | sim | sim | `proposal-attachments`, `proposal-covers` | ? | não | Concluído (Fase 1-5) | Baixo | Monitorar exportação |
 | Viagens | Hub operacional | Hub + financeiro + vouchers | parcial | `agency.$slug.trips*.tsx` | ✓ | `trips`, `trip_passengers` | ✓ | a validar | a validar | ? | sim | sim | n/a | ? | não | Não analisado | Médio | Auditar |
 | Passageiros | CRUD + magic link | Completo | parcial | `agency.$slug.trips.$id.passengers.tsx` | ✓ | `trip_passengers` | ✓ | RPC `save_passenger_with_token` | ✓ | OK | sim | sim | `passenger-documents` | parcial | não | OK | Baixo | Validar |
 | Embarques | Checklist + alertas | Operacional | parcial | `agency.$slug.boarding.tsx` | ✓ | `boarding_cards` | ✓ | `departure_date`, `passengers_count` | ausentes historicamente | **Sim** | remendada | sim | n/a | ? | não | Mismatch | Alto | Migration + types |

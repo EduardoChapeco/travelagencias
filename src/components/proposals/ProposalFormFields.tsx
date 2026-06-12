@@ -67,11 +67,13 @@ export function TextField({
   value,
   onSave,
   type = "text",
+  placeholder,
 }: {
   label: string;
   value: string;
   onSave: (v: string) => void;
   type?: string;
+  placeholder?: string;
 }) {
   const [v, setV] = useState(value);
   useEffect(() => setV(value ?? ""), [value]);
@@ -84,6 +86,7 @@ export function TextField({
         type={type}
         className={SMALL_INPUT}
         value={v}
+        placeholder={placeholder}
         onChange={(e) => setV(e.target.value)}
         onBlur={() => onSave(v)}
       />

@@ -7,25 +7,37 @@ import {
   type Hotel,
   type Transfer,
   type Tour,
+  type ItineraryDay,
 } from "@/services/proposals";
 
 type Props = {
+  proposalId?: string;
+  agencyId?: string;
   onExtracted: (data: {
     flights?: Flight[];
     hotels?: Hotel[];
     transfers?: Transfer[];
     tours?: Tour[];
+    itinerary?: ItineraryDay[];
+    includes?: string[];
+    excludes?: string[];
+    emergency_contacts?: any[];
+    insurance?: any;
+    destination?: string;
+    pax?: string[];
+    locator?: string;
+    notes?: string;
   }) => void;
 };
 
-export function OcrButton({ onExtracted }: Props) {
+export function OcrButton({ proposalId, agencyId, onExtracted }: Props) {
   const [busy, setBusy] = useState(false);
 
   async function handle(files: FileList | null) {
     if (!files || !files[0]) return;
     setBusy(true);
     try {
-      const data = await processOcrFile(files[0]);
+      const data = await processOcrFile(files[0], proposalId, agencyId);
       onExtracted(data);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro no OCR");

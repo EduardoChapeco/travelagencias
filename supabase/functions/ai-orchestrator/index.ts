@@ -216,6 +216,95 @@ serve(async (req) => {
       throw new Error("No scraper keys configured.");
     }
 
+    // --- Action: GENERATE IMAGE ---
+    if (action === "generate-image") {
+      const { prompt, agency_id, proposal_id } = body;
+      if (!prompt) throw new Error("Prompt is required.");
+
+      let imageUrl = "";
+
+      if (keys.openai_key) {
+        try {
+          const res = await fetch("https://api.openai.com/v1/images/generations", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${keys.openai_key}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "dall-e-3",
+              prompt,
+              n: 1,
+              size: "1024x1024",
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            imageUrl = data.data?.[0]?.url;
+          }
+        } catch (e) {
+          console.error("OpenAI image generation failed", e);
+        }
+      }
+
+      if (!imageUrl && keys.openrouter_key) {
+        try {
+          const res = await fetch("https://openrouter.ai/api/v1/images/generations", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${keys.openrouter_key}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "stabilityai/stable-diffusion-xl",
+              prompt,
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            imageUrl = data.data?.[0]?.url;
+          }
+        } catch (e) {
+          console.error("OpenRouter image generation failed", e);
+        }
+      }
+
+      if (!imageUrl) {
+        throw new Error("Geração de imagem falhou. Chaves de API não configuradas ou limite excedido.");
+      }
+
+      // Fetch the generated image bytes
+      const imgRes = await fetch(imageUrl);
+      if (!imgRes.ok) throw new Error("Erro ao baixar imagem gerada.");
+      const arrayBuffer = await imgRes.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+
+      // Instantiate supabase client with service role key to bypass storage RLS
+      const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+        auth: { persistSession: false },
+      });
+
+      const uid = Math.random().toString(36).slice(2, 9);
+      const filePath = `${agency_id}/proposals/${proposal_id}/cover-${uid}.png`;
+
+      const { error: uploadErr } = await supabaseAdmin.storage
+        .from("agency-media")
+        .upload(filePath, bytes, {
+          contentType: "image/png",
+          upsert: true,
+        });
+
+      if (uploadErr) throw new Error("Erro de Storage: " + uploadErr.message);
+
+      const { data: { publicUrl } } = supabaseAdmin.storage
+        .from("agency-media")
+        .getPublicUrl(filePath);
+
+      return new Response(JSON.stringify({ url: publicUrl }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     throw new Error("Unknown action.");
   } catch (error: any) {
     console.error("Orchestrator Error:", error);
