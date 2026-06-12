@@ -57,7 +57,7 @@ async function checkAndIncrementRateLimit(supabase: any, agencyId: string) {
 
 export const listAIChatMessages = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     z.object({
       agencyId: z.string().uuid(),
       conversationId: z.string().uuid(),
@@ -78,7 +78,7 @@ export const listAIChatMessages = createServerFn({ method: "POST" })
 
 export const sendAIChatMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     z.object({
       agencyId: z.string().uuid(),
       conversationId: z.string().uuid(),
@@ -235,7 +235,7 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
 
 export const clearAIChatConversation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     z.object({
       agencyId: z.string().uuid(),
       conversationId: z.string().uuid(),
