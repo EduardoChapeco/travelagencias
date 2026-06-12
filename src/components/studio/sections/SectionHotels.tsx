@@ -1,13 +1,18 @@
 import { type Proposal, type Hotel, type HotelRoom } from "@/services/proposals";
-import { Accordion, Card, AddBtn, L, Inp, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
+import {
+  Accordion,
+  Card,
+  AddBtn,
+  L,
+  Inp,
+  SMALL_INPUT,
+} from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { FileUploadList } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
 import { Trash2, Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
-
-
 
 interface Props {
   draft: Proposal;
@@ -40,7 +45,12 @@ export function SectionHotels({ draft, save }: Props) {
   const [unsplashOpenIndex, setUnsplashOpenIndex] = useState<number | null>(null);
 
   function add() {
-    save({ hotels: [...hotels, { ...BLANK, id: crypto.randomUUID(), rooms: [{ type: "Duplo Standard", qty: 1 }] }] });
+    save({
+      hotels: [
+        ...hotels,
+        { ...BLANK, id: crypto.randomUUID(), rooms: [{ type: "Duplo Standard", qty: 1 }] },
+      ],
+    });
   }
 
   function upd(i: number, patch: Partial<Hotel>) {
@@ -94,7 +104,9 @@ export function SectionHotels({ draft, save }: Props) {
               onChange={(e) => upd(i, { meal_plan: e.target.value })}
             >
               {MEAL_PLANS.map((mp) => (
-                <option key={mp} value={mp}>{mp}</option>
+                <option key={mp} value={mp}>
+                  {mp}
+                </option>
               ))}
             </select>
           </L>
@@ -102,7 +114,9 @@ export function SectionHotels({ draft, save }: Props) {
           {/* Rooms */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Quartos</span>
+              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+                Quartos
+              </span>
               <button
                 type="button"
                 onClick={() => addRoom(i)}
@@ -149,7 +163,9 @@ export function SectionHotels({ draft, save }: Props) {
             {unsplashOpenIndex === i ? (
               <div className="rounded-lg border border-border bg-surface p-3 mt-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase tracking-wide font-semibold">Buscar imagem</span>
+                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                    Buscar imagem
+                  </span>
                   <button
                     type="button"
                     onClick={() => setUnsplashOpenIndex(null)}
@@ -183,11 +199,11 @@ export function SectionHotels({ draft, save }: Props) {
 
           <div className="grid grid-cols-1 gap-2 mt-2 pt-2 border-t border-border/30">
             <L label="Valor da Hospedagem (Soma no total)">
-              <Inp 
-                value={h.price?.toString() || ""} 
-                onChange={(v) => upd(i, { price: parseFloat(v) || 0 })} 
-                type="number" 
-                ph="0.00" 
+              <Inp
+                value={h.price?.toString() || ""}
+                onChange={(v) => upd(i, { price: parseFloat(v) || 0 })}
+                type="number"
+                ph="0.00"
               />
             </L>
           </div>

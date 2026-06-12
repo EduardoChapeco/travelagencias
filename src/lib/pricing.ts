@@ -27,7 +27,7 @@ export function calculateQuoteTotals(state: Partial<Proposal>): QuoteTotals {
   const hotels = state.hotels || [];
   const transfers = state.transfers || [];
   const tours = state.tours || [];
-  
+
   // Custom payments logic (extras) - handling later if added, for now let's sum known arrays
   const customPayments = state.custom_payments || [];
 
@@ -36,9 +36,9 @@ export function calculateQuoteTotals(state: Partial<Proposal>): QuoteTotals {
   const hoteis = hotels.reduce((acc, h) => acc + (Number(h.price) || 0), 0);
   const transfersTotal = transfers.reduce((acc, t) => acc + (Number(t.price) || 0), 0);
   const passeios = tours.reduce((acc, t) => acc + (Number(t.price) || 0), 0);
-  
+
   // Custom Payments (extras)
-  // Assuming extra items have a 'price' and 'is_optional' flag. 
+  // Assuming extra items have a 'price' and 'is_optional' flag.
   // If no optional flag exists yet, we assume all are mandatory.
   let extrasObrigatorios = 0;
   let extrasOpcionais = 0;

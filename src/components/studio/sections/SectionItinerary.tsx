@@ -70,10 +70,7 @@ export function SectionItinerary({ draft, save }: Props) {
           </div>
           <L label="Descrição">
             <textarea
-              className={
-                SMALL_INPUT +
-                " h-20 resize-none py-2 leading-relaxed"
-              }
+              className={SMALL_INPUT + " h-20 resize-none py-2 leading-relaxed"}
               value={d.description}
               placeholder="Descreva as atividades deste dia..."
               onChange={(e) => upd(i, { description: e.target.value })}

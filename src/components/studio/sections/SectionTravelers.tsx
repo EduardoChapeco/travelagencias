@@ -1,5 +1,12 @@
 import { type Proposal } from "@/services/proposals";
-import { Accordion, NumField, TextField, Card, AddBtn, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
+import {
+  Accordion,
+  NumField,
+  TextField,
+  Card,
+  AddBtn,
+  SMALL_INPUT,
+} from "@/components/proposals/ProposalFormFields";
 import { Users, Trash2 } from "lucide-react";
 
 interface Props {
@@ -60,7 +67,9 @@ export function SectionTravelers({ draft, save }: Props) {
             <button
               type="button"
               onClick={() => {
-                const arr = ((draft as any).pax_names ?? []).filter((_: string, x: number) => x !== i);
+                const arr = ((draft as any).pax_names ?? []).filter(
+                  (_: string, x: number) => x !== i,
+                );
                 save({ pax_names: arr } as any);
               }}
               className="rounded p-1 text-muted-foreground hover:text-danger transition-colors"

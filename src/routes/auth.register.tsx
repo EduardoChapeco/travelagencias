@@ -1,91 +1,105 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
-import { slugify } from "@/lib/slug";
-import { resolveSignedInAgency } from "@/lib/auth-routing";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
     meta: [
-      { title: "Cadastrar agência · TravelOS" },
-      { name: "description", content: "Crie sua conta e sua agência no TravelOS." },
+      { title: "Cadastrar conta · TravelOS" },
+      { name: "description", content: "Crie sua conta no TravelOS." },
     ],
   }),
   component: RegisterPage,
 });
 
 function RegisterPage() {
-  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
-  const [agencyName, setAgencyName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [legalName, setLegalName] = useState("");
-  const [document, setDocument] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("As senhas não coincidem.");
+      return;
+    }
+    if (!acceptedTerms) {
+      toast.error("Você precisa aceitar os termos de serviço e a política de privacidade.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const slug = slugify(agencyName, `agencia-${Date.now().toString(36)}`);
-
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+      const { error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/login`,
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
           data: { full_name: fullName },
         },
       });
+
       if (signupError) throw signupError;
 
-      // Auto-confirm is enabled, so we should already have a session.
-      const userId = signupData.user?.id;
-      if (!userId) throw new Error("Não foi possível criar o usuário.");
-
-      // If session not present (rare), sign in.
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session) {
-        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInErr) throw signInErr;
-      }
-
-      const existingAgency = await resolveSignedInAgency(userId);
-      if (existingAgency) {
-        toast.success("Agência encontrada.");
-        navigate({ to: "/agency/$slug", params: { slug: existingAgency.slug }, replace: true });
-        return;
-      }
-
-      const { data: rows, error: agencyErr } = await supabase.rpc("create_agency_onboarding", {
-        _name: agencyName,
-        _slug: slug,
-        _email: email,
-        _phone: phone,
-        _full_name: fullName,
-        _legal_name: legalName,
-        _document: document,
-      });
-      if (agencyErr) throw agencyErr;
-      const agency = Array.isArray(rows) ? rows[0] : rows;
-      if (!agency?.slug) throw new Error("Agência criada sem retorno de URL.");
-
-      toast.success("Agência criada!");
-      navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
+      setSuccess(true);
+      toast.success("Conta criada! Verifique seu e-mail.");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Erro ao criar a agência";
-      toast.error(msg);
+      const msg = err instanceof Error ? err.message : "Erro ao criar a conta";
+      // Prevent exposing raw Supabase errors when possible
+      if (msg.includes("already registered")) {
+        toast.error("Este e-mail já está em uso.");
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setSubmitting(false);
     }
   }
 
+  if (success) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-6 bg-background">
+        <div className="w-full max-w-sm text-center">
+          <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight">Verifique seu e-mail</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Enviamos um e-mail de confirmação para <strong>{email}</strong>. Clique no link da
+            mensagem para ativar sua conta.
+          </p>
+          <div className="mt-8 space-y-3">
+            <Link
+              to="/auth/login"
+              className="block text-sm font-medium text-primary hover:underline"
+            >
+              Ir para o Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center p-6">
+    <div className="flex min-h-screen items-center justify-center p-6 bg-background">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">
@@ -94,33 +108,15 @@ function RegisterPage() {
           <span className="text-sm font-semibold">TravelOS</span>
         </div>
 
-        <h1 className="text-2xl font-semibold tracking-tight">Cadastrar agência</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Sua conta + sua agência em um único passo.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Criar sua conta</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Preencha seus dados para começar.</p>
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-3">
-          <Field label="Seu nome">
+        <form onSubmit={onSubmit} className="mt-8 space-y-4">
+          <Field label="Nome completo">
             <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </Field>
-          <Field label="Nome da agência">
-            <Input required value={agencyName} onChange={(e) => setAgencyName(e.target.value)} />
-            {agencyName && (
-              <p className="mt-1 font-mono text-[10px] text-muted-foreground">
-                /agency/{slugify(agencyName)}
-              </p>
-            )}
-          </Field>
-          <Field label="Telefone / WhatsApp">
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-          </Field>
-          <Field label="Razão social">
-            <Input value={legalName} onChange={(e) => setLegalName(e.target.value)} />
-          </Field>
-          <Field label="CNPJ / documento">
-            <Input value={document} onChange={(e) => setDocument(e.target.value)} />
-          </Field>
-          <Field label="Email">
+
+          <Field label="E-mail">
             <Input
               type="email"
               required
@@ -129,7 +125,8 @@ function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Field>
-          <Field label="Senha (mínimo 8 caracteres)">
+
+          <Field label="Senha">
             <Input
               type="password"
               required
@@ -137,10 +134,49 @@ function RegisterPage() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mínimo de 8 caracteres"
             />
           </Field>
-          <PrimaryButton type="submit" disabled={submitting} className="w-full">
-            {submitting ? "Criando…" : "Criar agência"}
+
+          <Field label="Confirmação de senha">
+            <Input
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </Field>
+
+          <div className="flex items-start space-x-2 pt-2">
+            <Checkbox
+              id="terms"
+              checked={acceptedTerms}
+              onCheckedChange={(c) => setAcceptedTerms(c as boolean)}
+            />
+            <label
+              htmlFor="terms"
+              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+            >
+              Eu aceito os{" "}
+              <a href="#" className="text-primary hover:underline">
+                Termos de Serviço
+              </a>{" "}
+              e a{" "}
+              <a href="#" className="text-primary hover:underline">
+                Política de Privacidade
+              </a>
+              .
+            </label>
+          </div>
+
+          <PrimaryButton
+            type="submit"
+            disabled={submitting || !acceptedTerms}
+            className="w-full mt-6"
+          >
+            {submitting ? "Criando conta…" : "Criar conta"}
           </PrimaryButton>
         </form>
 

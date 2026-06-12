@@ -286,5 +286,3 @@ export function TagsEditor({
     </div>
   );
 }
-
-

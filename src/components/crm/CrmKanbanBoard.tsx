@@ -58,9 +58,7 @@ export function CrmKanbanBoard({
       </div>
 
       <DragOverlay>
-        {activeLead ? (
-          <LeadCardView lead={activeLead} dragging users={users} />
-        ) : null}
+        {activeLead ? <LeadCardView lead={activeLead} dragging users={users} /> : null}
       </DragOverlay>
     </DndContext>
   );
@@ -76,7 +74,15 @@ type ColumnProps = {
   onCreateProposal?: (id: string) => void;
 };
 
-function Column({ stage, leads, slug, users, onArchive, onTransfer, onCreateProposal }: ColumnProps) {
+function Column({
+  stage,
+  leads,
+  slug,
+  users,
+  onArchive,
+  onTransfer,
+  onCreateProposal,
+}: ColumnProps) {
   const { setNodeRef, isOver } = useSortable({ id: stage.id, data: { type: "column" } });
   const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
 

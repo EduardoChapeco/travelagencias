@@ -6,11 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 import { useAgency } from "@/lib/agency-context";
-import {
-  fetchProposal,
-  updateProposal,
-  type Proposal,
-} from "@/services/proposals";
+import { fetchProposal, updateProposal, type Proposal } from "@/services/proposals";
 
 import { StudioToolbar } from "@/components/studio/StudioToolbar";
 import { ProposalStudio } from "@/components/proposals/ProposalStudio";
@@ -40,7 +36,13 @@ function ProposalEditor() {
     if (propQ.data) {
       const raw = propQ.data;
       // Normalize canvas_format: fallback to a4-portrait if unset or invalid
-      const validFormats = ["a4-portrait","a4-landscape","story-916","presentation-169","letter-portrait"];
+      const validFormats = [
+        "a4-portrait",
+        "a4-landscape",
+        "story-916",
+        "presentation-169",
+        "letter-portrait",
+      ];
       const canvas_format = validFormats.includes(raw.canvas_format as string)
         ? raw.canvas_format
         : "a4-portrait";
@@ -68,19 +70,19 @@ function ProposalEditor() {
   const save = useCallback(
     (patch: Partial<Proposal>) => {
       if (!draft) return;
-      
+
       const nextState = { ...draft, ...patch };
-      
+
       // Auto-calculate totals if there is any change that affects them
       const totals = calculateQuoteTotals(nextState);
-      
+
       // We only merge subtotal, total, and discount to the backend, the rest are derived view models
-      const finalPatch = { 
-        ...patch, 
-        subtotal: totals.subtotal, 
-        total: totals.total 
+      const finalPatch = {
+        ...patch,
+        subtotal: totals.subtotal,
+        total: totals.total,
       };
-      
+
       const finalState = { ...nextState, subtotal: totals.subtotal, total: totals.total };
 
       setDraft(finalState);
@@ -126,20 +128,19 @@ function ProposalEditor() {
         .select("id")
         .single();
       if (error) throw new Error(error.message);
-      
-      const { error: contractError } = await supabase
-        .from("contracts")
-        .insert({
-          agency_id: agency.id,
-          trip_id: tripData.id,
-          status: "draft",
-          version: "1.0",
-          total_value: draft.total,
-          package_summary: `Contrato gerado a partir da cotação #${draft.number} - ${draft.title}`,
-          client_data: { name: draft.title }
-        });
-      if (contractError) throw new Error("Viagem criada, mas falha ao criar contrato: " + contractError.message);
-      
+
+      const { error: contractError } = await supabase.from("contracts").insert({
+        agency_id: agency.id,
+        trip_id: tripData.id,
+        status: "draft",
+        version: "1.0",
+        total_value: draft.total,
+        package_summary: `Contrato gerado a partir da cotação #${draft.number} - ${draft.title}`,
+        client_data: { name: draft.title },
+      });
+      if (contractError)
+        throw new Error("Viagem criada, mas falha ao criar contrato: " + contractError.message);
+
       await updateProposal(id, { status: "converted" });
       return tripData;
     },
@@ -232,11 +233,11 @@ function ProposalEditor() {
               includes: [...(draft.includes ?? []), ...(data.includes ?? [])],
               excludes: [...(draft.excludes ?? []), ...(data.excludes ?? [])],
             };
-            
+
             // For simple string/array fields, overwrite if they were empty
             if (!draft.destination && data.destination) merged.destination = data.destination;
             if (!draft.notes && data.notes) merged.notes = data.notes;
-            
+
             save(merged);
             toast.success("Dados extraídos e mesclados");
           }}

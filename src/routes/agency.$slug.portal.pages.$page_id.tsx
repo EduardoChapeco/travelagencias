@@ -254,9 +254,7 @@ function PageEditorRoute() {
                     <div className="text-xs text-muted-foreground">Carregando histórico...</div>
                   )}
                   {versionsQuery.data?.length === 0 && (
-                    <div className="text-xs text-muted-foreground">
-                      Nenhuma versão salva ainda.
-                    </div>
+                    <div className="text-xs text-muted-foreground">Nenhuma versão salva ainda.</div>
                   )}
                   {versionsQuery.data?.map((v) => (
                     <div

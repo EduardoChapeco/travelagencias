@@ -5,7 +5,12 @@ import { Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine } fro
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
-import { fetchProposalsList, duplicateProposal, deleteProposal, updateProposal } from "@/services/proposals";
+import {
+  fetchProposalsList,
+  duplicateProposal,
+  deleteProposal,
+  updateProposal,
+} from "@/services/proposals";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 import {
   DropdownMenu,
@@ -83,7 +88,8 @@ function ProposalsList() {
   });
 
   const renMut = useMutation({
-    mutationFn: (args: { id: string, title: string }) => updateProposal(args.id, { title: args.title }),
+    mutationFn: (args: { id: string; title: string }) =>
+      updateProposal(args.id, { title: args.title }),
     onSuccess: () => {
       toast.success("Cotação renomeada!");
       qc.invalidateQueries({ queryKey: ["proposals"] });
@@ -176,16 +182,25 @@ function ProposalsList() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
                           <DropdownMenuItem asChild>
-                            <Link to="/agency/$slug/proposals/$id" params={{ slug, id: p.id }} className="cursor-pointer">
+                            <Link
+                              to="/agency/$slug/proposals/$id"
+                              params={{ slug, id: p.id }}
+                              className="cursor-pointer"
+                            >
                               <Edit2 className="mr-2 h-4 w-4" /> Editar Proposta
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => window.open(`/m/proposal/${p.public_token}`, '_blank')} className="cursor-pointer">
+                          <DropdownMenuItem
+                            onClick={() => window.open(`/m/proposal/${p.public_token}`, "_blank")}
+                            className="cursor-pointer"
+                          >
                             <Eye className="mr-2 h-4 w-4" /> Ver WebView
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              navigator.clipboard.writeText(`${window.location.origin}/m/proposal/${p.public_token}`);
+                              navigator.clipboard.writeText(
+                                `${window.location.origin}/m/proposal/${p.public_token}`,
+                              );
                               toast.success("Link copiado!");
                             }}
                             className="cursor-pointer"
@@ -193,19 +208,25 @@ function ProposalsList() {
                             <Link2 className="mr-2 h-4 w-4" /> Copiar Link
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleRename(p.id, p.title)} className="cursor-pointer">
+                          <DropdownMenuItem
+                            onClick={() => handleRename(p.id, p.title)}
+                            className="cursor-pointer"
+                          >
                             <PencilLine className="mr-2 h-4 w-4" /> Renomear
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => dupMut.mutate(p.id)} className="cursor-pointer">
+                          <DropdownMenuItem
+                            onClick={() => dupMut.mutate(p.id)}
+                            className="cursor-pointer"
+                          >
                             <Copy className="mr-2 h-4 w-4" /> Duplicar Cotação
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => {
                               if (window.confirm("Tem certeza que deseja excluir esta cotação?")) {
                                 delMut.mutate(p.id);
                               }
-                            }} 
+                            }}
                             className="cursor-pointer text-rose-600 focus:text-rose-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> Excluir

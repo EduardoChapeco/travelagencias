@@ -19,7 +19,9 @@ function Row({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
     <div className="flex gap-2 text-[11px] leading-snug">
-      <span className="shrink-0 w-28 font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
+      <span className="shrink-0 w-28 font-semibold text-slate-500 uppercase tracking-wide">
+        {label}
+      </span>
       <span className="flex-1 text-slate-800">{value}</span>
     </div>
   );
@@ -30,7 +32,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div className="mb-5">
       <div className="flex items-center gap-2 mb-2">
         <div className="h-px flex-1 bg-slate-200" />
-        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{title}</span>
+        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+          {title}
+        </span>
         <div className="h-px flex-1 bg-slate-200" />
       </div>
       {children}
@@ -42,15 +46,27 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency }: Props)
   const brand = agency.brand_color ?? "#1a56db";
 
   return (
-    <div className="w-full min-h-full bg-white font-sans text-slate-900 p-8 flex flex-col" style={{ fontSize: "12px" }}>
-      
+    <div
+      className="w-full min-h-full bg-white font-sans text-slate-900 p-8 flex flex-col"
+      style={{ fontSize: "12px" }}
+    >
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b-2" style={{ borderColor: brand }}>
+      <div
+        className="flex items-center justify-between mb-6 pb-4 border-b-2"
+        style={{ borderColor: brand }}
+      >
         <div>
           {agency.logo_url ? (
-            <img src={agency.logo_url} alt={agency.name} className="h-10 object-contain" crossOrigin="anonymous" />
+            <img
+              src={agency.logo_url}
+              alt={agency.name}
+              className="h-10 object-contain"
+              crossOrigin="anonymous"
+            />
           ) : (
-            <div className="text-xl font-black tracking-tighter" style={{ color: brand }}>{agency.name}</div>
+            <div className="text-xl font-black tracking-tighter" style={{ color: brand }}>
+              {agency.name}
+            </div>
           )}
           <div className="text-[10px] text-slate-400 mt-0.5">Guia de Embarque</div>
         </div>
@@ -73,7 +89,9 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency }: Props)
             {v.passengers.map((p, i) => (
               <div key={i} className="flex flex-col border border-slate-100 rounded-md px-3 py-2">
                 <span className="font-bold text-[12px] text-slate-800">{p.name}</span>
-                {p.document && <span className="text-[10px] text-slate-400">Doc: {p.document}</span>}
+                {p.document && (
+                  <span className="text-[10px] text-slate-400">Doc: {p.document}</span>
+                )}
                 {p.seat && <span className="text-[10px] text-slate-400">Assento: {p.seat}</span>}
               </div>
             ))}
@@ -90,7 +108,9 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency }: Props)
                 <span className="font-black text-base tracking-tighter">
                   {f.origin ?? "—"} → {f.destination ?? "—"}
                 </span>
-                <span className="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">{f.class ?? "Economy"}</span>
+                <span className="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
+                  {f.class ?? "Economy"}
+                </span>
               </div>
               <div className="grid grid-cols-3 gap-2 mt-1">
                 <Row label="Cia Aérea" value={f.airline} />
@@ -131,7 +151,9 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency }: Props)
           {v.transfers.map((t, i) => (
             <div key={i} className="flex gap-3 text-[11px] items-start mb-1">
               <span className="shrink-0 font-bold text-slate-500">{t.type ?? "Transfer"}</span>
-              <span className="flex-1">{t.origin} → {t.destination}</span>
+              <span className="flex-1">
+                {t.origin} → {t.destination}
+              </span>
               {t.date && <span className="text-slate-400 shrink-0">{t.date}</span>}
             </div>
           ))}
@@ -166,14 +188,17 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency }: Props)
       {/* OBSERVAÇÕES */}
       {v.observations && (
         <Section title="Observações">
-          <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap">{v.observations}</p>
+          <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap">
+            {v.observations}
+          </p>
         </Section>
       )}
 
       {/* FOOTER */}
       <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
         <div className="text-[10px] text-slate-400">
-          Documento gerado por <span className="font-semibold text-slate-600">TravelOS · {agency.name}</span>
+          Documento gerado por{" "}
+          <span className="font-semibold text-slate-600">TravelOS · {agency.name}</span>
         </div>
         <div className="text-[10px] font-mono text-slate-400">@{agency.slug}</div>
       </div>

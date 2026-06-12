@@ -12,17 +12,12 @@ export function TourSection({ draft, save }: Props) {
   return (
     <Accordion title={`Passeios (${draft.tours.length})`}>
       {draft.tours.map((t, i) => (
-        <Card
-          key={t.id}
-          onRemove={() => save({ tours: draft.tours.filter((x) => x.id !== t.id) })}
-        >
+        <Card key={t.id} onRemove={() => save({ tours: draft.tours.filter((x) => x.id !== t.id) })}>
           <div className="grid grid-cols-2 gap-2">
             <Inp
               ph="Descrição"
               value={t.description}
-              onChange={(v) =>
-                save({ tours: replaceAt(draft.tours, i, { ...t, description: v }) })
-              }
+              onChange={(v) => save({ tours: replaceAt(draft.tours, i, { ...t, description: v }) })}
             />
             <Inp
               type="date"
@@ -42,9 +37,7 @@ export function TourSection({ draft, save }: Props) {
             <Inp
               ph="URL imagem"
               value={t.image_url}
-              onChange={(v) =>
-                save({ tours: replaceAt(draft.tours, i, { ...t, image_url: v }) })
-              }
+              onChange={(v) => save({ tours: replaceAt(draft.tours, i, { ...t, image_url: v }) })}
             />
             <Inp
               ph="Notas"

@@ -5,12 +5,12 @@ import { Check } from "lucide-react";
 // Preview color map per template id
 const PREVIEW_STYLES: Record<string, { bg: string; accent: string }> = {
   "editorial-flat": { bg: "#f1f5f9", accent: "#3b82f6" },
-  "executivo-b2b":  { bg: "#ffffff", accent: "#1e293b" },
-  "dark-premium":   { bg: "#0f172a", accent: "#c9a84c" },
+  "executivo-b2b": { bg: "#ffffff", accent: "#1e293b" },
+  "dark-premium": { bg: "#0f172a", accent: "#c9a84c" },
   // voucher / story
-  "voucher-navy":   { bg: "#1e3a5f", accent: "#60a5fa" },
-  "voucher-minimal":{ bg: "#fafafa", accent: "#64748b" },
-  "voucher-brand":  { bg: "#e0f2fe", accent: "#0284c7" },
+  "voucher-navy": { bg: "#1e3a5f", accent: "#60a5fa" },
+  "voucher-minimal": { bg: "#fafafa", accent: "#64748b" },
+  "voucher-brand": { bg: "#e0f2fe", accent: "#0284c7" },
   // presentation
   "presentation-exec": { bg: "#1e1b4b", accent: "#a78bfa" },
 };
@@ -24,7 +24,7 @@ interface StudioTemplatePickerProps {
 export function StudioTemplatePicker({ format, value, onChange }: StudioTemplatePickerProps) {
   // Filter templates that support this format (PROPOSAL_TEMPLATES only covers a4-portrait for now)
   const relevant = PROPOSAL_TEMPLATES.filter(
-    (t) => t.formats.includes(format) || t.formats.length === 0
+    (t) => t.formats.includes(format) || t.formats.length === 0,
   );
 
   if (relevant.length === 0) {
@@ -59,10 +59,22 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
             >
               <div style={{ background: style.accent, height: 3 }} />
               <div className="flex-1 p-1 space-y-0.5">
-                <div className="rounded-sm h-1" style={{ background: style.accent, opacity: 0.7, width: "80%" }} />
-                <div className="rounded-sm h-1" style={{ background: style.accent, opacity: 0.3, width: "60%" }} />
-                <div className="rounded-sm h-1" style={{ background: style.accent, opacity: 0.3, width: "90%" }} />
-                <div className="rounded-sm h-1" style={{ background: style.accent, opacity: 0.2, width: "70%" }} />
+                <div
+                  className="rounded-sm h-1"
+                  style={{ background: style.accent, opacity: 0.7, width: "80%" }}
+                />
+                <div
+                  className="rounded-sm h-1"
+                  style={{ background: style.accent, opacity: 0.3, width: "60%" }}
+                />
+                <div
+                  className="rounded-sm h-1"
+                  style={{ background: style.accent, opacity: 0.3, width: "90%" }}
+                />
+                <div
+                  className="rounded-sm h-1"
+                  style={{ background: style.accent, opacity: 0.2, width: "70%" }}
+                />
               </div>
             </div>
 

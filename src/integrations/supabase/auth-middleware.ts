@@ -9,7 +9,8 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
     try {
       const _processEnv = typeof process !== "undefined" ? process.env : {};
       const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || _processEnv.SUPABASE_URL;
-      const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || _processEnv.SUPABASE_PUBLISHABLE_KEY;
+      const SUPABASE_PUBLISHABLE_KEY =
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || _processEnv.SUPABASE_PUBLISHABLE_KEY;
 
       if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
         const missing = [

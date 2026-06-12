@@ -41,9 +41,15 @@ export function StudioToolbar({
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            {subtitle && <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">{subtitle}</span>}
+            {subtitle && (
+              <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
+                {subtitle}
+              </span>
+            )}
             {status && (
-              <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${statusBg} ${statusColor}`}>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${statusBg} ${statusColor}`}
+              >
                 {status}
               </span>
             )}
@@ -72,9 +78,7 @@ export function StudioToolbar({
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2 shrink-0">
-        {children}
-      </div>
+      <div className="flex items-center gap-2 shrink-0">{children}</div>
     </header>
   );
 }

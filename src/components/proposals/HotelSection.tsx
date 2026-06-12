@@ -21,37 +21,27 @@ export function HotelSection({ draft, save }: Props) {
             <Inp
               ph="Nome do hotel"
               value={h.name}
-              onChange={(v) =>
-                save({ hotels: replaceAt(draft.hotels, i, { ...h, name: v }) })
-              }
+              onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, name: v }) })}
             />
             <Inp
               ph="Cidade"
               value={h.city}
-              onChange={(v) =>
-                save({ hotels: replaceAt(draft.hotels, i, { ...h, city: v }) })
-              }
+              onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, city: v }) })}
             />
             <Inp
               type="date"
               value={h.checkin}
-              onChange={(v) =>
-                save({ hotels: replaceAt(draft.hotels, i, { ...h, checkin: v }) })
-              }
+              onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, checkin: v }) })}
             />
             <Inp
               type="date"
               value={h.checkout}
-              onChange={(v) =>
-                save({ hotels: replaceAt(draft.hotels, i, { ...h, checkout: v }) })
-              }
+              onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, checkout: v }) })}
             />
             <Inp
               ph="Regime (café, all-inclusive…)"
               value={h.meal_plan}
-              onChange={(v) =>
-                save({ hotels: replaceAt(draft.hotels, i, { ...h, meal_plan: v }) })
-              }
+              onChange={(v) => save({ hotels: replaceAt(draft.hotels, i, { ...h, meal_plan: v }) })}
             />
             <Inp
               type="number"

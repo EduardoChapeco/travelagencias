@@ -138,7 +138,8 @@ function PublicProposalView() {
           <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/60 mb-4" />
           <h1 className="text-xl font-bold tracking-tight">Proposta não encontrada</h1>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-            O link de acesso expirou, foi desativado ou é inválido. Por favor, solicite um novo link ao seu agente de viagens.
+            O link de acesso expirou, foi desativado ou é inválido. Por favor, solicite um novo link
+            ao seu agente de viagens.
           </p>
         </div>
       </div>
@@ -149,7 +150,8 @@ function PublicProposalView() {
   const brand = p.agency?.brand_color ?? "#3b82f6";
   const brandFg = p.agency?.brand_color_fg ?? "#FFFFFF";
   const decided = !!p.decided_at;
-  const totalPax = (p.pax_adults || 0) + (p.pax_seniors || 0) + (p.pax_children || 0) + (p.pax_infants || 0);
+  const totalPax =
+    (p.pax_adults || 0) + (p.pax_seniors || 0) + (p.pax_children || 0) + (p.pax_infants || 0);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f19] text-foreground font-sans pb-20">
@@ -173,21 +175,31 @@ function PublicProposalView() {
             )}
             <div>
               <div className="text-sm font-bold leading-tight">{p.agency?.name ?? "Agência"}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Proposta #{p.number}</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                Proposta #{p.number}
+              </div>
             </div>
           </div>
           <span
             className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
             style={{ background: `${brand}15`, color: brand }}
           >
-            {p.status === "draft" ? "Rascunho" : p.status === "sent" ? "Enviada" : p.status === "viewed" ? "Visualizada" : p.status === "accepted" ? "Aceita" : p.status}
+            {p.status === "draft"
+              ? "Rascunho"
+              : p.status === "sent"
+                ? "Enviada"
+                : p.status === "viewed"
+                  ? "Visualizada"
+                  : p.status === "accepted"
+                    ? "Aceita"
+                    : p.status}
           </span>
         </div>
       </header>
 
       {/* Hero Banner Section */}
       <section className="mx-auto max-w-4xl px-4 mt-6">
-        <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white p-8 sm:p-12 shadow-md border border-white/5">
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white p-8 sm:p-12 border border-white/5">
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent z-10" />
           <div
             className="absolute inset-0 opacity-20 bg-cover bg-center"
@@ -216,19 +228,27 @@ function PublicProposalView() {
           <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm grid grid-cols-3 gap-4 text-center">
             <div className="space-y-1">
               <MapPin className="mx-auto h-4 w-4 text-muted-foreground" />
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Destino</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                Destino
+              </div>
               <div className="text-xs font-bold truncate">{p.destination ?? "—"}</div>
             </div>
             <div className="space-y-1 border-x border-border/80">
               <Calendar className="mx-auto h-4 w-4 text-muted-foreground" />
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Período</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                Período
+              </div>
               <div className="text-xs font-bold truncate">
-                {p.travel_start ? `${new Date(p.travel_start).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}` : "—"}
+                {p.travel_start
+                  ? `${new Date(p.travel_start).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}`
+                  : "—"}
               </div>
             </div>
             <div className="space-y-1">
               <Users className="mx-auto h-4 w-4 text-muted-foreground" />
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Passageiros</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                Passageiros
+              </div>
               <div className="text-xs font-bold">{totalPax} pax</div>
             </div>
           </div>
@@ -241,7 +261,10 @@ function PublicProposalView() {
               </h2>
               <div className="space-y-3">
                 {p.flights.map((f: any, idx: number) => (
-                  <div key={idx} className="relative overflow-hidden rounded-2xl border border-border bg-surface p-5 transition-all hover:border-brand/40 group">
+                  <div
+                    key={idx}
+                    className="relative overflow-hidden rounded-2xl border border-border bg-surface p-5 transition-all hover:border-brand/40 group"
+                  >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 border border-border/40 text-brand">
@@ -258,15 +281,23 @@ function PublicProposalView() {
                       </div>
                       <div className="grid grid-cols-3 gap-4 sm:gap-6 text-xs flex-1 sm:flex-none">
                         <div>
-                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Data</span>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">
+                            Data
+                          </span>
                           <span className="font-semibold">{fmtDate(f.date)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Horário</span>
-                          <span className="font-semibold">{f.departure_time} - {f.arrival_time}</span>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">
+                            Horário
+                          </span>
+                          <span className="font-semibold">
+                            {f.departure_time} - {f.arrival_time}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Bagagem</span>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">
+                            Bagagem
+                          </span>
                           <span className="font-semibold">{f.baggage_rules || "Não inclusa"}</span>
                         </div>
                       </div>
@@ -290,10 +321,17 @@ function PublicProposalView() {
               </h2>
               <div className="space-y-4">
                 {p.hotels.map((h: any, idx: number) => (
-                  <div key={idx} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition-all hover:border-brand/40 group">
+                  <div
+                    key={idx}
+                    className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition-all hover:border-brand/40 group"
+                  >
                     {h.images && h.images[0] && (
                       <div className="h-48 w-full overflow-hidden relative">
-                        <img src={h.images[0]} alt={h.name} className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-500" />
+                        <img
+                          src={h.images[0]}
+                          alt={h.name}
+                          className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-500"
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       </div>
                     )}
@@ -317,12 +355,18 @@ function PublicProposalView() {
 
                       <div className="mt-4 pt-4 border-t border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
                         <div>
-                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Período</span>
-                          <span className="font-semibold">{fmtDate(h.checkin)} &rarr; {fmtDate(h.checkout)}</span>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">
+                            Período
+                          </span>
+                          <span className="font-semibold">
+                            {fmtDate(h.checkin)} &rarr; {fmtDate(h.checkout)}
+                          </span>
                         </div>
                         {h.rooms && h.rooms.length > 0 && (
                           <div>
-                            <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Acomodação</span>
+                            <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">
+                              Acomodação
+                            </span>
                             <span className="font-semibold">
                               {h.rooms.map((r: any, rIdx: number) => (
                                 <span key={rIdx}>
@@ -349,19 +393,32 @@ function PublicProposalView() {
               </h2>
               <div className="space-y-3">
                 {p.transfers.map((t: any, idx: number) => (
-                  <div key={idx} className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-brand/40">
+                  <div
+                    key={idx}
+                    className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-brand/40"
+                  >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 border border-border/40 text-brand">
                       <Car className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0 text-xs">
                       <div className="flex items-baseline justify-between gap-2">
                         <span className="font-bold text-sm text-foreground">{t.description}</span>
-                        <span className="text-muted-foreground whitespace-nowrap font-mono">{fmtDate(t.date)}</span>
+                        <span className="text-muted-foreground whitespace-nowrap font-mono">
+                          {fmtDate(t.date)}
+                        </span>
                       </div>
                       <div className="mt-1 text-muted-foreground">
-                        Veículo: <strong className="text-foreground">{t.vehicle}</strong> &middot; Tipo: <strong className="text-foreground">{t.type === "private" ? "Privativo" : "Compartilhado"}</strong>
+                        Veículo: <strong className="text-foreground">{t.vehicle}</strong> &middot;
+                        Tipo:{" "}
+                        <strong className="text-foreground">
+                          {t.type === "private" ? "Privativo" : "Compartilhado"}
+                        </strong>
                       </div>
-                      {t.notes && <p className="mt-1.5 text-muted-foreground italic bg-surface-alt/40 p-2 rounded">{t.notes}</p>}
+                      {t.notes && (
+                        <p className="mt-1.5 text-muted-foreground italic bg-surface-alt/40 p-2 rounded">
+                          {t.notes}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -377,16 +434,25 @@ function PublicProposalView() {
               </h2>
               <div className="space-y-3">
                 {p.tours.map((t: any, idx: number) => (
-                  <div key={idx} className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-brand/40">
+                  <div
+                    key={idx}
+                    className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-4 transition-all hover:border-brand/40"
+                  >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 border border-border/40 text-brand">
                       <Compass className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0 text-xs">
                       <div className="flex items-baseline justify-between gap-2">
                         <span className="font-bold text-sm text-foreground">{t.description}</span>
-                        <span className="text-muted-foreground whitespace-nowrap font-mono">{fmtDate(t.date)}</span>
+                        <span className="text-muted-foreground whitespace-nowrap font-mono">
+                          {fmtDate(t.date)}
+                        </span>
                       </div>
-                      {t.notes && <p className="mt-1 text-muted-foreground italic bg-surface-alt/40 p-2 rounded">{t.notes}</p>}
+                      {t.notes && (
+                        <p className="mt-1 text-muted-foreground italic bg-surface-alt/40 p-2 rounded">
+                          {t.notes}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -410,7 +476,9 @@ function PublicProposalView() {
                         {d.day || `Dia ${idx + 1}`}
                       </span>
                       <h3 className="font-bold text-sm mt-1">{d.title}</h3>
-                      <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">{d.description}</p>
+                      <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                        {d.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -424,7 +492,9 @@ function PublicProposalView() {
           {/* Finance Premium Invoice */}
           <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1" style={{ background: brand }} />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Resumo Financeiro</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
+              Resumo Financeiro
+            </h3>
 
             <div className="space-y-2 text-xs border-b border-border/60 pb-4">
               <div className="flex items-center justify-between text-muted-foreground">
@@ -442,8 +512,12 @@ function PublicProposalView() {
             <div className="pt-4 space-y-4">
               <div className="flex items-baseline justify-between">
                 <div>
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold block">Total à Vista</span>
-                  <span className="text-[9px] text-emerald-600 font-bold uppercase">Pix com {p.pix_discount_percent}% desc</span>
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold block">
+                    Total à Vista
+                  </span>
+                  <span className="text-[9px] text-emerald-600 font-bold uppercase">
+                    Pix com {p.pix_discount_percent}% desc
+                  </span>
                 </div>
                 <span className="font-mono text-xl font-extrabold text-foreground">
                   {money(Number(p.total), p.currency)}
@@ -473,7 +547,9 @@ function PublicProposalView() {
               {p.valid_until && (
                 <div className="rounded-lg bg-slate-50 dark:bg-slate-900 border border-border/40 p-2.5 text-[10px] text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-brand" />
-                  <span>Condições válidas até <strong>{fmtDate(p.valid_until)}</strong></span>
+                  <span>
+                    Condições válidas até <strong>{fmtDate(p.valid_until)}</strong>
+                  </span>
                 </div>
               )}
             </div>
@@ -519,8 +595,12 @@ function PublicProposalView() {
           {/* Terms Box */}
           {p.terms && (
             <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-2">
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Condições Gerais</h4>
-              <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto no-scrollbar">{p.terms}</p>
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Condições Gerais
+              </h4>
+              <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto no-scrollbar">
+                {p.terms}
+              </p>
             </div>
           )}
 
@@ -535,7 +615,8 @@ function PublicProposalView() {
                     </div>
                     <div className="font-bold text-emerald-600 text-sm">Proposta Aceita!</div>
                     <p className="text-muted-foreground leading-normal">
-                      Aprovada em {fmtDate(p.decided_at)}. Nosso agente de viagens entrará em contato para os trâmites do contrato de viagem.
+                      Aprovada em {fmtDate(p.decided_at)}. Nosso agente de viagens entrará em
+                      contato para os trâmites do contrato de viagem.
                     </p>
                   </div>
                 )}
@@ -546,7 +627,8 @@ function PublicProposalView() {
                     </div>
                     <div className="font-bold text-rose-600 text-sm">Proposta Recusada</div>
                     <p className="text-muted-foreground leading-normal">
-                      Recusada em {fmtDate(p.decided_at)}. Entraremos em contato para ajustar as condições de acordo com suas preferências.
+                      Recusada em {fmtDate(p.decided_at)}. Entraremos em contato para ajustar as
+                      condições de acordo com suas preferências.
                     </p>
                   </div>
                 )}
@@ -556,7 +638,9 @@ function PublicProposalView() {
               </div>
             ) : (
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Decidir Proposta</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">
+                  Decidir Proposta
+                </h3>
                 <DecideActions
                   onDecide={(s) => decide.mutate(s)}
                   pending={decide.isPending}

@@ -2,7 +2,6 @@ import { type Proposal, type Tour } from "@/services/proposals";
 import { Accordion, Card, AddBtn, L, Inp } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
 
-
 interface Props {
   draft: Proposal;
   save: (patch: Partial<Proposal>) => void;
@@ -38,7 +37,11 @@ export function SectionTours({ draft, save }: Props) {
         <Card key={t.id || i} onRemove={() => remove(i)}>
           <div className="mb-2">
             <L label="Descrição">
-              <Inp value={t.description} onChange={(v) => upd(i, { description: v })} ph="ex. City Tour Roma" />
+              <Inp
+                value={t.description}
+                onChange={(v) => upd(i, { description: v })}
+                ph="ex. City Tour Roma"
+              />
             </L>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
@@ -55,7 +58,11 @@ export function SectionTours({ draft, save }: Props) {
             </L>
           </div>
           <L label="Observações">
-            <Inp value={t.notes} onChange={(v) => upd(i, { notes: v })} ph="Ponto de encontro, duração..." />
+            <Inp
+              value={t.notes}
+              onChange={(v) => upd(i, { notes: v })}
+              ph="Ponto de encontro, duração..."
+            />
           </L>
         </Card>
       ))}

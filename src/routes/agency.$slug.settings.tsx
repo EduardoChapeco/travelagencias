@@ -38,9 +38,21 @@ const INTEGRATION_PROVIDERS: Array<{ key: string; label: string; hint?: string }
   { key: "whatsapp_phone_id", label: "WhatsApp Phone Number ID" },
   { key: "whatsapp_token", label: "WhatsApp Access Token" },
   { key: "google_business", label: "Google Business Client ID" },
-  { key: "google_calendar_client_id", label: "Google Calendar Client ID", hint: "ID do cliente OAuth 2.0" },
-  { key: "google_calendar_client_secret", label: "Google Calendar Client Secret", hint: "Segredo do cliente OAuth 2.0" },
-  { key: "google_calendar_refresh_token", label: "Google Calendar Refresh Token", hint: "Refresh Token com escopo do Google Calendar" },
+  {
+    key: "google_calendar_client_id",
+    label: "Google Calendar Client ID",
+    hint: "ID do cliente OAuth 2.0",
+  },
+  {
+    key: "google_calendar_client_secret",
+    label: "Google Calendar Client Secret",
+    hint: "Segredo do cliente OAuth 2.0",
+  },
+  {
+    key: "google_calendar_refresh_token",
+    label: "Google Calendar Refresh Token",
+    hint: "Refresh Token com escopo do Google Calendar",
+  },
 ];
 
 function mask(v: string | null | undefined) {
@@ -588,7 +600,7 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
   const { data: agency, isLoading } = useQuery({
     queryKey: ["agency-integrations", agencyId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("agencies")
         .select("integrations_config")
         .eq("id", agencyId)
@@ -604,11 +616,12 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
   });
 
   useEffect(() => {
-    if (agency?.integrations_config) {
-      setConfig((c) => ({ ...c, ...agency.integrations_config }));
+    if ((agency as any)?.integrations_config) {
+      setConfig((c) => ({ ...c, ...(agency as any).integrations_config }));
     }
     if (keysQuery.data) {
-      const getVal = (provider: string) => keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
+      const getVal = (provider: string) =>
+        keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
       setConfig((c) => ({
         ...c,
         meta_capi_token: getVal("meta_capi_token"),
@@ -630,8 +643,8 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
         evolution_api_url: config.evolution_api_url,
         preferred_provider: config.preferred_provider,
       };
-      
-      const { error } = await supabase
+
+      const { error } = await (supabase as any)
         .from("agencies")
         .update({ integrations_config: nonSecrets })
         .eq("id", agencyId);
@@ -640,10 +653,26 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
       // 2. Save secrets to api_keys
       const secrets = [
         { provider: "meta_capi_token", val: config.meta_capi_token, label: "Meta CAPI Token" },
-        { provider: "meta_verify_token", val: config.meta_verify_token, label: "Meta Verify Token" },
-        { provider: "whatsapp_phone_id", val: config.whatsapp_phone_id, label: "WhatsApp Phone ID" },
-        { provider: "whatsapp_access_token", val: config.whatsapp_access_token, label: "WhatsApp Access Token" },
-        { provider: "evolution_api_key", val: config.evolution_api_key, label: "Evolution API Key" },
+        {
+          provider: "meta_verify_token",
+          val: config.meta_verify_token,
+          label: "Meta Verify Token",
+        },
+        {
+          provider: "whatsapp_phone_id",
+          val: config.whatsapp_phone_id,
+          label: "WhatsApp Phone ID",
+        },
+        {
+          provider: "whatsapp_access_token",
+          val: config.whatsapp_access_token,
+          label: "WhatsApp Access Token",
+        },
+        {
+          provider: "evolution_api_key",
+          val: config.evolution_api_key,
+          label: "Evolution API Key",
+        },
       ];
 
       for (const secret of secrets) {
@@ -667,7 +696,8 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
 
   const webhookUrl = `${window.location.origin.replace("5173", "54321")}/functions/v1/whatsapp-webhook`;
 
-  if (isLoading) return <div className="p-8 text-center text-sm text-muted-foreground">Carregando...</div>;
+  if (isLoading)
+    return <div className="p-8 text-center text-sm text-muted-foreground">Carregando...</div>;
 
   return (
     <form onSubmit={save} className="mt-4 space-y-6">
@@ -678,11 +708,13 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
           Provedor de WhatsApp
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <label className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-            config.preferred_provider === "meta_official"
-              ? "border-brand bg-brand/5"
-              : "border-border hover:border-brand/40"
-          }`}>
+          <label
+            className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              config.preferred_provider === "meta_official"
+                ? "border-brand bg-brand/5"
+                : "border-border hover:border-brand/40"
+            }`}
+          >
             <input
               type="radio"
               className="sr-only"
@@ -692,13 +724,17 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
               onChange={() => setConfig({ ...config, preferred_provider: "meta_official" })}
             />
             <span className="font-bold text-sm">API Oficial Meta</span>
-            <span className="text-xs text-muted-foreground">Estável, sem servidor extra. 1.000 conversas/mês grátis.</span>
+            <span className="text-xs text-muted-foreground">
+              Estável, sem servidor extra. 1.000 conversas/mês grátis.
+            </span>
           </label>
-          <label className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-            config.preferred_provider === "evolution_api"
-              ? "border-brand bg-brand/5"
-              : "border-border hover:border-brand/40"
-          }`}>
+          <label
+            className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              config.preferred_provider === "evolution_api"
+                ? "border-brand bg-brand/5"
+                : "border-border hover:border-brand/40"
+            }`}
+          >
             <input
               type="radio"
               className="sr-only"
@@ -708,7 +744,9 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
               onChange={() => setConfig({ ...config, preferred_provider: "evolution_api" })}
             />
             <span className="font-bold text-sm">Evolution API (VPS)</span>
-            <span className="text-xs text-muted-foreground">Custo zero por mensagem. Requer VPS própria ($5/mês).</span>
+            <span className="text-xs text-muted-foreground">
+              Custo zero por mensagem. Requer VPS própria ($5/mês).
+            </span>
           </label>
         </div>
       </div>
@@ -758,7 +796,10 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
                 onChange={(e) => setConfig({ ...config, whatsapp_access_token: e.target.value })}
               />
             </Field>
-            <Field label="Verify Token (Webhook)" hint="Defina qualquer palavra-secreta e coloque igual no Meta">
+            <Field
+              label="Verify Token (Webhook)"
+              hint="Defina qualquer palavra-secreta e coloque igual no Meta"
+            >
               <Input
                 placeholder="ex: travelOS-secret-2024"
                 value={config.meta_verify_token}
@@ -767,7 +808,9 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
             </Field>
           </div>
           <div className="border-t border-border/50 pt-4">
-            <div className="text-xs font-bold text-muted-foreground mb-3">Rastreamento de Anúncios (CAPI)</div>
+            <div className="text-xs font-bold text-muted-foreground mb-3">
+              Rastreamento de Anúncios (CAPI)
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Meta Pixel ID">
                 <Input
@@ -792,7 +835,9 @@ function OmnichannelTab({ agencyId }: { agencyId: string }) {
       {/* Evolution API Settings */}
       {config.preferred_provider === "evolution_api" && (
         <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-          <div className="text-sm font-bold text-foreground">Configurações do Evolution API (VPS)</div>
+          <div className="text-sm font-bold text-foreground">
+            Configurações do Evolution API (VPS)
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="URL da VPS" hint="Ex: https://minhavps.com">
               <Input

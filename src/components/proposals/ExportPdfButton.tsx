@@ -49,40 +49,44 @@ export function ExportPdfButton({ proposal }: Props) {
       const html2canvas = (await import("html2canvas")).default;
       const container = document.getElementById("proposal-canvas");
       if (!container) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
-      
-      const pages = Array.from(container.querySelectorAll(".a4-page, .a4-landscape-page")) as HTMLElement[];
+
+      const pages = Array.from(
+        container.querySelectorAll(".a4-page, .a4-landscape-page"),
+      ) as HTMLElement[];
       const targets = pages.length > 0 ? pages : [container];
-      
+
       for (let i = 0; i < targets.length; i++) {
         const el = targets[i];
         const originalMargin = el.style.margin;
         el.style.margin = "0";
-        
-        const canvas = await html2canvas(el, { 
+
+        const canvas = await html2canvas(el, {
           scale: 2,
-          useCORS: true, 
+          useCORS: true,
           backgroundColor: "#ffffff",
-          logging: false
+          logging: false,
         });
-        
+
         el.style.margin = originalMargin;
-        
+
         const mimeType = format === "png" ? "image/png" : "image/jpeg";
         const extension = format === "png" ? "png" : "jpg";
         const img = canvas.toDataURL(mimeType, 0.95);
-        
+
         const link = document.createElement("a");
-        const suffix = targets.length > 1 ? `-pag-${String(i+1).padStart(2, "0")}` : "";
+        const suffix = targets.length > 1 ? `-pag-${String(i + 1).padStart(2, "0")}` : "";
         link.download = `proposta-${proposal.number}${suffix}.${extension}`;
         link.href = img;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        if (targets.length > 1) await new Promise(resolve => setTimeout(resolve, 300));
+
+        if (targets.length > 1) await new Promise((resolve) => setTimeout(resolve, 300));
       }
-      
-      toast.success(targets.length > 1 ? `${targets.length} imagens exportadas!` : "Imagem exportada!");
+
+      toast.success(
+        targets.length > 1 ? `${targets.length} imagens exportadas!` : "Imagem exportada!",
+      );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao exportar imagem");
     } finally {
@@ -98,7 +102,7 @@ export function ExportPdfButton({ proposal }: Props) {
     try {
       const url = await generateProposalPdfViaServer(proposal.id, proposal.number);
       setServerPdfUrl(url);
-      toast.success("PDF gerado com sucesso! Clique para baixar.", { 
+      toast.success("PDF gerado com sucesso! Clique para baixar.", {
         id: toastId,
         duration: 8000,
         action: {
@@ -107,10 +111,9 @@ export function ExportPdfButton({ proposal }: Props) {
         },
       });
     } catch (e) {
-      toast.error(
-        e instanceof Error ? e.message : "Erro ao gerar PDF no servidor",
-        { id: toastId }
-      );
+      toast.error(e instanceof Error ? e.message : "Erro ao gerar PDF no servidor", {
+        id: toastId,
+      });
     } finally {
       setBusy(false);
     }

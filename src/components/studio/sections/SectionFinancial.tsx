@@ -16,7 +16,9 @@ export function SectionFinancial({ draft, save }: Props) {
         <div className="rounded-xl border border-border/50 bg-surface p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="h-3.5 w-3.5 text-brand" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Resumo</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Resumo
+            </span>
           </div>
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-muted-foreground">
@@ -31,7 +33,9 @@ export function SectionFinancial({ draft, save }: Props) {
             )}
             <div className="flex justify-between border-t border-border/40 pt-2 font-bold text-sm">
               <span>Total</span>
-              <span className="font-mono text-foreground">{money(draft.total, draft.currency)}</span>
+              <span className="font-mono text-foreground">
+                {money(draft.total, draft.currency)}
+              </span>
             </div>
           </div>
         </div>
@@ -55,7 +59,8 @@ export function SectionFinancial({ draft, save }: Props) {
         {/* Pix Discount */}
         <div>
           <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-2">
-            Desconto Pix: <strong className="text-foreground">{draft.pix_discount_percent ?? 0}%</strong>
+            Desconto Pix:{" "}
+            <strong className="text-foreground">{draft.pix_discount_percent ?? 0}%</strong>
           </label>
           <input
             type="range"
@@ -77,7 +82,9 @@ export function SectionFinancial({ draft, save }: Props) {
               onChange={(e) => save({ installments_card: parseInt(e.target.value) })}
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}x</option>
+                <option key={n} value={n}>
+                  {n}x
+                </option>
               ))}
             </select>
           </L>
@@ -88,7 +95,9 @@ export function SectionFinancial({ draft, save }: Props) {
               onChange={(e) => save({ installments_boleto: parseInt(e.target.value) })}
             >
               {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>{n}x</option>
+                <option key={n} value={n}>
+                  {n}x
+                </option>
               ))}
             </select>
           </L>

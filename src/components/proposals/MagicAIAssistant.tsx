@@ -19,7 +19,9 @@ type Props = {
 
 export function MagicAIAssistant({ draft, onApply }: Props) {
   const [open, setOpen] = useState(false);
-  const [prompt, setPrompt] = useState("Reescreva os textos desta proposta para que fiquem mais persuasivos, luxuosos e voltados para venda. Mantenha os dias do roteiro fiéis à estrutura original.");
+  const [prompt, setPrompt] = useState(
+    "Reescreva os textos desta proposta para que fiquem mais persuasivos, luxuosos e voltados para venda. Mantenha os dias do roteiro fiéis à estrutura original.",
+  );
   const [busy, setBusy] = useState(false);
 
   async function handleMagic() {
@@ -48,7 +50,7 @@ Não inclua crases markdown nem texto adicional.`;
       });
 
       if (error) throw error;
-      
+
       const text = data?.result || "";
       const match = text.match(/\{[\s\S]*\}/);
       const parsed = JSON.parse(match ? match[0] : text);

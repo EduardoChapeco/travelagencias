@@ -33,7 +33,14 @@ export type Lead = {
   deleted_at?: string | null;
   tags?: string[];
   checklist?: Array<{ id: string; text: string; done: boolean }>;
-  attachments?: Array<{ id: string; name: string; url: string; size: number; type: string; created_at: string }>;
+  attachments?: Array<{
+    id: string;
+    name: string;
+    url: string;
+    size: number;
+    type: string;
+    created_at: string;
+  }>;
   custom_fields?: Record<string, unknown>;
   pax_adults?: number;
   pax_children?: number;
@@ -43,7 +50,14 @@ export type Lead = {
   lgpd_accepted_at?: string | null;
   avatar_url?: string | null;
   interest_type?: string | null;
-  pax_list?: Array<{ full_name: string; document?: string; birth_date?: string; relationship: string; phone?: string; email?: string }>;
+  pax_list?: Array<{
+    full_name: string;
+    document?: string;
+    birth_date?: string;
+    relationship: string;
+    phone?: string;
+    email?: string;
+  }>;
   pcd?: boolean;
   reduced_mobility?: boolean;
   autism?: boolean;
@@ -326,7 +340,9 @@ export async function fetchArchivedLeads(agencyId: string): Promise<Lead[]> {
     .eq("agency_id", agencyId)
     .not("deleted_at", "is", null);
   if (error) throw error;
-  return (data as unknown as Lead[]).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  return (data as unknown as Lead[]).sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
 }
 
 export async function restoreLead(leadId: string) {
@@ -345,34 +361,32 @@ export async function deleteLeadPermanently(leadId: string) {
 export async function uploadLeadAttachment(
   leadId: string,
   file: File,
-  currentAttachments: any[]
+  currentAttachments: any[],
 ): Promise<any[]> {
   const fileExt = file.name.split(".").pop();
   const filePath = `crm/attachments/${leadId}/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-  
-  const { data, error } = await supabase.storage
-    .from("agency-media")
-    .upload(filePath, file);
-    
+
+  const { data, error } = await supabase.storage.from("agency-media").upload(filePath, file);
+
   if (error) throw error;
-  
-  const { data: { publicUrl } } = supabase.storage
-    .from("agency-media")
-    .getPublicUrl(filePath);
-    
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+
   const newAttachment = {
     id: Math.random().toString(36).substring(2),
     name: file.name,
     url: publicUrl,
     size: file.size,
     type: file.type,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   };
-  
+
   const updatedAttachments = [...(currentAttachments || []), newAttachment];
-  
+
   await updateLead(leadId, { attachments: updatedAttachments });
-  
+
   return updatedAttachments;
 }
 
@@ -441,9 +455,9 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
     .select("agency_id, title, description, scheduled_at, duration_minutes")
     .eq("id", meetingId)
     .single();
-    
+
   if (!meeting) throw new Error("Compromisso não encontrado");
-  
+
   const { data: apiKeys } = await (supabase as any)
     .from("api_keys")
     .select("key_value")
@@ -452,15 +466,17 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
     .maybeSingle();
 
   if (!apiKeys || !apiKeys.key_value) {
-    throw new Error("Por favor, configure as chaves do Google Calendar em Configurações > Integrações.");
+    throw new Error(
+      "Por favor, configure as chaves do Google Calendar em Configurações > Integrações.",
+    );
   }
 
   const googleEventId = `g_cal_${Math.random().toString(36).substring(2)}`;
-  
+
   const { error } = await (supabase as any)
     .from("lead_meetings")
     .update({ google_event_id: googleEventId, invite_sent: true })
     .eq("id", meetingId);
-    
+
   if (error) throw error;
 }

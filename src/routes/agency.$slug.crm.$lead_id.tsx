@@ -55,7 +55,17 @@ import {
   type LeadMeeting,
 } from "@/services/crm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertCircle, Calendar, ShieldCheck, Heart, Sparkles, MessageCircle, Bot, Headphones } from "lucide-react";
+import {
+  AlertCircle,
+  Calendar,
+  ShieldCheck,
+  Heart,
+  Sparkles,
+  MessageCircle,
+  Bot,
+  Headphones,
+  Clock,
+} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import {
   Field,
@@ -228,16 +238,14 @@ function LeadDetailPage() {
     enabled: !!leadQ.data?.id,
     queryKey: ["proposals", agency?.id, { leadId: leadQ.data?.id }],
     queryFn: async () => {
-      let query = supabase
-        .from("proposals")
-        .select("id, number, title, status, total, created_at");
+      let query = supabase.from("proposals").select("id, number, title, status, total, created_at");
 
       if (leadQ.data?.client_id) {
         query = query.or(`lead_id.eq.${lead_id},client_id.eq.${leadQ.data.client_id}`);
       } else {
         query = query.eq("lead_id", lead_id);
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
       return data;
@@ -252,7 +260,11 @@ function LeadDetailPage() {
   const stage = stagesQ.data?.find((s) => s.id === lead?.stage_id);
 
   // Staleness calculations
-  const lastContactDate = lead?.last_contacted_at ? new Date(lead.last_contacted_at) : lead ? new Date(lead.created_at) : new Date();
+  const lastContactDate = lead?.last_contacted_at
+    ? new Date(lead.last_contacted_at)
+    : lead
+      ? new Date(lead.created_at)
+      : new Date();
   const diffTime = Math.abs(new Date().getTime() - lastContactDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -407,7 +419,9 @@ function LeadDetailPage() {
       const filePath = `crm/avatars/${lead.id}/${Date.now()}.${fileExt}`;
       const { error } = await supabase.storage.from("agency-media").upload(filePath, file);
       if (error) throw error;
-      const { data: { publicUrl } } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("agency-media").getPublicUrl(filePath);
       await updateLead(lead.id, { avatar_url: publicUrl });
       qc.invalidateQueries({ queryKey: ["lead", lead.id] });
       qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
@@ -451,13 +465,23 @@ function LeadDetailPage() {
                   <img src={lead.avatar_url} className="h-full w-full object-cover" />
                   <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
                     <Camera className="h-4 w-4 text-white" />
-                    <input type="file" onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+                    <input
+                      type="file"
+                      onChange={handlePhotoUpload}
+                      accept="image/*"
+                      className="hidden"
+                    />
                   </label>
                 </div>
               ) : (
                 <label className="h-12 w-12 rounded-full border border-dashed border-border hover:border-brand/60 flex items-center justify-center cursor-pointer group bg-surface">
                   <Camera className="h-5 w-5 text-muted-foreground group-hover:text-brand" />
-                  <input type="file" onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+                  <input
+                    type="file"
+                    onChange={handlePhotoUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
                 </label>
               )}
               <div>
@@ -470,7 +494,10 @@ function LeadDetailPage() {
                   )}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Estágio atual: <span className="font-bold text-foreground" style={{ color: stage?.color }}>{stage?.name}</span>
+                  Estágio atual:{" "}
+                  <span className="font-bold text-foreground" style={{ color: stage?.color }}>
+                    {stage?.name}
+                  </span>
                 </p>
               </div>
             </div>
@@ -503,7 +530,10 @@ function LeadDetailPage() {
                 <FileText className="h-3.5 w-3.5" /> Link Form
               </button>
               {!lead.client_id ? (
-                <PrimaryButton onClick={() => setConfirmConvertOpen(true)} className="rounded-full gap-1.5 text-xs font-bold h-9">
+                <PrimaryButton
+                  onClick={() => setConfirmConvertOpen(true)}
+                  className="rounded-full gap-1.5 text-xs font-bold h-9"
+                >
                   <UserCheck className="h-4 w-4" /> Converter em Cliente
                 </PrimaryButton>
               ) : (
@@ -511,7 +541,10 @@ function LeadDetailPage() {
                   <Check className="h-3.5 w-3.5" /> Convertido
                 </span>
               )}
-              <GhostButton onClick={() => setEditing((e) => !e)} className="rounded-full h-9 px-4 text-xs font-bold">
+              <GhostButton
+                onClick={() => setEditing((e) => !e)}
+                className="rounded-full h-9 px-4 text-xs font-bold"
+              >
                 {editing ? "Visualizar" : "Editar Campos"}
               </GhostButton>
             </div>
@@ -531,13 +564,33 @@ function LeadDetailPage() {
           ) : (
             <Tabs defaultValue="general" className="w-full">
               <TabsList className="flex gap-2 border-b border-border mb-6 bg-surface-alt/10 p-1 rounded-xl">
-                <TabsTrigger value="general" className="text-xs font-bold py-2 px-4">Geral</TabsTrigger>
-                <TabsTrigger value="pax" className="text-xs font-bold py-2 px-4">Acompanhantes</TabsTrigger>
-                <TabsTrigger value="meetings" className="text-xs font-bold py-2 px-4">Agenda & Lembretes</TabsTrigger>
-                <TabsTrigger value="proposals" className="text-xs font-bold py-2 px-4">Cotações</TabsTrigger>
-                <TabsTrigger value="omnichannel" className="text-xs font-bold py-2 px-4 flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> Mensagens</TabsTrigger>
-                <TabsTrigger value="ai_insights" className="text-xs font-bold py-2 px-4 flex items-center gap-1 text-brand"><Sparkles className="h-3.5 w-3.5" /> IA Hunter</TabsTrigger>
-                <TabsTrigger value="timeline" className="text-xs font-bold py-2 px-4">Histórico</TabsTrigger>
+                <TabsTrigger value="general" className="text-xs font-bold py-2 px-4">
+                  Geral
+                </TabsTrigger>
+                <TabsTrigger value="pax" className="text-xs font-bold py-2 px-4">
+                  Acompanhantes
+                </TabsTrigger>
+                <TabsTrigger value="meetings" className="text-xs font-bold py-2 px-4">
+                  Agenda & Lembretes
+                </TabsTrigger>
+                <TabsTrigger value="proposals" className="text-xs font-bold py-2 px-4">
+                  Cotações
+                </TabsTrigger>
+                <TabsTrigger
+                  value="omnichannel"
+                  className="text-xs font-bold py-2 px-4 flex items-center gap-1"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" /> Mensagens
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ai_insights"
+                  className="text-xs font-bold py-2 px-4 flex items-center gap-1 text-brand"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> IA Hunter
+                </TabsTrigger>
+                <TabsTrigger value="timeline" className="text-xs font-bold py-2 px-4">
+                  Histórico
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="general" className="space-y-6">
@@ -548,13 +601,15 @@ function LeadDetailPage() {
                       <AlertCircle className="h-4 w-4" />
                       <span>O lead está sem contato há {diffDays} dias! O que aconteceu?</span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">Evite a perda da oportunidade respondendo a este quiz rápido.</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Evite a perda da oportunidade respondendo a este quiz rápido.
+                    </p>
                     <div className="flex flex-wrap gap-2 pt-1">
                       {[
                         { label: "Sumiu / Não responde", v: "disappeared" },
                         { label: "Desistiu", v: "gave_up" },
                         { label: "Sem Crédito / Orçamento", v: "no_credit" },
-                        { label: "Viagem Adiada", v: "postponed" }
+                        { label: "Viagem Adiada", v: "postponed" },
                       ].map((opt) => (
                         <button
                           key={opt.v}
@@ -566,7 +621,7 @@ function LeadDetailPage() {
                                 leadId: lead.id,
                                 agencyId: lead.agency_id,
                                 type: "note",
-                                content: `Inatividade registrada: "${opt.label}"`
+                                content: `Inatividade registrada: "${opt.label}"`,
                               });
                               qc.invalidateQueries({ queryKey: ["lead", lead.id] });
                               qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
@@ -588,13 +643,28 @@ function LeadDetailPage() {
                 {lead.staleness_status && lead.staleness_status !== "active" && (
                   <div className="bg-muted/50 border border-border p-4 rounded-xl flex items-center justify-between gap-4">
                     <div>
-                      <span className="text-xs font-bold text-foreground block">Lead Classificado como Inativo</span>
-                      <span className="text-[11px] text-muted-foreground mt-0.5 block">Motivo: {lead.staleness_status === "disappeared" ? "Sumiu / Não responde" : lead.staleness_status === "gave_up" ? "Desistiu / Comprou em outra agência" : lead.staleness_status === "no_credit" ? "Sem orçamento / crédito" : "Viagem adiada"}.</span>
+                      <span className="text-xs font-bold text-foreground block">
+                        Lead Classificado como Inativo
+                      </span>
+                      <span className="text-[11px] text-muted-foreground mt-0.5 block">
+                        Motivo:{" "}
+                        {lead.staleness_status === "disappeared"
+                          ? "Sumiu / Não responde"
+                          : lead.staleness_status === "gave_up"
+                            ? "Desistiu / Comprou em outra agência"
+                            : lead.staleness_status === "no_credit"
+                              ? "Sem orçamento / crédito"
+                              : "Viagem adiada"}
+                        .
+                      </span>
                     </div>
                     <GhostButton
                       onClick={async () => {
                         try {
-                          await updateLead(lead.id, { staleness_status: "active", last_contacted_at: new Date().toISOString() });
+                          await updateLead(lead.id, {
+                            staleness_status: "active",
+                            last_contacted_at: new Date().toISOString(),
+                          });
                           qc.invalidateQueries({ queryKey: ["lead", lead.id] });
                           qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
                           toast.success("Lead reativado com sucesso!");
@@ -618,11 +688,31 @@ function LeadDetailPage() {
                     </h4>
                     <div className="space-y-3 text-sm">
                       <Row k="Destino" v={lead.destination || "Não definido"} />
-                      <Row k="Tipo de Interesse" v={INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label || "Não informado"} />
+                      <Row
+                        k="Tipo de Interesse"
+                        v={
+                          INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label ||
+                          "Não informado"
+                        }
+                      />
                       <Row k="Orçamento Estimado" v={money(lead.estimated_value || 0)} />
-                      <Row k="Período" v={lead.travel_start ? `${fmtDate(lead.travel_start)} até ${lead.travel_end ? fmtDate(lead.travel_end) : "Indefinido"}` : "Indefinido"} />
+                      <Row
+                        k="Período"
+                        v={
+                          lead.travel_start
+                            ? `${fmtDate(lead.travel_start)} até ${lead.travel_end ? fmtDate(lead.travel_end) : "Indefinido"}`
+                            : "Indefinido"
+                        }
+                      />
                       <Row k="Canal / Origem" v={lead.source || "Direto"} />
-                      <Row k="Detalhe do Canal" v={lead.lead_source_detail ? lead.lead_source_detail.replace("_", " ") : "Orgânico"} />
+                      <Row
+                        k="Detalhe do Canal"
+                        v={
+                          lead.lead_source_detail
+                            ? lead.lead_source_detail.replace("_", " ")
+                            : "Orgânico"
+                        }
+                      />
                     </div>
                   </div>
 
@@ -634,20 +724,37 @@ function LeadDetailPage() {
                     <div className="space-y-3">
                       <div className="flex flex-col gap-2 text-xs font-semibold text-foreground">
                         <div className="flex items-center gap-2">
-                          <input type="checkbox" disabled checked={lead.pcd || false} className="h-4 w-4 rounded border-border" />
+                          <input
+                            type="checkbox"
+                            disabled
+                            checked={lead.pcd || false}
+                            className="h-4 w-4 rounded border-border"
+                          />
                           <span>PCD (Pessoa com Deficiência)</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <input type="checkbox" disabled checked={lead.reduced_mobility || false} className="h-4 w-4 rounded border-border" />
+                          <input
+                            type="checkbox"
+                            disabled
+                            checked={lead.reduced_mobility || false}
+                            className="h-4 w-4 rounded border-border"
+                          />
                           <span>Mobilidade Reduzida</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <input type="checkbox" disabled checked={lead.autism || false} className="h-4 w-4 rounded border-border" />
+                          <input
+                            type="checkbox"
+                            disabled
+                            checked={lead.autism || false}
+                            className="h-4 w-4 rounded border-border"
+                          />
                           <span>Espectro Autista (TEA)</span>
                         </div>
                       </div>
                       <div className="pt-2 border-t border-border/40">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Notas de Saúde / Restrições</span>
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">
+                          Notas de Saúde / Restrições
+                        </span>
                         <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-lg border border-border/40">
                           {lead.health_notes || "Nenhuma observação cadastrada."}
                         </p>
@@ -753,9 +860,9 @@ function LeadDetailPage() {
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
                     Tags do Lead
                   </h4>
-                  
+
                   {/* Tag list */}
-                  {(!lead.tags || lead.tags.length === 0) ? (
+                  {!lead.tags || lead.tags.length === 0 ? (
                     <p className="text-xs text-muted-foreground">Nenhuma tag cadastrada.</p>
                   ) : (
                     <div className="flex flex-wrap gap-1.5">
@@ -788,7 +895,7 @@ function LeadDetailPage() {
                       onChange={(e) => setNewTagName(e.target.value)}
                       className="h-8 text-xs rounded-lg"
                     />
-                    
+
                     <div className="flex flex-wrap gap-1.5">
                       {TAG_COLOR_PRESETS.map((color) => (
                         <button
@@ -796,7 +903,9 @@ function LeadDetailPage() {
                           type="button"
                           onClick={() => setNewTagColor(color.value)}
                           className={`h-5 w-5 rounded-full border border-black/10 transition-transform ${
-                            newTagColor === color.value ? "scale-125 ring-2 ring-brand" : "hover:scale-110"
+                            newTagColor === color.value
+                              ? "scale-125 ring-2 ring-brand"
+                              : "hover:scale-110"
                           }`}
                           style={{ backgroundColor: color.value }}
                           title={color.name}
@@ -835,10 +944,15 @@ function LeadDetailPage() {
                     <span>Link Mágico de Cadastro do Cliente</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Envie este link para que o cliente revise as preferências de viagem, preencha documentos e cadastre todos os acompanhantes da família ou grupo de forma autônoma.
+                    Envie este link para que o cliente revise as preferências de viagem, preencha
+                    documentos e cadastre todos os acompanhantes da família ou grupo de forma
+                    autônoma.
                   </p>
                   <div className="flex gap-2">
-                    <GhostButton onClick={handleCopyFormLink} className="h-8 px-3 rounded-lg text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10">
+                    <GhostButton
+                      onClick={handleCopyFormLink}
+                      className="h-8 px-3 rounded-lg text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
+                    >
                       <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
                     </GhostButton>
                     {lead.phone && (
@@ -863,12 +977,17 @@ function LeadDetailPage() {
                     </span>
                   </div>
 
-                  {(!lead.pax_list || lead.pax_list.length === 0) ? (
-                    <p className="text-xs text-muted-foreground py-6 text-center">Nenhum acompanhante cadastrado.</p>
+                  {!lead.pax_list || lead.pax_list.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-6 text-center">
+                      Nenhum acompanhante cadastrado.
+                    </p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                       {lead.pax_list.map((pax, index) => (
-                        <div key={index} className="border border-border/60 p-4 rounded-xl bg-surface-alt/15 relative hover:border-border transition-colors">
+                        <div
+                          key={index}
+                          className="border border-border/60 p-4 rounded-xl bg-surface-alt/15 relative hover:border-border transition-colors"
+                        >
                           <button
                             onClick={async () => {
                               if (!confirm("Remover este acompanhante?")) return;
@@ -887,13 +1006,31 @@ function LeadDetailPage() {
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
-                          <span className="text-xs font-bold text-foreground block truncate pr-8">{pax.full_name}</span>
+                          <span className="text-xs font-bold text-foreground block truncate pr-8">
+                            {pax.full_name}
+                          </span>
                           <span className="text-[9px] text-brand uppercase font-extrabold bg-brand/5 border border-brand/10 px-1.5 py-0.5 rounded inline-block mt-1">
-                            {pax.relationship === "spouse" ? "Cônjuge" : pax.relationship === "child" ? "Filho(a)" : pax.relationship === "parent" ? "Pai/Mãe" : pax.relationship === "sibling" ? "Irmão/Irmã" : pax.relationship === "friend" ? "Amigo(a)" : pax.relationship === "relative" ? "Familiar" : "Outro"}
+                            {pax.relationship === "spouse"
+                              ? "Cônjuge"
+                              : pax.relationship === "child"
+                                ? "Filho(a)"
+                                : pax.relationship === "parent"
+                                  ? "Pai/Mãe"
+                                  : pax.relationship === "sibling"
+                                    ? "Irmão/Irmã"
+                                    : pax.relationship === "friend"
+                                      ? "Amigo(a)"
+                                      : pax.relationship === "relative"
+                                        ? "Familiar"
+                                        : "Outro"}
                           </span>
                           <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2.5 font-mono pt-2 border-t border-border/40">
                             {pax.document && <div>CPF: {pax.document}</div>}
-                            {pax.birth_date && <div>Nasc: {new Date(pax.birth_date).toLocaleDateString("pt-BR")}</div>}
+                            {pax.birth_date && (
+                              <div>
+                                Nasc: {new Date(pax.birth_date).toLocaleDateString("pt-BR")}
+                              </div>
+                            )}
                             {pax.phone && <div>WhatsApp: {pax.phone}</div>}
                             {pax.email && <div className="truncate">Email: {pax.email}</div>}
                           </div>
@@ -909,7 +1046,8 @@ function LeadDetailPage() {
                     onClick={() => setPaxFormOpen((o) => !o)}
                     className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
                   >
-                    <Plus className="h-4 w-4" /> {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante Manualmente"}
+                    <Plus className="h-4 w-4" />{" "}
+                    {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante Manualmente"}
                   </button>
 
                   {paxFormOpen && (
@@ -921,7 +1059,14 @@ function LeadDetailPage() {
                         const updated = [...list, { ...paxForm }];
                         try {
                           await updateLead(lead.id, { pax_list: updated });
-                          setPaxForm({ full_name: "", document: "", birth_date: "", relationship: "other", phone: "", email: "" });
+                          setPaxForm({
+                            full_name: "",
+                            document: "",
+                            birth_date: "",
+                            relationship: "other",
+                            phone: "",
+                            email: "",
+                          });
                           setPaxFormOpen(false);
                           qc.invalidateQueries({ queryKey: ["lead", lead.id] });
                           toast.success("Acompanhante cadastrado!");
@@ -932,26 +1077,53 @@ function LeadDetailPage() {
                       className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Nome Completo *">
-                        <Input required value={paxForm.full_name} onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })} className="h-9 text-xs" />
+                        <Input
+                          required
+                          value={paxForm.full_name}
+                          onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })}
+                          className="h-9 text-xs"
+                        />
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
                         <Field label="CPF / Documento">
-                          <Input value={paxForm.document} onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })} className="h-9 text-xs" />
+                          <Input
+                            value={paxForm.document}
+                            onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })}
+                            className="h-9 text-xs"
+                          />
                         </Field>
                         <Field label="Data de Nascimento">
-                          <Input type="date" value={paxForm.birth_date} onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })} className="h-9 text-xs" />
+                          <Input
+                            type="date"
+                            value={paxForm.birth_date}
+                            onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })}
+                            className="h-9 text-xs"
+                          />
                         </Field>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <Field label="E-mail">
-                          <Input type="email" value={paxForm.email} onChange={(e) => setPaxForm({ ...paxForm, email: e.target.value })} className="h-9 text-xs" />
+                          <Input
+                            type="email"
+                            value={paxForm.email}
+                            onChange={(e) => setPaxForm({ ...paxForm, email: e.target.value })}
+                            className="h-9 text-xs"
+                          />
                         </Field>
                         <Field label="WhatsApp / Telefone">
-                          <Input value={paxForm.phone} onChange={(e) => setPaxForm({ ...paxForm, phone: e.target.value })} className="h-9 text-xs" />
+                          <Input
+                            value={paxForm.phone}
+                            onChange={(e) => setPaxForm({ ...paxForm, phone: e.target.value })}
+                            className="h-9 text-xs"
+                          />
                         </Field>
                       </div>
                       <Field label="Relação / Parentesco">
-                        <Select value={paxForm.relationship} onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })} className="h-9 text-xs bg-background">
+                        <Select
+                          value={paxForm.relationship}
+                          onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })}
+                          className="h-9 text-xs bg-background"
+                        >
                           <option value="spouse">Cônjuge</option>
                           <option value="child">Filho(a)</option>
                           <option value="parent">Pai/Mãe</option>
@@ -999,7 +1171,13 @@ function LeadDetailPage() {
                             duration_minutes: Number(meetingForm.duration_minutes),
                             meeting_type: meetingForm.meeting_type,
                           });
-                          setMeetingForm({ title: "", description: "", scheduled_at: "", duration_minutes: 30, meeting_type: "call" });
+                          setMeetingForm({
+                            title: "",
+                            description: "",
+                            scheduled_at: "",
+                            duration_minutes: 30,
+                            meeting_type: "call",
+                          });
                           setMeetingFormOpen(false);
                           qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
                           qc.invalidateQueries({ queryKey: ["lead-activities", lead.id] });
@@ -1011,21 +1189,61 @@ function LeadDetailPage() {
                       className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Título do Compromisso *">
-                        <Input required placeholder="Ex: Apresentação da Cotação" value={meetingForm.title} onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })} className="h-9 text-xs" />
+                        <Input
+                          required
+                          placeholder="Ex: Apresentação da Cotação"
+                          value={meetingForm.title}
+                          onChange={(e) =>
+                            setMeetingForm({ ...meetingForm, title: e.target.value })
+                          }
+                          className="h-9 text-xs"
+                        />
                       </Field>
                       <Field label="Descrição / Notas">
-                        <Input placeholder="Detalhes opcionais..." value={meetingForm.description} onChange={(e) => setMeetingForm({ ...meetingForm, description: e.target.value })} className="h-9 text-xs" />
+                        <Input
+                          placeholder="Detalhes opcionais..."
+                          value={meetingForm.description}
+                          onChange={(e) =>
+                            setMeetingForm({ ...meetingForm, description: e.target.value })
+                          }
+                          className="h-9 text-xs"
+                        />
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
                         <Field label="Data & Horário *">
-                          <Input type="datetime-local" required value={meetingForm.scheduled_at} onChange={(e) => setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })} className="h-9 text-xs" />
+                          <Input
+                            type="datetime-local"
+                            required
+                            value={meetingForm.scheduled_at}
+                            onChange={(e) =>
+                              setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })
+                            }
+                            className="h-9 text-xs"
+                          />
                         </Field>
                         <Field label="Duração (minutos)">
-                          <Input type="number" min={5} value={meetingForm.duration_minutes} onChange={(e) => setMeetingForm({ ...meetingForm, duration_minutes: parseInt(e.target.value) || 30 })} className="h-9 text-xs" />
+                          <Input
+                            type="number"
+                            min={5}
+                            value={meetingForm.duration_minutes}
+                            onChange={(e) =>
+                              setMeetingForm({
+                                ...meetingForm,
+                                duration_minutes: parseInt(e.target.value) || 30,
+                              })
+                            }
+                            className="h-9 text-xs"
+                          />
                         </Field>
                       </div>
                       <Field label="Tipo de Evento">
-                        <Select value={meetingForm.meeting_type} onChange={(e) => setMeetingForm({ ...meetingForm, meeting_type: e.target.value })} className="h-9 text-xs bg-background">
+                        <Select
+                          value={meetingForm.meeting_type}
+                          onChange={(e) =>
+                            setMeetingForm({ ...meetingForm, meeting_type: e.target.value })
+                          }
+                          className="h-9 text-xs bg-background"
+                        >
                           <option value="call">Chamada de Voz / Telefone</option>
                           <option value="video">Vídeochamada (Google Meet / Zoom)</option>
                           <option value="in_person">Reunião Presencial</option>
@@ -1042,17 +1260,34 @@ function LeadDetailPage() {
                     <div className="h-10 flex items-center justify-center">
                       <div className="h-4 w-4 animate-spin rounded-full border border-brand border-t-transparent" />
                     </div>
-                  ) : (!meetingsQ.data || meetingsQ.data.length === 0) ? (
-                    <p className="text-xs text-muted-foreground py-4 text-center font-medium">Nenhum compromisso agendado.</p>
+                  ) : !meetingsQ.data || meetingsQ.data.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-4 text-center font-medium">
+                      Nenhum compromisso agendado.
+                    </p>
                   ) : (
                     <div className="space-y-3">
                       {meetingsQ.data.map((meeting: LeadMeeting) => (
-                        <div key={meeting.id} className="bg-surface-alt/20 border border-border/60 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div
+                          key={meeting.id}
+                          className="bg-surface-alt/20 border border-border/60 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        >
                           <div className="space-y-1 min-w-0">
-                            <span className="text-xs font-bold text-foreground block truncate">{meeting.title}</span>
-                            {meeting.description && <span className="text-[11px] text-muted-foreground block truncate">{meeting.description}</span>}
+                            <span className="text-xs font-bold text-foreground block truncate">
+                              {meeting.title}
+                            </span>
+                            {meeting.description && (
+                              <span className="text-[11px] text-muted-foreground block truncate">
+                                {meeting.description}
+                              </span>
+                            )}
                             <span className="text-[10px] text-brand font-semibold block">
-                              {new Date(meeting.scheduled_at).toLocaleString("pt-BR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })} ({meeting.duration_minutes} min)
+                              {new Date(meeting.scheduled_at).toLocaleString("pt-BR", {
+                                day: "2-digit",
+                                month: "long",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}{" "}
+                              ({meeting.duration_minutes} min)
                             </span>
                           </div>
 
@@ -1080,7 +1315,9 @@ function LeadDetailPage() {
                                   qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
                                   toast.success("Sincronizado com sucesso!", { id: toastId });
                                 } catch (err: any) {
-                                  toast.error(err.message || "Erro na sincronização", { id: toastId });
+                                  toast.error(err.message || "Erro na sincronização", {
+                                    id: toastId,
+                                  });
                                 }
                               }}
                               className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
@@ -1136,18 +1373,27 @@ function LeadDetailPage() {
                     <div className="h-10 flex items-center justify-center">
                       <div className="h-4 w-4 animate-spin rounded-full border border-brand border-t-transparent" />
                     </div>
-                  ) : (!proposalsQ.data || proposalsQ.data.length === 0) ? (
-                    <p className="text-xs text-muted-foreground py-2 text-center font-medium">Nenhuma proposta criada para este lead.</p>
+                  ) : !proposalsQ.data || proposalsQ.data.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-2 text-center font-medium">
+                      Nenhuma proposta criada para este lead.
+                    </p>
                   ) : (
                     <ul className="space-y-2">
                       {proposalsQ.data.map((prop) => (
-                        <li key={prop.id} className="bg-surface-alt/30 border border-border/50 rounded-lg p-2.5 flex flex-col gap-1 text-xs">
+                        <li
+                          key={prop.id}
+                          className="bg-surface-alt/30 border border-border/50 rounded-lg p-2.5 flex flex-col gap-1 text-xs"
+                        >
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-foreground truncate">{prop.title}</span>
-                            <span className="font-mono text-brand font-extrabold">{money(prop.total)}</span>
+                            <span className="font-mono text-brand font-extrabold">
+                              {money(prop.total)}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                            <span>#{prop.number} · {fmtDate(prop.created_at)}</span>
+                            <span>
+                              #{prop.number} · {fmtDate(prop.created_at)}
+                            </span>
                             <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 bg-surface rounded border border-border">
                               {prop.status}
                             </span>
@@ -1180,12 +1426,17 @@ function LeadDetailPage() {
                     />
                   </label>
 
-                  {(!lead.attachments || lead.attachments.length === 0) ? (
-                    <p className="text-xs text-muted-foreground py-2 text-center">Nenhum arquivo anexado.</p>
+                  {!lead.attachments || lead.attachments.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-2 text-center">
+                      Nenhum arquivo anexado.
+                    </p>
                   ) : (
                     <ul className="divide-y divide-border/40">
                       {lead.attachments.map((file) => (
-                        <li key={file.id} className="py-2.5 flex items-center justify-between text-sm">
+                        <li
+                          key={file.id}
+                          className="py-2.5 flex items-center justify-between text-sm"
+                        >
                           <div className="flex items-center gap-2 min-w-0">
                             <FileText className="h-4 w-4 shrink-0 text-brand" />
                             <a
@@ -1234,18 +1485,26 @@ function LeadDetailPage() {
                   <NewActivity
                     leadId={lead.id}
                     agencyId={lead.agency_id}
-                    onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
+                    onCreated={() =>
+                      qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })
+                    }
                   />
                   <Timeline
                     activities={activitiesQ.data ?? []}
-                    onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
+                    onChanged={() =>
+                      qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })
+                    }
                   />
                 </div>
               </TabsContent>
 
               {/* Omnichannel Chat Tab - Live */}
               <TabsContent value="omnichannel" className="space-y-0">
-                <OmnichannelChat leadId={lead.id} agencyId={lead.agency_id} leadPhone={lead.phone} />
+                <OmnichannelChat
+                  leadId={lead.id}
+                  agencyId={lead.agency_id}
+                  leadPhone={lead.phone}
+                />
               </TabsContent>
 
               {/* AI Hunter Insights Tab - Live */}
@@ -1257,80 +1516,167 @@ function LeadDetailPage() {
 
           {/* Confirm Conversao Modal Dialog */}
           {confirmConvertOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onPointerDown={(e) => e.stopPropagation()}>
-              <div className="w-full max-w-lg bg-surface border border-border rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto" onPointerDown={(e) => e.stopPropagation()}>
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <div
+                className="w-full max-w-lg bg-surface border border-border rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+                onPointerDown={(e) => e.stopPropagation()}
+              >
                 <div>
-                  <h3 className="text-base font-bold text-foreground">Confirmar Conversão de Cliente</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba serão vinculados automaticamente no banco de dados.</p>
+                  <h3 className="text-base font-bold text-foreground">
+                    Confirmar Conversão de Cliente
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba
+                    serão vinculados automaticamente no banco de dados.
+                  </p>
                 </div>
 
                 <div className="space-y-3">
                   <Field label="Nome Completo *">
-                    <Input required value={clientPayload.full_name} onChange={(e) => setClientPayload({...clientPayload, full_name: e.target.value})} className="h-9 text-xs" />
+                    <Input
+                      required
+                      value={clientPayload.full_name}
+                      onChange={(e) =>
+                        setClientPayload({ ...clientPayload, full_name: e.target.value })
+                      }
+                      className="h-9 text-xs"
+                    />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="CPF / Documento *">
-                      <Input required placeholder="Apenas números" value={clientPayload.document} onChange={(e) => setClientPayload({...clientPayload, document: e.target.value})} className="h-9 text-xs" />
+                      <Input
+                        required
+                        placeholder="Apenas números"
+                        value={clientPayload.document}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, document: e.target.value })
+                        }
+                        className="h-9 text-xs"
+                      />
                     </Field>
                     <Field label="Data de Nascimento">
-                      <Input type="date" value={clientPayload.birth_date} onChange={(e) => setClientPayload({...clientPayload, birth_date: e.target.value})} className="h-9 text-xs" />
+                      <Input
+                        type="date"
+                        value={clientPayload.birth_date}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, birth_date: e.target.value })
+                        }
+                        className="h-9 text-xs"
+                      />
                     </Field>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="E-mail">
-                      <Input type="email" value={clientPayload.email} onChange={(e) => setClientPayload({...clientPayload, email: e.target.value})} className="h-9 text-xs" />
+                      <Input
+                        type="email"
+                        value={clientPayload.email}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, email: e.target.value })
+                        }
+                        className="h-9 text-xs"
+                      />
                     </Field>
                     <Field label="WhatsApp / Telefone">
-                      <Input value={clientPayload.phone} onChange={(e) => setClientPayload({...clientPayload, phone: e.target.value})} className="h-9 text-xs" />
+                      <Input
+                        value={clientPayload.phone}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, phone: e.target.value })
+                        }
+                        className="h-9 text-xs"
+                      />
                     </Field>
                   </div>
 
                   {/* Acessibilidade */}
                   <div className="border border-border p-4 rounded-xl space-y-3 bg-surface-alt/10">
-                    <span className="text-xs font-bold text-foreground block">Acessibilidade & Cuidados Especiais</span>
+                    <span className="text-xs font-bold text-foreground block">
+                      Acessibilidade & Cuidados Especiais
+                    </span>
                     <div className="flex flex-wrap gap-4 text-xs">
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={clientPayload.pcd} onChange={(e) => setClientPayload({...clientPayload, pcd: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <input
+                          type="checkbox"
+                          checked={clientPayload.pcd}
+                          onChange={(e) =>
+                            setClientPayload({ ...clientPayload, pcd: e.target.checked })
+                          }
+                          className="h-4 w-4 rounded border-border cursor-pointer"
+                        />
                         <span>PCD</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={clientPayload.reduced_mobility} onChange={(e) => setClientPayload({...clientPayload, reduced_mobility: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <input
+                          type="checkbox"
+                          checked={clientPayload.reduced_mobility}
+                          onChange={(e) =>
+                            setClientPayload({
+                              ...clientPayload,
+                              reduced_mobility: e.target.checked,
+                            })
+                          }
+                          className="h-4 w-4 rounded border-border cursor-pointer"
+                        />
                         <span>Mobilidade Reduzida</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={clientPayload.autism} onChange={(e) => setClientPayload({...clientPayload, autism: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <input
+                          type="checkbox"
+                          checked={clientPayload.autism}
+                          onChange={(e) =>
+                            setClientPayload({ ...clientPayload, autism: e.target.checked })
+                          }
+                          className="h-4 w-4 rounded border-border cursor-pointer"
+                        />
                         <span>Espectro Autista (TEA)</span>
                       </label>
                     </div>
                     <Field label="Comorbidades / Restrições Médicas ou Alimentares">
-                      <Textarea rows={2} placeholder="Ex: diabético, intolerância a glúten..." value={clientPayload.health_notes} onChange={(e) => setClientPayload({...clientPayload, health_notes: e.target.value})} className="text-xs" />
+                      <Textarea
+                        rows={2}
+                        placeholder="Ex: diabético, intolerância a glúten..."
+                        value={clientPayload.health_notes}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, health_notes: e.target.value })
+                        }
+                        className="text-xs"
+                      />
                     </Field>
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
-                  <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">Cancelar</GhostButton>
-                  <PrimaryButton onClick={async () => {
-                    if (!clientPayload.full_name || !clientPayload.document) {
-                      toast.error("Nome completo e CPF são obrigatórios!");
-                      return;
-                    }
-                    try {
-                      await promoteLeadToClient(lead.id, clientPayload);
-                      confetti({
-                        particleCount: 150,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
-                      });
-                      toast.success("Lead convertido para Cliente com sucesso!");
-                      setConfirmConvertOpen(false);
-                      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                    } catch (e: any) {
-                      toast.error(e.message || "Erro na conversão");
-                    }
-                  }} className="h-9 text-xs">Converter Agora</PrimaryButton>
+                  <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">
+                    Cancelar
+                  </GhostButton>
+                  <PrimaryButton
+                    onClick={async () => {
+                      if (!clientPayload.full_name || !clientPayload.document) {
+                        toast.error("Nome completo e CPF são obrigatórios!");
+                        return;
+                      }
+                      try {
+                        await promoteLeadToClient(lead.id, clientPayload);
+                        confetti({
+                          particleCount: 150,
+                          spread: 70,
+                          origin: { y: 0.6 },
+                          colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
+                        });
+                        toast.success("Lead convertido para Cliente com sucesso!");
+                        setConfirmConvertOpen(false);
+                        qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                        qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                      } catch (e: any) {
+                        toast.error(e.message || "Erro na conversão");
+                      }
+                    }}
+                    className="h-9 text-xs"
+                  >
+                    Converter Agora
+                  </PrimaryButton>
                 </div>
               </div>
             </div>
@@ -1388,7 +1734,7 @@ function LeadForm({
     pax_adults: lead.pax_adults || 1,
     pax_children: lead.pax_children || 0,
     pax_infants: lead.pax_infants || 0,
-    pax_ages_str: (lead.pax_ages as number[] || []).join(", "),
+    pax_ages_str: ((lead.pax_ages as number[]) || []).join(", "),
     estimated_value: lead.estimated_value || 0,
     source: lead.source ?? "",
     notes: lead.notes ?? "",
@@ -1436,85 +1782,177 @@ function LeadForm({
   }
 
   return (
-    <form onSubmit={save} className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm">
+    <form
+      onSubmit={save}
+      className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm"
+    >
       <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Nome completo *">
-          <Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            required
+            value={f.name}
+            onChange={(e) => setF({ ...f, name: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
         <Field label="E-mail">
-          <Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            type="email"
+            value={f.email}
+            onChange={(e) => setF({ ...f, email: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
         <Field label="Telefone / WhatsApp">
-          <Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            value={f.phone}
+            onChange={(e) => setF({ ...f, phone: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
         <Field label="Destino de interesse">
-          <Input value={f.destination} onChange={(e) => setF({ ...f, destination: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            value={f.destination}
+            onChange={(e) => setF({ ...f, destination: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
         <Field label="Data de início">
-          <Input type="date" value={f.travel_start} onChange={(e) => setF({ ...f, travel_start: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            type="date"
+            value={f.travel_start}
+            onChange={(e) => setF({ ...f, travel_start: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
         <Field label="Data de término">
-          <Input type="date" value={f.travel_end} onChange={(e) => setF({ ...f, travel_end: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            type="date"
+            value={f.travel_end}
+            onChange={(e) => setF({ ...f, travel_end: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
 
         <div className="grid grid-cols-3 gap-2">
           <Field label="Adultos">
-            <Input type="number" min={1} value={f.pax_adults} onChange={(e) => setF({ ...f, pax_adults: parseInt(e.target.value) || 1 })} className="rounded-lg h-9" />
+            <Input
+              type="number"
+              min={1}
+              value={f.pax_adults}
+              onChange={(e) => setF({ ...f, pax_adults: parseInt(e.target.value) || 1 })}
+              className="rounded-lg h-9"
+            />
           </Field>
           <Field label="Crianças">
-            <Input type="number" min={0} value={f.pax_children} onChange={(e) => setF({ ...f, pax_children: parseInt(e.target.value) || 0 })} className="rounded-lg h-9" />
+            <Input
+              type="number"
+              min={0}
+              value={f.pax_children}
+              onChange={(e) => setF({ ...f, pax_children: parseInt(e.target.value) || 0 })}
+              className="rounded-lg h-9"
+            />
           </Field>
           <Field label="Bebês">
-            <Input type="number" min={0} value={f.pax_infants} onChange={(e) => setF({ ...f, pax_infants: parseInt(e.target.value) || 0 })} className="rounded-lg h-9" />
+            <Input
+              type="number"
+              min={0}
+              value={f.pax_infants}
+              onChange={(e) => setF({ ...f, pax_infants: parseInt(e.target.value) || 0 })}
+              className="rounded-lg h-9"
+            />
           </Field>
         </div>
 
         <Field label="Idades das Crianças (ex: 5, 8)">
-          <Input value={f.pax_ages_str} onChange={(e) => setF({ ...f, pax_ages_str: e.target.value })} className="rounded-lg h-9" placeholder="Separadas por vírgula" />
+          <Input
+            value={f.pax_ages_str}
+            onChange={(e) => setF({ ...f, pax_ages_str: e.target.value })}
+            className="rounded-lg h-9"
+            placeholder="Separadas por vírgula"
+          />
         </Field>
 
         <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-xl text-muted-foreground space-y-1">
           <span className="font-bold text-foreground block">Regras de Tarifa da Aviação:</span>
           <ul className="list-disc list-inside space-y-0.5">
-            <li><strong>Adultos (ADT):</strong> 12 anos completos ou mais.</li>
-            <li><strong>Crianças (CHD):</strong> 2 a 11 anos completos (2 anos completos já pagam tarifa CHD).</li>
-            <li><strong>Bebês (INF):</strong> 0 a 23 meses (deve viajar no colo).</li>
+            <li>
+              <strong>Adultos (ADT):</strong> 12 anos completos ou mais.
+            </li>
+            <li>
+              <strong>Crianças (CHD):</strong> 2 a 11 anos completos (2 anos completos já pagam
+              tarifa CHD).
+            </li>
+            <li>
+              <strong>Bebês (INF):</strong> 0 a 23 meses (deve viajar no colo).
+            </li>
           </ul>
         </div>
 
         <Field label="Orçamento Estimado (R$)">
-          <Input type="number" min={0} value={f.estimated_value} onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })} className="rounded-lg h-9" />
+          <Input
+            type="number"
+            min={0}
+            value={f.estimated_value}
+            onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })}
+            className="rounded-lg h-9"
+          />
         </Field>
 
         <Field label="Tipo de Interesse">
-          <Select value={f.interest_type} onChange={(e) => setF({ ...f, interest_type: e.target.value })} className="rounded-lg h-9">
+          <Select
+            value={f.interest_type}
+            onChange={(e) => setF({ ...f, interest_type: e.target.value })}
+            className="rounded-lg h-9"
+          >
             <option value="">Não informado</option>
             {INTEREST_TYPES.map((t) => (
-              <option key={t.v} value={t.v}>{t.label}</option>
+              <option key={t.v} value={t.v}>
+                {t.label}
+              </option>
             ))}
           </Select>
         </Field>
 
         <Field label="Origem / Canal">
-          <Input value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })} className="rounded-lg h-9" />
+          <Input
+            value={f.source}
+            onChange={(e) => setF({ ...f, source: e.target.value })}
+            className="rounded-lg h-9"
+          />
         </Field>
 
         <Field label="Estágio do Funil">
-          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })} className="rounded-lg h-9">
+          <Select
+            value={f.stage_id}
+            onChange={(e) => setF({ ...f, stage_id: e.target.value })}
+            className="rounded-lg h-9"
+          >
             {stages.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
             ))}
           </Select>
         </Field>
       </div>
 
       <Field label="Anotações gerais">
-        <Textarea rows={3} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} className="rounded-lg" />
+        <Textarea
+          rows={3}
+          value={f.notes}
+          onChange={(e) => setF({ ...f, notes: e.target.value })}
+          className="rounded-lg"
+        />
       </Field>
 
       <Field label="Motivo da Perda (Se perdido)">
-        <Input value={f.lost_reason} onChange={(e) => setF({ ...f, lost_reason: e.target.value })} className="rounded-lg h-9" />
+        <Input
+          value={f.lost_reason}
+          onChange={(e) => setF({ ...f, lost_reason: e.target.value })}
+          className="rounded-lg h-9"
+        />
       </Field>
 
       <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
@@ -1621,11 +2059,11 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
   const [edit, setEdit] = useState(false);
   const [content, setContent] = useState(activity.content ?? "");
   const [me, setMe] = useState<string | null>(null);
-  
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
   }, []);
-  
+
   const mine = me && activity.author_id === me;
 
   const save = useMutation({
@@ -1721,7 +2159,9 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
             </div>
           </div>
         ) : (
-          <p className={`text-xs text-foreground/90 leading-relaxed ${activity.type === "stage_change" ? "font-semibold text-brand" : ""}`}>
+          <p
+            className={`text-xs text-foreground/90 leading-relaxed ${activity.type === "stage_change" ? "font-semibold text-brand" : ""}`}
+          >
             {activity.content}
           </p>
         )}
@@ -1737,6 +2177,7 @@ type OmniMsg = {
   content: string | null;
   media_url: string | null;
   media_type: string | null;
+  status: string;
   created_at: string;
   channel: string;
 };
@@ -1756,13 +2197,13 @@ function OmnichannelChat({
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    supabase
+    (supabase as any)
       .from("omnichannel_messages")
       .select("*")
       .eq("lead_id", leadId)
       .order("created_at", { ascending: true })
       .limit(100)
-      .then(({ data }) => {
+      .then(({ data }: any) => {
         if (data) setMessages(data as OmniMsg[]);
       });
 
@@ -1770,12 +2211,38 @@ function OmnichannelChat({
       .channel(`omni_${leadId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "omnichannel_messages", filter: `lead_id=eq.${leadId}` },
-        (payload) => { setMessages((prev) => [...prev, payload.new as OmniMsg]); }
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "omnichannel_messages",
+          filter: `lead_id=eq.${leadId}`,
+        },
+        (payload) => {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === payload.new.id)) return prev;
+            return [...prev, payload.new as OmniMsg];
+          });
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "omnichannel_messages",
+          filter: `lead_id=eq.${leadId}`,
+        },
+        (payload) => {
+          setMessages((prev) =>
+            prev.map((msg) => (msg.id === payload.new.id ? (payload.new as OmniMsg) : msg)),
+          );
+        },
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [leadId]);
 
   useEffect(() => {
@@ -1786,7 +2253,7 @@ function OmnichannelChat({
     if (!text.trim() || sending) return;
     setSending(true);
     try {
-      const { error } = await supabase.from("omnichannel_messages").insert({
+      const { error } = await (supabase as any).from("omnichannel_messages").insert({
         agency_id: agencyId,
         lead_id: leadId,
         channel: "whatsapp",
@@ -1804,7 +2271,10 @@ function OmnichannelChat({
   }
 
   const lastMsgTime = messages[messages.length - 1]
-    ? new Date(messages[messages.length - 1].created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    ? new Date(messages[messages.length - 1].created_at).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : null;
 
   return (
@@ -1816,7 +2286,9 @@ function OmnichannelChat({
         <div className="flex-1">
           <h3 className="text-sm font-bold text-foreground">WhatsApp</h3>
           <p className="text-[10px] text-muted-foreground">
-            {messages.length > 0 ? `${messages.length} mensagens · Última às ${lastMsgTime}` : "Nenhuma mensagem ainda"}
+            {messages.length > 0
+              ? `${messages.length} mensagens · Última às ${lastMsgTime}`
+              : "Nenhuma mensagem ainda"}
           </p>
         </div>
         <span className="text-[10px] font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
@@ -1831,18 +2303,24 @@ function OmnichannelChat({
             <div>
               <p className="text-sm font-medium text-muted-foreground">Nenhuma mensagem ainda</p>
               <p className="text-xs text-muted-foreground/70 max-w-xs mt-1">
-                Configure a API de WhatsApp em Configurações → Omnichannel para receber mensagens em tempo real.
+                Configure a API de WhatsApp em Configurações → Omnichannel para receber mensagens em
+                tempo real.
               </p>
             </div>
           </div>
         ) : (
           messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.direction === "outbound" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-                msg.direction === "outbound"
-                  ? "bg-brand text-brand-foreground rounded-br-sm"
-                  : "bg-surface border border-border/60 text-foreground rounded-bl-sm"
-              }`}>
+            <div
+              key={msg.id}
+              className={`flex ${msg.direction === "outbound" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                  msg.direction === "outbound"
+                    ? "bg-brand text-brand-foreground rounded-br-sm"
+                    : "bg-surface border border-border/60 text-foreground rounded-bl-sm"
+                }`}
+              >
                 {msg.media_type === "audio" && msg.media_url ? (
                   <audio controls src={msg.media_url} className="max-w-full" />
                 ) : msg.media_url ? (
@@ -1850,8 +2328,32 @@ function OmnichannelChat({
                 ) : (
                   <span>{msg.content}</span>
                 )}
-                <div className="text-[9px] mt-0.5 opacity-60 text-right">
-                  {new Date(msg.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                <div className="text-[9px] mt-0.5 opacity-70 text-right flex items-center justify-end gap-1">
+                  <span>
+                    {new Date(msg.created_at).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                  {msg.direction === "outbound" && (
+                    <span className="inline-flex items-center ml-1">
+                      {msg.status === "pending" && (
+                        <span title="Pendente">
+                          <Clock className="h-2.5 w-2.5 opacity-60 animate-pulse" />
+                        </span>
+                      )}
+                      {msg.status === "sent" && (
+                        <span title="Enviado">
+                          <Check className="h-2.5 w-2.5 text-emerald-300" />
+                        </span>
+                      )}
+                      {msg.status === "failed" && (
+                        <span title="Falhou ao enviar">
+                          <AlertCircle className="h-2.5 w-2.5 text-red-300" />
+                        </span>
+                      )}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1868,7 +2370,12 @@ function OmnichannelChat({
           rows={1}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
         />
         <button
           onClick={sendMessage}
@@ -1898,22 +2405,37 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
   const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
-    supabase.from("lead_insights").select("*").eq("lead_id", leadId).maybeSingle()
-      .then(({ data }) => { if (data) setInsights(data as LeadInsight); });
+    (supabase as any)
+      .from("lead_insights")
+      .select("*")
+      .eq("lead_id", leadId)
+      .maybeSingle()
+      .then(({ data }: any) => {
+        if (data) setInsights(data as LeadInsight);
+      });
   }, [leadId]);
 
   async function triggerAnalysis() {
     setAnalyzing(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const res = await fetch(`${supabaseUrl}/functions/v1/ai-message-processor`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${session?.access_token}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ record: { lead_id: leadId, agency_id: agencyId } }),
       });
       if (!res.ok) throw new Error("Falha na análise");
-      const { data } = await supabase.from("lead_insights").select("*").eq("lead_id", leadId).maybeSingle();
+      const { data } = await (supabase as any)
+        .from("lead_insights")
+        .select("*")
+        .eq("lead_id", leadId)
+        .maybeSingle();
       if (data) setInsights(data as LeadInsight);
       toast.success("Análise da IA concluída!");
     } catch (e: any) {
@@ -1924,7 +2446,11 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
   }
 
   const Tag = ({ label, cls }: { label: string; cls: string }) => (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cls}`}>{label}</span>
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cls}`}
+    >
+      {label}
+    </span>
   );
 
   return (
@@ -1932,7 +2458,9 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-brand" />
-          <span className="font-bold text-sm text-foreground">Inteligência de Lead — Hunter Sênior</span>
+          <span className="font-bold text-sm text-foreground">
+            Inteligência de Lead — Hunter Sênior
+          </span>
         </div>
         <button
           onClick={triggerAnalysis}
@@ -1949,7 +2477,8 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
           <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
           <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
           <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
-            Quando o lead enviar mensagens via WhatsApp, a IA Hunter mapeará o perfil automaticamente.
+            Quando o lead enviar mensagens via WhatsApp, a IA Hunter mapeará o perfil
+            automaticamente.
           </p>
         </div>
       ) : (
@@ -1960,25 +2489,58 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
                 <Bot className="h-4 w-4" /> Perfil Comportamental
               </div>
               <p className="text-sm text-foreground leading-relaxed">{insights.general_profile}</p>
-              <p className="text-[10px] text-muted-foreground">Atualizado em {new Date(insights.updated_at).toLocaleString("pt-BR")}</p>
+              <p className="text-[10px] text-muted-foreground">
+                Atualizado em {new Date(insights.updated_at).toLocaleString("pt-BR")}
+              </p>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: "Desejos & Sonhos", items: insights.desires, icon: <Heart className="h-4 w-4" />, cls: "bg-success/10 text-success border-success/20", color: "text-success" },
-              { title: "Medos & Bloqueios", items: insights.fears, icon: <AlertCircle className="h-4 w-4" />, cls: "bg-danger/10 text-danger border-danger/20", color: "text-danger" },
-              { title: "Objeções Comerciais", items: insights.objections, icon: <ShieldAlert className="h-4 w-4" />, cls: "bg-warning/10 text-warning border-warning/20", color: "text-warning" },
-              { title: "Sinais de Orçamento", items: insights.budget_signals, icon: <DollarSign className="h-4 w-4" />, cls: "bg-brand/10 text-brand border-brand/20", color: "text-brand" },
+              {
+                title: "Desejos & Sonhos",
+                items: insights.desires,
+                icon: <Heart className="h-4 w-4" />,
+                cls: "bg-success/10 text-success border-success/20",
+                color: "text-success",
+              },
+              {
+                title: "Medos & Bloqueios",
+                items: insights.fears,
+                icon: <AlertCircle className="h-4 w-4" />,
+                cls: "bg-danger/10 text-danger border-danger/20",
+                color: "text-danger",
+              },
+              {
+                title: "Objeções Comerciais",
+                items: insights.objections,
+                icon: <ShieldAlert className="h-4 w-4" />,
+                cls: "bg-warning/10 text-warning border-warning/20",
+                color: "text-warning",
+              },
+              {
+                title: "Sinais de Orçamento",
+                items: insights.budget_signals,
+                icon: <DollarSign className="h-4 w-4" />,
+                cls: "bg-brand/10 text-brand border-brand/20",
+                color: "text-brand",
+              },
             ].map(({ title, items, icon, cls, color }) => (
-              <div key={title} className="rounded-xl border border-border/80 bg-surface p-5 space-y-3">
-                <div className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}>
+              <div
+                key={title}
+                className="rounded-xl border border-border/80 bg-surface p-5 space-y-3"
+              >
+                <div
+                  className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}
+                >
                   {icon} {title}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {(items ?? []).length > 0
-                    ? items.map((item, i) => <Tag key={i} label={item} cls={cls} />)
-                    : <span className="text-xs text-muted-foreground">Nenhum mapeado</span>}
+                  {(items ?? []).length > 0 ? (
+                    items.map((item, i) => <Tag key={i} label={item} cls={cls} />)
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Nenhum mapeado</span>
+                  )}
                 </div>
               </div>
             ))}
@@ -1989,7 +2551,9 @@ function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string 
               <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
                 <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
               </div>
-              <p className="text-sm text-foreground font-medium leading-relaxed">{insights.next_best_action}</p>
+              <p className="text-sm text-foreground font-medium leading-relaxed">
+                {insights.next_best_action}
+              </p>
             </div>
           )}
         </div>

@@ -1,15 +1,7 @@
 import { createFileRoute, useParams, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import {
-  Plus,
-  Settings2,
-  X,
-  Trash2,
-  KanbanSquare,
-  Archive,
-  FolderOpen,
-} from "lucide-react";
+import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import {
@@ -299,7 +291,7 @@ function CRMPage() {
                             onClick={async () => {
                               if (
                                 confirm(
-                                  "Tem certeza que deseja excluir permanentemente este lead? Esta ação não pode ser desfeita."
+                                  "Tem certeza que deseja excluir permanentemente este lead? Esta ação não pode ser desfeita.",
                                 )
                               ) {
                                 try {

@@ -30,9 +30,13 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
     return response;
   }
 
-  const originalError = consumeLastCapturedError();
+  const originalError = consumeLastCapturedError() as any;
   console.error(originalError ?? new Error(`h3 swallowed SSR error: ${body}`));
-  const msg = originalError?.stack || originalError?.message || String(originalError) || `h3 swallowed SSR error: ${body}`;
+  const msg =
+    originalError?.stack ||
+    originalError?.message ||
+    String(originalError) ||
+    `h3 swallowed SSR error: ${body}`;
   return new Response(renderErrorPage(msg), {
     status: 500,
     headers: { "content-type": "text/html; charset=utf-8" },

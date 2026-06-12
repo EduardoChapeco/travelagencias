@@ -121,7 +121,7 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       try {
         const _processEnv = typeof process !== "undefined" ? process.env : {};
         const orchestratorUrl = `${import.meta.env.VITE_SUPABASE_URL || _processEnv.VITE_SUPABASE_URL}/functions/v1/ai-orchestrator`;
-        
+
         console.log("Chamando ai-orchestrator em:", orchestratorUrl);
         const res = await fetch(orchestratorUrl, {
           method: "POST",

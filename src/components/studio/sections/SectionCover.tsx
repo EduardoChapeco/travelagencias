@@ -28,10 +28,8 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
       const uidVal = Math.random().toString(36).slice(2, 11);
       const fileExt = file.name.split(".").pop();
       const path = `${draft.agency_id}/studio/${draft.id}/${type}-${uidVal}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from("agency-media")
-        .upload(path, file);
+
+      const { error: uploadError } = await supabase.storage.from("agency-media").upload(path, file);
 
       if (uploadError) throw uploadError;
 
@@ -63,7 +61,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
             value={draft.title ?? ""}
             onSave={(v) => save({ title: v })}
           />
-          
+
           <div className="space-y-1">
             <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
               Imagem de Capa
@@ -76,7 +74,10 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                 value={draft.cover_image_url ?? ""}
                 onChange={(e) => save({ cover_image_url: e.target.value })}
               />
-              <label className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-surface text-xs cursor-pointer hover:bg-surface-alt transition-colors" title="Upload">
+              <label
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-surface text-xs cursor-pointer hover:bg-surface-alt transition-colors"
+                title="Upload"
+              >
                 {uploadingCover ? "..." : <Image className="h-3.5 w-3.5" />}
                 <input
                   type="file"
@@ -107,7 +108,9 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   setShowAiPrompt(!showAiPrompt);
                   setShowUnsplashCover(false);
                   if (!aiPrompt && draft.destination) {
-                    setAiPrompt(`foto cinematográfica estilo drone de ${draft.destination}, pôr do sol, turismo de luxo, 8k, alta fidelidade`);
+                    setAiPrompt(
+                      `foto cinematográfica estilo drone de ${draft.destination}, pôr do sol, turismo de luxo, 8k, alta fidelidade`,
+                    );
                   }
                 }}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-brand/40 bg-brand/5 text-brand text-xs hover:bg-brand/10 transition-colors"
@@ -122,7 +125,13 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   <span className="text-[10px] uppercase tracking-wide font-bold text-brand flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> Gerar Capa com IA
                   </span>
-                  <button type="button" onClick={() => setShowAiPrompt(false)} className="text-muted-foreground hover:text-foreground text-xs">Fechar</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAiPrompt(false)}
+                    className="text-muted-foreground hover:text-foreground text-xs"
+                  >
+                    Fechar
+                  </button>
                 </div>
                 <textarea
                   className="w-full p-2 text-xs rounded-lg border border-border bg-surface outline-none focus:border-brand resize-none"
@@ -144,8 +153,8 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                           action: "generate-image",
                           prompt: aiPrompt,
                           agency_id: draft.agency_id,
-                          proposal_id: draft.id
-                        }
+                          proposal_id: draft.id,
+                        },
                       });
                       if (error) throw error;
                       if (data?.url) {
@@ -164,7 +173,11 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   }}
                   className="w-full flex h-8 items-center justify-center gap-1.5 rounded-lg bg-brand text-brand-foreground text-xs font-bold hover:opacity-90 disabled:opacity-50 transition-colors"
                 >
-                  {generatingCover ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  {generatingCover ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" />
+                  )}
                   {generatingCover ? "Gerando..." : "Gerar Imagem"}
                 </button>
               </div>
@@ -173,8 +186,15 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
             {showUnsplashCover && (
               <div className="mt-2 rounded-lg border border-border bg-surface p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase tracking-wide font-semibold">Buscar imagem</span>
-                  <button onClick={() => setShowUnsplashCover(false)} className="text-muted-foreground hover:text-foreground text-xs">Fechar</button>
+                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                    Buscar imagem
+                  </span>
+                  <button
+                    onClick={() => setShowUnsplashCover(false)}
+                    className="text-muted-foreground hover:text-foreground text-xs"
+                  >
+                    Fechar
+                  </button>
                 </div>
                 <StudioUnsplashPicker
                   agencyId={draft.agency_id}
@@ -238,7 +258,6 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
         </div>
       </Accordion>
 
-
       {/* 4. Dados do Consultor (Agente) */}
       <Accordion title="Consultor Responsável">
         <div className="space-y-3">
@@ -253,7 +272,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
             value={draft.agent_whatsapp ?? ""}
             onSave={(v) => save({ agent_whatsapp: v })}
           />
-          
+
           <div className="space-y-1">
             <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
               Foto do Consultor (URL)

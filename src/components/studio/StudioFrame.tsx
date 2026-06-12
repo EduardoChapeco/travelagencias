@@ -8,10 +8,10 @@ export type CanvasFormat =
   | "letter-portrait";
 
 export const CANVAS_DIMENSIONS: Record<CanvasFormat, { width: string; minHeight: string }> = {
-  "a4-portrait":     { width: "210mm", minHeight: "297mm" },
-  "a4-landscape":    { width: "297mm", minHeight: "210mm" },
-  "story-916":       { width: "1080px", minHeight: "1920px" },
-  "presentation-169":{ width: "1920px", minHeight: "1080px" },
+  "a4-portrait": { width: "210mm", minHeight: "297mm" },
+  "a4-landscape": { width: "297mm", minHeight: "210mm" },
+  "story-916": { width: "1080px", minHeight: "1920px" },
+  "presentation-169": { width: "1920px", minHeight: "1080px" },
   "letter-portrait": { width: "215.9mm", minHeight: "279.4mm" },
 };
 
@@ -36,7 +36,7 @@ export function StudioFrame({ format, children, zoomMode = "auto" }: StudioFrame
       if (!containerRef.current) return;
       const padX = 48; // Padding to allow scrolling space
       const availW = containerRef.current.clientWidth - padX;
-      
+
       // Calculate pixel width of the target format assuming 96 DPI for mm
       let targetW = 794; // fallback A4 portrait (210mm * 96 / 25.4)
       if (dims.width === "210mm") targetW = 794;
@@ -46,7 +46,7 @@ export function StudioFrame({ format, children, zoomMode = "auto" }: StudioFrame
       else if (dims.width === "215.9mm") targetW = 816;
 
       const scaleW = availW / targetW;
-      
+
       if (zoomMode === "fit") {
         setScale(Math.min(1, scaleW)); // We only scale by width in this new infinite scroll mode
       } else {

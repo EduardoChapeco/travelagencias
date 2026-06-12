@@ -26,12 +26,12 @@ import { Route as ClientGiftcardsRouteImport } from './routes/client.giftcards'
 import { Route as ClientDocumentsRouteImport } from './routes/client.documents'
 import { Route as ClientCouponsRouteImport } from './routes/client.coupons'
 import { Route as ClientConsentsRouteImport } from './routes/client.consents'
-import { Route as AuthVerifyRouteImport } from './routes/auth.verify'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthOnboardingRouteImport } from './routes/auth.onboarding'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthConfirmRouteImport } from './routes/auth.confirm'
 import { Route as AgencySlugRouteImport } from './routes/agency.$slug'
 import { Route as AdminTripsRouteImport } from './routes/admin.trips'
 import { Route as AdminTravelersRouteImport } from './routes/admin.travelers'
@@ -198,11 +198,6 @@ const ClientConsentsRoute = ClientConsentsRouteImport.update({
   path: '/consents',
   getParentRoute: () => ClientRoute,
 } as any)
-const AuthVerifyRoute = AuthVerifyRouteImport.update({
-  id: '/verify',
-  path: '/verify',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -226,6 +221,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
   getParentRoute: () => AuthRoute,
 } as any)
 const AgencySlugRoute = AgencySlugRouteImport.update({
@@ -657,12 +657,12 @@ export interface FileRoutesByFullPath {
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
   '/agency/$slug': typeof AgencySlugRouteWithChildren
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/auth/verify': typeof AuthVerifyRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -758,12 +758,12 @@ export interface FileRoutesByTo {
   '/admin/policies': typeof AdminPoliciesRoute
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/auth/verify': typeof AuthVerifyRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -860,12 +860,12 @@ export interface FileRoutesById {
   '/admin/travelers': typeof AdminTravelersRoute
   '/admin/trips': typeof AdminTripsRoute
   '/agency/$slug': typeof AgencySlugRouteWithChildren
+  '/auth/confirm': typeof AuthConfirmRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/auth/verify': typeof AuthVerifyRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -967,12 +967,12 @@ export interface FileRouteTypes {
     | '/admin/travelers'
     | '/admin/trips'
     | '/agency/$slug'
+    | '/auth/confirm'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/auth/verify'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1068,12 +1068,12 @@ export interface FileRouteTypes {
     | '/admin/policies'
     | '/admin/travelers'
     | '/admin/trips'
+    | '/auth/confirm'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/auth/verify'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1169,12 +1169,12 @@ export interface FileRouteTypes {
     | '/admin/travelers'
     | '/admin/trips'
     | '/agency/$slug'
+    | '/auth/confirm'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/auth/verify'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1400,13 +1400,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientConsentsRouteImport
       parentRoute: typeof ClientRoute
     }
-    '/auth/verify': {
-      id: '/auth/verify'
-      path: '/verify'
-      fullPath: '/auth/verify'
-      preLoaderRoute: typeof AuthVerifyRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/auth/reset-password': {
       id: '/auth/reset-password'
       path: '/reset-password'
@@ -1440,6 +1433,13 @@ declare module '@tanstack/react-router' {
       path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/confirm': {
+      id: '/auth/confirm'
+      path: '/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
       parentRoute: typeof AuthRoute
     }
     '/agency/$slug': {
@@ -2050,22 +2050,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AuthRouteChildren {
+  AuthConfirmRoute: typeof AuthConfirmRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthOnboardingRoute: typeof AuthOnboardingRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-  AuthVerifyRoute: typeof AuthVerifyRoute
   AuthIndexRoute: typeof AuthIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthConfirmRoute: AuthConfirmRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthOnboardingRoute: AuthOnboardingRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
-  AuthVerifyRoute: AuthVerifyRoute,
   AuthIndexRoute: AuthIndexRoute,
 }
 

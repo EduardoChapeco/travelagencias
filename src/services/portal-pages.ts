@@ -18,9 +18,7 @@ export type PortalPage = {
   updated_at?: string;
 };
 
-export async function fetchPortalPagesList(
-  agencyId: string,
-): Promise<PortalPage[]> {
+export async function fetchPortalPagesList(agencyId: string): Promise<PortalPage[]> {
   const { data, error } = await supabase
     .from("portal_pages")
     .select("id, slug, title, is_published, template, blocks, seo")

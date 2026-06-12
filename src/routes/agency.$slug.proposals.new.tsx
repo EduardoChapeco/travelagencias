@@ -41,7 +41,11 @@ function NewProposal() {
   useEffect(() => {
     async function loadContext() {
       if (search.lead_id) {
-        const { data } = await supabase.from('leads').select('*').eq('id', search.lead_id).maybeSingle();
+        const { data } = await supabase
+          .from("leads")
+          .select("*")
+          .eq("id", search.lead_id)
+          .maybeSingle();
         if (data) {
           setTitle(`Cotação para ${data.name}`);
           setDestination(data.destination || "");
@@ -54,7 +58,11 @@ function NewProposal() {
           setNotes(data.notes || "");
         }
       } else if (search.client_id) {
-        const { data } = await supabase.from('clients').select('*').eq('id', search.client_id).maybeSingle();
+        const { data } = await supabase
+          .from("clients")
+          .select("*")
+          .eq("id", search.client_id)
+          .maybeSingle();
         if (data) {
           setTitle(`Cotação para ${data.full_name}`);
         }

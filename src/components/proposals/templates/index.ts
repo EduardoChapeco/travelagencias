@@ -17,8 +17,8 @@ export interface TemplateDefinition {
   id: ProposalTemplateId;
   label: string;
   description: string;
-  formats: string[];         // which canvas formats this template supports
-  previewBg: string;         // bg color for thumbnail
+  formats: string[]; // which canvas formats this template supports
+  previewBg: string; // bg color for thumbnail
 }
 
 export const PROPOSAL_TEMPLATES: TemplateDefinition[] = [
@@ -59,7 +59,9 @@ export const PROPOSAL_TEMPLATES: TemplateDefinition[] = [
   },
 ];
 
-export function getProposalTemplate(templateId: string): React.ComponentType<{ proposal: Proposal; agency: any }> {
+export function getProposalTemplate(
+  templateId: string,
+): React.ComponentType<{ proposal: Proposal; agency: any }> {
   switch (templateId) {
     case "editorial-flat":
       return TemplateEditorialFlat;

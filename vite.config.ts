@@ -10,6 +10,7 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig({
   nitro: { 
     preset: "cloudflare-pages",
+    // @ts-ignore: custom property for error handler
     errorHandler: "./src/nitro-error-handler.ts"
   },
   plugins: [

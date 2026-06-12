@@ -18,11 +18,11 @@ export function SectionIncludes({ draft, save }: Props) {
     toast.loading("IA analisando viagem e gerando sugestões…", { id: toastId });
     try {
       const suggestions = await suggestIncludesExcludesViaAI(draft);
-      
+
       const newIncludes = [...(draft.includes ?? [])];
       let addedIncludesCount = 0;
       suggestions.includes.forEach((item) => {
-        if (!newIncludes.some(i => i.toLowerCase() === item.toLowerCase())) {
+        if (!newIncludes.some((i) => i.toLowerCase() === item.toLowerCase())) {
           newIncludes.push(item);
           addedIncludesCount++;
         }
@@ -31,7 +31,7 @@ export function SectionIncludes({ draft, save }: Props) {
       const newExcludes = [...(draft.excludes ?? [])];
       let addedExcludesCount = 0;
       suggestions.excludes.forEach((item) => {
-        if (!newExcludes.some(i => i.toLowerCase() === item.toLowerCase())) {
+        if (!newExcludes.some((i) => i.toLowerCase() === item.toLowerCase())) {
           newExcludes.push(item);
           addedExcludesCount++;
         }
@@ -43,9 +43,14 @@ export function SectionIncludes({ draft, save }: Props) {
       });
 
       if (addedIncludesCount > 0 || addedExcludesCount > 0) {
-        toast.success(`IA adicionou ${addedIncludesCount} inclusões e ${addedExcludesCount} exclusões recomendadas!`, { id: toastId });
+        toast.success(
+          `IA adicionou ${addedIncludesCount} inclusões e ${addedExcludesCount} exclusões recomendadas!`,
+          { id: toastId },
+        );
       } else {
-        toast.success("IA analisou a viagem, mas todas as recomendações já estavam presentes.", { id: toastId });
+        toast.success("IA analisou a viagem, mas todas as recomendações já estavam presentes.", {
+          id: toastId,
+        });
       }
     } catch (error) {
       console.error(error);

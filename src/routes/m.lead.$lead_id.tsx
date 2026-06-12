@@ -22,7 +22,14 @@ type PublicLead = {
   pax_children: number;
   pax_infants: number;
   pax_ages: number[];
-  pax_list?: Array<{ full_name: string; document?: string; birth_date?: string; relationship: string; phone?: string; email?: string }>;
+  pax_list?: Array<{
+    full_name: string;
+    document?: string;
+    birth_date?: string;
+    relationship: string;
+    phone?: string;
+    email?: string;
+  }>;
   pcd?: boolean;
   reduced_mobility?: boolean;
   autism?: boolean;
@@ -61,8 +68,8 @@ function PublicLeadFormPage() {
   const [paxFormOpen, setPaxFormOpen] = useState(false);
 
   useEffect(() => {
-    (supabase.rpc as any)("public_lead_by_id", { _lead_id: lead_id })
-      .then(({ data, error }: any) => {
+    (supabase.rpc as any)("public_lead_by_id", { _lead_id: lead_id }).then(
+      ({ data, error }: any) => {
         if (error) {
           setErrorMsg(error.message);
           return;
@@ -78,7 +85,8 @@ function PublicLeadFormPage() {
         if (r.lgpd_accepted) {
           // If they already submitted LGPD or want to edit, that's fine.
         }
-      });
+      },
+    );
   }, [lead_id]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -127,7 +135,7 @@ function PublicLeadFormPage() {
       utm_source,
       utm_medium,
       utm_campaign,
-      utm_term
+      utm_term,
     };
 
     const { error } = await (supabase.rpc as any)("public_save_lead", {
@@ -206,10 +214,12 @@ function PublicLeadFormPage() {
             </div>
             <h2 className="text-xl font-bold text-foreground">Preferências Enviadas!</h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              Obrigado por preencher nosso formulário. Suas respostas foram salvas e nosso consultor já foi notificado para dar continuidade ao seu atendimento.
+              Obrigado por preencher nosso formulário. Suas respostas foram salvas e nosso consultor
+              já foi notificado para dar continuidade ao seu atendimento.
             </p>
             <div className="pt-2 text-xs text-muted-foreground border-t border-border flex items-center justify-center gap-1">
-              <Sparkles className="h-3 w-3 text-brand" /> Viagem planejada com carinho por {lead.agency_name}
+              <Sparkles className="h-3 w-3 text-brand" /> Viagem planejada com carinho por{" "}
+              {lead.agency_name}
             </div>
           </div>
         ) : (
@@ -220,7 +230,8 @@ function PublicLeadFormPage() {
                 Olá, {lead.name}! 👋
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Por favor, preencha os campos abaixo. Isso nos ajudará a selecionar as melhores opções de hotéis, voos e tarifas de acordo com o perfil do seu grupo.
+                Por favor, preencha os campos abaixo. Isso nos ajudará a selecionar as melhores
+                opções de hotéis, voos e tarifas de acordo com o perfil do seu grupo.
               </p>
             </div>
 
@@ -343,7 +354,9 @@ function PublicLeadFormPage() {
                   Regras de Tarifa da Aviação:
                 </span>
                 <ul className="list-disc list-inside space-y-0.5">
-                  <li><strong>Adulto (ADT):</strong> A partir de 12 anos completos.</li>
+                  <li>
+                    <strong>Adulto (ADT):</strong> A partir de 12 anos completos.
+                  </li>
                   <li>
                     <strong>Criança (CHD):</strong> 2 a 11 anos completos (2 anos completos já pagam
                     tarifa CHD).
@@ -366,21 +379,44 @@ function PublicLeadFormPage() {
                 </span>
               </div>
 
-              {(!form.pax_list || form.pax_list.length === 0) ? (
-                <p className="text-xs text-muted-foreground py-4 text-center">Nenhum acompanhante adicionado. Se você viaja acompanhado, adicione-os abaixo.</p>
+              {!form.pax_list || form.pax_list.length === 0 ? (
+                <p className="text-xs text-muted-foreground py-4 text-center">
+                  Nenhum acompanhante adicionado. Se você viaja acompanhado, adicione-os abaixo.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {form.pax_list.map((pax, index) => (
-                    <div key={index} className="border border-border/60 p-3.5 rounded-xl bg-surface-alt/10 relative flex justify-between items-start">
+                    <div
+                      key={index}
+                      className="border border-border/60 p-3.5 rounded-xl bg-surface-alt/10 relative flex justify-between items-start"
+                    >
                       <div className="min-w-0 flex-1">
-                        <span className="text-xs font-bold text-foreground block truncate">{pax.full_name}</span>
+                        <span className="text-xs font-bold text-foreground block truncate">
+                          {pax.full_name}
+                        </span>
                         <span className="text-[9px] text-brand uppercase font-extrabold bg-brand/5 border border-brand/10 px-1.5 py-0.5 rounded inline-block mt-1">
-                          {pax.relationship === "spouse" ? "Cônjuge" : pax.relationship === "child" ? "Filho(a)" : pax.relationship === "parent" ? "Pai/Mãe" : pax.relationship === "sibling" ? "Irmão/Irmã" : pax.relationship === "friend" ? "Amigo(a)" : pax.relationship === "relative" ? "Familiar" : "Outro"}
+                          {pax.relationship === "spouse"
+                            ? "Cônjuge"
+                            : pax.relationship === "child"
+                              ? "Filho(a)"
+                              : pax.relationship === "parent"
+                                ? "Pai/Mãe"
+                                : pax.relationship === "sibling"
+                                  ? "Irmão/Irmã"
+                                  : pax.relationship === "friend"
+                                    ? "Amigo(a)"
+                                    : pax.relationship === "relative"
+                                      ? "Familiar"
+                                      : "Outro"}
                         </span>
                         {(pax.document || pax.birth_date) && (
                           <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2 font-mono">
                             {pax.document && <div>CPF: {pax.document}</div>}
-                            {pax.birth_date && <div>Nasc: {new Date(pax.birth_date).toLocaleDateString("pt-BR")}</div>}
+                            {pax.birth_date && (
+                              <div>
+                                Nasc: {new Date(pax.birth_date).toLocaleDateString("pt-BR")}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -404,7 +440,8 @@ function PublicLeadFormPage() {
                 onClick={() => setPaxFormOpen((o) => !o)}
                 className="text-xs font-bold text-brand hover:underline flex items-center gap-1 mt-2 cursor-pointer"
               >
-                <Plus className="h-4 w-4" /> {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante"}
+                <Plus className="h-4 w-4" />{" "}
+                {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante"}
               </button>
 
               {paxFormOpen && (
@@ -459,7 +496,14 @@ function PublicLeadFormPage() {
                       }
                       const updated = [...(form.pax_list || []), { ...paxForm }];
                       setForm({ ...form, pax_list: updated });
-                      setPaxForm({ full_name: "", document: "", birth_date: "", relationship: "other", phone: "", email: "" });
+                      setPaxForm({
+                        full_name: "",
+                        document: "",
+                        birth_date: "",
+                        relationship: "other",
+                        phone: "",
+                        email: "",
+                      });
                       setPaxFormOpen(false);
                     }}
                     className="w-full text-xs h-9"
@@ -475,7 +519,7 @@ function PublicLeadFormPage() {
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Heart className="h-4 w-4 text-brand" /> Necessidades Especiais & Saúde
               </h3>
-              
+
               <div className="flex flex-col gap-2.5 text-xs font-semibold text-foreground">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -543,11 +587,16 @@ function PublicLeadFormPage() {
                 className="h-5 w-5 rounded border-border bg-background text-brand focus:ring-brand mt-0.5 cursor-pointer"
                 id="lgpd_agree"
               />
-              <label htmlFor="lgpd_agree" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none">
+              <label
+                htmlFor="lgpd_agree"
+                className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
+              >
                 <strong className="text-foreground block">
                   Consentimento de Coleta de Dados & LGPD
                 </strong>
-                Concordo que {lead.agency_name} possa coletar, processar e armazenar os dados de viagem preenchidos acima com a finalidade exclusiva de planejar propostas de viagens e serviços contratados.
+                Concordo que {lead.agency_name} possa coletar, processar e armazenar os dados de
+                viagem preenchidos acima com a finalidade exclusiva de planejar propostas de viagens
+                e serviços contratados.
               </label>
             </div>
 
@@ -566,7 +615,8 @@ function PublicLeadFormPage() {
       {/* Footer */}
       <footer className="py-6 text-center text-xs text-muted-foreground shrink-0 border-t border-border bg-surface mt-10">
         <div className="flex items-center justify-center gap-1 text-[10px]">
-          Protegido por criptografia <Heart className="h-3 w-3 text-brand fill-brand" /> Powered by TravelOS
+          Protegido por criptografia <Heart className="h-3 w-3 text-brand fill-brand" /> Powered by
+          TravelOS
         </div>
       </footer>
     </div>

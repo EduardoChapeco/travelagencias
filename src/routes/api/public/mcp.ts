@@ -74,7 +74,8 @@ export const Route = createFileRoute("/api/public/mcp")({
                   },
                   {
                     name: "get_public_trip_details",
-                    description: "Get public information about a specific group tour or public trip.",
+                    description:
+                      "Get public information about a specific group tour or public trip.",
                     inputSchema: {
                       type: "object",
                       properties: {

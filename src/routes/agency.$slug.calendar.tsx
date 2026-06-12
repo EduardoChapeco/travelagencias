@@ -62,9 +62,12 @@ const MEETING_TYPE_LABELS: Record<string, string> = {
 
 const MEETING_TYPE_COLORS: Record<string, string> = {
   call: "bg-blue-500/10 text-blue-600 border-blue-200 dark:border-blue-900/30 dark:text-blue-400",
-  video: "bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-900/30 dark:text-purple-400",
-  in_person: "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-900/30 dark:text-amber-400",
-  whatsapp: "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-900/30 dark:text-emerald-400",
+  video:
+    "bg-purple-500/10 text-purple-600 border-purple-200 dark:border-purple-900/30 dark:text-purple-400",
+  in_person:
+    "bg-amber-500/10 text-amber-600 border-amber-200 dark:border-amber-900/30 dark:text-amber-400",
+  whatsapp:
+    "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:border-emerald-900/30 dark:text-emerald-400",
 };
 
 function CalendarPage() {
@@ -76,7 +79,7 @@ function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  
+
   // Filters state
   const [filterType, setFilterType] = useState<string>("all");
   const [filterUser, setFilterUser] = useState<string>("all");
@@ -127,21 +130,21 @@ function CalendarPage() {
 
   const calendarDays = useMemo(() => {
     const days: Array<{ day: number; isCurrentMonth: boolean; date: Date }> = [];
-    
+
     for (let i = firstDayIndex - 1; i >= 0; i--) {
       const d = daysInPrevMonth - i;
       days.push({ day: d, isCurrentMonth: false, date: new Date(year, month - 1, d) });
     }
-    
+
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({ day: i, isCurrentMonth: true, date: new Date(year, month, i) });
     }
-    
+
     const remainingCells = 42 - days.length;
     for (let i = 1; i <= remainingCells; i++) {
       days.push({ day: i, isCurrentMonth: false, date: new Date(year, month + 1, i) });
     }
-    
+
     return days;
   }, [year, month, daysInMonth, firstDayIndex, daysInPrevMonth]);
 
@@ -187,7 +190,7 @@ function CalendarPage() {
   const handleCellClick = (date: Date) => {
     setSelectedDate(date);
     const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-      date.getDate()
+      date.getDate(),
     ).padStart(2, "0")}T09:00`;
     setMeetingForm((prev) => ({
       ...prev,
@@ -202,7 +205,10 @@ function CalendarPage() {
         title="Agenda & Lembretes"
         description="Controle mensal de reuniões de briefing, follow-ups de cotações e compromissos"
         actions={
-          <PrimaryButton onClick={() => setNewEventOpen(true)} className="rounded-full gap-1.5 text-xs font-bold h-9">
+          <PrimaryButton
+            onClick={() => setNewEventOpen(true)}
+            className="rounded-full gap-1.5 text-xs font-bold h-9"
+          >
             <Plus className="h-4 w-4" /> Novo Compromisso
           </PrimaryButton>
         }
@@ -213,7 +219,9 @@ function CalendarPage() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5">
             <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Filtros:</span>
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
+              Filtros:
+            </span>
           </div>
 
           <Select
@@ -275,7 +283,10 @@ function CalendarPage() {
         {/* Day name headers */}
         <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
           {WEEKDAYS.map((day) => (
-            <div key={day} className="py-2.5 text-center text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0">
+            <div
+              key={day}
+              className="py-2.5 text-center text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0"
+            >
               {day}
             </div>
           ))}
@@ -317,7 +328,9 @@ function CalendarPage() {
                 {/* Meetings list */}
                 <div className="flex-1 mt-2.5 space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
                   {dateMeetings.slice(0, 3).map((meeting: any) => {
-                    const typeColor = MEETING_TYPE_COLORS[meeting.meeting_type] || "bg-muted text-muted-foreground border-border";
+                    const typeColor =
+                      MEETING_TYPE_COLORS[meeting.meeting_type] ||
+                      "bg-muted text-muted-foreground border-border";
                     const isGoogle = !!meeting.google_event_id;
                     return (
                       <div
@@ -354,13 +367,22 @@ function CalendarPage() {
 
       {/* Meeting Detail Modal */}
       {selectedMeeting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onPointerDown={() => setSelectedMeeting(null)}>
-          <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-4" onPointerDown={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onPointerDown={() => setSelectedMeeting(null)}
+        >
+          <div
+            className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-4"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
             <div className="flex items-start justify-between border-b border-border/40 pb-3">
               <div>
                 <h3 className="text-sm font-bold text-foreground">{selectedMeeting.title}</h3>
-                <span className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block mt-1.5 ${MEETING_TYPE_COLORS[selectedMeeting.meeting_type]}`}>
-                  {MEETING_TYPE_LABELS[selectedMeeting.meeting_type] || selectedMeeting.meeting_type}
+                <span
+                  className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block mt-1.5 ${MEETING_TYPE_COLORS[selectedMeeting.meeting_type]}`}
+                >
+                  {MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
+                    selectedMeeting.meeting_type}
                 </span>
               </div>
               <button
@@ -374,7 +396,9 @@ function CalendarPage() {
             <div className="space-y-3.5 text-xs">
               {selectedMeeting.description && (
                 <div className="space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Notas / Descrição</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Notas / Descrição
+                  </span>
                   <p className="bg-surface-alt/20 p-2.5 rounded-lg border border-border/50 text-foreground/80 leading-relaxed">
                     {selectedMeeting.description}
                   </p>
@@ -383,7 +407,9 @@ function CalendarPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-0.5">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Data & Hora</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Data & Hora
+                  </span>
                   <span className="font-bold text-foreground">
                     {new Date(selectedMeeting.scheduled_at).toLocaleString("pt-BR", {
                       day: "2-digit",
@@ -394,14 +420,20 @@ function CalendarPage() {
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Duração</span>
-                  <span className="font-bold text-foreground">{selectedMeeting.duration_minutes} minutos</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Duração
+                  </span>
+                  <span className="font-bold text-foreground">
+                    {selectedMeeting.duration_minutes} minutos
+                  </span>
                 </div>
               </div>
 
               <div className="bg-surface-alt/10 border border-border p-3.5 rounded-xl flex items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Lead Associado</span>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Lead Associado
+                  </span>
                   <span className="font-extrabold text-foreground text-sm block mt-0.5">
                     {selectedMeeting.leads?.name || "Não informado"}
                   </span>
@@ -436,13 +468,22 @@ function CalendarPage() {
                       : "bg-surface border-border hover:border-brand/40 text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {selectedMeeting.google_event_id ? "✓ Sincronizado com Google" : <><RefreshCw className="h-3.5 w-3.5" /> Sincronizar Google Agenda</>}
+                  {selectedMeeting.google_event_id ? (
+                    "✓ Sincronizado com Google"
+                  ) : (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Google Agenda
+                    </>
+                  )}
                 </button>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <GhostButton onClick={() => setSelectedMeeting(null)} className="h-8 text-xs font-bold">
+              <GhostButton
+                onClick={() => setSelectedMeeting(null)}
+                className="h-8 text-xs font-bold"
+              >
                 Fechar
               </GhostButton>
               <button
@@ -468,7 +509,10 @@ function CalendarPage() {
 
       {/* Create Event Modal */}
       {newEventOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onPointerDown={() => setNewEventOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onPointerDown={() => setNewEventOpen(false)}
+        >
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -486,7 +530,14 @@ function CalendarPage() {
                   duration_minutes: Number(meetingForm.duration_minutes),
                   meeting_type: meetingForm.meeting_type,
                 });
-                setMeetingForm({ lead_id: "", title: "", description: "", scheduled_at: "", duration_minutes: 30, meeting_type: "call" });
+                setMeetingForm({
+                  lead_id: "",
+                  title: "",
+                  description: "",
+                  scheduled_at: "",
+                  duration_minutes: 30,
+                  meeting_type: "call",
+                });
                 setNewEventOpen(false);
                 qc.invalidateQueries({ queryKey: ["agency-meetings", agency?.id] });
                 toast.success("Compromisso agendado com sucesso!");
@@ -550,7 +601,9 @@ function CalendarPage() {
                     type="datetime-local"
                     required
                     value={meetingForm.scheduled_at}
-                    onChange={(e) => setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })}
+                    onChange={(e) =>
+                      setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })
+                    }
                     className="h-9 text-xs"
                   />
                 </Field>
@@ -559,7 +612,12 @@ function CalendarPage() {
                     type="number"
                     min={5}
                     value={meetingForm.duration_minutes}
-                    onChange={(e) => setMeetingForm({ ...meetingForm, duration_minutes: parseInt(e.target.value) || 30 })}
+                    onChange={(e) =>
+                      setMeetingForm({
+                        ...meetingForm,
+                        duration_minutes: parseInt(e.target.value) || 30,
+                      })
+                    }
                     className="h-9 text-xs"
                   />
                 </Field>
@@ -580,7 +638,11 @@ function CalendarPage() {
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <GhostButton type="button" onClick={() => setNewEventOpen(false)} className="h-8 text-xs font-bold">
+              <GhostButton
+                type="button"
+                onClick={() => setNewEventOpen(false)}
+                className="h-8 text-xs font-bold"
+              >
                 Cancelar
               </GhostButton>
               <PrimaryButton type="submit" className="h-8 text-xs font-bold px-4">

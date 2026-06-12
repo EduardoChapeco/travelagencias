@@ -1,7 +1,13 @@
 import { type Proposal, type Transfer } from "@/services/proposals";
-import { Accordion, Card, AddBtn, L, Inp, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
+import {
+  Accordion,
+  Card,
+  AddBtn,
+  L,
+  Inp,
+  SMALL_INPUT,
+} from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
-
 
 interface Props {
   draft: Proposal;
@@ -39,7 +45,11 @@ export function SectionTransfers({ draft, save }: Props) {
         <Card key={t.id || i} onRemove={() => remove(i)}>
           <div className="mb-2">
             <L label="Descrição">
-              <Inp value={t.description} onChange={(v) => upd(i, { description: v })} ph="ex. Aeroporto → Hotel" />
+              <Inp
+                value={t.description}
+                onChange={(v) => upd(i, { description: v })}
+                ph="ex. Aeroporto → Hotel"
+              />
             </L>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
@@ -78,11 +88,11 @@ export function SectionTransfers({ draft, save }: Props) {
           </div>
           <div className="grid grid-cols-1 gap-2 mt-2 pt-2 border-t border-border/30">
             <L label="Valor (Soma no total)">
-              <Inp 
-                value={t.price?.toString() || ""} 
-                onChange={(v) => upd(i, { price: parseFloat(v) || 0 })} 
-                type="number" 
-                ph="0.00" 
+              <Inp
+                value={t.price?.toString() || ""}
+                onChange={(v) => upd(i, { price: parseFloat(v) || 0 })}
+                type="number"
+                ph="0.00"
               />
             </L>
           </div>

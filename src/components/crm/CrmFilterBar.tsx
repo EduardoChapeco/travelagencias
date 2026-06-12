@@ -37,11 +37,14 @@ export function CrmFilterBar({
         className="h-9 w-48 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
       >
         <option value="">Todos os Responsáveis</option>
-        {users?.map((u) => u.user_id && (
-          <option key={u.user_id} value={u.user_id}>
-            {u.user_name || "Sem nome"}
-          </option>
-        ))}
+        {users?.map(
+          (u) =>
+            u.user_id && (
+              <option key={u.user_id} value={u.user_id}>
+                {u.user_name || "Sem nome"}
+              </option>
+            ),
+        )}
       </select>
       <select
         value={sourceFilter}

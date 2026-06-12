@@ -30,3 +30,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary extracts and backups
+target-repo/
+message_extract.txt
+message_extract_utf8.txt

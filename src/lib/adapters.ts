@@ -1,4 +1,11 @@
-import { type Proposal, type Flight, type Hotel, type Transfer, type Tour, type ItineraryDay } from "@/services/proposals";
+import {
+  type Proposal,
+  type Flight,
+  type Hotel,
+  type Transfer,
+  type Tour,
+  type ItineraryDay,
+} from "@/services/proposals";
 import { calculateQuoteTotals, type QuoteTotals } from "./pricing";
 
 export type BaseViewModel = {
@@ -27,7 +34,8 @@ export type BaseViewModel = {
 
 export function buildBaseViewModel(p: Proposal, agencyData: any): BaseViewModel {
   const totals = calculateQuoteTotals(p);
-  const totalPax = (p.pax_adults || 0) + (p.pax_children || 0) + (p.pax_infants || 0) + (p.pax_seniors || 0);
+  const totalPax =
+    (p.pax_adults || 0) + (p.pax_children || 0) + (p.pax_infants || 0) + (p.pax_seniors || 0);
 
   return {
     p,

@@ -1,5 +1,5 @@
 /**
- * Helper utilities to split large arrays or long text blocks into smaller chunks 
+ * Helper utilities to split large arrays or long text blocks into smaller chunks
  * that fit within an A4 page without breaking midway.
  */
 
@@ -22,22 +22,25 @@ export function paginateArray<T>(items: T[], itemsPerPage: number): T[][] {
  * Real DOM height measurement is complex, so we use a safe character count heuristic for A4 pages.
  * An A4 page full of text fits roughly 2500-3000 chars comfortably.
  */
-export function splitTextIntoPages(text: string | null | undefined, maxCharsPerPage = 2500): string[] {
+export function splitTextIntoPages(
+  text: string | null | undefined,
+  maxCharsPerPage = 2500,
+): string[] {
   if (!text) return [];
-  
+
   // Split by double line breaks (paragraphs)
   const paragraphs = text.split(/\n\s*\n/);
   const pages: string[] = [];
-  
+
   let currentPage = "";
-  
+
   for (const p of paragraphs) {
-    if ((currentPage.length + p.length) > maxCharsPerPage) {
+    if (currentPage.length + p.length > maxCharsPerPage) {
       if (currentPage) {
         pages.push(currentPage.trim());
         currentPage = "";
       }
-      
+
       // If a single paragraph is larger than maxCharsPerPage, we just push it anyway
       // to avoid breaking words, but this is a rare edge case.
       if (p.length > maxCharsPerPage) {
@@ -49,10 +52,10 @@ export function splitTextIntoPages(text: string | null | undefined, maxCharsPerP
       currentPage += p + "\n\n";
     }
   }
-  
+
   if (currentPage.trim()) {
     pages.push(currentPage.trim());
   }
-  
+
   return pages;
 }

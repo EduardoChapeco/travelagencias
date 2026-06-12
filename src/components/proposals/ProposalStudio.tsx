@@ -30,7 +30,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
   // Enforce compatibility: If current template doesn't support the current format, switch to a valid one
   const validTemplates = PROPOSAL_TEMPLATES.filter((t) => t.formats.includes(currentFormat));
   const isCompatible = validTemplates.some((t) => t.id === currentTemplate);
-  
+
   if (!isCompatible && validTemplates.length > 0) {
     currentTemplate = validTemplates[0].id;
   }

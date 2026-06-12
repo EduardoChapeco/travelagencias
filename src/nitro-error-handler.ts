@@ -14,7 +14,7 @@ export default function (error: any, event: any) {
       new Response(`<div class="debug"><h2>Nitro Error Handler</h2><pre>${msg}</pre></div>`, {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
-      })
+      }),
     );
   }
 }

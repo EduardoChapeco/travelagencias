@@ -5,28 +5,22 @@ export async function uploadProposalMedia(
   proposalId: string,
   file: File,
   slot: "cover" | "map" | "agent_photo" | "hotel" | "tour",
-  itemId?: string // for hotels or tours specific ids
+  itemId?: string, // for hotels or tours specific ids
 ): Promise<string> {
-  const extension = file.name.split('.').pop();
-  const filename = itemId 
-    ? `${slot}_${itemId}.${extension}`
-    : `${slot}_${Date.now()}.${extension}`;
-    
+  const extension = file.name.split(".").pop();
+  const filename = itemId ? `${slot}_${itemId}.${extension}` : `${slot}_${Date.now()}.${extension}`;
+
   const path = `${agencyId}/proposals/${proposalId}/${filename}`;
 
-  const { data, error } = await supabase.storage
-    .from("agency-media")
-    .upload(path, file, {
-      upsert: true,
-      cacheControl: "3600",
-    });
+  const { data, error } = await supabase.storage.from("agency-media").upload(path, file, {
+    upsert: true,
+    cacheControl: "3600",
+  });
 
   if (error) throw error;
-  
-  const { data: publicUrlData } = supabase.storage
-    .from("agency-media")
-    .getPublicUrl(data.path);
-    
+
+  const { data: publicUrlData } = supabase.storage.from("agency-media").getPublicUrl(data.path);
+
   return publicUrlData.publicUrl;
 }
 
@@ -35,7 +29,7 @@ export async function saveUnsplashImageToStorage(
   proposalId: string,
   slot: "cover" | "map" | "hotel" | "tour",
   unsplashUrl: string,
-  itemId?: string
+  itemId?: string,
 ): Promise<string> {
   try {
     // 1. Fetch the image blob from Unsplash

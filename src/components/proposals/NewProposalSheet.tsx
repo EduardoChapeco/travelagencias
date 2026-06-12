@@ -3,25 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-} from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
-import {
-  Search,
-  X,
-  Plus,
-  User,
-  UserPlus,
-  ChevronDown,
-  Check,
-} from "lucide-react";
+import { Search, X, Plus, User, UserPlus, ChevronDown, Check } from "lucide-react";
 
 type NewProposalSheetProps = {
   isOpen: boolean;
@@ -55,9 +40,7 @@ function ClientCombobox({
     queryFn: () => fetchClientsPick(agencyId),
   });
 
-  const filtered = clients.filter((c) =>
-    c.full_name.toLowerCase().includes(query.toLowerCase()),
-  );
+  const filtered = clients.filter((c) => c.full_name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -101,7 +84,10 @@ function ClientCombobox({
     <div className="relative" ref={ref}>
       <button
         type="button"
-        onClick={() => { setOpen((v) => !v); setQuery(""); }}
+        onClick={() => {
+          setOpen((v) => !v);
+          setQuery("");
+        }}
         className="flex h-9 w-full items-center justify-between rounded-md border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
       >
         <span className={selectedName ? "text-foreground" : "text-muted-foreground"}>
@@ -241,9 +227,7 @@ function LeadCombobox({
     queryFn: () => fetchLeadsPick(agencyId),
   });
 
-  const filtered = leads.filter((l) =>
-    l.name.toLowerCase().includes(query.toLowerCase()),
-  );
+  const filtered = leads.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -259,7 +243,10 @@ function LeadCombobox({
     <div className="relative" ref={ref}>
       <button
         type="button"
-        onClick={() => { setOpen((v) => !v); setQuery(""); }}
+        onClick={() => {
+          setOpen((v) => !v);
+          setQuery("");
+        }}
         className="flex h-9 w-full items-center justify-between rounded-md border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
       >
         <span className={selectedName ? "text-foreground" : "text-muted-foreground"}>
@@ -294,7 +281,11 @@ function LeadCombobox({
           <div className="max-h-40 overflow-y-auto">
             <button
               type="button"
-              onClick={() => { onChange(""); setSelectedName(""); setOpen(false); }}
+              onClick={() => {
+                onChange("");
+                setSelectedName("");
+                setOpen(false);
+              }}
               className="flex w-full items-center px-3 py-2 text-xs text-muted-foreground hover:bg-surface-alt"
             >
               — nenhum —
@@ -426,7 +417,8 @@ export function NewProposalSheet({
   return (
     <SheetPage isOpen={isOpen} onClose={onClose} title="Nova Cotação">
       <p className="text-xs text-muted-foreground mb-5">
-        Preencha os dados básicos para iniciar a montagem da proposta. Você poderá adicionar voos, hotéis e itinerário no editor.
+        Preencha os dados básicos para iniciar a montagem da proposta. Você poderá adicionar voos,
+        hotéis e itinerário no editor.
       </p>
 
       <form onSubmit={onSubmit} className="space-y-4">
@@ -460,11 +452,7 @@ export function NewProposalSheet({
             />
           </Field>
           <Field label="Lead do CRM (opcional)">
-            <LeadCombobox
-              agencyId={agency.id}
-              value={leadId}
-              onChange={setLeadId}
-            />
+            <LeadCombobox agencyId={agency.id} value={leadId} onChange={setLeadId} />
           </Field>
         </div>
 

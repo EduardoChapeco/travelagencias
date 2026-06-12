@@ -20,9 +20,7 @@ export function FlightSection({ draft, save }: Props) {
             <Inp
               ph="Origem (GRU)"
               value={f.origin}
-              onChange={(v) =>
-                save({ flights: replaceAt(draft.flights, i, { ...f, origin: v }) })
-              }
+              onChange={(v) => save({ flights: replaceAt(draft.flights, i, { ...f, origin: v }) })}
             />
             <Inp
               ph="Destino (LIS)"
@@ -34,16 +32,12 @@ export function FlightSection({ draft, save }: Props) {
             <Inp
               type="date"
               value={f.date}
-              onChange={(v) =>
-                save({ flights: replaceAt(draft.flights, i, { ...f, date: v }) })
-              }
+              onChange={(v) => save({ flights: replaceAt(draft.flights, i, { ...f, date: v }) })}
             />
             <Inp
               ph="Cia"
               value={f.airline}
-              onChange={(v) =>
-                save({ flights: replaceAt(draft.flights, i, { ...f, airline: v }) })
-              }
+              onChange={(v) => save({ flights: replaceAt(draft.flights, i, { ...f, airline: v }) })}
             />
             <Inp
               type="time"

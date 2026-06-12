@@ -1,6 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { GripVertical, UserPlus, Archive, CheckCircle2, Paperclip, Send, FileText } from "lucide-react";
+import {
+  GripVertical,
+  UserPlus,
+  Archive,
+  CheckCircle2,
+  Paperclip,
+  Send,
+  FileText,
+} from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { type Lead } from "@/services/crm";
@@ -27,7 +35,7 @@ export function LeadCardView({
   onCreateProposal,
 }: LeadCardProps) {
   const [transferMode, setTransferMode] = useState(false);
-  
+
   const ownerName =
     users?.find((u) => u.user_id === lead.owner_id)?.user_name?.split(" ")[0] ?? "Sem Dono";
 
@@ -37,7 +45,9 @@ export function LeadCardView({
   const filesCount = lead.attachments?.length || 0;
 
   // Calculate staleness
-  const lastContactDate = lead.last_contacted_at ? new Date(lead.last_contacted_at) : new Date(lead.created_at);
+  const lastContactDate = lead.last_contacted_at
+    ? new Date(lead.last_contacted_at)
+    : new Date(lead.created_at);
   const diffTime = Math.abs(new Date().getTime() - lastContactDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   const isStale = diffDays >= 5 && lead.staleness_status === "active";
@@ -47,7 +57,10 @@ export function LeadCardView({
     e.stopPropagation();
     if (!lead.phone) return;
     const msg = `Olá ${lead.name}! Sou da agência de viagens. Gostaria de falar sobre sua viagem de interesse para ${lead.destination || "seu destino"}.`;
-    window.open(`https://wa.me/${lead.phone.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(
+      `https://wa.me/${lead.phone.replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`,
+      "_blank",
+    );
   };
 
   const handleCreateProposal = (e: React.MouseEvent) => {
@@ -88,7 +101,7 @@ export function LeadCardView({
             ) : (
               <div className="truncate text-sm font-bold text-foreground flex-1">{lead.name}</div>
             )}
-            
+
             {/* Lead traffic source badge */}
             {lead.lead_source_detail && (
               <span className="shrink-0 text-[8px] font-extrabold uppercase px-1 py-0.5 rounded bg-brand/5 border border-brand/10 text-muted-foreground">
@@ -99,11 +112,13 @@ export function LeadCardView({
 
           {/* Stale Warning Alert */}
           {isStale && (
-            <div className={`text-[9px] font-extrabold uppercase tracking-wide px-1.5 py-0.5 rounded border inline-flex items-center gap-1 ${
-              isCold 
-                ? "bg-danger/10 text-danger border-danger/20" 
-                : "bg-warning/10 text-warning border-warning/20"
-            }`}>
+            <div
+              className={`text-[9px] font-extrabold uppercase tracking-wide px-1.5 py-0.5 rounded border inline-flex items-center gap-1 ${
+                isCold
+                  ? "bg-danger/10 text-danger border-danger/20"
+                  : "bg-warning/10 text-warning border-warning/20"
+              }`}
+            >
               ⚠️ {isCold ? "Inativo há" : "Sem Resposta"} {diffDays} dias
             </div>
           )}
@@ -112,7 +127,9 @@ export function LeadCardView({
           {lead.destination && (
             <div className="truncate text-xs font-semibold text-muted-foreground flex items-center gap-1">
               <MapPin className="h-3 w-3 shrink-0" />
-              <span>{lead.destination} · {lead.pax_adults || lead.pax_count || 1} Pax</span>
+              <span>
+                {lead.destination} · {lead.pax_adults || lead.pax_count || 1} Pax
+              </span>
             </div>
           )}
 
@@ -140,12 +157,14 @@ export function LeadCardView({
               <span className="inline-flex items-center rounded-full bg-surface-alt px-2 py-0.5 text-[9px] font-bold text-muted-foreground border border-border/50">
                 {ownerName}
               </span>
-              
+
               {/* Checklist progress */}
               {totalChecklist > 0 && (
                 <span
                   className={`inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded border border-border/50 bg-surface-alt/45 font-medium ${
-                    doneChecklist === totalChecklist ? "text-success border-success/30 bg-success/5 font-bold" : ""
+                    doneChecklist === totalChecklist
+                      ? "text-success border-success/30 bg-success/5 font-bold"
+                      : ""
                   }`}
                   title="Checklist completo"
                 >
@@ -191,11 +210,14 @@ export function LeadCardView({
               autoFocus
             >
               <option value="">Transferir para...</option>
-              {users.map((u) => u.user_id && (
-                <option key={u.user_id} value={u.user_id}>
-                  {u.user_name || "Sem nome"}
-                </option>
-              ))}
+              {users.map(
+                (u) =>
+                  u.user_id && (
+                    <option key={u.user_id} value={u.user_id}>
+                      {u.user_name || "Sem nome"}
+                    </option>
+                  ),
+              )}
             </select>
           ) : (
             <>
@@ -288,13 +310,13 @@ export function SortableLead({
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: lead.id,
   });
-  
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.3 : 1,
   };
-  
+
   return (
     <div ref={setNodeRef} style={style} className="touch-none">
       <LeadCardView

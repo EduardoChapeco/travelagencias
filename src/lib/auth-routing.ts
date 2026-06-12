@@ -3,14 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 export type SignedInAgency = {
   id: string;
   slug: string;
+  onboarding_completed?: boolean;
 };
 
 async function loadAgencyById(agencyId: string | null | undefined): Promise<SignedInAgency | null> {
   if (!agencyId) return null;
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("agencies")
-    .select("id, slug")
+    .select("id, slug, onboarding_completed")
     .eq("id", agencyId)
     .maybeSingle();
 

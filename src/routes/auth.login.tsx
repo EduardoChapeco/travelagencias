@@ -31,11 +31,22 @@ function LoginPage() {
 
   async function redirectToDefault() {
     const { data } = await supabase.auth.getUser();
-    const agency = await resolveSignedInAgency(data.user?.id);
-    if (!agency) {
+    if (!data.user) return;
+
+    // Checks if the user is confirmed, just in case
+    if (!data.user.email_confirmed_at) {
+      toast.error("Por favor, verifique seu e-mail antes de continuar.");
+      return;
+    }
+
+    const agency = await resolveSignedInAgency(data.user.id);
+
+    // If no agency is attached, or the agency onboarding is incomplete
+    if (!agency || agency.onboarding_completed === false) {
       navigate({ to: "/auth/onboarding", replace: true });
       return;
     }
+
     navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
   }
 

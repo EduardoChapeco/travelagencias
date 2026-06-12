@@ -9,7 +9,12 @@ interface Props {
 type Insurance = { provider: string; policy: string; coverage: string; phone: string };
 
 export function SectionInsurance({ draft, save }: Props) {
-  const ins: Insurance = (draft as any).insurance ?? { provider: "", policy: "", coverage: "", phone: "" };
+  const ins: Insurance = (draft as any).insurance ?? {
+    provider: "",
+    policy: "",
+    coverage: "",
+    phone: "",
+  };
 
   function upd(patch: Partial<Insurance>) {
     save({ insurance: { ...ins, ...patch } } as any);
@@ -25,7 +30,11 @@ export function SectionInsurance({ draft, save }: Props) {
           <Inp value={ins.policy} onChange={(v) => upd({ policy: v })} ph="ex. AC-12345678" />
         </L>
         <L label="Cobertura">
-          <Inp value={ins.coverage} onChange={(v) => upd({ coverage: v })} ph="ex. Emergência médica USD 30.000" />
+          <Inp
+            value={ins.coverage}
+            onChange={(v) => upd({ coverage: v })}
+            ph="ex. Emergência médica USD 30.000"
+          />
         </L>
         <L label="Telefone de Acionamento">
           <Inp value={ins.phone} onChange={(v) => upd({ phone: v })} ph="ex. +0800-xxx-xxxx" />

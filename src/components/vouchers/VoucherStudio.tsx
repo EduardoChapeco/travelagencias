@@ -28,21 +28,27 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
-import { type Voucher, type VoucherFlight, type VoucherAccommodation, type VoucherTransfer } from "@/services/vouchers";
+import {
+  type Voucher,
+  type VoucherFlight,
+  type VoucherAccommodation,
+  type VoucherTransfer,
+} from "@/services/vouchers";
 import { StudioFrame, type CanvasFormat } from "@/components/studio/StudioFrame";
 import TemplateVoucherEmbarqueA4 from "./templates/TemplateVoucherEmbarqueA4";
 import TemplateVoucherStory from "./templates/TemplateVoucherStory";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type CanvasMode = "a4-portrait" | "story-916" | "whatsapp";
-type TabId = "passengers" | "flights" | "accommodation" | "transfers" | "emergency" | "observations";
+type TabId =
+  | "passengers"
+  | "flights"
+  | "accommodation"
+  | "transfers"
+  | "emergency"
+  | "observations";
 
 interface Props {
   draft: Partial<Voucher>;
@@ -57,22 +63,36 @@ interface Props {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const SMALL = "w-full h-8 px-2.5 rounded-md border border-border/50 bg-surface-alt/50 text-xs outline-none transition-all focus:bg-surface focus:border-border-strong";
+const SMALL =
+  "w-full h-8 px-2.5 rounded-md border border-border/50 bg-surface-alt/50 text-xs outline-none transition-all focus:bg-surface focus:border-border-strong";
 
 function Lbl({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">{label}</span>
+      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+        {label}
+      </span>
       {children}
     </div>
   );
 }
 
 function AccordionSection({
-  id, label, icon, count, openId, setOpenId, children,
+  id,
+  label,
+  icon,
+  count,
+  openId,
+  setOpenId,
+  children,
 }: {
-  id: TabId; label: string; icon: React.ReactNode; count?: number;
-  openId: TabId | null; setOpenId: (v: TabId | null) => void; children: React.ReactNode;
+  id: TabId;
+  label: string;
+  icon: React.ReactNode;
+  count?: number;
+  openId: TabId | null;
+  setOpenId: (v: TabId | null) => void;
+  children: React.ReactNode;
 }) {
   const open = openId === id;
   return (
@@ -82,11 +102,17 @@ function AccordionSection({
         onClick={() => setOpenId(open ? null : id)}
         className="flex w-full items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-surface-alt transition-colors"
       >
-        {open ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
+        {open ? (
+          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+        )}
         {icon}
         {label}
         {count !== undefined && (
-          <span className="ml-1 rounded-full bg-surface-alt px-1.5 py-0.5 text-[9px] font-mono text-muted-foreground">{count}</span>
+          <span className="ml-1 rounded-full bg-surface-alt px-1.5 py-0.5 text-[9px] font-mono text-muted-foreground">
+            {count}
+          </span>
         )}
       </button>
       {open && <div className="border-t border-border px-3 pb-3 pt-2.5 space-y-2">{children}</div>}
@@ -96,7 +122,16 @@ function AccordionSection({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCancel, onUploadPdf, isEdit }: Props) {
+export function VoucherStudio({
+  draft,
+  setDraft,
+  agency,
+  onSave,
+  saving,
+  onCancel,
+  onUploadPdf,
+  isEdit,
+}: Props) {
   const [mode, setMode] = useState<CanvasMode>("a4-portrait");
   const [openSection, setOpenSection] = useState<TabId | null>("passengers");
   const [exporting, setExporting] = useState(false);
@@ -109,20 +144,20 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
   const emergency = draft.emergency_contacts ?? [];
 
   function upd<K extends keyof Voucher>(key: K, value: any) {
-    setDraft(d => ({ ...d, [key]: value }));
+    setDraft((d) => ({ ...d, [key]: value }));
   }
 
   // ── WhatsApp Text Generator ──────────────────────────────────────────────
   function generateWhatsAppText(): string {
     let text = `✈️ *RESUMO DE EMBARQUE - ${draft.destination || "Sua Viagem"}*\n\n`;
-    
+
     if (draft.general_locator) {
       text += `🔑 *Localizador Geral:* \`${draft.general_locator}\`\n\n`;
     }
 
     if (passengers.length > 0) {
       text += `👤 *Passageiros:*\n`;
-      passengers.forEach(p => {
+      passengers.forEach((p) => {
         text += `- ${p.name}${p.document ? ` (Doc: ${p.document})` : ""}${p.seat ? ` - Assento: ${p.seat}` : ""}\n`;
       });
       text += `\n`;
@@ -155,7 +190,7 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
 
     if (transfers.length > 0) {
       text += `🚌 *Transfers:*\n`;
-      transfers.forEach(t => {
+      transfers.forEach((t) => {
         text += `- ${t.type || "Transfer"}: ${t.origin || "Origem"} ➔ ${t.destination || "Destino"}\n`;
         if (t.date) text += `  📅 Data: ${t.date}\n`;
         if (t.vehicle) text += `  🚗 Veículo: ${t.vehicle}\n`;
@@ -167,7 +202,7 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
 
     if (emergency.length > 0) {
       text += `🚨 *Contatos de Emergência:*\n`;
-      emergency.forEach(c => {
+      emergency.forEach((c) => {
         text += `- ${c.name} (${c.role || "Suporte"}): ${c.phone}\n`;
       });
       text += `\n`;
@@ -189,7 +224,11 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
       const html2canvasLib = (await import("html2canvas")).default;
       const el = document.getElementById("voucher-canvas");
       if (!el) throw new Error("Canvas não encontrado");
-      const canvas = await html2canvasLib(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
+      const canvas = await html2canvasLib(el, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
       const img = canvas.toDataURL("image/jpeg", 0.96);
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       pdf.addImage(img, "JPEG", 0, 0, 210, 297);
@@ -251,12 +290,20 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
       {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-2.5 shrink-0">
         <div className="flex items-center gap-3">
-          <button type="button" onClick={onCancel} className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt transition-colors">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt transition-colors"
+          >
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <div className="text-sm font-semibold">{isEdit ? "Editar Voucher" : "Novo Voucher"}</div>
-            <div className="text-[10px] text-muted-foreground">{draft.destination ?? "Sem destino"}</div>
+            <div className="text-sm font-semibold">
+              {isEdit ? "Editar Voucher" : "Novo Voucher"}
+            </div>
+            <div className="text-[10px] text-muted-foreground">
+              {draft.destination ?? "Sem destino"}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -289,7 +336,12 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
           <label className="flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-dashed border-brand/50 bg-brand/5 px-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors">
             <Upload className="h-3.5 w-3.5" />
             OCR IA
-            <input type="file" accept="application/pdf" className="hidden" onChange={e => e.target.files?.[0] && onUploadPdf(e.target.files[0])} />
+            <input
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && onUploadPdf(e.target.files[0])}
+            />
           </label>
 
           {/* Export */}
@@ -329,126 +381,543 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
 
       {/* ── Body ─────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
-        
         {/* Left: Sidebar */}
         <div className="w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-3 space-y-2">
           {/* Header fields */}
           <div className="rounded-lg border border-border bg-surface p-3 grid grid-cols-1 gap-2">
             <Lbl label="Destino">
-              <input className={SMALL} value={draft.destination ?? ""} onChange={e => upd("destination", e.target.value)} placeholder="Lisboa, Portugal" />
+              <input
+                className={SMALL}
+                value={draft.destination ?? ""}
+                onChange={(e) => upd("destination", e.target.value)}
+                placeholder="Lisboa, Portugal"
+              />
             </Lbl>
             <Lbl label="Localizador">
-              <input className={SMALL} value={draft.general_locator ?? ""} onChange={e => upd("general_locator", e.target.value)} placeholder="PNR / Código" />
+              <input
+                className={SMALL}
+                value={draft.general_locator ?? ""}
+                onChange={(e) => upd("general_locator", e.target.value)}
+                placeholder="PNR / Código"
+              />
             </Lbl>
           </div>
 
           {/* Passengers */}
-          <AccordionSection id="passengers" label="Passageiros" icon={<User className="h-3.5 w-3.5 text-muted-foreground" />} count={passengers.length} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="passengers"
+            label="Passageiros"
+            icon={<User className="h-3.5 w-3.5 text-muted-foreground" />}
+            count={passengers.length}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             {passengers.map((p, i) => (
               <div key={i} className="grid grid-cols-2 gap-1.5 rounded-md border border-border p-2">
                 <Lbl label="Nome">
-                  <input className={SMALL} value={p.name} onChange={e => { const arr = [...passengers]; arr[i] = { ...p, name: e.target.value }; upd("passengers", arr); }} />
+                  <input
+                    className={SMALL}
+                    value={p.name}
+                    onChange={(e) => {
+                      const arr = [...passengers];
+                      arr[i] = { ...p, name: e.target.value };
+                      upd("passengers", arr);
+                    }}
+                  />
                 </Lbl>
                 <Lbl label="Documento">
-                  <input className={SMALL} value={p.document ?? ""} onChange={e => { const arr = [...passengers]; arr[i] = { ...p, document: e.target.value }; upd("passengers", arr); }} />
+                  <input
+                    className={SMALL}
+                    value={p.document ?? ""}
+                    onChange={(e) => {
+                      const arr = [...passengers];
+                      arr[i] = { ...p, document: e.target.value };
+                      upd("passengers", arr);
+                    }}
+                  />
                 </Lbl>
                 <Lbl label="Assento">
-                  <input className={SMALL} value={p.seat ?? ""} onChange={e => { const arr = [...passengers]; arr[i] = { ...p, seat: e.target.value }; upd("passengers", arr); }} />
+                  <input
+                    className={SMALL}
+                    value={p.seat ?? ""}
+                    onChange={(e) => {
+                      const arr = [...passengers];
+                      arr[i] = { ...p, seat: e.target.value };
+                      upd("passengers", arr);
+                    }}
+                  />
                 </Lbl>
                 <div className="flex items-end">
-                  <button type="button" onClick={() => upd("passengers", passengers.filter((_, x) => x !== i))} className="text-xs text-danger hover:underline">Remover</button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      upd(
+                        "passengers",
+                        passengers.filter((_, x) => x !== i),
+                      )
+                    }
+                    className="text-xs text-danger hover:underline"
+                  >
+                    Remover
+                  </button>
                 </div>
               </div>
             ))}
-            <button type="button" onClick={() => upd("passengers", [...passengers, { name: "", document: "", seat: "" }])} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt">
+            <button
+              type="button"
+              onClick={() =>
+                upd("passengers", [...passengers, { name: "", document: "", seat: "" }])
+              }
+              className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+            >
               + Passageiro
             </button>
           </AccordionSection>
 
           {/* Flights */}
-          <AccordionSection id="flights" label="Voos" icon={<Plane className="h-3.5 w-3.5 text-muted-foreground" />} count={flights.length} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="flights"
+            label="Voos"
+            icon={<Plane className="h-3.5 w-3.5 text-muted-foreground" />}
+            count={flights.length}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             {flights.map((f, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
-                  <Lbl label="Cia Aérea"><input className={SMALL} value={f.airline} onChange={e => { const arr = [...flights]; arr[i] = { ...f, airline: e.target.value }; upd("flights", arr); }} /></Lbl>
-                  <Lbl label="Voo Nº"><input className={SMALL} value={f.flight_number} onChange={e => { const arr = [...flights]; arr[i] = { ...f, flight_number: e.target.value }; upd("flights", arr); }} /></Lbl>
-                  <Lbl label="Origem"><input className={SMALL} value={f.origin} onChange={e => { const arr = [...flights]; arr[i] = { ...f, origin: e.target.value }; upd("flights", arr); }} /></Lbl>
-                  <Lbl label="Destino"><input className={SMALL} value={f.destination} onChange={e => { const arr = [...flights]; arr[i] = { ...f, destination: e.target.value }; upd("flights", arr); }} /></Lbl>
-                  <Lbl label="Data"><input className={SMALL} type="date" value={f.date} onChange={e => { const arr = [...flights]; arr[i] = { ...f, date: e.target.value }; upd("flights", arr); }} /></Lbl>
-                  <Lbl label="Saída"><input className={SMALL} value={f.departure_time} onChange={e => { const arr = [...flights]; arr[i] = { ...f, departure_time: e.target.value }; upd("flights", arr); }} placeholder="08:30" /></Lbl>
-                  <Lbl label="Chegada"><input className={SMALL} value={f.arrival_time} onChange={e => { const arr = [...flights]; arr[i] = { ...f, arrival_time: e.target.value }; upd("flights", arr); }} placeholder="14:45" /></Lbl>
-                  <Lbl label="Classe"><input className={SMALL} value={f.class} onChange={e => { const arr = [...flights]; arr[i] = { ...f, class: e.target.value }; upd("flights", arr); }} placeholder="Economy" /></Lbl>
+                  <Lbl label="Cia Aérea">
+                    <input
+                      className={SMALL}
+                      value={f.airline}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, airline: e.target.value };
+                        upd("flights", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Voo Nº">
+                    <input
+                      className={SMALL}
+                      value={f.flight_number}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, flight_number: e.target.value };
+                        upd("flights", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Origem">
+                    <input
+                      className={SMALL}
+                      value={f.origin}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, origin: e.target.value };
+                        upd("flights", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Destino">
+                    <input
+                      className={SMALL}
+                      value={f.destination}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, destination: e.target.value };
+                        upd("flights", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Data">
+                    <input
+                      className={SMALL}
+                      type="date"
+                      value={f.date}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, date: e.target.value };
+                        upd("flights", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Saída">
+                    <input
+                      className={SMALL}
+                      value={f.departure_time}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, departure_time: e.target.value };
+                        upd("flights", arr);
+                      }}
+                      placeholder="08:30"
+                    />
+                  </Lbl>
+                  <Lbl label="Chegada">
+                    <input
+                      className={SMALL}
+                      value={f.arrival_time}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, arrival_time: e.target.value };
+                        upd("flights", arr);
+                      }}
+                      placeholder="14:45"
+                    />
+                  </Lbl>
+                  <Lbl label="Classe">
+                    <input
+                      className={SMALL}
+                      value={f.class}
+                      onChange={(e) => {
+                        const arr = [...flights];
+                        arr[i] = { ...f, class: e.target.value };
+                        upd("flights", arr);
+                      }}
+                      placeholder="Economy"
+                    />
+                  </Lbl>
                 </div>
-                <button type="button" onClick={() => upd("flights", flights.filter((_, x) => x !== i))} className="text-[10px] text-danger hover:underline">Remover voo</button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    upd(
+                      "flights",
+                      flights.filter((_, x) => x !== i),
+                    )
+                  }
+                  className="text-[10px] text-danger hover:underline"
+                >
+                  Remover voo
+                </button>
               </div>
             ))}
-            <button type="button" onClick={() => upd("flights", [...flights, { locator: "", airline: "", flight_number: "", origin: "", destination: "", date: "", departure_time: "", arrival_time: "", class: "Economy", baggage: "23kg" }])} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt">
+            <button
+              type="button"
+              onClick={() =>
+                upd("flights", [
+                  ...flights,
+                  {
+                    locator: "",
+                    airline: "",
+                    flight_number: "",
+                    origin: "",
+                    destination: "",
+                    date: "",
+                    departure_time: "",
+                    arrival_time: "",
+                    class: "Economy",
+                    baggage: "23kg",
+                  },
+                ])
+              }
+              className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+            >
               + Voo
             </button>
           </AccordionSection>
 
           {/* Accommodation */}
-          <AccordionSection id="accommodation" label="Hospedagem" icon={<Hotel className="h-3.5 w-3.5 text-muted-foreground" />} count={accommodation.length} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="accommodation"
+            label="Hospedagem"
+            icon={<Hotel className="h-3.5 w-3.5 text-muted-foreground" />}
+            count={accommodation.length}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             {accommodation.map((a, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
-                  <Lbl label="Hotel"><input className={SMALL} value={a.name} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, name: e.target.value }; upd("accommodation", arr); }} /></Lbl>
-                  <Lbl label="Cidade"><input className={SMALL} value={a.city} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, city: e.target.value }; upd("accommodation", arr); }} /></Lbl>
-                  <Lbl label="Check-in"><input className={SMALL} type="date" value={a.checkin} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, checkin: e.target.value }; upd("accommodation", arr); }} /></Lbl>
-                  <Lbl label="Check-out"><input className={SMALL} type="date" value={a.checkout} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, checkout: e.target.value }; upd("accommodation", arr); }} /></Lbl>
-                  <Lbl label="Quarto"><input className={SMALL} value={a.room_type} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, room_type: e.target.value }; upd("accommodation", arr); }} placeholder="Duplo" /></Lbl>
-                  <Lbl label="Localizador"><input className={SMALL} value={a.confirmation} onChange={e => { const arr = [...accommodation]; arr[i] = { ...a, confirmation: e.target.value }; upd("accommodation", arr); }} /></Lbl>
+                  <Lbl label="Hotel">
+                    <input
+                      className={SMALL}
+                      value={a.name}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, name: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Cidade">
+                    <input
+                      className={SMALL}
+                      value={a.city}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, city: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Check-in">
+                    <input
+                      className={SMALL}
+                      type="date"
+                      value={a.checkin}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, checkin: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Check-out">
+                    <input
+                      className={SMALL}
+                      type="date"
+                      value={a.checkout}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, checkout: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Quarto">
+                    <input
+                      className={SMALL}
+                      value={a.room_type}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, room_type: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                      placeholder="Duplo"
+                    />
+                  </Lbl>
+                  <Lbl label="Localizador">
+                    <input
+                      className={SMALL}
+                      value={a.confirmation}
+                      onChange={(e) => {
+                        const arr = [...accommodation];
+                        arr[i] = { ...a, confirmation: e.target.value };
+                        upd("accommodation", arr);
+                      }}
+                    />
+                  </Lbl>
                 </div>
-                <button type="button" onClick={() => upd("accommodation", accommodation.filter((_, x) => x !== i))} className="text-[10px] text-danger hover:underline">Remover hotel</button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    upd(
+                      "accommodation",
+                      accommodation.filter((_, x) => x !== i),
+                    )
+                  }
+                  className="text-[10px] text-danger hover:underline"
+                >
+                  Remover hotel
+                </button>
               </div>
             ))}
-            <button type="button" onClick={() => upd("accommodation", [...accommodation, { name: "", city: "", address: "", phone: "", checkin: "", checkout: "", room_type: "", meal_plan: "", confirmation: "" }])} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt">
+            <button
+              type="button"
+              onClick={() =>
+                upd("accommodation", [
+                  ...accommodation,
+                  {
+                    name: "",
+                    city: "",
+                    address: "",
+                    phone: "",
+                    checkin: "",
+                    checkout: "",
+                    room_type: "",
+                    meal_plan: "",
+                    confirmation: "",
+                  },
+                ])
+              }
+              className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+            >
               + Hospedagem
             </button>
           </AccordionSection>
 
           {/* Transfers */}
-          <AccordionSection id="transfers" label="Transfers" icon={<Bus className="h-3.5 w-3.5 text-muted-foreground" />} count={transfers.length} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="transfers"
+            label="Transfers"
+            icon={<Bus className="h-3.5 w-3.5 text-muted-foreground" />}
+            count={transfers.length}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             {transfers.map((t, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
-                  <Lbl label="Tipo"><input className={SMALL} value={t.type} onChange={e => { const arr = [...transfers]; arr[i] = { ...t, type: e.target.value }; upd("transfers", arr); }} placeholder="Aeroporto" /></Lbl>
-                  <Lbl label="Data"><input className={SMALL} type="date" value={t.date} onChange={e => { const arr = [...transfers]; arr[i] = { ...t, date: e.target.value }; upd("transfers", arr); }} /></Lbl>
-                  <Lbl label="De"><input className={SMALL} value={t.origin} onChange={e => { const arr = [...transfers]; arr[i] = { ...t, origin: e.target.value }; upd("transfers", arr); }} /></Lbl>
-                  <Lbl label="Para"><input className={SMALL} value={t.destination} onChange={e => { const arr = [...transfers]; arr[i] = { ...t, destination: e.target.value }; upd("transfers", arr); }} /></Lbl>
+                  <Lbl label="Tipo">
+                    <input
+                      className={SMALL}
+                      value={t.type}
+                      onChange={(e) => {
+                        const arr = [...transfers];
+                        arr[i] = { ...t, type: e.target.value };
+                        upd("transfers", arr);
+                      }}
+                      placeholder="Aeroporto"
+                    />
+                  </Lbl>
+                  <Lbl label="Data">
+                    <input
+                      className={SMALL}
+                      type="date"
+                      value={t.date}
+                      onChange={(e) => {
+                        const arr = [...transfers];
+                        arr[i] = { ...t, date: e.target.value };
+                        upd("transfers", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="De">
+                    <input
+                      className={SMALL}
+                      value={t.origin}
+                      onChange={(e) => {
+                        const arr = [...transfers];
+                        arr[i] = { ...t, origin: e.target.value };
+                        upd("transfers", arr);
+                      }}
+                    />
+                  </Lbl>
+                  <Lbl label="Para">
+                    <input
+                      className={SMALL}
+                      value={t.destination}
+                      onChange={(e) => {
+                        const arr = [...transfers];
+                        arr[i] = { ...t, destination: e.target.value };
+                        upd("transfers", arr);
+                      }}
+                    />
+                  </Lbl>
                 </div>
-                <button type="button" onClick={() => upd("transfers", transfers.filter((_, x) => x !== i))} className="text-[10px] text-danger hover:underline">Remover transfer</button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    upd(
+                      "transfers",
+                      transfers.filter((_, x) => x !== i),
+                    )
+                  }
+                  className="text-[10px] text-danger hover:underline"
+                >
+                  Remover transfer
+                </button>
               </div>
             ))}
-            <button type="button" onClick={() => upd("transfers", [...transfers, { type: "Aeroporto ↔ Hotel", date: "", origin: "", destination: "", vehicle: "", supplier: "", confirmation: "" }])} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt">
+            <button
+              type="button"
+              onClick={() =>
+                upd("transfers", [
+                  ...transfers,
+                  {
+                    type: "Aeroporto ↔ Hotel",
+                    date: "",
+                    origin: "",
+                    destination: "",
+                    vehicle: "",
+                    supplier: "",
+                    confirmation: "",
+                  },
+                ])
+              }
+              className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+            >
               + Transfer
             </button>
           </AccordionSection>
 
           {/* Emergency */}
-          <AccordionSection id="emergency" label="Emergência" icon={<Phone className="h-3.5 w-3.5 text-muted-foreground" />} count={emergency.length} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="emergency"
+            label="Emergência"
+            icon={<Phone className="h-3.5 w-3.5 text-muted-foreground" />}
+            count={emergency.length}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             {emergency.map((c, i) => (
               <div key={i} className="grid grid-cols-2 gap-1.5 rounded-md border border-border p-2">
-                <Lbl label="Nome"><input className={SMALL} value={c.name} onChange={e => { const arr = [...emergency]; arr[i] = { ...c, name: e.target.value }; upd("emergency_contacts", arr); }} /></Lbl>
-                <Lbl label="Telefone"><input className={SMALL} value={c.phone} onChange={e => { const arr = [...emergency]; arr[i] = { ...c, phone: e.target.value }; upd("emergency_contacts", arr); }} /></Lbl>
-                <Lbl label="Função"><input className={SMALL} value={c.role} onChange={e => { const arr = [...emergency]; arr[i] = { ...c, role: e.target.value }; upd("emergency_contacts", arr); }} placeholder="Guia" /></Lbl>
+                <Lbl label="Nome">
+                  <input
+                    className={SMALL}
+                    value={c.name}
+                    onChange={(e) => {
+                      const arr = [...emergency];
+                      arr[i] = { ...c, name: e.target.value };
+                      upd("emergency_contacts", arr);
+                    }}
+                  />
+                </Lbl>
+                <Lbl label="Telefone">
+                  <input
+                    className={SMALL}
+                    value={c.phone}
+                    onChange={(e) => {
+                      const arr = [...emergency];
+                      arr[i] = { ...c, phone: e.target.value };
+                      upd("emergency_contacts", arr);
+                    }}
+                  />
+                </Lbl>
+                <Lbl label="Função">
+                  <input
+                    className={SMALL}
+                    value={c.role}
+                    onChange={(e) => {
+                      const arr = [...emergency];
+                      arr[i] = { ...c, role: e.target.value };
+                      upd("emergency_contacts", arr);
+                    }}
+                    placeholder="Guia"
+                  />
+                </Lbl>
                 <div className="flex items-end">
-                  <button type="button" onClick={() => upd("emergency_contacts", emergency.filter((_, x) => x !== i))} className="text-[10px] text-danger hover:underline">Remover</button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      upd(
+                        "emergency_contacts",
+                        emergency.filter((_, x) => x !== i),
+                      )
+                    }
+                    className="text-[10px] text-danger hover:underline"
+                  >
+                    Remover
+                  </button>
                 </div>
               </div>
             ))}
-            <button type="button" onClick={() => upd("emergency_contacts", [...emergency, { name: "", phone: "", role: "" }])} className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt">
+            <button
+              type="button"
+              onClick={() =>
+                upd("emergency_contacts", [...emergency, { name: "", phone: "", role: "" }])
+              }
+              className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border py-1.5 text-xs text-muted-foreground hover:bg-surface-alt"
+            >
               + Contato
             </button>
           </AccordionSection>
 
           {/* Observations */}
-          <AccordionSection id="observations" label="Observações" icon={<Umbrella className="h-3.5 w-3.5 text-muted-foreground" />} openId={openSection} setOpenId={setOpenSection}>
+          <AccordionSection
+            id="observations"
+            label="Observações"
+            icon={<Umbrella className="h-3.5 w-3.5 text-muted-foreground" />}
+            openId={openSection}
+            setOpenId={setOpenSection}
+          >
             <textarea
               rows={4}
               className="w-full rounded-md border border-border/50 bg-surface-alt/50 px-2.5 py-2 text-xs outline-none focus:border-border-strong resize-none"
               value={draft.observations ?? ""}
-              onChange={e => upd("observations", e.target.value)}
+              onChange={(e) => upd("observations", e.target.value)}
               placeholder="Informações adicionais para o passageiro…"
             />
           </AccordionSection>
@@ -457,7 +926,7 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
         {/* Right: Canvas preview / WhatsApp Chat */}
         <div className="flex-1 overflow-auto bg-surface-alt/30 flex items-start justify-center py-8">
           {mode === "whatsapp" ? (
-            <div className="w-full max-w-sm bg-[#efeae2] rounded-xl border border-border/80 shadow-md overflow-hidden flex flex-col h-[569px] font-sans">
+            <div className="w-full max-w-sm bg-[#efeae2] rounded-xl border border-border/80 overflow-hidden flex flex-col h-[569px] font-sans">
               {/* WhatsApp Header */}
               <div className="bg-[#00a884] text-white px-4 py-2.5 flex items-center gap-3 shrink-0">
                 <div className="w-9 h-9 rounded-full bg-white/20 overflow-hidden flex items-center justify-center shrink-0">
@@ -472,10 +941,10 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
                   <div className="text-[9px] text-white/80">Online</div>
                 </div>
               </div>
-              
+
               {/* Chat area */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat">
-                <div className="max-w-[85%] bg-[#d9fdd3] text-[#111b21] rounded-lg p-3 text-[11px] shadow-sm self-end ml-auto whitespace-pre-wrap font-mono relative leading-normal">
+                <div className="max-w-[85%] bg-[#d9fdd3] text-[#111b21] rounded-lg p-3 text-[11px] self-end ml-auto whitespace-pre-wrap font-mono relative leading-normal border border-border/20">
                   {generateWhatsAppText()}
                 </div>
               </div>
@@ -525,7 +994,9 @@ export function VoucherStudio({ draft, setDraft, agency, onSave, saving, onCance
         <SheetContent side="right" className="w-full max-w-md p-0 overflow-y-auto">
           <SheetHeader className="px-6 py-4 border-b border-border">
             <SheetTitle className="text-base font-semibold">Gerador de Story 9:16</SheetTitle>
-            <p className="text-xs text-muted-foreground">Baixe em alta resolução para enviar ao cliente.</p>
+            <p className="text-xs text-muted-foreground">
+              Baixe em alta resolução para enviar ao cliente.
+            </p>
           </SheetHeader>
           <div className="px-6 py-4 flex flex-col gap-4 items-center">
             {/* Story preview inside sheet */}

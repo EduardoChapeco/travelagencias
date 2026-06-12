@@ -78,9 +78,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
             <Field label="Alinhamento do Texto">
               <Select
                 value={block.align || "left"}
-                onChange={(e) =>
-                  updateBlock(block.id, { align: e.target.value as any })
-                }
+                onChange={(e) => updateBlock(block.id, { align: e.target.value as any })}
               >
                 <option value="left">Esquerda (Imagem à direita)</option>
                 <option value="right">Direita (Imagem à esquerda)</option>
@@ -121,8 +119,8 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
             />
           </Field>
           <p className="text-[10px] text-muted-foreground mt-1">
-            Este bloco puxará automaticamente as redes sociais e o
-            formulário de lead da agência no portal público.
+            Este bloco puxará automaticamente as redes sociais e o formulário de lead da agência no
+            portal público.
           </p>
         </>
       );
@@ -177,9 +175,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => {
-                    const newItems = (block.items || []).filter(
-                      (_, idx) => idx !== itemIdx,
-                    );
+                    const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
                     updateBlock(block.id, { items: newItems });
                   }}
                   className="p-2 text-muted-foreground hover:text-destructive"
@@ -284,9 +280,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => {
-                    const newItems = (block.items || []).filter(
-                      (_, idx) => idx !== itemIdx,
-                    );
+                    const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
                     updateBlock(block.id, { items: newItems });
                   }}
                   className="p-2 text-muted-foreground hover:text-destructive"

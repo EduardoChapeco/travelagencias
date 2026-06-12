@@ -42,7 +42,6 @@ export function StudioUnsplashPicker({
     }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     handleSearch();
   }, []);
@@ -55,7 +54,7 @@ export function StudioUnsplashPicker({
         proposalId,
         slot,
         photo.url_full,
-        itemId
+        itemId,
       );
       onImageSelected(savedUrl);
       toast.success("Imagem aplicada com sucesso!");
@@ -103,7 +102,7 @@ export function StudioUnsplashPicker({
                   alt={photo.alt}
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                
+
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                   <div className="flex justify-end">

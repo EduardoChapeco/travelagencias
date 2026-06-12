@@ -50,7 +50,9 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
         <div className="mt-8 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="h-4 w-4 text-white/60" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-white/60">Próximo destino</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-white/60">
+              Próximo destino
+            </span>
           </div>
           <h1 className="text-4xl font-black leading-none tracking-tighter">
             {v.destination ?? "Sua Viagem!"}
@@ -80,7 +82,8 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
                 <span>{v.flights[0].destination ?? "—"}</span>
               </div>
               <div className="text-[10px] mt-1 text-white/50 text-center">
-                {v.flights[0].airline} {v.flights[0].flight_number && `· ${v.flights[0].flight_number}`}
+                {v.flights[0].airline}{" "}
+                {v.flights[0].flight_number && `· ${v.flights[0].flight_number}`}
                 {v.flights[0].date && ` · ${v.flights[0].date}`}
               </div>
             </div>
@@ -94,7 +97,9 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
               </div>
               <div className="text-base font-bold truncate">{v.accommodation[0].name}</div>
               {v.accommodation[0].city && (
-                <div className="text-[10px] text-white/50 mt-0.5 truncate">{v.accommodation[0].city}</div>
+                <div className="text-[10px] text-white/50 mt-0.5 truncate">
+                  {v.accommodation[0].city}
+                </div>
               )}
             </div>
           )}
@@ -104,7 +109,7 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
         {v.passengers && v.passengers.length > 0 && (
           <div className="mt-4 text-[11px] text-white/50 text-center">
             {v.passengers.length} passageiro{v.passengers.length !== 1 ? "s" : ""} ·{" "}
-            {v.passengers.map(p => p.name.split(" ")[0]).join(", ")}
+            {v.passengers.map((p) => p.name.split(" ")[0]).join(", ")}
           </div>
         )}
 

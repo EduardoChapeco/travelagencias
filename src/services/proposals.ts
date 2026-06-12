@@ -130,12 +130,12 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
       try {
         const base64 = (reader.result as string).split(",")[1];
         const { data, error } = await supabase.functions.invoke("ocr-proposal", {
-          body: { 
-            file_base64: base64, 
-            mime: file.type, 
+          body: {
+            file_base64: base64,
+            mime: file.type,
             file_name: file.name,
             proposal_id,
-            agency_id
+            agency_id,
           },
         });
         if (error) throw error;
@@ -301,7 +301,7 @@ export async function duplicateProposal(proposalId: string): Promise<{ id: strin
     decided_at: null,
     viewed_at: null,
   };
-  
+
   delete (insertData as any).id;
   delete (insertData as any).public_token;
   delete (insertData as any).created_at;
@@ -318,11 +318,8 @@ export async function duplicateProposal(proposalId: string): Promise<{ id: strin
 }
 
 export async function deleteProposal(proposalId: string): Promise<void> {
-  const { error } = await supabase
-    .from("proposals")
-    .delete()
-    .eq("id", proposalId);
-    
+  const { error } = await supabase.from("proposals").delete().eq("id", proposalId);
+
   if (error) throw new Error(error.message);
 }
 
@@ -348,10 +345,13 @@ export async function generateProposalPdfViaServer(
 export async function suggestIncludesExcludesViaAI(
   proposal: Proposal,
 ): Promise<{ includes: string[]; excludes: string[] }> {
-  const hotelsText = proposal.hotels?.map(h => h.name).join(", ") || "nenhum";
-  const flightsText = proposal.flights?.map(f => `${f.origin}/${f.destination}`).join(", ") || "nenhum";
-  const transfersText = proposal.transfers?.length ? `${proposal.transfers.length} transfers` : "nenhum";
-  const toursText = proposal.tours?.map(t => t.description).join(", ") || "nenhum";
+  const hotelsText = proposal.hotels?.map((h) => h.name).join(", ") || "nenhum";
+  const flightsText =
+    proposal.flights?.map((f) => `${f.origin}/${f.destination}`).join(", ") || "nenhum";
+  const transfersText = proposal.transfers?.length
+    ? `${proposal.transfers.length} transfers`
+    : "nenhum";
+  const toursText = proposal.tours?.map((t) => t.description).join(", ") || "nenhum";
 
   const prompt = `Com base na seguinte proposta de viagem:
 - Destino: ${proposal.destination || "Vários destinos"}
@@ -381,5 +381,3 @@ Retorne EXATAMENTE um JSON com as chaves "includes" e "excludes", que são array
     excludes: Array.isArray(parsed.excludes) ? parsed.excludes : [],
   };
 }
-
-
