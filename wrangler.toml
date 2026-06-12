@@ -1,0 +1,11 @@
+name = "travelagencias"
+compatibility_date = "2024-04-05"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+[vars]
+# Variáveis de ambiente injetadas no Cloudflare Pages
+VITE_SUPABASE_URL = "https://esmppoxxnyiscidzsjvy.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzbXBwb3h4bnlpc2NpZHpzanZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNTM4NDgsImV4cCI6MjA5NjgyOTg0OH0.qe1dTo-tz-iO-J9tMBXgUKS8-R2rfZipjcAiGf0kZbY"
+SUPABASE_URL = "https://esmppoxxnyiscidzsjvy.supabase.co"
+SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzbXBwb3h4bnlpc2NpZHpzanZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNTM4NDgsImV4cCI6MjA5NjgyOTg0OH0.qe1dTo-tz-iO-J9tMBXgUKS8-R2rfZipjcAiGf0kZbY"
