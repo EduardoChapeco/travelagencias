@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Link2 } from "lucide-react";
+import { ArrowLeft, Link2, Calendar, Users, MapPin, Clock, Plane, Hotel, Car, Compass, Check, X, CreditCard, FileText, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAgency } from "@/lib/agency-context";
@@ -307,203 +307,411 @@ function ScalableCanvas({ children }: { children: React.ReactNode }) {
 
 // ===== Editorial template (A4 portrait) =====
 function ProposalTemplate({ proposal: p }: { proposal: Proposal }) {
+  const { agency } = useAgency();
+  const brand = agency?.brand_color ?? "#3b82f6";
+  const brandFg = agency?.brand_color_fg ?? "#FFFFFF";
+  const totalPax = (p.pax_adults || 0) + (p.pax_seniors || 0) + (p.pax_children || 0) + (p.pax_infants || 0);
+
   return (
     <div
       id="proposal-canvas"
-      className="bg-surface text-foreground"
+      className="bg-surface text-foreground shadow-lg border border-border"
       style={{
         width: 794,
         minHeight: 1123,
-        padding: 48,
+        padding: 40,
         fontFamily: "Inter, system-ui, sans-serif",
       }}
     >
-      <div className="mb-6 border-b-2 border-neutral-900 pb-4">
-        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Proposta #{p.number}
+      {/* Header Inside Canvas */}
+      <div className="flex items-center justify-between border-b border-border/80 pb-4 mb-6">
+        <div className="flex items-center gap-3">
+          {agency?.logo_url ? (
+            <img
+              src={agency.logo_url}
+              alt={agency.name}
+              className="h-9 w-9 rounded-lg object-cover border border-border/40"
+            />
+          ) : (
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg font-bold text-sm"
+              style={{ background: brand, color: brandFg }}
+            >
+              {agency?.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div className="text-left">
+            <div className="text-sm font-bold leading-tight">{agency?.name ?? "Agência"}</div>
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Proposta #{p.number}</div>
+          </div>
         </div>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">
-          {p.title || "Proposta de viagem"}
-        </h1>
-        <div className="mt-2 text-sm text-muted-foreground">
-          {p.destination ?? ""} · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)} ·{" "}
-          {p.pax_adults + p.pax_seniors + p.pax_children + p.pax_infants} pax
-        </div>
+        <span
+          className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider font-sans"
+          style={{ background: `${brand}15`, color: brand }}
+        >
+          {p.status === "draft" ? "Rascunho" : p.status === "sent" ? "Enviada" : p.status === "viewed" ? "Visualizada" : p.status === "accepted" ? "Aceita" : p.status}
+        </span>
       </div>
 
-      {p.flights.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Voos
-          </h2>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border text-left text-muted-foreground">
-                <th className="py-1">Trecho</th>
-                <th>Cia / Voo</th>
-                <th>Data</th>
-                <th>Horários</th>
-                <th>Bagagem</th>
-              </tr>
-            </thead>
-            <tbody>
-              {p.flights.map((f) => (
-                <tr key={f.id} className="border-b border-border/60">
-                  <td className="py-2 font-medium">
-                    {f.origin} → {f.destination}{" "}
+      {/* Hero Banner Section */}
+      <section className="mb-6">
+        <div className="relative overflow-hidden rounded-2xl bg-slate-900 text-white p-8 shadow-md border border-white/5">
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent z-10" />
+          <div
+            className="absolute inset-0 opacity-20 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80')`,
+            }}
+          />
+          <div className="relative z-20 text-left">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm mb-4">
+              <Sparkles className="h-3 w-3 text-yellow-400" /> Proposta Exclusiva
+            </span>
+            <h1 className="text-2xl font-extrabold tracking-tight text-white leading-tight">
+              {p.title || "Sua próxima experiência de viagem"}
+            </h1>
+            <p className="mt-2 text-xs text-slate-300 font-medium leading-relaxed">
+              Descubra os detalhes cuidadosamente planejados para a sua jornada.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-12 gap-6 text-left">
+        <div className="col-span-8 space-y-6">
+          {/* Quick Details Card */}
+          <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm grid grid-cols-3 gap-4 text-center">
+            <div className="space-y-1">
+              <MapPin className="mx-auto h-4 w-4 text-muted-foreground" />
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Destino</div>
+              <div className="text-xs font-bold truncate">{p.destination ?? "—"}</div>
+            </div>
+            <div className="space-y-1 border-x border-border/80">
+              <Calendar className="mx-auto h-4 w-4 text-muted-foreground" />
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Período</div>
+              <div className="text-xs font-bold truncate">
+                {p.travel_start ? `${new Date(p.travel_start).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}` : "—"}
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Users className="mx-auto h-4 w-4 text-muted-foreground" />
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Passageiros</div>
+              <div className="text-xs font-bold">{totalPax} pax</div>
+            </div>
+          </div>
+
+          {/* Flights Section */}
+          {p.flights && p.flights.length > 0 && (
+            <div className="space-y-3 text-left">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <Plane className="h-4 w-4" style={{ color: brand }} /> Voos e Conexões
+              </h2>
+              <div className="space-y-3">
+                {p.flights.map((f: any, idx: number) => (
+                  <div key={idx} className="relative overflow-hidden rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 group">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900 border border-border/40" style={{ color: brand }}>
+                          <Plane className="h-4.5 w-4.5" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-xs">
+                            {f.origin} &rarr; {f.destination}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {f.airline} &middot; {f.flight_number}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-[10px] text-right">
+                        <div>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Data</span>
+                          <span className="font-semibold">{fmtDate(f.date)}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Horário</span>
+                          <span className="font-semibold">{f.departure_time} - {f.arrival_time}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Bagagem</span>
+                          <span className="font-semibold">{f.baggage_rules || "Não inclusa"}</span>
+                        </div>
+                      </div>
+                    </div>
                     {f.stops > 0 && (
-                      <span className="text-muted-foreground">
-                        ({f.stops} parada{f.stops > 1 ? "s" : ""})
+                      <span className="absolute top-2 right-2 rounded bg-amber-500/10 px-1 py-0.5 text-[8px] font-bold text-amber-600 uppercase tracking-wide">
+                        {f.stops} parada{f.stops > 1 ? "s" : ""}
                       </span>
                     )}
-                  </td>
-                  <td>
-                    {f.airline} {f.flight_number}
-                  </td>
-                  <td>{fmtDate(f.date)}</td>
-                  <td>
-                    {f.departure_time} – {f.arrival_time}
-                  </td>
-                  <td>{f.baggage_rules}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-      {p.hotels.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Hospedagem
-          </h2>
-          <div className="space-y-3">
-            {p.hotels.map((h) => (
-              <div key={h.id} className="overflow-hidden rounded-lg border border-border">
-                {h.images[0] && (
-                  <img src={h.images[0]} alt={h.name} className="h-40 w-full object-cover" />
-                )}
-                <div className="p-3">
-                  <div className="flex items-baseline justify-between">
-                    <h3 className="font-semibold">{h.name}</h3>
-                    <span className="text-xs text-muted-foreground">{h.city}</span>
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {fmtDate(h.checkin)} → {fmtDate(h.checkout)} · {h.meal_plan}
-                  </div>
-                  {h.rooms.length > 0 && (
-                    <div className="mt-1 text-xs">
-                      {h.rooms.map((r, i) => (
-                        <span key={i}>
-                          {r.qty}× {r.type}
-                          {i < h.rooms.length - 1 ? ", " : ""}
-                        </span>
-                      ))}
+          {/* Hotels Section */}
+          {p.hotels && p.hotels.length > 0 && (
+            <div className="space-y-3 text-left">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <Hotel className="h-4 w-4" style={{ color: brand }} /> Hospedagem Selecionada
+              </h2>
+              <div className="space-y-4">
+                {p.hotels.map((h: any, idx: number) => (
+                  <div key={idx} className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm group">
+                    {h.images && h.images[0] && (
+                      <div className="h-32 w-full overflow-hidden relative">
+                        <img src={h.images[0]} alt={h.name} className="h-full w-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <Hotel className="h-4 w-4" style={{ color: brand }} />
+                            <h3 className="font-bold text-sm">{h.name}</h3>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                            <MapPin className="h-3 w-3" /> {h.city}
+                          </div>
+                        </div>
+                        <div className="text-right text-[10px]">
+                          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider" style={{ color: brand }}>
+                            {h.meal_plan || "Somente hospedagem"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between gap-4 text-[10px]">
+                        <div>
+                          <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Período</span>
+                          <span className="font-semibold">{fmtDate(h.checkin)} &rarr; {fmtDate(h.checkout)}</span>
+                        </div>
+                        {h.rooms && h.rooms.length > 0 && (
+                          <div className="text-right">
+                            <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Acomodação</span>
+                            <span className="font-semibold">
+                              {h.rooms.map((r: any, rIdx: number) => (
+                                <span key={rIdx}>
+                                  {r.qty}x {r.type}
+                                  {rIdx < h.rooms.length - 1 ? ", " : ""}
+                                </span>
+                              ))}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {p.transfers.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Transfers
-          </h2>
-          <ul className="space-y-1 text-xs">
-            {p.transfers.map((t) => (
-              <li key={t.id}>
-                • <strong>{fmtDate(t.date)}</strong> — {t.description} (
-                {t.type === "private" ? "Privativo" : "Compartilhado"}, {t.vehicle})
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {p.tours.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Passeios
-          </h2>
-          <ul className="space-y-1 text-xs">
-            {p.tours.map((t) => (
-              <li key={t.id}>
-                • <strong>{fmtDate(t.date)}</strong> — {t.description}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {p.itinerary.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Itinerário
-          </h2>
-          <div className="space-y-2">
-            {p.itinerary.map((d) => (
-              <div key={d.id} className="border-l-2 border-neutral-900 pl-3">
-                <div className="text-xs font-semibold">
-                  {d.day} — {d.title}
-                </div>
-                <div className="text-xs text-muted-foreground whitespace-pre-wrap">
-                  {d.description}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {(p.includes.length > 0 || p.excludes.length > 0) && (
-        <section className="mb-6 grid grid-cols-2 gap-4">
-          {p.includes.length > 0 && (
-            <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-success">
-                Inclui
-              </h3>
-              <ul className="text-xs">
-                {p.includes.map((i, x) => (
-                  <li key={x}>✓ {i}</li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
-          {p.excludes.length > 0 && (
-            <div>
-              <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-danger">
-                Não inclui
-              </h3>
-              <ul className="text-xs">
-                {p.excludes.map((i, x) => (
-                  <li key={x}>✗ {i}</li>
+
+          {/* Transfers Section */}
+          {p.transfers && p.transfers.length > 0 && (
+            <div className="space-y-3 text-left">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <Car className="h-4 w-4" style={{ color: brand }} /> Traslados e Conexões
+              </h2>
+              <div className="space-y-3">
+                {p.transfers.map((t: any, idx: number) => (
+                  <div key={idx} className="flex items-start gap-3 rounded-xl border border-border bg-surface p-3 transition-all hover:border-brand/40">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900 border border-border/40" style={{ color: brand }}>
+                      <Car className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="flex-1 min-w-0 text-[10px]">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="font-bold text-xs text-foreground">{t.description}</span>
+                        <span className="text-muted-foreground font-mono">{fmtDate(t.date)}</span>
+                      </div>
+                      <div className="mt-0.5 text-muted-foreground">
+                        Veículo: <strong className="text-foreground">{t.vehicle}</strong> &middot; Tipo: <strong className="text-foreground">{t.type === "private" ? "Privativo" : "Compartilhado"}</strong>
+                      </div>
+                      {t.notes && <p className="mt-1 text-muted-foreground italic bg-surface-alt/40 p-1.5 rounded text-[9px]">{t.notes}</p>}
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
-        </section>
-      )}
 
-      <section className="mt-8 rounded-lg bg-surface-alt p-5">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm text-muted-foreground">Total à vista (Pix)</span>
-          <span className="text-2xl font-bold">{money(p.total, p.currency)}</span>
+          {/* Tours Section */}
+          {p.tours && p.tours.length > 0 && (
+            <div className="space-y-3 text-left">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <Compass className="h-4 w-4" style={{ color: brand }} /> Passeios e Experiências
+              </h2>
+              <div className="space-y-3">
+                {p.tours.map((t: any, idx: number) => (
+                  <div key={idx} className="flex items-start gap-3 rounded-xl border border-border bg-surface p-3 transition-all hover:border-brand/40">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900 border border-border/40" style={{ color: brand }}>
+                      <Compass className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="flex-1 min-w-0 text-[10px]">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="font-bold text-xs text-foreground">{t.description}</span>
+                        <span className="text-muted-foreground font-mono">{fmtDate(t.date)}</span>
+                      </div>
+                      {t.notes && <p className="mt-1 text-muted-foreground italic bg-surface-alt/40 p-1.5 rounded text-[9px]">{t.notes}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Itinerary Section */}
+          {p.itinerary && p.itinerary.length > 0 && (
+            <div className="space-y-3 text-left">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1">
+                <Calendar className="h-4 w-4" style={{ color: brand }} /> Roteiro de Atividades
+              </h2>
+              <div className="relative border-l border-border/80 ml-3 pl-4 space-y-4">
+                {p.itinerary.map((d: any, idx: number) => (
+                  <div key={idx} className="relative">
+                    {/* Circle Node */}
+                    <div className="absolute -left-[23px] top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-surface border-2" style={{ borderColor: brand }} />
+                    <div className="text-[10px]">
+                      <span className="rounded bg-brand/10 px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider" style={{ color: brand }}>
+                        {d.day || `Dia ${idx + 1}`}
+                      </span>
+                      <h3 className="font-bold text-xs mt-1">{d.title}</h3>
+                      <p className="mt-1 text-muted-foreground leading-relaxed whitespace-pre-wrap">{d.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        {p.installments_card > 1 && (
-          <div className="mt-1 text-xs text-muted-foreground">
-            ou em até {p.installments_card}x no cartão
+
+        {/* Right Columns: Financial & Decisions */}
+        <div className="col-span-4 space-y-6">
+          {/* Finance Premium Invoice */}
+          <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1" style={{ background: brand }} />
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3">Resumo Financeiro</h3>
+
+            <div className="space-y-1.5 text-[10px] border-b border-border/60 pb-3">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>Valor Base</span>
+                <span className="font-mono">{money(Number(p.subtotal), p.currency)}</span>
+              </div>
+              {Number(p.discount) > 0 && (
+                <div className="flex items-center justify-between text-emerald-600 font-medium">
+                  <span>Desconto</span>
+                  <span className="font-mono">- {money(Number(p.discount), p.currency)}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-3 space-y-3">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <span className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold block">Total à Vista</span>
+                  <span className="text-[8px] text-emerald-600 font-bold uppercase">Pix com {p.pix_discount_percent}% desc</span>
+                </div>
+                <span className="font-mono text-base font-extrabold text-foreground">
+                  {money(Number(p.total), p.currency)}
+                </span>
+              </div>
+
+              {/* Card Options */}
+              {p.installments_card > 1 && (
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1.5 border-t border-border/30">
+                  <span className="flex items-center gap-1">
+                    <CreditCard className="h-3 w-3" /> Cartão de Crédito
+                  </span>
+                  <span>até {p.installments_card}x</span>
+                </div>
+              )}
+
+              {/* Boleto Options */}
+              {p.installments_boleto > 1 && (
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <FileText className="h-3 w-3" /> Boleto Bancário
+                  </span>
+                  <span>até {p.installments_boleto}x</span>
+                </div>
+              )}
+
+              {p.valid_until && (
+                <div className="rounded-lg bg-slate-50 dark:bg-slate-900 border border-border/40 p-2 text-[9px] text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3.5 w-3.5" style={{ color: brand }} />
+                  <span>Válida até <strong>{fmtDate(p.valid_until)}</strong></span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-        {p.installments_boleto > 1 && (
-          <div className="text-xs text-muted-foreground">
-            ou em até {p.installments_boleto}x no boleto
+
+          {/* Inclusions & Exclusions Card */}
+          {(p.includes?.length > 0 || p.excludes?.length > 0) && (
+            <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm space-y-3 text-left">
+              {p.includes?.length > 0 && (
+                <div>
+                  <h4 className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 mb-1.5 flex items-center gap-1">
+                    <Check className="h-3 w-3" /> O que inclui
+                  </h4>
+                  <ul className="space-y-1 text-[10px] text-muted-foreground pl-0.5">
+                    {p.includes.map((inc: string, idx: number) => (
+                      <li key={idx} className="flex gap-1 items-start leading-tight">
+                        <span className="text-emerald-600 select-none">•</span>
+                        <span>{inc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {p.excludes?.length > 0 && (
+                <div className="pt-2 border-t border-border/40">
+                  <h4 className="text-[9px] font-bold uppercase tracking-wider text-rose-600 mb-1.5 flex items-center gap-1">
+                    <X className="h-3 w-3" /> O que não inclui
+                  </h4>
+                  <ul className="space-y-1 text-[10px] text-muted-foreground pl-0.5">
+                    {p.excludes.map((exc: string, idx: number) => (
+                      <li key={idx} className="flex gap-1 items-start leading-tight">
+                        <span className="text-rose-600 select-none">•</span>
+                        <span>{exc}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Terms Box */}
+          {p.terms && (
+            <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm space-y-1.5 text-left">
+              <h4 className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Condições Gerais</h4>
+              <p className="text-[10px] text-muted-foreground whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto no-scrollbar">{p.terms}</p>
+            </div>
+          )}
+
+          {/* Decision Panel (Disabled/Preview Mode for the Editor) */}
+          <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm text-center">
+            <h3 className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Decisão do Cliente (Visualização)</h3>
+            <div className="flex flex-col gap-1.5 opacity-80">
+              <div
+                className="h-8 w-full rounded-lg text-[10px] font-bold flex items-center justify-center shadow-sm"
+                style={{ background: brand, color: brandFg }}
+              >
+                Aceitar proposta
+              </div>
+              <div className="h-8 w-full rounded-lg border border-border bg-surface text-[10px] font-medium text-muted-foreground flex items-center justify-center">
+                Recusar proposta
+              </div>
+            </div>
+            <p className="text-[8px] text-muted-foreground mt-2 leading-tight">
+              Este painel estará interativo apenas para o cliente final.
+            </p>
           </div>
-        )}
-      </section>
+        </div>
+      </div>
     </div>
   );
 }
