@@ -30,6 +30,16 @@ const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" |
   expired: "warning",
 };
 
+const STATUS_LABEL: Record<string, string> = {
+  draft: "Rascunho",
+  sent: "Enviada",
+  viewed: "Visualizada",
+  accepted: "Aceita",
+  converted: "Convertida",
+  rejected: "Recusada",
+  expired: "Expirada",
+};
+
 function ProposalsList() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/proposals" });
@@ -107,7 +117,7 @@ function ProposalsList() {
                     </td>
                     <td className="px-3 py-2.5">
                       <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
-                        {p.status}
+                        {STATUS_LABEL[p.status] ?? p.status}
                       </StatusBadge>
                     </td>
                     <td className="px-3 py-2.5 text-right font-mono text-xs">

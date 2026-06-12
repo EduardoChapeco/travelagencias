@@ -1,8 +1,9 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { ArrowLeft, Link2, Calendar, Users, MapPin, Clock, Plane, Hotel, Car, Compass, Check, X, CreditCard, FileText, Sparkles } from "lucide-react";
+import { ArrowLeft, Link2, Calendar, Users, MapPin, Clock, Plane, Hotel, Car, Compass, Check, X, CreditCard, FileText, Sparkles, Send, PlaneTakeoff } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import { useAgency } from "@/lib/agency-context";
 import { money, fmtDate } from "@/components/ui/form";
@@ -75,6 +76,56 @@ function ProposalEditor() {
     [draft, persist],
   );
 
+  const navigate = useNavigate();
+
+  const sendProposal = useMutation({
+    mutationFn: async () => {
+      if (!draft) return;
+      await updateProposal(id, { status: "sent" });
+    },
+    onSuccess: () => {
+      toast.success("Cotação marcada como enviada!");
+      qc.invalidateQueries({ queryKey: ["proposal", id] });
+      if (draft) setDraft({ ...draft, status: "sent" });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao enviar"),
+  });
+
+  const convertToTrip = useMutation({
+    mutationFn: async () => {
+      if (!draft || !agency) return null;
+      const { data: u } = await supabase.auth.getUser();
+      const { data: tripData, error } = await supabase
+        .from("trips")
+        .insert({
+          agency_id: agency.id,
+          proposal_id: draft.id,
+          client_id: (draft as any).client_id ?? null,
+          title: draft.title,
+          destination: draft.destination,
+          travel_start: draft.travel_start,
+          travel_end: draft.travel_end,
+          currency: draft.currency,
+          total_sale: draft.total,
+          status: "planning",
+          owner_id: u.user?.id ?? null,
+        })
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      // mark the proposal as converted
+      await updateProposal(id, { status: "converted" });
+      return tripData;
+    },
+    onSuccess: (data) => {
+      if (!data) return;
+      toast.success("Viagem criada a partir da cotação!");
+      qc.invalidateQueries({ queryKey: ["trips", agency?.id] });
+      navigate({ to: "/agency/$slug/trips/$id", params: { slug, id: data.id } });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao converter"),
+  });
+
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;
   if (!propQ.data) return <div className="p-6">Proposta não encontrada</div>;
@@ -116,6 +167,26 @@ function ProposalEditor() {
           >
             <Link2 className="h-3.5 w-3.5" /> Copiar link
           </button>
+          {draft.status === "draft" && (
+            <button
+              onClick={() => sendProposal.mutate()}
+              disabled={sendProposal.isPending}
+              className="flex h-9 items-center gap-1.5 rounded-md bg-brand/10 border border-brand/30 px-3 text-xs font-semibold text-brand hover:bg-brand/20 disabled:opacity-60"
+            >
+              <Send className="h-3.5 w-3.5" />
+              {sendProposal.isPending ? "Enviando…" : "Enviar cotação"}
+            </button>
+          )}
+          {(draft.status === "accepted") && (
+            <button
+              onClick={() => convertToTrip.mutate()}
+              disabled={convertToTrip.isPending}
+              className="flex h-9 items-center gap-1.5 rounded-md bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-60 shadow-sm"
+            >
+              <PlaneTakeoff className="h-3.5 w-3.5" />
+              {convertToTrip.isPending ? "Convertendo…" : "Converter em Viagem"}
+            </button>
+          )}
           <ExportPdfButton proposal={draft} />
           <OcrButton
             onExtracted={(data) => {
