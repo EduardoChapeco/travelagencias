@@ -1,4 +1,4 @@
-export function renderErrorPage(): string {
+export function renderErrorPage(errorMsg?: string): string {
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -14,12 +14,14 @@ export function renderErrorPage(): string {
       a, button { padding: 0.5rem 1rem; border-radius: 0.375rem; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
       .primary { background: #111; color: #fff; }
       .secondary { background: #fff; color: #111; border-color: #d1d5db; }
+      .debug { margin-top: 1rem; background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 0.375rem; text-align: left; font-family: monospace; font-size: 0.875rem; white-space: pre-wrap; word-break: break-all; }
     </style>
   </head>
   <body>
     <div class="card">
       <h1>This page didn't load</h1>
       <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+      ${errorMsg ? `<div class="debug">ERROR: ${errorMsg.replace(/</g, "&lt;")}</div>` : ""}
       <div class="actions">
         <button class="primary" onclick="location.reload()">Try again</button>
         <a class="secondary" href="/">Go home</a>
