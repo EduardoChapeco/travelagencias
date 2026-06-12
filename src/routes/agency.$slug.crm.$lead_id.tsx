@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -18,6 +18,16 @@ import {
   MapPin,
   Users,
   DollarSign,
+  Plus,
+  Paperclip,
+  Check,
+  ShieldAlert,
+  Camera,
+  Trash,
+  Send,
+  FileText,
+  FileDown,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -32,9 +42,20 @@ import {
   addLeadActivity,
   updateLeadActivity,
   deleteLeadActivity,
+  uploadLeadAttachment,
+  fetchAgencyUsers,
+  transferLead,
+  fetchLeadMeetings,
+  createLeadMeeting,
+  deleteLeadMeeting,
+  syncMeetingToGoogleCalendar,
   type Stage,
   type Lead,
+  type Activity,
+  type LeadMeeting,
 } from "@/services/crm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Calendar, ShieldCheck, Heart, Sparkles, MessageCircle, Bot, Headphones } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import {
   Field,
@@ -46,21 +67,13 @@ import {
   fmtDate,
   money,
 } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
+import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 
 export const Route = createFileRoute("/agency/$slug/crm/$lead_id")({
   head: () => ({ meta: [{ title: "Detalhe do Lead · TravelOS" }] }),
   component: LeadDetailPage,
 });
-
-// Tipos agora vêm do serviço
-type Activity = {
-  id: string;
-  type: "note" | "stage_change" | "call" | "email" | "whatsapp" | "meeting" | "task";
-  content: string | null;
-  author_id: string | null;
-  created_at: string;
-  metadata: Record<string, unknown>;
-};
 
 const ACTIVITY_TYPES = [
   { v: "note", label: "Nota", icon: StickyNote },
@@ -71,12 +84,31 @@ const ACTIVITY_TYPES = [
   { v: "task", label: "Tarefa", icon: CheckCircle2 },
 ] as const;
 
-function iconFor(type: Activity["type"]) {
+const INTEREST_TYPES = [
+  { v: "flights", label: "Passagens Aéreas" },
+  { v: "hotel", label: "Somente Hotel" },
+  { v: "package_flight", label: "Pacote Aéreo Completo" },
+  { v: "package_ground", label: "Pacote Terrestre Completo" },
+  { v: "other", label: "Outros Serviços" },
+] as const;
+
+const TAG_COLOR_PRESETS = [
+  { name: "Vermelho", value: "#ef4444" },
+  { name: "Laranja", value: "#f97316" },
+  { name: "Amarelo", value: "#eab308" },
+  { name: "Verde", value: "#22c55e" },
+  { name: "Azul", value: "#3b82f6" },
+  { name: "Roxo", value: "#a855f7" },
+  { name: "Rosa", value: "#ec4899" },
+  { name: "Cinza", value: "#6b7280" },
+];
+
+function iconFor(type: string) {
   if (type === "stage_change") return ArrowRightLeft;
   return ACTIVITY_TYPES.find((t) => t.v === type)?.icon ?? StickyNote;
 }
 
-function colorFor(type: Activity["type"]) {
+function colorFor(type: string) {
   switch (type) {
     case "stage_change":
       return "text-brand";
@@ -100,7 +132,45 @@ function LeadDetailPage() {
   const { slug, lead_id } = useParams({ from: "/agency/$slug/crm/$lead_id" });
   const navigate = useNavigate();
   const qc = useQueryClient();
+
   const [editing, setEditing] = useState(false);
+  const [checklistInput, setChecklistInput] = useState("");
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagColor, setNewTagColor] = useState("#3b82f6");
+  const [uploading, setUploading] = useState(false);
+  const [proposalSheetOpen, setProposalSheetOpen] = useState(false);
+
+  const [confirmConvertOpen, setConfirmConvertOpen] = useState(false);
+  const [clientPayload, setClientPayload] = useState({
+    full_name: "",
+    document: "",
+    birth_date: "",
+    email: "",
+    phone: "",
+    pcd: false,
+    reduced_mobility: false,
+    autism: false,
+    health_notes: "",
+  });
+
+  const [paxForm, setPaxForm] = useState({
+    full_name: "",
+    document: "",
+    birth_date: "",
+    relationship: "other",
+    phone: "",
+    email: "",
+  });
+  const [paxFormOpen, setPaxFormOpen] = useState(false);
+
+  const [meetingForm, setMeetingForm] = useState({
+    title: "",
+    description: "",
+    scheduled_at: "",
+    duration_minutes: 30,
+    meeting_type: "call",
+  });
+  const [meetingFormOpen, setMeetingFormOpen] = useState(false);
 
   const stagesQ = useQuery({
     enabled: !!agency,
@@ -126,26 +196,69 @@ function LeadDetailPage() {
     queryFn: () => fetchLeadOwnerProfile(leadQ.data!.owner_id!),
   });
 
-  if (leadQ.isLoading)
-    return <div className="p-8 text-sm text-muted-foreground">Carregando detalhes do lead...</div>;
-  if (!leadQ.data) {
-    return (
-      <div className="p-8 max-w-2xl mx-auto text-center">
-        <h1 className="text-2xl font-bold mb-4">Lead não encontrado</h1>
-        <p className="text-muted-foreground mb-6">Ele pode ter sido arquivado ou excluído.</p>
-        <Link
-          to="/agency/$slug/crm"
-          params={{ slug }}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-surface-alt px-6 text-sm font-medium hover:bg-border/50 transition-colors"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao Kanban
-        </Link>
-      </div>
-    );
+  const usersQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["agency-users", agency?.id],
+    queryFn: () => fetchAgencyUsers(agency!.id),
+  });
+
+  const meetingsQ = useQuery({
+    enabled: !!leadQ.data?.id,
+    queryKey: ["lead-meetings", lead_id],
+    queryFn: () => fetchLeadMeetings(lead_id),
+  });
+
+  useEffect(() => {
+    if (leadQ.data) {
+      setClientPayload({
+        full_name: leadQ.data.name || "",
+        document: "",
+        birth_date: "",
+        email: leadQ.data.email || "",
+        phone: leadQ.data.phone || "",
+        pcd: leadQ.data.pcd || false,
+        reduced_mobility: leadQ.data.reduced_mobility || false,
+        autism: leadQ.data.autism || false,
+        health_notes: leadQ.data.health_notes || "",
+      });
+    }
+  }, [leadQ.data]);
+
+  const proposalsQ = useQuery({
+    enabled: !!leadQ.data?.id,
+    queryKey: ["proposals", agency?.id, { leadId: leadQ.data?.id }],
+    queryFn: async () => {
+      let query = supabase
+        .from("proposals")
+        .select("id, number, title, status, total, created_at");
+
+      if (leadQ.data?.client_id) {
+        query = query.or(`lead_id.eq.${lead_id},client_id.eq.${leadQ.data.client_id}`);
+      } else {
+        query = query.eq("lead_id", lead_id);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (!leadQ.data && !leadQ.isLoading) {
+    return null;
   }
 
-  const lead = leadQ.data;
-  const stage = stagesQ.data?.find((s) => s.id === lead.stage_id);
+  const lead = leadQ.data as Lead;
+  const stage = stagesQ.data?.find((s) => s.id === lead?.stage_id);
+
+  // Staleness calculations
+  const lastContactDate = lead?.last_contacted_at ? new Date(lead.last_contacted_at) : lead ? new Date(lead.created_at) : new Date();
+  const diffTime = Math.abs(new Date().getTime() - lastContactDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  function handleClose() {
+    navigate({ to: "/agency/$slug/crm", params: { slug } });
+  }
 
   async function handleConvert() {
     try {
@@ -154,7 +267,6 @@ function LeadDetailPage() {
       return toast.error("Erro ao converter lead: " + error.message);
     }
 
-    // Apple-like Celebration
     confetti({
       particleCount: 150,
       spread: 70,
@@ -168,249 +280,1081 @@ function LeadDetailPage() {
     qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
   }
 
-  return (
-    <div className="space-y-8 pb-10">
-      {/* Top Nav */}
-      <div className="flex items-center justify-between mb-8">
-        <Link
-          to="/agency/$slug/crm"
-          params={{ slug }}
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Voltar ao Kanban
-        </Link>
-        {!editing && !lead.client_id && (
-          <button
-            onClick={() => setEditing(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-semibold hover:bg-surface-alt transition-colors"
-          >
-            <Pencil className="h-3.5 w-3.5" /> Editar Lead
-          </button>
-        )}
-      </div>
+  // --- Checklist Helpers ---
+  async function toggleChecklistItem(itemId: string, done: boolean) {
+    const list = lead.checklist || [];
+    const updated = list.map((item) => (item.id === itemId ? { ...item, done } : item));
+    try {
+      await updateLead(lead.id, { checklist: updated });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+    } catch (e) {
+      toast.error("Falha ao salvar checklist");
+    }
+  }
 
-      {editing ? (
-        <div className="mb-10">
-          <LeadForm
-            lead={lead}
-            stages={stagesQ.data ?? []}
-            onCancel={() => setEditing(false)}
-            onSaved={() => {
-              setEditing(false);
-              qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-              qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-            }}
-          />
+  async function addChecklistItem(e: React.FormEvent) {
+    e.preventDefault();
+    if (!checklistInput.trim()) return;
+    const list = lead.checklist || [];
+    const newItem = {
+      id: Math.random().toString(36).substring(2),
+      text: checklistInput.trim(),
+      done: false,
+    };
+    const updated = [...list, newItem];
+    try {
+      await updateLead(lead.id, { checklist: updated });
+      setChecklistInput("");
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      toast.success("Item adicionado!");
+    } catch (e) {
+      toast.error("Falha ao adicionar item");
+    }
+  }
+
+  async function deleteChecklistItem(itemId: string) {
+    const list = lead.checklist || [];
+    const updated = list.filter((item) => item.id !== itemId);
+    try {
+      await updateLead(lead.id, { checklist: updated });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+    } catch (e) {
+      toast.error("Falha ao deletar item");
+    }
+  }
+
+  // --- Tag Helpers ---
+  async function addTag() {
+    if (!newTagName.trim()) return;
+    const tagString = `${newTagName.trim()}:${newTagColor}`;
+    const list = lead.tags || [];
+    if (list.includes(tagString)) return toast.error("Tag já existe");
+    const updated = [...list, tagString];
+    try {
+      await updateLead(lead.id, { tags: updated });
+      setNewTagName("");
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+      toast.success("Tag adicionada!");
+    } catch (e) {
+      toast.error("Falha ao adicionar tag");
+    }
+  }
+
+  async function removeTag(tag: string) {
+    const list = lead.tags || [];
+    const updated = list.filter((t) => t !== tag);
+    try {
+      await updateLead(lead.id, { tags: updated });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+    } catch (e) {
+      toast.error("Falha ao remover tag");
+    }
+  }
+
+  // --- Attachments Helpers ---
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const toastId = toast.loading(`Enviando arquivo ${file.name}...`);
+    try {
+      await uploadLeadAttachment(lead.id, file, lead.attachments || []);
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      toast.success("Arquivo enviado com sucesso!", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao fazer upload", { id: toastId });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function removeAttachment(attachmentId: string) {
+    if (!confirm("Remover este anexo permanentemente?")) return;
+    const list = lead.attachments || [];
+    const updated = list.filter((a) => a.id !== attachmentId);
+    try {
+      await updateLead(lead.id, { attachments: updated });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      toast.success("Anexo removido.");
+    } catch (e) {
+      toast.error("Falha ao remover anexo");
+    }
+  }
+
+  // --- LGPD Helpers ---
+  async function handleLgpdToggle(checked: boolean) {
+    try {
+      await updateLead(lead.id, {
+        lgpd_accepted: checked,
+        lgpd_accepted_at: checked ? new Date().toISOString() : null,
+      });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      toast.success("Termo LGPD atualizado!");
+    } catch (e) {
+      toast.error("Erro ao atualizar LGPD");
+    }
+  }
+
+  // --- Photo Upload Helpers ---
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const toastId = toast.loading(`Enviando foto de perfil...`);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `crm/avatars/${lead.id}/${Date.now()}.${fileExt}`;
+      const { error } = await supabase.storage.from("agency-media").upload(filePath, file);
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+      await updateLead(lead.id, { avatar_url: publicUrl });
+      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+      toast.success("Foto atualizada com sucesso!", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao enviar foto", { id: toastId });
+    }
+  }
+
+  function handleCopyFormLink() {
+    const url = `${window.location.origin}/m/lead/${lead.id}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Link do formulário copiado para a área de transferência!");
+  }
+
+  function handleShareFormWhatsApp() {
+    const url = `${window.location.origin}/m/lead/${lead.id}`;
+    const text = `Olá, ${lead.name}! Para podermos personalizar seu atendimento e planejar sua viagem para ${lead.destination || "seu destino de interesse"}, por favor preencha este formulário rápido: ${url}`;
+    const waUrl = `https://wa.me/${lead.phone?.replace(/\D/g, "") || ""}?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, "_blank");
+  }
+
+  return (
+    <SheetPage
+      isOpen={true}
+      onClose={handleClose}
+      title={lead?.name || "Carregando lead..."}
+      width="clamp(720px, 60vw, 1024px)"
+    >
+      {leadQ.isLoading ? (
+        <div className="flex h-64 items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
         </div>
       ) : (
-        <>
-          {/* Hero Section (Minimalist & Premium) */}
-          <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                {stage && (
-                  <span
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-border text-[10px] font-bold tracking-widest uppercase"
-                    style={{ color: stage.color }}
-                  >
-                    <span
-                      className="w-1.5 h-1.5 rounded-full mr-1.5"
-                      style={{ backgroundColor: stage.color }}
-                    />
-                    {stage.name}
-                  </span>
-                )}
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
-                  Criado em {fmtDate(lead.created_at)}
-                </span>
-              </div>
-
-              <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-4">
-                {lead.name}
-              </h1>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                {lead.email && (
-                  <a
-                    href={`mailto:${lead.email}`}
-                    className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Mail className="h-4 w-4" /> {lead.email}
-                  </a>
-                )}
-                {lead.phone && (
-                  <a
-                    href={`https://wa.me/${lead.phone.replace(/\\D/g, "")}`}
-                    target="_blank"
-                    className="flex items-center gap-1.5 text-muted-foreground hover:text-emerald-600 transition-colors"
-                  >
-                    <Phone className="h-4 w-4" /> {lead.phone}
-                  </a>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col md:items-end gap-3">
-              <div className="flex items-center gap-3">
-                <Badge icon={MapPin} text={lead.destination || "Destino não definido"} />
-                <Badge icon={Users} text={`${lead.pax_count} Pax`} />
-                {lead.estimated_value > 0 && (
-                  <Badge icon={DollarSign} text={money(lead.estimated_value)} highlight />
-                )}
-              </div>
-              <div className="text-xs text-muted-foreground mt-2">
-                Responsável:{" "}
-                <span className="font-semibold text-foreground">
-                  {ownerQ.data?.full_name ?? "Não atribuído"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Action / Conversion Banner */}
-          {lead.client_id ? (
-            <div className="mb-10 rounded-2xl border border-success/30 bg-success/5 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4 text-success">
-                <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
-                  <UserCheck className="h-5 w-5" />
+        <div className="space-y-6">
+          {/* Header Actions Row */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-xl">
+            <div className="flex items-center gap-3">
+              {lead.avatar_url ? (
+                <div className="relative group h-12 w-12 rounded-full overflow-hidden border border-border">
+                  <img src={lead.avatar_url} className="h-full w-full object-cover" />
+                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                    <Camera className="h-4 w-4 text-white" />
+                    <input type="file" onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+                  </label>
                 </div>
-                <div>
-                  <h3 className="font-bold">Lead Convertido em Cliente</h3>
-                  <p className="text-sm opacity-80 mt-0.5">
-                    A negociação foi um sucesso e o cadastro já foi efetivado.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() =>
-                  navigate({
-                    to: "/agency/$slug/clients/$id",
-                    params: { slug, id: lead.client_id! },
-                  })
-                }
-                className="rounded-full bg-success text-success-foreground px-6 py-2.5 text-sm font-bold tracking-wide hover:bg-success/90 transition-colors shrink-0"
-              >
-                Acessar Perfil Oficial
-              </button>
-            </div>
-          ) : stage?.is_won ? (
-            <div className="mb-10 rounded-2xl border border-foreground/10 bg-surface-alt/50 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              ) : (
+                <label className="h-12 w-12 rounded-full border border-dashed border-border hover:border-brand/60 flex items-center justify-center cursor-pointer group bg-surface">
+                  <Camera className="h-5 w-5 text-muted-foreground group-hover:text-brand" />
+                  <input type="file" onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+                </label>
+              )}
               <div>
-                <h3 className="font-bold text-foreground">Ação Requerida</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  O negócio foi dado como ganho. Converta o lead para prosseguir com vendas
-                  oficiais.
+                <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
+                  {lead.name}
+                  {lead.lgpd_accepted && (
+                    <span className="text-[10px] font-bold text-success bg-success/10 border border-success/30 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                      <ShieldAlert className="h-3 w-3 inline" /> LGPD OK
+                    </span>
+                  )}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Estágio atual: <span className="font-bold text-foreground" style={{ color: stage?.color }}>{stage?.name}</span>
                 </p>
               </div>
-              <button
-                onClick={handleConvert}
-                className="rounded-full bg-foreground text-background px-6 py-2.5 text-sm font-bold tracking-wide hover:opacity-90 transition-opacity shrink-0"
-              >
-                Converter para Cliente
-              </button>
             </div>
-          ) : null}
 
-          {/* Layout Columns */}
-          <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
-            {/* Timeline Column */}
-            <section>
-              <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                Histórico e Timeline
-              </h2>
-              <NewActivity
-                leadId={lead.id}
-                agencyId={lead.agency_id}
-                onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
-              />
-              <div className="mt-8">
-                <Timeline
-                  activities={(activitiesQ.data as any) ?? []}
-                  onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
-                />
-              </div>
-            </section>
-
-            {/* Side Column */}
-            <aside className="space-y-6">
-              {/* Change Stage Block */}
-              <div className="rounded-2xl border border-border bg-surface p-5">
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                  Alterar Estágio
-                </label>
-                <Select
-                  value={lead.stage_id}
-                  className="rounded-xl border-border bg-background h-10 w-full"
-                  onChange={async (e) => {
-                    const newStage = e.target.value;
-                    if (newStage === lead.stage_id) return;
-                    const fromName = stage?.name ?? "—";
-                    const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
-                    try {
-                      await updateLead(lead.id, { stage_id: newStage });
-                      await addLeadActivity({
-                        leadId: lead.id,
-                        agencyId: lead.agency_id,
-                        type: "stage_change",
-                        content: `Movido de ${fromName} para ${toName}`,
-                        metadata: { from: lead.stage_id, to: newStage },
-                      });
-                      qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-                      qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
-                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                    } catch (error: any) {
-                      toast.error(error.message);
-                    }
-                  }}
+            <div className="flex items-center gap-2 flex-wrap">
+              {lead.phone && (
+                <a
+                  href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
+                  target="_blank"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
+                  title="WhatsApp Rápido"
                 >
-                  {stagesQ.data?.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              {/* Notes Block */}
-              {lead.notes && (
-                <div className="rounded-2xl border border-border bg-surface p-5">
-                  <div className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                    Anotações do Lead
-                  </div>
-                  <p className="whitespace-pre-wrap text-sm text-foreground/80 leading-relaxed">
-                    {lead.notes}
-                  </p>
-                </div>
+                  <Send className="h-3.5 w-3.5" /> WhatsApp
+                </a>
               )}
-
-              {/* Detailed Info Block */}
-              <div className="rounded-2xl border border-border bg-surface p-5">
-                <div className="block text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                  Detalhes Fixos
-                </div>
-                <dl className="space-y-3 text-xs">
-                  <Row k="Origem" v={lead.source ?? "—"} />
-                  <Row k="Data Ida" v={lead.travel_start ? fmtDate(lead.travel_start) : "—"} />
-                  <Row k="Data Retorno" v={lead.travel_end ? fmtDate(lead.travel_end) : "—"} />
-                  {lead.closed_at && <Row k="Fechamento" v={fmtDate(lead.closed_at)} />}
-                  {lead.lost_reason && <Row k="Motivo Perda" v={lead.lost_reason} />}
-                </dl>
-              </div>
-            </aside>
+              {lead.phone && (
+                <button
+                  onClick={handleShareFormWhatsApp}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                  title="Enviar Formulário via WhatsApp"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" /> Enviar Form WA
+                </button>
+              )}
+              <button
+                onClick={handleCopyFormLink}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
+                title="Copiar Link do Formulário"
+              >
+                <FileText className="h-3.5 w-3.5" /> Link Form
+              </button>
+              {!lead.client_id ? (
+                <PrimaryButton onClick={() => setConfirmConvertOpen(true)} className="rounded-full gap-1.5 text-xs font-bold h-9">
+                  <UserCheck className="h-4 w-4" /> Converter em Cliente
+                </PrimaryButton>
+              ) : (
+                <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-full px-4 py-1.5 flex items-center gap-1">
+                  <Check className="h-3.5 w-3.5" /> Convertido
+                </span>
+              )}
+              <GhostButton onClick={() => setEditing((e) => !e)} className="rounded-full h-9 px-4 text-xs font-bold">
+                {editing ? "Visualizar" : "Editar Campos"}
+              </GhostButton>
+            </div>
           </div>
-        </>
-      )}
-    </div>
-  );
-}
 
-function Badge({ icon: Icon, text, highlight }: { icon: any; text: string; highlight?: boolean }) {
-  return (
-    <div
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium ${highlight ? "border-foreground text-foreground bg-foreground/5" : "border-border text-muted-foreground bg-surface"}`}
-    >
-      <Icon className="h-4 w-4 opacity-70" /> {text}
-    </div>
+          {editing ? (
+            <LeadForm
+              lead={lead}
+              stages={stagesQ.data ?? []}
+              onCancel={() => setEditing(false)}
+              onSaved={() => {
+                setEditing(false);
+                qc.invalidateQueries({ queryKey: ["lead", lead_id] });
+                qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+              }}
+            />
+          ) : (
+            <Tabs defaultValue="general" className="w-full">
+              <TabsList className="flex gap-2 border-b border-border mb-6 bg-surface-alt/10 p-1 rounded-xl">
+                <TabsTrigger value="general" className="text-xs font-bold py-2 px-4">Geral</TabsTrigger>
+                <TabsTrigger value="pax" className="text-xs font-bold py-2 px-4">Acompanhantes</TabsTrigger>
+                <TabsTrigger value="meetings" className="text-xs font-bold py-2 px-4">Agenda & Lembretes</TabsTrigger>
+                <TabsTrigger value="proposals" className="text-xs font-bold py-2 px-4">Cotações</TabsTrigger>
+                <TabsTrigger value="omnichannel" className="text-xs font-bold py-2 px-4 flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" /> Mensagens</TabsTrigger>
+                <TabsTrigger value="ai_insights" className="text-xs font-bold py-2 px-4 flex items-center gap-1 text-brand"><Sparkles className="h-3.5 w-3.5" /> IA Hunter</TabsTrigger>
+                <TabsTrigger value="timeline" className="text-xs font-bold py-2 px-4">Histórico</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="general" className="space-y-6">
+                {/* Staleness Quiz if stale */}
+                {diffDays >= 5 && lead.staleness_status === "active" && (
+                  <div className="bg-warning/5 border border-warning/15 p-4 rounded-xl space-y-2.5">
+                    <div className="flex items-center gap-2 text-warning text-xs font-bold">
+                      <AlertCircle className="h-4 w-4" />
+                      <span>O lead está sem contato há {diffDays} dias! O que aconteceu?</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">Evite a perda da oportunidade respondendo a este quiz rápido.</p>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {[
+                        { label: "Sumiu / Não responde", v: "disappeared" },
+                        { label: "Desistiu", v: "gave_up" },
+                        { label: "Sem Crédito / Orçamento", v: "no_credit" },
+                        { label: "Viagem Adiada", v: "postponed" }
+                      ].map((opt) => (
+                        <button
+                          key={opt.v}
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await updateLead(lead.id, { staleness_status: opt.v });
+                              await addLeadActivity({
+                                leadId: lead.id,
+                                agencyId: lead.agency_id,
+                                type: "note",
+                                content: `Inatividade registrada: "${opt.label}"`
+                              });
+                              qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                              qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                              toast.success("Status de inatividade atualizado!");
+                            } catch (e) {
+                              toast.error("Falha ao salvar");
+                            }
+                          }}
+                          className="text-[10px] font-bold bg-background border border-border px-3 py-1.5 rounded-lg hover:border-brand/40 transition-colors cursor-pointer"
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Stale status notification with reactivation option */}
+                {lead.staleness_status && lead.staleness_status !== "active" && (
+                  <div className="bg-muted/50 border border-border p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs font-bold text-foreground block">Lead Classificado como Inativo</span>
+                      <span className="text-[11px] text-muted-foreground mt-0.5 block">Motivo: {lead.staleness_status === "disappeared" ? "Sumiu / Não responde" : lead.staleness_status === "gave_up" ? "Desistiu / Comprou em outra agência" : lead.staleness_status === "no_credit" ? "Sem orçamento / crédito" : "Viagem adiada"}.</span>
+                    </div>
+                    <GhostButton
+                      onClick={async () => {
+                        try {
+                          await updateLead(lead.id, { staleness_status: "active", last_contacted_at: new Date().toISOString() });
+                          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                          toast.success("Lead reativado com sucesso!");
+                        } catch (e) {
+                          toast.error("Falha ao reativar");
+                        }
+                      }}
+                      className="text-xs font-bold h-8 px-3 rounded-lg"
+                    >
+                      Re-ativar Lead
+                    </GhostButton>
+                  </div>
+                )}
+
+                {/* Grid info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Trip Details Card */}
+                  <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-brand" /> Viagem & Interesse
+                    </h4>
+                    <div className="space-y-3 text-sm">
+                      <Row k="Destino" v={lead.destination || "Não definido"} />
+                      <Row k="Tipo de Interesse" v={INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label || "Não informado"} />
+                      <Row k="Orçamento Estimado" v={money(lead.estimated_value || 0)} />
+                      <Row k="Período" v={lead.travel_start ? `${fmtDate(lead.travel_start)} até ${lead.travel_end ? fmtDate(lead.travel_end) : "Indefinido"}` : "Indefinido"} />
+                      <Row k="Canal / Origem" v={lead.source || "Direto"} />
+                      <Row k="Detalhe do Canal" v={lead.lead_source_detail ? lead.lead_source_detail.replace("_", " ") : "Orgânico"} />
+                    </div>
+                  </div>
+
+                  {/* Accessibility / PCD Card */}
+                  <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-brand" /> Acessibilidade & Saúde
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="flex flex-col gap-2 text-xs font-semibold text-foreground">
+                        <div className="flex items-center gap-2">
+                          <input type="checkbox" disabled checked={lead.pcd || false} className="h-4 w-4 rounded border-border" />
+                          <span>PCD (Pessoa com Deficiência)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input type="checkbox" disabled checked={lead.reduced_mobility || false} className="h-4 w-4 rounded border-border" />
+                          <span>Mobilidade Reduzida</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input type="checkbox" disabled checked={lead.autism || false} className="h-4 w-4 rounded border-border" />
+                          <span>Espectro Autista (TEA)</span>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-border/40">
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Notas de Saúde / Restrições</span>
+                        <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-lg border border-border/40">
+                          {lead.health_notes || "Nenhuma observação cadastrada."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Consentimento LGPD */}
+                <div className="rounded-xl border border-border bg-surface p-5 flex items-center justify-between gap-4">
+                  <div>
+                    <h4 className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                      Consentimento LGPD
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      O lead aceitou os termos de privacidade e coleta de dados da agência.
+                      {lead.lgpd_accepted_at && (
+                        <span className="block mt-0.5 text-success font-semibold">
+                          Aceito em: {new Date(lead.lgpd_accepted_at).toLocaleString("pt-BR")}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={lead.lgpd_accepted || false}
+                    onChange={(e) => handleLgpdToggle(e.target.checked)}
+                    className="h-5 w-5 rounded border-border bg-background text-brand focus:ring-brand cursor-pointer"
+                  />
+                </div>
+
+                {/* Stage and Owner Dropdowns Card */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-xl border border-border">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                      Estágio do Funil
+                    </label>
+                    <Select
+                      value={lead.stage_id}
+                      className="rounded-xl border-border bg-background h-10 w-full text-xs"
+                      onChange={async (e) => {
+                        const newStage = e.target.value;
+                        if (newStage === lead.stage_id) return;
+                        const fromName = stage?.name ?? "—";
+                        const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
+                        try {
+                          await updateLead(lead.id, { stage_id: newStage });
+                          await addLeadActivity({
+                            leadId: lead.id,
+                            agencyId: lead.agency_id,
+                            type: "stage_change",
+                            content: `Movido de ${fromName} para ${toName}`,
+                            metadata: { from: lead.stage_id, to: newStage },
+                          });
+                          qc.invalidateQueries({ queryKey: ["lead", lead_id] });
+                          qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
+                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                          toast.success(`Estágio alterado para ${toName}`);
+                        } catch (error: any) {
+                          toast.error(error.message);
+                        }
+                      }}
+                    >
+                      {stagesQ.data?.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                      Responsável / Dono
+                    </label>
+                    <Select
+                      value={lead.owner_id || ""}
+                      className="rounded-xl border-border bg-background h-10 w-full text-xs"
+                      onChange={async (e) => {
+                        const val = e.target.value || null;
+                        try {
+                          await transferLead(lead.id, val);
+                          qc.invalidateQueries({ queryKey: ["lead", lead_id] });
+                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                          qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
+                          toast.success("Dono do lead atualizado.");
+                        } catch (e) {
+                          toast.error("Falha ao salvar dono");
+                        }
+                      }}
+                    >
+                      <option value="">Não atribuído</option>
+                      {usersQ.data?.map((u: any) => (
+                        <option key={u.user_id} value={u.user_id}>
+                          {u.user_name} ({u.role})
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Tag pill list and creator */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
+                    Tags do Lead
+                  </h4>
+                  
+                  {/* Tag list */}
+                  {(!lead.tags || lead.tags.length === 0) ? (
+                    <p className="text-xs text-muted-foreground">Nenhuma tag cadastrada.</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5">
+                      {lead.tags.map((tag) => {
+                        const [name, color] = tag.split(":");
+                        return (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold text-white shadow-sm"
+                            style={{ backgroundColor: color || "#3b82f6" }}
+                          >
+                            {name}
+                            <button
+                              onClick={() => removeTag(tag)}
+                              className="hover:bg-black/20 rounded p-0.5 shrink-0"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Add Tag */}
+                  <div className="space-y-2.5 pt-2">
+                    <Input
+                      placeholder="Nome da tag..."
+                      value={newTagName}
+                      onChange={(e) => setNewTagName(e.target.value)}
+                      className="h-8 text-xs rounded-lg"
+                    />
+                    
+                    <div className="flex flex-wrap gap-1.5">
+                      {TAG_COLOR_PRESETS.map((color) => (
+                        <button
+                          key={color.value}
+                          type="button"
+                          onClick={() => setNewTagColor(color.value)}
+                          className={`h-5 w-5 rounded-full border border-black/10 transition-transform ${
+                            newTagColor === color.value ? "scale-125 ring-2 ring-brand" : "hover:scale-110"
+                          }`}
+                          style={{ backgroundColor: color.value }}
+                          title={color.name}
+                        />
+                      ))}
+                    </div>
+
+                    <GhostButton
+                      onClick={addTag}
+                      disabled={!newTagName.trim()}
+                      className="w-full h-8 rounded-lg text-xs font-bold"
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1 inline" /> Criar Tag
+                    </GhostButton>
+                  </div>
+                </div>
+
+                {/* General notes */}
+                {lead.notes && (
+                  <div className="rounded-xl border border-border bg-surface p-5">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 mb-3">
+                      Anotações de Cadastro
+                    </h4>
+                    <p className="whitespace-pre-wrap text-xs text-foreground/80 leading-relaxed font-medium">
+                      {lead.notes}
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="pax" className="space-y-6">
+                {/* Magic Client Link */}
+                <div className="bg-brand/[0.03] border border-brand/15 p-5 rounded-xl space-y-2.5">
+                  <div className="flex items-center gap-2 text-brand text-xs font-bold">
+                    <Sparkles className="h-4 w-4" />
+                    <span>Link Mágico de Cadastro do Cliente</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Envie este link para que o cliente revise as preferências de viagem, preencha documentos e cadastre todos os acompanhantes da família ou grupo de forma autônoma.
+                  </p>
+                  <div className="flex gap-2">
+                    <GhostButton onClick={handleCopyFormLink} className="h-8 px-3 rounded-lg text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10">
+                      <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
+                    </GhostButton>
+                    {lead.phone && (
+                      <button
+                        onClick={handleShareFormWhatsApp}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                      >
+                        <MessageSquare className="h-3.5 w-3.5" /> Enviar Form no WhatsApp
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Travelers List */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      Viajantes Vinculados / Acompanhantes
+                    </h4>
+                    <span className="text-xs font-extrabold text-brand bg-brand/5 border border-brand/10 px-2 py-0.5 rounded">
+                      {lead.pax_list?.length || 0} Passageiros
+                    </span>
+                  </div>
+
+                  {(!lead.pax_list || lead.pax_list.length === 0) ? (
+                    <p className="text-xs text-muted-foreground py-6 text-center">Nenhum acompanhante cadastrado.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      {lead.pax_list.map((pax, index) => (
+                        <div key={index} className="border border-border/60 p-4 rounded-xl bg-surface-alt/15 relative hover:border-border transition-colors">
+                          <button
+                            onClick={async () => {
+                              if (!confirm("Remover este acompanhante?")) return;
+                              const list = lead.pax_list || [];
+                              const updated = list.filter((_, idx) => idx !== index);
+                              try {
+                                await updateLead(lead.id, { pax_list: updated });
+                                qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                                toast.success("Acompanhante removido!");
+                              } catch (e) {
+                                toast.error("Falha ao salvar");
+                              }
+                            }}
+                            className="absolute right-3 top-3 text-muted-foreground hover:text-danger p-1 cursor-pointer"
+                            title="Remover"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                          <span className="text-xs font-bold text-foreground block truncate pr-8">{pax.full_name}</span>
+                          <span className="text-[9px] text-brand uppercase font-extrabold bg-brand/5 border border-brand/10 px-1.5 py-0.5 rounded inline-block mt-1">
+                            {pax.relationship === "spouse" ? "Cônjuge" : pax.relationship === "child" ? "Filho(a)" : pax.relationship === "parent" ? "Pai/Mãe" : pax.relationship === "sibling" ? "Irmão/Irmã" : pax.relationship === "friend" ? "Amigo(a)" : pax.relationship === "relative" ? "Familiar" : "Outro"}
+                          </span>
+                          <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2.5 font-mono pt-2 border-t border-border/40">
+                            {pax.document && <div>CPF: {pax.document}</div>}
+                            {pax.birth_date && <div>Nasc: {new Date(pax.birth_date).toLocaleDateString("pt-BR")}</div>}
+                            {pax.phone && <div>WhatsApp: {pax.phone}</div>}
+                            {pax.email && <div className="truncate">Email: {pax.email}</div>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Add Traveler form */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <button
+                    onClick={() => setPaxFormOpen((o) => !o)}
+                    className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="h-4 w-4" /> {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante Manualmente"}
+                  </button>
+
+                  {paxFormOpen && (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!paxForm.full_name) return;
+                        const list = lead.pax_list || [];
+                        const updated = [...list, { ...paxForm }];
+                        try {
+                          await updateLead(lead.id, { pax_list: updated });
+                          setPaxForm({ full_name: "", document: "", birth_date: "", relationship: "other", phone: "", email: "" });
+                          setPaxFormOpen(false);
+                          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                          toast.success("Acompanhante cadastrado!");
+                        } catch (err) {
+                          toast.error("Falha ao salvar acompanhante");
+                        }
+                      }}
+                      className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
+                    >
+                      <Field label="Nome Completo *">
+                        <Input required value={paxForm.full_name} onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })} className="h-9 text-xs" />
+                      </Field>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Field label="CPF / Documento">
+                          <Input value={paxForm.document} onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })} className="h-9 text-xs" />
+                        </Field>
+                        <Field label="Data de Nascimento">
+                          <Input type="date" value={paxForm.birth_date} onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })} className="h-9 text-xs" />
+                        </Field>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Field label="E-mail">
+                          <Input type="email" value={paxForm.email} onChange={(e) => setPaxForm({ ...paxForm, email: e.target.value })} className="h-9 text-xs" />
+                        </Field>
+                        <Field label="WhatsApp / Telefone">
+                          <Input value={paxForm.phone} onChange={(e) => setPaxForm({ ...paxForm, phone: e.target.value })} className="h-9 text-xs" />
+                        </Field>
+                      </div>
+                      <Field label="Relação / Parentesco">
+                        <Select value={paxForm.relationship} onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })} className="h-9 text-xs bg-background">
+                          <option value="spouse">Cônjuge</option>
+                          <option value="child">Filho(a)</option>
+                          <option value="parent">Pai/Mãe</option>
+                          <option value="sibling">Irmão/Irmã</option>
+                          <option value="friend">Amigo(a)</option>
+                          <option value="relative">Familiar / Outro Relacionamento</option>
+                          <option value="other">Outro</option>
+                        </Select>
+                      </Field>
+                      <PrimaryButton type="submit" className="w-full text-xs h-9">
+                        Adicionar Acompanhante
+                      </PrimaryButton>
+                    </form>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="meetings" className="space-y-6">
+                {/* Meeting Scheduler and Follow-ups */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      Compromissos & Reuniões Agendadas
+                    </h4>
+                    <button
+                      onClick={() => setMeetingFormOpen((o) => !o)}
+                      className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Agendar Reunião
+                    </button>
+                  </div>
+
+                  {meetingFormOpen && (
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!meetingForm.title || !meetingForm.scheduled_at) return;
+                        try {
+                          await createLeadMeeting({
+                            lead_id: lead.id,
+                            agency_id: lead.agency_id,
+                            title: meetingForm.title,
+                            description: meetingForm.description || null,
+                            scheduled_at: new Date(meetingForm.scheduled_at).toISOString(),
+                            duration_minutes: Number(meetingForm.duration_minutes),
+                            meeting_type: meetingForm.meeting_type,
+                          });
+                          setMeetingForm({ title: "", description: "", scheduled_at: "", duration_minutes: 30, meeting_type: "call" });
+                          setMeetingFormOpen(false);
+                          qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
+                          qc.invalidateQueries({ queryKey: ["lead-activities", lead.id] });
+                          toast.success("Compromisso agendado!");
+                        } catch (err) {
+                          toast.error("Falha ao criar compromisso");
+                        }
+                      }}
+                      className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
+                    >
+                      <Field label="Título do Compromisso *">
+                        <Input required placeholder="Ex: Apresentação da Cotação" value={meetingForm.title} onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })} className="h-9 text-xs" />
+                      </Field>
+                      <Field label="Descrição / Notas">
+                        <Input placeholder="Detalhes opcionais..." value={meetingForm.description} onChange={(e) => setMeetingForm({ ...meetingForm, description: e.target.value })} className="h-9 text-xs" />
+                      </Field>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Field label="Data & Horário *">
+                          <Input type="datetime-local" required value={meetingForm.scheduled_at} onChange={(e) => setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })} className="h-9 text-xs" />
+                        </Field>
+                        <Field label="Duração (minutos)">
+                          <Input type="number" min={5} value={meetingForm.duration_minutes} onChange={(e) => setMeetingForm({ ...meetingForm, duration_minutes: parseInt(e.target.value) || 30 })} className="h-9 text-xs" />
+                        </Field>
+                      </div>
+                      <Field label="Tipo de Evento">
+                        <Select value={meetingForm.meeting_type} onChange={(e) => setMeetingForm({ ...meetingForm, meeting_type: e.target.value })} className="h-9 text-xs bg-background">
+                          <option value="call">Chamada de Voz / Telefone</option>
+                          <option value="video">Vídeochamada (Google Meet / Zoom)</option>
+                          <option value="in_person">Reunião Presencial</option>
+                          <option value="whatsapp">Follow-up via WhatsApp</option>
+                        </Select>
+                      </Field>
+                      <PrimaryButton type="submit" className="w-full text-xs h-9">
+                        Agendar Evento
+                      </PrimaryButton>
+                    </form>
+                  )}
+
+                  {meetingsQ.isLoading ? (
+                    <div className="h-10 flex items-center justify-center">
+                      <div className="h-4 w-4 animate-spin rounded-full border border-brand border-t-transparent" />
+                    </div>
+                  ) : (!meetingsQ.data || meetingsQ.data.length === 0) ? (
+                    <p className="text-xs text-muted-foreground py-4 text-center font-medium">Nenhum compromisso agendado.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {meetingsQ.data.map((meeting: LeadMeeting) => (
+                        <div key={meeting.id} className="bg-surface-alt/20 border border-border/60 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-1 min-w-0">
+                            <span className="text-xs font-bold text-foreground block truncate">{meeting.title}</span>
+                            {meeting.description && <span className="text-[11px] text-muted-foreground block truncate">{meeting.description}</span>}
+                            <span className="text-[10px] text-brand font-semibold block">
+                              {new Date(meeting.scheduled_at).toLocaleString("pt-BR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })} ({meeting.duration_minutes} min)
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-3 self-end md:self-center shrink-0">
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const url = `${window.location.origin}/m/lead/${lead.id}`;
+                                const inviteText = `Olá ${lead.name}, agendamos nosso compromisso "${meeting.title}" para ${new Date(meeting.scheduled_at).toLocaleString("pt-BR")}. Segue o link de nosso formulário caso queira atualizar seus dados: ${url}`;
+                                navigator.clipboard.writeText(inviteText);
+                                toast.success("Convite copiado!");
+                              }}
+                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                              title="Copiar texto de convite para enviar por email ou whats"
+                            >
+                              Copiar Convite
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const toastId = toast.loading("Sincronizando com Google Agenda...");
+                                try {
+                                  await syncMeetingToGoogleCalendar(meeting.id);
+                                  qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
+                                  toast.success("Sincronizado com sucesso!", { id: toastId });
+                                } catch (err: any) {
+                                  toast.error(err.message || "Erro na sincronização", { id: toastId });
+                                }
+                              }}
+                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                                meeting.google_event_id
+                                  ? "bg-success/10 text-success border border-success/20 cursor-default"
+                                  : "bg-surface border border-border/80 hover:border-brand/40 text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              {meeting.google_event_id ? "✓ Sincronizado" : "Google Agenda"}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (!confirm("Remover este compromisso?")) return;
+                                try {
+                                  await deleteLeadMeeting(meeting.id);
+                                  qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
+                                  toast.success("Compromisso removido.");
+                                } catch (e) {
+                                  toast.error("Erro ao remover");
+                                }
+                              }}
+                              className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-lg transition-colors cursor-pointer"
+                              title="Deletar"
+                            >
+                              <Trash className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="proposals" className="space-y-6">
+                {/* Proposals Integration */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-border/40 pb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      Propostas de Venda
+                    </h4>
+                    <button
+                      onClick={() => setProposalSheetOpen(true)}
+                      className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Nova Cotação
+                    </button>
+                  </div>
+
+                  {proposalsQ.isLoading ? (
+                    <div className="h-10 flex items-center justify-center">
+                      <div className="h-4 w-4 animate-spin rounded-full border border-brand border-t-transparent" />
+                    </div>
+                  ) : (!proposalsQ.data || proposalsQ.data.length === 0) ? (
+                    <p className="text-xs text-muted-foreground py-2 text-center font-medium">Nenhuma proposta criada para este lead.</p>
+                  ) : (
+                    <ul className="space-y-2">
+                      {proposalsQ.data.map((prop) => (
+                        <li key={prop.id} className="bg-surface-alt/30 border border-border/50 rounded-lg p-2.5 flex flex-col gap-1 text-xs">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="text-foreground truncate">{prop.title}</span>
+                            <span className="font-mono text-brand font-extrabold">{money(prop.total)}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                            <span>#{prop.number} · {fmtDate(prop.created_at)}</span>
+                            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 bg-surface rounded border border-border">
+                              {prop.status}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* Attachments Section */}
+                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
+                    <Paperclip className="h-4 w-4 text-brand" /> Documentos e Anexos
+                  </h4>
+
+                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
+                    <Paperclip className="h-5 w-5 text-muted-foreground mb-1.5" />
+                    <span className="text-xs font-bold text-foreground">
+                      {uploading ? "Enviando arquivo..." : "Clique para anexar um arquivo"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5">
+                      PDF, Imagens, Documentos de viagem
+                    </span>
+                    <input
+                      type="file"
+                      disabled={uploading}
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {(!lead.attachments || lead.attachments.length === 0) ? (
+                    <p className="text-xs text-muted-foreground py-2 text-center">Nenhum arquivo anexado.</p>
+                  ) : (
+                    <ul className="divide-y divide-border/40">
+                      {lead.attachments.map((file) => (
+                        <li key={file.id} className="py-2.5 flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="h-4 w-4 shrink-0 text-brand" />
+                            <a
+                              href={file.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-medium text-foreground hover:text-brand transition-colors truncate"
+                            >
+                              {file.name}
+                            </a>
+                            <span className="text-[10px] text-muted-foreground shrink-0 font-mono">
+                              ({(file.size / 1024).toFixed(1)} KB)
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <a
+                              href={file.url}
+                              download={file.name}
+                              target="_blank"
+                              className="p-1.5 hover:bg-surface-alt rounded text-muted-foreground hover:text-foreground transition-colors"
+                              title="Baixar Arquivo"
+                            >
+                              <FileDown className="h-4 w-4" />
+                            </a>
+                            <button
+                              onClick={() => removeAttachment(file.id)}
+                              className="p-1.5 hover:bg-danger/10 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
+                              title="Remover"
+                            >
+                              <Trash className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="timeline" className="space-y-6">
+                {/* Timeline and History activities */}
+                <div className="space-y-6">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
+                    Histórico & Atividades Conversacionais
+                  </h4>
+                  <NewActivity
+                    leadId={lead.id}
+                    agencyId={lead.agency_id}
+                    onCreated={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
+                  />
+                  <Timeline
+                    activities={activitiesQ.data ?? []}
+                    onChanged={() => qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] })}
+                  />
+                </div>
+              </TabsContent>
+
+              {/* Omnichannel Chat Tab - Live */}
+              <TabsContent value="omnichannel" className="space-y-0">
+                <OmnichannelChat leadId={lead.id} agencyId={lead.agency_id} leadPhone={lead.phone} />
+              </TabsContent>
+
+              {/* AI Hunter Insights Tab - Live */}
+              <TabsContent value="ai_insights" className="space-y-6">
+                <AIHunterPanel leadId={lead.id} agencyId={lead.agency_id} />
+              </TabsContent>
+            </Tabs>
+          )}
+
+          {/* Confirm Conversao Modal Dialog */}
+          {confirmConvertOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onPointerDown={(e) => e.stopPropagation()}>
+              <div className="w-full max-w-lg bg-surface border border-border rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto" onPointerDown={(e) => e.stopPropagation()}>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">Confirmar Conversão de Cliente</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba serão vinculados automaticamente no banco de dados.</p>
+                </div>
+
+                <div className="space-y-3">
+                  <Field label="Nome Completo *">
+                    <Input required value={clientPayload.full_name} onChange={(e) => setClientPayload({...clientPayload, full_name: e.target.value})} className="h-9 text-xs" />
+                  </Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="CPF / Documento *">
+                      <Input required placeholder="Apenas números" value={clientPayload.document} onChange={(e) => setClientPayload({...clientPayload, document: e.target.value})} className="h-9 text-xs" />
+                    </Field>
+                    <Field label="Data de Nascimento">
+                      <Input type="date" value={clientPayload.birth_date} onChange={(e) => setClientPayload({...clientPayload, birth_date: e.target.value})} className="h-9 text-xs" />
+                    </Field>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="E-mail">
+                      <Input type="email" value={clientPayload.email} onChange={(e) => setClientPayload({...clientPayload, email: e.target.value})} className="h-9 text-xs" />
+                    </Field>
+                    <Field label="WhatsApp / Telefone">
+                      <Input value={clientPayload.phone} onChange={(e) => setClientPayload({...clientPayload, phone: e.target.value})} className="h-9 text-xs" />
+                    </Field>
+                  </div>
+
+                  {/* Acessibilidade */}
+                  <div className="border border-border p-4 rounded-xl space-y-3 bg-surface-alt/10">
+                    <span className="text-xs font-bold text-foreground block">Acessibilidade & Cuidados Especiais</span>
+                    <div className="flex flex-wrap gap-4 text-xs">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={clientPayload.pcd} onChange={(e) => setClientPayload({...clientPayload, pcd: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <span>PCD</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={clientPayload.reduced_mobility} onChange={(e) => setClientPayload({...clientPayload, reduced_mobility: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <span>Mobilidade Reduzida</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={clientPayload.autism} onChange={(e) => setClientPayload({...clientPayload, autism: e.target.checked})} className="h-4 w-4 rounded border-border cursor-pointer" />
+                        <span>Espectro Autista (TEA)</span>
+                      </label>
+                    </div>
+                    <Field label="Comorbidades / Restrições Médicas ou Alimentares">
+                      <Textarea rows={2} placeholder="Ex: diabético, intolerância a glúten..." value={clientPayload.health_notes} onChange={(e) => setClientPayload({...clientPayload, health_notes: e.target.value})} className="text-xs" />
+                    </Field>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
+                  <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">Cancelar</GhostButton>
+                  <PrimaryButton onClick={async () => {
+                    if (!clientPayload.full_name || !clientPayload.document) {
+                      toast.error("Nome completo e CPF são obrigatórios!");
+                      return;
+                    }
+                    try {
+                      await promoteLeadToClient(lead.id, clientPayload);
+                      confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
+                      });
+                      toast.success("Lead convertido para Cliente com sucesso!");
+                      setConfirmConvertOpen(false);
+                      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                    } catch (e: any) {
+                      toast.error(e.message || "Erro na conversão");
+                    }
+                  }} className="h-9 text-xs">Converter Agora</PrimaryButton>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {proposalSheetOpen && agency && (
+        <NewProposalSheet
+          isOpen={proposalSheetOpen}
+          onClose={() => setProposalSheetOpen(false)}
+          preSelectedLeadId={lead.id}
+          onCreated={(newProposalId) => {
+            setProposalSheetOpen(false);
+            qc.invalidateQueries({ queryKey: ["proposals", agency.id] });
+            toast.success("Redirecionando para editor de cotações...");
+            navigate({
+              to: "/agency/$slug/proposals/$id",
+              params: { slug, id: newProposalId },
+            });
+          }}
+        />
+      )}
+    </SheetPage>
   );
 }
 
@@ -441,11 +1385,15 @@ function LeadForm({
     destination: lead.destination ?? "",
     travel_start: lead.travel_start ?? "",
     travel_end: lead.travel_end ?? "",
-    pax_count: lead.pax_count,
-    estimated_value: lead.estimated_value,
+    pax_adults: lead.pax_adults || 1,
+    pax_children: lead.pax_children || 0,
+    pax_infants: lead.pax_infants || 0,
+    pax_ages_str: (lead.pax_ages as number[] || []).join(", "),
+    estimated_value: lead.estimated_value || 0,
     source: lead.source ?? "",
     notes: lead.notes ?? "",
     stage_id: lead.stage_id,
+    interest_type: lead.interest_type ?? "",
     lost_reason: lead.lost_reason ?? "",
   });
   const [busy, setBusy] = useState(false);
@@ -453,6 +1401,12 @@ function LeadForm({
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+
+    const paxAges = f.pax_ages_str
+      .split(",")
+      .map((s) => parseInt(s.trim()))
+      .filter((n) => !isNaN(n));
+
     try {
       await updateLead(lead.id, {
         name: f.name,
@@ -461,11 +1415,15 @@ function LeadForm({
         destination: f.destination || null,
         travel_start: f.travel_start || null,
         travel_end: f.travel_end || null,
-        pax_count: f.pax_count,
+        pax_adults: f.pax_adults,
+        pax_children: f.pax_children,
+        pax_infants: f.pax_infants,
+        pax_ages: paxAges,
         estimated_value: f.estimated_value,
         source: f.source || null,
         notes: f.notes || null,
         stage_id: f.stage_id,
+        interest_type: f.interest_type || null,
         lost_reason: f.lost_reason || null,
       });
       toast.success("Lead atualizado com sucesso!");
@@ -478,134 +1436,98 @@ function LeadForm({
   }
 
   return (
-    <form onSubmit={save} className="space-y-6 rounded-2xl border border-border bg-surface p-8">
-      <h2 className="text-lg font-bold">Editar Lead</h2>
-      <div className="grid md:grid-cols-2 gap-6">
-        <Field label="Nome *">
-          <Input
-            required
-            value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })}
-            className="rounded-xl h-10"
-          />
+    <form onSubmit={save} className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm">
+      <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field label="Nome completo *">
+          <Input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Email">
-          <Input
-            type="email"
-            value={f.email}
-            onChange={(e) => setF({ ...f, email: e.target.value })}
-            className="rounded-xl h-10"
-          />
+        <Field label="E-mail">
+          <Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} className="rounded-lg h-9" />
         </Field>
         <Field label="Telefone / WhatsApp">
-          <Input
-            value={f.phone}
-            onChange={(e) => setF({ ...f, phone: e.target.value })}
-            className="rounded-xl h-10"
-          />
+          <Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Destino">
-          <Input
-            value={f.destination}
-            onChange={(e) => setF({ ...f, destination: e.target.value })}
-            className="rounded-xl h-10"
-          />
+        <Field label="Destino de interesse">
+          <Input value={f.destination} onChange={(e) => setF({ ...f, destination: e.target.value })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Início da Viagem">
-          <Input
-            type="date"
-            value={f.travel_start}
-            onChange={(e) => setF({ ...f, travel_start: e.target.value })}
-            className="rounded-xl h-10"
-          />
+        <Field label="Data de início">
+          <Input type="date" value={f.travel_start} onChange={(e) => setF({ ...f, travel_start: e.target.value })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Retorno">
-          <Input
-            type="date"
-            value={f.travel_end}
-            onChange={(e) => setF({ ...f, travel_end: e.target.value })}
-            className="rounded-xl h-10"
-          />
+        <Field label="Data de término">
+          <Input type="date" value={f.travel_end} onChange={(e) => setF({ ...f, travel_end: e.target.value })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Pax">
-          <Input
-            type="number"
-            min={1}
-            value={f.pax_count}
-            onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })}
-            className="rounded-xl h-10"
-          />
+
+        <div className="grid grid-cols-3 gap-2">
+          <Field label="Adultos">
+            <Input type="number" min={1} value={f.pax_adults} onChange={(e) => setF({ ...f, pax_adults: parseInt(e.target.value) || 1 })} className="rounded-lg h-9" />
+          </Field>
+          <Field label="Crianças">
+            <Input type="number" min={0} value={f.pax_children} onChange={(e) => setF({ ...f, pax_children: parseInt(e.target.value) || 0 })} className="rounded-lg h-9" />
+          </Field>
+          <Field label="Bebês">
+            <Input type="number" min={0} value={f.pax_infants} onChange={(e) => setF({ ...f, pax_infants: parseInt(e.target.value) || 0 })} className="rounded-lg h-9" />
+          </Field>
+        </div>
+
+        <Field label="Idades das Crianças (ex: 5, 8)">
+          <Input value={f.pax_ages_str} onChange={(e) => setF({ ...f, pax_ages_str: e.target.value })} className="rounded-lg h-9" placeholder="Separadas por vírgula" />
         </Field>
-        <Field label="Valor (R$)">
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            value={f.estimated_value}
-            onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })}
-            className="rounded-xl h-10"
-          />
+
+        <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-xl text-muted-foreground space-y-1">
+          <span className="font-bold text-foreground block">Regras de Tarifa da Aviação:</span>
+          <ul className="list-disc list-inside space-y-0.5">
+            <li><strong>Adultos (ADT):</strong> 12 anos completos ou mais.</li>
+            <li><strong>Crianças (CHD):</strong> 2 a 11 anos completos (2 anos completos já pagam tarifa CHD).</li>
+            <li><strong>Bebês (INF):</strong> 0 a 23 meses (deve viajar no colo).</li>
+          </ul>
+        </div>
+
+        <Field label="Orçamento Estimado (R$)">
+          <Input type="number" min={0} value={f.estimated_value} onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })} className="rounded-lg h-9" />
         </Field>
-        <Field label="Estágio">
-          <Select
-            value={f.stage_id}
-            onChange={(e) => setF({ ...f, stage_id: e.target.value })}
-            className="rounded-xl h-10"
-          >
-            {stages.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
+
+        <Field label="Tipo de Interesse">
+          <Select value={f.interest_type} onChange={(e) => setF({ ...f, interest_type: e.target.value })} className="rounded-lg h-9">
+            <option value="">Não informado</option>
+            {INTEREST_TYPES.map((t) => (
+              <option key={t.v} value={t.v}>{t.label}</option>
             ))}
           </Select>
         </Field>
-        <Field label="Origem">
-          <Input
-            value={f.source}
-            onChange={(e) => setF({ ...f, source: e.target.value })}
-            className="rounded-xl h-10"
-          />
+
+        <Field label="Origem / Canal">
+          <Input value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })} className="rounded-lg h-9" />
+        </Field>
+
+        <Field label="Estágio do Funil">
+          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })} className="rounded-lg h-9">
+            {stages.map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </Select>
         </Field>
       </div>
-      <Field label="Anotações">
-        <Textarea
-          rows={4}
-          value={f.notes}
-          onChange={(e) => setF({ ...f, notes: e.target.value })}
-          className="rounded-xl"
-        />
-      </Field>
-      <Field label="Motivo de perda (se aplicável)">
-        <Input
-          value={f.lost_reason}
-          onChange={(e) => setF({ ...f, lost_reason: e.target.value })}
-          className="rounded-xl h-10"
-        />
+
+      <Field label="Anotações gerais">
+        <Textarea rows={3} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} className="rounded-lg" />
       </Field>
 
-      <div className="flex justify-end gap-3 pt-4 border-t border-border">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded-full px-6 py-2 text-sm font-medium hover:bg-surface-alt transition-colors"
-        >
+      <Field label="Motivo da Perda (Se perdido)">
+        <Input value={f.lost_reason} onChange={(e) => setF({ ...f, lost_reason: e.target.value })} className="rounded-lg h-9" />
+      </Field>
+
+      <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
+        <GhostButton type="button" onClick={onCancel}>
           Cancelar
-        </button>
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded-full bg-foreground text-background px-6 py-2 text-sm font-bold hover:opacity-90 transition-opacity"
-        >
-          {busy ? "Salvando…" : "Salvar Alterações"}
-        </button>
+        </GhostButton>
+        <PrimaryButton type="submit" disabled={busy}>
+          {busy ? "Salvando..." : "Salvar Alterações"}
+        </PrimaryButton>
       </div>
     </form>
   );
 }
-
-// --------------------------------------------------------------------------------------
-// Timeline Components (Apple/Minimalist Style)
-// --------------------------------------------------------------------------------------
 
 function NewActivity({
   leadId,
@@ -616,7 +1538,7 @@ function NewActivity({
   agencyId: string;
   onCreated: () => void;
 }) {
-  const [type, setType] = useState<Activity["type"]>("note");
+  const [type, setType] = useState<string>("note");
   const [content, setContent] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -643,12 +1565,12 @@ function NewActivity({
   return (
     <form
       onSubmit={submit}
-      className="rounded-2xl border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
+      className="rounded-xl border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
     >
       <Select
         value={type}
-        onChange={(e) => setType(e.target.value as Activity["type"])}
-        className="w-32 border-0 bg-transparent text-sm focus:ring-0 text-muted-foreground"
+        onChange={(e) => setType(e.target.value)}
+        className="w-32 border-0 bg-transparent text-xs focus:ring-0 text-muted-foreground"
       >
         {ACTIVITY_TYPES.map((t) => (
           <option key={t.v} value={t.v}>
@@ -659,18 +1581,18 @@ function NewActivity({
       <div className="flex-1 border-l border-border/50">
         <Textarea
           rows={1}
-          placeholder="Registre um novo passo..."
+          placeholder="Registrar um comentário, ligação ou e-mail..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="border-0 bg-transparent focus:ring-0 resize-none py-3 min-h-[44px]"
+          className="border-0 bg-transparent focus:ring-0 resize-none py-2 min-h-[38px] text-xs"
         />
       </div>
       <button
         type="submit"
         disabled={busy || !content.trim()}
-        className="m-1 rounded-full bg-foreground text-background px-4 py-2 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
+        className="m-1 rounded-lg bg-brand text-brand-foreground px-3.5 py-1.5 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
       >
-        Salvar
+        Postar
       </button>
     </form>
   );
@@ -679,13 +1601,13 @@ function NewActivity({
 function Timeline({ activities, onChanged }: { activities: Activity[]; onChanged: () => void }) {
   if (activities.length === 0) {
     return (
-      <div className="text-center text-sm text-muted-foreground py-10">
-        Histórico limpo. Nenhuma atividade registrada.
+      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-xl border border-border/50 border-dashed">
+        Sem histórico ou atividades registradas.
       </div>
     );
   }
   return (
-    <div className="relative pl-4 border-l border-border/60 space-y-6">
+    <div className="relative pl-4 border-l border-border/60 space-y-4">
       {activities.map((a) => (
         <ActivityItem key={a.id} activity={a} onChanged={onChanged} />
       ))}
@@ -699,9 +1621,11 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
   const [edit, setEdit] = useState(false);
   const [content, setContent] = useState(activity.content ?? "");
   const [me, setMe] = useState<string | null>(null);
+  
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
   }, []);
+  
   const mine = me && activity.author_id === me;
 
   const save = useMutation({
@@ -728,16 +1652,16 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
   });
 
   return (
-    <div className="relative pl-6">
-      <div className="absolute -left-[17px] top-1 flex h-8 w-8 items-center justify-center rounded-full bg-background border border-border">
-        <Icon className={`h-3.5 w-3.5 ${colorClass}`} />
+    <div className="relative pl-6 group">
+      <div className="absolute -left-[25px] top-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border">
+        <Icon className={`h-3 w-3 ${colorClass}`} />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-xl p-3.5 transition-colors">
         <div className="flex items-center justify-between">
-          <div className="text-xs font-medium text-muted-foreground">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ??
-              activity.type.replace("_", " ")}
+              (activity.type === "stage_change" ? "Mudança de Estágio" : activity.type)}
             <span className="mx-2 opacity-50">•</span>
             {new Date(activity.created_at).toLocaleString("pt-BR", {
               day: "2-digit",
@@ -748,10 +1672,11 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
           </div>
 
           {mine && !edit && activity.type !== "stage_change" && (
-            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => setEdit(true)}
-                className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+                title="Editar"
               >
                 <Pencil className="h-3 w-3" />
               </button>
@@ -759,51 +1684,316 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
                 onClick={() => {
                   if (confirm("Apagar permanentemente este registro?")) remove.mutate();
                 }}
-                className="text-muted-foreground hover:text-danger transition-colors p-1"
+                className="text-muted-foreground hover:text-danger transition-colors p-0.5"
+                title="Deletar"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash className="h-3 w-3" />
               </button>
             </div>
           )}
         </div>
 
         {edit ? (
-          <div className="mt-2 space-y-3 rounded-2xl border border-border bg-surface p-4">
+          <div className="mt-2 space-y-2.5">
             <Textarea
               rows={2}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="rounded-xl border-border/50"
+              className="rounded-lg border-border text-xs"
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-1.5">
               <button
                 onClick={() => {
                   setEdit(false);
                   setContent(activity.content ?? "");
                 }}
-                className="rounded-full px-4 py-1.5 text-xs font-medium hover:bg-surface-alt transition-colors"
+                className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-surface-alt transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={() => save.mutate()}
                 disabled={save.isPending}
-                className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-bold transition-opacity hover:opacity-90"
+                className="rounded-lg bg-brand text-brand-foreground px-3 py-1 text-xs font-bold transition-opacity hover:opacity-90"
               >
                 Salvar
               </button>
             </div>
           </div>
         ) : (
-          <div
-            className={`mt-1 text-sm text-foreground/90 leading-relaxed ${activity.type === "stage_change" ? "font-medium" : ""}`}
-          >
-            {activity.content || (
-              <span className="text-muted-foreground italic">Sem detalhes.</span>
-            )}
-          </div>
+          <p className={`text-xs text-foreground/90 leading-relaxed ${activity.type === "stage_change" ? "font-semibold text-brand" : ""}`}>
+            {activity.content}
+          </p>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── OmnichannelChat Component ─────────────────────── */
+type OmniMsg = {
+  id: string;
+  direction: "inbound" | "outbound";
+  content: string | null;
+  media_url: string | null;
+  media_type: string | null;
+  created_at: string;
+  channel: string;
+};
+
+function OmnichannelChat({
+  leadId,
+  agencyId,
+  leadPhone,
+}: {
+  leadId: string;
+  agencyId: string;
+  leadPhone?: string | null;
+}) {
+  const [messages, setMessages] = useState<OmniMsg[]>([]);
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    supabase
+      .from("omnichannel_messages")
+      .select("*")
+      .eq("lead_id", leadId)
+      .order("created_at", { ascending: true })
+      .limit(100)
+      .then(({ data }) => {
+        if (data) setMessages(data as OmniMsg[]);
+      });
+
+    const channel = supabase
+      .channel(`omni_${leadId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "omnichannel_messages", filter: `lead_id=eq.${leadId}` },
+        (payload) => { setMessages((prev) => [...prev, payload.new as OmniMsg]); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [leadId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  async function sendMessage() {
+    if (!text.trim() || sending) return;
+    setSending(true);
+    try {
+      const { error } = await supabase.from("omnichannel_messages").insert({
+        agency_id: agencyId,
+        lead_id: leadId,
+        channel: "whatsapp",
+        direction: "outbound",
+        content: text.trim(),
+        status: "pending",
+      });
+      if (error) throw error;
+      setText("");
+    } catch {
+      toast.error("Falha ao enviar mensagem");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  const lastMsgTime = messages[messages.length - 1]
+    ? new Date(messages[messages.length - 1].created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    : null;
+
+  return (
+    <div className="flex flex-col h-[620px] border border-border/80 rounded-xl bg-surface/50 overflow-hidden">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface-alt/20">
+        <div className="h-9 w-9 rounded-full bg-[#25d366]/10 flex items-center justify-center">
+          <MessageCircle className="h-4 w-4 text-[#25d366]" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-sm font-bold text-foreground">WhatsApp</h3>
+          <p className="text-[10px] text-muted-foreground">
+            {messages.length > 0 ? `${messages.length} mensagens · Última às ${lastMsgTime}` : "Nenhuma mensagem ainda"}
+          </p>
+        </div>
+        <span className="text-[10px] font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
+          {messages.length > 0 ? "ATIVO" : "AGUARDANDO"}
+        </span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#E5DDD5]/5">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
+            <MessageCircle className="h-12 w-12 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Nenhuma mensagem ainda</p>
+              <p className="text-xs text-muted-foreground/70 max-w-xs mt-1">
+                Configure a API de WhatsApp em Configurações → Omnichannel para receber mensagens em tempo real.
+              </p>
+            </div>
+          </div>
+        ) : (
+          messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.direction === "outbound" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                msg.direction === "outbound"
+                  ? "bg-brand text-brand-foreground rounded-br-sm"
+                  : "bg-surface border border-border/60 text-foreground rounded-bl-sm"
+              }`}>
+                {msg.media_type === "audio" && msg.media_url ? (
+                  <audio controls src={msg.media_url} className="max-w-full" />
+                ) : msg.media_url ? (
+                  <img src={msg.media_url} className="rounded-lg max-w-full" alt="media" />
+                ) : (
+                  <span>{msg.content}</span>
+                )}
+                <div className="text-[9px] mt-0.5 opacity-60 text-right">
+                  {new Date(msg.created_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      <div className="p-3 border-t border-border bg-surface flex items-end gap-2">
+        <Paperclip className="h-5 w-5 text-muted-foreground mb-2.5 shrink-0" />
+        <textarea
+          className="w-full text-sm bg-surface-alt border border-border/60 rounded-xl px-4 py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
+          placeholder="Digite uma mensagem..."
+          rows={1}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+        />
+        <button
+          onClick={sendMessage}
+          disabled={!text.trim() || sending}
+          className="p-2.5 bg-brand text-brand-foreground rounded-full hover:opacity-90 transition-opacity shrink-0 disabled:opacity-40"
+        >
+          <Send className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────── AIHunterPanel Component ─────────────────────── */
+type LeadInsight = {
+  fears: string[];
+  desires: string[];
+  objections: string[];
+  budget_signals: string[];
+  general_profile: string | null;
+  next_best_action: string | null;
+  updated_at: string;
+};
+
+function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string }) {
+  const [insights, setInsights] = useState<LeadInsight | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  useEffect(() => {
+    supabase.from("lead_insights").select("*").eq("lead_id", leadId).maybeSingle()
+      .then(({ data }) => { if (data) setInsights(data as LeadInsight); });
+  }, [leadId]);
+
+  async function triggerAnalysis() {
+    setAnalyzing(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/ai-message-processor`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ record: { lead_id: leadId, agency_id: agencyId } }),
+      });
+      if (!res.ok) throw new Error("Falha na análise");
+      const { data } = await supabase.from("lead_insights").select("*").eq("lead_id", leadId).maybeSingle();
+      if (data) setInsights(data as LeadInsight);
+      toast.success("Análise da IA concluída!");
+    } catch (e: any) {
+      toast.error(e.message || "Falha ao analisar");
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
+  const Tag = ({ label, cls }: { label: string; cls: string }) => (
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cls}`}>{label}</span>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-brand" />
+          <span className="font-bold text-sm text-foreground">Inteligência de Lead — Hunter Sênior</span>
+        </div>
+        <button
+          onClick={triggerAnalysis}
+          disabled={analyzing}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand bg-brand/5 rounded-lg hover:bg-brand/10 transition-colors disabled:opacity-50"
+        >
+          <Bot className="h-3.5 w-3.5" />
+          {analyzing ? "Analisando..." : "Analisar Agora"}
+        </button>
+      </div>
+
+      {!insights ? (
+        <div className="rounded-xl border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
+          <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
+          <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
+          <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
+            Quando o lead enviar mensagens via WhatsApp, a IA Hunter mapeará o perfil automaticamente.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {insights.general_profile && (
+            <div className="rounded-xl border border-brand/20 bg-brand/5 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
+                <Bot className="h-4 w-4" /> Perfil Comportamental
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">{insights.general_profile}</p>
+              <p className="text-[10px] text-muted-foreground">Atualizado em {new Date(insights.updated_at).toLocaleString("pt-BR")}</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Desejos & Sonhos", items: insights.desires, icon: <Heart className="h-4 w-4" />, cls: "bg-success/10 text-success border-success/20", color: "text-success" },
+              { title: "Medos & Bloqueios", items: insights.fears, icon: <AlertCircle className="h-4 w-4" />, cls: "bg-danger/10 text-danger border-danger/20", color: "text-danger" },
+              { title: "Objeções Comerciais", items: insights.objections, icon: <ShieldAlert className="h-4 w-4" />, cls: "bg-warning/10 text-warning border-warning/20", color: "text-warning" },
+              { title: "Sinais de Orçamento", items: insights.budget_signals, icon: <DollarSign className="h-4 w-4" />, cls: "bg-brand/10 text-brand border-brand/20", color: "text-brand" },
+            ].map(({ title, items, icon, cls, color }) => (
+              <div key={title} className="rounded-xl border border-border/80 bg-surface p-5 space-y-3">
+                <div className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}>
+                  {icon} {title}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {(items ?? []).length > 0
+                    ? items.map((item, i) => <Tag key={i} label={item} cls={cls} />)
+                    : <span className="text-xs text-muted-foreground">Nenhum mapeado</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {insights.next_best_action && (
+            <div className="rounded-xl border border-success/30 bg-success/5 p-5 space-y-2">
+              <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
+                <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
+              </div>
+              <p className="text-sm text-foreground font-medium leading-relaxed">{insights.next_best_action}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

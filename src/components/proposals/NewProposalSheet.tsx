@@ -27,6 +27,7 @@ type NewProposalSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   onCreated: (id: string) => void;
+  preSelectedLeadId?: string;
 };
 
 // ─── Combobox de busca para cliente ────────────────────────────────────────────
@@ -121,7 +122,7 @@ function ClientCombobox({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface shadow-xl">
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface">
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -279,7 +280,7 @@ function LeadCombobox({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface shadow-xl">
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface">
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <input
@@ -327,7 +328,12 @@ function LeadCombobox({
 }
 
 // ─── Sheet Principal ─────────────────────────────────────────────────────────
-export function NewProposalSheet({ isOpen, onClose, onCreated }: NewProposalSheetProps) {
+export function NewProposalSheet({
+  isOpen,
+  onClose,
+  onCreated,
+  preSelectedLeadId,
+}: NewProposalSheetProps) {
   const { agency } = useAgency();
   const qc = useQueryClient();
 
@@ -344,6 +350,42 @@ export function NewProposalSheet({ isOpen, onClose, onCreated }: NewProposalShee
   const [validUntil, setValidUntil] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && preSelectedLeadId) {
+      setLeadId(preSelectedLeadId);
+      // Fetch details from the leads table to pre-populate the form
+      supabase
+        .from("leads")
+        .select("*")
+        .eq("id", preSelectedLeadId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            setTitle(`Cotação para ${data.name} - ${data.destination || ""}`);
+            setDestination(data.destination || "");
+            if (data.client_id) setClientId(data.client_id);
+            setTravelStart(data.travel_start || "");
+            setTravelEnd(data.travel_end || "");
+            setAdults(data.pax_adults || data.pax_count || 2);
+            setChildren(data.pax_children || 0);
+            setInfants(data.pax_infants || 0);
+            setNotes(data.notes || "");
+          }
+        });
+    } else if (isOpen) {
+      setTitle("");
+      setDestination("");
+      setClientId("");
+      setLeadId("");
+      setTravelStart("");
+      setTravelEnd("");
+      setAdults(2);
+      setChildren(0);
+      setInfants(0);
+      setNotes("");
+    }
+  }, [isOpen, preSelectedLeadId]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

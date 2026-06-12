@@ -1,14 +1,19 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
 
 export const Route = createFileRoute("/agency/$slug/proposals/new")({
+  validateSearch: z.object({
+    lead_id: z.string().optional(),
+    client_id: z.string().optional(),
+  }),
   head: () => ({ meta: [{ title: "Nova cotação · TravelOS" }] }),
   component: NewProposal,
 });
@@ -16,12 +21,13 @@ export const Route = createFileRoute("/agency/$slug/proposals/new")({
 function NewProposal() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/proposals/new" });
+  const search = Route.useSearch();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [destination, setDestination] = useState("");
-  const [clientId, setClientId] = useState<string>("");
-  const [leadId, setLeadId] = useState<string>("");
+  const [clientId, setClientId] = useState<string>(search.client_id || "");
+  const [leadId, setLeadId] = useState<string>(search.lead_id || "");
   const [travelStart, setTravelStart] = useState("");
   const [travelEnd, setTravelEnd] = useState("");
   const [adults, setAdults] = useState(2);
@@ -31,6 +37,31 @@ function NewProposal() {
   const [validUntil, setValidUntil] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    async function loadContext() {
+      if (search.lead_id) {
+        const { data } = await supabase.from('leads').select('*').eq('id', search.lead_id).maybeSingle();
+        if (data) {
+          setTitle(`Cotação para ${data.name}`);
+          setDestination(data.destination || "");
+          if (data.client_id) setClientId(data.client_id);
+          setTravelStart(data.travel_start || "");
+          setTravelEnd(data.travel_end || "");
+          setAdults(data.pax_adults || data.pax_count || 2);
+          setChildren(data.pax_children || 0);
+          setInfants(data.pax_infants || 0);
+          setNotes(data.notes || "");
+        }
+      } else if (search.client_id) {
+        const { data } = await supabase.from('clients').select('*').eq('id', search.client_id).maybeSingle();
+        if (data) {
+          setTitle(`Cotação para ${data.full_name}`);
+        }
+      }
+    }
+    loadContext();
+  }, [search.lead_id, search.client_id]);
 
   const clientsQ = useQuery({
     enabled: !!agency,

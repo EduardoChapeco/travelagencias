@@ -547,6 +547,7 @@ export type Database = {
           tags: string[]
           updated_at: string
           user_id: string | null
+          avatar_url: string | null
         }
         Insert: {
           address?: Json
@@ -566,6 +567,7 @@ export type Database = {
           tags?: string[]
           updated_at?: string
           user_id?: string | null
+          avatar_url?: string | null
         }
         Update: {
           address?: Json
@@ -585,6 +587,7 @@ export type Database = {
           tags?: string[]
           updated_at?: string
           user_id?: string | null
+          avatar_url?: string | null
         }
         Relationships: [
           {
@@ -1458,6 +1461,18 @@ export type Database = {
           travel_end: string | null
           travel_start: string | null
           updated_at: string
+          tags: string[]
+          checklist: Json
+          attachments: Json
+          custom_fields: Json
+          pax_adults: number
+          pax_children: number
+          pax_infants: number
+          pax_ages: Json
+          lgpd_accepted: boolean
+          lgpd_accepted_at: string | null
+          avatar_url: string | null
+          interest_type: string | null
         }
         Insert: {
           agency_id: string
@@ -1482,6 +1497,18 @@ export type Database = {
           travel_end?: string | null
           travel_start?: string | null
           updated_at?: string
+          tags?: string[]
+          checklist?: Json
+          attachments?: Json
+          custom_fields?: Json
+          pax_adults?: number
+          pax_children?: number
+          pax_infants?: number
+          pax_ages?: Json
+          lgpd_accepted?: boolean
+          lgpd_accepted_at?: string | null
+          avatar_url?: string | null
+          interest_type?: string | null
         }
         Update: {
           agency_id?: string
@@ -1506,6 +1533,18 @@ export type Database = {
           travel_end?: string | null
           travel_start?: string | null
           updated_at?: string
+          tags?: string[]
+          checklist?: Json
+          attachments?: Json
+          custom_fields?: Json
+          pax_adults?: number
+          pax_children?: number
+          pax_infants?: number
+          pax_ages?: Json
+          lgpd_accepted?: boolean
+          lgpd_accepted_at?: string | null
+          avatar_url?: string | null
+          interest_type?: string | null
         }
         Relationships: [
           {

@@ -52,6 +52,7 @@ import { Route as PAgency_slugPage_slugRouteImport } from './routes/p.$agency_sl
 import { Route as MProposalTokenRouteImport } from './routes/m.proposal.$token'
 import { Route as MPaymentTokenRouteImport } from './routes/m.payment.$token'
 import { Route as MPassengerTokenRouteImport } from './routes/m.passenger.$token'
+import { Route as MLeadLead_idRouteImport } from './routes/m.lead.$lead_id'
 import { Route as MInviteTokenRouteImport } from './routes/m.invite.$token'
 import { Route as MContractTokenRouteImport } from './routes/m.contract.$token'
 import { Route as MCheckinTokenRouteImport } from './routes/m.checkin.$token'
@@ -77,6 +78,7 @@ import { Route as AgencySlugContractsRouteImport } from './routes/agency.$slug.c
 import { Route as AgencySlugCompetitorsRouteImport } from './routes/agency.$slug.competitors'
 import { Route as AgencySlugCompanyRouteImport } from './routes/agency.$slug.company'
 import { Route as AgencySlugClientsRouteImport } from './routes/agency.$slug.clients'
+import { Route as AgencySlugCalendarRouteImport } from './routes/agency.$slug.calendar'
 import { Route as AgencySlugBusLayoutsRouteImport } from './routes/agency.$slug.bus-layouts'
 import { Route as AgencySlugBrandRouteImport } from './routes/agency.$slug.brand'
 import { Route as AgencySlugBoardingRouteImport } from './routes/agency.$slug.boarding'
@@ -326,6 +328,11 @@ const MPassengerTokenRoute = MPassengerTokenRouteImport.update({
   path: '/m/passenger/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MLeadLead_idRoute = MLeadLead_idRouteImport.update({
+  id: '/m/lead/$lead_id',
+  path: '/m/lead/$lead_id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MInviteTokenRoute = MInviteTokenRouteImport.update({
   id: '/m/invite/$token',
   path: '/m/invite/$token',
@@ -449,6 +456,11 @@ const AgencySlugCompanyRoute = AgencySlugCompanyRouteImport.update({
 const AgencySlugClientsRoute = AgencySlugClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
+const AgencySlugCalendarRoute = AgencySlugCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => AgencySlugRoute,
 } as any)
 const AgencySlugBusLayoutsRoute = AgencySlugBusLayoutsRouteImport.update({
@@ -668,6 +680,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
+  '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -693,6 +706,7 @@ export interface FileRoutesByFullPath {
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
   '/m/invite/$token': typeof MInviteTokenRoute
+  '/m/lead/$lead_id': typeof MLeadLead_idRoute
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
@@ -766,6 +780,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
+  '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -789,6 +804,7 @@ export interface FileRoutesByTo {
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
   '/m/invite/$token': typeof MInviteTokenRoute
+  '/m/lead/$lead_id': typeof MLeadLead_idRoute
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
@@ -867,6 +883,7 @@ export interface FileRoutesById {
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
+  '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -892,6 +909,7 @@ export interface FileRoutesById {
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
   '/m/invite/$token': typeof MInviteTokenRoute
+  '/m/lead/$lead_id': typeof MLeadLead_idRoute
   '/m/passenger/$token': typeof MPassengerTokenRoute
   '/m/payment/$token': typeof MPaymentTokenRoute
   '/m/proposal/$token': typeof MProposalTokenRoute
@@ -972,6 +990,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
+    | '/agency/$slug/calendar'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -997,6 +1016,7 @@ export interface FileRouteTypes {
     | '/m/checkin/$token'
     | '/m/contract/$token'
     | '/m/invite/$token'
+    | '/m/lead/$lead_id'
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
@@ -1070,6 +1090,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
+    | '/agency/$slug/calendar'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -1093,6 +1114,7 @@ export interface FileRouteTypes {
     | '/m/checkin/$token'
     | '/m/contract/$token'
     | '/m/invite/$token'
+    | '/m/lead/$lead_id'
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
@@ -1170,6 +1192,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
+    | '/agency/$slug/calendar'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -1195,6 +1218,7 @@ export interface FileRouteTypes {
     | '/m/checkin/$token'
     | '/m/contract/$token'
     | '/m/invite/$token'
+    | '/m/lead/$lead_id'
     | '/m/passenger/$token'
     | '/m/payment/$token'
     | '/m/proposal/$token'
@@ -1247,6 +1271,7 @@ export interface RootRouteChildren {
   MCheckinTokenRoute: typeof MCheckinTokenRoute
   MContractTokenRoute: typeof MContractTokenRoute
   MInviteTokenRoute: typeof MInviteTokenRoute
+  MLeadLead_idRoute: typeof MLeadLead_idRoute
   MPassengerTokenRoute: typeof MPassengerTokenRoute
   MPaymentTokenRoute: typeof MPaymentTokenRoute
   MProposalTokenRoute: typeof MProposalTokenRoute
@@ -1557,6 +1582,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MPassengerTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/m/lead/$lead_id': {
+      id: '/m/lead/$lead_id'
+      path: '/m/lead/$lead_id'
+      fullPath: '/m/lead/$lead_id'
+      preLoaderRoute: typeof MLeadLead_idRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/m/invite/$token': {
       id: '/m/invite/$token'
       path: '/m/invite/$token'
@@ -1730,6 +1762,13 @@ declare module '@tanstack/react-router' {
       path: '/clients'
       fullPath: '/agency/$slug/clients'
       preLoaderRoute: typeof AgencySlugClientsRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
+    '/agency/$slug/calendar': {
+      id: '/agency/$slug/calendar'
+      path: '/calendar'
+      fullPath: '/agency/$slug/calendar'
+      preLoaderRoute: typeof AgencySlugCalendarRouteImport
       parentRoute: typeof AgencySlugRoute
     }
     '/agency/$slug/bus-layouts': {
@@ -2244,6 +2283,7 @@ interface AgencySlugRouteChildren {
   AgencySlugBoardingRoute: typeof AgencySlugBoardingRoute
   AgencySlugBrandRoute: typeof AgencySlugBrandRoute
   AgencySlugBusLayoutsRoute: typeof AgencySlugBusLayoutsRouteWithChildren
+  AgencySlugCalendarRoute: typeof AgencySlugCalendarRoute
   AgencySlugClientsRoute: typeof AgencySlugClientsRouteWithChildren
   AgencySlugCompanyRoute: typeof AgencySlugCompanyRoute
   AgencySlugCompetitorsRoute: typeof AgencySlugCompetitorsRoute
@@ -2270,6 +2310,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugBoardingRoute: AgencySlugBoardingRoute,
   AgencySlugBrandRoute: AgencySlugBrandRoute,
   AgencySlugBusLayoutsRoute: AgencySlugBusLayoutsRouteWithChildren,
+  AgencySlugCalendarRoute: AgencySlugCalendarRoute,
   AgencySlugClientsRoute: AgencySlugClientsRouteWithChildren,
   AgencySlugCompanyRoute: AgencySlugCompanyRoute,
   AgencySlugCompetitorsRoute: AgencySlugCompetitorsRoute,
@@ -2335,6 +2376,7 @@ const rootRouteChildren: RootRouteChildren = {
   MCheckinTokenRoute: MCheckinTokenRoute,
   MContractTokenRoute: MContractTokenRoute,
   MInviteTokenRoute: MInviteTokenRoute,
+  MLeadLead_idRoute: MLeadLead_idRoute,
   MPassengerTokenRoute: MPassengerTokenRoute,
   MPaymentTokenRoute: MPaymentTokenRoute,
   MProposalTokenRoute: MProposalTokenRoute,

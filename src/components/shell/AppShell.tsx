@@ -35,6 +35,12 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
 
+  const isFullPage =
+    pathname.endsWith("/crm") ||
+    pathname.includes("/crm/") ||
+    pathname.includes("/proposals/") ||
+    pathname.includes("/vouchers");
+
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
       <AppSidebar isPinned={isPinned} onTogglePin={togglePin} />
@@ -88,7 +94,13 @@ export function AppShell({
 
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
-            <div className="flex w-full flex-1 flex-col px-4 md:px-8 xl:px-16 py-6 md:py-8">
+            <div
+              className={
+                isFullPage
+                  ? "flex w-full flex-1 flex-col"
+                  : "flex w-full flex-1 flex-col px-4 md:px-8 xl:px-16 py-6 md:py-8"
+              }
+            >
               <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </div>
           </main>

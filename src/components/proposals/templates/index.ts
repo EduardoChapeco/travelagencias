@@ -4,7 +4,6 @@ import TemplateEditorialFlat from "./TemplateEditorialFlat";
 import TemplateExecutivo from "./TemplateExecutivo";
 import TemplateDarkPremium from "./TemplateDarkPremium";
 import TemplateLandscape from "./TemplateLandscape";
-import TemplateVoucher from "./TemplateVoucher";
 import TemplateGroupCatalog from "./TemplateGroupCatalog";
 
 export type ProposalTemplateId =
@@ -12,7 +11,6 @@ export type ProposalTemplateId =
   | "executivo-b2b"
   | "dark-premium"
   | "landscape-presentation"
-  | "voucher-pre"
   | "group-catalog";
 
 export interface TemplateDefinition {
@@ -53,13 +51,6 @@ export const PROPOSAL_TEMPLATES: TemplateDefinition[] = [
     previewBg: "#1e293b",
   },
   {
-    id: "voucher-pre",
-    label: "Voucher Pré-embarque",
-    description: "Ticket e Voucher sem preços para entregar ao cliente antes da viagem.",
-    formats: ["a4-portrait"],
-    previewBg: "#f8fafc",
-  },
-  {
     id: "group-catalog",
     label: "Catálogo de Grupo",
     description: "Ideal para excursões rodoviárias, focado em chamadas de venda e fotos.",
@@ -78,8 +69,6 @@ export function getProposalTemplate(templateId: string): React.ComponentType<{ p
       return TemplateDarkPremium;
     case "landscape-presentation":
       return TemplateLandscape;
-    case "voucher-pre":
-      return TemplateVoucher;
     case "group-catalog":
       return TemplateGroupCatalog;
     default:

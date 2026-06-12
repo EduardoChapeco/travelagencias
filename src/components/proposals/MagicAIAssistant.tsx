@@ -107,7 +107,7 @@ Não inclua crases markdown nem texto adicional.`;
           <button
             onClick={handleMagic}
             disabled={busy}
-            className="w-full flex h-10 items-center justify-center gap-2 rounded-xl bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all shadow-sm disabled:opacity-60"
+            className="w-full flex h-10 items-center justify-center gap-2 rounded-xl bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
           >
             {busy ? (
               <>

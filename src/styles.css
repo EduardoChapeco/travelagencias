@@ -262,3 +262,11 @@
     animation: none;
   }
 }
+
+@layer base {
+  *, ::before, ::after {
+    box-shadow: none !important;
+    --tw-shadow: none !important;
+    --tw-shadow-colored: none !important;
+  }
+}

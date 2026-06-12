@@ -39,9 +39,9 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
         
         {/* Caixa Translúcida Central */}
         <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-[40px] p-16 text-center max-w-4xl w-full shadow-2xl">
+          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-[40px] p-16 text-center max-w-4xl w-full">
             <div className="text-sm font-bold uppercase tracking-[0.3em] text-white/70 mb-4">Aventura Exclusiva</div>
-            <h1 className="text-[120px] leading-none mb-6 text-white drop-shadow-lg" style={{ fontFamily: "'Bebas Neue', cursive" }}>
+            <h1 className="text-[120px] leading-none mb-6 text-white" style={{ fontFamily: "'Bebas Neue', cursive" }}>
               {p.destination || p.title || "Seu Destino"}
             </h1>
             <div className="text-2xl text-white/90 font-light" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -72,12 +72,12 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
             {p.itinerary!.map((d, i) => (
               <div key={i} className="relative pl-12 pb-16 last:pb-0 break-inside-avoid">
                 <div 
-                  className="absolute w-6 h-6 rounded-full -left-[15px] border-[4px] border-white top-2 shadow-sm"
+                  className="absolute w-6 h-6 rounded-full -left-[15px] border-[4px] border-white top-2"
                   style={{ backgroundColor: brand }}
                 />
-                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8 shadow-sm">
+                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8">
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="px-4 py-1.5 rounded-lg text-xs font-bold uppercase text-white shadow-sm" style={{ backgroundColor: brand }}>
+                    <span className="px-4 py-1.5 rounded-lg text-xs font-bold uppercase text-white" style={{ backgroundColor: brand }}>
                       {d.day || `Dia ${i + 1}`}
                     </span>
                     <h4 className="text-2xl font-bold text-slate-900">{d.title}</h4>
@@ -103,7 +103,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                 </h2>
                 <div className="space-y-6">
                   {p.hotels!.map((h, i) => (
-                    <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm break-inside-avoid">
+                    <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 break-inside-avoid">
                       <div className="text-xl font-bold mb-1">{h.name}</div>
                       <div className="text-sm text-slate-500 mb-4">{h.city}</div>
                       {h.images?.[0] && (
@@ -128,7 +128,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                 </h2>
                 <div className="space-y-4">
                   {p.flights!.map((f, i) => (
-                    <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm break-inside-avoid">
+                    <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 break-inside-avoid">
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-xs font-bold uppercase tracking-widest text-slate-500">{f.airline}</span>
                         <span className="text-xs font-mono font-bold bg-slate-100 px-2 py-1 rounded">{f.flight_number}</span>
@@ -160,7 +160,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Investimento Total</div>
-          <div className="text-[120px] leading-none mb-12 drop-shadow-xl" style={{ fontFamily: "'Bebas Neue', cursive", color: brand === "#1e293b" ? "#38bdf8" : brand }}>
+          <div className="text-[120px] leading-none mb-12" style={{ fontFamily: "'Bebas Neue', cursive", color: brand === "#1e293b" ? "#38bdf8" : brand }}>
             {money(vm.totals.total, p.currency)}
           </div>
           

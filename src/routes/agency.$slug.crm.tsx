@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
@@ -7,6 +7,8 @@ import {
   X,
   Trash2,
   KanbanSquare,
+  Archive,
+  FolderOpen,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -34,11 +36,15 @@ import {
   getLeadsCountInStage,
   moveLeadsToStage,
   deleteStage as deleteStageService,
+  fetchArchivedLeads,
+  restoreLead,
+  deleteLeadPermanently,
   type Stage,
   type Lead,
 } from "@/services/crm";
 import { CrmFilterBar } from "@/components/crm/CrmFilterBar";
 import { CrmKanbanBoard } from "@/components/crm/CrmKanbanBoard";
+import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
   head: () => ({ meta: [{ title: "CRM · TravelOS" }] }),
@@ -49,9 +55,12 @@ function CRMPage() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/crm" });
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
   const [newOpen, setNewOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [proposalLeadId, setProposalLeadId] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [ownerFilter, setOwnerFilter] = useState("");
@@ -67,8 +76,8 @@ function CRMPage() {
 
   const leadsQ = useQuery({
     enabled: !!agency,
-    queryKey: ["leads", agency?.id],
-    queryFn: () => fetchLeads(agency!.id),
+    queryKey: ["leads", agency?.id, showArchived],
+    queryFn: () => (showArchived ? fetchArchivedLeads(agency!.id) : fetchLeads(agency!.id)),
   });
 
   const usersQ = useQuery({
@@ -151,8 +160,8 @@ function CRMPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4.5rem)] flex-col overflow-hidden bg-background">
-      <div className="px-6 pt-6 pb-2 border-b border-border/50 bg-surface/30">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <div className="px-6 pt-4 pb-2 border-b border-border/50 bg-surface/30">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-xl font-bold text-foreground">Pipeline CRM</h1>
@@ -161,6 +170,22 @@ function CRMPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <GhostButton
+              onClick={() => setShowArchived((v) => !v)}
+              className={`gap-2 text-[11px] uppercase tracking-widest font-bold ${
+                showArchived ? "bg-brand/10 border-brand text-brand hover:bg-brand/20" : ""
+              }`}
+            >
+              {showArchived ? (
+                <>
+                  <FolderOpen className="h-4 w-4" /> Ver Funil Ativo
+                </>
+              ) : (
+                <>
+                  <Archive className="h-4 w-4" /> Pasta de Arquivados
+                </>
+              )}
+            </GhostButton>
             <GhostButton
               onClick={() => setSettingsOpen(true)}
               className="gap-2 text-[11px] uppercase tracking-widest font-bold"
@@ -176,15 +201,17 @@ function CRMPage() {
           </div>
         </div>
 
-        <CrmFilterBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          ownerFilter={ownerFilter}
-          setOwnerFilter={setOwnerFilter}
-          sourceFilter={sourceFilter}
-          setSourceFilter={setSourceFilter}
-          users={usersQ.data ?? []}
-        />
+        {!showArchived && (
+          <CrmFilterBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            ownerFilter={ownerFilter}
+            setOwnerFilter={setOwnerFilter}
+            sourceFilter={sourceFilter}
+            setSourceFilter={setSourceFilter}
+            users={usersQ.data ?? []}
+          />
+        )}
       </div>
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
@@ -204,31 +231,102 @@ function CRMPage() {
             </div>
             <h3 className="text-lg font-bold text-foreground">Erro ao carregar o Kanban</h3>
             <p className="text-sm text-muted-foreground">
-              Não foi possível carregar as informações do CRM. Isso geralmente acontece por falta de
-              permissão ou porque o banco de dados está desatualizado.
+              Não foi possível carregar as informações do CRM.
             </p>
-            <div className="w-full text-left bg-background p-3 rounded text-xs font-mono text-danger/80 break-words mt-4">
-              {stagesQ.error && (
-                <div>
-                  <strong>Stages Error:</strong> {(stagesQ.error as Error).message}
-                </div>
-              )}
-              {leadsQ.error && (
-                <div>
-                  <strong>Leads Error:</strong> {(leadsQ.error as Error).message}
-                </div>
-              )}
-              {usersQ.error && (
-                <div>
-                  <strong>Users Error:</strong> {(usersQ.error as Error).message}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}
 
-      {stagesQ.data && stagesQ.data.length === 0 && (
+      {showArchived && leadsQ.data && (
+        <div className="flex-1 overflow-auto p-6 bg-surface/30">
+          <div className="rounded-2xl border border-border bg-surface p-6">
+            <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
+            {leadsQ.data.length === 0 ? (
+              <div className="text-center py-12 text-sm text-muted-foreground">
+                Nenhum lead arquivado encontrado.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-border/60 text-muted-foreground text-xs uppercase tracking-wider font-bold">
+                      <th className="py-3 px-4">Nome</th>
+                      <th className="py-3 px-4">Destino</th>
+                      <th className="py-3 px-4">Valor Estimado</th>
+                      <th className="py-3 px-4">Arquivado em</th>
+                      <th className="py-3 px-4 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {leadsQ.data.map((l) => (
+                      <tr key={l.id} className="hover:bg-surface-alt/40 transition-colors">
+                        <td className="py-4 px-4 font-bold text-foreground">
+                          <Link
+                            to="/agency/$slug/crm/$lead_id"
+                            params={{ slug, lead_id: l.id }}
+                            className="hover:text-brand transition-colors"
+                          >
+                            {l.name}
+                          </Link>
+                        </td>
+                        <td className="py-4 px-4 text-muted-foreground">{l.destination || "—"}</td>
+                        <td className="py-4 px-4 font-mono text-brand font-bold">
+                          {l.estimated_value && l.estimated_value > 0
+                            ? `R$ ${l.estimated_value.toLocaleString("pt-BR", {
+                                minimumFractionDigits: 2,
+                              })}`
+                            : "—"}
+                        </td>
+                        <td className="py-4 px-4 text-muted-foreground">
+                          {l.deleted_at ? new Date(l.deleted_at).toLocaleDateString("pt-BR") : "—"}
+                        </td>
+                        <td className="py-4 px-4 text-right space-x-2">
+                          <GhostButton
+                            onClick={async () => {
+                              try {
+                                await restoreLead(l.id);
+                                toast.success("Lead restaurado com sucesso!");
+                                qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                              } catch (e) {
+                                toast.error("Falha ao restaurar lead");
+                              }
+                            }}
+                            className="h-8 px-3 text-xs border-success/30 hover:bg-success/10 text-success font-semibold"
+                          >
+                            Restaurar
+                          </GhostButton>
+                          <GhostButton
+                            onClick={async () => {
+                              if (
+                                confirm(
+                                  "Tem certeza que deseja excluir permanentemente este lead? Esta ação não pode ser desfeita."
+                                )
+                              ) {
+                                try {
+                                  await deleteLeadPermanently(l.id);
+                                  toast.success("Lead excluído permanentemente!");
+                                  qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                                } catch (e) {
+                                  toast.error("Falha ao excluir permanentemente");
+                                }
+                              }
+                            }}
+                            className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
+                          >
+                            Excluir
+                          </GhostButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {!showArchived && stagesQ.data && stagesQ.data.length === 0 && (
         <div className="flex-1 p-6">
           <EmptyState
             icon={KanbanSquare}
@@ -243,7 +341,7 @@ function CRMPage() {
         </div>
       )}
 
-      {stagesQ.data && stagesQ.data.length > 0 && localLeads && (
+      {!showArchived && stagesQ.data && stagesQ.data.length > 0 && localLeads && (
         <CrmKanbanBoard
           stages={stagesQ.data}
           stagesById={stagesById}
@@ -255,6 +353,7 @@ function CRMPage() {
           onDragEnd={onDragEnd}
           onArchive={archiveLead}
           onTransfer={transferLead}
+          onCreateProposal={(id) => setProposalLeadId(id)}
         />
       )}
 
@@ -278,6 +377,24 @@ function CRMPage() {
           onUpdated={() => qc.invalidateQueries({ queryKey: ["stages", agency.id] })}
         />
       )}
+
+      {proposalLeadId && agency && (
+        <NewProposalSheet
+          isOpen={!!proposalLeadId}
+          onClose={() => setProposalLeadId(null)}
+          preSelectedLeadId={proposalLeadId}
+          onCreated={(newProposalId) => {
+            setProposalLeadId(null);
+            toast.success("Redirecionando para editor de cotações...");
+            navigate({
+              to: "/agency/$slug/proposals/$id",
+              params: { slug, id: newProposalId },
+            });
+          }}
+        />
+      )}
+
+      <Outlet />
     </div>
   );
 }

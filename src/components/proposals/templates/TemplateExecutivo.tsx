@@ -33,7 +33,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
       </div>
 
       {/* JANELA CENTRAL (Capa) */}
-      <div className="w-full h-[250px] rounded-3xl overflow-hidden relative mb-12 flex items-center justify-center break-inside-avoid shadow-sm">
+      <div className="w-full h-[250px] rounded-3xl overflow-hidden relative mb-12 flex items-center justify-center break-inside-avoid border border-slate-200">
         <img 
           src={p.cover_image_url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200&q=80"}
           crossOrigin="anonymous"
@@ -181,7 +181,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
 
         {/* FINANCEIRO */}
         <div className="mt-16 break-inside-avoid">
-          <div className="bg-[#1E293B] rounded-2xl p-10 text-white shadow-xl">
+          <div className="bg-[#1E293B] rounded-2xl p-10 text-white border border-slate-700">
             <h2 className="text-xl font-medium text-slate-300 mb-8 border-b border-slate-700 pb-4">
               Investimento Total
             </h2>

@@ -63,7 +63,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
       {/* BLOCO DE CORES ABAIXO DA CAPA */}
       <div style={{ backgroundColor: brand }} className="pb-24 pt-4 px-12 relative z-10 break-inside-avoid">
         {/* Resumo Executivo Flutuante */}
-        <div className="bg-white rounded-[32px] p-8 shadow-2xl -mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-slate-100">
+        <div className="bg-white rounded-[32px] p-8 border border-slate-200 -mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-slate-100">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Cliente</div>
             <div className="font-semibold text-slate-900 text-sm">{(p as any).client_name || "—"}</div>
@@ -98,7 +98,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </h2>
             <div className="space-y-6">
               {p.flights!.map((f, i) => (
-                <div key={i} className="border border-slate-200 rounded-3xl overflow-hidden shadow-sm break-inside-avoid">
+                <div key={i} className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid">
                   <div className="bg-blue-50 px-6 py-3 flex justify-between items-center border-b border-blue-100">
                     <span className="text-xs font-bold uppercase tracking-widest text-blue-600">{f.airline || "Companhia"}</span>
                     <span className="text-xs font-mono font-bold text-blue-800 bg-blue-100/50 px-3 py-1 rounded-full">{f.flight_number}</span>
@@ -133,7 +133,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </h2>
             <div className="space-y-6">
               {p.hotels!.map((h, i) => (
-                <div key={i} className="border border-slate-200 rounded-3xl overflow-hidden shadow-sm break-inside-avoid">
+                <div key={i} className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid">
                   <div className="bg-amber-50 px-6 py-3 flex justify-between items-center border-b border-amber-100">
                     <span className="text-xs font-bold uppercase tracking-widest text-amber-700">Hotel & Resort</span>
                     <span className="text-xs font-bold uppercase text-amber-800 bg-amber-100/50 px-3 py-1 rounded-full">{h.meal_plan || "Só Hospedagem"}</span>
@@ -178,7 +178,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
 
         {/* FINANCEIRO */}
         <div className="mt-20 break-inside-avoid">
-          <div className="bg-[#1E293B] rounded-[40px] p-12 text-white text-center shadow-2xl relative overflow-hidden">
+          <div className="bg-[#1E293B] rounded-[40px] p-12 text-white text-center border border-slate-700 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
             
             <h2 className="text-3xl mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>

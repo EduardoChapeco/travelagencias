@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Trash2, KeyRound } from "lucide-react";
+import { Plus, Trash2, KeyRound, Wifi, WifiOff, MessageCircle, Zap, BarChart3 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   fetchAgencySettings,
   saveSettings,
@@ -37,6 +38,9 @@ const INTEGRATION_PROVIDERS: Array<{ key: string; label: string; hint?: string }
   { key: "whatsapp_phone_id", label: "WhatsApp Phone Number ID" },
   { key: "whatsapp_token", label: "WhatsApp Access Token" },
   { key: "google_business", label: "Google Business Client ID" },
+  { key: "google_calendar_client_id", label: "Google Calendar Client ID", hint: "ID do cliente OAuth 2.0" },
+  { key: "google_calendar_client_secret", label: "Google Calendar Client Secret", hint: "Segredo do cliente OAuth 2.0" },
+  { key: "google_calendar_refresh_token", label: "Google Calendar Refresh Token", hint: "Refresh Token com escopo do Google Calendar" },
 ];
 
 function mask(v: string | null | undefined) {
@@ -59,6 +63,9 @@ function Page() {
           <TabsTrigger value="general">Geral</TabsTrigger>
           <TabsTrigger value="team">Equipe</TabsTrigger>
           <TabsTrigger value="integrations">Integrações</TabsTrigger>
+          <TabsTrigger value="omnichannel" className="flex items-center gap-1.5">
+            <MessageCircle className="h-3.5 w-3.5" /> Omnichannel
+          </TabsTrigger>
           <TabsTrigger value="apikeys">API Keys</TabsTrigger>
         </TabsList>
         <TabsContent value="general">
@@ -69,6 +76,9 @@ function Page() {
         </TabsContent>
         <TabsContent value="integrations">
           <IntegrationsTab agencyId={agency.id} />
+        </TabsContent>
+        <TabsContent value="omnichannel">
+          <OmnichannelTab agencyId={agency.id} />
         </TabsContent>
         <TabsContent value="apikeys">
           <ApiKeysTab agencyId={agency.id} />
@@ -558,5 +568,254 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
         )}
       </div>
     </div>
+  );
+}
+
+/* ----------------------- OMNICHANNEL TAB ----------------------- */
+function OmnichannelTab({ agencyId }: { agencyId: string }) {
+  const [busy, setBusy] = useState(false);
+  const [config, setConfig] = useState({
+    meta_pixel_id: "",
+    meta_capi_token: "",
+    meta_verify_token: "",
+    whatsapp_phone_id: "",
+    whatsapp_access_token: "",
+    evolution_api_url: "",
+    evolution_api_key: "",
+    preferred_provider: "meta_official" as "meta_official" | "evolution_api",
+  });
+
+  const { data: agency, isLoading } = useQuery({
+    queryKey: ["agency-integrations", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agencies")
+        .select("integrations_config")
+        .eq("id", agencyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const keysQuery = useQuery({
+    queryKey: ["agency-api-keys", agencyId],
+    queryFn: () => fetchApiKeys(agencyId),
+  });
+
+  useEffect(() => {
+    if (agency?.integrations_config) {
+      setConfig((c) => ({ ...c, ...agency.integrations_config }));
+    }
+    if (keysQuery.data) {
+      const getVal = (provider: string) => keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
+      setConfig((c) => ({
+        ...c,
+        meta_capi_token: getVal("meta_capi_token"),
+        meta_verify_token: getVal("meta_verify_token"),
+        whatsapp_phone_id: getVal("whatsapp_phone_id"),
+        whatsapp_access_token: getVal("whatsapp_access_token"),
+        evolution_api_key: getVal("evolution_api_key"),
+      }));
+    }
+  }, [agency, keysQuery.data]);
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      // 1. Save non-secrets to agency integrations_config
+      const nonSecrets = {
+        meta_pixel_id: config.meta_pixel_id,
+        evolution_api_url: config.evolution_api_url,
+        preferred_provider: config.preferred_provider,
+      };
+      
+      const { error } = await supabase
+        .from("agencies")
+        .update({ integrations_config: nonSecrets })
+        .eq("id", agencyId);
+      if (error) throw error;
+
+      // 2. Save secrets to api_keys
+      const secrets = [
+        { provider: "meta_capi_token", val: config.meta_capi_token, label: "Meta CAPI Token" },
+        { provider: "meta_verify_token", val: config.meta_verify_token, label: "Meta Verify Token" },
+        { provider: "whatsapp_phone_id", val: config.whatsapp_phone_id, label: "WhatsApp Phone ID" },
+        { provider: "whatsapp_access_token", val: config.whatsapp_access_token, label: "WhatsApp Access Token" },
+        { provider: "evolution_api_key", val: config.evolution_api_key, label: "Evolution API Key" },
+      ];
+
+      for (const secret of secrets) {
+        if (secret.val.trim() !== "") {
+          await saveApiKey(agencyId, {
+            provider: secret.provider,
+            label: secret.label,
+            key_value: secret.val.trim(),
+            is_active: true,
+          });
+        }
+      }
+
+      toast.success("Configurações de Omnichannel salvas com segurança!");
+    } catch (err: any) {
+      toast.error(err.message || "Falha ao salvar");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const webhookUrl = `${window.location.origin.replace("5173", "54321")}/functions/v1/whatsapp-webhook`;
+
+  if (isLoading) return <div className="p-8 text-center text-sm text-muted-foreground">Carregando...</div>;
+
+  return (
+    <form onSubmit={save} className="mt-4 space-y-6">
+      {/* Provider Selection */}
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+        <div className="flex items-center gap-2 text-foreground font-bold">
+          <MessageCircle className="h-5 w-5 text-brand" />
+          Provedor de WhatsApp
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <label className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+            config.preferred_provider === "meta_official"
+              ? "border-brand bg-brand/5"
+              : "border-border hover:border-brand/40"
+          }`}>
+            <input
+              type="radio"
+              className="sr-only"
+              name="provider"
+              value="meta_official"
+              checked={config.preferred_provider === "meta_official"}
+              onChange={() => setConfig({ ...config, preferred_provider: "meta_official" })}
+            />
+            <span className="font-bold text-sm">API Oficial Meta</span>
+            <span className="text-xs text-muted-foreground">Estável, sem servidor extra. 1.000 conversas/mês grátis.</span>
+          </label>
+          <label className={`flex flex-col gap-1 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+            config.preferred_provider === "evolution_api"
+              ? "border-brand bg-brand/5"
+              : "border-border hover:border-brand/40"
+          }`}>
+            <input
+              type="radio"
+              className="sr-only"
+              name="provider"
+              value="evolution_api"
+              checked={config.preferred_provider === "evolution_api"}
+              onChange={() => setConfig({ ...config, preferred_provider: "evolution_api" })}
+            />
+            <span className="font-bold text-sm">Evolution API (VPS)</span>
+            <span className="text-xs text-muted-foreground">Custo zero por mensagem. Requer VPS própria ($5/mês).</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Webhook URL */}
+      <div className="rounded-xl border border-dashed border-border/80 bg-surface/30 p-4 space-y-2">
+        <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground">
+          <Zap className="h-4 w-4" /> URL do Webhook (configure no painel Meta ou Evolution)
+        </div>
+        <div className="flex items-center gap-2">
+          <code className="flex-1 text-xs bg-surface-alt border border-border rounded px-3 py-2 font-mono truncate">
+            {`[SUPABASE_URL]/functions/v1/whatsapp-webhook`}
+          </code>
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(webhookUrl);
+              toast.success("URL copiada!");
+            }}
+            className="shrink-0 px-3 py-2 text-xs border border-border rounded-lg hover:bg-surface-alt transition-colors"
+          >
+            Copiar
+          </button>
+        </div>
+      </div>
+
+      {/* Meta Official Settings */}
+      {config.preferred_provider === "meta_official" && (
+        <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="text-sm font-bold text-foreground flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-brand" /> Configurações da API Oficial Meta
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="WhatsApp Phone Number ID">
+              <Input
+                type="password"
+                placeholder="Número do telefone no painel Meta..."
+                value={config.whatsapp_phone_id}
+                onChange={(e) => setConfig({ ...config, whatsapp_phone_id: e.target.value })}
+              />
+            </Field>
+            <Field label="WhatsApp Access Token" hint="Token permanente do Meta Business Manager">
+              <Input
+                type="password"
+                placeholder="EAAxxxxx..."
+                value={config.whatsapp_access_token}
+                onChange={(e) => setConfig({ ...config, whatsapp_access_token: e.target.value })}
+              />
+            </Field>
+            <Field label="Verify Token (Webhook)" hint="Defina qualquer palavra-secreta e coloque igual no Meta">
+              <Input
+                placeholder="ex: travelOS-secret-2024"
+                value={config.meta_verify_token}
+                onChange={(e) => setConfig({ ...config, meta_verify_token: e.target.value })}
+              />
+            </Field>
+          </div>
+          <div className="border-t border-border/50 pt-4">
+            <div className="text-xs font-bold text-muted-foreground mb-3">Rastreamento de Anúncios (CAPI)</div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Meta Pixel ID">
+                <Input
+                  placeholder="123456789012345"
+                  value={config.meta_pixel_id}
+                  onChange={(e) => setConfig({ ...config, meta_pixel_id: e.target.value })}
+                />
+              </Field>
+              <Field label="CAPI Access Token" hint="Para retroalimentar eventos de conversão">
+                <Input
+                  type="password"
+                  placeholder="Token da API de Conversões..."
+                  value={config.meta_capi_token}
+                  onChange={(e) => setConfig({ ...config, meta_capi_token: e.target.value })}
+                />
+              </Field>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Evolution API Settings */}
+      {config.preferred_provider === "evolution_api" && (
+        <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="text-sm font-bold text-foreground">Configurações do Evolution API (VPS)</div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="URL da VPS" hint="Ex: https://minhavps.com">
+              <Input
+                placeholder="https://"
+                value={config.evolution_api_url}
+                onChange={(e) => setConfig({ ...config, evolution_api_url: e.target.value })}
+              />
+            </Field>
+            <Field label="Evolution API Key">
+              <Input
+                type="password"
+                placeholder="Chave de acesso da Evolution API..."
+                value={config.evolution_api_key}
+                onChange={(e) => setConfig({ ...config, evolution_api_key: e.target.value })}
+              />
+            </Field>
+          </div>
+        </div>
+      )}
+
+      <PrimaryButton disabled={busy} className="w-full">
+        {busy ? "Salvando..." : "Salvar Configurações de Omnichannel"}
+      </PrimaryButton>
+    </form>
   );
 }

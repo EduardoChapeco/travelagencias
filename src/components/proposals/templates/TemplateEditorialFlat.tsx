@@ -106,7 +106,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                         <Plane className="w-4 h-4" style={{ color: brand }} />
                         <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: brand }}>{f.airline || "Companhia"}</span>
                       </div>
-                      <span className="bg-white px-3 py-1 rounded-full text-[10px] font-mono font-bold text-slate-700 shadow-sm">
+                      <span className="bg-white px-3 py-1 rounded-full text-[10px] font-mono font-bold text-slate-700 border border-slate-200">
                         {f.flight_number || "Voo"}
                       </span>
                     </div>

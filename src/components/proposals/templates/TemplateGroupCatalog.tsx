@@ -56,7 +56,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
         {/* COLUNA ESQUERDA - DESCRIÇÃO E ROTEIRO (Ocupa 2 colunas) */}
         <div className="col-span-2 space-y-8">
           
-          <div className="bg-white rounded-3xl p-8 border border-slate-200 break-inside-avoid shadow-sm">
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 break-inside-avoid">
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-4">Sobre a Viagem</h2>
             <p className="text-slate-600 leading-relaxed text-lg">
               Um roteiro cuidadosamente planejado para você não se preocupar com nada. Apenas embarque no nosso ônibus executivo e aproveite a companhia de outros viajantes em uma experiência única para {p.destination}.
@@ -64,7 +64,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
           </div>
 
           {vm.hasItinerary && (
-            <div className="bg-white rounded-3xl p-8 border border-slate-200 break-inside-avoid shadow-sm">
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 break-inside-avoid">
               <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-6">Programação</h2>
               <div className="space-y-6">
                 {p.itinerary!.map((d, i) => (
@@ -90,7 +90,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
         {/* COLUNA DIREITA - PAINEL DE VENDAS */}
         <div className="space-y-6">
           
-          <div className="bg-white border-2 rounded-3xl p-6 shadow-xl sticky top-8 break-inside-avoid" style={{ borderColor: brand }}>
+          <div className="bg-white border-2 rounded-3xl p-6 sticky top-8 break-inside-avoid" style={{ borderColor: brand }}>
             <div className="text-center mb-6 border-b border-slate-100 pb-6">
               <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">A partir de</div>
               <div className="text-5xl font-black tracking-tighter text-slate-900">
@@ -111,7 +111,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             </div>
 
             {/* BOTÃO FALSO PARA MOSTRAR QUE É UM CATALOGO */}
-            <div className="w-full py-4 rounded-xl text-center text-white font-black uppercase tracking-widest text-lg shadow-lg border-b-4 opacity-90" style={{ backgroundColor: brand, borderBottomColor: "rgba(0,0,0,0.2)" }}>
+            <div className="w-full py-4 rounded-xl text-center text-white font-black uppercase tracking-widest text-lg border-b-4 opacity-90" style={{ backgroundColor: brand, borderBottomColor: "rgba(0,0,0,0.2)" }}>
               Garantir Vaga
             </div>
             <div className="text-center text-xs text-slate-400 font-bold mt-4">
@@ -119,7 +119,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm break-inside-avoid">
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 break-inside-avoid">
             <h3 className="font-black text-slate-900 uppercase tracking-tighter mb-4 text-lg">O Pacote Inclui</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm font-semibold text-slate-700">

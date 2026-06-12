@@ -127,6 +127,19 @@ function ProposalEditor() {
         .single();
       if (error) throw new Error(error.message);
       
+      const { error: contractError } = await supabase
+        .from("contracts")
+        .insert({
+          agency_id: agency.id,
+          trip_id: tripData.id,
+          status: "draft",
+          version: "1.0",
+          total_value: draft.total,
+          package_summary: `Contrato gerado a partir da cotação #${draft.number} - ${draft.title}`,
+          client_data: { name: draft.title }
+        });
+      if (contractError) throw new Error("Viagem criada, mas falha ao criar contrato: " + contractError.message);
+      
       await updateProposal(id, { status: "converted" });
       return tripData;
     },

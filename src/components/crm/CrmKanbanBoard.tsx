@@ -14,6 +14,7 @@ type BoardProps = {
   onDragEnd: (e: any) => void;
   onArchive: (id: string) => void;
   onTransfer: (id: string, ownerId: string) => void;
+  onCreateProposal?: (id: string) => void;
 };
 
 export function CrmKanbanBoard({
@@ -27,6 +28,7 @@ export function CrmKanbanBoard({
   onDragEnd,
   onArchive,
   onTransfer,
+  onCreateProposal,
 }: BoardProps) {
   return (
     <DndContext
@@ -48,6 +50,7 @@ export function CrmKanbanBoard({
                 users={users}
                 onArchive={onArchive}
                 onTransfer={onTransfer}
+                onCreateProposal={onCreateProposal}
               />
             );
           })}
@@ -70,36 +73,39 @@ type ColumnProps = {
   users: Array<{ user_id: string | null; user_name: string | null }>;
   onArchive: (id: string) => void;
   onTransfer: (id: string, ownerId: string) => void;
+  onCreateProposal?: (id: string) => void;
 };
 
-function Column({ stage, leads, slug, users, onArchive, onTransfer }: ColumnProps) {
+function Column({ stage, leads, slug, users, onArchive, onTransfer, onCreateProposal }: ColumnProps) {
   const { setNodeRef, isOver } = useSortable({ id: stage.id, data: { type: "column" } });
   const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
 
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[340px] shrink-0 flex-col rounded-2xl border bg-surface/60 transition-all duration-300 ${isOver ? "border-brand bg-brand/5" : "border-border/60"}`}
+      className={`flex h-full w-[360px] shrink-0 flex-col rounded-2xl border bg-surface/50 transition-all duration-300 ${
+        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "border-border/80"
+      }`}
+      style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/50 bg-surface-alt/40 px-5 py-4 rounded-t-2xl">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-5 py-4 rounded-t-xl">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2.5">
             <span
-              className="h-3 w-3 rounded-full ring-4 ring-surface"
+              className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
               style={{ background: stage.color }}
             />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
           </div>
-          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-background px-2 text-[11px] font-bold text-muted-foreground ring-1 ring-border">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-background px-1.5 text-[10px] font-bold text-muted-foreground ring-1 ring-border">
             {leads.length}
-            {(stage.is_won || stage.is_lost) && leads.length >= 50 ? "+" : ""}
           </span>
         </div>
         {totalValue > 0 && (
-          <div className="text-[11px] font-medium text-muted-foreground mt-1 ml-5">
-            Pipeline:{" "}
+          <div className="text-[10px] font-medium text-muted-foreground mt-1 ml-5">
+            Total:{" "}
             <span className="text-foreground font-bold">
               R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </span>
@@ -107,7 +113,7 @@ function Column({ stage, leads, slug, users, onArchive, onTransfer }: ColumnProp
         )}
       </div>
       <SortableContext items={leads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 space-y-3.5 overflow-y-auto p-4 no-scrollbar cursor-default bg-background/30">
+        <div className="flex-1 space-y-3.5 overflow-y-auto p-4 no-scrollbar cursor-default bg-background/10">
           {leads.map((lead) => (
             <SortableLead
               key={lead.id}
@@ -116,15 +122,11 @@ function Column({ stage, leads, slug, users, onArchive, onTransfer }: ColumnProp
               users={users}
               onArchive={onArchive}
               onTransfer={onTransfer}
+              onCreateProposal={onCreateProposal}
             />
           ))}
-          {(stage.is_won || stage.is_lost) && leads.length >= 50 && (
-            <div className="text-center text-[10px] text-muted-foreground pt-3 font-medium uppercase tracking-wider">
-              Apenas os últimos 50 visíveis
-            </div>
-          )}
           {leads.length === 0 && (
-            <div className="flex h-32 items-center justify-center rounded-xl border-2 border-dashed border-border/60 bg-surface/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/40">
+            <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
               Solte leads aqui
             </div>
           )}
