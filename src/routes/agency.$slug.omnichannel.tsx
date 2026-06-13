@@ -23,8 +23,7 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
 
-// @ts-ignore – route registered via file-based routing; types regenerate on next vite dev run
-export const Route = createFileRoute("/agency/$slug/omnichannel" as any)({
+export const Route = createFileRoute("/agency/$slug/omnichannel")({
   head: () => ({ meta: [{ title: "Omnichannel · TravelOS" }] }),
   component: OmnichannelPage,
 });

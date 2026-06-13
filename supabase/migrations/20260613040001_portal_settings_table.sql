@@ -43,16 +43,16 @@ CREATE POLICY "Agency members can manage portal settings"
   FOR ALL
   USING (
     EXISTS (
-      SELECT 1 FROM public.agency_members am
-      WHERE am.agency_id = portal_settings.agency_id
-        AND am.user_id = auth.uid()
+      SELECT 1 FROM public.user_roles ur
+      WHERE ur.agency_id = portal_settings.agency_id
+        AND ur.user_id = auth.uid()
     )
   )
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM public.agency_members am
-      WHERE am.agency_id = portal_settings.agency_id
-        AND am.user_id = auth.uid()
+      SELECT 1 FROM public.user_roles ur
+      WHERE ur.agency_id = portal_settings.agency_id
+        AND ur.user_id = auth.uid()
     )
   );
 

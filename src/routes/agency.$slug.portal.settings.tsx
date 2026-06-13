@@ -18,8 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Textarea, Select, PrimaryButton } from "@/components/ui/form";
 
-// @ts-ignore – route registered via file-based routing; types regenerate on next vite dev run
-export const Route = createFileRoute("/agency/$slug/portal/settings" as any)({
+export const Route = createFileRoute("/agency/$slug/portal/settings")({
   head: () => ({ meta: [{ title: "Configurações do Portal · TravelOS" }] }),
   component: PortalSettingsPage,
 });

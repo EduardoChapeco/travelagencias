@@ -68,8 +68,8 @@ CREATE INDEX IF NOT EXISTS idx_omnichannel_sessions_agency_last_msg
 CREATE INDEX IF NOT EXISTS idx_portal_pages_sort
   ON public.portal_pages(agency_id, sort_order);
 
-CREATE INDEX IF NOT EXISTS idx_cms_posts_agency_published
-  ON public.cms_posts(agency_id, is_published, published_at DESC NULLS LAST);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_agency_published
+  ON public.blog_posts(agency_id, status, published_at DESC NULLS LAST);
 
 -- ─────────────────────────────────────────────────────────────────
 -- 6. Function: Atualizar last_message_at e preview na sessão
@@ -116,7 +116,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1
     FROM public.omnichannel_sessions s
-    JOIN public.agency_members m ON m.agency_id = s.agency_id
+    JOIN public.user_roles m ON m.agency_id = s.agency_id
     WHERE s.id = p_session_id AND m.user_id = auth.uid()
   ) THEN
     RAISE EXCEPTION 'access_denied';
