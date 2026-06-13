@@ -200,6 +200,7 @@ export interface CreateProposalPayload {
   currency: string;
   valid_until?: string;
   notes?: string;
+  visibility?: "private" | "agency" | "public";
 }
 
 export async function createProposal(
@@ -222,6 +223,7 @@ export async function createProposal(
     currency: payload.currency || "BRL",
     valid_until: payload.valid_until || null,
     notes: payload.notes || null,
+    visibility: payload.visibility || "private",
     owner_id: ownerId || null,
     // Safely enforce defaults for JSONB NOT NULL fields
     flights: [],
@@ -254,7 +256,7 @@ export async function fetchProposalsList(
   const { data, count, error } = await supabase
     .from("proposals")
     .select(
-      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token",
+      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility",
       { count: "exact" },
     )
     .eq("agency_id", agencyId)
@@ -329,14 +331,17 @@ export async function deleteProposal(proposalId: string): Promise<void> {
  */
 export async function generateProposalPdfViaServer(
   proposalId: string,
-  proposalNumber: number,
+  agencyId: string,
+  format: string = "A4",
+  landscape: boolean = false,
 ): Promise<string> {
   const { data, error } = await supabase.functions.invoke("generate-proposal-pdf", {
-    body: { proposalId },
+    body: { proposal_id: proposalId, agency_id: agencyId, format, landscape },
   });
   if (error) throw new Error(error.message ?? "Erro ao gerar PDF no servidor");
-  if (!data?.url) throw new Error("PDF gerado, mas URL não retornada pelo servidor");
-  return data.url as string;
+  const url = data?.pdf_url || data?.url;
+  if (!url) throw new Error("PDF gerado, mas URL não retornada pelo servidor");
+  return url as string;
 }
 
 /**

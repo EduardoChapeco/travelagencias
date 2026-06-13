@@ -6,19 +6,23 @@ export function DocumentPage({
   className = "",
 }: {
   children: React.ReactNode;
-  format?: "a4-portrait" | "a4-landscape";
+  format?: "a4-portrait" | "a4-landscape" | "presentation-169";
   className?: string;
 }) {
-  const isPortrait = format === "a4-portrait";
-  const dims = isPortrait
-    ? { width: "210mm", height: "297mm" }
-    : { width: "297mm", height: "210mm" };
+  let dims = { width: "210mm", height: "297mm" };
+  let pageClass = "a4-page";
+
+  if (format === "a4-landscape") {
+    dims = { width: "297mm", height: "210mm" };
+    pageClass = "a4-landscape-page";
+  } else if (format === "presentation-169") {
+    dims = { width: "1920px", height: "1080px" };
+    pageClass = "presentation-page";
+  }
 
   return (
     <div
-      className={`relative bg-white flex flex-col shrink-0 overflow-hidden box-border ${
-        isPortrait ? "a4-page" : "a4-landscape-page"
-      } ${className}`}
+      className={`relative bg-white flex flex-col shrink-0 overflow-hidden box-border ${pageClass} ${className}`}
       style={{
         width: dims.width,
         height: dims.height,

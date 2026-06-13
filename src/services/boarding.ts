@@ -4,8 +4,33 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type ChecklistItem = { label: string; done: boolean; passenger_id?: string };
 
+export type ProposedFlight = {
+  origin: string;
+  destination: string;
+  date: string;
+  departure_time: string;
+  arrival_time: string;
+  airline: string;
+  flight_number: string;
+};
+
+export type ProposedHotel = {
+  name: string;
+  city: string;
+  checkin: string;
+  checkout: string;
+};
+
+export type ProposedDetails = {
+  id: string;
+  title: string;
+  flights: ProposedFlight[];
+  hotels: ProposedHotel[];
+};
+
 export type BoardingCard = {
   id: string;
+  agency_id?: string;
   pnr: string | null;
   airline: string | null;
   status: string;
@@ -17,6 +42,12 @@ export type BoardingCard = {
   passengers_count?: number | null;
   trip_title?: string;
   trip_destination?: string;
+  tags?: string[];
+  notes?: string | null;
+  internal_ref?: string | null;
+  proposal_details?: ProposedDetails | null;
+  briefing_date?: string | null;
+  briefing_url?: string | null;
 };
 
 export type MinTrip = {
@@ -37,31 +68,53 @@ export async function fetchBoardingCards(agencyId: string): Promise<BoardingCard
   const { data, error } = await supabase
     .from("boarding_cards")
     .select(
-      "id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count",
+      "id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count, tags, notes, internal_ref, briefing_date, briefing_url",
     )
     .eq("agency_id", agencyId)
     .order("position");
   if (error) throw new Error(error.message);
 
   const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
-  const tripMap: Record<string, { title: string; destination?: string }> = {};
+  const tripMap: Record<string, { title: string; destination?: string; proposal_id?: string | null }> = {};
+  const proposalMap: Record<string, ProposedDetails> = {};
 
   if (tripIds.length > 0) {
     const { data: trips } = await supabase
       .from("trips")
-      .select("id, title, destination")
+      .select("id, title, destination, proposal_id")
       .in("id", tripIds);
     (trips ?? []).forEach((t: any) => {
-      tripMap[t.id] = { title: t.title, destination: t.destination };
+      tripMap[t.id] = { title: t.title, destination: t.destination, proposal_id: t.proposal_id };
     });
+
+    const proposalIds = [...new Set((trips ?? []).map((t: any) => t.proposal_id).filter(Boolean))];
+    if (proposalIds.length > 0) {
+      const { data: proposals } = await supabase
+        .from("proposals")
+        .select("id, title, flights, hotels")
+        .in("id", proposalIds);
+      (proposals ?? []).forEach((p: any) => {
+        proposalMap[p.id] = {
+          id: p.id,
+          title: p.title,
+          flights: (p.flights ?? []) as ProposedFlight[],
+          hotels: (p.hotels ?? []) as ProposedHotel[],
+        };
+      });
+    }
   }
 
-  return (data ?? []).map((c: any) => ({
-    ...c,
-    checklist: c.checklist ?? [],
-    trip_title: tripMap[c.trip_id]?.title,
-    trip_destination: tripMap[c.trip_id]?.destination,
-  })) as BoardingCard[];
+  return (data ?? []).map((c: any) => {
+    const t = tripMap[c.trip_id];
+    const pId = t?.proposal_id;
+    return {
+      ...c,
+      checklist: c.checklist ?? [],
+      trip_title: t?.title,
+      trip_destination: t?.destination,
+      proposal_details: pId ? proposalMap[pId] : null,
+    };
+  }) as BoardingCard[];
 }
 
 export async function fetchBoardingTrips(agencyId: string): Promise<MinTrip[]> {
@@ -105,6 +158,17 @@ export async function updateBoardingCardChecklist(
   const { error } = await supabase
     .from("boarding_cards")
     .update({ checklist: checklist as never })
+    .eq("id", cardId);
+  if (error) throw new Error(error.message);
+}
+
+export async function updateBoardingCard(
+  cardId: string,
+  patch: Partial<Pick<BoardingCard, "pnr" | "airline" | "departure_date" | "passengers_count" | "tags" | "notes" | "internal_ref" | "alerts" | "briefing_date" | "briefing_url">>,
+): Promise<void> {
+  const { error } = await supabase
+    .from("boarding_cards")
+    .update(patch as never)
     .eq("id", cardId);
   if (error) throw new Error(error.message);
 }

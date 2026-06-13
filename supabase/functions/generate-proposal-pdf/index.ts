@@ -26,7 +26,7 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
-    const { proposal_id, agency_id, format = "A4" } = await req.json();
+    const { proposal_id, agency_id, format = "A4", landscape = false } = await req.json();
 
     if (!proposal_id || !agency_id) {
       throw new Error("proposal_id and agency_id are required");
@@ -60,16 +60,28 @@ serve(async (req) => {
     const page = await browser.newPage();
     
     // Set viewport based on format
-    if (format === "A4") {
-      await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+    if (landscape) {
+      if (format === "presentation-169" || format === "16:9") {
+        await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
+      } else {
+        await page.setViewport({ width: 1123, height: 794, deviceScaleFactor: 2 }); // A4 Landscape
+      }
     } else {
-      await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 2 });
+      if (format === "A4") {
+        await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+      } else {
+        await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 2 });
+      }
     }
 
     await page.goto(targetUrl, { waitUntil: "networkidle0" });
 
+    // For PDF page format setting
+    const pdfFormat = (format === "presentation-169" || format === "16:9") ? "Letter" : format;
+
     const pdfBuffer = await page.pdf({
-      format: format as any,
+      format: pdfFormat as any,
+      landscape: !!landscape,
       printBackground: true,
       margin: { top: 0, bottom: 0, left: 0, right: 0 },
     });

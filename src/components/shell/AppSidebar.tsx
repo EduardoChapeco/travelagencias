@@ -22,6 +22,7 @@ import {
   Briefcase,
   Radar,
   Calendar,
+  MessageSquare,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -44,10 +45,10 @@ const items: NavItem[] = [
   { label: "Frota & Ônibus", segment: "bus-layouts", icon: Bus },
   { label: "Vistos", segment: "visas", icon: Globe2 },
   { label: "Corporativo", segment: "corporate", icon: Building2 },
-
   { label: "Clientes", segment: "clients", icon: UserRound },
   { label: "Fornecedores", segment: "suppliers", icon: Store },
   { label: "Suporte", segment: "support", icon: LifeBuoy },
+  { label: "Omnichannel", segment: "omnichannel", icon: MessageSquare },
   { label: "Portal", segment: "portal", icon: Globe },
   { label: "Base de Conhecimento", segment: "knowledge", icon: BookOpen },
   { label: "Minha Empresa", segment: "company", icon: Building2 },

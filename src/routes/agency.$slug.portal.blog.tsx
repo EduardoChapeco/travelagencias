@@ -14,6 +14,8 @@ import {
   Search,
   Sparkles,
   Wand2,
+  Share2,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +52,8 @@ type Post = {
   tags: string[];
   author_id: string | null;
   seo: { meta_title?: string; meta_description?: string; og_image_url?: string } | null;
+  google_posted_at: string | null;
+  google_post_id: string | null;
 };
 
 function slugify(s: string) {
@@ -89,15 +93,14 @@ function BlogPage() {
     enabled: !!agency,
     queryKey: ["blog", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
+      const { data, error } = await (supabase.from as any)("blog_posts")
         .select(
-          "id, slug, title, excerpt, cover_image_url, status, published_at, views, category, tags, author_id, seo",
+          "id, slug, title, excerpt, cover_image_url, status, published_at, views, category, tags, author_id, seo, google_posted_at, google_post_id",
         )
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Post[];
+      return (data ?? []) as Post[];
     },
   });
 
@@ -292,6 +295,25 @@ function BlogSheet({
   const [metaDesc, setMetaDesc] = useState(post?.seo?.meta_description ?? "");
   const [seoOpen, setSeoOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [gbpPosting, setGbpPosting] = useState(false);
+
+  async function postToGoogleBusiness() {
+    if (!post?.id) return;
+    setGbpPosting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase.functions.invoke("google-business-post", {
+        body: { post_id: post.id, agency_id: agencyId },
+      });
+      if (res.error) throw res.error;
+      toast.success("✓ Post publicado no Google Meu Negócio!");
+      onSaved();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao publicar no Google. Verifique a configuração OAuth.");
+    } finally {
+      setGbpPosting(false);
+    }
+  }
 
   // Load full content if editing
   useEffect(() => {
@@ -550,13 +572,35 @@ function BlogSheet({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
-            {submitting ? "Salvando…" : post ? "Salvar alterações" : "Criar artigo"}
-          </PrimaryButton>
+        <div className="border-t border-border px-6 py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            {/* Google Business Post button */}
+            {post?.status === "published" && !post?.google_posted_at && (
+              <button
+                type="button"
+                onClick={postToGoogleBusiness}
+                disabled={gbpPosting}
+                className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground disabled:opacity-50 transition-colors"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                {gbpPosting ? "Publicando..." : "Publicar no Google"}
+              </button>
+            )}
+            {post?.google_posted_at && (
+              <span className="flex items-center gap-1.5 text-xs text-success font-medium">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                No Google desde {new Date(post.google_posted_at).toLocaleDateString("pt-BR")}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <GhostButton type="button" onClick={onClose}>
+              Cancelar
+            </GhostButton>
+            <PrimaryButton type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
+              {submitting ? "Salvando…" : post ? "Salvar alterações" : "Criar artigo"}
+            </PrimaryButton>
+          </div>
         </div>
       </div>
     </div>

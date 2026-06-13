@@ -14,6 +14,12 @@ import {
   HelpCircle,
   Sparkles,
   ArrowLeft,
+  Quote,
+  Bus,
+  BarChart2,
+  Play,
+  Map,
+  Rss,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
@@ -35,6 +41,7 @@ import {
   publishPortalPage,
 } from "@/services/portal";
 import { useBlockEditor } from "@/hooks/use-block-editor";
+import { BLOCK_LABELS } from "@/lib/cms-types";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -338,29 +345,46 @@ function PageEditorRoute() {
                             <Plus className="h-3.5 w-3.5" /> Bloco
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuContent align="end" className="w-64">
                           <DropdownMenuLabel>Layout Básico</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("hero")}>
-                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero
-                            (Capa principal)
+                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero (Capa principal)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("text")}>
                             <Type className="w-4 h-4 mr-2 text-muted-foreground" /> Texto com imagem
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("gallery")}>
+                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de fotos
+                          </DropdownMenuItem>
+
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel>Social Proof</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => addBlock("testimonials")}>
+                            <Quote className="w-4 h-4 mr-2 text-muted-foreground" /> Depoimentos
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("stats")}>
+                            <BarChart2 className="w-4 h-4 mr-2 text-muted-foreground" /> Números em destaque
+                          </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
                           <DropdownMenuLabel>Módulos Específicos</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => addBlock("gallery")}>
-                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de
-                            fotos
+                          <DropdownMenuItem onClick={() => addBlock("tours_grid")}>
+                            <Bus className="w-4 h-4 mr-2 text-muted-foreground" /> Grade de Roteiros
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("blog_feed")}>
+                            <Rss className="w-4 h-4 mr-2 text-muted-foreground" /> Feed do Blog
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("features")}>
-                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais
-                            (Features)
+                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais (Features)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("faq")}>
-                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas
-                            Frequentes (FAQ)
+                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas Frequentes (FAQ)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("video")}>
+                            <Play className="w-4 h-4 mr-2 text-muted-foreground" /> Vídeo embed
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("map")}>
+                            <Map className="w-4 h-4 mr-2 text-muted-foreground" /> Mapa / Localização
                           </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
@@ -369,8 +393,7 @@ function PageEditorRoute() {
                             <Megaphone className="w-4 h-4 mr-2 text-brand" /> Call to Action (Faixa)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("contact")}>
-                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato
-                            Integrado
+                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato Integrado
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -404,7 +427,7 @@ function PageEditorRoute() {
                           <div className="flex items-center justify-between bg-surface-alt/50 px-3 py-2 border-b border-border">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                {block.type === "text" ? "Texto" : block.type}
+                                {BLOCK_LABELS[block.type] ?? block.type}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">

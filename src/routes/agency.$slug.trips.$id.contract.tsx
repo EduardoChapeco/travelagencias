@@ -18,11 +18,16 @@ import {
   Trash2,
   Pencil,
   Eye,
+  FileCheck,
+  History,
+  Clock,
+  UserCheck
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PrimaryButton, GhostButton, StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { PrimaryButton, GhostButton, StatusBadge, money, fmtDate, Input, Field } from "@/components/ui/form";
+import JSZip from "jszip";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/contract")({
   head: () => ({ meta: [{ title: "Contrato · TravelOS" }] }),
@@ -43,7 +48,7 @@ type Contract = {
   trip_id: string;
   agency_id: string;
   version: string;
-  status: "draft" | "sent" | "pending_signature" | "signed" | "cancelled";
+  status: "draft" | "sent" | "pending_signature" | "signed" | "cancelled" | "viewed";
   package_summary: string | null;
   total_value: number;
   payment_terms: string | null;
@@ -57,6 +62,12 @@ type Contract = {
     signer_document: string;
     signed_at: string;
     ip: string;
+    user_agent?: string;
+    signature_image?: string;
+    selfie_image?: string;
+    doc_front?: string;
+    doc_back?: string;
+    video_kyc?: string;
   }>;
   certificate: { serial: string; issued_at: string } | null;
   content_hash: string | null;
@@ -64,6 +75,10 @@ type Contract = {
   public_token: string;
   signed_at: string | null;
   created_at: string;
+  viewed_at?: string | null;
+  last_viewed_at?: string | null;
+  view_count?: number;
+  pdf_url?: string | null;
 };
 
 type Trip = {
@@ -106,6 +121,7 @@ type Passenger = {
 const STATUS_LABEL: Record<string, string> = {
   draft: "Rascunho",
   sent: "Enviado",
+  viewed: "Visualizado",
   pending_signature: "Aguardando assinatura",
   signed: "Assinado",
   cancelled: "Cancelado",
@@ -114,6 +130,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_TONE: Record<string, "neutral" | "info" | "warning" | "success" | "danger"> = {
   draft: "neutral",
   sent: "info",
+  viewed: "warning",
   pending_signature: "warning",
   signed: "success",
   cancelled: "danger",
@@ -210,6 +227,34 @@ function TripContract() {
     },
   });
 
+  const auditChainQ = useQuery({
+    enabled: !!contractQ.data?.id,
+    queryKey: ["contract_audit_chain", contractQ.data?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contract_audit_chain")
+        .select("*")
+        .eq("contract_id", contractQ.data!.id)
+        .order("id", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const addendumsQ = useQuery({
+    enabled: !!contractQ.data?.id,
+    queryKey: ["contract_addendums", contractQ.data?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("contract_addendums")
+        .select("*")
+        .eq("contract_id", contractQ.data!.id)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   // ── State ────────────────────────────────────────────────────────────────────
 
   const [packageSummary, setPackageSummary] = useState("");
@@ -218,6 +263,9 @@ function TripContract() {
   const [showClauses, setShowClauses] = useState(false);
   const [editingCustom, setEditingCustom] = useState(false);
   const [newClause, setNewClause] = useState({ section: "", clause_text: "" });
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addendumTitle, setAddendumTitle] = useState("");
+  const [addendumContent, setAddendumContent] = useState("");
 
   useEffect(() => {
     if (contractQ.data) {
@@ -362,6 +410,177 @@ function TripContract() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao cancelar"),
   });
 
+  const createAddendum = useMutation({
+    mutationFn: async ({ title, content }: { title: string; content: string }) => {
+      const contract = contractQ.data;
+      if (!contract) throw new Error("Sem contrato ativo");
+      const { data, error } = await supabase
+        .from("contract_addendums")
+        .insert({
+          contract_id: contract.id,
+          title,
+          content,
+          status: "pending_signature",
+        })
+        .select("*")
+        .single();
+      if (error) throw error;
+
+      // Cria log na cadeia de auditoria blockchain
+      const { error: auditErr } = await supabase
+        .from("contract_audit_chain")
+        .insert({
+          contract_id: contract.id,
+          action: "ADDENDUM_CREATED",
+          metadata: { addendum_id: data.id, title },
+        });
+      if (auditErr) console.warn("Erro ao registrar auditoria de aditivo:", auditErr);
+
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Aditivo criado com sucesso e enviado para assinatura", { id: "addendum" });
+      qc.invalidateQueries({ queryKey: ["contract_addendums", contractQ.data?.id] });
+      qc.invalidateQueries({ queryKey: ["contract_audit_chain", contractQ.data?.id] });
+      setAddendumTitle("");
+      setAddendumContent("");
+      setShowAddForm(false);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao criar aditivo", { id: "addendum" }),
+  });
+
+  const fetchBlob = async (pathOrUrl: string) => {
+    if (pathOrUrl.startsWith("http")) {
+      const res = await fetch(pathOrUrl);
+      return await res.blob();
+    } else {
+      const { data, error } = await supabase.storage.from("contract-pdfs").download(pathOrUrl);
+      if (error) throw error;
+      return data;
+    }
+  };
+
+  const handleDownloadZip = async () => {
+    const contract = contractQ.data;
+    if (!contract) return;
+    toast.loading("Preparando pacote de validação...", { id: "zip" });
+    try {
+      const zip = new JSZip();
+      
+      // 1. Baixar PDF do Contrato
+      if (contract.pdf_url) {
+        try {
+          const pdfBlob = await fetchBlob(contract.pdf_url);
+          zip.file("contrato-assinado.pdf", pdfBlob);
+        } catch (e) {
+          console.error("Falha ao baixar PDF do contrato:", e);
+        }
+      }
+      
+      // 2. Baixar documentos KYC dos assinantes
+      if (contract.signatures) {
+        for (let i = 0; i < contract.signatures.length; i++) {
+          const sig = contract.signatures[i];
+          const prefix = `assinante_${i + 1}_${sig.signer_name.toLowerCase().replace(/\s+/g, "_")}`;
+          
+          if (sig.signature_image) {
+            try {
+              const blob = await fetchBlob(sig.signature_image);
+              zip.file(`${prefix}_assinatura.png`, blob);
+            } catch (e) { console.error(e); }
+          }
+          if (sig.selfie_image) {
+            try {
+              const blob = await fetchBlob(sig.selfie_image);
+              zip.file(`${prefix}_selfie.jpg`, blob);
+            } catch (e) { console.error(e); }
+          }
+          if (sig.doc_front) {
+            try {
+              const blob = await fetchBlob(sig.doc_front);
+              zip.file(`${prefix}_doc_frente.jpg`, blob);
+            } catch (e) { console.error(e); }
+          }
+          if (sig.doc_back) {
+            try {
+              const blob = await fetchBlob(sig.doc_back);
+              zip.file(`${prefix}_doc_verso.jpg`, blob);
+            } catch (e) { console.error(e); }
+          }
+          if (sig.video_kyc) {
+            try {
+              const blob = await fetchBlob(sig.video_kyc);
+              zip.file(`${prefix}_video_kyc.webm`, blob);
+            } catch (e) { console.error(e); }
+          }
+        }
+      }
+      
+      // 3. Montar manifesto de validação (manifesto.txt)
+      let manifestText = `==================================================\n`;
+      manifestText += `MANIFESTO DE VALIDAÇÃO JURÍDICA E AUDITORIA\n`;
+      manifestText += `TravelOS Digital Trust Services\n`;
+      manifestText += `==================================================\n\n`;
+      manifestText += `CONTRATO ID: ${contract.id}\n`;
+      manifestText += `Versão: ${contract.version}\n`;
+      manifestText += `Status: ${contract.status.toUpperCase()}\n`;
+      manifestText += `Valor Total: ${contract.total_value}\n`;
+      manifestText += `Criado em: ${new Date(contract.created_at).toLocaleString("pt-BR")}\n`;
+      if (contract.signed_at) {
+        manifestText += `Assinado em: ${new Date(contract.signed_at).toLocaleString("pt-BR")}\n`;
+      }
+      if (contract.certificate) {
+        manifestText += `Serial de Autenticidade: ${contract.certificate.serial}\n`;
+        manifestText += `Hash do Conteúdo: ${contract.content_hash}\n`;
+      }
+      
+      manifestText += `\n--------------------------------------------------\n`;
+      manifestText += `SIGNATÁRIOS E ASSINATURAS:\n`;
+      manifestText += `--------------------------------------------------\n`;
+      
+      if (contract.signatures) {
+        contract.signatures.forEach((sig, index) => {
+          manifestText += `\n[Assinante #${index + 1}]\n`;
+          manifestText += `Nome: ${sig.signer_name}\n`;
+          manifestText += `Documento: ${sig.signer_document}\n`;
+          manifestText += `Data/Hora: ${new Date(sig.signed_at).toLocaleString("pt-BR")}\n`;
+          manifestText += `IP: ${sig.ip}\n`;
+          manifestText += `Dispositivo: ${sig.user_agent || "N/A"}\n`;
+        });
+      } else {
+        manifestText += `\nNenhuma assinatura registrada até o momento.\n`;
+      }
+      
+      if (auditChainQ.data && auditChainQ.data.length > 0) {
+        manifestText += `\n--------------------------------------------------\n`;
+        manifestText += `CADEIA DE AUDITORIA CRIPTOGRÁFICA (LEDGER):\n`;
+        manifestText += `--------------------------------------------------\n`;
+        auditChainQ.data.forEach((audit: any) => {
+          manifestText += `\n[ID #${audit.id}] Ação: ${audit.action}\n`;
+          manifestText += `Data: ${new Date(audit.created_at).toLocaleString("pt-BR")}\n`;
+          manifestText += `Metadata: ${JSON.stringify(audit.metadata)}\n`;
+          manifestText += `Hash Anterior: ${audit.prev_hash || "GENESIS"}\n`;
+          manifestText += `Hash do Bloco: ${audit.row_hash}\n`;
+        });
+      }
+      
+      zip.file("manifesto_auditoria.txt", manifestText);
+      
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = window.URL.createObjectURL(content);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pacote-auditoria-contrato-${contract.id.slice(0, 8)}.zip`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Pacote de validação ZIP baixado!", { id: "zip" });
+    } catch (e: any) {
+      console.error("Erro ao gerar pacote ZIP:", e);
+      toast.error("Erro ao gerar pacote ZIP: " + e.message, { id: "zip" });
+    }
+  };
+
   // ── Derived ───────────────────────────────────────────────────────────────────
 
   const contract = contractQ.data;
@@ -407,9 +626,26 @@ function TripContract() {
           </div>
           <h1 className="mt-1 text-xl font-semibold tracking-tight">Contrato</h1>
           {contract && (
-            <p className="mt-1 text-xs text-muted-foreground font-mono">
-              v{contract.version} · criado em {fmtDate(contract.created_at)}
-            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground font-mono">
+              <span>v{contract.version}</span>
+              <span>·</span>
+              <span>criado em {fmtDate(contract.created_at)}</span>
+              {contract.view_count !== undefined && contract.view_count > 0 && (
+                <>
+                  <span>·</span>
+                  <span className="flex items-center gap-1 text-warning">
+                    <Eye className="h-3 w-3" />
+                    Visualizado {contract.view_count} {contract.view_count === 1 ? "vez" : "vezes"}
+                  </span>
+                </>
+              )}
+              {contract.last_viewed_at && (
+                <>
+                  <span>·</span>
+                  <span>Último acesso: {fmtDate(contract.last_viewed_at)}</span>
+                </>
+              )}
+            </div>
           )}
         </div>
 
@@ -436,6 +672,16 @@ function TripContract() {
                 Visualizar
               </a>
             </>
+          )}
+
+          {contract?.status === "signed" && (
+            <button
+              onClick={handleDownloadZip}
+              className="flex h-8 items-center gap-1.5 rounded-md border border-success bg-success/10 text-success px-3 text-xs font-semibold hover:bg-success/20 transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Baixar Pacote (ZIP)
+            </button>
           )}
 
           {!contract && (
@@ -501,15 +747,24 @@ function TripContract() {
               )}
             </div>
           </div>
-          <a
-            href={`/verify/${contract.certificate?.serial}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 text-xs text-success font-medium hover:underline"
-          >
-            <Shield className="h-3.5 w-3.5" />
-            Verificar autenticidade
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDownloadZip}
+              className="flex items-center gap-1.5 text-xs text-success font-semibold border border-success/30 bg-success/10 px-3 py-1.5 rounded hover:bg-success/20 transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Baixar Pacote ZIP
+            </button>
+            <a
+              href={`/verify/${contract.certificate?.serial}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 text-xs text-success font-medium hover:underline"
+            >
+              <Shield className="h-3.5 w-3.5" />
+              Verificar autenticidade
+            </a>
+          </div>
         </div>
       )}
 
@@ -675,6 +930,85 @@ function TripContract() {
               </div>
             )}
           </div>
+
+          {/* Aditivos do Contrato */}
+          {contract && (
+            <div className="rounded-lg border border-border bg-surface p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-sm font-semibold">Aditivos e Retificações</h2>
+                {contract.status === "signed" && !showAddForm && (
+                  <button
+                    onClick={() => setShowAddForm(true)}
+                    className="flex items-center gap-1 text-xs text-primary font-bold hover:underline"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Novo Aditivo
+                  </button>
+                )}
+              </div>
+
+              {showAddForm && (
+                <div className="mb-4 rounded-xl border border-border p-4 space-y-4 bg-surface-alt/20">
+                  <h3 className="text-xs font-bold text-foreground">Novo Aditivo ao Contrato</h3>
+                  <Field label="Título do Aditivo">
+                    <Input
+                      placeholder="Ex: Alteração de Data de Embarque ou Upgrade de Hotel"
+                      value={addendumTitle}
+                      onChange={(e) => setAddendumTitle(e.target.value)}
+                    />
+                  </Field>
+                  <Field label="Conteúdo do Acordo (Cláusulas Adicionais)">
+                    <textarea
+                      rows={4}
+                      placeholder="Descreva detalhadamente o acordo complementar..."
+                      value={addendumContent}
+                      onChange={(e) => setAddendumContent(e.target.value)}
+                      className="w-full rounded-md border border-input bg-surface p-2.5 text-xs outline-none focus:border-border-strong resize-none"
+                    />
+                  </Field>
+                  <div className="flex gap-2">
+                    <PrimaryButton
+                      disabled={createAddendum.isPending || !addendumTitle || !addendumContent}
+                      onClick={() => createAddendum.mutate({ title: addendumTitle, content: addendumContent })}
+                    >
+                      {createAddendum.isPending ? "Criando..." : "Enviar Aditivo"}
+                    </PrimaryButton>
+                    <GhostButton onClick={() => { setShowAddForm(false); setAddendumTitle(""); setAddendumContent(""); }}>
+                      Cancelar
+                    </GhostButton>
+                  </div>
+                </div>
+              )}
+
+              {addendumsQ.isLoading && <p className="text-xs text-muted-foreground">Carregando aditivos...</p>}
+
+              {(!addendumsQ.data || addendumsQ.data.length === 0) && (
+                <p className="text-xs text-muted-foreground">Nenhum termo aditivo registrado para este contrato.</p>
+              )}
+
+              {addendumsQ.data && addendumsQ.data.length > 0 && (
+                <div className="space-y-3">
+                  {addendumsQ.data.map((ad: any) => (
+                    <div key={ad.id} className="rounded-xl border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-foreground">{ad.title}</span>
+                        <StatusBadge tone={STATUS_TONE[ad.status] || "neutral"}>
+                          {STATUS_LABEL[ad.status] || ad.status}
+                        </StatusBadge>
+                      </div>
+                      <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{ad.content}</p>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground border-t border-border/30 pt-2 font-mono">
+                        <span>Criado: {new Date(ad.created_at).toLocaleDateString("pt-BR")}</span>
+                        {ad.signed_at && (
+                          <span className="text-success font-semibold">Assinado: {new Date(ad.signed_at).toLocaleDateString("pt-BR")}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ── Right: summary panel ─────────────────────────────────────────────── */}
@@ -751,22 +1085,120 @@ function TripContract() {
             </div>
           </div>
 
-          {/* Signatures */}
-          {contract?.signatures && contract.signatures.length > 0 && (
-            <div className="rounded-lg border border-border bg-surface p-4">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Assinaturas
+          {/* Controle de Assinaturas */}
+          {contract && (
+            <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                <UserCheck className="h-4 w-4" /> Controle de Assinaturas
               </h3>
-              <ul className="space-y-2">
-                {contract.signatures.map((s, i) => (
-                  <li key={i} className="text-xs">
-                    <div className="font-medium">{s.signer_name}</div>
-                    <div className="text-muted-foreground">{s.signer_document}</div>
-                    <div className="text-muted-foreground">{fmtDate(s.signed_at)}</div>
-                    <div className="text-muted-foreground truncate">IP: {s.ip}</div>
-                  </li>
+              <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold">{contract.client_data?.name || "Cliente Contratante"}</div>
+                    <div className="text-[10px] text-muted-foreground font-mono">
+                      {contract.client_data?.document || contract.client_data?.cpf || "Sem doc informado"}
+                    </div>
+                  </div>
+                  <div>
+                    {contract.status === "signed" ? (
+                      <span className="inline-flex items-center gap-1 rounded bg-success/15 px-2 py-0.5 text-[10px] font-bold text-success">
+                        Assinado
+                      </span>
+                    ) : contract.status === "cancelled" ? (
+                      <span className="inline-flex items-center gap-1 rounded bg-danger/15 px-2 py-0.5 text-[10px] font-bold text-danger">
+                        Cancelado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded bg-warning/15 px-2 py-0.5 text-[10px] font-bold text-warning animate-pulse">
+                        Aguardando
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {contract.signatures && contract.signatures.map((sig, i) => (
+                  <div key={i} className="mt-3 border-t border-border/40 pt-2.5 space-y-2 text-[10px] text-muted-foreground">
+                    <div className="flex items-center justify-between">
+                      <span>IP: <strong className="font-mono text-foreground/80">{sig.ip}</strong></span>
+                      <span>{new Date(sig.signed_at).toLocaleDateString("pt-BR")} {new Date(sig.signed_at).toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                    <div className="truncate" title={sig.user_agent}>UA: {sig.user_agent || "Desconhecido"}</div>
+                    
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {sig.selfie_image && (
+                        <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                          ✓ Selfie KYC
+                        </span>
+                      )}
+                      {sig.doc_front && (
+                        <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                          ✓ Doc (Frente)
+                        </span>
+                      )}
+                      {sig.doc_back && (
+                        <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                          ✓ Doc (Verso)
+                        </span>
+                      )}
+                      {sig.video_kyc && (
+                        <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                          ✓ Vídeo KYC
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Cadeia de Auditoria Criptográfica (Ledger) */}
+          {contract && (
+            <div className="rounded-lg border border-border bg-surface p-4">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                <History className="h-4 w-4" /> Cadeia de Auditoria (Ledger)
+              </h3>
+              
+              {auditChainQ.isLoading && <p className="text-[10px] text-muted-foreground">Carregando auditoria...</p>}
+
+              {auditChainQ.data && auditChainQ.data.length > 0 ? (
+                <div className="relative border-l border-border/60 pl-3.5 space-y-4 ml-1">
+                  {auditChainQ.data.map((audit: any) => {
+                    let icon = <Clock className="h-3 w-3 text-muted-foreground" />;
+                    let actionLabel = audit.action;
+                    if (audit.action === "CONTRACT_SIGNED") {
+                      icon = <UserCheck className="h-3 w-3 text-success" />;
+                      actionLabel = "Contrato Assinado";
+                    } else if (audit.action === "ADDENDUM_CREATED") {
+                      icon = <FileText className="h-3 w-3 text-info" />;
+                      actionLabel = "Aditivo Registrado";
+                    } else if (audit.action === "ADDENDUM_SIGNED") {
+                      icon = <FileCheck className="h-3 w-3 text-success" />;
+                      actionLabel = "Aditivo Assinado";
+                    } else if (audit.action === "CONTRACT_CREATED") {
+                      actionLabel = "Contrato Inicial";
+                    }
+
+                    return (
+                      <div key={audit.id} className="relative text-[10px]">
+                        {/* Bullet */}
+                        <div className="absolute -left-[22px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface ring-2 ring-border/50">
+                          {icon}
+                        </div>
+                        <div className="font-semibold text-foreground/90">{actionLabel}</div>
+                        <div className="text-muted-foreground font-mono text-[9px] mt-0.5">
+                          Block #{audit.id} · {audit.row_hash?.slice(0, 8)}...
+                        </div>
+                        <div className="text-[9px] text-muted-foreground">
+                          {new Date(audit.created_at).toLocaleString("pt-BR")}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-[10px] text-muted-foreground">Nenhum evento registrado no livro razão.</p>
+              )}
             </div>
           )}
 

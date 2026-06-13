@@ -109,7 +109,7 @@ export async function fetchTripVouchers(tripId: string): Promise<Voucher[]> {
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data ?? []) as Voucher[];
+  return (data ?? []) as unknown as Voucher[];
 }
 
 export async function fetchTripPassengers(tripId: string): Promise<TripPassenger[]> {

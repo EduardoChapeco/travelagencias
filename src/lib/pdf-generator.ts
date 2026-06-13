@@ -29,10 +29,10 @@ export async function generateContractPdf(elementId: string): Promise<Blob> {
   const element = document.getElementById(elementId);
   if (!element) throw new Error("Elemento do contrato não encontrado na DOM.");
 
-  // Oculta área de assinatura temporariamente para o PDF ser "limpo" como documento anexo
-  const signatureSection = document.getElementById("signature-section");
-  if (signatureSection) {
-    signatureSection.style.display = "none";
+  // Oculta área de inputs de assinatura temporariamente para o PDF ser gerado sem botões/campos interativos
+  const interactiveForm = document.getElementById("interactive-signature-form");
+  if (interactiveForm) {
+    interactiveForm.style.display = "none";
   }
 
   // Captura o HTML para Canvas
@@ -42,8 +42,8 @@ export async function generateContractPdf(elementId: string): Promise<Blob> {
     backgroundColor: "#ffffff", // Fundo branco obrigatório para PDF
   });
 
-  if (signatureSection) {
-    signatureSection.style.display = "block"; // Restaura o display
+  if (interactiveForm) {
+    interactiveForm.style.display = "block"; // Restaura o display
   }
 
   const imgData = canvas.toDataURL("image/jpeg", 1.0);

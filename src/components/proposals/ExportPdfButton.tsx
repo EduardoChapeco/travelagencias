@@ -51,7 +51,7 @@ export function ExportPdfButton({ proposal }: Props) {
       if (!container) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
 
       const pages = Array.from(
-        container.querySelectorAll(".a4-page, .a4-landscape-page"),
+        container.querySelectorAll(".a4-page, .a4-landscape-page, .presentation-page"),
       ) as HTMLElement[];
       const targets = pages.length > 0 ? pages : [container];
 
@@ -100,7 +100,9 @@ export function ExportPdfButton({ proposal }: Props) {
     const toastId = "server-pdf";
     toast.loading("Gerando PDF de alta qualidade no servidor…", { id: toastId });
     try {
-      const url = await generateProposalPdfViaServer(proposal.id, proposal.number);
+      const isLandscape = proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
+      const pdfFormat = proposal.canvas_format === "presentation-169" ? "presentation-169" : "A4";
+      const url = await generateProposalPdfViaServer(proposal.id, proposal.agency_id, pdfFormat, isLandscape);
       setServerPdfUrl(url);
       toast.success("PDF gerado com sucesso! Clique para baixar.", {
         id: toastId,

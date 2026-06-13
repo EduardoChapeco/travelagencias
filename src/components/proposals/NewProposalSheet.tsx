@@ -340,6 +340,7 @@ export function NewProposalSheet({
   const [currency, setCurrency] = useState("BRL");
   const [validUntil, setValidUntil] = useState("");
   const [notes, setNotes] = useState("");
+  const [visibility, setVisibility] = useState<"private" | "agency" | "public">("private");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -375,6 +376,7 @@ export function NewProposalSheet({
       setChildren(0);
       setInfants(0);
       setNotes("");
+      setVisibility("private");
     }
   }, [isOpen, preSelectedLeadId]);
 
@@ -398,6 +400,7 @@ export function NewProposalSheet({
         currency,
         valid_until: validUntil || undefined,
         notes: notes || undefined,
+        visibility,
       };
 
       const { id } = await createProposal(agency.id, payload, u.user?.id);
@@ -512,6 +515,20 @@ export function NewProposalSheet({
             <Input type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)} />
           </Field>
         </div>
+
+        {/* Visibilidade */}
+        <Field label="Visibilidade da Cotação">
+          <Select value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
+            <option value="private">🔒 Privada — somente você</option>
+            <option value="agency">🏢 Agência — toda a equipe vê</option>
+            <option value="public">🌐 Pública — link acessível por qualquer um</option>
+          </Select>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            {visibility === "private" && "Apenas você pode ver esta cotação."}
+            {visibility === "agency" && "Todos os agentes da sua equipe poderão ver e editar."}
+            {visibility === "public" && "O link público pode ser acessado sem login — ideal para cotações avulsas."}
+          </p>
+        </Field>
 
         {/* Observações */}
         <Field label="Observações Internas">

@@ -306,6 +306,160 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
         </div>
       );
 
+    // ── TESTIMONIALS ──────────────────────────────────────────────
+    case "testimonials":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <div className="space-y-3">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Depoimentos</label>
+            {(block.items || []).map((item: any, idx: number) => (
+              <div key={idx} className="border border-border rounded-lg p-3 space-y-2 bg-surface">
+                <div className="grid grid-cols-2 gap-2">
+                  <Input placeholder="Nome do cliente" value={item.author || ""} onChange={(e) => {
+                    const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], author: e.target.value };
+                    updateBlock(block.id, { items: arr });
+                  }} />
+                  <Input placeholder="Cargo / Contexto (ex: Viagem em família)" value={item.role || ""} onChange={(e) => {
+                    const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], role: e.target.value };
+                    updateBlock(block.id, { items: arr });
+                  }} />
+                </div>
+                <Textarea placeholder="Depoimento..." rows={2} value={item.text || ""} onChange={(e) => {
+                  const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], text: e.target.value };
+                  updateBlock(block.id, { items: arr });
+                }} />
+                <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                  <Input placeholder="URL da foto do cliente (opcional)" value={item.avatar_url || ""} onChange={(e) => {
+                    const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], avatar_url: e.target.value };
+                    updateBlock(block.id, { items: arr });
+                  }} />
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground">Estrelas:</span>
+                    <Select value={String(item.stars || 5)} onChange={(e) => {
+                      const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], stars: Number(e.target.value) };
+                      updateBlock(block.id, { items: arr });
+                    }}>
+                      {[5,4,3,2,1].map(s => <option key={s} value={s}>{s}★</option>)}
+                    </Select>
+                    <button type="button" onClick={() => updateBlock(block.id, { items: (block.items || []).filter((_: any, i: number) => i !== idx) })} className="p-1.5 text-muted-foreground hover:text-destructive">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <button type="button" onClick={() => updateBlock(block.id, { items: [...(block.items || []), { author: "Nome do Cliente", role: "", text: "Depoimento aqui...", avatar_url: "", stars: 5 }] })} className="text-xs text-brand font-medium hover:underline">
+              + Adicionar depoimento
+            </button>
+          </div>
+        </div>
+      );
+
+    // ── TOURS GRID ────────────────────────────────────────────────
+    case "tours_grid":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <Field label="Subtítulo">
+            <Input value={block.subtitle || ""} onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })} />
+          </Field>
+          <Field label="Máximo de roteiros exibidos" hint="Os roteiros publicados mais próximos serão exibidos automaticamente">
+            <Select value={String(block.max_items || 6)} onChange={(e) => updateBlock(block.id, { max_items: Number(e.target.value) })}>
+              {[3,4,6,8,12].map(n => <option key={n} value={n}>{n} roteiros</option>)}
+            </Select>
+          </Field>
+          <p className="text-[10px] text-muted-foreground">Os roteiros são buscados automaticamente. Gerencie-os em <strong>Roteiros em Grupo</strong>.</p>
+        </div>
+      );
+
+    // ── STATS ─────────────────────────────────────────────────────
+    case "stats":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Números em destaque</label>
+            {(block.items || []).map((item: any, idx: number) => (
+              <div key={idx} className="grid grid-cols-[auto_1fr_2fr_auto] gap-2 items-center border border-border rounded-lg p-2 bg-surface">
+                <Input className="w-12 text-center px-1" placeholder="🌍" value={item.icon || ""} onChange={(e) => {
+                  const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], icon: e.target.value };
+                  updateBlock(block.id, { items: arr });
+                }} />
+                <Input placeholder="500+" value={item.value || ""} onChange={(e) => {
+                  const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], value: e.target.value };
+                  updateBlock(block.id, { items: arr });
+                }} />
+                <Input placeholder="Viagens realizadas" value={item.label || ""} onChange={(e) => {
+                  const arr = [...(block.items || [])]; arr[idx] = { ...arr[idx], label: e.target.value };
+                  updateBlock(block.id, { items: arr });
+                }} />
+                <button type="button" onClick={() => updateBlock(block.id, { items: (block.items || []).filter((_: any, i: number) => i !== idx) })} className="p-1.5 text-muted-foreground hover:text-destructive">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <button type="button" onClick={() => updateBlock(block.id, { items: [...(block.items || []), { icon: "📊", value: "0+", label: "Novo número" }] })} className="text-xs text-brand font-medium hover:underline">
+              + Adicionar número
+            </button>
+          </div>
+        </div>
+      );
+
+    // ── VIDEO ─────────────────────────────────────────────────────
+    case "video":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <Field label="URL do vídeo (embed)" hint="Use a URL de incorporação do YouTube (youtube.com/embed/ID) ou Vimeo">
+            <Input value={block.url || ""} onChange={(e) => updateBlock(block.id, { url: e.target.value })} placeholder="https://www.youtube.com/embed/dQw4w9WgXcQ" />
+          </Field>
+          <Field label="Legenda do vídeo (opcional)">
+            <Input value={block.caption || ""} onChange={(e) => updateBlock(block.id, { caption: e.target.value })} />
+          </Field>
+        </div>
+      );
+
+    // ── MAP ───────────────────────────────────────────────────────
+    case "map":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <Field label="URL de embed do Google Maps" hint="No Google Maps: Compartilhar > Incorporar um mapa > Copiar o src do iframe">
+            <Input value={block.embed_url || ""} onChange={(e) => updateBlock(block.id, { embed_url: e.target.value })} placeholder="https://www.google.com/maps/embed?pb=..." />
+          </Field>
+          <Field label="Endereço por extenso (texto abaixo do mapa)">
+            <Input value={block.address_label || ""} onChange={(e) => updateBlock(block.id, { address_label: e.target.value })} placeholder="Rua das Flores, 100 — Chapecó/SC" />
+          </Field>
+        </div>
+      );
+
+    // ── BLOG FEED ─────────────────────────────────────────────────
+    case "blog_feed":
+      return (
+        <div className="space-y-4">
+          <Field label="Título da seção">
+            <Input value={block.title || ""} onChange={(e) => updateBlock(block.id, { title: e.target.value })} />
+          </Field>
+          <Field label="Quantidade de posts exibidos" hint="Os posts mais recentes publicados serão buscados automaticamente">
+            <Select value={String(block.max_items || 3)} onChange={(e) => updateBlock(block.id, { max_items: Number(e.target.value) })}>
+              {[3,4,6].map(n => <option key={n} value={n}>{n} posts</option>)}
+            </Select>
+          </Field>
+          <p className="text-[10px] text-muted-foreground">Os posts são buscados automaticamente. Gerencie-os em <strong>Portal &gt; Blog</strong>.</p>
+        </div>
+      );
+
     default:
       return null;
   }

@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
-import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
+import { createProposal, fetchClientsPick, fetchLeadsPick, updateProposal, processOcrFile } from "@/services/proposals";
 
 export const Route = createFileRoute("/agency/$slug/proposals/new")({
   validateSearch: z.object({
@@ -37,6 +37,83 @@ function NewProposal() {
   const [validUntil, setValidUntil] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrStep, setOcrStep] = useState("");
+  const [extractedItems, setExtractedItems] = useState<{
+    flights?: any[];
+    hotels?: any[];
+    transfers?: any[];
+    tours?: any[];
+    itinerary?: any[];
+    includes?: string[];
+    excludes?: string[];
+  } | null>(null);
+
+  async function handleOcrFile(file: File) {
+    if (!agency) return;
+    setOcrLoading(true);
+    setOcrStep("Carregando arquivo original...");
+    try {
+      setOcrStep("IA lendo PDF e imagens...");
+      const data = await processOcrFile(file, undefined, agency.id);
+      
+      setOcrStep("Estruturando voos, hotéis e roteiro...");
+      // Auto-preencher dados gerais
+      if (data.destination) {
+        setDestination(data.destination);
+        setTitle(`Cotação inteligente: ${data.destination}`);
+      } else {
+        setTitle(`Cotação importada: ${file.name.replace(/\.[^/.]+$/, "")}`);
+      }
+      
+      // Datas
+      if (data.flights && data.flights.length > 0) {
+        const sortedFlights = [...data.flights].sort((a, b) => new Date(a.date || a.departure_time).getTime() - new Date(b.date || b.departure_time).getTime());
+        if (sortedFlights[0]?.date || sortedFlights[0]?.departure_time) {
+          setTravelStart(new Date(sortedFlights[0].date || sortedFlights[0].departure_time).toISOString().split("T")[0]);
+        }
+        if (sortedFlights[sortedFlights.length - 1]?.date || sortedFlights[sortedFlights.length - 1]?.departure_time) {
+          setTravelEnd(new Date(sortedFlights[sortedFlights.length - 1].date || sortedFlights[sortedFlights.length - 1].departure_time).toISOString().split("T")[0]);
+        }
+      } else if (data.hotels && data.hotels.length > 0) {
+        const sortedHotels = [...data.hotels].sort((a, b) => new Date(a.checkin).getTime() - new Date(b.checkin).getTime());
+        if (sortedHotels[0]?.checkin) {
+          setTravelStart(sortedHotels[0].checkin);
+        }
+        if (sortedHotels[sortedHotels.length - 1]?.checkout) {
+          setTravelEnd(sortedHotels[sortedHotels.length - 1].checkout);
+        }
+      }
+
+      // PAX count
+      if (data.pax && data.pax.length > 0) {
+        setAdults(data.pax.length);
+      }
+
+      // Notes
+      if (data.notes) {
+        setNotes(data.notes);
+      }
+
+      // Guardar itens complexos
+      setExtractedItems({
+        flights: data.flights ?? [],
+        hotels: data.hotels ?? [],
+        transfers: data.transfers ?? [],
+        tours: data.tours ?? [],
+        itinerary: data.itinerary ?? [],
+        includes: data.includes ?? [],
+        excludes: data.excludes ?? [],
+      });
+
+      toast.success("Orçamento lido pela IA com sucesso!");
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao processar arquivo com IA.");
+    } finally {
+      setOcrLoading(false);
+      setOcrStep("");
+    }
+  }
 
   useEffect(() => {
     async function loadContext() {
@@ -106,6 +183,11 @@ function NewProposal() {
 
       const { id } = await createProposal(agency.id, payload, u.user?.id);
 
+      // Salvar os itens extras extraídos por OCR
+      if (extractedItems) {
+        await updateProposal(id, extractedItems);
+      }
+
       toast.success("Cotação criada com sucesso!");
       navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id } });
     } catch (error: any) {
@@ -125,6 +207,57 @@ function NewProposal() {
         <ArrowLeft className="h-3.5 w-3.5" /> Voltar
       </Link>
       <h1 className="mb-6 text-xl font-semibold tracking-tight">Nova cotação</h1>
+
+      {/* OCR Dropzone */}
+      <div className="mb-6 max-w-2xl rounded-2xl border border-dashed border-border bg-surface p-6 text-center transition-all hover:border-brand/40">
+        {ocrLoading ? (
+          <div className="flex flex-col items-center justify-center py-4 space-y-3">
+            <Loader2 className="h-8 w-8 animate-spin text-brand animate-pulse" />
+            <div className="text-sm font-semibold text-foreground">{ocrStep}</div>
+            <div className="text-xs text-muted-foreground">Isso pode levar alguns segundos dependendo do tamanho do arquivo.</div>
+          </div>
+        ) : (
+          <label className="flex flex-col items-center justify-center cursor-pointer group py-4">
+            <div className="mb-3 rounded-full bg-brand/10 p-3 text-brand group-hover:bg-brand/20 transition-colors">
+              <Upload className="h-6 w-6" />
+            </div>
+            <h3 className="font-bold text-foreground text-sm flex items-center justify-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento com Inteligência Artificial
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 max-w-md">
+              Arraste um PDF/Imagem aqui ou clique para selecionar. A IA criará voos, hotéis e o itinerário completo automaticamente.
+            </p>
+            <input
+              type="file"
+              accept="application/pdf,image/*"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  handleOcrFile(e.target.files[0]);
+                }
+              }}
+            />
+          </label>
+        )}
+        
+        {extractedItems && (
+          <div className="mt-4 rounded-xl bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
+            <div className="text-left">
+              <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                {(extractedItems.flights?.length ?? 0)} voo(s), {(extractedItems.hotels?.length ?? 0)} hotel(eis) e {(extractedItems.itinerary?.length ?? 0)} dia(s) de roteiro serão salvos ao criar a cotação.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setExtractedItems(null)}
+              className="text-muted-foreground hover:text-danger text-[10px] font-semibold border border-border rounded px-2 py-0.5 hover:bg-surface-alt transition-colors"
+            >
+              Descartar
+            </button>
+          </div>
+        )}
+      </div>
 
       <form
         onSubmit={onSubmit}

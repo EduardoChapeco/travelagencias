@@ -18,10 +18,124 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const payload = await req.json();
-    // Este endpoint será chamado via Supabase Database Webhook no INSERT da omnichannel_messages
-    const record = payload.record;
+    const body = await req.json();
+    
+    // Identifica se é uma ação explícita ou um Database Webhook
+    const action = body.action; 
+    const record = body.record; // Passado pelo Database Webhook
+    
+    // ────────────── AÇÃO: CRIAR PROPOSTA COM BASE NO CHAT ──────────────
+    if (action === "create_proposal") {
+      const { lead_id, agency_id } = body;
+      if (!lead_id) throw new Error("lead_id é obrigatório para esta ação.");
 
+      // 1. Buscar histórico de conversas do lead
+      const { data: messages } = await supabase
+        .from("omnichannel_messages")
+        .select("direction, content, created_at")
+        .eq("lead_id", lead_id)
+        .order("created_at", { ascending: false })
+        .limit(30);
+
+      const chatHistory = (messages ?? []).reverse().map(m => 
+        `[${m.direction === 'inbound' ? 'Cliente' : 'Agente'}]: ${m.content}`
+      ).join("\n");
+
+      // Prompt estruturado para gerar a proposta completa
+      const proposalPrompt = `
+Você é uma IA especialista em criar cotações de viagens. Analise a conversa a seguir e gere um rascunho de cotação no formato JSON.
+Ano atual de referência: 2026.
+
+Histórico de conversa:
+${chatHistory}
+
+Gere um objeto JSON contendo:
+- "title": Título comercial atrativo (ex: "Férias em Gramado", "Aventura em Fernando de Noronha").
+- "destination": Destino principal da viagem.
+- "travel_start": Data de início da viagem em formato YYYY-MM-DD (estime se não houver datas exatas, ex: 3 meses a partir de hoje).
+- "travel_end": Data de término da viagem em formato YYYY-MM-DD.
+- "pax_adults": Número de adultos (padrão 1 se não mencionado).
+- "pax_children": Número de crianças (padrão 0).
+- "pax_infants": Número de bebês (padrão 0).
+- "currency": "BRL"
+- "flights": Array de voos simulados (cada voo possui: "airline", "flight_number", "origin", "destination", "departure_time" ex: "14:00", "arrival_time" ex: "16:30", "price" numérico, "stops" inteiro, "baggage_rules" string).
+- "hotels": Array de hotéis sugeridos (cada hotel possui: "name", "city", "checkin" YYYY-MM-DD, "checkout" YYYY-MM-DD, "meal_plan" ex: "Café da manhã", "price" numérico).
+- "transfers": Array de transfers (cada item possui: "description", "type" private/shared, "vehicle", "price" numérico).
+- "tours": Array de passeios recomendados (cada passeio possui: "description", "price" numérico).
+- "itinerary": Array de dias de roteiro (cada dia possui: "day" inteiro, "title" título do dia, "description" descrição premium do que fazer).
+- "includes": Array de strings de itens inclusos.
+- "excludes": Array de strings de itens não inclusos.
+
+Retorne EXATAMENTE e APENAS o objeto JSON. Não inclua blocos de código com markdown (ex: \`\`\`json).
+`;
+
+      const aiResponse = await fetch(orchestratorUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${serviceRoleKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "completion",
+          modelPreference: "smart",
+          systemPrompt: "Você é um consultor de turismo premium especialista em conversão de vendas. Retorne apenas JSON puro.",
+          prompt: proposalPrompt
+        })
+      });
+
+      if (!aiResponse.ok) throw new Error("Erro na comunicação com a IA.");
+      const aiData = await aiResponse.json();
+      
+      let proposalData;
+      try {
+        const cleanedText = aiData.result.replace(/```json/g, "").replace(/```/g, "").trim();
+        proposalData = JSON.parse(cleanedText);
+      } catch (e) {
+        throw new Error("A IA falhou em formatar a cotação em JSON válido.");
+      }
+
+      // Garantir valores padrão para salvar
+      const finalProposal = {
+        agency_id,
+        lead_id,
+        title: proposalData.title || "Proposta gerada por IA",
+        destination: proposalData.destination || "Destino",
+        travel_start: proposalData.travel_start || null,
+        travel_end: proposalData.travel_end || null,
+        pax_adults: Number(proposalData.pax_adults) || 1,
+        pax_children: Number(proposalData.pax_children) || 0,
+        pax_infants: Number(proposalData.pax_infants) || 0,
+        currency: proposalData.currency || "BRL",
+        flights: proposalData.flights || [],
+        hotels: proposalData.hotels || [],
+        transfers: proposalData.transfers || [],
+        tours: proposalData.tours || [],
+        itinerary: proposalData.itinerary || [],
+        includes: proposalData.includes || [],
+        excludes: proposalData.excludes || [],
+        status: "draft"
+      };
+
+      // Salvar proposta no banco
+      const { data: newProposal, error: insertError } = await supabase
+        .from("proposals")
+        .insert(finalProposal as any)
+        .select("id, public_token, number")
+        .single();
+
+      if (insertError) throw insertError;
+
+      return new Response(JSON.stringify({ 
+        success: true, 
+        proposal_id: newProposal.id, 
+        public_token: newProposal.public_token,
+        number: newProposal.number
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ────────────── TRIGGER WEBHOOK: PROCESSADOR DE MENSAGENS INBOUND ──────────────
     if (!record || !record.lead_id) {
       return new Response("No record found", { status: 200 });
     }
@@ -46,19 +160,31 @@ serve(async (req) => {
 Histórico da Conversa:
 ${chatHistory}
 
-Analise esta conversa e retorne APENAS um objeto JSON válido com as seguintes chaves:
+Analise esta conversa e retorne APENAS um objeto JSON válido com as seguintes chaves. 
+Importante: Tente extrair as informações do perfil de viagem do lead no campo "extracted_lead_info" (se preenchidas na conversa).
+Ano atual de referência: 2026.
+
 {
   "fears": ["medo 1", "medo 2"],
   "desires": ["desejo 1", "desejo 2"],
   "objections": ["objeção 1"],
   "budget_signals": ["sinal 1"],
   "general_profile": "resumo do perfil em 2 frases",
-  "next_best_action": "o que o vendedor deve falar agora"
+  "next_best_action": "o que o vendedor deve falar agora",
+  "extracted_lead_info": {
+    "destination": "Paris (ou null se não souber)",
+    "travel_start": "YYYY-MM-DD (ou null)",
+    "travel_end": "YYYY-MM-DD (ou null)",
+    "pax_adults": 2,
+    "pax_children": 0,
+    "pax_infants": 0,
+    "estimated_value": 15000 (ou null)
+  }
 }
 Não inclua formatação markdown como \`\`\`json.
     `;
 
-    // 2. Chamar o Orchestrator interno (usará OpenRouter/Gemini dependendo das configs globais)
+    // 2. Chamar o Orchestrator interno
     const aiResponse = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
@@ -105,6 +231,46 @@ Não inclua formatação markdown como \`\`\`json.
       }, { onConflict: 'lead_id' });
 
     if (upsertErr) throw upsertErr;
+
+    // 4. Se houver informações de lead extraídas, atualizar o lead (se os campos atuais estiverem nulos/0)
+    if (insights.extracted_lead_info) {
+      const info = insights.extracted_lead_info;
+      const leadUpdate: any = {};
+      
+      if (info.destination) leadUpdate.destination = info.destination;
+      if (info.travel_start) leadUpdate.travel_start = info.travel_start;
+      if (info.travel_end) leadUpdate.travel_end = info.travel_end;
+      if (info.pax_adults) leadUpdate.pax_adults = Number(info.pax_adults);
+      if (info.pax_children) leadUpdate.pax_children = Number(info.pax_children);
+      if (info.pax_infants) leadUpdate.pax_infants = Number(info.pax_infants);
+      if (info.estimated_value) leadUpdate.estimated_value = Number(info.estimated_value);
+      
+      if (Object.keys(leadUpdate).length > 0) {
+        // Buscar o lead atual
+        const { data: currentLead } = await supabase
+          .from("leads")
+          .select("destination, travel_start, travel_end, pax_adults, pax_children, pax_infants, estimated_value")
+          .eq("id", record.lead_id)
+          .maybeSingle();
+          
+        if (currentLead) {
+          const finalUpdate: any = {};
+          for (const key of Object.keys(leadUpdate)) {
+            // Apenas atualiza se o campo atual for nulo ou igual a zero/vazio
+            if (!currentLead[key] || currentLead[key] === 0 || currentLead[key] === "") {
+              finalUpdate[key] = leadUpdate[key];
+            }
+          }
+          
+          if (Object.keys(finalUpdate).length > 0) {
+            await supabase
+              .from("leads")
+              .update(finalUpdate)
+              .eq("id", record.lead_id);
+          }
+        }
+      }
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

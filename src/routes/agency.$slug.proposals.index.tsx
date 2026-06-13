@@ -139,6 +139,7 @@ function ProposalsList() {
                   <th className="px-3 py-2 font-medium">Destino</th>
                   <th className="px-3 py-2 font-medium">Viagem</th>
                   <th className="px-3 py-2 font-medium">Status</th>
+                  <th className="px-3 py-2 font-medium">Visibilidade</th>
                   <th className="px-3 py-2 text-right font-medium">Total</th>
                   <th className="px-3 py-2 text-right font-medium">Ações</th>
                 </tr>
@@ -169,6 +170,21 @@ function ProposalsList() {
                       <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
                         {STATUS_LABEL[p.status] ?? p.status}
                       </StatusBadge>
+                    </td>
+                    <td className="px-3 py-2.5">
+                      {p.visibility === "public" ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 text-[10px] font-semibold">
+                          🌐 Pública
+                        </span>
+                      ) : p.visibility === "agency" ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-success/10 text-success border border-success/20 px-2 py-0.5 text-[10px] font-semibold">
+                          🏢 Agência
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt text-muted-foreground border border-border px-2 py-0.5 text-[10px] font-semibold">
+                          🔒 Privada
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2.5 text-right font-mono text-xs">
                       {money(Number(p.total), p.currency)}

@@ -12,11 +12,16 @@ import {
   Contact2,
   ShieldCheck,
   FileText,
+  Upload,
+  Download,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: () => ({ meta: [{ title: "Passageiros · TravelOS" }] }),
@@ -29,6 +34,12 @@ function PassengersPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
 
+  // Estados para Upload & OCR por passageiro
+  const [uploadingPid, setUploadingPid] = useState<string | null>(null);
+  const [selectedDocType, setSelectedDocType] = useState<Record<string, "passport" | "visa" | "ticket" | "other">>({});
+  const [expDates, setExpDates] = useState<Record<string, string>>({});
+
+  // 1. Query de Passageiros
   const list = useQuery({
     enabled: !!agency,
     queryKey: ["passengers", id],
@@ -38,13 +49,43 @@ function PassengersPage() {
         .select("*")
         .eq("trip_id", id)
         .is("deleted_at", null)
-        .order("is_lead_passenger", { ascending: false }) // Principais primeiro
+        .order("is_lead_passenger", { ascending: false })
         .order("created_at");
       if (error) throw error;
       return data;
     },
   });
 
+  // 2. Query da Viagem (para saber a data de embarque/início)
+  const tripQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["trip", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trips")
+        .select("id, title, travel_start, travel_end")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // 3. Query dos Documentos de Passageiros cadastrados na viagem
+  const docsQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["passenger-documents", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("passenger_documents")
+        .select("*")
+        .eq("trip_id", id);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // 4. Mutação para remover passageiro
   const remove = useMutation({
     mutationFn: async (pid: string) => {
       const { error } = await (supabase as any)
@@ -53,8 +94,137 @@ function PassengersPage() {
         .eq("id", pid);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["passengers", id] }),
+    onSuccess: () => {
+      toast.success("Passageiro removido.");
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+    },
   });
+
+  // 5. Mutação para excluir documento
+  const deleteDoc = useMutation({
+    mutationFn: async (docId: string) => {
+      const { data: doc } = await supabase
+        .from("passenger_documents")
+        .select("file_path")
+        .eq("id", docId)
+        .single();
+      
+      if (doc?.file_path) {
+        await supabase.storage.from("passenger-documents").remove([doc.file_path]);
+      }
+
+      const { error } = await supabase
+        .from("passenger_documents")
+        .delete()
+        .eq("id", docId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Documento excluído.");
+      qc.invalidateQueries({ queryKey: ["passenger-documents", id] });
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+      qc.invalidateQueries({ queryKey: ["boarding-cards"] });
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao excluir: " + err.message);
+    }
+  });
+
+  // Upload & Processamento OCR
+  async function handleFileUpload(pid: string, file: File, docType: "passport" | "visa" | "ticket" | "other", customExpDate?: string) {
+    if (!agency) return;
+    setUploadingPid(pid);
+    const toastId = toast.loading("Enviando documento...");
+    try {
+      const ext = file.name.split(".").pop();
+      const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}.${ext}`;
+      const filePath = `${agency.id}/${id}/${pid}/${filename}`;
+
+      // A. Subir arquivo para o Storage
+      const { error: uploadErr } = await supabase.storage
+        .from("passenger-documents")
+        .upload(filePath, file);
+      if (uploadErr) throw uploadErr;
+
+      toast.loading("Analisando com Inteligência Artificial (OCR)...", { id: toastId });
+
+      // B. Converter para base64
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const b64 = (reader.result as string).split(",")[1];
+          resolve(b64);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(file);
+      const fileBase64 = await base64Promise;
+
+      // C. Chamar Edge Function de OCR
+      let extractedData: any = {};
+      let expirationDate = customExpDate || null;
+      try {
+        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke("ocr-passenger-document", {
+          body: {
+            file_base64: fileBase64,
+            mime: file.type,
+            agency_id: agency.id,
+          }
+        });
+        if (!ocrErr && ocrData?.result) {
+          extractedData = ocrData.result;
+          if (extractedData.expiration_date) {
+            expirationDate = extractedData.expiration_date;
+          }
+          toast.success("IA extraiu os dados com sucesso!", { id: toastId });
+        } else {
+          console.warn("OCR returned empty or error", ocrErr);
+          toast.success("Documento enviado sem extração automática.", { id: toastId });
+        }
+      } catch (ocrErr) {
+        console.warn("OCR function invocation failed", ocrErr);
+        toast.success("Documento enviado. (OCR indisponível)", { id: toastId });
+      }
+
+      // D. Salvar no banco
+      const { error: insertErr } = await supabase
+        .from("passenger_documents")
+        .insert({
+          trip_id: id,
+          passenger_id: pid,
+          agency_id: agency.id,
+          document_type: docType,
+          file_path: filePath,
+          extracted_metadata: extractedData,
+          expiration_date: expirationDate || null,
+        } as any);
+
+      if (insertErr) throw insertErr;
+
+      // Limpar campos
+      setExpDates({ ...expDates, [pid]: "" });
+      qc.invalidateQueries({ queryKey: ["passenger-documents", id] });
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+      qc.invalidateQueries({ queryKey: ["boarding-cards"] }); // atualiza tags operacionais!
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao fazer upload.", { id: toastId });
+    } finally {
+      setUploadingPid(null);
+    }
+  }
+
+  // Visualizar / Baixar Documento Seguro
+  async function handleDownloadDoc(path: string) {
+    try {
+      const { data, error } = await supabase.storage
+        .from("passenger-documents")
+        .createSignedUrl(path, 3600);
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank");
+    } catch (err: any) {
+      toast.error("Erro ao abrir documento: " + err.message);
+    }
+  }
 
   const translateKind = (kind: string) => {
     switch (kind) {
@@ -82,7 +252,7 @@ function PassengersPage() {
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Rooming List</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Gerencie os passageiros vinculados a este roteiro.
+            Gerencie os passageiros vinculados a este roteiro e seus documentos operacionais.
           </p>
         </div>
         <button
@@ -93,12 +263,12 @@ function PassengersPage() {
         </button>
       </div>
 
-      {list.isLoading && (
+      {(list.isLoading || docsQ.isLoading || tripQ.isLoading) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-48 rounded-2xl bg-surface-alt animate-pulse border border-border"
+              className="h-96 rounded-2xl bg-surface-alt animate-pulse border border-border"
             />
           ))}
         </div>
@@ -109,8 +279,7 @@ function PassengersPage() {
           <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o
-            grupo.
+            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o grupo.
           </p>
         </div>
       )}
@@ -136,12 +305,16 @@ function PassengersPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         {translateKind(p.kind)}
                       </span>
-                      <StatusBadge tone="info">Líder da Reserva</StatusBadge>
+                      {p.is_lead_passenger && <StatusBadge tone="info">Líder da Reserva</StatusBadge>}
                     </div>
                   </div>
                 </div>
                 <button
-                  onClick={() => remove.mutate(p.id)}
+                  onClick={() => {
+                    if (confirm("Deseja remover este passageiro da viagem?")) {
+                      remove.mutate(p.id);
+                    }
+                  }}
                   className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all hover:bg-danger/10 hover:text-danger"
                   title="Remover passageiro"
                 >
@@ -150,68 +323,195 @@ function PassengersPage() {
               </div>
 
               {/* Body Card */}
-              <div className="p-5 space-y-4 flex-1">
-                {/* Documentação */}
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
-                    <FileText className="h-3.5 w-3.5" />
+              <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                <div className="space-y-4">
+                  {/* Documentação */}
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                      <FileText className="h-3.5 w-3.5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                        {p.document_type ? String(p.document_type).toUpperCase() : "Documento Principal"}
+                      </div>
+                      <div className="text-xs font-mono font-medium truncate">
+                        {p.document || "Não informado"}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
-                      {p.document_type ? String(p.document_type).toUpperCase() : "Documento"}
+
+                  {/* Nascimento e Nacionalidade */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                          Nascimento
+                        </div>
+                        <div className="text-xs font-medium truncate">
+                          {p.birth_date ? fmtDate(p.birth_date) : "—"}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-xs font-mono font-medium truncate">
-                      {p.document || "Não informado"}
+
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                          Nacionalidade
+                        </div>
+                        <div className="text-xs font-medium truncate">{p.nationality || "—"}</div>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Contato (Se houver) */}
+                  {(p.email || p.phone) && (
+                    <div className="pt-4 border-t border-border/50 space-y-2">
+                      {p.email && (
+                        <div className="flex items-center gap-2.5">
+                          <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <span className="text-xs text-muted-foreground truncate">{p.email}</span>
+                        </div>
+                      )}
+                      {p.phone && (
+                        <div className="flex items-center gap-2.5">
+                          <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <span className="text-xs text-muted-foreground truncate">{p.phone}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Documentos Anexados & Upload Area */}
+                <div className="pt-4 border-t border-border/50 space-y-3 mt-4">
+                  <div className="text-[10px] font-bold uppercase text-muted-foreground tracking-wide mb-1 flex items-center justify-between">
+                    <span>Documentos Operacionais</span>
+                    {uploadingPid === p.id && (
+                      <span className="flex items-center gap-1 text-[10px] text-brand">
+                        <Loader2 className="h-3 w-3 animate-spin" /> OCR Ativo...
+                      </span>
+                    )}
+                  </div>
+
+                  {/* List of current passenger documents */}
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {docsQ.data?.filter((d: any) => d.passenger_id === p.id).map((doc: any) => {
+                      const daysToDeparture = tripQ.data?.travel_start && doc.expiration_date
+                        ? Math.ceil((new Date(doc.expiration_date).getTime() - new Date(tripQ.data.travel_start).getTime()) / (1000 * 3600 * 24))
+                        : null;
+                      const isExpiringSoon = daysToDeparture !== null && daysToDeparture >= 0 && daysToDeparture < 180; // < 6 months
+                      const isExpired = daysToDeparture !== null && daysToDeparture < 0;
+
+                      return (
+                        <div key={doc.id} className="flex flex-col gap-1 rounded-lg border border-border/60 bg-surface-alt/10 p-2.5 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-foreground flex items-center gap-1">
+                              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                              {doc.document_type === 'passport' ? 'Passaporte' : 
+                               doc.document_type === 'visa' ? 'Visto' : 
+                               doc.document_type === 'ticket' ? 'Passagem' : 'Outro'}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadDoc(doc.file_path)}
+                                className="text-muted-foreground hover:text-brand transition-colors p-0.5"
+                                title="Visualizar / Baixar"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm("Deseja excluir este documento?")) {
+                                    deleteDoc.mutate(doc.id);
+                                  }
+                                }}
+                                className="text-muted-foreground hover:text-danger transition-colors p-0.5"
+                                title="Excluir"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                          {doc.expiration_date && (
+                            <div className="text-[10px] text-muted-foreground font-mono">
+                              Validade: {new Date(doc.expiration_date + 'T12:00:00').toLocaleDateString("pt-BR")}
+                            </div>
+                          )}
+                          {isExpired && (
+                            <div className="flex items-center gap-1 text-[10px] text-danger font-bold mt-1">
+                              <AlertTriangle className="h-3 w-3 shrink-0" />
+                              Expirado!
+                            </div>
+                          )}
+                          {isExpiringSoon && !isExpired && (
+                            <div className="flex items-center gap-1 text-[9px] text-danger font-bold bg-danger/5 border border-danger/10 rounded px-1.5 py-0.5 mt-1">
+                              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                              Expira em menos de 6 meses no embarque!
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {(!docsQ.data || docsQ.data.filter((d: any) => d.passenger_id === p.id).length === 0) && (
+                      <div className="text-[10px] text-muted-foreground italic py-1">
+                        Nenhum anexo cadastrado.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Document upload form inside the card */}
+                  <div className="rounded-xl border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <select
+                        value={selectedDocType[p.id] || "passport"}
+                        onChange={(e) => setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })}
+                        className="h-8 rounded-md border border-border bg-surface px-2 text-[10px] font-medium outline-none text-foreground"
+                      >
+                        <option value="passport">Passaporte</option>
+                        <option value="visa">Visto</option>
+                        <option value="ticket">Passagem</option>
+                        <option value="other">Outro</option>
+                      </select>
+                      <input
+                        type="date"
+                        value={expDates[p.id] || ""}
+                        onChange={(e) => setExpDates({ ...expDates, [p.id]: e.target.value })}
+                        placeholder="Vencimento"
+                        className="h-8 rounded-md border border-border bg-surface px-2 text-[10px] outline-none text-foreground"
+                      />
+                    </div>
+                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
+                      <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                      Anexar & Processar OCR
+                      <input
+                        type="file"
+                        accept="application/pdf,image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleFileUpload(
+                              p.id,
+                              e.target.files[0],
+                              selectedDocType[p.id] || "passport",
+                              expDates[p.id]
+                            );
+                          }
+                        }}
+                        disabled={uploadingPid === p.id}
+                      />
+                    </label>
                   </div>
                 </div>
 
-                {/* Nascimento e Nacionalidade */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
-                        Nascimento
-                      </div>
-                      <div className="text-xs font-medium truncate">
-                        {p.birth_date ? fmtDate(p.birth_date) : "—"}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
-                      <ShieldCheck className="h-3.5 w-3.5" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
-                        Nacionalidade
-                      </div>
-                      <div className="text-xs font-medium truncate">{p.nationality || "—"}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contato (Se houver) */}
-                {(p.email || p.phone) && (
-                  <div className="pt-4 mt-2 border-t border-border/50 space-y-2">
-                    {p.email && (
-                      <div className="flex items-center gap-2.5">
-                        <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-xs text-muted-foreground truncate">{p.email}</span>
-                      </div>
-                    )}
-                    {p.phone && (
-                      <div className="flex items-center gap-2.5">
-                        <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-xs text-muted-foreground truncate">{p.phone}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           ))}
