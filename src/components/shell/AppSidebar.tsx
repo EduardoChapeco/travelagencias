@@ -23,6 +23,7 @@ import {
   Radar,
   Calendar,
   MessageSquare,
+  Palette,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -52,6 +53,7 @@ const items: NavItem[] = [
   { label: "Portal", segment: "portal", icon: Globe },
   { label: "Base de Conhecimento", segment: "knowledge", icon: BookOpen },
   { label: "Minha Empresa", segment: "company", icon: Building2 },
+  { label: "Identidade Visual", segment: "brand", icon: Palette },
   { label: "Configurações", segment: "settings", icon: Settings },
 ];
 

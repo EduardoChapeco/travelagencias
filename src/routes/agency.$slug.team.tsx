@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Copy } from "lucide-react";
+import { Plus, Trash2, Copy, Percent, X, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   fetchTeamMembers,
@@ -23,6 +23,7 @@ import {
   StatusBadge,
   fmtDate,
 } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/agency/$slug/team")({
   head: () => ({ meta: [{ title: "Equipe · TravelOS" }] }),
@@ -30,11 +31,15 @@ export const Route = createFileRoute("/agency/$slug/team")({
 });
 
 type Member = {
+  id: string;
   user_id: string;
   role: string;
   created_at: string;
-  full_name: string | null;
-  avatar_url: string | null;
+  profile: {
+    id: string;
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
 };
 type Invite = {
   id: string;
@@ -50,6 +55,7 @@ function TeamPage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<Member | null>(null);
 
   const members = useQuery({
     enabled: !!agency,
@@ -127,6 +133,7 @@ function TeamPage() {
               <tr>
                 <th className="px-3 py-2">Nome</th>
                 <th className="px-3 py-2">Papel</th>
+                <th className="px-3 py-2">Comissão</th>
                 <th className="px-3 py-2">Entrou</th>
                 <th className="px-3 py-2"></th>
               </tr>
@@ -151,6 +158,18 @@ function TeamPage() {
                       <option value="agent">Agente</option>
                       <option value="agent_viewer">Visualizador</option>
                     </Select>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {m.role === "agent" ? (
+                      <button
+                        onClick={() => setSelectedAgent(m)}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+                      >
+                        <Percent className="h-3 w-3" /> Configurar
+                      </button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
                     {fmtDate(m.created_at)}
@@ -237,7 +256,206 @@ function TeamPage() {
           }}
         />
       )}
+
+      {selectedAgent && agency && (
+        <AgentCommissionSheet
+          agencyId={agency.id}
+          agent={selectedAgent}
+          onClose={() => setSelectedAgent(null)}
+        />
+      )}
     </>
+  );
+}
+
+function AgentCommissionSheet({
+  agencyId,
+  agent,
+  onClose,
+}: {
+  agencyId: string;
+  agent: Member;
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const [commissionType, setCommissionType] = useState<"fixed" | "scale">("scale");
+  const [fixedPct, setFixedPct] = useState(0);
+  const [scaleRanges, setScaleRanges] = useState<Array<{ min: number; max: number | null; pct: number }>>([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: rule, isLoading } = useQuery({
+    queryKey: ["agent-commission-rule", agencyId, agent.user_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agent_commission_rules" as any)
+        .select("*")
+        .eq("agency_id", agencyId)
+        .eq("user_id", agent.user_id)
+        .maybeSingle();
+      if (error) throw error;
+      return data as any;
+    },
+  });
+
+  useEffect(() => {
+    if (rule) {
+      setCommissionType(rule.commission_type || "scale");
+      setFixedPct(rule.fixed_pct || 0);
+      setScaleRanges(rule.scale_ranges || []);
+    } else {
+      setScaleRanges([
+        { min: 0, max: 50000, pct: 3 },
+        { min: 50000, max: 100000, pct: 5 },
+        { min: 100000, max: null, pct: 7 },
+      ]);
+    }
+  }, [rule]);
+
+  function handleAddRange() {
+    const lastRange = scaleRanges[scaleRanges.length - 1];
+    const newMin = lastRange ? (lastRange.max || 0) : 0;
+    setScaleRanges([...scaleRanges, { min: newMin, max: null, pct: 5 }]);
+  }
+
+  function handleRemoveRange(index: number) {
+    setScaleRanges(scaleRanges.filter((_, i) => i !== index));
+  }
+
+  function handleRangeChange(index: number, field: "min" | "max" | "pct", val: number | null) {
+    const newRanges = [...scaleRanges];
+    newRanges[index] = { ...newRanges[index], [field]: val };
+    setScaleRanges(newRanges);
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("agent_commission_rules" as any)
+        .upsert({
+          agency_id: agencyId,
+          user_id: agent.user_id,
+          commission_type: commissionType,
+          fixed_pct: fixedPct,
+          scale_ranges: scaleRanges,
+        }, { onConflict: "agency_id,user_id" });
+
+      if (error) throw error;
+      toast.success("Comissão configurada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["agent-commission-rule", agencyId, agent.user_id] });
+      onClose();
+    } catch (error: any) {
+      toast.error("Erro ao salvar: " + error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <Sheet onClose={onClose} title={`Comissão: ${agent.profile?.full_name || "Agente"}`}>
+      {isLoading ? (
+        <div className="py-8 text-center text-sm text-muted-foreground">Carregando...</div>
+      ) : (
+        <form onSubmit={submit} className="space-y-4">
+          <Field label="Tipo de Comissionamento">
+            <Select
+              value={commissionType}
+              onChange={(e) => setCommissionType(e.target.value as "fixed" | "scale")}
+            >
+              <option value="scale">Escala Progressiva (Faturamento Mensal)</option>
+              <option value="fixed">Taxa Fixa (%)</option>
+            </Select>
+          </Field>
+
+          {commissionType === "fixed" ? (
+            <Field label="Taxa de Comissão Fixa (%)" hint="Percentual fixo sobre a base comissionável">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                step={0.1}
+                required
+                value={fixedPct}
+                onChange={(e) => setFixedPct(parseFloat(e.target.value) || 0)}
+              />
+            </Field>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase text-muted-foreground">Faixas de Faturamento</span>
+                <button
+                  type="button"
+                  onClick={handleAddRange}
+                  className="inline-flex items-center gap-1 text-xs text-brand hover:underline font-semibold"
+                >
+                  <PlusCircle className="h-3.5 w-3.5" /> Adicionar Faixa
+                </button>
+              </div>
+
+              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                {scaleRanges.map((range, index) => (
+                  <div key={index} className="flex items-center gap-2 rounded-lg border border-border bg-surface p-2.5">
+                    <div className="grid grid-cols-3 gap-2 flex-1">
+                      <div>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Min (R$)</label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={range.min}
+                          onChange={(e) => handleRangeChange(index, "min", parseFloat(e.target.value) || 0)}
+                          className="h-8 text-xs px-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Max (R$)</label>
+                        <Input
+                          type="number"
+                          min={0}
+                          placeholder="Sem limite"
+                          value={range.max === null ? "" : range.max}
+                          onChange={(e) => handleRangeChange(index, "max", e.target.value === "" ? null : parseFloat(e.target.value))}
+                          className="h-8 text-xs px-2"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Taxa (%)</label>
+                        <Input
+                          type="number"
+                          min={0}
+                          max={100}
+                          step={0.1}
+                          value={range.pct}
+                          onChange={(e) => handleRangeChange(index, "pct", parseFloat(e.target.value) || 0)}
+                          className="h-8 text-xs px-2"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRange(index)}
+                      className="mt-4 text-destructive hover:bg-destructive/10 p-1.5 rounded transition-colors self-center"
+                      disabled={scaleRanges.length <= 1}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
+            <GhostButton type="button" onClick={onClose}>
+              Cancelar
+            </GhostButton>
+            <PrimaryButton type="submit" disabled={submitting}>
+              {submitting ? "Salvando…" : "Salvar Configuração"}
+            </PrimaryButton>
+          </div>
+        </form>
+      )}
+    </Sheet>
   );
 }
 

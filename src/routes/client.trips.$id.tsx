@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowLeft,
   Plane,
@@ -121,6 +122,42 @@ function ClientTripDetail() {
       await addTripMemories(id, urls);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
+  });
+
+  const lgpdQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-lgpd-acceptance", tripQ.data?.client_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("legal_acceptances" as any)
+        .select("*")
+        .eq("client_id", tripQ.data!.client_id)
+        .eq("terms_type", "lgpd_memories")
+        .maybeSingle();
+      if (error) return null;
+      return data;
+    }
+  });
+
+  const acceptLgpd = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("legal_acceptances" as any)
+        .insert({
+          client_id: tripQ.data!.client_id,
+          agency_id: tripQ.data!.agency_id,
+          terms_type: "lgpd_memories",
+          user_agent: navigator.userAgent
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-lgpd-acceptance", tripQ.data!.client_id] });
+      toast.success("Termos LGPD aceitos com sucesso!");
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao registrar consentimento: " + err.message);
+    }
   });
 
   if (tripQ.isLoading)
@@ -649,59 +686,80 @@ function ClientTripDetail() {
         {/* ABA: MEMÓRIAS */}
         {activeTab === "memorias" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5 text-brand" /> Galeria Privada
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Guarde aqui as fotos inesquecíveis da sua viagem.
+            {!lgpdQ.isLoading && !lgpdQ.data ? (
+              <div className="rounded-3xl border border-warning/30 bg-warning/5 p-8 max-w-2xl mx-auto space-y-4 text-center">
+                <ShieldAlert className="w-12 h-12 text-warning mx-auto" />
+                <h3 className="text-base font-bold text-foreground">Autorização de Uso de Imagem (LGPD)</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Para poder salvar fotos das suas viagens no portal, precisamos do seu consentimento para armazenar estas mídias de forma segura. A agência poderá visualizar as imagens e, com a sua permissão, utilizá-las em comunicações ou divulgações institucionais de marketing.
                 </p>
-              </div>
-              <div>
-                {/* Uploader escondido por trás de um botão bonitinho */}
-                <div className="w-full md:w-auto">
-                  <MultiFileUploader
-                    bucket="trip-memories"
-                    folder={`${id}`}
-                    max={10}
-                    values={[]}
-                    onChange={(urls) => {
-                      if (urls.length > 0) uploadMemory.mutate(urls);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {memories.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-border p-12 text-center bg-surface">
-                <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <div className="text-lg font-bold text-foreground mb-1">Nenhuma memória ainda</div>
-                <div className="text-sm text-muted-foreground">
-                  Faça o upload da sua primeira foto.
+                <div className="pt-2">
+                  <button
+                    onClick={() => acceptLgpd.mutate()}
+                    disabled={acceptLgpd.isPending}
+                    className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
+                  >
+                    {acceptLgpd.isPending ? "Registrando..." : "Aceitar e Habilitar Galeria"}
+                  </button>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {memories.map((m: any) => (
-                  <div
-                    key={m.id}
-                    className="aspect-square rounded-2xl overflow-hidden bg-muted group relative"
-                  >
-                    <img
-                      src={m.image_url}
-                      alt="Memória"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                      <span className="text-[10px] text-white font-medium">
-                        {fmtDate(m.created_at)}
-                      </span>
+              <>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                      <ImageIcon className="w-5 h-5 text-brand" /> Galeria Privada
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Guarde aqui as fotos inesquecíveis da sua viagem.
+                    </p>
+                  </div>
+                  <div>
+                    {/* Uploader escondido por trás de um botão bonitinho */}
+                    <div className="w-full md:w-auto">
+                      <MultiFileUploader
+                        bucket="trip-memories"
+                        folder={`${id}`}
+                        max={10}
+                        values={[]}
+                        onChange={(urls) => {
+                          if (urls.length > 0) uploadMemory.mutate(urls);
+                        }}
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+
+                {memories.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-border p-12 text-center bg-surface">
+                    <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                    <div className="text-lg font-bold text-foreground mb-1">Nenhuma memória ainda</div>
+                    <div className="text-sm text-muted-foreground">
+                      Faça o upload da sua primeira foto.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {memories.map((m: any) => (
+                      <div
+                        key={m.id}
+                        className="aspect-square rounded-2xl overflow-hidden bg-muted group relative"
+                      >
+                        <img
+                          src={m.image_url}
+                          alt="Memória"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                          <span className="text-[10px] text-white font-medium">
+                            {fmtDate(m.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}

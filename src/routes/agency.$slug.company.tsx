@@ -115,7 +115,7 @@ const defaultBrandKit = (): BrandKit => ({
   font_heading: "Inter", font_body: "Inter", logo_url: "", favicon_url: "",
 });
 
-type Tab = "identity" | "contact" | "location" | "social" | "media" | "hours" | "brand" | "portal_config";
+type Tab = "identity" | "contact" | "location" | "social" | "media" | "hours";
 const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "identity",      label: "Identidade",       icon: Building2 },
   { id: "contact",       label: "Contato",           icon: Phone },
@@ -123,8 +123,6 @@ const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
   { id: "social",        label: "Redes sociais",     icon: Share2 },
   { id: "media",         label: "Mídia",             icon: Globe },
   { id: "hours",         label: "Horários",          icon: Clock },
-  { id: "brand",         label: "Identidade Visual", icon: Palette },
-  { id: "portal_config", label: "Config. Portal",    icon: LayoutTemplate },
 ];
 
 function Page() {
@@ -637,218 +635,6 @@ function Page() {
               </div>
             </form>
           )}
-
-          {/* ── BRAND TAB ──────────────────────────────────────── */}
-          {tab === "brand" && (
-            <form onSubmit={saveBrand} className="space-y-0">
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-                <div className="space-y-5">
-                  {/* Logo */}
-                  <section className="rounded-lg border border-border bg-surface p-5">
-                    <h3 className="mb-3 text-sm font-semibold">Logo</h3>
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-md border border-border bg-surface-alt">
-                        {brand.logo_url ? (
-                          <img src={brand.logo_url} alt="logo" className="max-h-full max-w-full object-contain" />
-                        ) : (
-                          <span className="text-xs text-muted-foreground">sem logo</span>
-                        )}
-                      </div>
-                      <label className="flex h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-surface-alt">
-                        <Upload className="h-3.5 w-3.5" /> {uploading ? "Enviando…" : "Enviar arquivo"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])}
-                        />
-                      </label>
-                    </div>
-                  </section>
-
-                  {/* Colors */}
-                  <section className="rounded-lg border border-border bg-surface p-5">
-                    <h3 className="mb-3 text-sm font-semibold">Cores da marca</h3>
-                    <div className="grid grid-cols-3 gap-3">
-                      <ColorField label="Primária" value={brand.brand_color} onChange={(v) => setBrand({ ...brand, brand_color: v })} />
-                      <ColorField label="Fundo claro" value={brand.brand_color_light} onChange={(v) => setBrand({ ...brand, brand_color_light: v })} />
-                      <ColorField label="Texto sobre primária" value={brand.brand_color_fg} onChange={(v) => setBrand({ ...brand, brand_color_fg: v })} />
-                    </div>
-                  </section>
-
-                  {/* Typography */}
-                  <section className="rounded-lg border border-border bg-surface p-5">
-                    <h3 className="mb-3 text-sm font-semibold">Tipografia</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field label="Fonte de títulos">
-                        <Input value={brand.font_heading} onChange={(e) => setBrand({ ...brand, font_heading: e.target.value })} />
-                      </Field>
-                      <Field label="Fonte do corpo">
-                        <Input value={brand.font_body} onChange={(e) => setBrand({ ...brand, font_body: e.target.value })} />
-                      </Field>
-                    </div>
-                  </section>
-
-                  {/* Favicon */}
-                  <section className="rounded-lg border border-border bg-surface p-5">
-                    <h3 className="mb-3 text-sm font-semibold">Favicon</h3>
-                    <Field label="Favicon URL" hint="Ícone da aba do navegador (32×32 PNG recomendado)">
-                      <Input value={brand.favicon_url} onChange={(e) => setBrand({ ...brand, favicon_url: e.target.value })} placeholder="https://..." />
-                    </Field>
-                  </section>
-
-                  <div className="flex justify-end">
-                    <PrimaryButton type="submit" disabled={brandBusy} className="gap-1.5">
-                      <Save className="h-3.5 w-3.5" />
-                      {brandBusy ? "Salvando…" : "Salvar identidade visual"}
-                    </PrimaryButton>
-                  </div>
-                </div>
-
-                {/* Brand Preview */}
-                <aside className="rounded-lg border border-border bg-surface p-5">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Pré-visualização</h3>
-                  <div className="overflow-hidden rounded-md border border-border">
-                    <div className="p-4" style={{ background: brand.brand_color, color: brand.brand_color_fg }}>
-                      <div className="text-xs opacity-80">Cabeçalho</div>
-                      <div className="mt-1 text-lg font-semibold" style={{ fontFamily: brand.font_heading }}>
-                        {agency?.name ?? "Sua agência"}
-                      </div>
-                    </div>
-                    <div className="p-4" style={{ background: brand.brand_color_light }}>
-                      <div className="text-xs" style={{ fontFamily: brand.font_body, color: brand.brand_color }}>
-                        Texto do corpo em destaque sobre o fundo claro.
-                      </div>
-                      <button
-                        className="mt-3 rounded px-3 py-1.5 text-xs font-medium"
-                        style={{ background: brand.brand_color, color: brand.brand_color_fg }}
-                        type="button"
-                      >
-                        Botão primário
-                      </button>
-                    </div>
-                  </div>
-                  <div className="mt-4 rounded-md border border-border/50 bg-surface-alt p-3">
-                    <p className="text-[11px] font-medium text-foreground mb-1">Onde é aplicado</p>
-                    <ul className="space-y-0.5 text-[11px] text-muted-foreground">
-                      <li>• Portal público (header, botões, links)</li>
-                      <li>• Cotações e propostas enviadas</li>
-                      <li>• Contratos e vouchers gerados</li>
-                      <li>• E-mails transacionais</li>
-                    </ul>
-                  </div>
-                </aside>
-              </div>
-            </form>
-          )}
-
-          {/* ── PORTAL CONFIG TAB ──────────────────────────────── */}
-          {tab === "portal_config" && (
-            <form onSubmit={save} className="space-y-0">
-              <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
-                <h3 className="text-sm font-semibold">Configurações do portal público</h3>
-                <p className="text-xs text-muted-foreground">
-                  Controle quais seções são exibidas, o estilo do cabeçalho e integrações de analytics do portal em{" "}
-                  <a href={portalUrl} target="_blank" rel="noreferrer" className="text-brand hover:underline">{portalUrl}</a>
-                </p>
-
-                {/* Header style */}
-                <div>
-                  <div className="mb-2 text-xs font-medium">Estilo do cabeçalho</div>
-                  <div className="grid grid-cols-3 gap-3">
-                    {(["simple", "full", "minimal"] as const).map((style) => (
-                      <button
-                        key={style}
-                        type="button"
-                        onClick={() => setTheme("header_style", style)}
-                        className={`rounded-lg border p-3 text-left transition-colors ${
-                          form.portal_theme.header_style === style
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-border-strong"
-                        }`}
-                      >
-                        <div className="text-xs font-semibold capitalize mb-1">
-                          {style === "simple" ? "Simples" : style === "full" ? "Completo" : "Minimalista"}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">
-                          {style === "simple" && "Logo + navegação básica"}
-                          {style === "full" && "Logo + nav + CTA + redes sociais"}
-                          {style === "minimal" && "Apenas logo centralizada"}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Visible sections */}
-                <div>
-                  <div className="mb-2 text-xs font-medium">Seções visíveis no portal</div>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {(
-                      [
-                        { key: "show_tours", label: "Roteiros em grupo" },
-                        { key: "show_blog", label: "Blog / Artigos" },
-                        { key: "show_gallery", label: "Galeria de fotos" },
-                        { key: "show_hours", label: "Horários de atendimento" },
-                        { key: "show_map", label: "Mapa / Localização" },
-                      ] as { key: keyof PortalTheme; label: string }[]
-                    ).map(({ key, label }) => (
-                      <label key={key} className="flex cursor-pointer items-center gap-2.5 rounded-md border border-border px-3 py-2 hover:bg-surface-alt">
-                        <input
-                          type="checkbox"
-                          checked={form.portal_theme[key] as boolean}
-                          onChange={(e) => setTheme(key, e.target.checked as any)}
-                          className="h-4 w-4 rounded"
-                        />
-                        <span className="text-xs font-medium">{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Analytics */}
-                <div className="border-t border-border pt-4">
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Analytics</h4>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="Google Analytics ID (G-XXXXXXXX)" hint="Rastreie visitas ao portal público">
-                      <Input
-                        value={form.portal_theme.analytics_id}
-                        onChange={(e) => setTheme("analytics_id", e.target.value)}
-                        placeholder="G-XXXXXXXXXX"
-                      />
-                    </Field>
-                    <Field label="Meta Pixel ID" hint="Para remarketing do Facebook/Instagram">
-                      <Input
-                        value={form.portal_theme.meta_pixel_id}
-                        onChange={(e) => setTheme("meta_pixel_id", e.target.value)}
-                        placeholder="000000000000000"
-                      />
-                    </Field>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="border-t border-border pt-4">
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Rodapé</h4>
-                  <Field label="Texto do rodapé" hint="Ex: © 2025 Agência XYZ. Todos os direitos reservados.">
-                    <Textarea
-                      rows={2}
-                      value={form.portal_theme.footer_text}
-                      onChange={(e) => setTheme("footer_text", e.target.value)}
-                      placeholder={`© ${new Date().getFullYear()} ${agency.name}. Todos os direitos reservados.`}
-                    />
-                  </Field>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end rounded-b-lg border-x border-b border-border bg-surface px-5 py-3">
-                <PrimaryButton type="submit" disabled={busy} className="gap-1.5">
-                  <Save className="h-3.5 w-3.5" />
-                  {busy ? "Salvando…" : "Salvar configurações do portal"}
-                </PrimaryButton>
-              </div>
-            </form>
-          )}
         </div>
 
         {/* PORTAL PREVIEW PANEL */}
@@ -891,8 +677,8 @@ function Page() {
               <div className="p-3">
                 <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Cores</div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: brand.brand_color }} title="Primária" />
-                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: brand.brand_color_light }} title="Fundo claro" />
+                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: agency.brand_color || "#1E293B" }} title="Primária" />
+                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: agency.brand_color_light || "#F1F5F9" }} title="Fundo claro" />
                 </div>
               </div>
             </div>
@@ -900,26 +686,5 @@ function Page() {
         )}
       </div>
     </>
-  );
-}
-
-function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  return (
-    <div>
-      <div className="mb-1 text-xs font-medium text-muted-foreground">{label}</div>
-      <div className="flex items-center gap-2">
-        <input
-          type="color"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-12 cursor-pointer rounded border border-border bg-transparent"
-        />
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="h-9 flex-1 rounded-md border border-border bg-surface px-2 font-mono text-xs outline-none focus:border-border-strong"
-        />
-      </div>
-    </div>
   );
 }

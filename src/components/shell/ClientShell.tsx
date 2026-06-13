@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
 import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
+import { toast } from "sonner";
 
 const items = [
   { to: "/client", label: "Início", icon: Home, exact: true },
@@ -31,19 +32,56 @@ const items = [
 export function ClientShell() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const [authenticatingToken, setAuthenticatingToken] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     let cancel = false;
-    supabase.auth.getUser().then(({ data }) => {
-      if (cancel) return;
-      setAuthed(!!data.user);
-      setReady(true);
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
+    if (token) {
+      setAuthenticatingToken(true);
+      
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+
+      supabase.functions.invoke("client-token-login", {
+        body: { token, redirect_to: cleanUrl }
+      }).then(({ data, error }) => {
+        if (cancel) return;
+        if (error || !data?.action_link) {
+          toast.error(error?.message || "Link de login inválido ou expirado.");
+          setAuthenticatingToken(false);
+          supabase.auth.getUser().then(({ data: userData }) => {
+            if (cancel) return;
+            setAuthed(!!userData.user);
+            setReady(true);
+          });
+        } else {
+          window.location.href = data.action_link;
+        }
+      });
+    } else {
+      supabase.auth.getUser().then(({ data }) => {
+        if (cancel) return;
+        setAuthed(!!data.user);
+        setReady(true);
+      });
+    }
+
     return () => {
       cancel = true;
     };
   }, []);
+
+  if (authenticatingToken)
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+        Autenticando via link seguro...
+      </div>
+    );
 
   if (!ready)
     return (

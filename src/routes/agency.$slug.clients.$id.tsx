@@ -14,7 +14,14 @@ import {
   FileSignature,
   ShieldCheck,
   Ticket as TicketIcon,
+  FileUp,
+  AlertTriangle,
+  Brain,
+  Sparkles,
+  Plane,
+  CreditCard,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
 import {
@@ -471,8 +478,16 @@ function ClientDetail() {
           )}
         </div>
 
-        {/* Painel Direito: Timeline Premium */}
-        <aside className="rounded-3xl border border-border bg-background p-6">
+        {/* Painel Direito: Abas adicionais */}
+        <div className="space-y-6">
+          {/* Aba Documentos */}
+          <DocumentsPanel clientId={id} agencyId={agency?.id ?? ""} />
+
+          {/* Aba Análise IA */}
+          <AIAnalysisPanel client={c} trips={tripsQ.data ?? []} proposals={proposalsQ.data ?? []} />
+
+          {/* Timeline Premium */}
+          <aside className="rounded-3xl border border-border bg-background p-6">
           <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">
             Linha do Tempo 360
           </h2>
@@ -606,7 +621,8 @@ function ClientDetail() {
               ))}
             </div>
           )}
-        </aside>
+          </aside>
+        </div>
       </div>
     </div>
   );
@@ -619,6 +635,422 @@ function InfoBlock({ label, value }: { label: string; value: React.ReactNode }) 
         {label}
       </div>
       <div className="text-sm font-medium leading-relaxed text-foreground">{value}</div>
+    </div>
+  );
+}
+
+// ─── DocumentsPanel ───────────────────────────────────────────────────────────
+
+const DOC_TYPES: { value: string; label: string }[] = [
+  { value: "passport", label: "Passaporte" },
+  { value: "rg", label: "RG" },
+  { value: "cpf", label: "CPF" },
+  { value: "birth_cert", label: "Certidão de Nascimento" },
+  { value: "cnh", label: "CNH" },
+  { value: "visa", label: "Visto" },
+  { value: "vaccination_card", label: "Cartão de Vacinação" },
+  { value: "insurance", label: "Seguro" },
+  { value: "other", label: "Outro" },
+];
+
+function DocumentsPanel({ clientId, agencyId }: { clientId: string; agencyId: string }) {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ doc_type: "passport", doc_number: "", issued_at: "", expires_at: "", notes: "" });
+  const [saving, setSaving] = useState(false);
+
+  const docsQ = useQuery({
+    queryKey: ["client-documents", clientId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("client_documents" as any)
+        .select("*")
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: false });
+      if (error) return [];
+      return (data ?? []) as any[];
+    },
+  });
+
+  async function saveDoc() {
+    setSaving(true);
+    const { error } = await supabase.from("client_documents" as any).insert({
+      client_id: clientId,
+      agency_id: agencyId,
+      doc_type: form.doc_type,
+      doc_number: form.doc_number || null,
+      issued_at: form.issued_at || null,
+      expires_at: form.expires_at || null,
+      notes: form.notes || null,
+    });
+    setSaving(false);
+    if (error) return toast.error("Erro ao salvar documento: " + error.message);
+    toast.success("Documento adicionado!");
+    setAdding(false);
+    setForm({ doc_type: "passport", doc_number: "", issued_at: "", expires_at: "", notes: "" });
+    qc.invalidateQueries({ queryKey: ["client-documents", clientId] });
+  }
+
+  async function deleteDoc(docId: string) {
+    if (!confirm("Remover este documento?")) return;
+    await supabase.from("client_documents" as any).delete().eq("id", docId);
+    qc.invalidateQueries({ queryKey: ["client-documents", clientId] });
+    toast.success("Documento removido.");
+  }
+
+  const today = new Date();
+  const soon = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
+
+  function expiryStatus(expiresAt?: string) {
+    if (!expiresAt) return null;
+    const d = new Date(expiresAt + "T00:00:00");
+    if (d < today) return "expired";
+    if (d < soon) return "soon";
+    return "ok";
+  }
+
+  const docs = docsQ.data ?? [];
+  const expiredCount = docs.filter((d: any) => expiryStatus(d.expires_at) === "expired").length;
+  const soonCount = docs.filter((d: any) => expiryStatus(d.expires_at) === "soon").length;
+
+  return (
+    <div className="rounded-3xl border border-border bg-background overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-6 py-4 text-sm font-bold hover:bg-surface/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <FileText className="h-4 w-4 text-brand" />
+          Documentos ({docs.length})
+        </div>
+        <div className="flex items-center gap-2">
+          {expiredCount > 0 && (
+            <span className="text-[10px] font-bold bg-danger/10 text-danger border border-danger/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" /> {expiredCount} vencido(s)
+            </span>
+          )}
+          {soonCount > 0 && (
+            <span className="text-[10px] font-bold bg-warning/10 text-warning border border-warning/30 px-2 py-0.5 rounded-full">
+              {soonCount} vence em breve
+            </span>
+          )}
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-6 pb-6 space-y-4 border-t border-border/50">
+          {docs.length === 0 && !adding && (
+            <p className="pt-4 text-sm text-muted-foreground text-center">Nenhum documento cadastrado.</p>
+          )}
+
+          {docs.map((doc: any) => {
+            const status = expiryStatus(doc.expires_at);
+            return (
+              <div
+                key={doc.id}
+                className={`flex items-start justify-between gap-3 rounded-xl border p-3 ${
+                  status === "expired"
+                    ? "border-danger/30 bg-danger/5"
+                    : status === "soon"
+                      ? "border-warning/30 bg-warning/5"
+                      : "border-border bg-surface"
+                }`}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-bold text-foreground">
+                      {DOC_TYPES.find((t) => t.value === doc.doc_type)?.label ?? doc.doc_type}
+                    </span>
+                    {status === "expired" && (
+                      <span className="text-[10px] font-bold text-danger">⚠ VENCIDO</span>
+                    )}
+                    {status === "soon" && (
+                      <span className="text-[10px] font-bold text-warning">⏰ Vence em breve</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {doc.doc_number && <span>Nº {doc.doc_number} · </span>}
+                    {doc.expires_at && <span>Vence: {new Date(doc.expires_at + "T00:00:00").toLocaleDateString("pt-BR")}</span>}
+                    {doc.notes && <span> · {doc.notes}</span>}
+                  </div>
+                </div>
+                <button
+                  onClick={() => deleteDoc(doc.id)}
+                  className="text-muted-foreground hover:text-danger transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            );
+          })}
+
+          {adding && (
+            <div className="rounded-xl border border-brand/30 bg-brand/5 p-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo</label>
+                  <select
+                    value={form.doc_type}
+                    onChange={(e) => setForm({ ...form, doc_type: e.target.value })}
+                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none"
+                  >
+                    {DOC_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Número</label>
+                  <input
+                    value={form.doc_number}
+                    onChange={(e) => setForm({ ...form, doc_number: e.target.value })}
+                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none"
+                    placeholder="Ex: AB123456"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Emissão</label>
+                  <input
+                    type="date"
+                    value={form.issued_at}
+                    onChange={(e) => setForm({ ...form, issued_at: e.target.value })}
+                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Vencimento</label>
+                  <input
+                    type="date"
+                    value={form.expires_at}
+                    onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
+                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={saveDoc}
+                  disabled={saving}
+                  className="flex-1 h-9 rounded-lg bg-brand text-white text-xs font-bold hover:opacity-90 disabled:opacity-60"
+                >
+                  {saving ? "Salvando..." : "Salvar"}
+                </button>
+                <button
+                  onClick={() => setAdding(false)}
+                  className="h-9 px-4 rounded-lg border border-border text-xs font-semibold"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!adding && (
+            <button
+              onClick={() => setAdding(true)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+            >
+              <FileUp className="h-3.5 w-3.5" /> Adicionar documento
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── AIAnalysisPanel ──────────────────────────────────────────────────────────
+
+function AIAnalysisPanel({
+  client,
+  trips,
+  proposals,
+}: {
+  client: any;
+  trips: any[];
+  proposals: any[];
+}) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState<any>(null);
+
+  async function runAnalysis() {
+    setLoading(true);
+    try {
+      const clientSummaryInfo = {
+        name: client.full_name,
+        email: client.email,
+        phone: client.phone,
+        birth_date: client.birth_date,
+        cpf: client.cpf,
+        rg: client.rg,
+        passport_number: client.passport_number,
+        passport_expiry: client.passport_expiry,
+        dietary: client.preferences?.dietary,
+        preferences_notes: client.preferences?.notes,
+        notes: client.notes,
+        tags: client.tags,
+      };
+
+      const tripsSummary = trips.map((t: any) => ({
+        destination: t.destination,
+        total_sale: t.total_sale,
+        status: t.status,
+        travel_start: t.travel_start,
+        title: t.title,
+      }));
+
+      const proposalsSummary = proposals.map((p: any) => ({
+        title: p.title,
+        status: p.status,
+        total: p.total,
+        created_at: p.created_at,
+      }));
+
+      const promptText = `Por favor, analise o perfil do seguinte cliente da agência de viagens e o histórico de interações dele.
+Informações do Cliente:
+${JSON.stringify(clientSummaryInfo, null, 2)}
+
+Histórico de Viagens:
+${JSON.stringify(tripsSummary, null, 2)}
+
+Histórico de Cotações/Propostas:
+${JSON.stringify(proposalsSummary, null, 2)}
+
+Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma formatação ou tags de bloco de código markdown como \`\`\`json, retorne apenas o objeto JSON puro:
+{
+  "summary": "Um resumo detalhado e profissional do comportamento e preferências de viagem do cliente.",
+  "retentionScore": "alto" | "médio" | "baixo",
+  "suggestions": [
+    "Primeira sugestão de engajamento ou destino ideal baseado no perfil",
+    "Segunda sugestão para fidelização ou oferta",
+    "Terceira sugestão de ação interna para o agente de viagens"
+  ],
+  "nextAction": "Recomendação clara da próxima ação comercial com o cliente."
+}`;
+
+      const systemPromptText = "Você é uma IA analista de comportamento do cliente em uma agência de viagens premium. Sua tarefa é analisar o perfil, o histórico de compras, preferências e interesses para sugerir ações personalizadas.";
+
+      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+        body: {
+          action: "completion",
+          prompt: promptText,
+          systemPrompt: systemPromptText,
+          agency_id: client.agency_id || client.agencyId,
+          modelPreference: "smart"
+        }
+      });
+
+      if (error) throw error;
+      let resultText = data?.result;
+      if (!resultText) throw new Error("Não foi possível obter uma resposta da IA.");
+
+      // Clean markdown code blocks if the AI model returned them
+      resultText = resultText.replace(/```json\s*|```\s*/g, "").trim();
+      const parsed = JSON.parse(resultText);
+
+      if (parsed && typeof parsed === "object") {
+        setAnalysis(parsed);
+      } else {
+        throw new Error("Formato inválido de JSON retornado pela IA.");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Erro ao gerar análise.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="rounded-3xl border border-border bg-background overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-6 py-4 text-sm font-bold hover:bg-surface/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Brain className="h-4 w-4 text-brand" />
+          Análise IA do Perfil
+        </div>
+        <div className="text-[10px] font-bold text-brand opacity-70">BETA</div>
+      </button>
+
+      {open && (
+        <div className="px-6 pb-6 border-t border-border/50 space-y-4">
+          {!analysis && !loading && (
+            <div className="pt-4 text-center">
+              <Sparkles className="h-8 w-8 text-brand mx-auto mb-3 opacity-60" />
+              <p className="text-sm text-muted-foreground mb-4">
+                A IA analisará o histórico de viagens, cotações e padrões de comportamento do cliente.
+              </p>
+              <button
+                onClick={runAnalysis}
+                className="flex items-center gap-1.5 mx-auto h-9 rounded-lg bg-brand text-white px-4 text-xs font-bold hover:opacity-90"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> Analisar Perfil
+              </button>
+            </div>
+          )}
+
+          {loading && (
+            <div className="pt-4 flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+              <p className="text-sm text-muted-foreground">Analisando perfil do cliente...</p>
+            </div>
+          )}
+
+          {analysis && (
+            <div className="pt-4 space-y-4">
+              {/* Resumo */}
+              <div className="rounded-xl bg-surface border border-border p-4">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Resumo</div>
+                <p className="text-sm leading-relaxed">{analysis.summary}</p>
+              </div>
+
+              {/* Score de Retenção */}
+              <div className={`rounded-xl border p-4 ${
+                analysis.retentionScore === "alto"
+                  ? "border-success/30 bg-success/5"
+                  : analysis.retentionScore === "médio"
+                    ? "border-brand/30 bg-brand/5"
+                    : "border-danger/30 bg-danger/5"
+              }`}>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Score de Retenção</div>
+                <div className={`text-2xl font-black capitalize ${
+                  analysis.retentionScore === "alto" ? "text-success" : analysis.retentionScore === "médio" ? "text-brand" : "text-danger"
+                }`}>
+                  {analysis.retentionScore} risco de churn
+                </div>
+              </div>
+
+              {/* Sugestões */}
+              <div className="space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sugestões da IA</div>
+                {analysis.suggestions.map((s: string, i: number) => (
+                  <div key={i} className="flex gap-2 text-sm">
+                    <Sparkles className="h-4 w-4 text-brand flex-shrink-0 mt-0.5" />
+                    <span>{s}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Próxima Ação */}
+              <div className="rounded-xl border border-brand/30 bg-brand/5 p-4">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">Próxima ação recomendada</div>
+                <p className="text-sm font-semibold">{analysis.nextAction}</p>
+              </div>
+
+              <button
+                onClick={runAnalysis}
+                className="text-xs text-muted-foreground hover:text-brand underline"
+              >
+                Regenerar análise
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

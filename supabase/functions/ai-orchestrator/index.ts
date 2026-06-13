@@ -30,6 +30,92 @@ async function decryptData(encodedBase64: string, password: string) {
   return new TextDecoder().decode(decrypted);
 }
 
+async function resolveApiKey(
+  supabaseAdmin: any,
+  provider: string,
+  agencyId?: string | null
+): Promise<{ keyValue: string | null; keyId: string | null }> {
+  try {
+    const { data, error } = await supabaseAdmin.rpc("pick_active_api_key", {
+      _provider: provider,
+      _agency_id: agencyId || null,
+    });
+    if (error) {
+      console.error(`Error in pick_active_api_key for ${provider}:`, error);
+      return { keyValue: null, keyId: null };
+    }
+    if (data && data.length > 0) {
+      const record = data[0];
+      let keyValue = record.key_value;
+      const keySecret = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
+      if (keyValue && keyValue.includes("=====")) {
+        keyValue = await decryptData(keyValue, keySecret);
+      }
+      return { keyValue, keyId: record.id };
+    }
+  } catch (e) {
+    console.error(`Exception resolving API key for ${provider}:`, e);
+  }
+  return { keyValue: null, keyId: null };
+}
+
+async function resolveApiKeyWithFallback(
+  supabaseAdmin: any,
+  provider: string,
+  agencyId?: string | null,
+  legacyKeys?: any
+): Promise<{ keyValue: string | null; keyId: string | null }> {
+  // 1. Try pick_active_api_key (dynamic API keys table)
+  const { keyValue, keyId } = await resolveApiKey(supabaseAdmin, provider, agencyId);
+  if (keyValue) {
+    return { keyValue, keyId };
+  }
+
+  // 2. Try legacy keys object from global_settings
+  if (legacyKeys) {
+    const legacyKeyName = `${provider}_key`;
+    if (legacyKeys[legacyKeyName]) {
+      return { keyValue: legacyKeys[legacyKeyName], keyId: null };
+    }
+  }
+
+  // 3. Try Deno.env fallback for specific providers
+  if (provider === "gemini") {
+    const envKey = Deno.env.get("GEMINI_API_KEY");
+    if (envKey) return { keyValue: envKey, keyId: null };
+  } else if (provider === "groq") {
+    const envKey = Deno.env.get("GROQ_API_KEY");
+    if (envKey) return { keyValue: envKey, keyId: null };
+  } else if (provider === "openai") {
+    const envKey = Deno.env.get("OPENAI_API_KEY");
+    if (envKey) return { keyValue: envKey, keyId: null };
+  } else if (provider === "openrouter") {
+    const envKey = Deno.env.get("OPENROUTER_API_KEY");
+    if (envKey) return { keyValue: envKey, keyId: null };
+  }
+
+  return { keyValue: null, keyId: null };
+}
+
+async function incrementKeyUsage(supabaseAdmin: any, keyId: string) {
+  try {
+    const { data, error: selectError } = await supabaseAdmin
+      .from("api_keys")
+      .select("used_count")
+      .eq("id", keyId)
+      .single();
+    if (!selectError && data) {
+      const newCount = (data.used_count || 0) + 1;
+      await supabaseAdmin
+        .from("api_keys")
+        .update({ used_count: newCount })
+        .eq("id", keyId);
+    }
+  } catch (e) {
+    console.error(`Failed to increment usage for key ${keyId}:`, e);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -60,21 +146,29 @@ serve(async (req) => {
       if (authError || !user) throw new Error("Unauthorized.");
     }
 
-    // Retrieve encrypted keys from global_settings
-    const { data: gs } = await supabase
-      .from("global_settings")
-      .select("value")
-      .eq("key", "integrations_config_encrypted")
-      .maybeSingle();
+    // Instantiate service role client to call restricted RPCs and bypass RLS
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+      auth: { persistSession: false },
+    });
 
-    if (!gs?.value?.payload) {
-      throw new Error("API Keys not configured in global_settings.");
+    // Retrieve encrypted keys from global_settings for legacy fallback
+    let keys: any = null;
+    try {
+      const { data: gs } = await supabaseAdmin
+        .from("global_settings")
+        .select("value")
+        .eq("key", "integrations_config_encrypted")
+        .maybeSingle();
+
+      if (gs?.value?.payload) {
+        const encryptionKey =
+          Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
+        const decryptedString = await decryptData(gs.value.payload, encryptionKey);
+        keys = JSON.parse(decryptedString);
+      }
+    } catch (e) {
+      console.warn("Could not load legacy keys from global_settings:", e);
     }
-
-    const encryptionKey =
-      Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
-    const decryptedString = await decryptData(gs.value.payload, encryptionKey);
-    const keys = JSON.parse(decryptedString);
 
     const body = await req.json();
     const { action } = body;
@@ -82,14 +176,16 @@ serve(async (req) => {
     // --- Action: TEXT COMPLETION (AI Fallback logic) ---
     if (action === "completion") {
       const { prompt, systemPrompt, modelPreference } = body; // modelPreference = 'fast' (Groq) or 'smart' (Gemini/OpenRouter)
+      const agencyId = body.agency_id || body.agencyId;
 
       let aiResult = null;
       let usedProvider = "";
 
-      // Try GEMINI first (if configured in env)
-      if (modelPreference !== "fast" && Deno.env.get("GEMINI_API_KEY")) {
+      // 1. Try GEMINI first (if modelPreference !== "fast")
+      const { keyValue: geminiKey, keyId: geminiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "gemini", agencyId, keys);
+      if (modelPreference !== "fast" && geminiKey) {
         try {
-          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${Deno.env.get("GEMINI_API_KEY")}`;
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
           const res = await fetch(geminiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -100,20 +196,59 @@ serve(async (req) => {
           if (res.ok) {
             const data = await res.json();
             aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            usedProvider = "gemini";
+            if (aiResult) {
+              usedProvider = "gemini";
+              if (geminiKeyId) await incrementKeyUsage(supabaseAdmin, geminiKeyId);
+            }
+          } else {
+            console.error("Gemini API error:", await res.text());
           }
         } catch (e) {
           console.error("Gemini failed", e);
         }
       }
 
-      // Fallback: GROQ (Llama 3)
-      if (!aiResult && keys.groq_key) {
+      // 2. Try OpenAI second (if modelPreference !== "fast")
+      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openai", agencyId, keys);
+      if (modelPreference !== "fast" && !aiResult && openaiKey) {
+        try {
+          const res = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${openaiKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [
+                { role: "system", content: systemPrompt || "You are a helpful assistant." },
+                { role: "user", content: prompt },
+              ],
+            }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            aiResult = data.choices?.[0]?.message?.content;
+            if (aiResult) {
+              usedProvider = "openai";
+              if (openaiKeyId) await incrementKeyUsage(supabaseAdmin, openaiKeyId);
+            }
+          } else {
+            console.error("OpenAI API error:", await res.text());
+          }
+        } catch (e) {
+          console.error("OpenAI failed", e);
+        }
+      }
+
+      // 3. Fallback: GROQ (Llama 3)
+      const { keyValue: groqKey, keyId: groqKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "groq", agencyId, keys);
+      if (!aiResult && groqKey) {
         try {
           const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${keys.groq_key}`,
+              Authorization: `Bearer ${groqKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -127,20 +262,26 @@ serve(async (req) => {
           if (res.ok) {
             const data = await res.json();
             aiResult = data.choices[0].message.content;
-            usedProvider = "groq";
+            if (aiResult) {
+              usedProvider = "groq";
+              if (groqKeyId) await incrementKeyUsage(supabaseAdmin, groqKeyId);
+            }
+          } else {
+            console.error("Groq API error:", await res.text());
           }
         } catch (e) {
           console.error("Groq failed", e);
         }
       }
 
-      // Fallback: OpenRouter
-      if (!aiResult && keys.openrouter_key) {
+      // 4. Fallback: OpenRouter
+      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openrouter", agencyId, keys);
+      if (!aiResult && openrouterKey) {
         try {
           const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${keys.openrouter_key}`,
+              Authorization: `Bearer ${openrouterKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -154,7 +295,12 @@ serve(async (req) => {
           if (res.ok) {
             const data = await res.json();
             aiResult = data.choices[0].message.content;
-            usedProvider = "openrouter";
+            if (aiResult) {
+              usedProvider = "openrouter";
+              if (openrouterKeyId) await incrementKeyUsage(supabaseAdmin, openrouterKeyId);
+            }
+          } else {
+            console.error("OpenRouter API error:", await res.text());
           }
         } catch (e) {
           console.error("OpenRouter failed", e);
@@ -171,9 +317,11 @@ serve(async (req) => {
     // --- Action: SCRAPE (Firecrawl / Stell) ---
     if (action === "scrape") {
       const { url, useStell } = body;
+      const agencyId = body.agency_id || body.agencyId;
 
-      if (useStell && keys.stell_key) {
-        // Placeholder for Stell.dev integration
+      const { keyValue: stellKey, keyId: stellKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "stell", agencyId, keys);
+      if (useStell && stellKey) {
+        if (stellKeyId) await incrementKeyUsage(supabaseAdmin, stellKeyId);
         return new Response(
           JSON.stringify({
             result: `Scraped via Stell.dev (Simulated). Content of ${url}`,
@@ -185,12 +333,12 @@ serve(async (req) => {
         );
       }
 
-      if (keys.firecrawl_key) {
-        // Real Firecrawl Integration
+      const { keyValue: firecrawlKey, keyId: firecrawlKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "firecrawl", agencyId, keys);
+      if (firecrawlKey) {
         const res = await fetch("https://api.firecrawl.dev/v0/scrape", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${keys.firecrawl_key}`,
+            Authorization: `Bearer ${firecrawlKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ url }),
@@ -202,6 +350,7 @@ serve(async (req) => {
         }
 
         const data = await res.json();
+        if (firecrawlKeyId) await incrementKeyUsage(supabaseAdmin, firecrawlKeyId);
         return new Response(
           JSON.stringify({
             result: data.data?.markdown || data.data?.content || "",
@@ -222,13 +371,15 @@ serve(async (req) => {
       if (!prompt) throw new Error("Prompt is required.");
 
       let imageUrl = "";
+      let usedImageProvider = "";
 
-      if (keys.openai_key) {
+      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openai", agency_id, keys);
+      if (openaiKey) {
         try {
           const res = await fetch("https://api.openai.com/v1/images/generations", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${keys.openai_key}`,
+              "Authorization": `Bearer ${openaiKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -241,18 +392,25 @@ serve(async (req) => {
           if (res.ok) {
             const data = await res.json();
             imageUrl = data.data?.[0]?.url;
+            if (imageUrl) {
+              usedImageProvider = "openai";
+              if (openaiKeyId) await incrementKeyUsage(supabaseAdmin, openaiKeyId);
+            }
+          } else {
+            console.error("OpenAI Image generation API error:", await res.text());
           }
         } catch (e) {
           console.error("OpenAI image generation failed", e);
         }
       }
 
-      if (!imageUrl && keys.openrouter_key) {
+      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openrouter", agency_id, keys);
+      if (!imageUrl && openrouterKey) {
         try {
           const res = await fetch("https://openrouter.ai/api/v1/images/generations", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${keys.openrouter_key}`,
+              "Authorization": `Bearer ${openrouterKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -263,6 +421,12 @@ serve(async (req) => {
           if (res.ok) {
             const data = await res.json();
             imageUrl = data.data?.[0]?.url;
+            if (imageUrl) {
+              usedImageProvider = "openrouter";
+              if (openrouterKeyId) await incrementKeyUsage(supabaseAdmin, openrouterKeyId);
+            }
+          } else {
+            console.error("OpenRouter Image generation API error:", await res.text());
           }
         } catch (e) {
           console.error("OpenRouter image generation failed", e);
@@ -280,14 +444,14 @@ serve(async (req) => {
       const bytes = new Uint8Array(arrayBuffer);
 
       // Instantiate supabase client with service role key to bypass storage RLS
-      const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+      const supabaseAdminForStorage = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
         auth: { persistSession: false },
       });
 
       const uid = Math.random().toString(36).slice(2, 9);
       const filePath = `${agency_id}/proposals/${proposal_id}/cover-${uid}.png`;
 
-      const { error: uploadErr } = await supabaseAdmin.storage
+      const { error: uploadErr } = await supabaseAdminForStorage.storage
         .from("agency-media")
         .upload(filePath, bytes, {
           contentType: "image/png",
@@ -296,7 +460,7 @@ serve(async (req) => {
 
       if (uploadErr) throw new Error("Erro de Storage: " + uploadErr.message);
 
-      const { data: { publicUrl } } = supabaseAdmin.storage
+      const { data: { publicUrl } } = supabaseAdminForStorage.storage
         .from("agency-media")
         .getPublicUrl(filePath);
 

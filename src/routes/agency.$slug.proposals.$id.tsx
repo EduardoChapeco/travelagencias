@@ -109,29 +109,18 @@ function ProposalEditor() {
   const convertToTrip = useMutation({
     mutationFn: async () => {
       if (!draft || !agency) return null;
-      const { data: u } = await supabase.auth.getUser();
-      const { data: tripData, error } = await supabase
-        .from("trips")
-        .insert({
-          agency_id: agency.id,
-          proposal_id: draft.id,
-          client_id: (draft as any).client_id ?? null,
-          title: draft.title,
-          destination: draft.destination,
-          travel_start: draft.travel_start,
-          travel_end: draft.travel_end,
-          currency: draft.currency,
-          total_sale: draft.total,
-          status: "planning",
-          owner_id: u.user?.id ?? null,
-        })
-        .select("id")
-        .single();
+
+      // Usa a função RPC atômica que transfere voos, hotéis, itinerário, etc.
+      const { data: tripId, error } = await (supabase.rpc as any)(
+        "convert_proposal_to_trip",
+        { p_proposal_id: draft.id, p_agency_id: agency.id },
+      );
       if (error) throw new Error(error.message);
 
+      // Criar contrato automaticamente
       const { error: contractError } = await supabase.from("contracts").insert({
         agency_id: agency.id,
-        trip_id: tripData.id,
+        trip_id: tripId,
         status: "draft",
         version: "1.0",
         total_value: draft.total,
@@ -139,15 +128,15 @@ function ProposalEditor() {
         client_data: { name: draft.title },
       });
       if (contractError)
-        throw new Error("Viagem criada, mas falha ao criar contrato: " + contractError.message);
+        toast.warning("Viagem criada, mas falha ao criar contrato: " + contractError.message);
 
-      await updateProposal(id, { status: "converted" });
-      return tripData;
+      return { id: tripId };
     },
     onSuccess: (data) => {
       if (!data) return;
-      toast.success("Viagem criada a partir da cotação!");
+      toast.success("✈ Viagem criada com todos os dados da cotação!");
       qc.invalidateQueries({ queryKey: ["trips", agency?.id] });
+      qc.invalidateQueries({ queryKey: ["proposal", id] });
       navigate({ to: "/agency/$slug/trips/$id", params: { slug, id: data.id } });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao converter"),
