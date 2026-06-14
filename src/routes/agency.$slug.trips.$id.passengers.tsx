@@ -29,7 +29,7 @@ export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
 });
 
 function PassengersPage() {
-  const { slug, id } = useParams({ from: "/agency/$slug/trips/$id/passengers" });
+  const { slug, id } = useParams({ strict: false }) as { slug: string; id: string };
   const { agency } = useAgency();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);

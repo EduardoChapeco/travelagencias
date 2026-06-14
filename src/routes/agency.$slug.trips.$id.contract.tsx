@@ -139,7 +139,7 @@ const STATUS_TONE: Record<string, "neutral" | "info" | "warning" | "success" | "
 // ─── Main component ───────────────────────────────────────────────────────────
 
 function TripContract() {
-  const { slug, id: tripId } = useParams({ from: "/agency/$slug/trips/$id/contract" });
+  const { slug, id: tripId } = useParams({ strict: false }) as { slug: string; id: string };
   const { agency } = useAgency();
   const qc = useQueryClient();
 

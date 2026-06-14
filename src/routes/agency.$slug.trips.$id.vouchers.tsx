@@ -68,7 +68,7 @@ const TEMPLATE_LABELS = {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 function TripVouchers() {
-  const { slug, id: tripId } = useParams({ from: "/agency/$slug/trips/$id/vouchers" });
+  const { slug, id: tripId } = useParams({ strict: false }) as { slug: string; id: string };
   const { agency } = useAgency();
   const qc = useQueryClient();
 
