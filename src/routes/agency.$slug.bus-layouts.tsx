@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Bus } from "lucide-react";
+import { Plus, Bus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -18,6 +18,8 @@ function BusLayoutsPage() {
   const { slug } = useParams({ from: "/agency/$slug/bus-layouts" });
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [qSearch, setQSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
 
   const q = useQuery({
     enabled: !!agency,
@@ -32,6 +34,14 @@ function BusLayoutsPage() {
       return data;
     },
   });
+
+  const filtered = useMemo(() => {
+    return (q.data ?? []).filter((l) => {
+      const matchSearch = !qSearch || l.name.toLowerCase().includes(qSearch.toLowerCase());
+      const matchType = typeFilter === "all" || l.vehicle_type === typeFilter;
+      return matchSearch && matchType;
+    });
+  }, [q.data, qSearch, typeFilter]);
 
   return (
     <>
@@ -48,17 +58,45 @@ function BusLayoutsPage() {
         }
       />
 
+      {/* Search + Filter */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 items-center">
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={qSearch}
+            onChange={(e) => setQSearch(e.target.value)}
+            placeholder="Buscar veículo..."
+            className="pl-9 w-full"
+          />
+        </div>
+        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0">
+          {["all", "bus", "van", "plane"].map((t) => (
+            <button
+              key={t}
+              onClick={() => setTypeFilter(t)}
+              className={`rounded px-3 py-1.5 font-medium transition-colors ${
+                typeFilter === t
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t === "all" ? "Todos" : t === "bus" ? "Ônibus" : t === "van" ? "Van" : "Avião"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && (
+      {filtered.length === 0 && !q.isLoading && (
         <EmptyState
           title="Sem layouts de veículos"
           description="Crie o mapa de assentos de um ônibus, van ou avião."
         />
       )}
 
-      {q.data && q.data.length > 0 && (
+      {filtered.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {q.data.map((l) => (
+          {filtered.map((l) => (
             <Link
               key={l.id}
               to="/agency/$slug/bus-layouts/$id"

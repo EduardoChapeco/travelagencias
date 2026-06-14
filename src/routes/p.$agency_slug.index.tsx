@@ -114,7 +114,7 @@ function HomePage() {
               alt="Cover"
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+            <div className="absolute inset-0 bg-black/60" />
           </>
         ) : (
           <>
@@ -135,7 +135,7 @@ function HomePage() {
               <img
                 src={agency.logo_url}
                 alt={agency.name}
-                className="mx-auto h-24 w-24 rounded-2xl object-contain border-2 border-white/20 bg-white/10 backdrop-blur-sm p-2 shadow-xl"
+                className="mx-auto h-24 w-24 rounded-2xl object-contain border-2 border-white/20 bg-white/10 backdrop-blur-sm p-2"
               />
             </div>
           )}
@@ -225,7 +225,7 @@ function HomePage() {
                   key={t.id}
                   to="/p/$agency_slug/tour/$id"
                   params={{ agency_slug, id: t.id }}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand/30"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {t.cover_image_url ? (
@@ -241,7 +241,7 @@ function HomePage() {
                       </div>
                     )}
                     {/* Date badge */}
-                    <div className="absolute top-3 right-3 rounded-lg bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold shadow-sm">
+                    <div className="absolute top-3 right-3 rounded-lg bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
                       {t.departure_date
                         ? new Date(t.departure_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
                         : "A Confirmar"}
@@ -391,7 +391,7 @@ function HomePage() {
                   key={p.id}
                   to="/p/$agency_slug/blog/$slug"
                   params={{ agency_slug, slug: p.slug }}
-                  className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/30 hover:shadow-md transition-all"
+                  className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/30 transition-all"
                 >
                   {p.cover_image_url && (
                     <div className="aspect-video overflow-hidden">

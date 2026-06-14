@@ -17,15 +17,27 @@ serve(async (req) => {
     const mode = url.searchParams.get("hub.mode");
     const token = url.searchParams.get("hub.verify_token");
     const challenge = url.searchParams.get("hub.challenge");
+    const verifyToken = Deno.env.get("META_VERIFY_TOKEN");
 
-    // Na prática, você validaria se 'token' bate com o seu META_VERIFY_TOKEN
-    if (mode === "subscribe" && token) {
+    if (mode === "subscribe" && (!verifyToken || token === verifyToken)) {
       return new Response(challenge, { status: 200 });
     }
     return new Response("Invalid verify token", { status: 403 });
   }
 
   try {
+    const verifyToken = Deno.env.get("META_VERIFY_TOKEN");
+    if (verifyToken) {
+      const tokenQuery = url.searchParams.get("token");
+      const tokenHeader = req.headers.get("x-webhook-token") || req.headers.get("apikey");
+      if (tokenQuery !== verifyToken && tokenHeader !== verifyToken) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 

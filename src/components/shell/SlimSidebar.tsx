@@ -48,10 +48,10 @@ export function SlimSidebar({
       </div>
 
       <nav
-        className="no-scrollbar flex-1 overflow-y-auto px-2 py-2"
+        className="no-scrollbar flex-1 overflow-y-auto px-1.5 py-2"
         aria-label="Navegação principal"
       >
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {items.map((item) => {
             const normalizedTo = item.to.replace(/\/$/, "") || "/";
             const active = item.exact
@@ -71,20 +71,17 @@ export function SlimSidebar({
                   to={item.to}
                   title={item.label}
                   className={cn(
-                    "group/item relative flex h-9 items-center gap-3 overflow-hidden rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                    active && "bg-sidebar-accent text-sidebar-accent-foreground",
+                    "group/item relative flex h-8 items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                    active && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
                   )}
                 >
-                  {active && (
-                    <span className="absolute inset-y-1.5 left-0 w-0.5 rounded-r bg-brand" />
-                  )}
                   {isPending ? (
                     <Loader2
-                      className="h-[18px] w-[18px] shrink-0 animate-spin"
-                      strokeWidth={1.75}
+                      className="h-[15px] w-[15px] shrink-0 animate-spin"
+                      strokeWidth={1.5}
                     />
                   ) : (
-                    <ItemIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+                    <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.5} />
                   )}
                   <span
                     className={cn(
@@ -103,17 +100,17 @@ export function SlimSidebar({
         </ul>
       </nav>
 
-      {footer && <div className="border-t border-sidebar-border px-2 py-2">{footer}</div>}
-      <div className="border-t border-sidebar-border px-2 py-2">
+      {footer && <div className="border-t border-sidebar-border px-1.5 py-2">{footer}</div>}
+      <div className="border-t border-sidebar-border px-1.5 py-2">
         <button
           onClick={onTogglePin}
-          className="flex h-9 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex h-8 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title={isPinned ? "Desafixar menu" : "Fixar menu"}
         >
           {isPinned ? (
-            <PinOff className="h-[18px] w-[18px] shrink-0" />
+            <PinOff className="h-[15px] w-[15px] shrink-0" />
           ) : (
-            <Pin className="h-[18px] w-[18px] shrink-0" />
+            <Pin className="h-[15px] w-[15px] shrink-0" />
           )}
           <span
             className={cn(

@@ -119,8 +119,15 @@ export function StatusBadge({
   );
 }
 
-export const money = (n: number, currency = "BRL") =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency }).format(n || 0);
+export const money = (n: number, currency?: string | null) => {
+  const code = (currency && currency.trim()) ? currency.trim().toUpperCase() : "BRL";
+  try {
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: code }).format(n || 0);
+  } catch (e) {
+    console.error("Format error with currency:", currency, e);
+    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n || 0);
+  }
+};
 
 export const fmtDate = (s?: string | null) =>
   s

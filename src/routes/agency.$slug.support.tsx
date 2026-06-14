@@ -17,6 +17,10 @@ import {
   StatusBadge,
   fmtDate,
 } from "@/components/ui/form";
+import { Search } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
+import { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/agency/$slug/support")({
   head: () => ({ meta: [{ title: "Suporte · TravelOS" }] }),
@@ -44,28 +48,112 @@ function SupportPage() {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 15;
 
+  const [qStr, setQStr] = useState("");
+  const debouncedQ = useDebounce(qStr, 400);
+
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["tickets", agency?.id, filter, page],
+    queryKey: ["tickets", agency?.id, filter, page, debouncedQ],
     queryFn: async () => {
       let qb = supabase
         .from("support_tickets")
         .select("id, code, title, type, priority, status, sla_deadline, created_at, client_id", {
           count: "exact",
         })
-        .eq("agency_id", agency!.id)
-        .order("created_at", { ascending: false })
-        .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+        .eq("agency_id", agency!.id);
 
       if (filter === "open") qb = qb.in("status", ["open", "in_progress"]);
       if (filter === "resolved") qb = qb.eq("status", "resolved");
+      
+      if (debouncedQ.trim()) {
+        qb = qb.or(`title.ilike.%${debouncedQ}%,code.ilike.%${debouncedQ}%`);
+      }
 
-      const { data, error, count } = await qb;
+      const { data, error, count } = await qb
+        .order("created_at", { ascending: false })
+        .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+        
       if (error) throw error;
       return { data: data as unknown as Ticket[], count: count ?? 0 };
     },
     placeholderData: keepPreviousData,
   });
+
+  const columns: ColumnDef<Ticket>[] = [
+    {
+      accessorKey: "code",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Código" />,
+      cell: ({ row }) => <span className="font-mono text-xs">{row.original.code}</span>,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Título" />,
+      cell: ({ row }) => (
+        <Link
+          to="/agency/$slug/support/$ticket_id"
+          params={{ slug, ticket_id: row.original.id }}
+          className="font-medium hover:underline text-foreground"
+        >
+          {row.original.title}
+        </Link>
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Tipo" />,
+      cell: ({ row }) => <span className="text-xs text-muted-foreground">{row.original.type}</span>,
+    },
+    {
+      accessorKey: "priority",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Prioridade" />,
+      cell: ({ row }) => {
+        const priority = row.original.priority;
+        return (
+          <StatusBadge
+            tone={
+              priority === "high" || priority === "urgent"
+                ? "danger"
+                : priority === "low"
+                  ? "neutral"
+                  : "warning"
+            }
+          >
+            {priority}
+          </StatusBadge>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const status = row.original.status;
+        return (
+          <StatusBadge
+            tone={
+              status === "resolved"
+                ? "success"
+                : status === "in_progress"
+                  ? "info"
+                  : "warning"
+            }
+          >
+            {status}
+          </StatusBadge>
+        );
+      },
+    },
+    {
+      accessorKey: "sla_deadline",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="SLA" />,
+      cell: ({ row }) => <span className="text-xs text-muted-foreground">{fmtDate(row.original.sla_deadline)}</span>,
+    },
+    {
+      accessorKey: "created_at",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Aberto em" />,
+      cell: ({ row }) => <span className="text-xs text-muted-foreground">{fmtDate(row.original.created_at)}</span>,
+    },
+  ];
 
   const totalPages = Math.ceil((q.data?.count ?? 0) / PAGE_SIZE);
 
@@ -84,114 +172,58 @@ function SupportPage() {
         }
       />
 
-      <div className="mb-4 flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs w-fit">
-        {(["all", "open", "resolved"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => {
-              setFilter(f);
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs w-full sm:w-fit shrink-0">
+          {(["all", "open", "resolved"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => {
+                setFilter(f);
+                setPage(1);
+              }}
+              className={`rounded px-3 py-1.5 flex-1 sm:flex-none font-medium transition-colors ${filter === f ? "bg-surface-alt text-foreground shadow-sm border border-border/50" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {f === "all" ? "Todos" : f === "open" ? "Abertos" : "Resolvidos"}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={qStr}
+            onChange={(e) => {
+              setQStr(e.target.value);
               setPage(1);
             }}
-            className={`rounded px-2.5 py-1 ${filter === f ? "bg-surface-alt text-foreground" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            {f === "all" ? "Todos" : f === "open" ? "Abertos" : "Resolvidos"}
-          </button>
-        ))}
+            className="pl-9 w-full"
+            placeholder="Buscar ticket..."
+          />
+        </div>
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.data.length === 0 && (
-        <EmptyState title="Sem tickets" description="Os tickets de suporte aparecem aqui." />
-      )}
+      
+      {q.data?.data.length === 0 && !debouncedQ && filter === "all" ? (
+        <EmptyState title="Sem tickets" description="Nenhum ticket de suporte aberto." />
+      ) : q.data?.data.length === 0 ? (
+        <EmptyState title="Nenhum ticket encontrado" description="Tente ajustar a busca ou filtro." />
+      ) : null}
 
       {q.data && q.data.data.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 font-medium">Código</th>
-                <th className="px-3 py-2 font-medium">Título</th>
-                <th className="px-3 py-2 font-medium">Tipo</th>
-                <th className="px-3 py-2 font-medium">Prioridade</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-                <th className="px-3 py-2 font-medium">SLA</th>
-                <th className="px-3 py-2 font-medium">Aberto em</th>
-              </tr>
-            </thead>
-            <tbody>
-              {q.data.data.map((t) => (
-                <tr key={t.id} className="border-t border-border hover:bg-surface-alt/30">
-                  <td className="px-3 py-2.5 font-mono text-xs">{t.code}</td>
-                  <td className="px-3 py-2.5">
-                    <Link
-                      to="/agency/$slug/support/$ticket_id"
-                      params={{ slug, ticket_id: t.id }}
-                      className="font-medium hover:underline"
-                    >
-                      {t.title}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">{t.type}</td>
-                  <td className="px-3 py-2.5">
-                    <StatusBadge
-                      tone={
-                        t.priority === "high" || t.priority === "urgent"
-                          ? "danger"
-                          : t.priority === "low"
-                            ? "neutral"
-                            : "warning"
-                      }
-                    >
-                      {t.priority}
-                    </StatusBadge>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <StatusBadge
-                      tone={
-                        t.status === "resolved"
-                          ? "success"
-                          : t.status === "in_progress"
-                            ? "info"
-                            : "warning"
-                      }
-                    >
-                      {t.status}
-                    </StatusBadge>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(t.sla_deadline)}
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(t.created_at)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-xs text-muted-foreground">
-            Página {page} de {totalPages} ({q.data?.count} total)
-          </div>
-          <div className="flex gap-1">
-            <GhostButton
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="px-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </GhostButton>
-            <GhostButton
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-2"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </GhostButton>
-          </div>
+        <div className="mt-4">
+          <DataTable
+            columns={columns}
+            data={q.data.data}
+            pageCount={Math.ceil(q.data.count / PAGE_SIZE)}
+            pagination={{ pageIndex: page - 1, pageSize: PAGE_SIZE }}
+            onPaginationChange={(updater: any) => {
+              if (typeof updater === "function") {
+                const newState = updater({ pageIndex: page - 1, pageSize: PAGE_SIZE });
+                setPage(newState.pageIndex + 1);
+              }
+            }}
+          />
         </div>
       )}
 

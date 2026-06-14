@@ -3,7 +3,6 @@ import { FolderSearch } from "lucide-react";
 
 export function PageHeader({
   title,
-  description,
   actions,
 }: {
   title: string;
@@ -14,7 +13,6 @@ export function PageHeader({
     <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
       <div className="min-w-0 flex-1">
         <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
-        {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       </div>
       {actions && (
         <div className="flex flex-none items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">

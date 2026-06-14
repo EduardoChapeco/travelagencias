@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine } from "lucide-react";
+import { Search, Filter, Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import {
   fetchProposalsList,
   duplicateProposal,
@@ -12,6 +12,8 @@ import {
   updateProposal,
 } from "@/services/proposals";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+import { useConfirm } from "@/hooks/use-confirm";
+import { usePrompt } from "@/hooks/use-prompt";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { z } from "zod";
 import { toast } from "sonner";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const proposalsSearchSchema = z.object({
   new: z.preprocess((val) => val === "true" || val === true, z.boolean()).optional(),
@@ -59,12 +62,18 @@ function ProposalsList() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [newOpen, setNewOpen] = useState(!!search.new);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const debouncedSearch = useDebounce(searchQuery, 400);
   const pageSize = 20;
+
+  const { confirm, ConfirmDialog } = useConfirm();
+  const { prompt, PromptDialog } = usePrompt();
 
   const list = useQuery({
     enabled: !!agency,
-    queryKey: ["proposals", agency?.id, page],
-    queryFn: () => fetchProposalsList(agency!.id, page, pageSize),
+    queryKey: ["proposals", agency?.id, page, debouncedSearch, statusFilter],
+    queryFn: () => fetchProposalsList(agency!.id, page, pageSize, { search: debouncedSearch, status: statusFilter }),
   });
 
   const qc = useQueryClient();
@@ -87,21 +96,27 @@ function ProposalsList() {
     onError: (e) => toast.error(e.message),
   });
 
-  const renMut = useMutation({
-    mutationFn: (args: { id: string; title: string }) =>
-      updateProposal(args.id, { title: args.title }),
+  const updateMut = useMutation({
+    mutationFn: (args: { id: string; updates: any }) =>
+      updateProposal(args.id, args.updates),
     onSuccess: () => {
-      toast.success("Cotação renomeada!");
+      toast.success("Cotação atualizada!");
       qc.invalidateQueries({ queryKey: ["proposals"] });
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e: any) => toast.error(e.message),
   });
 
-  const handleRename = (id: string, currentTitle: string) => {
-    const newTitle = window.prompt("Digite o novo nome para a cotação:", currentTitle);
-    if (newTitle && newTitle.trim() !== "" && newTitle !== currentTitle) {
-      renMut.mutate({ id, title: newTitle.trim() });
-    }
+  function renameProposal(id: string, currentTitle: string) {
+    prompt({
+      title: "Renomear Cotação",
+      description: "Digite o novo nome para a cotação:",
+      defaultValue: currentTitle,
+      onConfirm: (newTitle) => {
+        if (newTitle && newTitle !== currentTitle) {
+          updateMut.mutate({ id, updates: { title: newTitle } });
+        }
+      }
+    });
   };
 
   return (
@@ -121,15 +136,47 @@ function ProposalsList() {
 
       {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
-      {list.data && list.data.data.length === 0 && (
+      {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
         <EmptyState
           title="Nenhuma cotação ainda"
           description="Crie sua primeira proposta comercial."
         />
-      )}
+      ) : (
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Buscar por título..." 
+                className="pl-9 h-10 w-full"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <Select 
+                className="h-10" 
+                value={statusFilter} 
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+              >
+                <option value="all">Todos os Status</option>
+                <option value="draft">Rascunho</option>
+                <option value="sent">Enviada</option>
+                <option value="viewed">Visualizada</option>
+                <option value="accepted">Aceita</option>
+                <option value="converted">Convertida</option>
+                <option value="rejected">Recusada</option>
+                <option value="expired">Expirada</option>
+              </Select>
+            </div>
+          </div>
 
-      {list.data && list.data.data.length > 0 && (
-        <>
           <div className="overflow-hidden rounded-lg border border-border">
             <table className="w-full text-sm">
               <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -145,7 +192,7 @@ function ProposalsList() {
                 </tr>
               </thead>
               <tbody>
-                {list.data.data.map((p) => (
+                {list.data?.data.map((p) => (
                   <tr key={p.id} className="border-t border-border hover:bg-surface-alt/30">
                     <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
                       #{p.number}
@@ -225,7 +272,7 @@ function ProposalsList() {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => handleRename(p.id, p.title)}
+                            onClick={() => renameProposal(p.id, p.title)}
                             className="cursor-pointer"
                           >
                             <PencilLine className="mr-2 h-4 w-4" /> Renomear
@@ -236,14 +283,19 @@ function ProposalsList() {
                           >
                             <Copy className="mr-2 h-4 w-4" /> Duplicar Cotação
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => {
-                              if (window.confirm("Tem certeza que deseja excluir esta cotação?")) {
-                                delMut.mutate(p.id);
-                              }
+                            className="text-danger"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              confirm({
+                                title: "Excluir Cotação",
+                                description: "Tem certeza que deseja excluir esta cotação?",
+                                variant: "destructive",
+                                onConfirm: () => {
+                                  delMut.mutate(p.id);
+                                }
+                              });
                             }}
-                            className="cursor-pointer text-rose-600 focus:text-rose-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" /> Excluir
                           </DropdownMenuItem>
@@ -259,7 +311,7 @@ function ProposalsList() {
           <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
             <div className="text-xs text-muted-foreground">
               Página <span className="font-medium text-foreground">{page}</span> de{" "}
-              {Math.ceil(list.data.count / pageSize) || 1}
+              {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
             </div>
             <div className="flex items-center gap-2">
               <GhostButton
@@ -270,7 +322,7 @@ function ProposalsList() {
                 Anterior
               </GhostButton>
               <GhostButton
-                disabled={page * pageSize >= list.data.count}
+                disabled={page * pageSize >= (list.data?.count ?? 0)}
                 onClick={() => setPage((p) => p + 1)}
                 className="h-8 px-3 text-xs"
               >
@@ -278,7 +330,7 @@ function ProposalsList() {
               </GhostButton>
             </div>
           </div>
-        </>
+        </div>
       )}
 
       {newOpen && (
@@ -291,6 +343,8 @@ function ProposalsList() {
           }}
         />
       )}
+      <ConfirmDialog />
+      <PromptDialog />
     </>
   );
 }

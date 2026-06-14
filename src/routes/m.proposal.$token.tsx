@@ -134,7 +134,7 @@ function PublicProposalView() {
   if (!q.data) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-alt/30 px-6 text-center">
-        <div className="max-w-md rounded-2xl border border-border bg-surface p-8 shadow-sm">
+        <div className="max-w-md rounded-2xl border border-border bg-surface p-8">
           <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/60 mb-4" />
           <h1 className="text-xl font-bold tracking-tight">Proposta não encontrada</h1>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
@@ -200,7 +200,7 @@ function PublicProposalView() {
       {/* Hero Banner Section */}
       <section className="mx-auto max-w-4xl px-4 mt-6">
         <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white p-8 sm:p-12 border border-white/5">
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent z-10" />
+          <div className="absolute inset-0 bg-black/50 z-10" />
           <div
             className="absolute inset-0 opacity-20 bg-cover bg-center"
             style={{
@@ -225,7 +225,7 @@ function PublicProposalView() {
       <main className="mx-auto max-w-4xl px-4 mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
         <div className="md:col-span-8 space-y-6">
           {/* Quick Details Card */}
-          <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm grid grid-cols-3 gap-4 text-center">
+          <div className="rounded-2xl border border-border bg-surface p-5 grid grid-cols-3 gap-4 text-center">
             <div className="space-y-1">
               <MapPin className="mx-auto h-4 w-4 text-muted-foreground" />
               <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
@@ -323,7 +323,7 @@ function PublicProposalView() {
                 {p.hotels.map((h: any, idx: number) => (
                   <div
                     key={idx}
-                    className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm transition-all hover:border-brand/40 group"
+                    className="overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-brand/40 group"
                   >
                     {h.images && h.images[0] && (
                       <div className="h-48 w-full overflow-hidden relative">
@@ -332,7 +332,7 @@ function PublicProposalView() {
                           alt={h.name}
                           className="h-full w-full object-cover group-hover:scale-102 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-black/40" />
                       </div>
                     )}
                     <div className="p-5">
@@ -490,7 +490,7 @@ function PublicProposalView() {
         {/* Right Columns: Financial & Decisions */}
         <div className="md:col-span-4 space-y-6">
           {/* Finance Premium Invoice */}
-          <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm relative overflow-hidden">
+          <div className="rounded-2xl border border-border bg-surface p-5 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1" style={{ background: brand }} />
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
               Resumo Financeiro
@@ -557,7 +557,7 @@ function PublicProposalView() {
 
           {/* Inclusions & Exclusions Card */}
           {(p.includes?.length > 0 || p.excludes?.length > 0) && (
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-4">
+            <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
               {p.includes?.length > 0 && (
                 <div>
                   <h4 className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-2 flex items-center gap-1.5">
@@ -594,7 +594,7 @@ function PublicProposalView() {
 
           {/* Terms Box */}
           {p.terms && (
-            <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-2">
+            <div className="rounded-2xl border border-border bg-surface p-5 space-y-2">
               <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Condições Gerais
               </h4>
@@ -605,7 +605,7 @@ function PublicProposalView() {
           )}
 
           {/* Decision Panel */}
-          <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             {decided ? (
               <div className="text-center text-xs space-y-2">
                 {p.status === "accepted" && (
@@ -684,7 +684,7 @@ function DecideActions({
             type="button"
             onClick={() => onDecide(confirm)}
             disabled={pending}
-            className="h-8 text-[11px] font-bold shadow-sm"
+            className="h-8 text-[11px] font-bold"
             style={{ background: brand, color: brandFg }}
           >
             {pending ? "Enviando…" : "Confirmar"}
@@ -697,7 +697,7 @@ function DecideActions({
     <div className="flex flex-col gap-2">
       <button
         onClick={() => setConfirm("accepted")}
-        className="h-10 w-full rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+        className="h-10 w-full rounded-xl text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
         style={{ background: brand, color: brandFg }}
       >
         Aceitar proposta

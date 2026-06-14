@@ -13,6 +13,10 @@ import {
   Filter,
 } from "lucide-react";
 import { toast } from "sonner";
+
+import { format, parseISO } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
@@ -56,15 +60,17 @@ const STATUS_LABEL: Record<string, string> = {
 
 function TripsList() {
   const { agency } = useAgency();
-  const { slug } = useParams({ from: "/agency/$slug/trips" });
+  const { slug } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
 
   const [newOpen, setNewOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const pageSize = 20;
+
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const list = useQuery({
     enabled: !!agency,
@@ -81,7 +87,7 @@ function TripsList() {
         .range((page - 1) * pageSize, page * pageSize - 1);
 
       if (search.trim()) q = q.ilike("title", `%${search.trim()}%`);
-      if (statusFilter) q = q.eq("status", statusFilter as any);
+      if (statusFilter && statusFilter !== "all") q = q.eq("status", statusFilter as any);
 
       const { data, error, count } = await q;
       if (error) throw error;
@@ -215,14 +221,14 @@ function TripsList() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => {
-                    if (
-                      window.confirm(
-                        `Excluir a viagem "${trip.title}"?\nEsta ação não pode ser desfeita.`,
-                      )
-                    ) {
-                      delMut.mutate(trip.id);
-                    }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    confirm({
+                      title: "Excluir Viagem",
+                      description: "Tem certeza que deseja excluir esta viagem?",
+                      variant: "destructive",
+                      onConfirm: () => delMut.mutate(trip.id)
+                    });
                   }}
                   disabled={delMut.isPending}
                   className="cursor-pointer text-rose-600 focus:text-rose-600"
@@ -272,7 +278,7 @@ function TripsList() {
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             className="h-9 appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
           >
-            <option value="">Todos os status</option>
+            <option value="all">Todos os status</option>
             <option value="planning">Planejamento</option>
             <option value="confirmed">Confirmada</option>
             <option value="in_progress">Em andamento</option>
@@ -332,6 +338,7 @@ function TripsList() {
           }}
         />
       )}
+      <ConfirmDialog />
     </>
   );
 }

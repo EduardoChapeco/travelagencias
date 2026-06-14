@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Building2, Percent, PhoneCall, Mail } from "lucide-react";
@@ -19,7 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 
-export const Route = createFileRoute("/agency/$slug/suppliers")({
+export const Route = createFileRoute("/agency/$slug/suppliers/")({
   head: () => ({ meta: [{ title: "Comissões e Fornecedores · TravelOS" }] }),
   component: SuppliersPage,
 });
@@ -38,18 +38,29 @@ type Supplier = {
 
 function SuppliersPage() {
   const { agency } = useAgency();
+  const { slug } = Route.useParams();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [kindFilter, setKindFilter] = useState("all");
 
   const q = useQuery({
     enabled: !!agency,
     queryKey: ["suppliers", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("suppliers")
         .select("id, name, legal_name, kind, document, email, phone, commission_rate, is_active")
-        .eq("agency_id", agency!.id)
-        .order("name");
+        .eq("agency_id", agency!.id);
+
+      if (kindFilter !== "all") {
+        query = query.eq("kind", kindFilter as any);
+      }
+      if (search.trim()) {
+        query = query.ilike("name", `%${search}%`);
+      }
+
+      const { data, error } = await query.order("name");
       if (error) throw error;
       return data as unknown as Supplier[];
     },
@@ -70,20 +81,47 @@ function SuppliersPage() {
         }
       />
 
+      {/* Filtros */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Input 
+            placeholder="Buscar por nome do fornecedor..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="w-full sm:w-48">
+          <Select 
+            value={kindFilter} 
+            onChange={(e) => setKindFilter(e.target.value)}
+          >
+            <option value="all">Todas as categorias</option>
+            <option value="hotel">Hospedagem</option>
+            <option value="airline">Cia Aérea</option>
+            <option value="tour_operator">Operadora</option>
+            <option value="transfer">Transfer</option>
+            <option value="insurance">Seguro</option>
+            <option value="other">Outros</option>
+          </Select>
+        </div>
+      </div>
+
       {q.isLoading && (
         <div className="text-sm text-muted-foreground p-8">Carregando cadeia de suprimentos…</div>
       )}
       {q.data?.length === 0 && (
         <EmptyState
-          title="Sem fornecedores"
-          description="Cadastre operadoras e hotéis para começar a montar pacotes."
+          title="Nenhum fornecedor encontrado"
+          description="Ajuste os filtros ou cadastre um novo fornecedor para começar."
         />
       )}
 
       {q.data && q.data.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
           {q.data.map((s) => (
-            <div
+            <Link
+              to="/agency/$slug/suppliers/$id"
+              params={{ slug, id: s.id }}
               key={s.id}
               className={cn(
                 "group rounded-2xl border border-border/50 bg-surface p-5  transition-all hover:",
@@ -140,7 +178,7 @@ function SuppliersPage() {
                   {Number(s.commission_rate).toFixed(2)}%
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

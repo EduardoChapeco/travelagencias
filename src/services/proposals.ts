@@ -252,15 +252,24 @@ export async function fetchProposalsList(
   agencyId: string,
   page: number,
   pageSize: number,
+  options?: { search?: string; status?: string }
 ): Promise<{ data: any[]; count: number }> {
-  const { data, count, error } = await supabase
+  let query = supabase
     .from("proposals")
     .select(
       "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility",
       { count: "exact" },
     )
-    .eq("agency_id", agencyId)
-    // NOTE: proposals table has no deleted_at column — no soft-delete filter needed
+    .eq("agency_id", agencyId);
+
+  if (options?.search) {
+    query = query.ilike("title", `%${options.search}%`);
+  }
+  if (options?.status && options.status !== "all") {
+    query = query.eq("status", options.status as any);
+  }
+
+  const { data, count, error } = await query
     .order("created_at", { ascending: false })
     .range((page - 1) * pageSize, page * pageSize - 1);
 

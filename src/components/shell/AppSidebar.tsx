@@ -24,6 +24,8 @@ import {
   Calendar,
   MessageSquare,
   Palette,
+  Users2,
+  Puzzle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -33,10 +35,10 @@ type NavItem = { label: string; segment: string; icon: typeof LayoutDashboard; e
 
 const items: NavItem[] = [
   { label: "Dashboard", segment: "", icon: LayoutDashboard, exact: true },
-  { label: "CRM", segment: "crm", icon: Users },
+  { label: "Negociações & Leads", segment: "crm", icon: Users },
   { label: "Agenda", segment: "calendar", icon: Calendar },
-  { label: "Espião de Mercado", segment: "competitors", icon: Radar },
-  { label: "Cotações", segment: "proposals", icon: FileText },
+  { label: "Monitor de Concorrentes", segment: "competitors", icon: Radar },
+  { label: "Orçamentos & Propostas", segment: "proposals", icon: FileText },
   { label: "Viagens", segment: "trips", icon: Luggage },
   { label: "Embarques", segment: "boarding", icon: Plane },
   { label: "Contratos", segment: "contracts", icon: ScrollText },
@@ -49,11 +51,14 @@ const items: NavItem[] = [
   { label: "Clientes", segment: "clients", icon: UserRound },
   { label: "Fornecedores", segment: "suppliers", icon: Store },
   { label: "Suporte", segment: "support", icon: LifeBuoy },
-  { label: "Omnichannel", segment: "omnichannel", icon: MessageSquare },
-  { label: "Portal", segment: "portal", icon: Globe },
-  { label: "Base de Conhecimento", segment: "knowledge", icon: BookOpen },
+  { label: "Conversas & Mensagens", segment: "omnichannel", icon: MessageSquare },
+  { label: "Site da Agência", segment: "portal", icon: Globe },
+  { label: "Biblioteca de Apoio", segment: "knowledge", icon: BookOpen },
+  // ── Gestão ──
   { label: "Minha Empresa", segment: "company", icon: Building2 },
+  { label: "Equipe", segment: "team", icon: Users2 },
   { label: "Identidade Visual", segment: "brand", icon: Palette },
+  { label: "Conexões", segment: "integrations", icon: Puzzle },
   { label: "Configurações", segment: "settings", icon: Settings },
 ];
 
@@ -90,7 +95,7 @@ export function AppSidebar({
           </div>
           <span
             className={cn(
-              "ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold transition duration-200",
+              "ml-3 min-w-0 translate-x-1 truncate text-[12.5px] font-semibold transition duration-200",
               isPinned
                 ? "translate-x-0 opacity-100"
                 : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100",
@@ -103,10 +108,10 @@ export function AppSidebar({
       footer={
         <button
           onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-          className="flex h-9 w-full items-center gap-3 overflow-hidden rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex h-8 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title="Sair"
         >
-          <LogOut className="h-[18px] w-[18px] shrink-0" />
+          <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.5} />
           <span
             className={cn(
               "translate-x-1 truncate transition duration-200",

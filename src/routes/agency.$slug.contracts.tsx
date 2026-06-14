@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Building2, Calendar, FileSignature, ArrowRight, User } from "lucide-react";
+import { Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate, GhostButton, PrimaryButton } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
   head: () => ({ meta: [{ title: "Contratos · TravelOS" }] }),
@@ -37,19 +38,33 @@ function ContractsPage() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/contracts" });
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 400);
   const pageSize = 20;
 
   const q = useQuery({
     enabled: !!agency,
-    queryKey: ["contracts", agency?.id, page],
+    queryKey: ["contracts", agency?.id, page, debouncedSearch, statusFilter],
     queryFn: async () => {
-      const { data, error, count } = await supabase
+      let query = supabase
         .from("contracts")
         .select(
           "id, trip_id, version, status, total_value, signed_at, created_at, package_summary, client_data",
           { count: "exact" },
         )
-        .eq("agency_id", agency!.id)
+        .eq("agency_id", agency!.id);
+
+      if (statusFilter !== "all") {
+        query = query.eq("status", statusFilter);
+      }
+      
+      // We don't easily have 'client_name' as a top level column, but we can search in package_summary
+      if (debouncedSearch.trim()) {
+        query = query.ilike("package_summary", `%${debouncedSearch}%`);
+      }
+
+      const { data, error, count } = await query
         .order("created_at", { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1);
       if (error) throw error;
@@ -68,12 +83,49 @@ function ContractsPage() {
         <div className="text-sm text-muted-foreground p-8">Carregando cadeia de custódia…</div>
       )}
 
-      {q.data?.data.length === 0 && (
+      {/* Filtros */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Buscar por pacote..." 
+            className="pl-9"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <div className="w-full sm:w-48">
+          <Select 
+            value={statusFilter} 
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="all">Todos os Status</option>
+            <option value="draft">Rascunho</option>
+            <option value="sent">Enviado</option>
+            <option value="viewed">Visualizado</option>
+            <option value="signed">Assinado</option>
+            <option value="cancelled">Cancelado</option>
+          </Select>
+        </div>
+      </div>
+
+      {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
         <EmptyState
           title="Nenhum contrato gerado"
           description="Acesse uma viagem confirmada e clique em 'Gerar Contrato' para iniciar o fluxo de assinaturas."
         />
-      )}
+      ) : q.data?.data.length === 0 ? (
+        <EmptyState
+          title="Nenhum contrato encontrado"
+          description="Altere os filtros ou a busca para ver resultados."
+        />
+      ) : null}
 
       {q.data && q.data.data.length > 0 && (
         <>

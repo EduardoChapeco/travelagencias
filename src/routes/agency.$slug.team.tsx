@@ -24,6 +24,7 @@ import {
   fmtDate,
 } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/team")({
   head: () => ({ meta: [{ title: "Equipe · TravelOS" }] }),
@@ -56,6 +57,7 @@ function TeamPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Member | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const members = useQuery({
     enabled: !!agency,
@@ -81,23 +83,37 @@ function TeamPage() {
   }
 
   async function removeMember(userId: string) {
-    if (!agency || !confirm("Remover este membro?")) return;
-    try {
-      await removeTeamMember(agency.id, userId);
-      toast.success("Removido");
-      qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
+    if (!agency) return;
+    confirm({
+      title: "Remover Membro",
+      description: "Deseja remover este membro da equipe?",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await removeTeamMember(agency.id, userId);
+          toast.success("Removido");
+          qc.invalidateQueries({ queryKey: ["team-members", agency.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+      },
+    });
   }
 
   async function deleteInviteById(id: string) {
-    try {
-      await deleteTeamInvite(id);
-      qc.invalidateQueries({ queryKey: ["team-invites", agency?.id] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
+    confirm({
+      title: "Cancelar Convite",
+      description: "Deseja cancelar este convite pendente?",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deleteTeamInvite(id);
+          qc.invalidateQueries({ queryKey: ["team-invites", agency?.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+      },
+    });
   }
 
   function copyInvite(token: string) {
@@ -264,6 +280,7 @@ function TeamPage() {
           onClose={() => setSelectedAgent(null)}
         />
       )}
+      <ConfirmDialog />
     </>
   );
 }

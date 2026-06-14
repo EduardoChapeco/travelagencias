@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useCrmKanban } from "@/hooks/use-crm-kanban";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +41,16 @@ import {
 import { CrmFilterBar } from "@/components/crm/CrmFilterBar";
 import { CrmKanbanBoard } from "@/components/crm/CrmKanbanBoard";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
   head: () => ({ meta: [{ title: "CRM · TravelOS" }] }),
@@ -51,6 +62,8 @@ function CRMPage() {
   const { slug } = useParams({ from: "/agency/$slug/crm" });
   const qc = useQueryClient();
   const navigate = useNavigate();
+
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [newOpen, setNewOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -134,14 +147,19 @@ function CRMPage() {
   });
 
   async function archiveLead(leadId: string) {
-    if (!confirm("Arquivar este lead? Ele não aparecerá mais no Kanban.")) return;
-    try {
-      await archiveLeadService(leadId);
-      toast.success("Lead arquivado com sucesso!");
-      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-    } catch (error) {
-      toast.error("Falha ao arquivar");
-    }
+    confirm({
+      title: "Arquivar Lead",
+      description: "Ele não aparecerá mais no Kanban ativo. Tem certeza?",
+      onConfirm: async () => {
+        try {
+          await archiveLeadService(leadId);
+          toast.success("Lead arquivado com sucesso!");
+          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+        } catch (error) {
+          toast.error("Falha ao arquivar");
+        }
+      }
+    });
   }
 
   async function transferLead(leadId: string, newOwnerId: string) {
@@ -159,10 +177,7 @@ function CRMPage() {
       <div className="px-6 pt-4 pb-2 border-b border-border/50 bg-surface/30">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Pipeline CRM</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Gestão inteligente de oportunidades e vendas.
-            </p>
+            <h1 className="text-xl font-bold text-foreground">Negociações & Leads</h1>
           </div>
           <div className="flex items-center gap-3">
             <GhostButton
@@ -291,20 +306,21 @@ function CRMPage() {
                             Restaurar
                           </GhostButton>
                           <GhostButton
-                            onClick={async () => {
-                              if (
-                                confirm(
-                                  "Tem certeza que deseja excluir permanentemente este lead? Esta ação não pode ser desfeita.",
-                                )
-                              ) {
-                                try {
-                                  await deleteLeadPermanently(l.id);
-                                  toast.success("Lead excluído permanentemente!");
-                                  qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                                } catch (e) {
-                                  toast.error("Falha ao excluir permanentemente");
+                            onClick={() => {
+                              confirm({
+                                title: "Excluir Permanentemente",
+                                description: "Deseja EXCLUIR este lead permanentemente? Essa ação não pode ser desfeita.",
+                                variant: "destructive",
+                                onConfirm: async () => {
+                                  try {
+                                    await deleteLeadPermanently(l.id);
+                                    toast.success("Lead excluído permanentemente!");
+                                    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                                  } catch (e) {
+                                    toast.error("Falha ao excluir permanentemente");
+                                  }
                                 }
-                              }
+                              });
                             }}
                             className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
                           >
@@ -389,12 +405,16 @@ function CRMPage() {
         />
       )}
 
+      <ConfirmDialog />
       <Outlet />
     </div>
   );
 }
 
+import { supabase } from "@/integrations/supabase/client";
+
 const leadSchema = z.object({
+  client_id: z.string().optional().nullable(),
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("E-mail inválido").or(z.literal("")).optional().nullable(),
   phone: z.string().optional().nullable(),
@@ -402,6 +422,10 @@ const leadSchema = z.object({
   travel_start: z.string().optional().nullable(),
   travel_end: z.string().optional().nullable(),
   pax_count: z.number().min(1, "Deve ter pelo menos 1 passageiro").default(2),
+  pax_adults: z.number().min(0).default(0),
+  pax_children: z.number().min(0).default(0),
+  pax_infants: z.number().min(0).default(0),
+  interest_type: z.string().optional().nullable(),
   estimated_value: z.number().min(0, "O valor não pode ser negativo").default(0),
   source: z.string().optional().nullable(),
   stage_id: z.string().min(1, "Selecione o estágio do funil"),
@@ -422,15 +446,31 @@ function NewLeadSheet({
   onCreated: () => void;
 }) {
   const firstStage = stages[0];
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const clientsQ = useQuery({
+    queryKey: ["agency-clients", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clients")
+        .select("id, full_name, email, phone")
+        .eq("agency_id", agencyId)
+        .order("full_name");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema) as any,
     defaultValues: {
+      client_id: "",
       name: "",
       email: "",
       phone: "",
@@ -438,12 +478,29 @@ function NewLeadSheet({
       travel_start: "",
       travel_end: "",
       pax_count: 2,
+      pax_adults: 2,
+      pax_children: 0,
+      pax_infants: 0,
+      interest_type: "Não informado",
       estimated_value: 0,
       source: "",
       stage_id: firstStage?.id ?? "",
       notes: "",
     },
   });
+
+  const watchClientId = watch("client_id");
+
+  useEffect(() => {
+    if (watchClientId && clientsQ.data) {
+      const c = clientsQ.data.find((x: any) => x.id === watchClientId);
+      if (c) {
+        setValue("name", c.full_name || "");
+        setValue("email", c.email || "");
+        setValue("phone", c.phone || "");
+      }
+    }
+  }, [watchClientId, clientsQ.data, setValue]);
 
   useEffect(() => {
     if (firstStage) {
@@ -462,94 +519,135 @@ function NewLeadSheet({
   }
 
   return (
-    <Sheet onClose={onClose} title="Novo lead">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
-        <Field label="Nome Completo *" error={errors.name?.message}>
-          <Input
-            {...register("name")}
-            autoFocus
-          />
-        </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="E-mail" error={errors.email?.message}>
-            <Input
-              type="email"
-              {...register("email")}
-            />
+    <Sheet onClose={onClose} title="Novo Lead / Oportunidade">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2 pb-20">
+        
+        {/* Seção Cliente */}
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            1. Perfil do Cliente
+          </h3>
+          <Field label="Vincular a Cliente Existente (Opcional)" error={errors.client_id?.message}>
+            <Select {...register("client_id")}>
+              <option value="">Novo Cliente (Sem vínculo)</option>
+              {clientsQ.data?.map((c: any) => (
+                <option key={c.id} value={c.id}>{c.full_name} ({c.email || c.phone})</option>
+              ))}
+            </Select>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Vincular preencherá os dados de contato automaticamente.
+            </p>
           </Field>
-          <Field label="WhatsApp / Telefone" error={errors.phone?.message}>
-            <Input {...register("phone")} />
+
+          <Field label="Nome Completo *" error={errors.name?.message}>
+            <Input {...register("name")} autoFocus />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="E-mail" error={errors.email?.message}>
+              <Input type="email" {...register("email")} />
+            </Field>
+            <Field label="WhatsApp / Telefone" error={errors.phone?.message}>
+              <Input {...register("phone")} />
+            </Field>
+          </div>
+        </div>
+
+        {/* Seção Oportunidade */}
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            2. Detalhes do Interesse
+          </h3>
+          
+          <Field label="Destino de Interesse" error={errors.destination?.message}>
+            <Input {...register("destination")} placeholder="Ex: Paris, França" />
+          </Field>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
+              <Input type="number" min={0} step="0.01" {...register("estimated_value", { valueAsNumber: true })} />
+            </Field>
+            <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
+              <Select {...register("interest_type")}>
+                <option value="Não informado">Não informado</option>
+                <option value="Lazer / Férias">Lazer / Férias</option>
+                <option value="Corporativo / Negócios">Corporativo / Negócios</option>
+                <option value="Lua de Mel">Lua de Mel</option>
+                <option value="Grupos / Excursão">Grupos / Excursão</option>
+                <option value="Intercâmbio">Intercâmbio</option>
+              </Select>
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Estágio no Funil *" error={errors.stage_id?.message}>
+              <Select {...register("stage_id")}>
+                {stages.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Origem / Canal" error={errors.source?.message}>
+              <Select {...register("source")}>
+                <option value="">Não informado</option>
+                <option value="whatsapp">WhatsApp / Telefone</option>
+                <option value="instagram">Instagram / Meta</option>
+                <option value="website">Site / Landing Page</option>
+                <option value="referral">Indicação</option>
+                <option value="walkin">Presencial</option>
+              </Select>
+            </Field>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          >
+            {showAdvanced ? "Ocultar Detalhes Avançados" : "Preencher Datas e Passageiros (Avançado)"}
+          </button>
+
+          {showAdvanced && (
+            <div className="pt-3 border-t border-border space-y-4 animate-in fade-in slide-in-from-top-2">
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Ida Prevista" error={errors.travel_start?.message}>
+                  <Input type="date" {...register("travel_start")} />
+                </Field>
+                <Field label="Retorno Previsto" error={errors.travel_end?.message}>
+                  <Input type="date" {...register("travel_end")} />
+                </Field>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <Field label="Adultos" error={errors.pax_adults?.message}>
+                  <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
+                </Field>
+                <Field label="Crianças (2 a 11)" error={errors.pax_children?.message}>
+                  <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
+                </Field>
+                <Field label="Bebês (0 a 2)" error={errors.pax_infants?.message}>
+                  <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
+                </Field>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Anotações */}
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
+          <Field label="Anotações Iniciais" error={errors.notes?.message}>
+            <Textarea
+              rows={4}
+              {...register("notes")}
+              placeholder="Informações cruciais para o primeiro contato (ex: restrições, vontades específicas)..."
+            />
           </Field>
         </div>
-        <Field label="Destino" error={errors.destination?.message}>
-          <Input
-            {...register("destination")}
-            placeholder="Ex: Paris, França"
-          />
-        </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Ida Prevista" error={errors.travel_start?.message}>
-            <Input
-              type="date"
-              {...register("travel_start")}
-            />
-          </Field>
-          <Field label="Retorno Previsto" error={errors.travel_end?.message}>
-            <Input
-              type="date"
-              {...register("travel_end")}
-            />
-          </Field>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Passageiros (Pax)" error={errors.pax_count?.message}>
-            <Input
-              type="number"
-              min={1}
-              {...register("pax_count", { valueAsNumber: true })}
-            />
-          </Field>
-          <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
-            <Input
-              type="number"
-              min={0}
-              step="0.01"
-              {...register("estimated_value", { valueAsNumber: true })}
-            />
-          </Field>
-        </div>
-        <Field label="Origem / Canal" error={errors.source?.message}>
-          <Select {...register("source")}>
-            <option value="">Não informado</option>
-            <option value="whatsapp">WhatsApp / Telefone</option>
-            <option value="instagram">Instagram / Meta</option>
-            <option value="website">Site / Landing Page</option>
-            <option value="referral">Indicação</option>
-            <option value="walkin">Presencial</option>
-          </Select>
-        </Field>
-        <Field label="Estágio do Funil" error={errors.stage_id?.message}>
-          <Select {...register("stage_id")}>
-            {stages.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label="Anotações Iniciais" error={errors.notes?.message}>
-          <Textarea
-            rows={4}
-            {...register("notes")}
-            placeholder="Informações cruciais para o primeiro contato..."
-          />
-        </Field>
-        <div className="flex justify-end gap-3 pt-4 border-t border-border mt-4">
+
+        <div className="sticky bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md p-4 border-t border-border flex justify-end gap-3 z-10 -mx-6 -mb-6">
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
           <PrimaryButton type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Criando..." : "Salvar Lead"}
+            {isSubmitting ? "Salvando..." : "Salvar Oportunidade"}
           </PrimaryButton>
         </div>
       </form>
@@ -570,6 +668,9 @@ function StageSettingsModal({
 }) {
   const [busy, setBusy] = useState(false);
   const [localStages, setLocalStages] = useState<Stage[]>(stages);
+  const { confirm, ConfirmDialog } = useConfirm();
+  const [deletePrompt, setDeletePrompt] = useState<{ id: string; count: number } | null>(null);
+  const [transferTargetId, setTransferTargetId] = useState<string>("");
 
   async function handleSave() {
     setBusy(true);
@@ -593,33 +694,45 @@ function StageSettingsModal({
     try {
       const count = await getLeadsCountInStage(stageId);
       if (count > 0) {
-        const targetStageId = prompt(
-          `Este estágio possui ${count} leads ativos. Para deletá-lo, você deve transferi-los. Digite o NOME EXATO do estágio de destino:`,
-        );
-        if (!targetStageId) return;
-        const targetStage = localStages.find(
-          (s) => s.name.toLowerCase() === targetStageId.toLowerCase() && s.id !== stageId,
-        );
-        if (!targetStage || targetStage.id.startsWith("temp_")) {
-          toast.error("Estágio de destino inválido ou inexistente.");
-          return;
-        }
-
-        setBusy(true);
-        await moveLeadsToStage(stageId, targetStage.id);
-        await deleteStageService(stageId);
-        toast.success(`${count} leads transferidos para ${targetStage.name} e estágio excluído.`);
-        onUpdated();
-        onClose();
+        setDeletePrompt({ id: stageId, count });
       } else {
-        if (confirm("Tem certeza que deseja excluir este estágio vazio?")) {
-          setBusy(true);
-          await deleteStageService(stageId);
-          toast.success("Estágio excluído.");
-          onUpdated();
-          onClose();
-        }
+        confirm({
+          title: "Excluir Estágio",
+          description: "Tem certeza que deseja excluir este estágio vazio?",
+          variant: "destructive",
+          onConfirm: async () => {
+            setBusy(true);
+            try {
+              await deleteStageService(stageId);
+              toast.success("Estágio excluído.");
+              onUpdated();
+              onClose();
+            } catch (err: any) {
+              toast.error(err.message || "Erro na operação");
+              setBusy(false);
+            }
+          }
+        });
       }
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao verificar leads do estágio");
+    }
+  }
+
+  async function confirmTransferAndDelete() {
+    if (!deletePrompt || !transferTargetId) return;
+    setBusy(true);
+    try {
+      const targetStage = localStages.find((s) => s.id === transferTargetId);
+      if (!targetStage) throw new Error("Estágio de destino inválido.");
+      
+      await moveLeadsToStage(deletePrompt.id, transferTargetId);
+      await deleteStageService(deletePrompt.id);
+      toast.success(`${deletePrompt.count} leads transferidos para ${targetStage.name} e estágio excluído.`);
+      setDeletePrompt(null);
+      setTransferTargetId("");
+      onUpdated();
+      onClose();
     } catch (err: any) {
       toast.error(err.message || "Erro na operação");
       setBusy(false);
@@ -769,6 +882,39 @@ function StageSettingsModal({
           </div>
         </div>
       </div>
+      
+      <ConfirmDialog />
+
+      <AlertDialog open={!!deletePrompt} onOpenChange={(open) => !open && setDeletePrompt(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir e Transferir Leads</AlertDialogTitle>
+            <AlertDialogDescription>
+              Este estágio possui {deletePrompt?.count} leads ativos. Para deletá-lo, você deve transferi-los para outro estágio.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="py-4">
+            <Select value={transferTargetId} onChange={(e) => setTransferTargetId(e.target.value)}>
+              <option value="">Selecione o estágio de destino...</option>
+              {localStages
+                .filter((s) => s.id !== deletePrompt?.id && !s.id.startsWith("temp_"))
+                .map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+            </Select>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletePrompt(null)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmTransferAndDelete} 
+              disabled={!transferTargetId || busy}
+              className="bg-danger hover:bg-danger/90 text-white"
+            >
+              Transferir e Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

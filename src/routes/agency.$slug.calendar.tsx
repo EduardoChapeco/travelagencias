@@ -1,6 +1,6 @@
 import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   ChevronLeft,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { useConfirm } from "@/hooks/use-confirm";
 import { PageHeader } from "@/components/shell/PageHeader";
 import {
   fetchAgencyMeetings,
@@ -75,6 +76,7 @@ function CalendarPage() {
   const { slug } = useParams({ from: "/agency/$slug/calendar" });
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
@@ -121,6 +123,18 @@ function CalendarPage() {
     },
   });
 
+  const delMut = useMutation({
+    mutationFn: () => deleteLeadMeeting(selectedMeeting.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["agency-meetings", agency?.id] });
+      toast.success("Compromisso removido.");
+      setSelectedMeeting(null);
+    },
+    onError: () => {
+      toast.error("Falha ao remover compromisso.");
+    },
+  });
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -153,12 +167,8 @@ function CalendarPage() {
     if (filterType !== "all") {
       list = list.filter((m) => m.meeting_type === filterType);
     }
-    // Note: We can filter by owner/user if needed, though meetings don't have owner_id directly.
-    // They are linked to leads, so we can filter by the lead's owner_id.
     if (filterUser !== "all" && leadsQ.data) {
       list = list.filter((m) => {
-        const matchingLead = (m as any).leads;
-        // Fetch raw leads array to find the owner of this lead
         const leadDetails = leadsQ.data.find((l) => l.id === m.lead_id);
         return leadDetails && (leadDetails as any).owner_id === filterUser;
       });
@@ -214,7 +224,6 @@ function CalendarPage() {
         }
       />
 
-      {/* Filters & Navigation Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-alt/45 border border-border/50 p-4 rounded-xl">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5">
@@ -252,7 +261,6 @@ function CalendarPage() {
           )}
         </div>
 
-        {/* Calendar Nav */}
         <div className="flex items-center gap-2.5 self-center">
           <button
             onClick={handlePrevMonth}
@@ -278,9 +286,7 @@ function CalendarPage() {
         </div>
       </div>
 
-      {/* Grid Container */}
       <div className="bg-surface border border-border/70 rounded-xl overflow-hidden">
-        {/* Day name headers */}
         <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
           {WEEKDAYS.map((day) => (
             <div
@@ -292,7 +298,6 @@ function CalendarPage() {
           ))}
         </div>
 
-        {/* Grid Cells */}
         <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-border/50 bg-border/20">
           {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
             const dateMeetings = getMeetingsForDate(date, filteredMeetings);
@@ -305,7 +310,6 @@ function CalendarPage() {
                   !isCurrentMonth ? "opacity-35" : ""
                 } ${today ? "bg-brand/[0.02]" : ""}`}
               >
-                {/* Day label */}
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
@@ -325,7 +329,6 @@ function CalendarPage() {
                   )}
                 </div>
 
-                {/* Meetings list */}
                 <div className="flex-1 mt-2.5 space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
                   {dateMeetings.slice(0, 3).map((meeting: any) => {
                     const typeColor =
@@ -365,7 +368,6 @@ function CalendarPage() {
         </div>
       </div>
 
-      {/* Meeting Detail Modal */}
       {selectedMeeting && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -487,16 +489,13 @@ function CalendarPage() {
                 Fechar
               </GhostButton>
               <button
-                onClick={async () => {
-                  if (!confirm("Remover este compromisso permanentemente?")) return;
-                  try {
-                    await deleteLeadMeeting(selectedMeeting.id);
-                    qc.invalidateQueries({ queryKey: ["agency-meetings", agency?.id] });
-                    toast.success("Compromisso removido.");
-                    setSelectedMeeting(null);
-                  } catch (e) {
-                    toast.error("Falha ao remover compromisso.");
-                  }
+                onClick={() => {
+                  confirm({
+                    title: "Excluir Compromisso",
+                    description: "Remover este compromisso permanentemente?",
+                    variant: "destructive",
+                    onConfirm: () => delMut.mutate(),
+                  });
                 }}
                 className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-lg transition-colors cursor-pointer"
               >
@@ -507,7 +506,6 @@ function CalendarPage() {
         </div>
       )}
 
-      {/* Create Event Modal */}
       {newEventOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -652,6 +650,7 @@ function CalendarPage() {
           </form>
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

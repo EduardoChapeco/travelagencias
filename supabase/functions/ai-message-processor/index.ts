@@ -29,6 +29,29 @@ serve(async (req) => {
       const { lead_id, agency_id } = body;
       if (!lead_id) throw new Error("lead_id é obrigatório para esta ação.");
 
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) throw new Error("Missing Authorization header.");
+
+      const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+      const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
+
+      // Check if user is a member of the agency
+      const { data: membership, error: memberErr } = await supabaseClient
+        .from("agency_members")
+        .select("id")
+        .eq("agency_id", agency_id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (memberErr || !membership) {
+        throw new Error("Unauthorized: You do not have access to this agency.");
+      }
+
       // 1. Buscar histórico de conversas do lead
       const { data: messages } = await supabase
         .from("omnichannel_messages")

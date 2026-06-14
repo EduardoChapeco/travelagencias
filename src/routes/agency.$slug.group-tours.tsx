@@ -1,20 +1,15 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, Search, MapPin, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { fetchGroupTours } from "@/services/tours";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import {
-  Field,
   Input,
-  Select,
-  Textarea,
   PrimaryButton,
-  GhostButton,
-  Sheet,
   StatusBadge,
   fmtDate,
   money,
@@ -54,6 +49,8 @@ function GroupToursPage() {
   const { slug } = useParams({ from: "/agency/$slug/group-tours" });
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [qSearch, setQSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const q = useQuery({
     enabled: !!agency,
@@ -61,29 +58,64 @@ function GroupToursPage() {
     queryFn: () => fetchGroupTours(agency!.id),
   });
 
+  const filtered = useMemo(() => {
+    return (q.data ?? []).filter((t) => {
+      const matchSearch = !qSearch ||
+        t.title.toLowerCase().includes(qSearch.toLowerCase()) ||
+        (t.destination ?? "").toLowerCase().includes(qSearch.toLowerCase());
+      const matchStatus = statusFilter === "all" || t.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [q.data, qSearch, statusFilter]);
+
   return (
     <>
       <PageHeader
         title="Excursões em grupo"
         description="Pacotes recorrentes com vagas, inscrições e itinerário."
         actions={
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
-          >
+          <PrimaryButton onClick={() => setOpen(true)} className="gap-1.5">
             <Plus className="h-3.5 w-3.5" /> Nova excursão
-          </button>
+          </PrimaryButton>
         }
       />
 
+      {/* Search + Filter bar */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 items-center">
+        <div className="relative flex-1 max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={qSearch}
+            onChange={(e) => setQSearch(e.target.value)}
+            placeholder="Buscar excursão ou destino..."
+            className="pl-9 w-full"
+          />
+        </div>
+        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0">
+          {["all", "draft", "published", "open", "closed"].map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`rounded px-3 py-1.5 font-medium transition-colors capitalize ${
+                statusFilter === s
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {s === "all" ? "Todos" : s}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.length === 0 && (
+      {filtered.length === 0 && !q.isLoading && (
         <EmptyState title="Sem excursões" description="Crie uma excursão para abrir inscrições." />
       )}
 
-      {q.data && q.data.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {q.data.map((t) => {
+      {filtered.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((t) => {
             const occupancy = t.total_seats
               ? Math.round((t.reserved_seats / t.total_seats) * 100)
               : 0;

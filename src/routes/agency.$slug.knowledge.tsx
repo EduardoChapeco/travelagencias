@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, BookOpen, Edit2, Eye } from "lucide-react";
+import { Plus, BookOpen, Edit2, Eye, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -68,22 +68,22 @@ function KnowledgePage() {
         title="Base de conhecimento"
         description="Procedimentos, fornecedores, regras internas e guias de destino."
         actions={
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
-          >
+          <PrimaryButton onClick={() => setOpen(true)} className="gap-1.5 h-9 text-xs font-bold px-3">
             <Plus className="h-3.5 w-3.5" /> Novo artigo
-          </button>
+          </PrimaryButton>
         }
       />
 
-      <div className="mb-4">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por título ou tag"
-          className="h-9 w-full max-w-sm rounded-md border border-border bg-surface px-3 text-sm outline-none focus:border-border-strong"
-        />
+      <div className="mb-6">
+        <div className="relative max-w-sm w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por título ou tag..."
+            className="pl-9 w-full"
+          />
+        </div>
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
@@ -99,7 +99,7 @@ function KnowledgePage() {
           <button
             key={a.id}
             onClick={() => setViewing(a)}
-            className="rounded-lg border border-border bg-surface p-4 text-left hover:border-border-strong"
+            className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 hover:shadow-sm"
           >
             <div className="flex items-start justify-between gap-2">
               <BookOpen className="h-4 w-4 text-muted-foreground" />

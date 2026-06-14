@@ -1,26 +1,16 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LeadInterestCard } from "@/components/crm/lead-details/LeadInterestCard";
+import { LeadAccessibilityCard } from "@/components/crm/lead-details/LeadAccessibilityCard";
+import { LeadForm } from "@/components/crm/lead-details/LeadForm";
+import { NewActivity, Timeline } from "@/components/crm/lead-details/LeadTimeline";
+import { OmnichannelChat } from "@/components/crm/lead-details/OmnichannelChat";
+import { AIHunterPanel } from "@/components/crm/lead-details/AIHunterPanel";
 import {
-  ArrowLeft,
-  Pencil,
-  Trash2,
-  Save,
   X,
   MessageSquare,
-  Phone,
-  Mail,
-  CalendarClock,
-  CheckCircle2,
-  StickyNote,
-  ArrowRightLeft,
   UserCheck,
-  MapPin,
-  Users,
-  DollarSign,
   Plus,
   Paperclip,
   Check,
@@ -30,7 +20,8 @@ import {
   Send,
   FileText,
   FileDown,
-  ExternalLink,
+  AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -43,8 +34,6 @@ import {
   promoteLeadToClient,
   updateLead,
   addLeadActivity,
-  updateLeadActivity,
-  deleteLeadActivity,
   uploadLeadAttachment,
   fetchAgencyUsers,
   transferLead,
@@ -54,21 +43,9 @@ import {
   syncMeetingToGoogleCalendar,
   type Stage,
   type Lead,
-  type Activity,
   type LeadMeeting,
 } from "@/services/crm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertCircle,
-  Calendar,
-  ShieldCheck,
-  Heart,
-  Sparkles,
-  MessageCircle,
-  Bot,
-  Headphones,
-  Clock,
-} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import {
   Field,
@@ -82,28 +59,12 @@ import {
 } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/crm/$lead_id")({
   head: () => ({ meta: [{ title: "Detalhe do Lead · TravelOS" }] }),
   component: LeadDetailPage,
 });
-
-const ACTIVITY_TYPES = [
-  { v: "note", label: "Nota", icon: StickyNote },
-  { v: "call", label: "Ligação", icon: Phone },
-  { v: "whatsapp", label: "WhatsApp", icon: MessageSquare },
-  { v: "email", label: "Email", icon: Mail },
-  { v: "meeting", label: "Reunião", icon: CalendarClock },
-  { v: "task", label: "Tarefa", icon: CheckCircle2 },
-] as const;
-
-const INTEREST_TYPES = [
-  { v: "flights", label: "Passagens Aéreas" },
-  { v: "hotel", label: "Somente Hotel" },
-  { v: "package_flight", label: "Pacote Aéreo Completo" },
-  { v: "package_ground", label: "Pacote Terrestre Completo" },
-  { v: "other", label: "Outros Serviços" },
-] as const;
 
 const TAG_COLOR_PRESETS = [
   { name: "Vermelho", value: "#ef4444" },
@@ -116,35 +77,12 @@ const TAG_COLOR_PRESETS = [
   { name: "Cinza", value: "#6b7280" },
 ];
 
-function iconFor(type: string) {
-  if (type === "stage_change") return ArrowRightLeft;
-  return ACTIVITY_TYPES.find((t) => t.v === type)?.icon ?? StickyNote;
-}
-
-function colorFor(type: string) {
-  switch (type) {
-    case "stage_change":
-      return "text-brand";
-    case "whatsapp":
-      return "text-emerald-500";
-    case "call":
-      return "text-blue-500";
-    case "email":
-      return "text-amber-500";
-    case "meeting":
-      return "text-purple-500";
-    case "task":
-      return "text-rose-500";
-    default:
-      return "text-muted-foreground";
-  }
-}
-
 function LeadDetailPage() {
   const { agency } = useAgency();
   const { slug, lead_id } = useParams({ from: "/agency/$slug/crm/$lead_id" });
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [editing, setEditing] = useState(false);
   const [checklistInput, setChecklistInput] = useState("");
@@ -386,16 +324,22 @@ function LeadDetailPage() {
   }
 
   async function removeAttachment(attachmentId: string) {
-    if (!confirm("Remover este anexo permanentemente?")) return;
-    const list = lead.attachments || [];
-    const updated = list.filter((a) => a.id !== attachmentId);
-    try {
-      await updateLead(lead.id, { attachments: updated });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      toast.success("Anexo removido.");
-    } catch (e) {
-      toast.error("Falha ao remover anexo");
-    }
+    confirm({
+      title: "Remover Anexo",
+      description: "Deseja remover este anexo permanentemente?",
+      variant: "destructive",
+      onConfirm: async () => {
+        const list = lead.attachments || [];
+        const updated = list.filter((a) => a.id !== attachmentId);
+        try {
+          await updateLead(lead.id, { attachments: updated });
+          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+          toast.success("Anexo removido.");
+        } catch (e) {
+          toast.error("Falha ao remover anexo");
+        }
+      }
+    });
   }
 
   // --- LGPD Helpers ---
@@ -460,6 +404,7 @@ function LeadDetailPage() {
         </div>
       ) : (
         <div className="space-y-6">
+          <ConfirmDialog />
           {/* Header Actions Row */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-xl">
             <div className="flex items-center gap-3">
@@ -583,7 +528,7 @@ function LeadDetailPage() {
                   value="omnichannel"
                   className="text-xs font-bold py-2 px-4 flex items-center gap-1"
                 >
-                  <MessageCircle className="h-3.5 w-3.5" /> Mensagens
+                  <MessageSquare className="h-3.5 w-3.5" /> Mensagens
                 </TabsTrigger>
                 <TabsTrigger
                   value="ai_insights"
@@ -684,86 +629,8 @@ function LeadDetailPage() {
 
                 {/* Grid info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Trip Details Card */}
-                  <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 text-brand" /> Viagem & Interesse
-                    </h4>
-                    <div className="space-y-3 text-sm">
-                      <Row k="Destino" v={lead.destination || "Não definido"} />
-                      <Row
-                        k="Tipo de Interesse"
-                        v={
-                          INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label ||
-                          "Não informado"
-                        }
-                      />
-                      <Row k="Orçamento Estimado" v={money(lead.estimated_value || 0)} />
-                      <Row
-                        k="Período"
-                        v={
-                          lead.travel_start
-                            ? `${fmtDate(lead.travel_start)} até ${lead.travel_end ? fmtDate(lead.travel_end) : "Indefinido"}`
-                            : "Indefinido"
-                        }
-                      />
-                      <Row k="Canal / Origem" v={lead.source || "Direto"} />
-                      <Row
-                        k="Detalhe do Canal"
-                        v={
-                          lead.lead_source_detail
-                            ? lead.lead_source_detail.replace("_", " ")
-                            : "Orgânico"
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  {/* Accessibility / PCD Card */}
-                  <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
-                      <ShieldCheck className="h-4 w-4 text-brand" /> Acessibilidade & Saúde
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="flex flex-col gap-2 text-xs font-semibold text-foreground">
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            disabled
-                            checked={lead.pcd || false}
-                            className="h-4 w-4 rounded border-border"
-                          />
-                          <span>PCD (Pessoa com Deficiência)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            disabled
-                            checked={lead.reduced_mobility || false}
-                            className="h-4 w-4 rounded border-border"
-                          />
-                          <span>Mobilidade Reduzida</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            disabled
-                            checked={lead.autism || false}
-                            className="h-4 w-4 rounded border-border"
-                          />
-                          <span>Espectro Autista (TEA)</span>
-                        </div>
-                      </div>
-                      <div className="pt-2 border-t border-border/40">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">
-                          Notas de Saúde / Restrições
-                        </span>
-                        <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-lg border border-border/40">
-                          {lead.health_notes || "Nenhuma observação cadastrada."}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  <LeadInterestCard lead={lead} />
+                  <LeadAccessibilityCard lead={lead} />
                 </div>
 
                 {/* Consentimento LGPD */}
@@ -992,17 +859,23 @@ function LeadDetailPage() {
                           className="border border-border/60 p-4 rounded-xl bg-surface-alt/15 relative hover:border-border transition-colors"
                         >
                           <button
-                            onClick={async () => {
-                              if (!confirm("Remover este acompanhante?")) return;
-                              const list = lead.pax_list || [];
-                              const updated = list.filter((_, idx) => idx !== index);
-                              try {
-                                await updateLead(lead.id, { pax_list: updated });
-                                qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                                toast.success("Acompanhante removido!");
-                              } catch (e) {
-                                toast.error("Falha ao salvar");
-                              }
+                            onClick={() => {
+                              confirm({
+                                title: "Remover Acompanhante",
+                                description: "Deseja remover este acompanhante?",
+                                variant: "destructive",
+                                onConfirm: async () => {
+                                  const list = lead.pax_list || [];
+                                  const updated = list.filter((_, idx) => idx !== index);
+                                  try {
+                                    await updateLead(lead.id, { pax_list: updated });
+                                    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                                    toast.success("Acompanhante removido!");
+                                  } catch (e) {
+                                    toast.error("Falha ao salvar");
+                                  }
+                                }
+                              });
                             }}
                             className="absolute right-3 top-3 text-muted-foreground hover:text-danger p-1 cursor-pointer"
                             title="Remover"
@@ -1334,15 +1207,21 @@ function LeadDetailPage() {
 
                             <button
                               type="button"
-                              onClick={async () => {
-                                if (!confirm("Remover este compromisso?")) return;
-                                try {
-                                  await deleteLeadMeeting(meeting.id);
-                                  qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
-                                  toast.success("Compromisso removido.");
-                                } catch (e) {
-                                  toast.error("Erro ao remover");
-                                }
+                              onClick={() => {
+                                confirm({
+                                  title: "Remover Compromisso",
+                                  description: "Deseja remover este compromisso?",
+                                  variant: "destructive",
+                                  onConfirm: async () => {
+                                    try {
+                                      await deleteLeadMeeting(meeting.id);
+                                      qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
+                                      toast.success("Compromisso removido.");
+                                    } catch (e) {
+                                      toast.error("Erro ao remover");
+                                    }
+                                  }
+                                });
                               }}
                               className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-lg transition-colors cursor-pointer"
                               title="Deletar"
@@ -1704,1015 +1583,5 @@ function LeadDetailPage() {
         />
       )}
     </SheetPage>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-border/40 pb-2 last:border-0 last:pb-0">
-      <dt className="text-muted-foreground">{k}</dt>
-      <dd className="text-right font-medium text-foreground">{v}</dd>
-    </div>
-  );
-}
-
-const leadEditSchema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("E-mail inválido").or(z.literal("")).optional().nullable(),
-  phone: z.string().optional().nullable(),
-  destination: z.string().optional().nullable(),
-  travel_start: z.string().optional().nullable(),
-  travel_end: z.string().optional().nullable(),
-  pax_adults: z.number().min(1, "Mínimo 1 adulto").default(1),
-  pax_children: z.number().min(0).default(0),
-  pax_infants: z.number().min(0).default(0),
-  pax_ages_str: z.string().optional().nullable(),
-  estimated_value: z.number().min(0, "O valor não pode ser negativo").default(0),
-  source: z.string().optional().nullable(),
-  stage_id: z.string().min(1, "Selecione o estágio"),
-  interest_type: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-  lost_reason: z.string().optional().nullable(),
-});
-
-type LeadEditFormData = z.infer<typeof leadEditSchema>;
-
-function LeadForm({
-  lead,
-  stages,
-  onCancel,
-  onSaved,
-}: {
-  lead: Lead;
-  stages: Stage[];
-  onCancel: () => void;
-  onSaved: () => void;
-}) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LeadEditFormData>({
-    resolver: zodResolver(leadEditSchema) as any,
-    defaultValues: {
-      name: lead.name,
-      email: lead.email ?? "",
-      phone: lead.phone ?? "",
-      destination: lead.destination ?? "",
-      travel_start: lead.travel_start ?? "",
-      travel_end: lead.travel_end ?? "",
-      pax_adults: lead.pax_adults || 1,
-      pax_children: lead.pax_children || 0,
-      pax_infants: lead.pax_infants || 0,
-      pax_ages_str: ((lead.pax_ages as number[]) || []).join(", "),
-      estimated_value: lead.estimated_value || 0,
-      source: lead.source ?? "",
-      notes: lead.notes ?? "",
-      stage_id: lead.stage_id,
-      interest_type: lead.interest_type ?? "",
-      lost_reason: lead.lost_reason ?? "",
-    },
-  });
-
-  async function onSubmit(data: LeadEditFormData) {
-    const paxAges = (data.pax_ages_str || "")
-      .split(",")
-      .map((s) => parseInt(s.trim()))
-      .filter((n) => !isNaN(n));
-
-    try {
-      await updateLead(lead.id, {
-        name: data.name,
-        email: data.email || null,
-        phone: data.phone || null,
-        destination: data.destination || null,
-        travel_start: data.travel_start || null,
-        travel_end: data.travel_end || null,
-        pax_adults: data.pax_adults,
-        pax_children: data.pax_children,
-        pax_infants: data.pax_infants,
-        pax_ages: paxAges,
-        estimated_value: data.estimated_value,
-        source: data.source || null,
-        notes: data.notes || null,
-        stage_id: data.stage_id,
-        interest_type: data.interest_type || null,
-        lost_reason: data.lost_reason || null,
-      });
-      toast.success("Lead atualizado com sucesso!");
-      onSaved();
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  }
-
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm"
-    >
-      <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Nome completo *" error={errors.name?.message}>
-          <Input
-            {...register("name")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-        <Field label="E-mail" error={errors.email?.message}>
-          <Input
-            type="email"
-            {...register("email")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-        <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
-          <Input
-            {...register("phone")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-        <Field label="Destino de interesse" error={errors.destination?.message}>
-          <Input
-            {...register("destination")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-        <Field label="Data de início" error={errors.travel_start?.message}>
-          <Input
-            type="date"
-            {...register("travel_start")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-        <Field label="Data de término" error={errors.travel_end?.message}>
-          <Input
-            type="date"
-            {...register("travel_end")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-
-        <div className="grid grid-cols-3 gap-2">
-          <Field label="Adultos" error={errors.pax_adults?.message}>
-            <Input
-              type="number"
-              min={1}
-              {...register("pax_adults", { valueAsNumber: true })}
-              className="rounded-lg h-9"
-            />
-          </Field>
-          <Field label="Crianças" error={errors.pax_children?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_children", { valueAsNumber: true })}
-              className="rounded-lg h-9"
-            />
-          </Field>
-          <Field label="Bebês" error={errors.pax_infants?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_infants", { valueAsNumber: true })}
-              className="rounded-lg h-9"
-            />
-          </Field>
-        </div>
-
-        <Field label="Idades das Crianças (ex: 5, 8)" error={errors.pax_ages_str?.message}>
-          <Input
-            {...register("pax_ages_str")}
-            className="rounded-lg h-9"
-            placeholder="Separadas por vírgula"
-          />
-        </Field>
-
-        <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-xl text-muted-foreground space-y-1">
-          <span className="font-bold text-foreground block">Regras de Tarifa da Aviação:</span>
-          <ul className="list-disc list-inside space-y-0.5">
-            <li>
-              <strong>Adultos (ADT):</strong> 12 anos completos ou mais.
-            </li>
-            <li>
-              <strong>Crianças (CHD):</strong> 2 a 11 anos completos (2 anos completos já pagam
-              tarifa CHD).
-            </li>
-            <li>
-              <strong>Bebês (INF):</strong> 0 a 23 meses (deve viajar no colo).
-            </li>
-          </ul>
-        </div>
-
-        <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
-          <Input
-            type="number"
-            min={0}
-            step="0.01"
-            {...register("estimated_value", { valueAsNumber: true })}
-            className="rounded-lg h-9"
-          />
-        </Field>
-
-        <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
-          <Select
-            {...register("interest_type")}
-            className="rounded-lg h-9"
-          >
-            <option value="">Não informado</option>
-            {INTEREST_TYPES.map((t) => (
-              <option key={t.v} value={t.v}>
-                {t.label}
-              </option>
-            ))}
-          </Select>
-        </Field>
-
-        <Field label="Origem / Canal" error={errors.source?.message}>
-          <Input
-            {...register("source")}
-            className="rounded-lg h-9"
-          />
-        </Field>
-
-        <Field label="Estágio do Funil" error={errors.stage_id?.message}>
-          <Select
-            {...register("stage_id")}
-            className="rounded-lg h-9"
-          >
-            {stages.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </Select>
-        </Field>
-      </div>
-
-      <Field label="Anotações gerais" error={errors.notes?.message}>
-        <Textarea
-          rows={3}
-          {...register("notes")}
-          className="rounded-lg"
-        />
-      </Field>
-
-      <Field label="Motivo da Perda (Se perdido)" error={errors.lost_reason?.message}>
-        <Input
-          {...register("lost_reason")}
-          className="rounded-lg h-9"
-        />
-      </Field>
-
-      <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
-        <GhostButton type="button" onClick={onCancel}>
-          Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Salvando..." : "Salvar Alterações"}
-        </PrimaryButton>
-      </div>
-    </form>
-  );
-}
-
-function NewActivity({
-  leadId,
-  agencyId,
-  onCreated,
-}: {
-  leadId: string;
-  agencyId: string;
-  onCreated: () => void;
-}) {
-  const [type, setType] = useState<string>("note");
-  const [content, setContent] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!content.trim()) return;
-    setBusy(true);
-    try {
-      await addLeadActivity({
-        leadId,
-        agencyId,
-        type,
-        content: content.trim(),
-      });
-      setContent("");
-      onCreated();
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <form
-      onSubmit={submit}
-      className="rounded-xl border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
-    >
-      <Select
-        value={type}
-        onChange={(e) => setType(e.target.value)}
-        className="w-32 border-0 bg-transparent text-xs focus:ring-0 text-muted-foreground"
-      >
-        {ACTIVITY_TYPES.map((t) => (
-          <option key={t.v} value={t.v}>
-            {t.label}
-          </option>
-        ))}
-      </Select>
-      <div className="flex-1 border-l border-border/50">
-        <Textarea
-          rows={1}
-          placeholder="Registrar um comentário, ligação ou e-mail..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="border-0 bg-transparent focus:ring-0 resize-none py-2 min-h-[38px] text-xs"
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={busy || !content.trim()}
-        className="m-1 rounded-lg bg-brand text-brand-foreground px-3.5 py-1.5 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
-      >
-        Postar
-      </button>
-    </form>
-  );
-}
-
-function Timeline({ activities, onChanged }: { activities: Activity[]; onChanged: () => void }) {
-  if (activities.length === 0) {
-    return (
-      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-xl border border-border/50 border-dashed">
-        Sem histórico ou atividades registradas.
-      </div>
-    );
-  }
-  return (
-    <div className="relative pl-4 border-l border-border/60 space-y-4">
-      {activities.map((a) => (
-        <ActivityItem key={a.id} activity={a} onChanged={onChanged} />
-      ))}
-    </div>
-  );
-}
-
-function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: () => void }) {
-  const Icon = iconFor(activity.type);
-  const colorClass = colorFor(activity.type);
-  const [edit, setEdit] = useState(false);
-  const [content, setContent] = useState(activity.content ?? "");
-  const [me, setMe] = useState<string | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMe(data.user?.id ?? null));
-  }, []);
-
-  const mine = me && activity.author_id === me;
-
-  const save = useMutation({
-    mutationFn: async () => {
-      await updateLeadActivity(activity.id, content.trim() || null);
-    },
-    onSuccess: () => {
-      toast.success("Nota atualizada.");
-      setEdit(false);
-      onChanged();
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar."),
-  });
-
-  const remove = useMutation({
-    mutationFn: async () => {
-      await deleteLeadActivity(activity.id);
-    },
-    onSuccess: () => {
-      toast.success("Registro removido.");
-      onChanged();
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover."),
-  });
-
-  return (
-    <div className="relative pl-6 group">
-      <div className="absolute -left-[25px] top-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border">
-        <Icon className={`h-3 w-3 ${colorClass}`} />
-      </div>
-
-      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-xl p-3.5 transition-colors">
-        <div className="flex items-center justify-between">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ??
-              (activity.type === "stage_change" ? "Mudança de Estágio" : activity.type)}
-            <span className="mx-2 opacity-50">•</span>
-            {new Date(activity.created_at).toLocaleString("pt-BR", {
-              day: "2-digit",
-              month: "short",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </div>
-
-          {mine && !edit && activity.type !== "stage_change" && (
-            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={() => setEdit(true)}
-                className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-                title="Editar"
-              >
-                <Pencil className="h-3 w-3" />
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm("Apagar permanentemente este registro?")) remove.mutate();
-                }}
-                className="text-muted-foreground hover:text-danger transition-colors p-0.5"
-                title="Deletar"
-              >
-                <Trash className="h-3 w-3" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {edit ? (
-          <div className="mt-2 space-y-2.5">
-            <Textarea
-              rows={2}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="rounded-lg border-border text-xs"
-            />
-            <div className="flex justify-end gap-1.5">
-              <button
-                onClick={() => {
-                  setEdit(false);
-                  setContent(activity.content ?? "");
-                }}
-                className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-surface-alt transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => save.mutate()}
-                disabled={save.isPending}
-                className="rounded-lg bg-brand text-brand-foreground px-3 py-1 text-xs font-bold transition-opacity hover:opacity-90"
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        ) : (
-          <p
-            className={`text-xs text-foreground/90 leading-relaxed ${activity.type === "stage_change" ? "font-semibold text-brand" : ""}`}
-          >
-            {activity.content}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────── OmnichannelChat Component ─────────────────────── */
-type OmniMsg = {
-  id: string;
-  direction: "inbound" | "outbound";
-  content: string | null;
-  media_url: string | null;
-  media_type: string | null;
-  status: string;
-  created_at: string;
-  channel: string;
-};
-
-function OmnichannelChat({
-  leadId,
-  agencyId,
-  leadPhone,
-}: {
-  leadId: string;
-  agencyId: string;
-  leadPhone?: string | null;
-}) {
-  const [messages, setMessages] = useState<OmniMsg[]>([]);
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    (supabase as any)
-      .from("omnichannel_messages")
-      .select("*")
-      .eq("lead_id", leadId)
-      .order("created_at", { ascending: true })
-      .limit(100)
-      .then(({ data }: any) => {
-        if (data) setMessages(data as OmniMsg[]);
-      });
-
-    const channel = supabase
-      .channel(`omni_${leadId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "omnichannel_messages",
-          filter: `lead_id=eq.${leadId}`,
-        },
-        (payload) => {
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === payload.new.id)) return prev;
-            return [...prev, payload.new as OmniMsg];
-          });
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "omnichannel_messages",
-          filter: `lead_id=eq.${leadId}`,
-        },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((msg) => (msg.id === payload.new.id ? (payload.new as OmniMsg) : msg)),
-          );
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [leadId]);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  async function sendMessage() {
-    if (!text.trim() || sending) return;
-    setSending(true);
-    try {
-      const { error } = await (supabase as any).from("omnichannel_messages").insert({
-        agency_id: agencyId,
-        lead_id: leadId,
-        channel: "whatsapp",
-        direction: "outbound",
-        content: text.trim(),
-        status: "pending",
-      });
-      if (error) throw error;
-      setText("");
-    } catch {
-      toast.error("Falha ao enviar mensagem");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  const lastMsgTime = messages[messages.length - 1]
-    ? new Date(messages[messages.length - 1].created_at).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : null;
-
-  return (
-    <div className="flex flex-col h-[620px] border border-border/80 rounded-xl bg-surface/50 overflow-hidden">
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface-alt/20">
-        <div className="h-9 w-9 rounded-full bg-[#25d366]/10 flex items-center justify-center">
-          <MessageCircle className="h-4 w-4 text-[#25d366]" />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-bold text-foreground">WhatsApp</h3>
-          <p className="text-[10px] text-muted-foreground">
-            {messages.length > 0
-              ? `${messages.length} mensagens · Última às ${lastMsgTime}`
-              : "Nenhuma mensagem ainda"}
-          </p>
-        </div>
-        <span className="text-[10px] font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
-          {messages.length > 0 ? "ATIVO" : "AGUARDANDO"}
-        </span>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#E5DDD5]/5">
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
-            <MessageCircle className="h-12 w-12 text-muted-foreground" />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Nenhuma mensagem ainda</p>
-              <p className="text-xs text-muted-foreground/70 max-w-xs mt-1">
-                Configure a API de WhatsApp em Configurações → Omnichannel para receber mensagens em
-                tempo real.
-              </p>
-            </div>
-          </div>
-        ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${msg.direction === "outbound" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-                  msg.direction === "outbound"
-                    ? "bg-brand text-brand-foreground rounded-br-sm"
-                    : "bg-surface border border-border/60 text-foreground rounded-bl-sm"
-                }`}
-              >
-                {msg.media_type === "audio" && msg.media_url ? (
-                  <audio controls src={msg.media_url} className="max-w-full" />
-                ) : msg.media_url ? (
-                  <img src={msg.media_url} className="rounded-lg max-w-full" alt="media" />
-                ) : (
-                  <span>{msg.content}</span>
-                )}
-                <div className="text-[9px] mt-0.5 opacity-70 text-right flex items-center justify-end gap-1">
-                  <span>
-                    {new Date(msg.created_at).toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                  {msg.direction === "outbound" && (
-                    <span className="inline-flex items-center ml-1">
-                      {msg.status === "pending" && (
-                        <span title="Pendente">
-                          <Clock className="h-2.5 w-2.5 opacity-60 animate-pulse" />
-                        </span>
-                      )}
-                      {msg.status === "sent" && (
-                        <span title="Enviado">
-                          <Check className="h-2.5 w-2.5 text-emerald-300" />
-                        </span>
-                      )}
-                      {msg.status === "failed" && (
-                        <span title="Falhou ao enviar">
-                          <AlertCircle className="h-2.5 w-2.5 text-red-300" />
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-        <div ref={bottomRef} />
-      </div>
-
-      <div className="p-3 border-t border-border bg-surface flex items-end gap-2">
-        <Paperclip className="h-5 w-5 text-muted-foreground mb-2.5 shrink-0" />
-        <textarea
-          className="w-full text-sm bg-surface-alt border border-border/60 rounded-xl px-4 py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
-          placeholder="Digite uma mensagem..."
-          rows={1}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
-            }
-          }}
-        />
-        <button
-          onClick={sendMessage}
-          disabled={!text.trim() || sending}
-          className="p-2.5 bg-brand text-brand-foreground rounded-full hover:opacity-90 transition-opacity shrink-0 disabled:opacity-40"
-        >
-          <Send className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────── AIHunterPanel Component ─────────────────────── */
-type LeadInsight = {
-  fears: string[];
-  desires: string[];
-  objections: string[];
-  budget_signals: string[];
-  general_profile: string | null;
-  next_best_action: string | null;
-  updated_at: string;
-};
-
-function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: string }) {
-  const { slug } = useParams({ from: "/agency/$slug/crm/$lead_id" });
-  const navigate = useNavigate();
-  const qc = useQueryClient();
-
-  const [insights, setInsights] = useState<LeadInsight | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
-
-  const [generatingProposal, setGeneratingProposal] = useState(false);
-  const [createdProposal, setCreatedProposal] = useState<{ id: string; number: string; publicToken: string } | null>(null);
-  const [sendingWa, setSendingWa] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-
-  useEffect(() => {
-    (supabase as any)
-      .from("lead_insights")
-      .select("*")
-      .eq("lead_id", leadId)
-      .maybeSingle()
-      .then(({ data }: any) => {
-        if (data) setInsights(data as LeadInsight);
-      });
-  }, [leadId]);
-
-  async function triggerAnalysis() {
-    setAnalyzing(true);
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/ai-message-processor`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ record: { lead_id: leadId, agency_id: agencyId } }),
-      });
-      if (!res.ok) throw new Error("Falha na análise");
-      const { data } = await (supabase as any)
-        .from("lead_insights")
-        .select("*")
-        .eq("lead_id", leadId)
-        .maybeSingle();
-      if (data) setInsights(data as LeadInsight);
-      toast.success("Análise da IA concluída!");
-    } catch (e: any) {
-      toast.error(e.message || "Falha ao analisar");
-    } finally {
-      setAnalyzing(false);
-    }
-  }
-
-  async function generateAIProposal() {
-    setGeneratingProposal(true);
-    setErrorMsg("");
-    try {
-      const { data, error } = await supabase.functions.invoke("ai-message-processor", {
-        body: { action: "create_proposal", lead_id: leadId, agency_id: agencyId }
-      });
-      if (error) throw error;
-      if (!data || !data.proposal_id) throw new Error("ID da proposta não retornado pela IA.");
-      
-      setCreatedProposal({
-        id: data.proposal_id,
-        number: data.number,
-        publicToken: data.public_token
-      });
-      toast.success(`Cotação #${data.number} gerada com sucesso!`);
-      // Invalida a lista de cotações para que atualize na aba de cotações
-      qc.invalidateQueries({ queryKey: ["proposals", agencyId] });
-    } catch (e: any) {
-      console.error(e);
-      setErrorMsg(e.message || "Erro ao gerar proposta com IA.");
-      toast.error(e.message || "Erro ao gerar proposta");
-    } finally {
-      setGeneratingProposal(false);
-    }
-  }
-
-  function editProposal() {
-    if (!createdProposal) return;
-    navigate({
-      to: "/agency/$slug/proposals/$id",
-      params: { slug, id: createdProposal.id }
-    });
-  }
-
-  async function sendProposalToWhatsApp() {
-    if (!createdProposal || sendingWa) return;
-    setSendingWa(true);
-    try {
-      const url = `${window.location.origin}/m/proposal/${createdProposal.publicToken}`;
-      const content = `Olá! Preparamos uma proposta personalizada de viagem para você. Você pode acessá-la e detalhar todos os serviços por este link: ${url}`;
-      
-      const { error } = await (supabase as any).from("omnichannel_messages").insert({
-        agency_id: agencyId,
-        lead_id: leadId,
-        channel: "whatsapp",
-        direction: "outbound",
-        content,
-        status: "pending",
-      });
-      if (error) throw error;
-      toast.success("Mensagem adicionada à fila de envio do WhatsApp!");
-      qc.invalidateQueries({ queryKey: ["lead-activities", leadId] });
-    } catch (e: any) {
-      console.error(e);
-      toast.error("Erro ao enviar link da cotação.");
-    } finally {
-      setSendingWa(false);
-    }
-  }
-
-  function copyProposalLink() {
-    if (!createdProposal) return;
-    const url = `${window.location.origin}/m/proposal/${createdProposal.publicToken}`;
-    navigator.clipboard.writeText(url);
-    toast.success("Link da cotação copiado para a área de transferência!");
-  }
-
-  const Tag = ({ label, cls }: { label: string; cls: string }) => (
-    <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cls}`}
-    >
-      {label}
-    </span>
-  );
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-brand" />
-          <span className="font-bold text-sm text-foreground">
-            Inteligência de Lead — Hunter Sênior
-          </span>
-        </div>
-        <button
-          onClick={triggerAnalysis}
-          disabled={analyzing}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand bg-brand/5 rounded-lg hover:bg-brand/10 transition-colors disabled:opacity-50"
-        >
-          <Bot className="h-3.5 w-3.5" />
-          {analyzing ? "Analisando..." : "Analisar Agora"}
-        </button>
-      </div>
-
-      {/* Bloco de Criação de Cotação por IA */}
-      <div className="rounded-xl border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="h-4 w-4" /> Geração de Proposta por IA
-          </div>
-          {createdProposal && (
-            <span className="text-[10px] font-extrabold uppercase bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded">
-              Cotação #{createdProposal.number} Criada
-            </span>
-          )}
-        </div>
-        
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          O Copiloto de IA analisa as últimas 30 mensagens deste lead no chat do WhatsApp para extrair o roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no formato de rascunho com apenas 1 clique.
-        </p>
-
-        {errorMsg && (
-          <p className="text-xs text-danger font-medium">{errorMsg}</p>
-        )}
-
-        <div className="flex flex-wrap gap-2 pt-1">
-          <button
-            onClick={generateAIProposal}
-            disabled={generatingProposal}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
-          >
-            <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? 'animate-spin' : ''}`} />
-            {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta com IA"}
-          </button>
-
-          {createdProposal && (
-            <>
-              <button
-                onClick={editProposal}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
-              >
-                <Pencil className="h-3.5 w-3.5" /> Editar no Studio
-              </button>
-
-              <button
-                onClick={sendProposalToWhatsApp}
-                disabled={sendingWa}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 px-3 text-xs font-bold transition-all disabled:opacity-50"
-              >
-                <Send className="h-3.5 w-3.5" /> 
-                {sendingWa ? "Enviando..." : "Enviar por WhatsApp"}
-              </button>
-
-              <button
-                onClick={copyProposalLink}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
-              >
-                <FileText className="h-3.5 w-3.5" /> Copiar Link
-              </button>
-              
-              <a
-                href={`${window.location.origin}/m/proposal/${createdProposal.publicToken}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
-              >
-                <ExternalLink className="h-3.5 w-3.5" /> Visualizar
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-
-      {!insights ? (
-        <div className="rounded-xl border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
-          <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
-          <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
-          <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
-            Quando o lead enviar mensagens via WhatsApp, a IA Hunter mapeará o perfil
-            automaticamente.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {insights.general_profile && (
-            <div className="rounded-xl border border-brand/20 bg-brand/5 p-5 space-y-2">
-              <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
-                <Bot className="h-4 w-4" /> Perfil Comportamental
-              </div>
-              <p className="text-sm text-foreground leading-relaxed">{insights.general_profile}</p>
-              <p className="text-[10px] text-muted-foreground">
-                Atualizado em {new Date(insights.updated_at).toLocaleString("pt-BR")}
-              </p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                title: "Desejos & Sonhos",
-                items: insights.desires,
-                icon: <Heart className="h-4 w-4" />,
-                cls: "bg-success/10 text-success border-success/20",
-                color: "text-success",
-              },
-              {
-                title: "Medos & Bloqueios",
-                items: insights.fears,
-                icon: <AlertCircle className="h-4 w-4" />,
-                cls: "bg-danger/10 text-danger border-danger/20",
-                color: "text-danger",
-              },
-              {
-                title: "Objeções Comerciais",
-                items: insights.objections,
-                icon: <ShieldAlert className="h-4 w-4" />,
-                cls: "bg-warning/10 text-warning border-warning/20",
-                color: "text-warning",
-              },
-              {
-                title: "Sinais de Orçamento",
-                items: insights.budget_signals,
-                icon: <DollarSign className="h-4 w-4" />,
-                cls: "bg-brand/10 text-brand border-brand/20",
-                color: "text-brand",
-              },
-            ].map(({ title, items, icon, cls, color }) => (
-              <div
-                key={title}
-                className="rounded-xl border border-border/80 bg-surface p-5 space-y-3"
-              >
-                <div
-                  className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}
-                >
-                  {icon} {title}
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {(items ?? []).length > 0 ? (
-                    items.map((item, i) => <Tag key={i} label={item} cls={cls} />)
-                  ) : (
-                    <span className="text-xs text-muted-foreground">Nenhum mapeado</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {insights.next_best_action && (
-            <div className="rounded-xl border border-success/30 bg-success/5 p-5 space-y-2">
-              <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
-                <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
-              </div>
-              <p className="text-sm text-foreground font-medium leading-relaxed">
-                {insights.next_best_action}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
   );
 }

@@ -221,7 +221,7 @@ function Page() {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 rounded-xl border border-border bg-surface p-8 shadow-sm"
+          className="space-y-4 rounded-xl border border-border bg-surface p-8"
         >
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
