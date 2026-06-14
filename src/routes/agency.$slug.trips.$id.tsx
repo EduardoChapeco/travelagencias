@@ -47,7 +47,7 @@ function getDaysToTrip(travelStart?: string | null): number | null {
 }
 
 function TripLayout() {
-  const { slug, id } = useParams({ from: "/agency/$slug/trips/$id" });
+  const { slug, id } = useParams({ strict: false }) as { slug: string; id: string };
   const { agency } = useAgency();
   const navigate = useNavigate();
   const qc = useQueryClient();

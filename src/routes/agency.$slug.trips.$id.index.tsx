@@ -12,7 +12,7 @@ export const Route = createFileRoute("/agency/$slug/trips/$id/")({
 });
 
 function TripOverview() {
-  const { slug, id } = useParams({ from: "/agency/$slug/trips/$id/" });
+  const { slug, id } = useParams({ strict: false }) as { slug: string; id: string };
   const { agency } = useAgency();
   const qc = useQueryClient();
 
@@ -43,10 +43,12 @@ function TripOverview() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
 
-  if (tripQ.isLoading || !form)
+  if (tripQ.isLoading)
     return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
   if (!tripQ.data)
     return <div className="text-sm text-muted-foreground p-6">Viagem não encontrada.</div>;
+  if (!form)
+    return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
 
   const t = form;
   const margin = Number(t.total_sale || 0) - Number(t.total_cost || 0);
