@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
@@ -15,35 +18,48 @@ export const Route = createFileRoute("/auth/register")({
   component: RegisterPage,
 });
 
-function RegisterPage() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
+const registerSchema = z.object({
+  fullName: z.string().min(2, "Nome completo é obrigatório"),
+  email: z.string().min(1, "E-mail é obrigatório").email("Digite um e-mail válido"),
+  password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
+  confirmPassword: z.string().min(8, "A confirmação de senha é obrigatória"),
+  acceptedTerms: z.boolean().refine((val) => val === true, {
+    message: "Você precisa aceitar os termos de serviço e a política de privacidade",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
 
-  const [submitting, setSubmitting] = useState(false);
+type RegisterFormData = z.infer<typeof registerSchema>;
+
+function RegisterPage() {
   const [success, setSuccess] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("As senhas não coincidem.");
-      return;
-    }
-    if (!acceptedTerms) {
-      toast.error("Você precisa aceitar os termos de serviço e a política de privacidade.");
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      acceptedTerms: false,
+    },
+  });
 
-    setSubmitting(true);
+  async function onSubmit(data: RegisterFormData) {
     try {
       const { error: signupError } = await supabase.auth.signUp({
-        email,
-        password,
+        email: data.email,
+        password: data.password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/confirm`,
-          data: { full_name: fullName },
+          data: { full_name: data.fullName },
         },
       });
 
@@ -59,8 +75,6 @@ function RegisterPage() {
       } else {
         toast.error(msg);
       }
-    } finally {
-      setSubmitting(false);
     }
   }
 
@@ -82,7 +96,7 @@ function RegisterPage() {
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Verifique seu e-mail</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Enviamos um e-mail de confirmação para <strong>{email}</strong>. Clique no link da
+            Enviamos um e-mail de confirmação. Clique no link da
             mensagem para ativar sua conta.
           </p>
           <div className="mt-8 space-y-3">
@@ -111,72 +125,75 @@ function RegisterPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Criar sua conta</h1>
         <p className="mt-1 text-sm text-muted-foreground">Preencha seus dados para começar.</p>
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-4">
-          <Field label="Nome completo">
-            <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
+          <Field label="Nome completo" error={errors.fullName?.message}>
+            <Input {...register("fullName")} />
           </Field>
 
-          <Field label="E-mail">
+          <Field label="E-mail" error={errors.email?.message}>
             <Input
               type="email"
-              required
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email")}
             />
           </Field>
 
-          <Field label="Senha">
+          <Field label="Senha" error={errors.password?.message}>
             <Input
               type="password"
-              required
-              minLength={8}
               autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               placeholder="Mínimo de 8 caracteres"
+              {...register("password")}
             />
           </Field>
 
-          <Field label="Confirmação de senha">
+          <Field label="Confirmação de senha" error={errors.confirmPassword?.message}>
             <Input
               type="password"
-              required
-              minLength={8}
               autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              {...register("confirmPassword")}
             />
           </Field>
 
-          <div className="flex items-start space-x-2 pt-2">
-            <Checkbox
-              id="terms"
-              checked={acceptedTerms}
-              onCheckedChange={(c) => setAcceptedTerms(c as boolean)}
-            />
-            <label
-              htmlFor="terms"
-              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
-            >
-              Eu aceito os{" "}
-              <a href="#" className="text-primary hover:underline">
-                Termos de Serviço
-              </a>{" "}
-              e a{" "}
-              <a href="#" className="text-primary hover:underline">
-                Política de Privacidade
-              </a>
-              .
-            </label>
+          <div>
+            <div className="flex items-start space-x-2 pt-2">
+              <Controller
+                control={control}
+                name="acceptedTerms"
+                render={({ field }) => (
+                  <Checkbox
+                    id="terms"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
+              <label
+                htmlFor="terms"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+              >
+                Eu aceito os{" "}
+                <a href="#" className="text-primary hover:underline">
+                  Termos de Serviço
+                </a>{" "}
+                e a{" "}
+                <a href="#" className="text-primary hover:underline">
+                  Política de Privacidade
+                </a>
+                .
+              </label>
+            </div>
+            {errors.acceptedTerms && (
+              <p className="mt-1 text-[11px] text-red-500">{errors.acceptedTerms.message}</p>
+            )}
           </div>
 
           <PrimaryButton
             type="submit"
-            disabled={submitting || !acceptedTerms}
+            disabled={isSubmitting}
             className="w-full mt-6"
           >
-            {submitting ? "Criando conta…" : "Criar conta"}
+            {isSubmitting ? "Criando conta…" : "Criar conta"}
           </PrimaryButton>
         </form>
 

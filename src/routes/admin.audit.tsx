@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Filter, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAdminAuditLogs } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, GhostButton } from "@/components/ui/form";
 
@@ -20,26 +20,12 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-audit", page, filterAction, filterEntity],
-    queryFn: async () => {
-      let query = (supabase as any).from("vw_admin_audit").select("*", { count: "exact" });
-
-      if (filterAction) {
-        query = query.eq("action", filterAction);
-      }
-      if (filterEntity) {
-        query = query.eq("entity_type", filterEntity);
-      }
-
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-
-      const { data, count, error } = await query
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (error) throw error;
-      return { data: data ?? [], count: count ?? 0 };
-    },
+    queryFn: () => fetchAdminAuditLogs({
+      action: filterAction,
+      entityType: filterEntity,
+      page,
+      pageSize: PAGE_SIZE,
+    }),
     placeholderData: (prev) => prev,
   });
 

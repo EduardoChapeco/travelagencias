@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAdminTravelers } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, Input, GhostButton } from "@/components/ui/form";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -21,34 +21,7 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-travelers", page, search],
-    queryFn: async () => {
-      let query = supabase
-        .from("clients")
-        .select("id, full_name, email, phone, agency_id, created_at", { count: "exact" });
-
-      if (search) {
-        query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
-      }
-
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-
-      const { data, count, error } = await query
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (error) throw error;
-
-      const aids = Array.from(new Set((data ?? []).map((c) => c.agency_id)));
-      const ags = aids.length
-        ? ((await supabase.from("agencies").select("id, name").in("id", aids)).data ?? [])
-        : [];
-      const amap = new Map(ags.map((a) => [a.id, a.name]));
-      return {
-        data: (data ?? []).map((c) => ({ ...c, agency_name: amap.get(c.agency_id) ?? "—" })),
-        count: count ?? 0,
-      };
-    },
+    queryFn: () => fetchAdminTravelers({ search, page, pageSize: PAGE_SIZE }),
     placeholderData: (prev) => prev,
   });
 

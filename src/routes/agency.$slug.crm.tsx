@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useCrmKanban } from "@/hooks/use-crm-kanban";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   fetchStages,
   fetchLeads,
@@ -391,6 +394,22 @@ function CRMPage() {
   );
 }
 
+const leadSchema = z.object({
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("E-mail inválido").or(z.literal("")).optional().nullable(),
+  phone: z.string().optional().nullable(),
+  destination: z.string().optional().nullable(),
+  travel_start: z.string().optional().nullable(),
+  travel_end: z.string().optional().nullable(),
+  pax_count: z.number().min(1, "Deve ter pelo menos 1 passageiro").default(2),
+  estimated_value: z.number().min(0, "O valor não pode ser negativo").default(0),
+  source: z.string().optional().nullable(),
+  stage_id: z.string().min(1, "Selecione o estágio do funil"),
+  notes: z.string().optional().nullable(),
+});
+
+type LeadFormData = z.infer<typeof leadSchema>;
+
 function NewLeadSheet({
   agencyId,
   stages,
@@ -403,106 +422,104 @@ function NewLeadSheet({
   onCreated: () => void;
 }) {
   const firstStage = stages[0];
-  const [f, setF] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    destination: "",
-    travel_start: "",
-    travel_end: "",
-    pax_count: 2,
-    estimated_value: 0,
-    source: "",
-    notes: "",
-    stage_id: firstStage?.id ?? "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  useEffect(() => {
-    if (firstStage && !f.stage_id) setF((c) => ({ ...c, stage_id: firstStage.id }));
-  }, [firstStage, f.stage_id]);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!f.stage_id) return;
-    setSubmitting(true);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<LeadFormData>({
+    resolver: zodResolver(leadSchema) as any,
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      destination: "",
+      travel_start: "",
+      travel_end: "",
+      pax_count: 2,
+      estimated_value: 0,
+      source: "",
+      stage_id: firstStage?.id ?? "",
+      notes: "",
+    },
+  });
+
+  useEffect(() => {
+    if (firstStage) {
+      setValue("stage_id", firstStage.id);
+    }
+  }, [firstStage, setValue]);
+
+  async function onSubmit(data: LeadFormData) {
     try {
-      await createLead(agencyId, f);
+      await createLead(agencyId, data);
       toast.success("Lead criado com sucesso!");
       onCreated();
     } catch (error: any) {
       toast.error(error.message || "Erro ao criar lead");
-    } finally {
-      setSubmitting(false);
     }
   }
 
   return (
     <Sheet onClose={onClose} title="Novo lead">
-      <form onSubmit={onSubmit} className="space-y-4 pt-2">
-        <Field label="Nome Completo *">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
+        <Field label="Nome Completo *" error={errors.name?.message}>
           <Input
-            required
-            value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })}
+            {...register("name")}
             autoFocus
           />
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="E-mail">
+          <Field label="E-mail" error={errors.email?.message}>
             <Input
               type="email"
-              value={f.email}
-              onChange={(e) => setF({ ...f, email: e.target.value })}
+              {...register("email")}
             />
           </Field>
-          <Field label="WhatsApp / Telefone">
-            <Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
+          <Field label="WhatsApp / Telefone" error={errors.phone?.message}>
+            <Input {...register("phone")} />
           </Field>
         </div>
-        <Field label="Destino">
+        <Field label="Destino" error={errors.destination?.message}>
           <Input
-            value={f.destination}
-            onChange={(e) => setF({ ...f, destination: e.target.value })}
+            {...register("destination")}
             placeholder="Ex: Paris, França"
           />
         </Field>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Ida Prevista">
+          <Field label="Ida Prevista" error={errors.travel_start?.message}>
             <Input
               type="date"
-              value={f.travel_start}
-              onChange={(e) => setF({ ...f, travel_start: e.target.value })}
+              {...register("travel_start")}
             />
           </Field>
-          <Field label="Retorno Previsto">
+          <Field label="Retorno Previsto" error={errors.travel_end?.message}>
             <Input
               type="date"
-              value={f.travel_end}
-              onChange={(e) => setF({ ...f, travel_end: e.target.value })}
+              {...register("travel_end")}
             />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Passageiros (Pax)">
+          <Field label="Passageiros (Pax)" error={errors.pax_count?.message}>
             <Input
               type="number"
               min={1}
-              value={f.pax_count}
-              onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })}
+              {...register("pax_count", { valueAsNumber: true })}
             />
           </Field>
-          <Field label="Orçamento Estimado (R$)">
+          <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
             <Input
               type="number"
               min={0}
               step="0.01"
-              value={f.estimated_value}
-              onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })}
+              {...register("estimated_value", { valueAsNumber: true })}
             />
           </Field>
         </div>
-        <Field label="Origem / Canal">
-          <Select value={f.source} onChange={(e) => setF({ ...f, source: e.target.value })}>
+        <Field label="Origem / Canal" error={errors.source?.message}>
+          <Select {...register("source")}>
             <option value="">Não informado</option>
             <option value="whatsapp">WhatsApp / Telefone</option>
             <option value="instagram">Instagram / Meta</option>
@@ -511,8 +528,8 @@ function NewLeadSheet({
             <option value="walkin">Presencial</option>
           </Select>
         </Field>
-        <Field label="Estágio do Funil">
-          <Select value={f.stage_id} onChange={(e) => setF({ ...f, stage_id: e.target.value })}>
+        <Field label="Estágio do Funil" error={errors.stage_id?.message}>
+          <Select {...register("stage_id")}>
             {stages.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -520,11 +537,10 @@ function NewLeadSheet({
             ))}
           </Select>
         </Field>
-        <Field label="Anotações Iniciais">
+        <Field label="Anotações Iniciais" error={errors.notes?.message}>
           <Textarea
             rows={4}
-            value={f.notes}
-            onChange={(e) => setF({ ...f, notes: e.target.value })}
+            {...register("notes")}
             placeholder="Informações cruciais para o primeiro contato..."
           />
         </Field>
@@ -532,8 +548,8 @@ function NewLeadSheet({
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Criando..." : "Salvar Lead"}
+          <PrimaryButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Criando..." : "Salvar Lead"}
           </PrimaryButton>
         </div>
       </form>

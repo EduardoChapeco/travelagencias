@@ -8,31 +8,57 @@ import {
   fetchPublicAgencyPolicies,
   submitPublicLead,
 } from "@/services/public";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/p/$agency_slug/contact")({
   head: () => ({ meta: [{ title: "Fale Conosco" }] }),
   component: ContactPage,
 });
 
+const contactSchema = z.object({
+  name: z.string().min(3, "Nome completo deve ter pelo menos 3 caracteres"),
+  phone: z.string().min(8, "WhatsApp/Telefone inválido ou incompleto"),
+  email: z.string().email("Digite um e-mail válido").optional().or(z.literal("")),
+  destination: z.string().optional(),
+  travel_start: z.string().optional(),
+  travel_end: z.string().optional(),
+  pax_count: z.coerce.number().min(1, "A viagem deve ter pelo menos 1 passageiro"),
+  estimated_value: z.string().optional(),
+  notes: z.string().optional(),
+  lgpdAccepted: z.boolean().refine((val) => val === true, {
+    message: "Você deve aceitar as Políticas de Privacidade para continuar",
+  }),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
+
 function ContactPage() {
   const { agency_slug } = useParams({ from: "/p/$agency_slug/contact" });
 
   const [utms, setUtms] = useState({ source: "", medium: "", campaign: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [lgpdAccepted, setLgpdAccepted] = useState(false);
 
-  const [f, setF] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    destination: "",
-    travel_start: "",
-    travel_end: "",
-    pax_count: 2,
-    estimated_value: "",
-    notes: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      destination: "",
+      travel_start: "",
+      travel_end: "",
+      pax_count: 2,
+      estimated_value: "",
+      notes: "",
+      lgpdAccepted: false,
+    },
   });
 
   const agencyQ = useQuery({
@@ -55,18 +81,10 @@ function ContactPage() {
     });
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data: ContactFormData) {
     setErrorMsg("");
 
-    if (!lgpdAccepted) {
-      setErrorMsg("Você precisa aceitar os Termos e Políticas para continuar.");
-      return;
-    }
-
-    setBusy(true);
-
-    let finalNotes = f.notes.trim();
+    let finalNotes = (data.notes || "").trim();
     if (utms.source || utms.medium || utms.campaign) {
       finalNotes += `\n\n--- Rastreio de Campanha ---\nOrigem: ${utms.source || "N/A"}\nMídia: ${utms.medium || "N/A"}\nCampanha: ${utms.campaign || "N/A"}`;
     }
@@ -74,14 +92,14 @@ function ContactPage() {
     try {
       await submitPublicLead({
         agency_slug: agency_slug as string,
-        name: f.name,
-        email: f.email || null,
-        phone: f.phone || null,
-        destination: f.destination || null,
-        travel_start: f.travel_start || null,
-        travel_end: f.travel_end || null,
-        pax_count: f.pax_count,
-        estimated_value: parseFloat(f.estimated_value) || 0,
+        name: data.name,
+        email: data.email || null,
+        phone: data.phone || null,
+        destination: data.destination || null,
+        travel_start: data.travel_start || null,
+        travel_end: data.travel_end || null,
+        pax_count: data.pax_count,
+        estimated_value: parseFloat(data.estimated_value || "0") || 0,
         source: utms.source || "website",
         notes: finalNotes || null,
       });
@@ -95,8 +113,6 @@ function ContactPage() {
       });
     } catch (err: any) {
       setErrorMsg("Ocorreu um erro ao enviar seu contato: " + (err?.message || String(err)));
-    } finally {
-      setBusy(false);
     }
   }
 
@@ -115,8 +131,6 @@ function ContactPage() {
       </div>
     );
   }
-
-  const hasPolicies = policiesQ.data && policiesQ.data.length > 0;
 
   if (submitted) {
     return (
@@ -148,7 +162,7 @@ function ContactPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {errorMsg && (
           <div className="rounded-2xl border border-danger bg-danger/5 p-4 text-sm text-danger font-medium text-center">
             {errorMsg}
@@ -161,12 +175,15 @@ function ContactPage() {
               Nome Completo *
             </label>
             <input
-              required
-              value={f.name}
-              onChange={(e) => setF({ ...f, name: e.target.value })}
+              {...register("name")}
               className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               placeholder="Como quer ser chamado?"
             />
+            {errors.name && (
+              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                {errors.name.message}
+              </span>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -175,12 +192,15 @@ function ContactPage() {
                 WhatsApp *
               </label>
               <input
-                required
-                value={f.phone}
-                onChange={(e) => setF({ ...f, phone: e.target.value })}
+                {...register("phone")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="(11) 99999-9999"
               />
+              {errors.phone && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.phone.message}
+                </span>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
@@ -188,11 +208,15 @@ function ContactPage() {
               </label>
               <input
                 type="email"
-                value={f.email}
-                onChange={(e) => setF({ ...f, email: e.target.value })}
+                {...register("email")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="seu@email.com"
               />
+              {errors.email && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.email.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -201,11 +225,15 @@ function ContactPage() {
               Destino dos Sonhos
             </label>
             <input
-              value={f.destination}
-              onChange={(e) => setF({ ...f, destination: e.target.value })}
+              {...register("destination")}
               className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               placeholder="Para onde você quer ir?"
             />
+            {errors.destination && (
+              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                {errors.destination.message}
+              </span>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -215,10 +243,14 @@ function ContactPage() {
               </label>
               <input
                 type="date"
-                value={f.travel_start}
-                onChange={(e) => setF({ ...f, travel_start: e.target.value })}
+                {...register("travel_start")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
+              {errors.travel_start && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.travel_start.message}
+                </span>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
@@ -226,10 +258,14 @@ function ContactPage() {
               </label>
               <input
                 type="date"
-                value={f.travel_end}
-                onChange={(e) => setF({ ...f, travel_end: e.target.value })}
+                {...register("travel_end")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
+              {errors.travel_end && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.travel_end.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -241,10 +277,14 @@ function ContactPage() {
               <input
                 type="number"
                 min="1"
-                value={f.pax_count}
-                onChange={(e) => setF({ ...f, pax_count: parseInt(e.target.value) || 1 })}
+                {...register("pax_count")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
+              {errors.pax_count && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.pax_count.message}
+                </span>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
@@ -254,11 +294,15 @@ function ContactPage() {
                 type="number"
                 min="0"
                 step="100"
-                value={f.estimated_value}
-                onChange={(e) => setF({ ...f, estimated_value: e.target.value })}
+                {...register("estimated_value")}
                 className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="Ex: 15000"
               />
+              {errors.estimated_value && (
+                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                  {errors.estimated_value.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -268,42 +312,53 @@ function ContactPage() {
             </label>
             <textarea
               rows={4}
-              value={f.notes}
-              onChange={(e) => setF({ ...f, notes: e.target.value })}
+              {...register("notes")}
               className="w-full px-4 py-3 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all resize-none"
               placeholder="O que não pode faltar nessa viagem?"
             />
+            {errors.notes && (
+              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                {errors.notes.message}
+              </span>
+            )}
           </div>
         </div>
 
         {/* LGPD Consent */}
-        <div className="flex items-start gap-3 px-2">
-          <input
-            type="checkbox"
-            id="lgpd"
-            checked={lgpdAccepted}
-            onChange={(e) => setLgpdAccepted(e.target.checked)}
-            className="mt-1 h-5 w-5 rounded border-border text-foreground focus:ring-foreground transition-all cursor-pointer"
-          />
-          <label
-            htmlFor="lgpd"
-            className="text-sm text-muted-foreground cursor-pointer select-none leading-relaxed"
-          >
-            Declaro que li e concordo com a coleta dos meus dados para fins de orçamento e
-            atendimento comercial, conforme as{" "}
-            <span className="text-foreground font-semibold underline decoration-border underline-offset-2">
-              Políticas de Privacidade
-            </span>{" "}
-            da agência.
-          </label>
+        <div className="space-y-1.5">
+          <div className="flex items-start gap-3 px-2">
+            <input
+              type="checkbox"
+              id="lgpd"
+              {...register("lgpdAccepted")}
+              className="mt-1 h-5 w-5 rounded border-border text-foreground focus:ring-foreground transition-all cursor-pointer"
+            />
+            <label
+              htmlFor="lgpd"
+              className="text-sm text-muted-foreground cursor-pointer select-none leading-relaxed"
+            >
+              Declaro que li e concordo com a coleta dos meus dados para fins de orçamento e
+              atendimento comercial, conforme as{" "}
+              <span className="text-foreground font-semibold underline decoration-border underline-offset-2">
+                Políticas de Privacidade
+              </span>{" "}
+              da agência.
+            </label>
+          </div>
+          {errors.lgpdAccepted && (
+            <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+              {errors.lgpdAccepted.message}
+            </span>
+          )}
         </div>
 
         <button
           type="submit"
-          disabled={busy}
+          disabled={isSubmitting}
           className="w-full h-14 rounded-full bg-foreground text-background text-sm font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          {busy ? "Enviando..." : "Solicitar Orçamento"} <ArrowRight className="w-4 h-4" />
+          {isSubmitting ? "Enviando..." : "Solicitar Orçamento"}{" "}
+          <ArrowRight className="w-4 h-4" />
         </button>
       </form>
     </div>

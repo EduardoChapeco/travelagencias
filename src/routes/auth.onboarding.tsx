@@ -6,33 +6,67 @@ import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { slugify } from "@/lib/slug";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
 import { validateCNPJ, formatCNPJ, fetchCNPJData } from "@/lib/validations/document";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/onboarding")({
   head: () => ({ meta: [{ title: "Configure sua agência · TravelOS" }] }),
   component: Page,
 });
 
+const onboardingSchema = z.object({
+  name: z.string().min(2, "Nome da agência é obrigatório"),
+  slug: z.string().min(2, "URL é obrigatória"),
+  email: z.string().email("E-mail inválido"),
+  phone: z.string().optional(),
+  legalName: z.string().optional(),
+  document: z.string().optional(),
+  address_zip_code: z.string().optional(),
+  address_street: z.string().optional(),
+  address_number: z.string().optional(),
+  address_complement: z.string().optional(),
+  address_neighborhood: z.string().optional(),
+  address_city: z.string().optional(),
+  address_state: z.string().max(2, "No máximo 2 caracteres").optional(),
+});
+
+type OnboardingFormData = z.infer<typeof onboardingSchema>;
+
 function Page() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [busy, setBusy] = useState(false);
   const [loadingCnpj, setLoadingCnpj] = useState(false);
 
-  const [form, setForm] = useState({
-    name: "",
-    slug: "",
-    email: "",
-    phone: "",
-    legalName: "",
-    document: "",
-    address_zip_code: "",
-    address_street: "",
-    address_number: "",
-    address_complement: "",
-    address_neighborhood: "",
-    address_city: "",
-    address_state: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    trigger,
+    formState: { errors, isSubmitting },
+  } = useForm<OnboardingFormData>({
+    resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      email: "",
+      phone: "",
+      legalName: "",
+      document: "",
+      address_zip_code: "",
+      address_street: "",
+      address_number: "",
+      address_complement: "",
+      address_neighborhood: "",
+      address_city: "",
+      address_state: "",
+    },
   });
+
+  const documentValue = watch("document");
+  const nameValue = watch("name");
+  const slugValue = watch("slug");
 
   useEffect(() => {
     (async () => {
@@ -41,30 +75,34 @@ function Page() {
         navigate({ to: "/auth/login" });
         return;
       }
-      setForm((f) => ({ ...f, email: u.user?.email ?? "" }));
+      setValue("email", u.user?.email ?? "");
       const agency = await resolveSignedInAgency(u.user.id);
       if (agency && agency.onboarding_completed) {
         navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
       }
     })();
-  }, [navigate]);
+  }, [navigate, setValue]);
 
-  function setName(v: string) {
-    setForm((current) => ({ ...current, name: v, slug: current.slug ? current.slug : slugify(v) }));
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = e.target.value;
+    setValue("name", v, { shouldValidate: true });
+    if (!slugValue || slugify(slugValue) === slugify(v.slice(0, -1))) {
+      setValue("slug", slugify(v), { shouldValidate: true });
+    }
   }
 
-  function setSlug(v: string) {
-    setForm({ ...form, slug: slugify(v) });
+  function handleSlugChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setValue("slug", slugify(e.target.value), { shouldValidate: true });
   }
 
   function handleDocumentChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.value;
     const formatted = formatCNPJ(raw);
-    setForm({ ...form, document: formatted });
+    setValue("document", formatted, { shouldValidate: true });
   }
 
   async function handleCnpjLookup() {
-    const raw = form.document.replace(/[^\d]/g, "");
+    const raw = (documentValue || "").replace(/[^\d]/g, "");
     if (raw.length !== 14 || !validateCNPJ(raw)) {
       toast.error("CNPJ inválido. Verifique o número informado.");
       return;
@@ -72,22 +110,20 @@ function Page() {
     setLoadingCnpj(true);
     try {
       const data = await fetchCNPJData(raw);
-      setForm((f) => ({
-        ...f,
-        legalName: data.razao_social || f.legalName,
-        name: data.nome_fantasia || data.razao_social || f.name,
-        slug: f.slug || slugify(data.nome_fantasia || data.razao_social || ""),
-        address_zip_code: data.cep
-          ? data.cep.replace(/(\d{5})(\d{3})/, "$1-$2")
-          : f.address_zip_code,
-        address_street: data.logradouro || f.address_street,
-        address_number: data.numero || f.address_number,
-        address_complement: data.complemento || f.address_complement,
-        address_neighborhood: data.bairro || f.address_neighborhood,
-        address_city: data.municipio || f.address_city,
-        address_state: data.uf || f.address_state,
-        phone: data.ddd_telefone_1 || f.phone,
-      }));
+      if (data.razao_social) setValue("legalName", data.razao_social);
+      if (data.nome_fantasia || data.razao_social) {
+        const n = data.nome_fantasia || data.razao_social;
+        setValue("name", n);
+        if (!slugValue) setValue("slug", slugify(n));
+      }
+      if (data.cep) setValue("address_zip_code", data.cep.replace(/(\d{5})(\d{3})/, "$1-$2"));
+      if (data.logradouro) setValue("address_street", data.logradouro);
+      if (data.numero) setValue("address_number", data.numero);
+      if (data.complemento) setValue("address_complement", data.complemento);
+      if (data.bairro) setValue("address_neighborhood", data.bairro);
+      if (data.municipio) setValue("address_city", data.municipio);
+      if (data.uf) setValue("address_state", data.uf);
+      if (data.ddd_telefone_1) setValue("phone", data.ddd_telefone_1);
       toast.success("Dados do CNPJ importados com sucesso.");
     } catch (err) {
       toast.error("Não foi possível buscar dados deste CNPJ. Preencha manualmente.");
@@ -96,46 +132,60 @@ function Page() {
     }
   }
 
-  async function create(e: React.FormEvent) {
-    e.preventDefault();
-
-    if (step < 3) {
-      if (step === 1) {
-        const rawCnpj = form.document.replace(/[^\d]/g, "");
-        if (rawCnpj.length > 0 && rawCnpj.length !== 14) {
-          toast.error("CNPJ deve ter 14 dígitos numéricos.");
-          return;
-        }
-        if (rawCnpj.length === 14 && !validateCNPJ(rawCnpj)) {
-          toast.error("O CNPJ informado é inválido matematicamente.");
-          return;
-        }
+  async function nextStep() {
+    let fieldsToValidate: any[] = [];
+    if (step === 1) {
+      fieldsToValidate = ["name", "slug"];
+      const rawCnpj = (documentValue || "").replace(/[^\d]/g, "");
+      if (rawCnpj.length > 0 && rawCnpj.length !== 14) {
+        toast.error("CNPJ deve ter 14 dígitos numéricos.");
+        return;
       }
-      setStep(step + 1);
+      if (rawCnpj.length === 14 && !validateCNPJ(rawCnpj)) {
+        toast.error("O CNPJ informado é inválido matematicamente.");
+        return;
+      }
+    } else if (step === 2) {
+      fieldsToValidate = [
+        "address_zip_code",
+        "address_street",
+        "address_number",
+        "address_complement",
+        "address_neighborhood",
+        "address_city",
+        "address_state",
+      ];
+    }
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) setStep(step + 1);
+  }
+
+  async function onSubmit(data: OnboardingFormData) {
+    if (step < 3) {
+      nextStep();
       return;
     }
 
-    setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error("Usuário não autenticado");
 
       // @ts-ignore: Types will be updated when supabase gen types runs
       const { data: rows, error } = await supabase.rpc("create_agency_onboarding", {
-        _name: form.name,
-        _slug: form.slug,
-        _email: form.email,
-        _phone: form.phone,
+        _name: data.name,
+        _slug: data.slug,
+        _email: data.email,
+        _phone: data.phone,
         _full_name: u.user.user_metadata?.full_name ?? null,
-        _legal_name: form.legalName,
-        _document: form.document,
-        _address_zip_code: form.address_zip_code,
-        _address_street: form.address_street,
-        _address_number: form.address_number,
-        _address_complement: form.address_complement,
-        _address_neighborhood: form.address_neighborhood,
-        _address_city: form.address_city,
-        _address_state: form.address_state,
+        _legal_name: data.legalName,
+        _document: data.document,
+        _address_zip_code: data.address_zip_code,
+        _address_street: data.address_street,
+        _address_number: data.address_number,
+        _address_complement: data.address_complement,
+        _address_neighborhood: data.address_neighborhood,
+        _address_city: data.address_city,
+        _address_state: data.address_state,
         _onboarding_completed: true,
       });
 
@@ -148,7 +198,6 @@ function Page() {
       navigate({ to: "/agency/$slug", params: { slug: ag.slug }, replace: true });
     } catch (err: any) {
       toast.error(err.message || "Ocorreu um erro ao configurar a agência.");
-      setBusy(false);
     }
   }
 
@@ -171,7 +220,7 @@ function Page() {
         </div>
 
         <form
-          onSubmit={create}
+          onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 rounded-xl border border-border bg-surface p-8 shadow-sm"
         >
           {step === 1 && (
@@ -179,42 +228,39 @@ function Page() {
               <h2 className="text-lg font-medium">Dados da Empresa</h2>
               <div className="flex gap-2 items-end">
                 <div className="flex-1">
-                  <Field label="CNPJ / Documento">
+                  <Field label="CNPJ / Documento" error={errors.document?.message}>
                     <Input
-                      value={form.document}
-                      onChange={handleDocumentChange}
                       placeholder="00.000.000/0000-00"
                       maxLength={18}
+                      {...register("document")}
+                      onChange={handleDocumentChange}
                     />
                   </Field>
                 </div>
                 <button
                   type="button"
                   onClick={handleCnpjLookup}
-                  disabled={loadingCnpj || form.document.replace(/[^\d]/g, "").length !== 14}
+                  disabled={loadingCnpj || (documentValue || "").replace(/[^\d]/g, "").length !== 14}
                   className="mb-[2px] h-10 rounded-md border border-border px-4 text-sm font-medium hover:bg-surface-alt disabled:opacity-50"
                 >
                   {loadingCnpj ? "Buscando..." : "Buscar CNPJ"}
                 </button>
               </div>
-              <Field label="Razão social">
-                <Input
-                  value={form.legalName}
-                  onChange={(e) => setForm({ ...form, legalName: e.target.value })}
-                />
+              <Field label="Razão social" error={errors.legalName?.message}>
+                <Input {...register("legalName")} />
               </Field>
-              <Field label="Nome da agência (Nome fantasia)">
-                <Input required value={form.name} onChange={(e) => setName(e.target.value)} />
+              <Field label="Nome da agência (Nome fantasia)" error={errors.name?.message}>
+                <Input {...register("name")} onChange={handleNameChange} />
               </Field>
               <Field
                 label="URL da sua agência no sistema"
-                hint={`travelos.app/agency/${form.slug || "minha-agencia"}`}
+                hint={`travelos.app/agency/${slugValue || "minha-agencia"}`}
+                error={errors.slug?.message}
               >
                 <Input
-                  required
-                  value={form.slug}
-                  onChange={(e) => setSlug(e.target.value)}
                   placeholder="minha-agencia"
+                  {...register("slug")}
+                  onChange={handleSlugChange}
                 />
               </Field>
             </div>
@@ -223,56 +269,33 @@ function Page() {
           {step === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-2">
               <h2 className="text-lg font-medium">Endereço</h2>
-              <Field label="CEP">
-                <Input
-                  value={form.address_zip_code}
-                  onChange={(e) => setForm({ ...form, address_zip_code: e.target.value })}
-                  placeholder="00000-000"
-                />
+              <Field label="CEP" error={errors.address_zip_code?.message}>
+                <Input placeholder="00000-000" {...register("address_zip_code")} />
               </Field>
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
-                  <Field label="Rua / Logradouro">
-                    <Input
-                      value={form.address_street}
-                      onChange={(e) => setForm({ ...form, address_street: e.target.value })}
-                    />
+                  <Field label="Rua / Logradouro" error={errors.address_street?.message}>
+                    <Input {...register("address_street")} />
                   </Field>
                 </div>
                 <div>
-                  <Field label="Número">
-                    <Input
-                      value={form.address_number}
-                      onChange={(e) => setForm({ ...form, address_number: e.target.value })}
-                    />
+                  <Field label="Número" error={errors.address_number?.message}>
+                    <Input {...register("address_number")} />
                   </Field>
                 </div>
               </div>
-              <Field label="Complemento">
-                <Input
-                  value={form.address_complement}
-                  onChange={(e) => setForm({ ...form, address_complement: e.target.value })}
-                />
+              <Field label="Complemento" error={errors.address_complement?.message}>
+                <Input {...register("address_complement")} />
               </Field>
               <div className="grid grid-cols-3 gap-4">
-                <Field label="Bairro">
-                  <Input
-                    value={form.address_neighborhood}
-                    onChange={(e) => setForm({ ...form, address_neighborhood: e.target.value })}
-                  />
+                <Field label="Bairro" error={errors.address_neighborhood?.message}>
+                  <Input {...register("address_neighborhood")} />
                 </Field>
-                <Field label="Cidade">
-                  <Input
-                    value={form.address_city}
-                    onChange={(e) => setForm({ ...form, address_city: e.target.value })}
-                  />
+                <Field label="Cidade" error={errors.address_city?.message}>
+                  <Input {...register("address_city")} />
                 </Field>
-                <Field label="UF">
-                  <Input
-                    value={form.address_state}
-                    onChange={(e) => setForm({ ...form, address_state: e.target.value })}
-                    maxLength={2}
-                  />
+                <Field label="UF" error={errors.address_state?.message}>
+                  <Input maxLength={2} {...register("address_state")} />
                 </Field>
               </div>
             </div>
@@ -281,19 +304,11 @@ function Page() {
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-2">
               <h2 className="text-lg font-medium">Contato e Horários</h2>
-              <Field label="E-mail principal">
-                <Input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
+              <Field label="E-mail principal" error={errors.email?.message}>
+                <Input type="email" {...register("email")} />
               </Field>
-              <Field label="Telefone / WhatsApp">
-                <Input
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                />
+              <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
+                <Input {...register("phone")} />
               </Field>
               <div className="rounded-md border border-border p-4 bg-muted/30">
                 <p className="text-sm text-muted-foreground">
@@ -310,13 +325,13 @@ function Page() {
                 type="button"
                 onClick={() => setStep(step - 1)}
                 className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt"
-                disabled={busy}
+                disabled={isSubmitting}
               >
                 Voltar
               </button>
             )}
-            <PrimaryButton type="submit" disabled={busy} className="flex-1">
-              {busy ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}
+            <PrimaryButton type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}
             </PrimaryButton>
           </div>
         </form>

@@ -1,6 +1,9 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeft,
   Pencil,
@@ -1713,6 +1716,27 @@ function Row({ k, v }: { k: string; v: string }) {
   );
 }
 
+const leadEditSchema = z.object({
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("E-mail inválido").or(z.literal("")).optional().nullable(),
+  phone: z.string().optional().nullable(),
+  destination: z.string().optional().nullable(),
+  travel_start: z.string().optional().nullable(),
+  travel_end: z.string().optional().nullable(),
+  pax_adults: z.number().min(1, "Mínimo 1 adulto").default(1),
+  pax_children: z.number().min(0).default(0),
+  pax_infants: z.number().min(0).default(0),
+  pax_ages_str: z.string().optional().nullable(),
+  estimated_value: z.number().min(0, "O valor não pode ser negativo").default(0),
+  source: z.string().optional().nullable(),
+  stage_id: z.string().min(1, "Selecione o estágio"),
+  interest_type: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  lost_reason: z.string().optional().nullable(),
+});
+
+type LeadEditFormData = z.infer<typeof leadEditSchema>;
+
 function LeadForm({
   lead,
   stages,
@@ -1724,151 +1748,141 @@ function LeadForm({
   onCancel: () => void;
   onSaved: () => void;
 }) {
-  const [f, setF] = useState({
-    name: lead.name,
-    email: lead.email ?? "",
-    phone: lead.phone ?? "",
-    destination: lead.destination ?? "",
-    travel_start: lead.travel_start ?? "",
-    travel_end: lead.travel_end ?? "",
-    pax_adults: lead.pax_adults || 1,
-    pax_children: lead.pax_children || 0,
-    pax_infants: lead.pax_infants || 0,
-    pax_ages_str: ((lead.pax_ages as number[]) || []).join(", "),
-    estimated_value: lead.estimated_value || 0,
-    source: lead.source ?? "",
-    notes: lead.notes ?? "",
-    stage_id: lead.stage_id,
-    interest_type: lead.interest_type ?? "",
-    lost_reason: lead.lost_reason ?? "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LeadEditFormData>({
+    resolver: zodResolver(leadEditSchema) as any,
+    defaultValues: {
+      name: lead.name,
+      email: lead.email ?? "",
+      phone: lead.phone ?? "",
+      destination: lead.destination ?? "",
+      travel_start: lead.travel_start ?? "",
+      travel_end: lead.travel_end ?? "",
+      pax_adults: lead.pax_adults || 1,
+      pax_children: lead.pax_children || 0,
+      pax_infants: lead.pax_infants || 0,
+      pax_ages_str: ((lead.pax_ages as number[]) || []).join(", "),
+      estimated_value: lead.estimated_value || 0,
+      source: lead.source ?? "",
+      notes: lead.notes ?? "",
+      stage_id: lead.stage_id,
+      interest_type: lead.interest_type ?? "",
+      lost_reason: lead.lost_reason ?? "",
+    },
   });
-  const [busy, setBusy] = useState(false);
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-
-    const paxAges = f.pax_ages_str
+  async function onSubmit(data: LeadEditFormData) {
+    const paxAges = (data.pax_ages_str || "")
       .split(",")
       .map((s) => parseInt(s.trim()))
       .filter((n) => !isNaN(n));
 
     try {
       await updateLead(lead.id, {
-        name: f.name,
-        email: f.email || null,
-        phone: f.phone || null,
-        destination: f.destination || null,
-        travel_start: f.travel_start || null,
-        travel_end: f.travel_end || null,
-        pax_adults: f.pax_adults,
-        pax_children: f.pax_children,
-        pax_infants: f.pax_infants,
+        name: data.name,
+        email: data.email || null,
+        phone: data.phone || null,
+        destination: data.destination || null,
+        travel_start: data.travel_start || null,
+        travel_end: data.travel_end || null,
+        pax_adults: data.pax_adults,
+        pax_children: data.pax_children,
+        pax_infants: data.pax_infants,
         pax_ages: paxAges,
-        estimated_value: f.estimated_value,
-        source: f.source || null,
-        notes: f.notes || null,
-        stage_id: f.stage_id,
-        interest_type: f.interest_type || null,
-        lost_reason: f.lost_reason || null,
+        estimated_value: data.estimated_value,
+        source: data.source || null,
+        notes: data.notes || null,
+        stage_id: data.stage_id,
+        interest_type: data.interest_type || null,
+        lost_reason: data.lost_reason || null,
       });
       toast.success("Lead atualizado com sucesso!");
       onSaved();
     } catch (error: any) {
       toast.error(error.message);
-    } finally {
-      setBusy(false);
     }
   }
 
   return (
     <form
-      onSubmit={save}
+      onSubmit={handleSubmit(onSubmit)}
       className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm"
     >
       <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Nome completo *">
+        <Field label="Nome completo *" error={errors.name?.message}>
           <Input
-            required
-            value={f.name}
-            onChange={(e) => setF({ ...f, name: e.target.value })}
+            {...register("name")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="E-mail">
+        <Field label="E-mail" error={errors.email?.message}>
           <Input
             type="email"
-            value={f.email}
-            onChange={(e) => setF({ ...f, email: e.target.value })}
+            {...register("email")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Telefone / WhatsApp">
+        <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
           <Input
-            value={f.phone}
-            onChange={(e) => setF({ ...f, phone: e.target.value })}
+            {...register("phone")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Destino de interesse">
+        <Field label="Destino de interesse" error={errors.destination?.message}>
           <Input
-            value={f.destination}
-            onChange={(e) => setF({ ...f, destination: e.target.value })}
+            {...register("destination")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Data de início">
+        <Field label="Data de início" error={errors.travel_start?.message}>
           <Input
             type="date"
-            value={f.travel_start}
-            onChange={(e) => setF({ ...f, travel_start: e.target.value })}
+            {...register("travel_start")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Data de término">
+        <Field label="Data de término" error={errors.travel_end?.message}>
           <Input
             type="date"
-            value={f.travel_end}
-            onChange={(e) => setF({ ...f, travel_end: e.target.value })}
+            {...register("travel_end")}
             className="rounded-lg h-9"
           />
         </Field>
 
         <div className="grid grid-cols-3 gap-2">
-          <Field label="Adultos">
+          <Field label="Adultos" error={errors.pax_adults?.message}>
             <Input
               type="number"
               min={1}
-              value={f.pax_adults}
-              onChange={(e) => setF({ ...f, pax_adults: parseInt(e.target.value) || 1 })}
+              {...register("pax_adults", { valueAsNumber: true })}
               className="rounded-lg h-9"
             />
           </Field>
-          <Field label="Crianças">
+          <Field label="Crianças" error={errors.pax_children?.message}>
             <Input
               type="number"
               min={0}
-              value={f.pax_children}
-              onChange={(e) => setF({ ...f, pax_children: parseInt(e.target.value) || 0 })}
+              {...register("pax_children", { valueAsNumber: true })}
               className="rounded-lg h-9"
             />
           </Field>
-          <Field label="Bebês">
+          <Field label="Bebês" error={errors.pax_infants?.message}>
             <Input
               type="number"
               min={0}
-              value={f.pax_infants}
-              onChange={(e) => setF({ ...f, pax_infants: parseInt(e.target.value) || 0 })}
+              {...register("pax_infants", { valueAsNumber: true })}
               className="rounded-lg h-9"
             />
           </Field>
         </div>
 
-        <Field label="Idades das Crianças (ex: 5, 8)">
+        <Field label="Idades das Crianças (ex: 5, 8)" error={errors.pax_ages_str?.message}>
           <Input
-            value={f.pax_ages_str}
-            onChange={(e) => setF({ ...f, pax_ages_str: e.target.value })}
+            {...register("pax_ages_str")}
             className="rounded-lg h-9"
             placeholder="Separadas por vírgula"
           />
@@ -1890,20 +1904,19 @@ function LeadForm({
           </ul>
         </div>
 
-        <Field label="Orçamento Estimado (R$)">
+        <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
           <Input
             type="number"
             min={0}
-            value={f.estimated_value}
-            onChange={(e) => setF({ ...f, estimated_value: parseFloat(e.target.value) || 0 })}
+            step="0.01"
+            {...register("estimated_value", { valueAsNumber: true })}
             className="rounded-lg h-9"
           />
         </Field>
 
-        <Field label="Tipo de Interesse">
+        <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
           <Select
-            value={f.interest_type}
-            onChange={(e) => setF({ ...f, interest_type: e.target.value })}
+            {...register("interest_type")}
             className="rounded-lg h-9"
           >
             <option value="">Não informado</option>
@@ -1915,18 +1928,16 @@ function LeadForm({
           </Select>
         </Field>
 
-        <Field label="Origem / Canal">
+        <Field label="Origem / Canal" error={errors.source?.message}>
           <Input
-            value={f.source}
-            onChange={(e) => setF({ ...f, source: e.target.value })}
+            {...register("source")}
             className="rounded-lg h-9"
           />
         </Field>
 
-        <Field label="Estágio do Funil">
+        <Field label="Estágio do Funil" error={errors.stage_id?.message}>
           <Select
-            value={f.stage_id}
-            onChange={(e) => setF({ ...f, stage_id: e.target.value })}
+            {...register("stage_id")}
             className="rounded-lg h-9"
           >
             {stages.map((s) => (
@@ -1938,19 +1949,17 @@ function LeadForm({
         </Field>
       </div>
 
-      <Field label="Anotações gerais">
+      <Field label="Anotações gerais" error={errors.notes?.message}>
         <Textarea
           rows={3}
-          value={f.notes}
-          onChange={(e) => setF({ ...f, notes: e.target.value })}
+          {...register("notes")}
           className="rounded-lg"
         />
       </Field>
 
-      <Field label="Motivo da Perda (Se perdido)">
+      <Field label="Motivo da Perda (Se perdido)" error={errors.lost_reason?.message}>
         <Input
-          value={f.lost_reason}
-          onChange={(e) => setF({ ...f, lost_reason: e.target.value })}
+          {...register("lost_reason")}
           className="rounded-lg h-9"
         />
       </Field>
@@ -1959,8 +1968,8 @@ function LeadForm({
         <GhostButton type="button" onClick={onCancel}>
           Cancelar
         </GhostButton>
-        <PrimaryButton type="submit" disabled={busy}>
-          {busy ? "Salvando..." : "Salvar Alterações"}
+        <PrimaryButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Salvando..." : "Salvar Alterações"}
         </PrimaryButton>
       </div>
     </form>

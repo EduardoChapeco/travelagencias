@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -17,8 +17,32 @@ import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/u
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const STEPS = ["Destino e Datas", "Passageiros", "Financeiro e Status", "Revisão"];
+
+const tripWizardSchema = z.object({
+  title: z.string().min(3, "O título da viagem precisa ter pelo menos 3 caracteres"),
+  destination: z.string().optional().nullable(),
+  travel_start: z.string().optional().nullable(),
+  travel_end: z.string().optional().nullable(),
+  client_id: z.string().optional().nullable(),
+  currency: z.string().default("BRL"),
+  total_sale: z.number({ invalid_type_error: "Insira um número válido" }).min(0, "O valor de venda não pode ser negativo").default(0),
+  status: z.enum(["planning", "confirmed", "in_progress", "completed"]).default("planning"),
+}).refine((data) => {
+  if (data.travel_start && data.travel_end) {
+    return new Date(data.travel_end) >= new Date(data.travel_start);
+  }
+  return true;
+}, {
+  message: "A data de volta deve ser posterior à data de ida",
+  path: ["travel_end"],
+});
+
+type TripWizardFormData = z.infer<typeof tripWizardSchema>;
 
 export function NewTripWizard({
   agencyId,
@@ -32,17 +56,35 @@ export function NewTripWizard({
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form State
-  const [title, setTitle] = useState("");
-  const [destination, setDestination] = useState("");
-  const [travelStart, setTravelStart] = useState("");
-  const [travelEnd, setTravelEnd] = useState("");
-  const [clientId, setClientId] = useState("");
-  const [currency, setCurrency] = useState("BRL");
-  const [totalSale, setTotalSale] = useState(0);
-  const [status, setStatus] = useState<"planning" | "confirmed" | "in_progress" | "completed">(
-    "planning",
-  );
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = useForm<TripWizardFormData>({
+    resolver: zodResolver(tripWizardSchema) as any,
+    defaultValues: {
+      title: "",
+      destination: "",
+      travel_start: "",
+      travel_end: "",
+      client_id: "",
+      currency: "BRL",
+      total_sale: 0,
+      status: "planning",
+    },
+  });
+
+  const watchCurrency = watch("currency");
+  const watchClientId = watch("client_id");
+  const watchTitle = watch("title");
+  const watchDestination = watch("destination");
+  const watchTravelStart = watch("travel_start");
+  const watchTravelEnd = watch("travel_end");
+  const watchStatus = watch("status");
+  const watchTotalSale = watch("total_sale");
 
   const clientsQ = useQuery({
     queryKey: ["clients-pick", agencyId],
@@ -58,68 +100,73 @@ export function NewTripWizard({
     },
   });
 
-  const handleNext = () => {
-    if (step === 0 && (!title || title.length < 3)) {
-      toast.error("O título da viagem precisa ter pelo menos 3 caracteres.");
-      return;
+  const handleNext = async () => {
+    let fieldsToValidate: Array<keyof TripWizardFormData> = [];
+    if (step === 0) {
+      fieldsToValidate = ["title", "travel_start", "travel_end", "destination"];
+    } else if (step === 1) {
+      fieldsToValidate = ["client_id"];
+    } else if (step === 2) {
+      fieldsToValidate = ["status", "currency", "total_sale"];
     }
-    if (step === 0 && travelStart && travelEnd) {
-      if (new Date(travelEnd) < new Date(travelStart)) {
-        toast.error("A data de volta deve ser posterior à data de ida.");
-        return;
-      }
+
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) {
+      setStep((s) => Math.min(s + 1, STEPS.length - 1));
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
   };
 
   const handleBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  async function submit() {
+  async function onSubmit(data: TripWizardFormData) {
     setSubmitting(true);
-    const { data: u } = await supabase.auth.getUser();
+    try {
+      const { data: u } = await supabase.auth.getUser();
 
-    const { data: tripData, error } = await supabase
-      .from("trips")
-      .insert({
-        agency_id: agencyId,
-        title,
-        destination: destination || null,
-        travel_start: travelStart || null,
-        travel_end: travelEnd || null,
-        client_id: clientId || null,
-        status,
-        currency,
-        total_sale: totalSale,
-        owner_id: u.user?.id ?? null,
-      })
-      .select("id")
-      .single();
-
-    if (error || !tripData) {
-      toast.error(error?.message || "Erro ao criar viagem.");
-      setSubmitting(false);
-      return;
-    }
-
-    // Se cliente selecionado, adicionar como 1º passageiro
-    if (clientId) {
-      const client = clientsQ.data?.find((c) => c.id === clientId);
-      if (client) {
-        await supabase.from("trip_passengers").insert({
+      const { data: tripData, error } = await supabase
+        .from("trips")
+        .insert({
           agency_id: agencyId,
-          trip_id: tripData.id,
-          full_name: client.full_name,
-          document: client.document || null,
-        });
-      }
-    }
+          title: data.title,
+          destination: data.destination || null,
+          travel_start: data.travel_start || null,
+          travel_end: data.travel_end || null,
+          client_id: data.client_id || null,
+          status: data.status,
+          currency: data.currency,
+          total_sale: data.total_sale,
+          owner_id: u.user?.id ?? null,
+        })
+        .select("id")
+        .single();
 
-    setSubmitting(false);
-    toast.success("Viagem criada com sucesso!");
-    onCreated(tripData.id); // ← retorna o ID para redirecionar
+      if (error || !tripData) {
+        throw error || new Error("Erro ao criar viagem.");
+      }
+
+      // Se cliente selecionado, adicionar como 1º passageiro
+      if (data.client_id) {
+        const client = clientsQ.data?.find((c) => c.id === data.client_id);
+        if (client) {
+          await supabase.from("trip_passengers").insert({
+            agency_id: agencyId,
+            trip_id: tripData.id,
+            full_name: client.full_name,
+            document: client.document || null,
+          });
+        }
+      }
+
+      toast.success("Viagem criada com sucesso!");
+      onCreated(tripData.id);
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar viagem.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  const selectedClient = clientsQ.data?.find((c) => c.id === clientId);
+  const selectedClient = clientsQ.data?.find((c) => c.id === watchClientId);
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -132,6 +179,7 @@ export function NewTripWizard({
             <p className="text-[11px] text-muted-foreground">Gestão completa de viagens, orçamentos e passageiros.</p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
           >
@@ -170,176 +218,175 @@ export function NewTripWizard({
           ))}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
-          <div className="mx-auto max-w-xl space-y-6">
+        {/* Content Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
+            <div className="mx-auto max-w-xl space-y-6">
 
-            {/* STEP 0: Destino e Datas */}
-            {step === 0 && (
-              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-                <Field label="Título do Roteiro *">
-                  <Input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ex: Férias em Cancún, Corporativo SP..."
-                    autoFocus
-                  />
-                </Field>
-                <Field label="Destino (País, Cidade ou Região)">
-                  <Input
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    placeholder="Ex: Cancún, México"
-                  />
-                </Field>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Data de Ida Prevista">
-                    <Input type="date" value={travelStart} onChange={(e) => setTravelStart(e.target.value)} />
-                  </Field>
-                  <Field label="Data de Retorno Prevista">
-                    <Input type="date" value={travelEnd} onChange={(e) => setTravelEnd(e.target.value)} />
-                  </Field>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 1: Passageiros */}
-            {step === 1 && (
-              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-xl border border-border bg-surface-alt/40 p-5 text-sm text-muted-foreground">
-                  O cliente responsável é aquele que realiza o pagamento ou responde pela viagem. Se
-                  ele também viajar, será automaticamente adicionado como o primeiro passageiro do
-                  roteiro.
-                </div>
-                <Field label="Cliente Responsável (Opcional)">
-                  <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                    <option value="">— Sem cliente ainda —</option>
-                    {(clientsQ.data ?? []).map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.full_name} {c.document ? `(${c.document})` : ""}
-                      </option>
-                    ))}
-                  </Select>
-                </Field>
-              </div>
-            )}
-
-            {/* STEP 2: Financeiro */}
-            {step === 2 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="Status Inicial">
-                    <Select value={status} onChange={(e) => setStatus(e.target.value as any)}>
-                      <option value="planning">Planejamento</option>
-                      <option value="confirmed">Confirmada</option>
-                      <option value="in_progress">Em andamento</option>
-                      <option value="completed">Concluída</option>
-                    </Select>
-                  </Field>
-                  <Field label="Moeda Principal">
-                    <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                      <option value="BRL">BRL (Real)</option>
-                      <option value="USD">USD (Dólar)</option>
-                      <option value="EUR">EUR (Euro)</option>
-                      <option value="GBP">GBP (Libra)</option>
-                    </Select>
-                  </Field>
-                </div>
-                <Field label="Meta de Orçamento / Valor de Venda">
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">
-                      {currency === "BRL" ? "R$" : currency === "USD" ? "$" : currency === "EUR" ? "€" : "£"}
-                    </span>
+              {/* STEP 0: Destino e Datas */}
+              {step === 0 && (
+                <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <Field label="Título do Roteiro *" error={errors.title?.message}>
                     <Input
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      className="pl-10"
-                      value={totalSale}
-                      onChange={(e) => setTotalSale(parseFloat(e.target.value) || 0)}
+                      {...register("title")}
+                      placeholder="Ex: Férias em Cancún, Corporativo SP..."
+                      autoFocus
                     />
+                  </Field>
+                  <Field label="Destino (País, Cidade ou Região)" error={errors.destination?.message}>
+                    <Input
+                      {...register("destination")}
+                      placeholder="Ex: Cancún, México"
+                    />
+                  </Field>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Data de Ida Prevista" error={errors.travel_start?.message}>
+                      <Input type="date" {...register("travel_start")} />
+                    </Field>
+                    <Field label="Data de Retorno Prevista" error={errors.travel_end?.message}>
+                      <Input type="date" {...register("travel_end")} />
+                    </Field>
                   </div>
-                </Field>
-              </div>
-            )}
+                </div>
+              )}
 
-            {/* STEP 3: Revisão */}
-            {step === 3 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
-                  <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
-                    <Plane className="h-5 w-5 text-brand" /> {title}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium text-foreground">{destination || "Sem destino definido"}</span>
+              {/* STEP 1: Passageiros */}
+              {step === 1 && (
+                <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="rounded-xl border border-border bg-surface-alt/40 p-5 text-sm text-muted-foreground">
+                    O cliente responsável é aquele que realiza o pagamento ou responde pela viagem. Se
+                    ele também viajar, será automaticamente adicionado como o primeiro passageiro do
+                    roteiro.
+                  </div>
+                  <Field label="Cliente Responsável (Opcional)" error={errors.client_id?.message}>
+                    <Select {...register("client_id")}>
+                      <option value="">— Sem cliente ainda —</option>
+                      {(clientsQ.data ?? []).map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.full_name} {c.document ? `(${c.document})` : ""}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
+              )}
+
+              {/* STEP 2: Financeiro */}
+              {step === 2 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Status Inicial" error={errors.status?.message}>
+                      <Select {...register("status")}>
+                        <option value="planning">Planejamento</option>
+                        <option value="confirmed">Confirmada</option>
+                        <option value="in_progress">Em andamento</option>
+                        <option value="completed">Concluída</option>
+                      </Select>
+                    </Field>
+                    <Field label="Moeda Principal" error={errors.currency?.message}>
+                      <Select {...register("currency")}>
+                        <option value="BRL">BRL (Real)</option>
+                        <option value="USD">USD (Dólar)</option>
+                        <option value="EUR">EUR (Euro)</option>
+                        <option value="GBP">GBP (Libra)</option>
+                      </Select>
+                    </Field>
+                  </div>
+                  <Field label="Meta de Orçamento / Valor de Venda" error={errors.total_sale?.message}>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">
+                        {watchCurrency === "BRL" ? "R$" : watchCurrency === "USD" ? "$" : watchCurrency === "EUR" ? "€" : "£"}
+                      </span>
+                      <Input
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        className="pl-10"
+                        {...register("total_sale", { valueAsNumber: true })}
+                      />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium text-foreground">{selectedClient?.full_name || "Sem cliente"}</span>
-                    </div>
-                    {(travelStart || travelEnd) && (
-                      <div className="flex items-center gap-2 col-span-full">
-                        <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Ida e Volta:</span>
-                        <span className="font-medium text-foreground">
-                          {travelStart ? new Date(travelStart + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}{" "}
-                          →{" "}
-                          {travelEnd ? new Date(travelEnd + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}
+                  </Field>
+                </div>
+              )}
+
+              {/* STEP 3: Revisão */}
+              {step === 3 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                  <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
+                    <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
+                      <Plane className="h-5 w-5 text-brand" /> {watchTitle}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{watchDestination || "Sem destino definido"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{selectedClient?.full_name || "Sem cliente"}</span>
+                      </div>
+                      {(watchTravelStart || watchTravelEnd) && (
+                        <div className="flex items-center gap-2 col-span-full">
+                          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Ida e Volta:</span>
+                          <span className="font-medium text-foreground">
+                            {watchTravelStart ? new Date(watchTravelStart + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}{" "}
+                            →{" "}
+                            {watchTravelEnd ? new Date(watchTravelEnd + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Status:</span>
+                        <span className="font-medium text-foreground uppercase tracking-widest text-[10px] bg-surface-alt px-2 py-0.5 rounded">
+                          {watchStatus}
                         </span>
                       </div>
-                    )}
-                    <div className="flex items-center gap-2">
-                      <Tag className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Status:</span>
-                      <span className="font-medium text-foreground uppercase tracking-widest text-[10px] bg-surface-alt px-2 py-0.5 rounded">
-                        {status}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">Venda:</span>
-                      <span className="font-bold text-brand">
-                        {currency} {totalSale.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Venda:</span>
+                        <span className="font-bold text-brand">
+                          {watchCurrency} {(watchTotalSale || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg border border-brand/20 bg-brand/5 p-4 text-sm text-muted-foreground">
-                  <span className="font-semibold text-brand">Tudo certo!</span> Você poderá adicionar passageiros, voos, vouchers e contratos após criar o roteiro.
+                  <div className="rounded-lg border border-brand/20 bg-brand/5 p-4 text-sm text-muted-foreground">
+                    <span className="font-semibold text-brand">Tudo certo!</span> Você poderá adicionar passageiros, voos, vouchers e contratos após criar o roteiro.
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4">
-          <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
-            <ChevronLeft className="h-4 w-4" /> Voltar
-          </GhostButton>
-
-          <div className="flex gap-3">
-            <GhostButton onClick={onClose} disabled={submitting}>
-              Cancelar
+          {/* Footer */}
+          <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
+            <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+              <ChevronLeft className="h-4 w-4" /> Voltar
             </GhostButton>
-            {step < STEPS.length - 1 ? (
-              <PrimaryButton onClick={handleNext} className="gap-2 w-32">
-                Próximo <ChevronRight className="h-4 w-4" />
-              </PrimaryButton>
-            ) : (
-              <PrimaryButton
-                onClick={submit}
-                disabled={submitting}
-                className="w-48 font-bold tracking-wider"
-              >
-                {submitting ? "CRIANDO..." : "✈ CRIAR ROTEIRO"}
-              </PrimaryButton>
-            )}
+
+            <div className="flex gap-3">
+              <GhostButton type="button" onClick={onClose} disabled={submitting}>
+                Cancelar
+              </GhostButton>
+              {step < STEPS.length - 1 ? (
+                <PrimaryButton type="button" onClick={handleNext} className="gap-2 w-32">
+                  Próximo <ChevronRight className="h-4 w-4" />
+                </PrimaryButton>
+              ) : (
+                <PrimaryButton
+                  type="submit"
+                  disabled={submitting}
+                  className="w-48 font-bold tracking-wider"
+                >
+                  {submitting ? "CRIANDO..." : "✈ CRIAR ROTEIRO"}
+                </PrimaryButton>
+              )}
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>,
     document.body,

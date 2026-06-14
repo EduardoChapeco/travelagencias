@@ -3,27 +3,45 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/forgot-password")({
   head: () => ({ meta: [{ title: "Recuperar senha · TravelOS" }] }),
   component: ForgotPage,
 });
 
+const forgotSchema = z.object({
+  email: z.string().min(1, "E-mail é obrigatório").email("Digite um e-mail válido"),
+});
+
+type ForgotFormData = z.infer<typeof forgotSchema>;
+
 function ForgotPage() {
-  const [email, setEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const navigate = useNavigate();
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotFormData>({
+    resolver: zodResolver(forgotSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  async function onSubmit(data: ForgotFormData) {
+    const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     });
-    setSubmitting(false);
-    if (error) toast.error(error.message);
-    else setSent(true);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      setSent(true);
+    }
   }
 
   return (
@@ -42,18 +60,16 @@ function ForgotPage() {
             </button>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="mt-8 space-y-3">
-            <Field label="Email">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">
+            <Field label="Email" error={errors.email?.message}>
               <Input
                 type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
+                {...register("email")}
               />
             </Field>
-            <PrimaryButton type="submit" disabled={submitting} className="w-full">
-              {submitting ? "Enviando…" : "Enviar link"}
+            <PrimaryButton type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Enviando…" : "Enviar link"}
             </PrimaryButton>
             <div className="text-center">
               <Link

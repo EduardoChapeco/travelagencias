@@ -18,7 +18,12 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchPlans,
+  deletePlan,
+  togglePlanActive,
+  savePlan,
+} from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
@@ -28,6 +33,10 @@ import {
   GhostButton,
   StatusBadge,
 } from "@/components/ui/form";
+import { useForm, useFieldArray } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 
 export const Route = createFileRoute("/admin/plans")({
   head: () => ({ meta: [{ title: "Planos · TravelOS Admin" }] }),
@@ -48,6 +57,7 @@ type Plan = {
   is_active: boolean;
   is_featured: boolean;
   badge?: string;
+  slug?: string;
 };
 
 const EMPTY_PLAN: Omit<Plan, "id"> = {
@@ -82,12 +92,8 @@ function Page() {
   const q = useQuery({
     queryKey: ["admin-plans"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("plans")
-        .select("*")
-        .order("price_monthly", { ascending: true });
-      if (error) throw error;
-      return (data || []) as any[];
+      const data = await fetchPlans();
+      return data as Plan[];
     },
   });
 
@@ -95,23 +101,22 @@ function Page() {
 
   async function handleDelete(id: string) {
     if (!confirm("Remover este plano?")) return;
-    const { error } = await supabase.from("plans").delete().eq("id", id);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await deletePlan(id);
       toast.success("Plano removido");
       qc.invalidateQueries({ queryKey: ["admin-plans"] });
+    } catch (error: any) {
+      toast.error(error.message);
     }
   }
 
   async function handleToggleActive(plan: Plan) {
-    const { error } = await supabase
-      .from("plans")
-      .update({ is_active: !plan.is_active })
-      .eq("id", plan.id);
-    if (error) toast.error(error.message);
-    else {
+    try {
+      await togglePlanActive(plan.id, !plan.is_active);
       toast.success(!plan.is_active ? "Plano ativado" : "Plano desativado");
       qc.invalidateQueries({ queryKey: ["admin-plans"] });
+    } catch (error: any) {
+      toast.error(error.message);
     }
   }
 
@@ -224,27 +229,22 @@ function Page() {
             setEditing(null);
           }}
           onSave={async (plan) => {
-            let error;
-            if (editing) {
-              const res = await supabase
-                .from("plans")
-                .update(plan as any)
-                .eq("id", plan.id);
-              error = res.error;
-            } else {
-              // we don't pass an id if it's new so supabase generates it, or we pass the generated one
-              // wait, empty plan has a generated id: crypto.randomUUID(), but plans table has id DEFAULT gen_random_uuid()
-              // better to let supabase generate it or use the one we generated. Let's just insert everything.
-              const res = await supabase.from("plans").insert(plan as any);
-              error = res.error;
-            }
-            if (error) {
-              toast.error(error.message);
-            } else {
+            try {
+              // We omit the auto-generated slug in new inserts to let service/DB handle it 
+              // or let savePlan do the upsert. In plans schema, slug is a unique required text.
+              // So we slugify the name if it is a new plan, or generate one in service.
+              // Let's pass a slug if it doesn't have one.
+              const payload = { ...plan };
+              if (!payload.slug) {
+                payload.slug = plan.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+              }
+              await savePlan(payload);
               toast.success(editing ? "Plano atualizado" : "Plano criado");
               setCreating(false);
               setEditing(null);
               qc.invalidateQueries({ queryKey: ["admin-plans"] });
+            } catch (error: any) {
+              toast.error(error.message);
             }
           }}
         />
@@ -271,6 +271,28 @@ function LimitBadge({
   );
 }
 
+const planSchema = z.object({
+  id: z.string(),
+  name: z.string().min(3, "Nome do plano deve ter pelo menos 3 caracteres"),
+  badge: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  price_monthly: z.coerce.number().min(0, "O preço mensal deve ser maior ou igual a zero"),
+  price_annual: z.coerce.number().min(0, "O preço anual deve ser maior ou igual a zero"),
+  max_agents: z.coerce.number().min(1, "O número máximo de agentes deve ser pelo menos 1"),
+  max_trips_per_month: z.coerce.number().min(-1, "O número máximo de viagens deve ser pelo menos -1"),
+  max_storage_gb: z.coerce.number().min(1, "O espaço mínimo de armazenamento é 1 GB"),
+  is_active: z.boolean(),
+  is_featured: z.boolean(),
+  features: z.array(
+    z.object({
+      label: z.string().min(1, "Nome da feature é obrigatório"),
+      included: z.boolean(),
+    })
+  ),
+});
+
+type PlanFormData = z.infer<typeof planSchema>;
+
 function PlanEditor({
   initial,
   isNew,
@@ -282,28 +304,23 @@ function PlanEditor({
   onClose: () => void;
   onSave: (plan: Plan) => Promise<void>;
 }) {
-  const [plan, setPlan] = useState<Plan>(initial);
-  const [busy, setBusy] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<PlanFormData>({
+    resolver: zodResolver(planSchema),
+    defaultValues: initial,
+  });
 
-  const set = <K extends keyof Plan>(k: K, v: Plan[K]) => setPlan((p) => ({ ...p, [k]: v }));
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "features",
+  });
 
-  const setFeature = (i: number, field: keyof Feature, v: string | boolean) =>
-    setPlan((p) => ({
-      ...p,
-      features: p.features.map((f, j) => (j === i ? { ...f, [field]: v } : f)),
-    }));
-
-  const addFeature = () =>
-    setPlan((p) => ({ ...p, features: [...p.features, { label: "", included: true }] }));
-
-  const removeFeature = (i: number) =>
-    setPlan((p) => ({ ...p, features: p.features.filter((_, j) => j !== i) }));
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    await onSave(plan);
-    setBusy(false);
+  async function onSubmit(data: PlanFormData) {
+    await onSave(data as Plan);
   }
 
   return (
@@ -315,74 +332,60 @@ function PlanEditor({
         <h2 className="mb-5 text-base font-semibold tracking-tight">
           {isNew ? "Novo plano" : `Editar: ${initial.name}`}
         </h2>
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Nome do plano *">
+            <Field label="Nome do plano *" error={errors.name?.message}>
               <Input
-                required
-                value={plan.name}
-                onChange={(e) => set("name", e.target.value)}
                 placeholder="Starter, Pro, Enterprise…"
+                {...register("name")}
               />
             </Field>
-            <Field label="Badge (opcional)">
+            <Field label="Badge (opcional)" error={errors.badge?.message}>
               <Input
-                value={plan.badge ?? ""}
-                onChange={(e) => set("badge", e.target.value)}
                 placeholder="Mais popular"
+                {...register("badge")}
               />
             </Field>
           </div>
-          <Field label="Descrição">
+          <Field label="Descrição" error={errors.description?.message}>
             <Textarea
               rows={2}
-              value={plan.description}
-              onChange={(e) => set("description", e.target.value)}
+              {...register("description")}
             />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Preço mensal (R$)">
+            <Field label="Preço mensal (R$)" error={errors.price_monthly?.message}>
               <Input
                 type="number"
-                min={0}
-                step={0.01}
-                value={plan.price_monthly}
-                onChange={(e) => set("price_monthly", +e.target.value)}
+                step="0.01"
+                {...register("price_monthly")}
               />
             </Field>
-            <Field label="Preço anual (R$)">
+            <Field label="Preço anual (R$)" error={errors.price_annual?.message}>
               <Input
                 type="number"
-                min={0}
-                step={0.01}
-                value={plan.price_annual}
-                onChange={(e) => set("price_annual", +e.target.value)}
+                step="0.01"
+                {...register("price_annual")}
               />
             </Field>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Max agentes">
+            <Field label="Max agentes" error={errors.max_agents?.message}>
               <Input
                 type="number"
-                min={1}
-                value={plan.max_agents}
-                onChange={(e) => set("max_agents", +e.target.value)}
+                {...register("max_agents")}
               />
             </Field>
-            <Field label="Viagens/mês">
+            <Field label="Viagens/mês" error={errors.max_trips_per_month?.message}>
               <Input
                 type="number"
-                min={-1}
-                value={plan.max_trips_per_month}
-                onChange={(e) => set("max_trips_per_month", +e.target.value)}
+                {...register("max_trips_per_month")}
               />
             </Field>
-            <Field label="Storage (GB)">
+            <Field label="Storage (GB)" error={errors.max_storage_gb?.message}>
               <Input
                 type="number"
-                min={1}
-                value={plan.max_storage_gb}
-                onChange={(e) => set("max_storage_gb", +e.target.value)}
+                {...register("max_storage_gb")}
               />
             </Field>
           </div>
@@ -390,16 +393,14 @@ function PlanEditor({
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                checked={plan.is_active}
-                onChange={(e) => set("is_active", e.target.checked)}
+                {...register("is_active")}
               />
               Ativo
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                checked={plan.is_featured}
-                onChange={(e) => set("is_featured", e.target.checked)}
+                {...register("is_featured")}
               />
               Destaque (badge)
             </label>
@@ -410,30 +411,28 @@ function PlanEditor({
               <div className="text-xs font-medium text-muted-foreground">Features</div>
               <button
                 type="button"
-                onClick={addFeature}
+                onClick={() => append({ label: "", included: true })}
                 className="text-xs text-brand hover:underline"
               >
                 + Adicionar
               </button>
             </div>
             <div className="space-y-2">
-              {plan.features.map((f, i) => (
-                <div key={i} className="flex items-center gap-2">
+              {fields.map((field, i) => (
+                <div key={field.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={f.included}
-                    onChange={(e) => setFeature(i, "included", e.target.checked)}
+                    {...register(`features.${i}.included` as const)}
                     className="h-3.5 w-3.5"
                   />
                   <Input
-                    value={f.label}
-                    onChange={(e) => setFeature(i, "label", e.target.value)}
                     placeholder="Nome da feature"
                     className="flex-1"
+                    {...register(`features.${i}.label` as const)}
                   />
                   <button
                     type="button"
-                    onClick={() => removeFeature(i)}
+                    onClick={() => remove(i)}
                     className="text-danger hover:text-danger/80"
                   >
                     <X className="h-4 w-4" />
@@ -447,8 +446,8 @@ function PlanEditor({
             <GhostButton type="button" onClick={onClose}>
               Cancelar
             </GhostButton>
-            <PrimaryButton type="submit" disabled={busy}>
-              {busy ? "Salvando…" : isNew ? "Criar plano" : "Salvar"}
+            <PrimaryButton type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Salvando…" : isNew ? "Criar plano" : "Salvar"}
             </PrimaryButton>
           </div>
         </form>

@@ -20,6 +20,10 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton, Select } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { slugify } from "@/lib/slug";
 
 export const Route = createFileRoute("/agency/$slug/settings")({
   head: () => ({ meta: [{ title: "Configurações · TravelOS" }] }),
@@ -101,18 +105,23 @@ function Page() {
 }
 
 /* ------------------------- GERAL ------------------------- */
+const generalSettingsSchema = z.object({
+  name: z.string().min(2, "Nome da agência deve ter pelo menos 2 caracteres"),
+  slug: z.string()
+    .min(3, "Slug deve ter pelo menos 3 caracteres")
+    .max(50, "Slug deve ter no máximo 50 caracteres")
+    .regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, "Slug inválido (apenas minúsculas, números e hifens, sem iniciar/terminar com hífen)"),
+  legal_name: z.string().optional().nullable(),
+  document: z.string().optional().nullable(),
+  email: z.string().email("Digite um e-mail válido").or(z.literal("")).optional().nullable(),
+  phone: z.string().optional().nullable(),
+});
+
+type GeneralSettingsForm = z.infer<typeof generalSettingsSchema>;
+
 function GeneralTab({ agencyId }: { agencyId: string }) {
   const { refresh } = useAgency();
-  const [form, setForm] = useState({
-    name: "",
-    slug: "",
-    email: "",
-    phone: "",
-    legal_name: "",
-    document: "",
-    created_at: "",
-  });
-  const [busy, setBusy] = useState(false);
+  const [createdAt, setCreatedAt] = useState("");
 
   const q = useQuery({
     queryKey: ["agency-full", agencyId],
@@ -122,95 +131,120 @@ function GeneralTab({ agencyId }: { agencyId: string }) {
     },
   });
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<GeneralSettingsForm>({
+    resolver: zodResolver(generalSettingsSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      email: "",
+      phone: "",
+      legal_name: "",
+      document: "",
+    },
+  });
+
   useEffect(() => {
     if (!q.data?.agency) return;
-    setForm({
+    const agencyData = {
       name: q.data.agency.name,
       slug: q.data.agency.slug,
       email: q.data.priv?.email ?? "",
       phone: q.data.priv?.phone ?? "",
       legal_name: q.data.priv?.legal_name ?? "",
       document: q.data.priv?.document ?? "",
-      created_at: q.data.agency.created_at ?? "",
-    });
-  }, [q.data]);
+    };
+    reset(agencyData);
+    setCreatedAt(q.data.agency.created_at ?? "");
+  }, [q.data, reset]);
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
+  async function onSubmit(data: GeneralSettingsForm) {
     try {
       await saveSettings(
         agencyId,
-        { name: form.name, slug: form.slug },
         {
-          email: form.email,
-          phone: form.phone,
-          document: form.document,
-          legal_name: form.legal_name,
-        },
-        null,
+          name: data.name,
+          cnpj: data.document || null,
+          phone: data.phone || null,
+          email: data.email || null,
+        }, // payload for company_profiles
+        {
+          name: data.name,
+          slug: data.slug,
+          email: data.email || null,
+          phone: data.phone || null,
+          document: data.document || null,
+          legal_name: data.legal_name || null,
+        }, // agencyPayload for agencies
+        {
+          email: data.email || null,
+          phone: data.phone || null,
+          document: data.document || null,
+          legal_name: data.legal_name || null,
+        }, // privatePayload for agency_private
       );
       toast.success("Configurações salvas");
       refresh();
-      if (form.slug !== q.data?.agency?.slug) {
-        window.location.href = `/agency/${form.slug}/settings`;
+      if (data.slug !== q.data?.agency?.slug) {
+        window.location.href = `/agency/${data.slug}/settings`;
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Falha ao salvar");
-    } finally {
-      setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={save} className="mt-4 space-y-4 rounded-lg border border-border bg-surface p-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4 rounded-lg border border-border bg-surface p-6">
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Nome da agência">
+        <Field label="Nome da agência" error={errors.name?.message}>
           <Input
-            required
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            {...register("name")}
+            onChange={(e) => {
+              const val = e.target.value;
+              setValue("name", val, { shouldValidate: true });
+              // Auto-fill slug if it wasn't modified manually, or matches the slugified name
+              const currentSlug = q.data?.agency?.slug || "";
+              const currentNameSlugified = slugify(q.data?.agency?.name || "");
+              const currentValSlugified = slugify(val);
+              if (currentSlug === currentNameSlugified || !currentSlug) {
+                setValue("slug", currentValSlugified, { shouldValidate: true });
+              }
+            }}
           />
         </Field>
-        <Field label="Slug (URL)">
+        <Field label="Slug (URL)" error={errors.slug?.message}>
           <Input
-            required
-            value={form.slug}
-            onChange={(e) =>
-              setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })
-            }
+            {...register("slug")}
+            onChange={(e) => {
+              setValue("slug", slugify(e.target.value), { shouldValidate: true });
+            }}
           />
         </Field>
       </div>
-      <Field label="Razão social">
-        <Input
-          value={form.legal_name}
-          onChange={(e) => setForm({ ...form, legal_name: e.target.value })}
-        />
+      <Field label="Razão social" error={errors.legal_name?.message}>
+        <Input {...register("legal_name")} />
       </Field>
-      <Field label="CNPJ / Documento">
-        <Input
-          value={form.document}
-          onChange={(e) => setForm({ ...form, document: e.target.value })}
-        />
+      <Field label="CNPJ / Documento" error={errors.document?.message}>
+        <Input {...register("document")} />
       </Field>
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="E-mail oficial">
-          <Input
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
+        <Field label="E-mail oficial" error={errors.email?.message}>
+          <Input type="email" {...register("email")} />
         </Field>
-        <Field label="Telefone">
-          <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+        <Field label="Telefone" error={errors.phone?.message}>
+          <Input {...register("phone")} />
         </Field>
       </div>
       <div className="rounded-md border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-        Criada em {form.created_at ? new Date(form.created_at).toLocaleDateString("pt-BR") : "—"} ·
+        Criada em {createdAt ? new Date(createdAt).toLocaleDateString("pt-BR") : "—"} ·
         Plano: Padrão
       </div>
-      <PrimaryButton disabled={busy}>{busy ? "Salvando…" : "Salvar"}</PrimaryButton>
+      <PrimaryButton disabled={isSubmitting}>{isSubmitting ? "Salvando…" : "Salvar"}</PrimaryButton>
     </form>
   );
 }

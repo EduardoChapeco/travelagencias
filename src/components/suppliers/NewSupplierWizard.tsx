@@ -10,13 +10,40 @@ import {
   Percent,
   PhoneCall,
   Mail,
-  FileText,
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
 const STEPS = ["Identidade B2B", "Comercial & Markups", "Contatos (SLA)"];
+
+const supplierWizardSchema = z.object({
+  name: z.string().min(2, "Nome fantasia deve ter no mínimo 2 caracteres"),
+  legalName: z.string().optional().nullable(),
+  kind: z.enum(["operator", "airline", "hotel", "car_rental", "insurance", "transfer", "visa", "other"]).default("operator"),
+  document: z.string().optional().nullable(),
+  commission: z.number({ invalid_type_error: "Insira um número válido" }).min(0, "Comissão mínima é 0%").max(100, "Comissão máxima é 100%").default(0),
+  notes: z.string().optional().nullable(),
+  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+  phone: z.string().optional().nullable(),
+}).refine((data) => {
+  if (data.document) {
+    const raw = data.document.replace(/[^\d]/g, "");
+    if (raw.length > 0) {
+      return validateCNPJ(raw);
+    }
+  }
+  return true;
+}, {
+  message: "CNPJ inválido",
+  path: ["document"],
+});
+
+type SupplierWizardFormData = z.infer<typeof supplierWizardSchema>;
 
 export function NewSupplierWizard({
   agencyId,
@@ -31,54 +58,86 @@ export function NewSupplierWizard({
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form State
-  const [name, setName] = useState("");
-  const [legalName, setLegalName] = useState("");
-  const [kind, setKind] = useState("operator");
-  const [document, setDocument] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = useForm<SupplierWizardFormData>({
+    resolver: zodResolver(supplierWizardSchema) as any,
+    defaultValues: {
+      name: "",
+      legalName: "",
+      kind: "operator",
+      document: "",
+      commission: 0,
+      notes: "",
+      email: "",
+      phone: "",
+    },
+  });
 
-  const [commission, setCommission] = useState(0);
-  // Optional: multiple markups
-  const [notes, setNotes] = useState("");
+  const watchName = watch("name");
+  const watchLegalName = watch("legalName");
+  const watchKind = watch("kind");
+  const watchDocument = watch("document");
+  const watchCommission = watch("commission");
+  const watchNotes = watch("notes");
+  const watchEmail = watch("email");
+  const watchPhone = watch("phone");
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setValue("document", formatCNPJ(raw), { shouldValidate: true });
+  };
 
-  const handleNext = () => {
-    if (step === 0 && !name) {
-      toast.error("O Nome Fantasia é obrigatório.");
-      return;
+  const handleNext = async () => {
+    let fieldsToValidate: Array<keyof SupplierWizardFormData> = [];
+    if (step === 0) {
+      fieldsToValidate = ["name", "legalName", "kind", "document"];
+    } else if (step === 1) {
+      fieldsToValidate = ["commission", "notes"];
+    } else if (step === 2) {
+      fieldsToValidate = ["email", "phone"];
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) {
+      setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    }
   };
 
   const handleBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  async function submit() {
+  async function onSubmit(data: SupplierWizardFormData) {
     setSubmitting(true);
+    try {
+      const { error } = await supabase.from("suppliers").insert({
+        agency_id: agencyId,
+        name: data.name,
+        legal_name: data.legalName || null,
+        kind: data.kind as any,
+        document: data.document || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        commission_rate: data.commission,
+        notes: data.notes || null,
+        is_active: true,
+      });
 
-    const { error } = await supabase.from("suppliers").insert({
-      agency_id: agencyId,
-      name,
-      legal_name: legalName || null,
-      kind: kind as never,
-      document: document || null,
-      email: email || null,
-      phone: phone || null,
-      commission_rate: commission,
-      notes: notes || null,
-      is_active: true,
-    });
+      if (error) {
+        throw error;
+      }
 
-    setSubmitting(false);
-
-    if (error) {
-      toast.error(error.message);
-      return;
+      toast.success("Fornecedor / Operador cadastrado com sucesso!");
+      onCreated();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao cadastrar parceiro.");
+    } finally {
+      setSubmitting(false);
     }
-
-    toast.success("Fornecedor / Operador cadastrado com sucesso!");
-    onCreated();
   }
 
   return (
@@ -120,159 +179,155 @@ export function NewSupplierWizard({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
-        <div className="mx-auto max-w-xl space-y-6">
-          {/* STEP 0: Identidade */}
-          {step === 0 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Field label="Nome Fantasia (Visível nos Relatórios) *">
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: CVC Viagens"
-                  autoFocus
-                  className="text-lg font-semibold"
-                />
-              </Field>
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Razão Social (Contratos)">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+          <div className="mx-auto max-w-xl space-y-6">
+            {/* STEP 0: Identidade */}
+            {step === 0 && (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <Field label="Nome Fantasia (Visível nos Relatórios) *" error={errors.name?.message}>
                   <Input
-                    value={legalName}
-                    onChange={(e) => setLegalName(e.target.value)}
-                    placeholder="CVC Brasil Operadora Ltda"
+                    {...register("name")}
+                    placeholder="Ex: CVC Viagens"
+                    autoFocus
+                    className="text-lg font-semibold"
                   />
                 </Field>
-                <Field label="CNPJ / Documento">
-                  <Input
-                    value={document}
-                    onChange={(e) => setDocument(e.target.value)}
-                    placeholder="00.000.000/0001-00"
-                  />
-                </Field>
-              </div>
-              <Field label="Categoria Principal do Fornecedor">
-                <Select value={kind} onChange={(e) => setKind(e.target.value)}>
-                  <option value="operator">Operadora Turística (DMC)</option>
-                  <option value="airline">Companhia Aérea / Consolidador</option>
-                  <option value="hotel">Rede de Hotéis / Acomodação</option>
-                  <option value="car_rental">Locadora de Veículos</option>
-                  <option value="insurance">Seguradora / Assistência Viagem</option>
-                  <option value="transfer">Receptivo / Transfer</option>
-                  <option value="visa">Despachante de Vistos</option>
-                  <option value="other">Outros Serviços</option>
-                </Select>
-              </Field>
-            </div>
-          )}
-
-          {/* STEP 1: Markups */}
-          {step === 1 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-xl border border-brand/20 bg-brand/5 p-6">
-                <Field label="Comissão Base ou Markup Acordado (%)">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    value={commission}
-                    onChange={(e) => setCommission(Number(e.target.value))}
-                    className="text-2xl font-mono text-brand h-12"
-                  />
-                  <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
-                    Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes deste
-                    fornecedor.
-                  </p>
-                </Field>
-              </div>
-
-              <Field label="Política de Comissionamento & Condições">
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={4}
-                  placeholder="Ex: Faturamento 30 dias. Aéreo com 8% e terrestre com 12%. Contato VIP: Roberto."
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* STEP 2: SLA e Contatos */}
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="E-mail de Reservas / Financeiro">
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Razão Social (Contratos)" error={errors.legalName?.message}>
                     <Input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="reservas@fornecedor.com"
-                      className="pl-9"
+                      {...register("legalName")}
+                      placeholder="CVC Brasil Operadora Ltda"
                     />
-                  </div>
-                </Field>
-                <Field label="Telefone / SLA Helpdesk">
-                  <div className="relative">
-                    <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </Field>
+                  <Field label="CNPJ / Documento" error={errors.document?.message}>
                     <Input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="0800 123 456"
-                      className="pl-9"
+                      value={watchDocument || ""}
+                      onChange={handleDocumentChange}
+                      placeholder="00.000.000/0001-00"
                     />
-                  </div>
+                  </Field>
+                </div>
+                <Field label="Categoria Principal do Fornecedor" error={errors.kind?.message}>
+                  <Select {...register("kind")}>
+                    <option value="operator">Operadora Turística (DMC)</option>
+                    <option value="airline">Companhia Aérea / Consolidador</option>
+                    <option value="hotel">Rede de Hotéis / Acomodação</option>
+                    <option value="car_rental">Locadora de Veículos</option>
+                    <option value="insurance">Seguradora / Assistência Viagem</option>
+                    <option value="transfer">Receptivo / Transfer</option>
+                    <option value="visa">Despachante de Vistos</option>
+                    <option value="other">Outros Serviços</option>
+                  </Select>
                 </Field>
               </div>
+            )}
 
-              <div className="rounded-xl border border-border bg-surface-alt/20 p-5 mt-6">
-                <h4 className="text-sm font-semibold mb-3">Resumo B2B</h4>
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <span className="text-muted-foreground block">Fornecedor:</span>
-                    <strong className="text-foreground text-sm">{name || "—"}</strong>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Categoria:</span>
-                    <strong className="text-foreground">{kind}</strong>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground block">Comissão Geral:</span>
-                    <strong className="text-brand font-mono text-sm">{commission}%</strong>
+            {/* STEP 1: Markups */}
+            {step === 1 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="rounded-xl border border-brand/20 bg-brand/5 p-6">
+                  <Field label="Comissão Base ou Markup Acordado (%)" error={errors.commission?.message}>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      {...register("commission", { valueAsNumber: true })}
+                      className="text-2xl font-mono text-brand h-12"
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
+                      Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes deste
+                      fornecedor.
+                    </p>
+                  </Field>
+                </div>
+
+                <Field label="Política de Comissionamento & Condições" error={errors.notes?.message}>
+                  <Textarea
+                    {...register("notes")}
+                    rows={4}
+                    placeholder="Ex: Faturamento 30 dias. Aéreo com 8% e terrestre com 12%. Contato VIP: Roberto."
+                  />
+                </Field>
+              </div>
+            )}
+
+            {/* STEP 2: SLA e Contatos */}
+            {step === 2 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="E-mail de Reservas / Financeiro" error={errors.email?.message}>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="email"
+                        {...register("email")}
+                        placeholder="reservas@fornecedor.com"
+                        className="pl-9"
+                      />
+                    </div>
+                  </Field>
+                  <Field label="Telefone / SLA Helpdesk" error={errors.phone?.message}>
+                    <div className="relative">
+                      <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        {...register("phone")}
+                        placeholder="0800 123 456"
+                        className="pl-9"
+                      />
+                    </div>
+                  </Field>
+                </div>
+
+                <div className="rounded-xl border border-border bg-surface-alt/20 p-5 mt-6">
+                  <h4 className="text-sm font-semibold mb-3">Resumo B2B</h4>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="text-muted-foreground block">Fornecedor:</span>
+                      <strong className="text-foreground text-sm">{watchName || "—"}</strong>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block">Categoria:</span>
+                      <strong className="text-foreground">{watchKind}</strong>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block">Comissão Geral:</span>
+                      <strong className="text-brand font-mono text-sm">{watchCommission}%</strong>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Footer Actions */}
-      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4">
-        <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
-          <ChevronLeft className="h-4 w-4" /> Voltar
-        </GhostButton>
-
-        <div className="flex gap-3">
-          <GhostButton onClick={onClose} disabled={submitting}>
-            Cancelar
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
+          <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+            <ChevronLeft className="h-4 w-4" /> Voltar
           </GhostButton>
-          {step < STEPS.length - 1 ? (
-            <PrimaryButton onClick={handleNext} className="gap-2 w-32">
-              Próximo <ChevronRight className="h-4 w-4" />
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton
-              onClick={submit}
-              disabled={submitting}
-              className="w-56 font-bold tracking-wider"
-            >
-              {submitting ? "SALVANDO..." : "CADASTRAR PARCEIRO"}
-            </PrimaryButton>
-          )}
+
+          <div className="flex gap-3">
+            <GhostButton type="button" onClick={onClose} disabled={submitting}>
+              Cancelar
+            </GhostButton>
+            {step < STEPS.length - 1 ? (
+              <PrimaryButton type="button" onClick={handleNext} className="gap-2 w-32">
+                Próximo <ChevronRight className="h-4 w-4" />
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton
+                type="submit"
+                disabled={submitting}
+                className="w-56 font-bold tracking-wider"
+              >
+                {submitting ? "SALVANDO..." : "CADASTRAR PARCEIRO"}
+              </PrimaryButton>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
     </SheetPage>
   );
 }

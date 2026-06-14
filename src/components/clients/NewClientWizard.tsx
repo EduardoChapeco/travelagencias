@@ -5,8 +5,45 @@ import { X, Check, ChevronRight, ChevronLeft, User, Building2, Phone, MapPin } f
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
 const STEPS = ["Perfil", "Contato", "Endereço e Classificação", "Revisão"];
+
+const clientWizardSchema = z.object({
+  kind: z.enum(["individual", "company"]).default("individual"),
+  fullName: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
+  legalName: z.string().optional().nullable(),
+  document: z.string().optional().nullable(),
+  birthDate: z.string().optional().nullable(),
+  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+  phone: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+}).refine((data) => {
+  if (data.kind === "company" && (!data.legalName || data.legalName.trim() === "")) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Razão social é obrigatória para empresas",
+  path: ["legalName"],
+}).refine((data) => {
+  if (data.kind === "company" && data.document) {
+    const raw = data.document.replace(/[^\d]/g, "");
+    if (raw.length > 0) {
+      return validateCNPJ(raw);
+    }
+  }
+  return true;
+}, {
+  message: "CNPJ inválido",
+  path: ["document"],
+});
+
+type ClientWizardFormData = z.infer<typeof clientWizardSchema>;
 
 export function NewClientWizard({
   agencyId,
@@ -21,62 +58,100 @@ export function NewClientWizard({
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form State
-  const [kind, setKind] = useState<"individual" | "company">("individual");
-  const [fullName, setFullName] = useState("");
-  const [legalName, setLegalName] = useState("");
-  const [document, setDocument] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = useForm<ClientWizardFormData>({
+    resolver: zodResolver(clientWizardSchema) as any,
+    defaultValues: {
+      kind: "individual",
+      fullName: "",
+      legalName: "",
+      document: "",
+      birthDate: "",
+      email: "",
+      phone: "",
+      tags: "",
+      notes: "",
+    },
+  });
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const watchKind = watch("kind");
+  const watchFullName = watch("fullName");
+  const watchLegalName = watch("legalName");
+  const watchDocument = watch("document");
+  const watchBirthDate = watch("birthDate");
+  const watchEmail = watch("email");
+  const watchPhone = watch("phone");
+  const watchTags = watch("tags");
+  const watchNotes = watch("notes");
 
-  const [tags, setTags] = useState("");
-  const [notes, setNotes] = useState("");
-
-  const handleNext = () => {
-    if (step === 0 && (!fullName || fullName.length < 3)) {
-      toast.error("O nome deve ter no mínimo 3 caracteres.");
-      return;
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (watchKind === "company") {
+      setValue("document", formatCNPJ(raw), { shouldValidate: true });
+    } else {
+      setValue("document", raw, { shouldValidate: true });
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
+
+  const handleNext = async () => {
+    let fieldsToValidate: Array<keyof ClientWizardFormData> = [];
+    if (step === 0) {
+      fieldsToValidate = ["kind", "fullName", "legalName", "document", "birthDate"];
+    } else if (step === 1) {
+      fieldsToValidate = ["email", "phone"];
+    } else if (step === 2) {
+      fieldsToValidate = ["tags", "notes"];
+    }
+
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) {
+      setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    }
   };
 
   const handleBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  async function submit() {
+  async function onSubmit(data: ClientWizardFormData) {
     setSubmitting(true);
-    const { data: u } = await supabase.auth.getUser();
+    try {
+      const { data: u } = await supabase.auth.getUser();
 
-    // Parse tags safely
-    const parsedTags = tags
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+      const parsedTags = (data.tags || "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
 
-    const { error } = await supabase.from("clients").insert({
-      agency_id: agencyId,
-      kind,
-      full_name: fullName,
-      legal_name: legalName || null,
-      document: document || null,
-      email: email || null,
-      phone: phone || null,
-      birth_date: birthDate || null,
-      notes: notes || null,
-      tags: (parsedTags.length > 0 ? parsedTags : null) as any,
-      owner_id: u.user?.id ?? null,
-    });
+      const { error } = await supabase.from("clients").insert({
+        agency_id: agencyId,
+        kind: data.kind,
+        full_name: data.fullName,
+        legal_name: data.legalName || null,
+        document: data.document || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        birth_date: data.birthDate || null,
+        notes: data.notes || null,
+        tags: (parsedTags.length > 0 ? parsedTags : null) as any,
+        owner_id: u.user?.id ?? null,
+      });
 
-    if (error) {
-      toast.error(error.message || "Erro ao criar cliente.");
+      if (error) {
+        throw error;
+      }
+
+      toast.success("Cliente criado com sucesso!");
+      onCreated();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar cliente.");
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    setSubmitting(false);
-    toast.success("Cliente criado com sucesso!");
-    onCreated();
   }
 
   return (
@@ -118,240 +193,243 @@ export function NewClientWizard({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
-        <div className="mx-auto max-w-xl space-y-6">
-          {/* STEP 0: Perfil */}
-          {step === 0 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="flex gap-4">
-                <div
-                  onClick={() => setKind("individual")}
-                  className={`flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${kind === "individual" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
-                >
-                  <User
-                    className={`h-8 w-8 mb-2 ${kind === "individual" ? "text-brand" : "text-muted-foreground"}`}
-                  />
-                  <span
-                    className={`font-bold ${kind === "individual" ? "text-brand" : "text-foreground"}`}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+          <div className="mx-auto max-w-xl space-y-6">
+            {/* STEP 0: Perfil */}
+            {step === 0 && (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setValue("kind", "individual", { shouldValidate: true })}
+                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${watchKind === "individual" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
                   >
-                    Pessoa Física
-                  </span>
-                </div>
-                <div
-                  onClick={() => setKind("company")}
-                  className={`flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${kind === "company" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
-                >
-                  <Building2
-                    className={`h-8 w-8 mb-2 ${kind === "company" ? "text-brand" : "text-muted-foreground"}`}
-                  />
-                  <span
-                    className={`font-bold ${kind === "company" ? "text-brand" : "text-foreground"}`}
+                    <User
+                      className={`h-8 w-8 mb-2 ${watchKind === "individual" ? "text-brand" : "text-muted-foreground"}`}
+                    />
+                    <span
+                      className={`font-bold ${watchKind === "individual" ? "text-brand" : "text-foreground"}`}
+                    >
+                      Pessoa Física
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setValue("kind", "company", { shouldValidate: true })}
+                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${watchKind === "company" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
                   >
-                    Empresa
-                  </span>
+                    <Building2
+                      className={`h-8 w-8 mb-2 ${watchKind === "company" ? "text-brand" : "text-muted-foreground"}`}
+                    />
+                    <span
+                      className={`font-bold ${watchKind === "company" ? "text-brand" : "text-foreground"}`}
+                    >
+                      Empresa
+                    </span>
+                  </button>
                 </div>
-              </div>
 
-              <Field label={kind === "individual" ? "Nome Completo *" : "Nome Fantasia *"}>
-                <Input
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder={kind === "individual" ? "Ex: João da Silva" : "Ex: Acme Corp"}
-                  autoFocus
-                />
-              </Field>
-
-              {kind === "company" && (
-                <Field label="Razão Social">
+                <Field
+                  label={watchKind === "individual" ? "Nome Completo *" : "Nome Fantasia *"}
+                  error={errors.fullName?.message}
+                >
                   <Input
-                    value={legalName}
-                    onChange={(e) => setLegalName(e.target.value)}
-                    placeholder="Ex: Acme Corporation LTDA"
+                    {...register("fullName")}
+                    placeholder={watchKind === "individual" ? "Ex: João da Silva" : "Ex: Acme Corp"}
+                    autoFocus
                   />
                 </Field>
-              )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <Field label={kind === "individual" ? "CPF / Passaporte" : "CNPJ"}>
-                  <Input
-                    value={document}
-                    onChange={(e) => setDocument(e.target.value)}
-                    placeholder={kind === "individual" ? "123.456.789-00" : "00.000.000/0001-00"}
-                  />
-                </Field>
-                {kind === "individual" && (
-                  <Field label="Data de Nascimento">
+                {watchKind === "company" && (
+                  <Field label="Razão Social" error={errors.legalName?.message}>
                     <Input
-                      type="date"
-                      value={birthDate}
-                      onChange={(e) => setBirthDate(e.target.value)}
+                      {...register("legalName")}
+                      placeholder="Ex: Acme Corporation LTDA"
                     />
                   </Field>
                 )}
-              </div>
-            </div>
-          )}
 
-          {/* STEP 1: Contato */}
-          {step === 1 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Field label="E-mail Principal">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="contato@exemplo.com"
-                />
-              </Field>
-              <Field label="Telefone / WhatsApp">
-                <Input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+55 11 99999-9999"
-                />
-              </Field>
-              <div className="rounded-xl border border-border bg-surface-alt/40 p-4 mt-2">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Mais opções de contato e redes sociais poderão ser cadastradas na tela de detalhes
-                  do cliente após a criação.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Endereço e Classificação */}
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <Field label="Tags de Classificação (separadas por vírgula)">
-                <Input
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="VIP, Corporativo, Preferência Janela..."
-                />
-                {tags && (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {tags.split(",").map(
-                      (t, i) =>
-                        t.trim() && (
-                          <span
-                            key={i}
-                            className="bg-surface-alt border border-border px-2 py-0.5 rounded text-[10px] font-bold text-muted-foreground uppercase tracking-wider"
-                          >
-                            {t.trim()}
-                          </span>
-                        ),
-                    )}
-                  </div>
-                )}
-              </Field>
-
-              <Field label="Anotações e Preferências">
-                <Textarea
-                  rows={4}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Restrições alimentares, assento preferido, necessidades especiais..."
-                />
-              </Field>
-            </div>
-          )}
-
-          {/* STEP 3: Revisão */}
-          {step === 3 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
-                <div className="flex items-center gap-3 mb-5 border-b border-border/50 pb-4">
-                  {kind === "individual" ? (
-                    <div className="h-12 w-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
-                      <User className="h-6 w-6" />
-                    </div>
-                  ) : (
-                    <div className="h-12 w-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
-                      <Building2 className="h-6 w-6" />
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field
+                    label={watchKind === "individual" ? "CPF / Passaporte" : "CNPJ"}
+                    error={errors.document?.message}
+                  >
+                    <Input
+                      value={watchDocument || ""}
+                      onChange={handleDocumentChange}
+                      placeholder={watchKind === "individual" ? "123.456.789-00" : "00.000.000/0001-00"}
+                    />
+                  </Field>
+                  {watchKind === "individual" && (
+                    <Field label="Data de Nascimento" error={errors.birthDate?.message}>
+                      <Input
+                        type="date"
+                        {...register("birthDate")}
+                      />
+                    </Field>
                   )}
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground">{fullName}</h3>
-                    {kind === "company" && legalName && (
-                      <p className="text-xs text-muted-foreground">{legalName}</p>
-                    )}
-                  </div>
                 </div>
+              </div>
+            )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-6 text-sm">
-                  {document && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground font-semibold text-xs uppercase tracking-widest">
-                        {kind === "individual" ? "Doc:" : "CNPJ:"}
-                      </span>
-                      <span className="font-mono">{document}</span>
+            {/* STEP 1: Contato */}
+            {step === 1 && (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <Field label="E-mail Principal" error={errors.email?.message}>
+                  <Input
+                    type="email"
+                    {...register("email")}
+                    placeholder="contato@exemplo.com"
+                  />
+                </Field>
+                <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
+                  <Input
+                    {...register("phone")}
+                    placeholder="+55 11 99999-9999"
+                  />
+                </Field>
+                <div className="rounded-xl border border-border bg-surface-alt/40 p-4 mt-2">
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Mais opções de contato e redes sociais poderão ser cadastradas na tela de detalhes
+                    do cliente após a criação.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: Endereço e Classificação */}
+            {step === 2 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <Field label="Tags de Classificação (separadas por vírgula)" error={errors.tags?.message}>
+                  <Input
+                    {...register("tags")}
+                    placeholder="VIP, Corporativo, Preferência Janela..."
+                  />
+                  {watchTags && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {watchTags.split(",").map(
+                        (t, i) =>
+                          t.trim() && (
+                            <span
+                              key={i}
+                              className="bg-surface-alt border border-border px-2 py-0.5 rounded text-[10px] font-bold text-muted-foreground uppercase tracking-wider"
+                            >
+                              {t.trim()}
+                            </span>
+                          ),
+                      )}
                     </div>
                   )}
-                  {birthDate && kind === "individual" && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground font-semibold text-xs uppercase tracking-widest">
-                        Nasc:
-                      </span>
-                      <span>{new Date(birthDate).toLocaleDateString("pt-BR")}</span>
-                    </div>
-                  )}
+                </Field>
 
-                  <div className="flex items-center gap-2 col-span-full">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium text-foreground">{phone || "S/ Telefone"}</span>
-                    <span className="text-muted-foreground mx-2">•</span>
-                    <span className="font-medium text-foreground">{email || "S/ E-mail"}</span>
-                  </div>
+                <Field label="Anotações e Preferências" error={errors.notes?.message}>
+                  <Textarea
+                    rows={4}
+                    {...register("notes")}
+                    placeholder="Restrições alimentares, assento preferido, necessidades especiais..."
+                  />
+                </Field>
+              </div>
+            )}
 
-                  {tags && (
-                    <div className="col-span-full mt-2">
-                      <div className="flex flex-wrap gap-1.5">
-                        {tags.split(",").map(
-                          (t, i) =>
-                            t.trim() && (
-                              <span
-                                key={i}
-                                className="bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
-                              >
-                                {t.trim()}
-                              </span>
-                            ),
-                        )}
+            {/* STEP 3: Revisão */}
+            {step === 3 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
+                  <div className="flex items-center gap-3 mb-5 border-b border-border/50 pb-4">
+                    {watchKind === "individual" ? (
+                      <div className="h-12 w-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                        <User className="h-6 w-6" />
                       </div>
+                    ) : (
+                      <div className="h-12 w-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
+                        <Building2 className="h-6 w-6" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-xl font-bold text-foreground">{watchFullName}</h3>
+                      {watchKind === "company" && watchLegalName && (
+                        <p className="text-xs text-muted-foreground">{watchLegalName}</p>
+                      )}
                     </div>
-                  )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-6 text-sm">
+                    {watchDocument && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground font-semibold text-xs uppercase tracking-widest">
+                          {watchKind === "individual" ? "Doc:" : "CNPJ:"}
+                        </span>
+                        <span className="font-mono">{watchDocument}</span>
+                      </div>
+                    )}
+                    {watchBirthDate && watchKind === "individual" && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground font-semibold text-xs uppercase tracking-widest">
+                          Nasc:
+                        </span>
+                        <span>{new Date(watchBirthDate).toLocaleDateString("pt-BR")}</span>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 col-span-full">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium text-foreground">{watchPhone || "S/ Telefone"}</span>
+                      <span className="text-muted-foreground mx-2">•</span>
+                      <span className="font-medium text-foreground">{watchEmail || "S/ E-mail"}</span>
+                    </div>
+
+                    {watchTags && (
+                      <div className="col-span-full mt-2">
+                        <div className="flex flex-wrap gap-1.5">
+                          {watchTags.split(",").map(
+                            (t, i) =>
+                              t.trim() && (
+                                <span
+                                  key={i}
+                                  className="bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                                >
+                                  {t.trim()}
+                                </span>
+                              ),
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Footer Actions */}
-      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4">
-        <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
-          <ChevronLeft className="h-4 w-4" /> Voltar
-        </GhostButton>
-
-        <div className="flex gap-3">
-          <GhostButton onClick={onClose} disabled={submitting}>
-            Cancelar
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
+          <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+            <ChevronLeft className="h-4 w-4" /> Voltar
           </GhostButton>
-          {step < STEPS.length - 1 ? (
-            <PrimaryButton onClick={handleNext} className="gap-2 w-32">
-              Próximo <ChevronRight className="h-4 w-4" />
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton
-              onClick={submit}
-              disabled={submitting}
-              className="w-48 font-bold tracking-wider"
-            >
-              {submitting ? "CRIANDO..." : "CRIAR CLIENTE"}
-            </PrimaryButton>
-          )}
+
+          <div className="flex gap-3">
+            <GhostButton type="button" onClick={onClose} disabled={submitting}>
+              Cancelar
+            </GhostButton>
+            {step < STEPS.length - 1 ? (
+              <PrimaryButton type="button" onClick={handleNext} className="gap-2 w-32">
+                Próximo <ChevronRight className="h-4 w-4" />
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton
+                type="submit"
+                disabled={submitting}
+                className="w-48 font-bold tracking-wider"
+              >
+                {submitting ? "CRIANDO..." : "CRIAR CLIENTE"}
+              </PrimaryButton>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
     </SheetPage>
   );
 }

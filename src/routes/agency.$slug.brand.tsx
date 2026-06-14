@@ -82,10 +82,8 @@ function BrandPage() {
       setUploading(false);
       return toast.error(error.message);
     }
-    const { data: signed } = await supabase.storage
-      .from("agency-logos")
-      .createSignedUrl(path, 60 * 60 * 24 * 365);
-    if (signed?.signedUrl) setForm((f) => ({ ...f, logo_url: signed.signedUrl }));
+    const { data: pub } = supabase.storage.from("agency-logos").getPublicUrl(path);
+    if (pub?.publicUrl) setForm((f) => ({ ...f, logo_url: pub.publicUrl }));
     setUploading(false);
   }
 

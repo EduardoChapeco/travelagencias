@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, queryOptions } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAdminAgencies, createAgencyAndInvite } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
 
@@ -13,18 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const agenciesQueryOptions = queryOptions({
   queryKey: ["admin-agencies"],
-  queryFn: async () => {
-    const { data, error } = await supabase
-      .from("agencies")
-      .select("id, slug, name, logo_url, created_at")
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    const privates = await supabase
-      .from("agency_private")
-      .select("agency_id, email, phone, legal_name, document");
-    const pmap = new Map((privates.data ?? []).map((p) => [p.agency_id, p]));
-    return (data ?? []).map((a) => ({ ...a, priv: pmap.get(a.id) }));
-  },
+  queryFn: fetchAdminAgencies,
 });
 
 export const Route = createFileRoute("/admin/agencies")({
@@ -69,16 +58,14 @@ function Page() {
     setLoading(true);
     setInviteUrl(null);
     try {
-      const { data, error } = await (supabase.rpc as any)("admin_create_agency_and_invite", {
-        _name: form.name,
-        _slug: form.slug,
-        _owner_email: form.email,
-        _cnpj: form.cnpj || null,
-        _phone: form.phone || null,
+      const payload = await createAgencyAndInvite({
+        name: form.name,
+        slug: form.slug,
+        email: form.email,
+        cnpj: form.cnpj,
+        phone: form.phone,
       });
-      if (error) throw error;
 
-      const payload = data as { agency_id: string; invite_token: string };
       const url = `${window.location.origin}/m/invite/${payload.invite_token}`;
       setInviteUrl(url);
       toast.success("Agência provisionada com sucesso!");

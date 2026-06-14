@@ -17,6 +17,7 @@ import {
   Shield,
   Palette,
   Webhook,
+  KeyRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,7 @@ const items = [
   { to: "/admin/contracts", label: "Contratos", icon: ScrollText },
   { to: "/admin/billing", label: "Faturamento", icon: Wallet },
   { to: "/admin/plans", label: "Planos", icon: Zap },
+  { to: "/admin/api-keys", label: "Chaves Globais", icon: KeyRound },
   { to: "/admin/policies", label: "Políticas & LGPD", icon: Shield },
   { to: "/admin/brand", label: "Marca Global", icon: Palette },
   { to: "/admin/integrations", label: "Integrações", icon: Webhook },

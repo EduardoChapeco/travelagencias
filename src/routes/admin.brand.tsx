@@ -1,30 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Palette, Globe, BarChart3, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchBrandingConfig, saveBrandingConfig } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/admin/brand")({
   head: () => ({ meta: [{ title: "Marca Global · TravelOS Admin" }] }),
   component: Page,
 });
 
-type BrandConfig = {
-  product_name: string;
-  tagline: string;
-  primary_color: string;
-  logo_url: string;
-  favicon_url: string;
-  google_analytics_id: string;
-  support_email: string;
-  terms_url: string;
-  privacy_url: string;
-};
+const brandConfigSchema = z.object({
+  product_name: z.string().min(2, "Nome do produto deve ter pelo menos 2 caracteres"),
+  tagline: z.string().optional().or(z.literal("")),
+  primary_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{3,6}$/, "Cor primária deve ser um valor hexadecimal válido"),
+  support_email: z.string().email("Digite um e-mail válido"),
+  logo_url: z.string().url("Digite uma URL de logo válida").optional().or(z.literal("")),
+  favicon_url: z.string().url("Digite uma URL de favicon válida").optional().or(z.literal("")),
+  terms_url: z.string().optional().or(z.literal("")),
+  privacy_url: z.string().optional().or(z.literal("")),
+  google_analytics_id: z.string().optional().or(z.literal("")),
+});
 
-const DEFAULTS: BrandConfig = {
+type BrandConfigFormData = z.infer<typeof brandConfigSchema>;
+
+const DEFAULTS: BrandConfigFormData = {
   product_name: "TravelOS",
   tagline: "A plataforma para agências de viagens",
   primary_color: "#18181b",
@@ -38,55 +45,47 @@ const DEFAULTS: BrandConfig = {
 
 function Page() {
   const qc = useQueryClient();
-  const [form, setForm] = useState<BrandConfig>(DEFAULTS);
-  const [busy, setBusy] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<BrandConfigFormData>({
+    resolver: zodResolver(brandConfigSchema),
+    defaultValues: DEFAULTS,
+  });
+
+  // Watch fields for live preview in the sidebar
+  const primaryColor = watch("primary_color");
+  const productName = watch("product_name");
+  const tagline = watch("tagline");
+  const logoUrl = watch("logo_url");
+  const supportEmail = watch("support_email");
+  const googleAnalyticsId = watch("google_analytics_id");
 
   const q = useQuery({
     queryKey: ["admin-brand-config"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("global_settings")
-        .select("value")
-        .eq("key", "branding_config")
-        .maybeSingle();
-      if (data?.value) {
-        try {
-          return data.value as unknown as BrandConfig;
-        } catch {
-          return null;
-        }
-      }
-      return null;
+      const config = await fetchBrandingConfig();
+      return config as BrandConfigFormData | null;
     },
   });
 
   useEffect(() => {
-    if (q.data) setForm({ ...DEFAULTS, ...q.data });
-  }, [q.data]);
+    if (q.data) reset({ ...DEFAULTS, ...q.data });
+  }, [q.data, reset]);
 
-  const set = <K extends keyof BrandConfig>(k: K, v: BrandConfig[K]) =>
-    setForm((f) => ({ ...f, [k]: v }));
-
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    const existing = q.data !== null && q.data !== undefined;
-    const { error } = existing
-      ? await supabase
-          .from("global_settings")
-          .update({ value: form as any })
-          .eq("key", "branding_config")
-      : await supabase.from("global_settings").insert({
-          key: "branding_config",
-          value: form as any,
-        });
-    setBusy(false);
-    if (error) {
+  async function onSubmit(data: BrandConfigFormData) {
+    try {
+      await saveBrandingConfig(data);
+      toast.success("Marca global salva");
+      qc.invalidateQueries({ queryKey: ["admin-brand-config"] });
+    } catch (error: any) {
       toast.error(error.message);
-      return;
     }
-    toast.success("Marca global salva");
-    qc.invalidateQueries({ queryKey: ["admin-brand-config"] });
   }
 
   return (
@@ -96,7 +95,7 @@ function Page() {
         description="Identidade visual e configurações globais do produto TravelOS."
       />
 
-      <form onSubmit={save} className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-5">
           {/* PRODUCT */}
           <section className="rounded-lg border border-border bg-surface p-5">
@@ -105,37 +104,29 @@ function Page() {
               <h3 className="text-sm font-semibold">Identidade do produto</h3>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Nome do produto">
-                <Input
-                  value={form.product_name}
-                  onChange={(e) => set("product_name", e.target.value)}
-                />
+              <Field label="Nome do produto" error={errors.product_name?.message}>
+                <Input {...register("product_name")} />
               </Field>
-              <Field label="Tagline / Slogan">
-                <Input value={form.tagline} onChange={(e) => set("tagline", e.target.value)} />
+              <Field label="Tagline / Slogan" error={errors.tagline?.message}>
+                <Input {...register("tagline")} />
               </Field>
-              <Field label="Cor primária global">
+              <Field label="Cor primária global" error={errors.primary_color?.message}>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={form.primary_color}
-                    onChange={(e) => set("primary_color", e.target.value)}
+                    value={primaryColor || "#18181b"}
+                    onChange={(e) => setValue("primary_color", e.target.value)}
                     className="h-9 w-12 cursor-pointer rounded border border-border bg-transparent"
                   />
                   <Input
-                    value={form.primary_color}
-                    onChange={(e) => set("primary_color", e.target.value)}
+                    {...register("primary_color")}
                     className="font-mono"
                     placeholder="#18181b"
                   />
                 </div>
               </Field>
-              <Field label="E-mail de suporte">
-                <Input
-                  type="email"
-                  value={form.support_email}
-                  onChange={(e) => set("support_email", e.target.value)}
-                />
+              <Field label="E-mail de suporte" error={errors.support_email?.message}>
+                <Input type="email" {...register("support_email")} />
               </Field>
             </div>
           </section>
@@ -147,35 +138,28 @@ function Page() {
               <h3 className="text-sm font-semibold">Ativos e links</h3>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="URL do Logo global" hint="Endereço público da imagem">
-                <Input
-                  type="url"
-                  value={form.logo_url}
-                  onChange={(e) => set("logo_url", e.target.value)}
-                  placeholder="https://..."
-                />
+              <Field
+                label="URL do Logo global"
+                hint="Endereço público da imagem"
+                error={errors.logo_url?.message}
+              >
+                <Input type="url" {...register("logo_url")} placeholder="https://..." />
               </Field>
-              <Field label="URL do Favicon" hint="Endereço .ico ou .png 32×32">
-                <Input
-                  type="url"
-                  value={form.favicon_url}
-                  onChange={(e) => set("favicon_url", e.target.value)}
-                  placeholder="https://..."
-                />
+              <Field
+                label="URL do Favicon"
+                hint="Endereço .ico ou .png 32×32"
+                error={errors.favicon_url?.message}
+              >
+                <Input type="url" {...register("favicon_url")} placeholder="https://..." />
               </Field>
-              <Field label="URL dos Termos de Uso">
-                <Input
-                  value={form.terms_url}
-                  onChange={(e) => set("terms_url", e.target.value)}
-                  placeholder="/termos"
-                />
+              <Field label="URL dos Termos de Uso" error={errors.terms_url?.message}>
+                <Input {...register("terms_url")} placeholder="/termos" />
               </Field>
-              <Field label="URL da Política de Privacidade">
-                <Input
-                  value={form.privacy_url}
-                  onChange={(e) => set("privacy_url", e.target.value)}
-                  placeholder="/privacidade"
-                />
+              <Field
+                label="URL da Política de Privacidade"
+                error={errors.privacy_url?.message}
+              >
+                <Input {...register("privacy_url")} placeholder="/privacidade" />
               </Field>
             </div>
           </section>
@@ -186,19 +170,15 @@ function Page() {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold">Analytics e rastreamento</h3>
             </div>
-            <Field label="Google Analytics ID (GA4)">
-              <Input
-                value={form.google_analytics_id}
-                onChange={(e) => set("google_analytics_id", e.target.value)}
-                placeholder="G-XXXXXXXXXX"
-              />
+            <Field label="Google Analytics ID (GA4)" error={errors.google_analytics_id?.message}>
+              <Input {...register("google_analytics_id")} placeholder="G-XXXXXXXXXX" />
             </Field>
           </section>
 
           <div className="flex justify-end">
-            <PrimaryButton type="submit" disabled={busy} className="gap-1.5">
+            <PrimaryButton type="submit" disabled={isSubmitting} className="gap-1.5">
               <Save className="h-3.5 w-3.5" />
-              {busy ? "Salvando…" : "Salvar marca global"}
+              {isSubmitting ? "Salvando…" : "Salvar marca global"}
             </PrimaryButton>
           </div>
         </div>
@@ -213,22 +193,20 @@ function Page() {
           <div className="p-4 space-y-3">
             <div
               className="rounded-lg p-4 text-sm font-semibold"
-              style={{ background: form.primary_color, color: "#ffffff" }}
+              style={{ background: primaryColor || "#18181b", color: "#ffffff" }}
             >
-              {form.product_name}
+              {productName}
             </div>
-            <div className="text-xs text-muted-foreground">{form.tagline}</div>
-            {form.logo_url && (
-              <img src={form.logo_url} alt="logo" className="h-10 object-contain" />
-            )}
+            <div className="text-xs text-muted-foreground">{tagline}</div>
+            {logoUrl && <img src={logoUrl} alt="logo" className="h-10 object-contain" />}
             <div className="space-y-1 text-[11px]">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Suporte</span>
-                <span className="font-medium">{form.support_email}</span>
+                <span className="font-medium">{supportEmail}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Analytics</span>
-                <span className="font-mono">{form.google_analytics_id || "—"}</span>
+                <span className="font-mono">{googleAnalyticsId || "—"}</span>
               </div>
             </div>
           </div>

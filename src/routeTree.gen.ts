@@ -42,6 +42,7 @@ import { Route as AdminContractsRouteImport } from './routes/admin.contracts'
 import { Route as AdminBrandRouteImport } from './routes/admin.brand'
 import { Route as AdminBillingRouteImport } from './routes/admin.billing'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AdminApiKeysRouteImport } from './routes/admin.api-keys'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as PAgency_slugIndexRouteImport } from './routes/p.$agency_slug.index'
@@ -278,6 +279,11 @@ const AdminBillingRoute = AdminBillingRouteImport.update({
 const AdminAuditRoute = AdminAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminApiKeysRoute = AdminApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
@@ -660,6 +666,7 @@ export interface FileRoutesByFullPath {
   '/client': typeof ClientRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/api-keys': typeof AdminApiKeysRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
@@ -764,6 +771,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/api-keys': typeof AdminApiKeysRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
@@ -867,6 +875,7 @@ export interface FileRoutesById {
   '/client': typeof ClientRouteWithChildren
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/api-keys': typeof AdminApiKeysRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/billing': typeof AdminBillingRoute
   '/admin/brand': typeof AdminBrandRoute
@@ -976,6 +985,7 @@ export interface FileRouteTypes {
     | '/client'
     | '/admin/agencies'
     | '/admin/agents'
+    | '/admin/api-keys'
     | '/admin/audit'
     | '/admin/billing'
     | '/admin/brand'
@@ -1080,6 +1090,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/agencies'
     | '/admin/agents'
+    | '/admin/api-keys'
     | '/admin/audit'
     | '/admin/billing'
     | '/admin/brand'
@@ -1182,6 +1193,7 @@ export interface FileRouteTypes {
     | '/client'
     | '/admin/agencies'
     | '/admin/agents'
+    | '/admin/api-keys'
     | '/admin/audit'
     | '/admin/billing'
     | '/admin/brand'
@@ -1535,6 +1547,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/admin/audit'
       preLoaderRoute: typeof AdminAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/api-keys': {
+      id: '/admin/api-keys'
+      path: '/api-keys'
+      fullPath: '/admin/api-keys'
+      preLoaderRoute: typeof AdminApiKeysRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/agents': {
@@ -2059,6 +2078,7 @@ const AdminAgenciesRouteWithChildren = AdminAgenciesRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAgenciesRoute: typeof AdminAgenciesRouteWithChildren
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminApiKeysRoute: typeof AdminApiKeysRoute
   AdminAuditRoute: typeof AdminAuditRoute
   AdminBillingRoute: typeof AdminBillingRoute
   AdminBrandRoute: typeof AdminBrandRoute
@@ -2074,6 +2094,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgenciesRoute: AdminAgenciesRouteWithChildren,
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminApiKeysRoute: AdminApiKeysRoute,
   AdminAuditRoute: AdminAuditRoute,
   AdminBillingRoute: AdminBillingRoute,
   AdminBrandRoute: AdminBrandRoute,

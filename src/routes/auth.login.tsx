@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/login")({
   head: () => ({
@@ -14,6 +17,13 @@ export const Route = createFileRoute("/auth/login")({
   }),
   component: LoginPage,
 });
+
+const loginSchema = z.object({
+  email: z.string().min(1, "E-mail é obrigatório").email("Digite um e-mail válido"),
+  password: z.string().min(1, "Senha é obrigatória"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 function translateAuthError(msg: string): string {
   if (msg.includes("Invalid login credentials") || msg.includes("invalid_credentials")) {
@@ -36,10 +46,19 @@ function translateAuthError(msg: string): string {
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -108,15 +127,13 @@ function LoginPage() {
     }
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data: LoginFormData) {
     setErrorMsg(null);
-    setSubmitting(true);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
+        email: data.email.trim(),
+        password: data.password,
       });
 
       if (error) {
@@ -128,8 +145,6 @@ function LoginPage() {
     } catch (err: any) {
       console.error("[auth.login] onSubmit caught:", err);
       showError(err?.message || "Erro inesperado ao realizar login. Tente novamente.");
-    } finally {
-      setSubmitting(false);
     }
   }
 
@@ -155,31 +170,21 @@ function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={onSubmit} className="mt-8 space-y-3">
-          <Field label="Email">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">
+          <Field label="Email" error={errors.email?.message}>
             <Input
               id="login-email"
               type="email"
-              required
               autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setErrorMsg(null);
-              }}
+              {...register("email")}
             />
           </Field>
-          <Field label="Senha">
+          <Field label="Senha" error={errors.password?.message}>
             <Input
               id="login-password"
               type="password"
-              required
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setErrorMsg(null);
-              }}
+              {...register("password")}
             />
           </Field>
           <div className="flex justify-end">
@@ -193,10 +198,10 @@ function LoginPage() {
           <PrimaryButton
             id="login-submit"
             type="submit"
-            disabled={submitting}
+            disabled={isSubmitting}
             className="w-full"
           >
-            {submitting ? "Entrando…" : "Entrar"}
+            {isSubmitting ? "Entrando…" : "Entrar"}
           </PrimaryButton>
         </form>
 
@@ -210,3 +215,4 @@ function LoginPage() {
     </div>
   );
 }
+

@@ -18,6 +18,10 @@ import {
   money,
   fmtDate,
 } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 
 export const Route = createFileRoute("/agency/$slug/financial/cash")({
   component: CashPage,
@@ -268,6 +272,18 @@ function Card({
   );
 }
 
+const newRecordSchema = z.object({
+  type: z.enum(["income", "expense"]),
+  status: z.enum(["pending", "paid"]),
+  description: z.string().min(2, "A descrição deve ter pelo menos 2 caracteres"),
+  category: z.string().optional(),
+  paymentMethod: z.string().optional(),
+  amount: z.coerce.number().positive("O valor deve ser maior que zero"),
+  dueDate: z.string().optional(),
+});
+
+type NewRecordFormData = z.infer<typeof newRecordSchema>;
+
 function NewRecord({
   agencyId,
   onClose,
@@ -277,32 +293,38 @@ function NewRecord({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [type, setType] = useState<"income" | "expense">("income");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [dueDate, setDueDate] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [status, setStatus] = useState<"pending" | "paid">("pending");
-  const [submitting, setSubmitting] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<NewRecordFormData>({
+    resolver: zodResolver(newRecordSchema),
+    defaultValues: {
+      type: "income",
+      status: "pending",
+      description: "",
+      category: "",
+      paymentMethod: "",
+      amount: 0,
+      dueDate: "",
+    },
+  });
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
+  async function submit(data: NewRecordFormData) {
     const { data: u } = await supabase.auth.getUser();
     const { error } = await (supabase as any).from("financial_records").insert({
       agency_id: agencyId,
-      type,
-      category: category || null,
-      description: description || null,
-      amount,
-      due_date: dueDate || null,
-      payment_method: paymentMethod || null,
-      status,
-      paid_at: status === "paid" ? new Date().toISOString() : null,
+      type: data.type,
+      category: data.category || null,
+      description: data.description || null,
+      amount: data.amount,
+      due_date: data.dueDate || null,
+      payment_method: data.paymentMethod || null,
+      status: data.status,
+      paid_at: data.status === "paid" ? new Date().toISOString() : null,
       created_by: u.user?.id ?? null,
     });
-    setSubmitting(false);
+
     if (error) return toast.error(error.message);
     toast.success("Lançamento criado");
     onCreated();
@@ -310,64 +332,56 @@ function NewRecord({
 
   return (
     <Sheet onClose={onClose} title="Novo lançamento">
-      <form onSubmit={submit} className="space-y-3">
+      <form onSubmit={handleSubmit(submit)} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Tipo">
-            <Select value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}>
+          <Field label="Tipo" error={errors.type?.message}>
+            <Select {...register("type")}>
               <option value="income">Entrada</option>
               <option value="expense">Saída</option>
             </Select>
           </Field>
-          <Field label="Status">
-            <Select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as "pending" | "paid")}
-            >
+          <Field label="Status" error={errors.status?.message}>
+            <Select {...register("status")}>
               <option value="pending">Pendente</option>
               <option value="paid">Pago</option>
             </Select>
           </Field>
         </div>
-        <Field label="Descrição">
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+        <Field label="Descrição" error={errors.description?.message}>
+          <Textarea {...register("description")} />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Categoria">
+          <Field label="Categoria" error={errors.category?.message}>
             <Input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
               placeholder="Hospedagem, comissão…"
+              {...register("category")}
             />
           </Field>
-          <Field label="Forma de pagamento">
+          <Field label="Forma de pagamento" error={errors.paymentMethod?.message}>
             <Input
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
               placeholder="Pix, cartão…"
+              {...register("paymentMethod")}
             />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Valor (R$)">
+          <Field label="Valor (R$)" error={errors.amount?.message}>
             <Input
               type="number"
-              min={0}
               step="0.01"
-              required
-              value={amount}
-              onChange={(e) => setAmount(+e.target.value || 0)}
+              {...register("amount")}
             />
           </Field>
-          <Field label="Vencimento">
-            <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          <Field label="Vencimento" error={errors.dueDate?.message}>
+            <Input type="date" {...register("dueDate")} />
           </Field>
         </div>
         <div className="flex justify-end gap-2 pt-2">
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Salvando…" : "Criar"}
+          <PrimaryButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Salvando…" : "Criar"}
           </PrimaryButton>
         </div>
       </form>

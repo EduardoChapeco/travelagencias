@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAdminContracts } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, money, StatusBadge, Input, GhostButton } from "@/components/ui/form";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -21,40 +21,7 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-contracts", page, search],
-    queryFn: async () => {
-      let query = supabase
-        .from("contracts")
-        .select(
-          "id, status, total_value, signed_at, created_at, agency_id, trip_id, client_data, certificate",
-          { count: "exact" },
-        );
-
-      if (search) {
-        // Since client_data is JSON, we can't easily ilike on it in PostgREST unless using ->>
-        // But for simplicity, we can search by ID or status. Let's just search by status for now,
-        // or just rely on agency ID if we had it. Since it's a simple search, we will skip deep JSON search.
-        query = query.or(`status.ilike.%${search}%`);
-      }
-
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-
-      const { data, count, error } = await query
-        .order("created_at", { ascending: false })
-        .range(from, to);
-
-      if (error) throw error;
-
-      const aids = Array.from(new Set((data ?? []).map((c) => c.agency_id)));
-      const ags = aids.length
-        ? ((await supabase.from("agencies").select("id, name").in("id", aids)).data ?? [])
-        : [];
-      const amap = new Map(ags.map((a) => [a.id, a.name]));
-      return {
-        data: (data ?? []).map((c) => ({ ...c, agency_name: amap.get(c.agency_id) ?? "—" })),
-        count: count ?? 0,
-      };
-    },
+    queryFn: () => fetchAdminContracts({ search, page, pageSize: PAGE_SIZE }),
     placeholderData: (prev) => prev,
   });
 

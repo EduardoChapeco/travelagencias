@@ -15,7 +15,7 @@ import {
   Activity,
 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAdminOverview } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { fmtDate, money, StatusBadge } from "@/components/ui/form";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -35,105 +35,7 @@ const chartConfig = {
 function Page() {
   const q = useQuery({
     queryKey: ["admin-overview"],
-    queryFn: async () => {
-      const now = new Date();
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-      const last12 = Array.from({ length: 12 }, (_, i) => {
-        const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
-        return { label: d.toLocaleString("pt-BR", { month: "short", year: "2-digit" }), start: d };
-      });
-
-      const [
-        { count: totalAgencies },
-        { count: totalUsers },
-        { count: totalTrips },
-        { count: tripsThisMonth },
-        { count: totalProposals },
-        { count: totalContracts },
-        { count: openTickets },
-        { count: newAgenciesThisMonth },
-        { data: revData },
-        { data: recentAgencies },
-        { data: recentTickets },
-      ] = await Promise.all([
-        supabase.from("agencies").select("id", { count: "exact", head: true }),
-        supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("trips").select("id", { count: "exact", head: true }),
-        supabase
-          .from("trips")
-          .select("id", { count: "exact", head: true })
-          .gte("created_at", monthStart),
-        supabase.from("proposals").select("id", { count: "exact", head: true }),
-        supabase.from("contracts").select("id", { count: "exact", head: true }),
-        supabase
-          .from("support_tickets")
-          .select("id", { count: "exact", head: true })
-          .in("status", ["open", "in_progress"]),
-        supabase
-          .from("agencies")
-          .select("id", { count: "exact", head: true })
-          .gte("created_at", monthStart),
-        supabase.from("financial_records").select("amount, type, status, created_at"),
-        supabase
-          .from("agencies")
-          .select("id, name, slug, created_at, logo_url")
-          .order("created_at", { ascending: false })
-          .limit(5),
-        supabase
-          .from("support_tickets")
-          .select("id, code, title, priority, status, created_at, agency_id")
-          .in("status", ["open", "in_progress"])
-          .order("created_at", { ascending: false })
-          .limit(5),
-      ]);
-
-      // Revenue by month (last 12)
-      const allRecords = revData ?? [];
-      const monthlyRevenue = last12.map(({ label, start }) => {
-        const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
-        const total = allRecords
-          .filter(
-            (r) =>
-              r.type === "income" &&
-              r.status === "paid" &&
-              r.created_at >= start.toISOString() &&
-              r.created_at < end.toISOString(),
-          )
-          .reduce((s, r) => s + Number(r.amount ?? 0), 0);
-        return { label, total };
-      });
-
-      const totalRevenue = allRecords
-        .filter((r) => r.type === "income" && r.status === "paid")
-        .reduce((s, r) => s + Number(r.amount ?? 0), 0);
-
-      const currentMonthRevenue = monthlyRevenue[11]?.total ?? 0;
-      const prevMonthRevenue = monthlyRevenue[10]?.total ?? 0;
-      const revGrowth =
-        prevMonthRevenue > 0
-          ? Math.round(((currentMonthRevenue - prevMonthRevenue) / prevMonthRevenue) * 100)
-          : 0;
-
-      const maxRev = Math.max(...monthlyRevenue.map((m) => m.total), 1);
-
-      return {
-        totalAgencies: totalAgencies ?? 0,
-        totalUsers: totalUsers ?? 0,
-        totalTrips: totalTrips ?? 0,
-        tripsThisMonth: tripsThisMonth ?? 0,
-        totalProposals: totalProposals ?? 0,
-        totalContracts: totalContracts ?? 0,
-        openTickets: openTickets ?? 0,
-        newAgenciesThisMonth: newAgenciesThisMonth ?? 0,
-        totalRevenue,
-        currentMonthRevenue,
-        revGrowth,
-        monthlyRevenue,
-        maxRev,
-        recentAgencies: recentAgencies ?? [],
-        recentTickets: recentTickets ?? [],
-      };
-    },
+    queryFn: fetchAdminOverview,
   });
 
   const d = q.data;

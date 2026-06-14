@@ -4,6 +4,23 @@ import { X, UserPlus, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const passengerSchema = z.object({
+  fullName: z.string().min(3, "Nome completo deve ter no mínimo 3 caracteres"),
+  kind: z.enum(["adult", "child", "infant"]),
+  document: z.string().optional().nullable(),
+  documentType: z.string().optional().nullable(),
+  birthDate: z.string().optional().nullable(),
+  nationality: z.string().optional().nullable(),
+  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+  phone: z.string().optional().nullable(),
+  isLead: z.boolean().default(false),
+});
+
+type PassengerFormData = z.infer<typeof passengerSchema>;
 
 export function NewPassengerSheet({
   tripId,
@@ -16,32 +33,41 @@ export function NewPassengerSheet({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [fullName, setFullName] = useState("");
-  const [kind, setKind] = useState<"adult" | "child" | "infant">("adult");
-  const [document, setDocument] = useState("");
-  const [documentType, setDocumentType] = useState("passport");
-  const [birthDate, setBirthDate] = useState("");
-  const [nationality, setNationality] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [isLead, setIsLead] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PassengerFormData>({
+    resolver: zodResolver(passengerSchema) as any,
+    defaultValues: {
+      fullName: "",
+      kind: "adult",
+      document: "",
+      documentType: "passport",
+      birthDate: "",
+      nationality: "",
+      email: "",
+      phone: "",
+      isLead: false,
+    },
+  });
+
+  async function onSubmit(data: PassengerFormData) {
     setSubmitting(true);
     const { error } = await supabase.from("trip_passengers").insert({
       trip_id: tripId,
       agency_id: agencyId,
-      full_name: fullName,
-      kind,
-      document: document || null,
-      document_type: documentType || null,
-      birth_date: birthDate || null,
-      nationality: nationality || null,
-      email: email || null,
-      phone: phone || null,
-      is_lead_passenger: isLead,
+      full_name: data.fullName,
+      kind: data.kind,
+      document: data.document || null,
+      document_type: data.documentType || null,
+      birth_date: data.birthDate || null,
+      nationality: data.nationality || null,
+      email: data.email || null,
+      phone: data.phone || null,
+      is_lead_passenger: data.isLead,
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
@@ -59,31 +85,26 @@ export function NewPassengerSheet({
       </div>
 
       {/* Content Form */}
-      <form onSubmit={submit} className="flex flex-col">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
         <div className="px-6 py-6 space-y-5">
-          <Field label="Nome Completo *">
+          <Field label="Nome Completo *" error={errors.fullName?.message}>
             <Input
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              {...register("fullName")}
               placeholder="Nome conforme o documento"
               autoFocus
             />
           </Field>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Tipo de Viajante">
-              <Select
-                value={kind}
-                onChange={(e) => setKind(e.target.value as "adult" | "child" | "infant")}
-              >
+            <Field label="Tipo de Viajante" error={errors.kind?.message}>
+              <Select {...register("kind")}>
                 <option value="adult">Adulto</option>
                 <option value="child">Criança (CHD)</option>
                 <option value="infant">Infante (INF)</option>
               </Select>
             </Field>
-            <Field label="Data de Nascimento">
-              <Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
+            <Field label="Data de Nascimento" error={errors.birthDate?.message}>
+              <Input type="date" {...register("birthDate")} />
             </Field>
           </div>
 
@@ -93,44 +114,40 @@ export function NewPassengerSheet({
               Documentação Primária
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Tipo de Documento">
-                <Select value={documentType} onChange={(e) => setDocumentType(e.target.value)}>
+              <Field label="Tipo de Documento" error={errors.documentType?.message}>
+                <Select {...register("documentType")}>
                   <option value="passport">Passaporte</option>
                   <option value="rg">Identidade (RG)</option>
                   <option value="cpf">CPF</option>
                   <option value="cnh">CNH</option>
                 </Select>
               </Field>
-              <Field label="Número do Documento">
+              <Field label="Número do Documento" error={errors.document?.message}>
                 <Input
-                  value={document}
-                  onChange={(e) => setDocument(e.target.value)}
+                  {...register("document")}
                   placeholder="Ex: AB123456"
                 />
               </Field>
             </div>
-            <Field label="Nacionalidade Emissora">
+            <Field label="Nacionalidade Emissora" error={errors.nationality?.message}>
               <Input
-                value={nationality}
-                onChange={(e) => setNationality(e.target.value)}
+                {...register("nationality")}
                 placeholder="Ex: Brasileiro"
               />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Email (Opcional)">
+            <Field label="Email (Opcional)" error={errors.email?.message}>
               <Input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
                 placeholder="passageiro@email.com"
               />
             </Field>
-            <Field label="Telefone (Opcional)">
+            <Field label="Telefone (Opcional)" error={errors.phone?.message}>
               <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                {...register("phone")}
                 placeholder="+55 11 99999-9999"
               />
             </Field>
@@ -139,8 +156,7 @@ export function NewPassengerSheet({
           <label className="flex items-center gap-3 rounded-xl border border-brand/20 bg-brand/5 p-4 cursor-pointer hover:border-brand/40 transition-colors">
             <input
               type="checkbox"
-              checked={isLead}
-              onChange={(e) => setIsLead(e.target.checked)}
+              {...register("isLead")}
               className="h-4 w-4 rounded border-brand/30 bg-surface text-brand focus:ring-brand"
             />
             <div className="flex flex-col">

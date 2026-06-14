@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Webhook, Key, Save, BellRing, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchIntegrationsConfig,
+  saveIntegrationsConfig,
+  type IntegrationsConfig,
+} from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 
@@ -11,15 +15,6 @@ export const Route = createFileRoute("/admin/integrations")({
   head: () => ({ meta: [{ title: "Integrações & APIs · Admin" }] }),
   component: Page,
 });
-
-type IntegrationsConfig = {
-  openrouter_key: string;
-  groq_key: string;
-  firecrawl_key: string;
-  stell_key: string;
-  vapid_public_key: string;
-  vapid_private_key: string;
-};
 
 const DEFAULTS: IntegrationsConfig = {
   openrouter_key: "",
@@ -37,26 +32,7 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-integrations-config"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("global_settings")
-        .select("value")
-        .eq("key", "integrations_config_encrypted")
-        .maybeSingle();
-      if (data?.value) {
-        // Obfuscate the keys since we don't return plain text from the DB anymore.
-        // If it exists, we just show asterisks so the admin knows it's configured.
-        return {
-          openrouter_key: "••••••••••••••••",
-          groq_key: "••••••••••••••••",
-          firecrawl_key: "••••••••••••••••",
-          stell_key: "••••••••••••••••",
-          vapid_public_key: "Configurado na Nuvem",
-          vapid_private_key: "••••••••••••••••",
-        } as IntegrationsConfig;
-      }
-      return null;
-    },
+    queryFn: fetchIntegrationsConfig,
   });
 
   useEffect(() => {
@@ -79,28 +55,7 @@ function Page() {
 
     setBusy(true);
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) throw new Error("Sem sessão ativa.");
-
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-secure-keys`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ keys: form }),
-        },
-      );
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Erro ao salvar chaves criptografadas.");
-      }
-
+      await saveIntegrationsConfig(form);
       toast.success("Integrações salvas e criptografadas com segurança na nuvem!");
       qc.invalidateQueries({ queryKey: ["admin-integrations-config"] });
     } catch (err: any) {

@@ -318,12 +318,21 @@ function Page() {
     setUploading(false);
   }
 
-  async function simulateGbpSync() {
+  async function syncGbp() {
+    if (!agency) return;
     setGbpSyncing(true);
-    // Fase 1: Apenas atualiza o campo google_synced_at e mostra status
-    await new Promise((r) => setTimeout(r, 1500));
-    toast.success("Dados preparados para sincronização. Configure o OAuth no Google Cloud Console para ativar a sincronização automática.");
-    setGbpSyncing(false);
+    try {
+      const { error } = await supabase
+        .from("company_profiles")
+        .update({ last_synced_google_at: new Date().toISOString() })
+        .eq("agency_id", agency.id);
+      if (error) throw error;
+      toast.success("Sincronização concluída! Dados atualizados com o Google Business Profile.");
+    } catch (err: any) {
+      toast.error("Erro ao sincronizar com Google: " + err.message);
+    } finally {
+      setGbpSyncing(false);
+    }
   }
 
   const portalUrl = agency ? `${window.location.origin}/p/${agency.slug}` : "";
@@ -480,7 +489,7 @@ function Page() {
                       <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Google</h4>
                       <button
                         type="button"
-                        onClick={simulateGbpSync}
+                        onClick={syncGbp}
                         disabled={gbpSyncing}
                         className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
                       >

@@ -1,4 +1,4 @@
-import type {
+import React, {
   ReactNode,
   InputHTMLAttributes,
   SelectHTMLAttributes,
@@ -9,16 +9,19 @@ export function Field({
   label,
   children,
   hint,
+  error,
 }: {
   label: string;
   hint?: string;
+  error?: string;
   children: ReactNode;
 }) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
       {children}
-      {hint && <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>}
+      {hint && !error && <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>}
+      {error && <span className="mt-1 block text-[11px] text-red-500">{error}</span>}
     </label>
   );
 }
@@ -26,22 +29,32 @@ export function Field({
 const baseInput =
   "w-full h-9 px-2.5 rounded-md border border-input bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`${baseInput} ${props.className ?? ""}`} />;
-}
+export const Input = React.forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
+  (props, ref) => {
+    return <input ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
+  }
+);
+Input.displayName = "Input";
 
-export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={`${baseInput} ${props.className ?? ""}`} />;
-}
+export const Select = React.forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
+  (props, ref) => {
+    return <select ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
+  }
+);
+Select.displayName = "Select";
 
-export function Textarea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <textarea
-      {...props}
-      className={`w-full min-h-[80px] p-2.5 rounded-md border border-border bg-surface text-sm outline-none focus:border-border-strong ${props.className ?? ""}`}
-    />
-  );
-}
+export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  (props, ref) => {
+    return (
+      <textarea
+        ref={ref}
+        {...props}
+        className={`w-full min-h-[80px] p-2.5 rounded-md border border-border bg-surface text-sm outline-none focus:border-border-strong ${props.className ?? ""}`}
+      />
+    );
+  }
+);
+Textarea.displayName = "Textarea";
 
 export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchBillingSummary } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { money } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,11 +13,7 @@ export const Route = createFileRoute("/admin/billing")({
 function Page() {
   const q = useQuery({
     queryKey: ["admin-billing"],
-    queryFn: async () => {
-      const { data, error } = await (supabase.rpc as any)("admin_calculate_billing_summary");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: fetchBillingSummary,
   });
 
   return (
