@@ -33,7 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const Route = createFileRoute("/agency/$slug/trips")({
+export const Route = createFileRoute("/agency/$slug/trips/")({
   head: () => ({ meta: [{ title: "Viagens · TravelOS" }] }),
   component: TripsList,
 });
