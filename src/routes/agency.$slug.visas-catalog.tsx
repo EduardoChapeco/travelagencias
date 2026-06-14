@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   Field,
   Input,
@@ -27,6 +28,7 @@ function VisasCatalogPage() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/visas-catalog" });
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | Category>("all");
 
@@ -62,6 +64,7 @@ function VisasCatalogPage() {
 
   return (
     <div className="flex h-full flex-col">
+      <ConfirmDialog />
       <div className="p-4 md:p-8">
         <div className="mb-4">
           <Link
@@ -143,7 +146,12 @@ function VisasCatalogPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (confirm("Remover do catálogo?")) removeMut.mutate(req.id);
+                        confirm({
+                          title: "Remover do catálogo?",
+                          description: "Tem certeza de que deseja remover este requisito do catálogo?",
+                          variant: "destructive",
+                          onConfirm: () => removeMut.mutate(req.id),
+                        });
                       }}
                       className="text-muted-foreground hover:text-danger p-0.5"
                     >

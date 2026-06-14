@@ -29,6 +29,8 @@ import {
   fmtDate,
 } from "@/components/ui/form";
 
+import { useConfirm } from "@/hooks/use-confirm";
+
 export const Route = createFileRoute("/agency/$slug/corporate/$rfp_id")({
   head: () => ({ meta: [{ title: "RFP Detail · TravelOS" }] }),
   component: RfpDetailPage,
@@ -40,6 +42,7 @@ function RfpDetailPage() {
   const { slug, rfp_id } = useParams({ from: "/agency/$slug/corporate/$rfp_id" });
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [addingOption, setAddingOption] = useState(false);
   const [newOptTitle, setNewOptTitle] = useState("");
   const [newOptPrice, setNewOptPrice] = useState("");
@@ -95,14 +98,21 @@ function RfpDetailPage() {
   }
 
   function removeOption(id: string) {
-    if (!confirm("Remover opção?")) return;
-    updateMut.mutate({ proposed_options: options.filter((o: any) => o.id !== id) });
+    confirm({
+      title: "Remover opção",
+      description: "Tem certeza de que deseja remover esta opção proposta?",
+      variant: "destructive",
+      onConfirm: () => {
+        updateMut.mutate({ proposed_options: options.filter((o: any) => o.id !== id) });
+      },
+    });
   }
 
   const currentStepIndex = STATUS_STEPS.indexOf(rfp.status);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
+      <ConfirmDialog />
       <div className="p-4 md:p-8">
         <Link
           to="/agency/$slug/corporate"

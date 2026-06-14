@@ -22,6 +22,7 @@ import { useAgency } from "@/lib/agency-context";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: () => ({ meta: [{ title: "Passageiros · TravelOS" }] }),
@@ -32,6 +33,7 @@ function PassengersPage() {
   const { slug, id } = Route.useParams();
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [open, setOpen] = useState(false);
 
   // Estados para Upload & OCR por passageiro
@@ -241,6 +243,7 @@ function PassengersPage() {
 
   return (
     <>
+      <ConfirmDialog />
       <Link
         to="/agency/$slug/trips/$id"
         params={{ slug, id }}
@@ -311,9 +314,12 @@ function PassengersPage() {
                 </div>
                 <button
                   onClick={() => {
-                    if (confirm("Deseja remover este passageiro da viagem?")) {
-                      remove.mutate(p.id);
-                    }
+                    confirm({
+                      title: "Remover passageiro?",
+                      description: `Tem certeza que deseja remover ${p.full_name} desta viagem? Esta ação não pode ser desfeita.`,
+                      variant: "destructive",
+                      onConfirm: () => remove.mutate(p.id),
+                    });
                   }}
                   className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all hover:bg-danger/10 hover:text-danger"
                   title="Remover passageiro"
@@ -429,9 +435,12 @@ function PassengersPage() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  if (confirm("Deseja excluir este documento?")) {
-                                    deleteDoc.mutate(doc.id);
-                                  }
+                                  confirm({
+                                    title: "Excluir documento?",
+                                    description: "Tem certeza que deseja excluir permanentemente este documento?",
+                                    variant: "destructive",
+                                    onConfirm: () => deleteDoc.mutate(doc.id),
+                                  });
                                 }}
                                 className="text-muted-foreground hover:text-danger transition-colors p-0.5"
                                 title="Excluir"

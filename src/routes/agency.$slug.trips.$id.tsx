@@ -22,6 +22,7 @@ import { useAgency } from "@/lib/agency-context";
 import { StatusBadge, fmtDate } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,6 +52,7 @@ function TripLayout() {
   const { agency } = useAgency();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const tripQ = useQuery({
     enabled: !!agency,
@@ -152,6 +154,7 @@ function TripLayout() {
 
   return (
     <div className="flex flex-col h-full w-full pb-10">
+      <ConfirmDialog />
       {/* ── Nav + Ações ──────────────────────────────────────────── */}
       <div className="mb-4 flex items-center justify-between">
         <Link
@@ -218,13 +221,12 @@ function TripLayout() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  if (
-                    window.confirm(
-                      `Excluir a viagem "${t.title}"?\nEsta ação não pode ser desfeita e remove todos os dados associados.`,
-                    )
-                  ) {
-                    delMut.mutate();
-                  }
+                  confirm({
+                    title: "Excluir Viagem?",
+                    description: `Tem certeza de que deseja excluir a viagem "${t.title}"? Esta ação não pode ser desfeita e removerá todos os dados associados.`,
+                    variant: "destructive",
+                    onConfirm: () => delMut.mutate(),
+                  });
                 }}
                 disabled={delMut.isPending}
                 className="cursor-pointer text-rose-600 focus:text-rose-600"

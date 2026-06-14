@@ -20,6 +20,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import {
@@ -108,6 +109,7 @@ function TicketDetail() {
   const { slug, ticket_id } = useParams({ from: "/agency/$slug/support/$ticket_id" });
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [reply, setReply] = useState("");
   const [channel, setChannel] = useState<MsgChannel>("public");
   const [attachUrl, setAttachUrl] = useState<string | null>(null);
@@ -231,9 +233,15 @@ function TicketDetail() {
   }
 
   async function escalateTicket() {
-    if (!confirm("Escalonar para prioridade URGENTE?")) return;
-    update.mutate({ priority: "urgent" });
-    toast.success("Ticket escalonado!");
+    confirm({
+      title: "Escalonar Ticket",
+      description: "Tem certeza que deseja escalonar este ticket para prioridade URGENTE?",
+      variant: "destructive",
+      onConfirm: () => {
+        update.mutate({ priority: "urgent" });
+        toast.success("Ticket escalonado!");
+      },
+    });
   }
 
   if (q.isLoading)
@@ -250,6 +258,7 @@ function TicketDetail() {
 
   return (
     <>
+      <ConfirmDialog />
       <Link
         to="/agency/$slug/support"
         params={{ slug }}

@@ -21,6 +21,7 @@ import {
   Eye,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency } from "@/lib/agency-context";
 import {
   StatusBadge,
@@ -71,6 +72,7 @@ function TripVouchers() {
   const { slug, id: tripId } = Route.useParams();
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [selected, setSelected] = useState<Voucher | null>(null);
   const [creating, setCreating] = useState(false);
@@ -320,6 +322,7 @@ function TripVouchers() {
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (
     <>
+      <ConfirmDialog />
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
         <button
@@ -439,7 +442,12 @@ function TripVouchers() {
               </button>
               <button
                 onClick={() => {
-                  if (confirm("Remover voucher?")) deleteVoucher.mutate(v.id);
+                  confirm({
+                    title: "Excluir voucher?",
+                    description: "Tem certeza que deseja excluir permanentemente este voucher?",
+                    variant: "destructive",
+                    onConfirm: () => deleteVoucher.mutate(v.id),
+                  });
                 }}
                 className="flex h-7 items-center justify-center rounded-md border border-border px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
               >

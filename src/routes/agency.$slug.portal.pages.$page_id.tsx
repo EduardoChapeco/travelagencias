@@ -51,6 +51,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BlockFormEditor } from "@/components/portal/BlockFormEditors";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/$page_id")({
   head: () => ({ meta: [{ title: "Editor de Página · TravelOS" }] }),
@@ -71,6 +72,7 @@ function PageEditorRoute() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { slug, page_id } = useParams({ from: "/agency/$slug/portal/pages/$page_id" });
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const isNew = page_id === "new";
 
@@ -171,18 +173,18 @@ function PageEditorRoute() {
   }
 
   async function revertVersion(v: any) {
-    if (
-      !confirm(
-        "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
-      )
-    )
-      return;
-    setTitle(v.title);
-    setInitialBlocks(v.blocks || []);
-    setMetaTitle(v.seo?.meta_title || "");
-    setMetaDesc(v.seo?.meta_description || "");
-    setTab("content");
-    toast.success("Versão carregada no editor. Salve para confirmar.");
+    confirm({
+      title: "Reverter versão",
+      description: "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
+      onConfirm: () => {
+        setTitle(v.title);
+        setInitialBlocks(v.blocks || []);
+        setMetaTitle(v.seo?.meta_title || "");
+        setMetaDesc(v.seo?.meta_description || "");
+        setTab("content");
+        toast.success("Versão carregada no editor. Salve para confirmar.");
+      },
+    });
   }
 
   return (
@@ -506,6 +508,7 @@ function PageEditorRoute() {
         </div>
       </div>
 
+      <ConfirmDialog />
       <AILandingPageSheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}

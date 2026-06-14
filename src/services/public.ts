@@ -4,16 +4,27 @@ export async function fetchPublicAgencyLayout(slug: string) {
   const { data: agency } = await (supabase as any)
     .rpc("get_public_agency_by_slug", { _slug: slug })
     .maybeSingle();
-  if (!agency) return { agency: null, pages: [] };
+  if (!agency) return { agency: null, pages: [], settings: null };
 
-  const { data: pages } = await supabase
-    .from("portal_pages")
-    .select("slug, title")
-    .eq("agency_id", agency.id)
-    .eq("is_published", true)
-    .order("created_at");
+  const [pagesRes, settingsRes] = await Promise.all([
+    supabase
+      .from("portal_pages")
+      .select("slug, title")
+      .eq("agency_id", agency.id)
+      .eq("is_published", true)
+      .order("created_at"),
+    (supabase as any)
+      .from("portal_settings")
+      .select("*")
+      .eq("agency_id", agency.id)
+      .maybeSingle()
+  ]);
 
-  return { agency, pages: pages || [] };
+  return {
+    agency,
+    pages: pagesRes.data || [],
+    settings: settingsRes.data || null
+  };
 }
 
 export async function fetchPublicAgencyHome(slug: string) {

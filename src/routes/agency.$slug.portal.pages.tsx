@@ -28,6 +28,8 @@ import { StatusBadge } from "@/components/ui/form";
 import { PortalBlockSchema } from "@/lib/cms-schemas";
 import { PortalPagePayloadSchema } from "@/lib/cms-schemas";
 
+import { useConfirm } from "@/hooks/use-confirm";
+
 export const Route = createFileRoute("/agency/$slug/portal/pages")({
   head: () => ({ meta: [{ title: "Páginas do portal · TravelOS" }] }),
   component: PagesPage,
@@ -58,6 +60,7 @@ function PagesPage() {
   const { agency } = useAgency();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const q = useQuery({
     enabled: !!agency,
@@ -92,11 +95,17 @@ function PagesPage() {
   }
 
   async function deletePage(p: PageRow) {
-    if (!confirm(`Tem certeza que deseja excluir a página "${p.title}"?`)) return;
-    const { error } = await supabase.from("portal_pages").delete().eq("id", p.id);
-    if (error) return toast.error(error.message);
-    toast.success("Página excluída");
-    qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+    confirm({
+      title: "Excluir página",
+      description: `Tem certeza que deseja excluir a página "${p.title}"? Esta ação não pode ser desfeita.`,
+      variant: "destructive",
+      onConfirm: async () => {
+        const { error } = await supabase.from("portal_pages").delete().eq("id", p.id);
+        if (error) return toast.error(error.message);
+        toast.success("Página excluída");
+        qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      },
+    });
   }
 
   async function handleDuplicate(p: PageRow) {
@@ -108,6 +117,7 @@ function PagesPage() {
 
   return (
     <>
+      <ConfirmDialog />
       <PageHeader
         title="Páginas do portal"
         description="Construa páginas estáticas usando o editor de blocos dinâmicos."

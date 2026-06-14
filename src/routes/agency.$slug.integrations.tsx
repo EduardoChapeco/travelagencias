@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   KeyRound,
   Plus,
@@ -481,6 +482,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ provider: "", label: "", key_value: "", monthly_limit: "" });
   const [busy, setBusy] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const q = useQuery({
     queryKey: ["agency-api-keys-list", agencyId],
@@ -519,18 +521,25 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
   }
 
   async function remove(id: string) {
-    if (!window.confirm("Remover esta chave?")) return;
-    try {
-      await deleteApiKey(id);
-      toast.success("Chave removida");
-      qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
-    } catch (e: any) {
-      toast.error(e.message);
-    }
+    confirm({
+      title: "Remover esta chave?",
+      description: "Tem certeza de que deseja remover esta chave de API? Esta ação não pode ser desfeita.",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deleteApiKey(id);
+          toast.success("Chave removida");
+          qc.invalidateQueries({ queryKey: ["agency-api-keys-list", agencyId] });
+        } catch (e: any) {
+          toast.error(e.message);
+        }
+      },
+    });
   }
 
   return (
     <div className="mt-5 space-y-4">
+      <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
         Gerencie livremente qualquer chave de API para integrações customizadas. Estas chaves ficam associadas exclusivamente a esta agência.

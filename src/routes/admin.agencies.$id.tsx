@@ -21,6 +21,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { fmtDate, StatusBadge, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/admin/agencies/$id")({
   head: () => ({ meta: [{ title: "Detalhe da agência · Admin" }] }),
@@ -227,165 +228,180 @@ function Page() {
 function DangerZone({ agency, priv, subscription, plans }: any) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   async function logAuditAction(action: string, metadata: any) {
     await logAdminAuditEvent(agency.id, action, metadata);
   }
 
   async function handleProvisionTrial() {
-    if (!confirm("Isso criará uma assinatura Trial Essential para a agência. Continuar?")) return;
-    setBusy(true);
-    const freePlan = plans.find((p: any) => p.sort_order === 1) || plans[0];
+    confirm({
+      title: "Provisionar Trial Essencial",
+      description: "Isso criará uma assinatura Trial Essential para a agência. Continuar?",
+      onConfirm: async () => {
+        setBusy(true);
+        const freePlan = plans.find((p: any) => p.sort_order === 1) || plans[0];
 
-    if (!freePlan) {
-      toast.error("Nenhum plano encontrado para provisionar.");
-      setBusy(false);
-      return;
-    }
+        if (!freePlan) {
+          toast.error("Nenhum plano encontrado para provisionar.");
+          setBusy(false);
+          return;
+        }
 
-    try {
-      await provisionAgencyTrial(agency.id, freePlan.id);
-      await logAuditAction("superadmin_provisioned_trial", { plan_id: freePlan.id });
-      toast.success("Assinatura provisionada.");
-      qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-    setBusy(false);
+        try {
+          await provisionAgencyTrial(agency.id, freePlan.id);
+          await logAuditAction("superadmin_provisioned_trial", { plan_id: freePlan.id });
+          toast.success("Assinatura provisionada.");
+          qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+        setBusy(false);
+      },
+    });
   }
 
   async function handleChangePlan(e: React.ChangeEvent<HTMLSelectElement>) {
     const planId = e.target.value;
     if (!planId) return;
     const planName = plans.find((p: any) => p.id === planId)?.name;
-    if (!confirm(`Tem certeza que deseja forçar a troca para o plano ${planName}?`)) {
-      e.target.value = ""; // reset
-      return;
-    }
-    setBusy(true);
-    try {
-      await forceChangeAgencyPlan(agency.id, planId);
-      await logAuditAction("superadmin_changed_plan", { new_plan_id: planId, plan_name: planName });
-      toast.success("Plano atualizado com sucesso!");
-      qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-    setBusy(false);
-    e.target.value = ""; // reset select
+    const target = e.target;
+    target.value = ""; // reset immediately
+
+    confirm({
+      title: "Forçar Troca de Plano",
+      description: `Tem certeza que deseja forçar a troca para o plano ${planName}?`,
+      onConfirm: async () => {
+        setBusy(true);
+        try {
+          await forceChangeAgencyPlan(agency.id, planId);
+          await logAuditAction("superadmin_changed_plan", { new_plan_id: planId, plan_name: planName });
+          toast.success("Plano atualizado com sucesso!");
+          qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+        setBusy(false);
+      },
+    });
   }
 
   async function handleStatusChange(newStatus: string) {
-    if (
-      !confirm(
-        `ATENÇÃO: Mudar o status para "${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?`,
-      )
-    )
-      return;
-    setBusy(true);
-    try {
-      await forceChangeAgencyStatus(agency.id, newStatus);
-      await logAuditAction("superadmin_changed_status", { new_status: newStatus });
-      toast.success(`Status forçado para ${newStatus}`);
-      qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-    setBusy(false);
+    confirm({
+      title: "Forçar Status da Assinatura",
+      description: `ATENÇÃO: Mudar o status para "${newStatus}" pode bloquear ou liberar o acesso de todos os agentes desta agência. Prosseguir?`,
+      variant: "destructive",
+      onConfirm: async () => {
+        setBusy(true);
+        try {
+          await forceChangeAgencyStatus(agency.id, newStatus);
+          await logAuditAction("superadmin_changed_status", { new_status: newStatus });
+          toast.success(`Status forçado para ${newStatus}`);
+          qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+        setBusy(false);
+      },
+    });
   }
 
   async function handleResetPassword() {
     if (!priv?.email) return toast.error("Agência sem e-mail do proprietário registrado.");
-    if (
-      !confirm(`Isso enviará um link de reset de senha imediatamente para ${priv.email}. Confirma?`)
-    )
-      return;
-    setBusy(true);
-
-    try {
-      await sendOwnerPasswordReset(priv.email);
-      await logAuditAction("superadmin_requested_password_reset", { target_email: priv.email });
-      toast.success("E-mail de recuperação enviado para o proprietário!");
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-    setBusy(false);
+    confirm({
+      title: "Gestão de Acesso",
+      description: `Isso enviará um link de reset de senha imediatamente para ${priv.email}. Confirma?`,
+      onConfirm: async () => {
+        setBusy(true);
+        try {
+          await sendOwnerPasswordReset(priv.email);
+          await logAuditAction("superadmin_requested_password_reset", { target_email: priv.email });
+          toast.success("E-mail de recuperação enviado para o proprietário!");
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+        setBusy(false);
+      },
+    });
   }
 
   return (
-    <section className="rounded-lg border-2 border-danger/30 bg-danger/5 p-4">
-      <div className="flex items-center gap-2 mb-4 text-danger">
-        <ShieldAlert className="h-5 w-5" />
-        <h3 className="font-bold tracking-tight">Zona de Perigo</h3>
-      </div>
-      <p className="text-xs text-danger/80 mb-5 leading-relaxed">
-        Ações destrutivas e forçadas. Todas as ações realizadas aqui são irreversíveis e registradas
-        na trilha de auditoria do sistema.
-      </p>
-
-      {!subscription ? (
-        <div className="space-y-3 border-b border-danger/10 pb-4 mb-4">
-          <div className="text-xs font-semibold text-foreground">Resolver Assinatura Ausente</div>
-          <PrimaryButton onClick={handleProvisionTrial} disabled={busy} className="w-full text-xs">
-            Provisionar Trial Essencial
-          </PrimaryButton>
+    <>
+      <section className="rounded-lg border-2 border-danger/30 bg-danger/5 p-4">
+        <div className="flex items-center gap-2 mb-4 text-danger">
+          <ShieldAlert className="h-5 w-5" />
+          <h3 className="font-bold tracking-tight">Zona de Perigo</h3>
         </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-foreground">Forçar Troca de Plano</label>
-            <select
-              disabled={busy}
-              onChange={handleChangePlan}
-              className="w-full rounded-md border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-brand focus:outline-none"
-              defaultValue=""
-            >
-              <option value="" disabled>
-                Selecione um novo plano...
-              </option>
-              {plans.map((p: any) => (
-                <option key={p.id} value={p.id} disabled={p.id === subscription.plan_id}>
-                  {p.name} {p.id === subscription.plan_id ? "(Atual)" : ""}
+        <p className="text-xs text-danger/80 mb-5 leading-relaxed">
+          Ações destrutivas e forçadas. Todas as ações realizadas aqui são irreversíveis e registradas
+          na trilha de auditoria do sistema.
+        </p>
+
+        {!subscription ? (
+          <div className="space-y-3 border-b border-danger/10 pb-4 mb-4">
+            <div className="text-xs font-semibold text-foreground">Resolver Assinatura Ausente</div>
+            <PrimaryButton onClick={handleProvisionTrial} disabled={busy} className="w-full text-xs">
+              Provisionar Trial Essencial
+            </PrimaryButton>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground">Forçar Troca de Plano</label>
+              <select
+                disabled={busy}
+                onChange={handleChangePlan}
+                className="w-full rounded-md border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Selecione um novo plano...
                 </option>
-              ))}
-            </select>
-          </div>
+                {plans.map((p: any) => (
+                  <option key={p.id} value={p.id} disabled={p.id === subscription.plan_id}>
+                    {p.name} {p.id === subscription.plan_id ? "(Atual)" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className="space-y-1.5 pt-2 border-t border-danger/10">
-            <div className="text-xs font-semibold text-foreground mb-2">
-              Forçar Status da Assinatura
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <GhostButton
-                onClick={() => handleStatusChange("canceled")}
-                disabled={busy || subscription.status === "canceled"}
-                className="text-xs text-danger hover:text-danger hover:bg-danger/10 justify-start"
-              >
-                <Ban className="h-3.5 w-3.5 mr-1" /> Bloquear (Cancel)
-              </GhostButton>
-              <GhostButton
-                onClick={() => handleStatusChange("active")}
-                disabled={busy || subscription.status === "active"}
-                className="text-xs text-success hover:text-success hover:bg-success/10 justify-start"
-              >
-                <AlertTriangle className="h-3.5 w-3.5 mr-1" /> Reativar
-              </GhostButton>
+            <div className="space-y-1.5 pt-2 border-t border-danger/10">
+              <div className="text-xs font-semibold text-foreground mb-2">
+                Forçar Status da Assinatura
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <GhostButton
+                  onClick={() => handleStatusChange("canceled")}
+                  disabled={busy || subscription.status === "canceled"}
+                  className="text-xs text-danger hover:text-danger hover:bg-danger/10 justify-start"
+                >
+                  <Ban className="h-3.5 w-3.5 mr-1" /> Bloquear (Cancel)
+                </GhostButton>
+                <GhostButton
+                  onClick={() => handleStatusChange("active")}
+                  disabled={busy || subscription.status === "active"}
+                  className="text-xs text-success hover:text-success hover:bg-success/10 justify-start"
+                >
+                  <AlertTriangle className="h-3.5 w-3.5 mr-1" /> Reativar
+                </GhostButton>
+              </div>
             </div>
           </div>
+        )}
+
+        <div className="space-y-1.5 pt-4 mt-4 border-t border-danger/10">
+          <div className="text-xs font-semibold text-foreground mb-2">Gestão de Acesso</div>
+          <GhostButton
+            onClick={handleResetPassword}
+            disabled={busy}
+            className="w-full text-xs text-foreground justify-start"
+          >
+            <KeyRound className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+            Enviar Reset de Senha (Owner)
+          </GhostButton>
         </div>
-      )}
-
-      <div className="space-y-1.5 pt-4 mt-4 border-t border-danger/10">
-        <div className="text-xs font-semibold text-foreground mb-2">Gestão de Acesso</div>
-        <GhostButton
-          onClick={handleResetPassword}
-          disabled={busy}
-          className="w-full text-xs text-foreground justify-start"
-        >
-          <KeyRound className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-          Enviar Reset de Senha (Owner)
-        </GhostButton>
-      </div>
-    </section>
+      </section>
+      <ConfirmDialog />
+    </>
   );
 }

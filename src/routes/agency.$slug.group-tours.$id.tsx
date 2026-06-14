@@ -2,6 +2,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, UserPlus, Trash2, Sparkles, Wand2 } from "lucide-react";
+import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -331,6 +332,7 @@ function ItineraryEditor({
   days: ItineraryDay[];
   onUpdate: () => void;
 }) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [adding, setAdding] = useState(false);
   const [dayNum, setDayNum] = useState(days.length + 1);
   const [title, setTitle] = useState("");
@@ -363,8 +365,14 @@ function ItineraryEditor({
   }
 
   async function handleRemove(day_number: number) {
-    if (!confirm("Remover este dia?")) return;
-    await persist(days.filter((d) => d.day_number !== day_number));
+    confirm({
+      title: "Remover este dia?",
+      description: "Tem certeza de que deseja remover este dia do itinerário da excursão?",
+      variant: "destructive",
+      onConfirm: async () => {
+        await persist(days.filter((d) => d.day_number !== day_number));
+      },
+    });
   }
 
   async function generateWithAI() {
@@ -440,6 +448,7 @@ function ItineraryEditor({
 
   return (
     <div className="space-y-4">
+      <ConfirmDialog />
       {/* AI WIZARD */}
       <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 space-y-3 mb-6">
         <div className="flex items-center justify-between">

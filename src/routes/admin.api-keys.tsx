@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import { Plus, Trash2, KeyRound } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton } from "@/components/ui/form";
@@ -27,6 +28,7 @@ function mask(v: string | null | undefined) {
 
 function Page() {
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [form, setForm] = useState({ provider: "", label: "", key_value: "", monthly_limit: "" });
   const [busy, setBusy] = useState(false);
 
@@ -68,20 +70,27 @@ function Page() {
   }
 
   async function remove(id: string) {
-    if (!window.confirm("Remover esta chave global?")) return;
-    try {
-      await deleteGlobalApiKey(id);
-      toast.success("Chave global removida");
-      qc.invalidateQueries({ queryKey: ["admin-global-api-keys"] });
-    } catch (e: any) {
-      toast.error(e.message);
-    }
+    confirm({
+      title: "Remover esta chave global?",
+      description: "Tem certeza de que deseja remover esta chave de API global? Esta ação não pode ser desfeita.",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deleteGlobalApiKey(id);
+          toast.success("Chave global removida");
+          qc.invalidateQueries({ queryKey: ["admin-global-api-keys"] });
+        } catch (e: any) {
+          toast.error(e.message);
+        }
+      },
+    });
   }
 
   const keysList = q.data ?? [];
 
   return (
     <>
+      <ConfirmDialog />
       <PageHeader
         title="Chaves Globais"
         description="Gerencie chaves de API padrão do sistema (Gemini, OpenAI, Resend, etc.) usadas como fallback quando as agências não fornecem chaves próprias."

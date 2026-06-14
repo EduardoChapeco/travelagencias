@@ -22,6 +22,7 @@ export const Route = createFileRoute("/p/$agency_slug/$page_slug")({
   loader: async ({ params }: any) => {
     return { pageSeo: await fetchPublicDynamicPageSeo(params.agency_slug, params.page_slug) };
   },
+  component: DynamicPage,
 });
 
 function DynamicPage() {

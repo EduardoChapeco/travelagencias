@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   Plus,
   Edit2,
@@ -86,6 +87,7 @@ function brl(n: number) {
 
 function Page() {
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [editing, setEditing] = useState<Plan | null>(null);
   const [creating, setCreating] = useState(false);
 
@@ -100,14 +102,20 @@ function Page() {
   const plans: Plan[] = q.data ?? [];
 
   async function handleDelete(id: string) {
-    if (!confirm("Remover este plano?")) return;
-    try {
-      await deletePlan(id);
-      toast.success("Plano removido");
-      qc.invalidateQueries({ queryKey: ["admin-plans"] });
-    } catch (error: any) {
-      toast.error(error.message);
-    }
+    confirm({
+      title: "Remover este plano?",
+      description: "Tem certeza de que deseja remover este plano da plataforma?",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deletePlan(id);
+          toast.success("Plano removido");
+          qc.invalidateQueries({ queryKey: ["admin-plans"] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+      },
+    });
   }
 
   async function handleToggleActive(plan: Plan) {
@@ -122,6 +130,7 @@ function Page() {
 
   return (
     <>
+      <ConfirmDialog />
       <PageHeader
         title="Planos"
         description="Gestão de planos e limites de uso da plataforma."
