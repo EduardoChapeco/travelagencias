@@ -68,7 +68,7 @@ const TEMPLATE_LABELS = {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 function TripVouchers() {
-  const { slug, id: tripId } = useParams({ strict: false }) as { slug: string; id: string };
+  const { slug, id: tripId } = Route.useParams();
   const { agency } = useAgency();
   const qc = useQueryClient();
 

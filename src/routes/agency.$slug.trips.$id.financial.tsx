@@ -84,7 +84,7 @@ const INST_STATUS_TONE: Record<string, "success" | "warning" | "danger" | "neutr
 // ─── Main component ───────────────────────────────────────────────────────────
 
 function TripFinancial() {
-  const { slug, id: tripId } = useParams({ strict: false }) as { slug: string; id: string };
+  const { slug, id: tripId } = Route.useParams();
   const { agency } = useAgency();
   const qc = useQueryClient();
 
