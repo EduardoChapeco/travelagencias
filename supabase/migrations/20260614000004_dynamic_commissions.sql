@@ -31,7 +31,7 @@ CREATE POLICY "agents_read_own_rule" ON public.agent_commission_rules
 -- Trigger para updated_at em agent_commission_rules
 CREATE TRIGGER agent_commission_rules_updated_at
   BEFORE UPDATE ON public.agent_commission_rules
-  FOR EACH ROW EXECUTE FUNCTION moddatetime(updated_at);
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- Alterar trip_commissions para colunas dinâmicas
 ALTER TABLE public.trip_commissions

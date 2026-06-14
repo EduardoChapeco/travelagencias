@@ -29,16 +29,12 @@ CREATE TABLE IF NOT EXISTS client_documents (
 ALTER TABLE client_documents ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "agency_members_access" ON client_documents
-  USING (
-    agency_id IN (
-      SELECT agency_id FROM agency_members WHERE user_id = auth.uid()
-    )
-  );
+  USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Trigger para updated_at
 CREATE TRIGGER client_documents_updated_at
   BEFORE UPDATE ON client_documents
-  FOR EACH ROW EXECUTE FUNCTION moddatetime(updated_at);
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_client_documents_client_id  ON client_documents(client_id);
@@ -120,7 +116,7 @@ CREATE POLICY "public_read" ON destination_info FOR SELECT USING (true);
 -- Trigger para updated_at
 CREATE TRIGGER destination_info_updated_at
   BEFORE UPDATE ON destination_info
-  FOR EACH ROW EXECUTE FUNCTION moddatetime(updated_at);
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 CREATE INDEX IF NOT EXISTS idx_destination_info_slug ON destination_info(slug);
 

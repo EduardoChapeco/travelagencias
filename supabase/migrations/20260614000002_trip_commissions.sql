@@ -41,16 +41,12 @@ CREATE TABLE IF NOT EXISTS trip_commissions (
 ALTER TABLE trip_commissions ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "agency_members_access" ON trip_commissions
-  USING (
-    agency_id IN (
-      SELECT agency_id FROM agency_members WHERE user_id = auth.uid()
-    )
-  );
+  USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Trigger para updated_at
 CREATE TRIGGER trip_commissions_updated_at
   BEFORE UPDATE ON trip_commissions
-  FOR EACH ROW EXECUTE FUNCTION moddatetime(updated_at);
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_trip_commissions_trip_id    ON trip_commissions(trip_id);
