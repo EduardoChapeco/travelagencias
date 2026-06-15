@@ -173,11 +173,11 @@ function RegisterPage() {
                 className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
               >
                 Eu aceito os{" "}
-                <a href="#" className="text-primary hover:underline">
+                <a href="/terms" target="_blank" className="text-primary hover:underline">
                   Termos de Serviço
                 </a>{" "}
                 e a{" "}
-                <a href="#" className="text-primary hover:underline">
+                <a href="/privacy" target="_blank" className="text-primary hover:underline">
                   Política de Privacidade
                 </a>
                 .

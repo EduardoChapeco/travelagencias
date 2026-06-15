@@ -213,12 +213,12 @@ function ClientsPage() {
         title="Clientes"
         description="Base centralizada de clientes da agência."
         actions={
-          <button
+          <PrimaryButton
             onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+            className="flex h-9 items-center gap-1.5 px-3"
           >
             <Plus className="h-3.5 w-3.5" /> Novo cliente
-          </button>
+          </PrimaryButton>
         }
       />
 

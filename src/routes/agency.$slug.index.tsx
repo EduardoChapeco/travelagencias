@@ -331,7 +331,21 @@ function Dashboard() {
   );
 }
 
-function StatCard({ label, value, subtitle, icon: Icon, color, bg }: any) {
+function StatCard({
+  label,
+  value,
+  subtitle,
+  icon: Icon,
+  color,
+  bg,
+}: {
+  label: string;
+  value: string | number;
+  subtitle: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  bg: string;
+}) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-surface p-6  transition-all hover: hover:border-border-strong group">
       <div className="absolute right-0 top-0 h-24 w-24 -translate-y-8 translate-x-8 rounded-full bg-surface-alt opacity-20 transition-transform group-hover:scale-150" />
@@ -363,19 +377,3 @@ function QuickLink({ to, label }: { to: string; label: string }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="rounded-lg border border-border bg-surface p-4">
-      <div className="text-xs font-medium text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold tracking-tight">{value}</div>
-    </div>
-  );
-}
-
-function brl(n: number) {
-  return n.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    maximumFractionDigits: 0,
-  });
-}
