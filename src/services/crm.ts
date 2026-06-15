@@ -227,6 +227,7 @@ export async function createLead(agencyId: string, f: any) {
     estimated_value: f.estimated_value,
     source: f.source || null,
     notes: f.notes || null,
+    custom_fields: f.custom_fields || {},
   });
   if (error) throw error;
 }

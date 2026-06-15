@@ -39,6 +39,27 @@ export function LeadCardView({
   const ownerName =
     users?.find((u) => u.user_id === lead.owner_id)?.user_name?.split(" ")[0] ?? "Sem Dono";
 
+  // Travel Period (Flexible or Specific dates)
+  const interestPeriod = (lead.custom_fields as any)?.interest_period;
+  const formattedDates = lead.travel_start
+    ? `${new Date(lead.travel_start).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}` +
+      (lead.travel_end ? ` a ${new Date(lead.travel_end).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}` : "")
+    : null;
+  const travelPeriod = interestPeriod || formattedDates;
+
+  // Pax Breakdown
+  const adults = lead.pax_adults || 0;
+  const children = lead.pax_children || 0;
+  const infants = lead.pax_infants || 0;
+  let paxBreakdown = `${lead.pax_count || 1} Pax`;
+  if (adults > 0 || children > 0 || infants > 0) {
+    const parts = [];
+    if (adults > 0) parts.push(`${adults} ADT`);
+    if (children > 0) parts.push(`${children} CHD`);
+    if (infants > 0) parts.push(`${infants} INF`);
+    paxBreakdown = parts.join(", ");
+  }
+
   // Calculate checklist stats
   const totalChecklist = lead.checklist?.length || 0;
   const doneChecklist = lead.checklist?.filter((i) => i.done).length || 0;
@@ -123,13 +144,20 @@ export function LeadCardView({
             </div>
           )}
 
-          {/* Destination & Pax */}
-          {lead.destination && (
-            <div className="truncate text-xs font-semibold text-muted-foreground flex items-center gap-1">
-              <MapPin className="h-3 w-3 shrink-0" />
-              <span>
-                {lead.destination} · {lead.pax_adults || lead.pax_count || 1} Pax
-              </span>
+          {/* Destination, Travel Period & Pax */}
+          {(lead.destination || travelPeriod) && (
+            <div className="text-xs font-semibold text-muted-foreground space-y-0.5 pl-1">
+              {lead.destination && (
+                <div className="truncate flex items-center gap-1 text-foreground font-bold">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 text-brand" />
+                  <span>{lead.destination}</span>
+                </div>
+              )}
+              <div className="flex flex-wrap items-center gap-x-1.5 text-[10px] text-muted-foreground pl-4 mt-0.5">
+                {travelPeriod && <span className="font-medium">{travelPeriod}</span>}
+                {travelPeriod && <span>•</span>}
+                <span className="font-semibold text-foreground/80">{paxBreakdown}</span>
+              </div>
             </div>
           )}
 

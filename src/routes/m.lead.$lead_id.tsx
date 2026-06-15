@@ -39,6 +39,7 @@ type PublicLead = {
   lgpd_accepted: boolean;
   agency_name: string;
   agency_logo: string | null;
+  custom_fields?: Record<string, any> | null;
 };
 
 const INTEREST_OPTIONS = [
@@ -130,6 +131,7 @@ function PublicLeadFormPage() {
       autism: form.autism || false,
       health_notes: form.health_notes || "",
       pax_list: form.pax_list || [],
+      custom_fields: form.custom_fields || {},
       // Tracking fields
       click_id,
       utm_source,
@@ -247,6 +249,18 @@ function PublicLeadFormPage() {
                   value={form.destination ?? ""}
                   onChange={(e) => setForm({ ...form, destination: e.target.value })}
                   placeholder="Para onde você deseja ir?"
+                  className="rounded-xl h-10"
+                />
+              </Field>
+
+              <Field label="Período/Mês Flexível de Interesse (Opcional)">
+                <Input
+                  value={(form.custom_fields as any)?.interest_period ?? ""}
+                  onChange={(e) => {
+                    const custom = { ...(form.custom_fields || {}), interest_period: e.target.value };
+                    setForm({ ...form, custom_fields: custom });
+                  }}
+                  placeholder="Ex: Julho/2026, Outubro, Final do ano"
                   className="rounded-xl h-10"
                 />
               </Field>

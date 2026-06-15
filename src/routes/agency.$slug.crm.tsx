@@ -11,8 +11,8 @@ import {
   Textarea,
   PrimaryButton,
   GhostButton,
-  Sheet,
 } from "@/components/ui/form";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useCrmKanban } from "@/hooks/use-crm-kanban";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -430,6 +430,7 @@ const leadSchema = z.object({
   source: z.string().optional().nullable(),
   stage_id: z.string().min(1, "Selecione o estágio do funil"),
   notes: z.string().optional().nullable(),
+  interest_period: z.string().optional().nullable(),
 });
 
 type LeadFormData = z.infer<typeof leadSchema>;
@@ -486,6 +487,7 @@ function NewLeadSheet({
       source: "",
       stage_id: firstStage?.id ?? "",
       notes: "",
+      interest_period: "",
     },
   });
 
@@ -509,8 +511,21 @@ function NewLeadSheet({
   }, [firstStage, setValue]);
 
   async function onSubmit(data: LeadFormData) {
+    const adults = Number(data.pax_adults) || 0;
+    const children = Number(data.pax_children) || 0;
+    const infants = Number(data.pax_infants) || 0;
+    const computedPaxCount = adults + children + infants || 1;
+
+    const payload = {
+      ...data,
+      pax_count: computedPaxCount,
+      custom_fields: {
+        interest_period: data.interest_period || null,
+      },
+    };
+
     try {
-      await createLead(agencyId, data);
+      await createLead(agencyId, payload);
       toast.success("Lead criado com sucesso!");
       onCreated();
     } catch (error: any) {
@@ -519,7 +534,7 @@ function NewLeadSheet({
   }
 
   return (
-    <Sheet onClose={onClose} title="Novo Lead / Oportunidade">
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Lead / Oportunidade" width="clamp(480px, 45vw, 640px)">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2 pb-20">
         
         {/* Seção Cliente */}
@@ -558,9 +573,14 @@ function NewLeadSheet({
             2. Detalhes do Interesse
           </h3>
           
-          <Field label="Destino de Interesse" error={errors.destination?.message}>
-            <Input {...register("destination")} placeholder="Ex: Paris, França" />
-          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Destino de Interesse" error={errors.destination?.message}>
+              <Input {...register("destination")} placeholder="Ex: Paris, Orlando" />
+            </Field>
+            <Field label="Período/Mês Flexível de Interesse" error={errors.interest_period?.message}>
+              <Input {...register("interest_period")} placeholder="Ex: Julho/2026, Outubro" />
+            </Field>
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
             <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
@@ -598,37 +618,27 @@ function NewLeadSheet({
             </Field>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-          >
-            {showAdvanced ? "Ocultar Detalhes Avançados" : "Preencher Datas e Passageiros (Avançado)"}
-          </button>
-
-          {showAdvanced && (
-            <div className="pt-3 border-t border-border space-y-4 animate-in fade-in slide-in-from-top-2">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Ida Prevista" error={errors.travel_start?.message}>
-                  <Input type="date" {...register("travel_start")} />
-                </Field>
-                <Field label="Retorno Previsto" error={errors.travel_end?.message}>
-                  <Input type="date" {...register("travel_end")} />
-                </Field>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <Field label="Adultos" error={errors.pax_adults?.message}>
-                  <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
-                </Field>
-                <Field label="Crianças (2 a 11)" error={errors.pax_children?.message}>
-                  <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
-                </Field>
-                <Field label="Bebês (0 a 2)" error={errors.pax_infants?.message}>
-                  <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
-                </Field>
-              </div>
+          <div className="pt-3 border-t border-border space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Ida Prevista (Se houver data)" error={errors.travel_start?.message}>
+                <Input type="date" {...register("travel_start")} />
+              </Field>
+              <Field label="Retorno Previsto (Se houver data)" error={errors.travel_end?.message}>
+                <Input type="date" {...register("travel_end")} />
+              </Field>
             </div>
-          )}
+            <div className="grid grid-cols-3 gap-4">
+              <Field label="Adultos" error={errors.pax_adults?.message}>
+                <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
+              </Field>
+              <Field label="Crianças (2 a 11)" error={errors.pax_children?.message}>
+                <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
+              </Field>
+              <Field label="Bebês (0 a 2)" error={errors.pax_infants?.message}>
+                <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
+              </Field>
+            </div>
+          </div>
         </div>
 
         {/* Anotações */}
@@ -651,7 +661,7 @@ function NewLeadSheet({
           </PrimaryButton>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }
 
@@ -754,31 +764,13 @@ function StageSettingsModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="flex h-full w-full max-w-xl flex-col overflow-hidden border-l border-border bg-surface animate-in slide-in-from-right duration-300"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-5 border-b border-border flex shrink-0 items-center justify-between bg-surface-alt/30">
-          <div>
-            <h2 className="text-lg font-bold text-foreground">Configurar Funil (Kanban)</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Renomeie, mude cores ou crie novas colunas.
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-full transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto flex-1 space-y-4 bg-surface/50">
-          <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+    <SheetPage isOpen={true} onClose={onClose} title="Configurar Funil (Kanban)" width="clamp(480px, 45vw, 640px)">
+      <div className="flex flex-col h-full justify-between pb-20 space-y-6">
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground -mt-3">
+            Renomeie, mude cores ou crie novas colunas.
+          </p>
+          <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pt-2">
             Colunas do Pipeline
           </div>
 
@@ -868,7 +860,7 @@ function StageSettingsModal({
           </GhostButton>
         </div>
 
-        <div className="px-6 py-4 border-t border-border flex items-center justify-between bg-surface-alt/30">
+        <div className="pt-4 border-t border-border flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
             Nota: Não é possível excluir estágios de sistema (Ganho/Perdido).
           </p>
@@ -915,6 +907,6 @@ function StageSettingsModal({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </SheetPage>
   );
 }

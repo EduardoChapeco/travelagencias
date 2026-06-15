@@ -37,6 +37,7 @@ const leadEditSchema = z.object({
   interest_type: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
   lost_reason: z.string().optional().nullable(),
+  interest_period: z.string().optional().nullable(),
 });
 
 type LeadEditFormData = z.infer<typeof leadEditSchema>;
@@ -75,6 +76,7 @@ export function LeadForm({
       stage_id: lead.stage_id,
       interest_type: lead.interest_type ?? "",
       lost_reason: lead.lost_reason ?? "",
+      interest_period: (lead.custom_fields as any)?.interest_period ?? "",
     },
   });
 
@@ -83,6 +85,11 @@ export function LeadForm({
       .split(",")
       .map((s) => parseInt(s.trim()))
       .filter((n) => !isNaN(n));
+
+    const customFields = {
+      ...(lead.custom_fields || {}),
+      interest_period: data.interest_period || null,
+    };
 
     try {
       await updateLead(lead.id, {
@@ -95,6 +102,7 @@ export function LeadForm({
         pax_adults: data.pax_adults,
         pax_children: data.pax_children,
         pax_infants: data.pax_infants,
+        pax_count: Number(data.pax_adults) + Number(data.pax_children) + Number(data.pax_infants) || 1,
         pax_ages: paxAges,
         estimated_value: data.estimated_value,
         source: data.source || null,
@@ -102,6 +110,7 @@ export function LeadForm({
         stage_id: data.stage_id,
         interest_type: data.interest_type || null,
         lost_reason: data.lost_reason || null,
+        custom_fields: customFields,
       });
       toast.success("Lead atualizado com sucesso!");
       onSaved();
@@ -142,14 +151,21 @@ export function LeadForm({
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Data de início" error={errors.travel_start?.message}>
+        <Field label="Período/Mês Flexível de Interesse" error={errors.interest_period?.message}>
+          <Input
+            {...register("interest_period")}
+            className="rounded-lg h-9"
+            placeholder="Ex: Julho/2026, Outubro"
+          />
+        </Field>
+        <Field label="Data de início (Se houver data)" error={errors.travel_start?.message}>
           <Input
             type="date"
             {...register("travel_start")}
             className="rounded-lg h-9"
           />
         </Field>
-        <Field label="Data de término" error={errors.travel_end?.message}>
+        <Field label="Data de término (Se houver data)" error={errors.travel_end?.message}>
           <Input
             type="date"
             {...register("travel_end")}

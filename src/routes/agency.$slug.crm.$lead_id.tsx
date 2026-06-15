@@ -60,6 +60,7 @@ import {
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/agency/$slug/crm/$lead_id")({
   head: () => ({ meta: [{ title: "Detalhe do Lead · TravelOS" }] }),
@@ -455,7 +456,7 @@ function LeadDetailPage() {
                 <a
                   href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
                   target="_blank"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
                   title="WhatsApp Rápido"
                 >
                   <Send className="h-3.5 w-3.5" /> WhatsApp
@@ -464,7 +465,7 @@ function LeadDetailPage() {
               {lead.phone && (
                 <button
                   onClick={handleShareFormWhatsApp}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                   title="Enviar Formulário via WhatsApp"
                 >
                   <MessageSquare className="h-3.5 w-3.5" /> Enviar Form WA
@@ -472,7 +473,7 @@ function LeadDetailPage() {
               )}
               <button
                 onClick={handleCopyFormLink}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
+                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
                 title="Copiar Link do Formulário"
               >
                 <FileText className="h-3.5 w-3.5" /> Link Form
@@ -480,18 +481,18 @@ function LeadDetailPage() {
               {!lead.client_id ? (
                 <PrimaryButton
                   onClick={() => setConfirmConvertOpen(true)}
-                  className="rounded-full gap-1.5 text-xs font-bold h-9"
+                  className="gap-1.5 text-xs font-bold h-9"
                 >
                   <UserCheck className="h-4 w-4" /> Converter em Cliente
                 </PrimaryButton>
               ) : (
-                <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-full px-4 py-1.5 flex items-center gap-1">
+                <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-md px-4 py-1.5 flex items-center gap-1">
                   <Check className="h-3.5 w-3.5" /> Convertido
                 </span>
               )}
               <GhostButton
                 onClick={() => setEditing((e) => !e)}
-                className="rounded-full h-9 px-4 text-xs font-bold"
+                className="h-9 px-4 text-xs font-bold"
               >
                 {editing ? "Visualizar" : "Editar Campos"}
               </GhostButton>
@@ -511,32 +512,47 @@ function LeadDetailPage() {
             />
           ) : (
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="flex gap-2 border-b border-border mb-6 bg-surface-alt/10 p-1 rounded-xl">
-                <TabsTrigger value="general" className="text-xs font-bold py-2 px-4">
+              <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 mb-6 flex-wrap h-auto gap-x-2 gap-y-1">
+                <TabsTrigger
+                  value="general"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                >
                   Geral
                 </TabsTrigger>
-                <TabsTrigger value="pax" className="text-xs font-bold py-2 px-4">
+                <TabsTrigger
+                  value="pax"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                >
                   Acompanhantes
                 </TabsTrigger>
-                <TabsTrigger value="meetings" className="text-xs font-bold py-2 px-4">
+                <TabsTrigger
+                  value="meetings"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                >
                   Agenda & Lembretes
                 </TabsTrigger>
-                <TabsTrigger value="proposals" className="text-xs font-bold py-2 px-4">
+                <TabsTrigger
+                  value="proposals"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                >
                   Cotações
                 </TabsTrigger>
                 <TabsTrigger
                   value="omnichannel"
-                  className="text-xs font-bold py-2 px-4 flex items-center gap-1"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 bg-transparent hover:text-brand transition-colors"
                 >
                   <MessageSquare className="h-3.5 w-3.5" /> Mensagens
                 </TabsTrigger>
                 <TabsTrigger
                   value="ai_insights"
-                  className="text-xs font-bold py-2 px-4 flex items-center gap-1 text-brand"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 text-brand bg-transparent hover:text-brand transition-colors"
                 >
                   <Sparkles className="h-3.5 w-3.5" /> IA Hunter
                 </TabsTrigger>
-                <TabsTrigger value="timeline" className="text-xs font-bold py-2 px-4">
+                <TabsTrigger
+                  value="timeline"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                >
                   Histórico
                 </TabsTrigger>
               </TabsList>
@@ -1397,172 +1413,162 @@ function LeadDetailPage() {
           )}
 
           {/* Confirm Conversao Modal Dialog */}
-          {confirmConvertOpen && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <div
-                className="w-full max-w-lg bg-surface border border-border rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <div>
-                  <h3 className="text-base font-bold text-foreground">
-                    Confirmar Conversão de Cliente
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba
-                    serão vinculados automaticamente no banco de dados.
-                  </p>
-                </div>
+          <Dialog open={confirmConvertOpen} onOpenChange={setConfirmConvertOpen}>
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Confirmar Conversão de Cliente</DialogTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba
+                  serão vinculados automaticamente no banco de dados.
+                </p>
+              </DialogHeader>
 
-                <div className="space-y-3">
-                  <Field label="Nome Completo *">
+              <div className="space-y-3 mt-4">
+                <Field label="Nome Completo *">
+                  <Input
+                    required
+                    value={clientPayload.full_name}
+                    onChange={(e) =>
+                      setClientPayload({ ...clientPayload, full_name: e.target.value })
+                    }
+                    className="h-9 text-xs"
+                  />
+                </Field>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="CPF / Documento *">
                     <Input
                       required
-                      value={clientPayload.full_name}
+                      placeholder="Apenas números"
+                      value={clientPayload.document}
                       onChange={(e) =>
-                        setClientPayload({ ...clientPayload, full_name: e.target.value })
+                        setClientPayload({ ...clientPayload, document: e.target.value })
                       }
                       className="h-9 text-xs"
                     />
                   </Field>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="CPF / Documento *">
-                      <Input
-                        required
-                        placeholder="Apenas números"
-                        value={clientPayload.document}
-                        onChange={(e) =>
-                          setClientPayload({ ...clientPayload, document: e.target.value })
-                        }
-                        className="h-9 text-xs"
-                      />
-                    </Field>
-                    <Field label="Data de Nascimento">
-                      <Input
-                        type="date"
-                        value={clientPayload.birth_date}
-                        onChange={(e) =>
-                          setClientPayload({ ...clientPayload, birth_date: e.target.value })
-                        }
-                        className="h-9 text-xs"
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="E-mail">
-                      <Input
-                        type="email"
-                        value={clientPayload.email}
-                        onChange={(e) =>
-                          setClientPayload({ ...clientPayload, email: e.target.value })
-                        }
-                        className="h-9 text-xs"
-                      />
-                    </Field>
-                    <Field label="WhatsApp / Telefone">
-                      <Input
-                        value={clientPayload.phone}
-                        onChange={(e) =>
-                          setClientPayload({ ...clientPayload, phone: e.target.value })
-                        }
-                        className="h-9 text-xs"
-                      />
-                    </Field>
-                  </div>
-
-                  {/* Acessibilidade */}
-                  <div className="border border-border p-4 rounded-xl space-y-3 bg-surface-alt/10">
-                    <span className="text-xs font-bold text-foreground block">
-                      Acessibilidade & Cuidados Especiais
-                    </span>
-                    <div className="flex flex-wrap gap-4 text-xs">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={clientPayload.pcd}
-                          onChange={(e) =>
-                            setClientPayload({ ...clientPayload, pcd: e.target.checked })
-                          }
-                          className="h-4 w-4 rounded border-border cursor-pointer"
-                        />
-                        <span>PCD</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={clientPayload.reduced_mobility}
-                          onChange={(e) =>
-                            setClientPayload({
-                              ...clientPayload,
-                              reduced_mobility: e.target.checked,
-                            })
-                          }
-                          className="h-4 w-4 rounded border-border cursor-pointer"
-                        />
-                        <span>Mobilidade Reduzida</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={clientPayload.autism}
-                          onChange={(e) =>
-                            setClientPayload({ ...clientPayload, autism: e.target.checked })
-                          }
-                          className="h-4 w-4 rounded border-border cursor-pointer"
-                        />
-                        <span>Espectro Autista (TEA)</span>
-                      </label>
-                    </div>
-                    <Field label="Comorbidades / Restrições Médicas ou Alimentares">
-                      <Textarea
-                        rows={2}
-                        placeholder="Ex: diabético, intolerância a glúten..."
-                        value={clientPayload.health_notes}
-                        onChange={(e) =>
-                          setClientPayload({ ...clientPayload, health_notes: e.target.value })
-                        }
-                        className="text-xs"
-                      />
-                    </Field>
-                  </div>
+                  <Field label="Data de Nascimento">
+                    <Input
+                      type="date"
+                      value={clientPayload.birth_date}
+                      onChange={(e) =>
+                        setClientPayload({ ...clientPayload, birth_date: e.target.value })
+                      }
+                      className="h-9 text-xs"
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="E-mail">
+                    <Input
+                      type="email"
+                      value={clientPayload.email}
+                      onChange={(e) =>
+                        setClientPayload({ ...clientPayload, email: e.target.value })
+                      }
+                      className="h-9 text-xs"
+                    />
+                  </Field>
+                  <Field label="WhatsApp / Telefone">
+                    <Input
+                      value={clientPayload.phone}
+                      onChange={(e) =>
+                        setClientPayload({ ...clientPayload, phone: e.target.value })
+                      }
+                      className="h-9 text-xs"
+                    />
+                  </Field>
                 </div>
 
-                <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
-                  <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">
-                    Cancelar
-                  </GhostButton>
-                  <PrimaryButton
-                    onClick={async () => {
-                      if (!clientPayload.full_name || !clientPayload.document) {
-                        toast.error("Nome completo e CPF são obrigatórios!");
-                        return;
+                {/* Acessibilidade */}
+                <div className="border border-border p-4 rounded-xl space-y-3 bg-surface-alt/10">
+                  <span className="text-xs font-bold text-foreground block">
+                    Acessibilidade & Cuidados Especiais
+                  </span>
+                  <div className="flex flex-wrap gap-4 text-xs">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={clientPayload.pcd}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, pcd: e.target.checked })
+                        }
+                        className="h-4 w-4 rounded border-border cursor-pointer"
+                      />
+                      <span>PCD</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={clientPayload.reduced_mobility}
+                        onChange={(e) =>
+                          setClientPayload({
+                            ...clientPayload,
+                            reduced_mobility: e.target.checked,
+                          })
+                        }
+                        className="h-4 w-4 rounded border-border cursor-pointer"
+                      />
+                      <span>Mobilidade Reduzida</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={clientPayload.autism}
+                        onChange={(e) =>
+                          setClientPayload({ ...clientPayload, autism: e.target.checked })
+                        }
+                        className="h-4 w-4 rounded border-border cursor-pointer"
+                      />
+                      <span>Espectro Autista (TEA)</span>
+                    </label>
+                  </div>
+                  <Field label="Comorbidades / Restrições Médicas ou Alimentares">
+                    <Textarea
+                      rows={2}
+                      placeholder="Ex: diabético, intolerância a glúten..."
+                      value={clientPayload.health_notes}
+                      onChange={(e) =>
+                        setClientPayload({ ...clientPayload, health_notes: e.target.value })
                       }
-                      try {
-                        await promoteLeadToClient(lead.id, clientPayload);
-                        confetti({
-                          particleCount: 150,
-                          spread: 70,
-                          origin: { y: 0.6 },
-                          colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
-                        });
-                        toast.success("Lead convertido para Cliente com sucesso!");
-                        setConfirmConvertOpen(false);
-                        qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                        qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                      } catch (e: any) {
-                        toast.error(e.message || "Erro na conversão");
-                      }
-                    }}
-                    className="h-9 text-xs"
-                  >
-                    Converter Agora
-                  </PrimaryButton>
+                      className="text-xs"
+                    />
+                  </Field>
                 </div>
               </div>
-            </div>
-          )}
+
+              <div className="flex justify-end gap-2.5 pt-4 border-t border-border mt-4">
+                <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">
+                  Cancelar
+                </GhostButton>
+                <PrimaryButton
+                  onClick={async () => {
+                    if (!clientPayload.full_name || !clientPayload.document) {
+                      toast.error("Nome completo e CPF são obrigatórios!");
+                      return;
+                    }
+                    try {
+                      await promoteLeadToClient(lead.id, clientPayload);
+                      confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
+                      });
+                      toast.success("Lead convertido para Cliente com sucesso!");
+                      setConfirmConvertOpen(false);
+                      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
+                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                    } catch (e: any) {
+                      toast.error(e.message || "Erro na conversão");
+                    }
+                  }}
+                  className="h-9 text-xs"
+                >
+                  Converter Agora
+                </PrimaryButton>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
 
