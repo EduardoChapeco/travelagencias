@@ -113,6 +113,7 @@ import { Route as AgencySlugCorporateRfp_idRouteImport } from './routes/agency.$
 import { Route as AgencySlugClientsIdRouteImport } from './routes/agency.$slug.clients.$id'
 import { Route as AgencySlugBusLayoutsIdRouteImport } from './routes/agency.$slug.bus-layouts.$id'
 import { Route as AgencySlugTripsIdIndexRouteImport } from './routes/agency.$slug.trips.$id.index'
+import { Route as AgencySlugPortalPagesIndexRouteImport } from './routes/agency.$slug.portal.pages.index'
 import { Route as AgencySlugTripsIdVouchersRouteImport } from './routes/agency.$slug.trips.$id.vouchers'
 import { Route as AgencySlugTripsIdPassengersRouteImport } from './routes/agency.$slug.trips.$id.passengers'
 import { Route as AgencySlugTripsIdFinancialRouteImport } from './routes/agency.$slug.trips.$id.financial'
@@ -647,6 +648,12 @@ const AgencySlugTripsIdIndexRoute = AgencySlugTripsIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AgencySlugTripsIdRoute,
 } as any)
+const AgencySlugPortalPagesIndexRoute =
+  AgencySlugPortalPagesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AgencySlugPortalPagesRoute,
+  } as any)
 const AgencySlugTripsIdVouchersRoute =
   AgencySlugTripsIdVouchersRouteImport.update({
     id: '/vouchers',
@@ -794,6 +801,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
   '/agency/$slug/trips/$id/passengers': typeof AgencySlugTripsIdPassengersRoute
   '/agency/$slug/trips/$id/vouchers': typeof AgencySlugTripsIdVouchersRoute
+  '/agency/$slug/portal/pages/': typeof AgencySlugPortalPagesIndexRoute
   '/agency/$slug/trips/$id/': typeof AgencySlugTripsIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -876,7 +884,6 @@ export interface FileRoutesByTo {
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
-  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesRouteWithChildren
   '/agency/$slug/portal/settings': typeof AgencySlugPortalSettingsRoute
   '/agency/$slug/proposals/$id': typeof AgencySlugProposalsIdRouteWithChildren
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
@@ -898,6 +905,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
   '/agency/$slug/trips/$id/passengers': typeof AgencySlugTripsIdPassengersRoute
   '/agency/$slug/trips/$id/vouchers': typeof AgencySlugTripsIdVouchersRoute
+  '/agency/$slug/portal/pages': typeof AgencySlugPortalPagesIndexRoute
   '/agency/$slug/trips/$id': typeof AgencySlugTripsIdIndexRoute
 }
 export interface FileRoutesById {
@@ -1011,6 +1019,7 @@ export interface FileRoutesById {
   '/agency/$slug/trips/$id/financial': typeof AgencySlugTripsIdFinancialRoute
   '/agency/$slug/trips/$id/passengers': typeof AgencySlugTripsIdPassengersRoute
   '/agency/$slug/trips/$id/vouchers': typeof AgencySlugTripsIdVouchersRoute
+  '/agency/$slug/portal/pages/': typeof AgencySlugPortalPagesIndexRoute
   '/agency/$slug/trips/$id/': typeof AgencySlugTripsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -1125,6 +1134,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/trips/$id/financial'
     | '/agency/$slug/trips/$id/passengers'
     | '/agency/$slug/trips/$id/vouchers'
+    | '/agency/$slug/portal/pages/'
     | '/agency/$slug/trips/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1207,7 +1217,6 @@ export interface FileRouteTypes {
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/group-tours/$id'
     | '/agency/$slug/portal/blog'
-    | '/agency/$slug/portal/pages'
     | '/agency/$slug/portal/settings'
     | '/agency/$slug/proposals/$id'
     | '/agency/$slug/proposals/new'
@@ -1229,6 +1238,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/trips/$id/financial'
     | '/agency/$slug/trips/$id/passengers'
     | '/agency/$slug/trips/$id/vouchers'
+    | '/agency/$slug/portal/pages'
     | '/agency/$slug/trips/$id'
   id:
     | '__root__'
@@ -1341,6 +1351,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/trips/$id/financial'
     | '/agency/$slug/trips/$id/passengers'
     | '/agency/$slug/trips/$id/vouchers'
+    | '/agency/$slug/portal/pages/'
     | '/agency/$slug/trips/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -2095,6 +2106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugTripsIdIndexRouteImport
       parentRoute: typeof AgencySlugTripsIdRoute
     }
+    '/agency/$slug/portal/pages/': {
+      id: '/agency/$slug/portal/pages/'
+      path: '/'
+      fullPath: '/agency/$slug/portal/pages/'
+      preLoaderRoute: typeof AgencySlugPortalPagesIndexRouteImport
+      parentRoute: typeof AgencySlugPortalPagesRoute
+    }
     '/agency/$slug/trips/$id/vouchers': {
       id: '/agency/$slug/trips/$id/vouchers'
       path: '/vouchers'
@@ -2320,10 +2338,12 @@ const AgencySlugGroupToursRouteWithChildren =
 
 interface AgencySlugPortalPagesRouteChildren {
   AgencySlugPortalPagesPage_idRoute: typeof AgencySlugPortalPagesPage_idRoute
+  AgencySlugPortalPagesIndexRoute: typeof AgencySlugPortalPagesIndexRoute
 }
 
 const AgencySlugPortalPagesRouteChildren: AgencySlugPortalPagesRouteChildren = {
   AgencySlugPortalPagesPage_idRoute: AgencySlugPortalPagesPage_idRoute,
+  AgencySlugPortalPagesIndexRoute: AgencySlugPortalPagesIndexRoute,
 }
 
 const AgencySlugPortalPagesRouteWithChildren =

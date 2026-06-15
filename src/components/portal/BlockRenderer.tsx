@@ -3,11 +3,77 @@ import { Link } from "@tanstack/react-router";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CheckCircle2, Send, Star, Quote, Play, Instagram, Facebook, Youtube, Linkedin, Phone, ChevronRight, Plane, Mail, AlertCircle, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  Send,
+  Star,
+  Quote,
+  Play,
+  Instagram,
+  Facebook,
+  Youtube,
+  Linkedin,
+  Phone,
+  ChevronRight,
+  Plane,
+  Mail,
+  AlertCircle,
+  Sparkles,
+  Compass,
+  ShieldCheck,
+  Hotel,
+  Users,
+  Leaf,
+  Award,
+  Heart,
+  Globe,
+  MessageSquare,
+  Briefcase,
+  Trees,
+  Crown,
+  Key,
+} from "lucide-react";
 import type { PortalBlock } from "@/lib/cms-types";
 
 // Re-export so existing imports from this path continue to work
 export type { PortalBlock };
+
+export function renderIconByName(name: string, className?: string) {
+  if (!name) return null;
+
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    trip: Compass,
+    trips: Compass,
+    safe: ShieldCheck,
+    hotel: Hotel,
+    union: Users,
+    eco: Leaf,
+    award: Award,
+    awards: Award,
+    lux: Sparkles,
+    flight: Plane,
+    key: Key,
+    care: Heart,
+    world: Globe,
+    places: Globe,
+    clients: Users,
+    chat: MessageSquare,
+    web: Globe,
+    star: Star,
+    insta: Instagram,
+    pack: Briefcase,
+    nature: Trees,
+    vip: Crown,
+  };
+
+  const IconComponent = iconMap[name.toLowerCase().trim()];
+  if (IconComponent) {
+    return <IconComponent className={className || "h-5 w-5"} />;
+  }
+
+  // Fallback if it's an emoji or unmapped string
+  return <span className={className}>{name}</span>;
+}
 
 export function BlockStyleWrapper({ block, children }: { block: PortalBlock; children: React.ReactNode }) {
   const styles = (block as any).styles;
@@ -339,8 +405,8 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                   key={i}
                   className="flex flex-col items-start bg-gradient-to-br from-surface to-surface-alt/30 p-7 rounded-3xl border border-border/80 shadow transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-brand/40 group"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-5 text-2xl group-hover:scale-110 transition-transform">
-                    {item.icon || "*"}
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-5 group-hover:scale-110 transition-transform">
+                    {renderIconByName(item.icon, "h-6 w-6")}
                   </div>
                   <h3 className="text-lg font-bold mb-2 group-hover:text-brand transition-colors">{item.title}</h3>
                   <p className="text-muted-foreground text-xs leading-relaxed">{item.description}</p>
@@ -363,8 +429,8 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                   key={i}
                   className="flex items-center gap-5 bg-surface-alt/15 p-5 rounded-2xl border border-border/40 hover:bg-surface-alt/25 transition-colors"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand text-xl">
-                    {item.icon || "*"}
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                    {renderIconByName(item.icon, "h-5 w-5")}
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
@@ -389,8 +455,8 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                 key={i}
                 className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50 transition-all hover:-translate-y-1"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4 text-2xl">
-                  {item.icon || "*"}
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4">
+                  {renderIconByName(item.icon, "h-6 w-6")}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                 <p className="text-muted-foreground">{item.description}</p>
@@ -604,7 +670,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                 key={i}
                 className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50"
               >
-                <div className="text-2xl font-bold text-brand mb-2">{item.icon || "*"}</div>
+                <div className="text-brand mb-2">{renderIconByName(item.icon, "h-6 w-6")}</div>
                 <div className="text-3xl font-extrabold text-brand mb-1">{item.value}</div>
                 <div className="text-sm text-muted-foreground">{item.label}</div>
               </div>
@@ -744,7 +810,9 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                 onClick={() => handleLinkClick(item.url)}
                 className={baseClasses}
               >
-                <span className="text-xl mr-3">{item.icon}</span>
+                <span className="mr-3 shrink-0 flex items-center justify-center">
+                  {renderIconByName(item.icon, "h-5 w-5")}
+                </span>
                 <span className="flex-1 text-center pr-8">{item.title}</span>
               </a>
             );

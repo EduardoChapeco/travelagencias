@@ -214,7 +214,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                   const newItems = [
                     ...(block.items || []),
                     {
-                      icon: "✨",
+                      icon: "Vip",
                       title: "Novo item",
                       description: "Descrição",
                     },
@@ -522,7 +522,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 >
                   <Input
                     className="w-12 text-center px-1"
-                    placeholder="🌍"
+                    placeholder="Trips"
                     value={item.icon || ""}
                     onChange={(e) => {
                       const arr = [...(block.items || [])];
@@ -567,7 +567,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                   updateBlock(block.id, {
                     items: [
                       ...(block.items || []),
-                      { icon: "📊", value: "0+", label: "Novo número" },
+                      { icon: "Trips", value: "0+", label: "Novo número" },
                     ],
                   })
                 }
@@ -757,7 +757,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 <div className="grid grid-cols-[auto_1fr_auto] gap-2 items-center">
                   <Input
                     className="w-12 text-center px-1"
-                    placeholder="💬"
+                    placeholder="Chat"
                     value={item.icon || ""}
                     onChange={(e) => {
                       const arr = [...(block.items || [])];
@@ -818,7 +818,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 updateBlock(block.id, {
                   items: [
                     ...(block.items || []),
-                    { icon: "🔗", title: "Novo Link", url: "", highlight: false },
+                    { icon: "Chat", title: "Novo Link", url: "", highlight: false },
                   ],
                 })
               }

@@ -56,8 +56,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BlockFormEditor } from "@/components/portal/BlockFormEditors";
-import { useConfirm } from "@/hooks/use-confirm";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
+import { SheetPage } from "@/components/ui/sheet";
 
 import {
   DndContext,
@@ -155,7 +155,8 @@ function PageEditorRoute() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { slug, page_id } = useParams({ from: "/agency/$slug/portal/pages/$page_id" });
-  const { confirm, ConfirmDialog } = useConfirm();
+  const [applyConfirmTemplate, setApplyConfirmTemplate] = useState<any | null>(null);
+  const [revertConfirmVersion, setRevertConfirmVersion] = useState<any | null>(null);
 
   const isNew = page_id === "new";
 
@@ -288,45 +289,15 @@ function PageEditorRoute() {
     }
   }
 
-  async function revertVersion(v: any) {
-    confirm({
-      title: "Reverter versão",
-      description:
-        "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
-      onConfirm: () => {
-        setTitle(v.title);
-        setInitialBlocks(v.blocks || []);
-        setMetaTitle(v.seo?.meta_title || "");
-        setMetaDesc(v.seo?.meta_description || "");
-        setTab("content");
-        toast.success("Versão carregada no editor. Salve para confirmar.");
-      },
-    });
+  function revertVersion(v: any) {
+    setRevertConfirmVersion(v);
   }
 
-  async function handleApplyTemplate(templateId: string) {
+  function handleApplyTemplate(templateId: string) {
     const tpl = getTemplateById(templateId);
-    if (!tpl) return;
-
-    confirm({
-      title: "Aplicar Template",
-      description: `Tem certeza que deseja aplicar o template "${tpl.name}"? Todos os blocos atuais serão substituídos pela estrutura desse template.`,
-      onConfirm: () => {
-        const freshBlocks = tpl.blocks.map((b) => {
-          const deepCopiedBlock = JSON.parse(JSON.stringify(b));
-          return {
-            ...deepCopiedBlock,
-            id: `${b.type}-${Math.random().toString(36).substring(2, 9)}`,
-          };
-        });
-        setBlocks(freshBlocks as any);
-        setTemplate(tpl.id); // Guardar o ID real do template no banco
-        if (!pageSlug) {
-          setPageSlug(tpl.id);
-        }
-        toast.success(`Template "${tpl.name}" aplicado!`);
-      },
-    });
+    if (tpl) {
+      setApplyConfirmTemplate(tpl);
+    }
   }
 
   return (
@@ -746,7 +717,94 @@ function PageEditorRoute() {
         </div>
       </div>
 
-      <ConfirmDialog />
+      {/* Visual template application confirm Sheet */}
+      <SheetPage
+        isOpen={!!applyConfirmTemplate}
+        onClose={() => setApplyConfirmTemplate(null)}
+        title="Aplicar Template"
+        width="400px"
+      >
+        <div className="space-y-4 py-2">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Tem certeza que deseja aplicar o template <strong>{applyConfirmTemplate?.name}</strong>?
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Todos os blocos de seções atuais no canvas serão substituídos pela estrutura desse template.
+          </p>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
+            <GhostButton
+              type="button"
+              onClick={() => setApplyConfirmTemplate(null)}
+            >
+              Cancelar
+            </GhostButton>
+            <PrimaryButton
+              type="button"
+              onClick={() => {
+                if (!applyConfirmTemplate) return;
+                const freshBlocks = applyConfirmTemplate.blocks.map((b: any) => {
+                  const deepCopiedBlock = JSON.parse(JSON.stringify(b));
+                  return {
+                    ...deepCopiedBlock,
+                    id: `${b.type}-${Math.random().toString(36).substring(2, 9)}`,
+                  };
+                });
+                setBlocks(freshBlocks as any);
+                setTemplate(applyConfirmTemplate.id);
+                if (!pageSlug) {
+                  setPageSlug(applyConfirmTemplate.id);
+                }
+                setApplyConfirmTemplate(null);
+                toast.success(`Template "${applyConfirmTemplate.name}" aplicado!`);
+              }}
+            >
+              Aplicar Template
+            </PrimaryButton>
+          </div>
+        </div>
+      </SheetPage>
+
+      {/* Visual version reversion confirm Sheet */}
+      <SheetPage
+        isOpen={!!revertConfirmVersion}
+        onClose={() => setRevertConfirmVersion(null)}
+        title="Reverter Versão"
+        width="400px"
+      >
+        <div className="space-y-4 py-2">
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Tem certeza que deseja reverter a página para a versão salva em{" "}
+            <strong>{revertConfirmVersion && new Date(revertConfirmVersion.created_at).toLocaleString()}</strong>?
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Todo o conteúdo atual no editor será substituído pelo conteúdo desta versão.
+          </p>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
+            <GhostButton
+              type="button"
+              onClick={() => setRevertConfirmVersion(null)}
+            >
+              Cancelar
+            </GhostButton>
+            <PrimaryButton
+              type="button"
+              onClick={() => {
+                if (!revertConfirmVersion) return;
+                setTitle(revertConfirmVersion.title);
+                setInitialBlocks(revertConfirmVersion.blocks || []);
+                setMetaTitle(revertConfirmVersion.seo?.meta_title || "");
+                setMetaDesc(revertConfirmVersion.seo?.meta_description || "");
+                setTab("content");
+                setRevertConfirmVersion(null);
+                toast.success("Versão carregada no editor. Salve para confirmar.");
+              }}
+            >
+              Confirmar Reversão
+            </PrimaryButton>
+          </div>
+        </div>
+      </SheetPage>
+
       <AILandingPageSheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}
