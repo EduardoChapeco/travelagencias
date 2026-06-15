@@ -982,7 +982,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
 
     // ── NEWSLETTER ─────────────────────────────────────────────────
     case "newsletter":
-      return <NewsletterBlock block={b} handleLinkClick={handleLinkClick} />;
+      return <NewsletterBlock block={b} handleLinkClick={handleLinkClick} agencySlug={agencySlug} />;
 
     default:
       return null;
@@ -992,19 +992,46 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
 function NewsletterBlock({
   block,
   handleLinkClick,
+  agencySlug,
 }: {
   block: any;
   handleLinkClick: (url: string) => void;
+  agencySlug: string;
 }) {
   const [emailInput, setEmailInput] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleNewsSubmit = (e: React.FormEvent) => {
+  const handleNewsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailInput.trim()) return;
-    toast.success("E-mail cadastrado com sucesso! Obrigado por se inscrever.");
-    setEmailInput("");
-    setSubscribed(true);
+    setLoading(true);
+    try {
+      const { error } = await (supabase.rpc as any)("submit_public_lead", {
+        _agency_slug: agencySlug,
+        _name: "Inscrito Newsletter",
+        _email: emailInput.trim(),
+        _phone: null,
+        _destination: null,
+        _travel_start: null,
+        _travel_end: null,
+        _pax_count: 1,
+        _estimated_value: 0,
+        _source: "newsletter",
+        _notes: "Inscrição de newsletter capturada pelo portal da agência",
+      });
+      if (error) {
+        toast.error("Erro ao se inscrever: " + error.message);
+      } else {
+        toast.success("E-mail cadastrado com sucesso! Obrigado por se inscrever.");
+        setEmailInput("");
+        setSubscribed(true);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erro inesperado ao cadastrar e-mail");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -1026,6 +1053,7 @@ function NewsletterBlock({
             <input
               type="email"
               required
+              disabled={loading}
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
               placeholder={block.placeholder || "Seu melhor e-mail"}
@@ -1033,9 +1061,10 @@ function NewsletterBlock({
             />
             <button
               type="submit"
-              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
+              disabled={loading}
+              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer disabled:opacity-50"
             >
-              {block.button_label || "Cadastrar"}
+              {loading ? "Cadastrando..." : (block.button_label || "Cadastrar")}
             </button>
           </form>
         )}

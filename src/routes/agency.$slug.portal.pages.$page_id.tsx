@@ -44,6 +44,7 @@ import {
   fetchPortalPageVersions,
   savePortalPageDraft,
   publishPortalPage,
+  revertPortalPageVersion,
 } from "@/services/portal";
 import { useBlockEditor } from "@/hooks/use-block-editor";
 import { BLOCK_LABELS, BLOCK_DEFAULTS, PortalBlockType } from "@/lib/cms-types";
@@ -256,7 +257,11 @@ function PageEditorRoute() {
     try {
       const newPageId = await saveDraftInternal();
       toast.success("Rascunho salvo");
+      
+      const targetPageId = isNew ? newPageId : page_id;
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      qc.invalidateQueries({ queryKey: ["portal-page", targetPageId] });
+      qc.invalidateQueries({ queryKey: ["portal-page-versions", targetPageId] });
 
       if (isNew && newPageId) {
         navigate({
@@ -281,6 +286,8 @@ function PageEditorRoute() {
 
       toast.success("Página publicada e versão salva!");
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      qc.invalidateQueries({ queryKey: ["portal-page", newPageId] });
+      qc.invalidateQueries({ queryKey: ["portal-page-versions", newPageId] });
       navigate({ to: "/agency/$slug/portal/pages", params: { slug } });
     } catch (err: any) {
       toast.error(err.message || "Erro ao publicar");
@@ -788,18 +795,31 @@ function PageEditorRoute() {
             </GhostButton>
             <PrimaryButton
               type="button"
-              onClick={() => {
+              disabled={submitting}
+              onClick={async () => {
                 if (!revertConfirmVersion) return;
-                setTitle(revertConfirmVersion.title);
-                setInitialBlocks(revertConfirmVersion.blocks || []);
-                setMetaTitle(revertConfirmVersion.seo?.meta_title || "");
-                setMetaDesc(revertConfirmVersion.seo?.meta_description || "");
-                setTab("content");
-                setRevertConfirmVersion(null);
-                toast.success("Versão carregada no editor. Salve para confirmar.");
+                setSubmitting(true);
+                try {
+                  await revertPortalPageVersion(page_id, revertConfirmVersion.id);
+                  toast.success("Página revertida para a versão selecionada!");
+                  
+                  // Invalidate cache immediately
+                  await qc.invalidateQueries({ queryKey: ["portal-page", page_id] });
+                  await qc.invalidateQueries({ queryKey: ["portal-page-versions", page_id] });
+                  
+                  // Reset initialization flag to force reload of fresh values
+                  setHasInitialized(false);
+                  
+                  setTab("content");
+                  setRevertConfirmVersion(null);
+                } catch (err: any) {
+                  toast.error(err.message || "Erro ao reverter versão");
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
-              Confirmar Reversão
+              {submitting ? "Revertendo..." : "Confirmar Reversão"}
             </PrimaryButton>
           </div>
         </div>

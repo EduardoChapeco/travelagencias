@@ -18,8 +18,8 @@ export type PageVersionRow = {
   id: string;
   page_id: string;
   title: string;
-  slug: string;
-  template: string;
+  slug: string | null;
+  template: string | null;
   blocks: PortalBlock[];
   seo: any;
   created_at: string;
@@ -102,5 +102,13 @@ export async function savePortalPageDraft(
 
 export async function publishPortalPage(pageId: string): Promise<void> {
   const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: pageId });
+  if (error) throw new Error(error.message);
+}
+
+export async function revertPortalPageVersion(pageId: string, versionId: string): Promise<void> {
+  const { error } = await (supabase as any).rpc("revert_portal_page", {
+    p_page_id: pageId,
+    p_version_id: versionId,
+  });
   if (error) throw new Error(error.message);
 }
