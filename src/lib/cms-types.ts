@@ -194,6 +194,255 @@ export type PortalBlock =
       placeholder?: string;
       button_label?: string;
       styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "tours_carousel";
+      title: string;
+      subtitle: string;
+      max_items: number;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "featured_destination_filter";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "team_widget";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "live_reviews";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "whatsapp_departments";
+      title: string;
+      departments: { name: string; phone: string; icon: string; message: string }[];
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "countdown_tour";
+      tour_id: string;
+      title: string;
+      subtitle: string;
+      button_label: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "social_links_row";
+      facebook?: string;
+      instagram?: string;
+      youtube?: string;
+      whatsapp?: string;
+      linkedin?: string;
+      tiktok?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "exchange_rates";
+      title: string;
+      currencies: string[];
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "dynamic_map_route";
+      title: string;
+      tour_id?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "agency_vouchers";
+      title: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "weather_forecast";
+      title?: string;
+      tour_id?: string;
+      city?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "itinerary_timeline";
+      title?: string;
+      tour_id: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "lead_capture_callback";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "promotional_banner";
+      title: string;
+      discount_code: string;
+      expiration_date?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "payment_gateways_display";
+      title: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "agent_profile_card";
+      agent_id: string;
+      cta_label: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "travel_tips_faq";
+      category?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "live_tours_map";
+      max_items: number;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "gift_cards_store";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "corporate_rfp_form";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "client_document_upload";
+      title: string;
+      instructions: string;
+      document_type: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "biolink_newsletter_box";
+      placeholder: string;
+      button_label: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "live_sales_counter";
+      duration_sec: number;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "visa_checker";
+      title: string;
+      default_nationality?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "insurance_simulator";
+      title: string;
+      description: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "reviews_submission_form";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "whatsapp_floating_bubble";
+      agent_id: string;
+      position: "left" | "right";
+      message: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "custom_package_lead_builder";
+      title: string;
+      subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "news_announcements_ticker";
+      title: string;
+      limit: number;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "faq_category_accordion";
+      title: string;
+      category: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "agency_badges_trust";
+      title: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "currency_calculator";
+      title: string;
+      default_from: string;
+      default_to: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "interactive_flight_tracker";
+      title: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "biolink_qr_code_share";
+      title: string;
+      qr_data_url?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "client_boarding_timeline";
+      title: string;
+      styles?: SectionStyle;
     };
 
 /** All block type literals — useful for type-guards and addBlock() */
@@ -223,6 +472,41 @@ export const BLOCK_LABELS: Record<PortalBlockType, string> = {
   featured_destinations: "Destinos em Destaque",
   social_links: "Redes Sociais",
   newsletter: "Newsletter / Captura",
+  tours_carousel: "Carrossel de Pacotes",
+  featured_destination_filter: "Grade de Destinos Filtráveis",
+  team_widget: "Nossa Equipe / Consultores",
+  live_reviews: "Depoimentos Reais (DB)",
+  whatsapp_departments: "Canais de WhatsApp",
+  countdown_tour: "Contador Regressivo (Pacote)",
+  social_links_row: "Redes Sociais (Ícones)",
+  exchange_rates: "Cotações de Moedas",
+  dynamic_map_route: "Mapa do Roteiro Ativo",
+  agency_vouchers: "Vouchers & Bilhetes",
+  weather_forecast: "Previsão do Tempo",
+  itinerary_timeline: "Roteiro Dia a Dia",
+  lead_capture_callback: "Solicitar Ligação",
+  promotional_banner: "Banner de Cupom",
+  payment_gateways_display: "Formas de Pagamento",
+  agent_profile_card: "Perfil do Consultor",
+  travel_tips_faq: "Dicas de Viagem (FAQ)",
+  live_tours_map: "Mapa dos Grupos",
+  gift_cards_store: "Cartão Presente",
+  corporate_rfp_form: "RFP Corporativa (B2B)",
+  client_document_upload: "Envio de Documentos",
+  biolink_newsletter_box: "Newsletter Biolink",
+  live_sales_counter: "Contador de Vendas",
+  visa_checker: "Consultor de Vistos",
+  insurance_simulator: "Simulador de Seguro Viagem",
+  reviews_submission_form: "Enviar Avaliação",
+  whatsapp_floating_bubble: "WhatsApp Flutuante (Consultor)",
+  custom_package_lead_builder: "Montar Pacote Personalizado",
+  news_announcements_ticker: "Ticker de Notícias / Novidades",
+  faq_category_accordion: "FAQ por Categoria",
+  agency_badges_trust: "Selos de Confiança & Garantia",
+  currency_calculator: "Calculadora de Câmbio",
+  interactive_flight_tracker: "Status de Voos Interativo",
+  biolink_qr_code_share: "QR Code & Compartilhar",
+  client_boarding_timeline: "Cronograma de Embarque",
 };
 
 /** Default empty values for each block type */
@@ -432,5 +716,186 @@ export const BLOCK_DEFAULTS: {
     subtitle: "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros e cupons de desconto.",
     placeholder: "Seu melhor e-mail",
     button_label: "Cadastrar",
+  },
+  tours_carousel: {
+    type: "tours_carousel",
+    title: "Nossos Pacotes de Viagem",
+    subtitle: "Deslize e conheça as próximas saídas organizadas em grupo.",
+    max_items: 8,
+  },
+  featured_destination_filter: {
+    type: "featured_destination_filter",
+    title: "Destinos dos Sonhos",
+    subtitle: "Filtre nossas saídas pelas regiões mais procuradas da temporada.",
+  },
+  team_widget: {
+    type: "team_widget",
+    title: "Fale com Nossos Especialistas",
+    subtitle: "Nossos consultores estão prontos para planejar a sua viagem sob medida.",
+  },
+  live_reviews: {
+    type: "live_reviews",
+    title: "O que nossos viajantes dizem",
+    subtitle: "Avaliações reais enviadas por quem já viajou com a Excetur.",
+  },
+  whatsapp_departments: {
+    type: "whatsapp_departments",
+    title: "Canais de Atendimento Rápido",
+    departments: [
+      { name: "Vendas / Orçamentos", phone: "5549999999999", icon: "chat", message: "Olá! Gostaria de fazer um orçamento de viagem." },
+      { name: "Suporte Operacional", phone: "5549999999999", icon: "safe", message: "Olá! Preciso de ajuda com minha viagem contratada." },
+      { name: "Financeiro", phone: "5549999999999", icon: "key", message: "Olá! Gostaria de falar sobre faturamento ou pagamentos." }
+    ],
+  },
+  countdown_tour: {
+    type: "countdown_tour",
+    tour_id: "",
+    title: "Últimas Vagas Disponíveis!",
+    subtitle: "Garanta seu lugar antes que o cronômetro expire.",
+    button_label: "Quero Garantir Minha Vaga",
+  },
+  social_links_row: {
+    type: "social_links_row",
+    instagram: "https://instagram.com",
+    whatsapp: "5549999999999",
+    facebook: "",
+    youtube: "",
+    linkedin: "",
+    tiktok: "",
+  },
+  exchange_rates: {
+    type: "exchange_rates",
+    title: "Conversor & Cotações do Dia",
+    currencies: ["USD", "EUR", "GBP", "ARS"],
+  },
+  dynamic_map_route: {
+    type: "dynamic_map_route",
+    title: "Roteiro da Viagem no Mapa",
+    tour_id: "",
+  },
+  agency_vouchers: {
+    type: "agency_vouchers",
+    title: "Seus Vouchers de Viagem",
+  },
+  weather_forecast: {
+    type: "weather_forecast",
+    tour_id: "",
+    city: "Chapecó, SC",
+  },
+  itinerary_timeline: {
+    type: "itinerary_timeline",
+    tour_id: "",
+  },
+  lead_capture_callback: {
+    type: "lead_capture_callback",
+    title: "Queremos te ligar!",
+    subtitle: "Deixe seu telefone e entraremos em contato em até 15 minutos.",
+  },
+  promotional_banner: {
+    type: "promotional_banner",
+    title: "Use o cupom e ganhe 10% OFF na primeira viagem!",
+    discount_code: "BEMVINDO10",
+    expiration_date: "",
+  },
+  payment_gateways_display: {
+    type: "payment_gateways_display",
+    title: "Opções de Pagamento Facilitado",
+  },
+  agent_profile_card: {
+    type: "agent_profile_card",
+    agent_id: "",
+    cta_label: "Agendar Horário",
+  },
+  travel_tips_faq: {
+    type: "travel_tips_faq",
+    category: "Geral",
+  },
+  live_tours_map: {
+    type: "live_tours_map",
+    max_items: 4,
+  },
+  gift_cards_store: {
+    type: "gift_cards_store",
+    title: "Dê Viagem de Presente",
+    subtitle: "Adquira um vale-viagem personalizado para quem você ama.",
+  },
+  corporate_rfp_form: {
+    type: "corporate_rfp_form",
+    title: "Solicitação de Viagem Corporativa (RFP)",
+    subtitle: "Envie a demanda de viagem ou evento da sua empresa.",
+  },
+  client_document_upload: {
+    type: "client_document_upload",
+    title: "Envio de Documentos de Embarque",
+    instructions: "Faça o upload do seu passaporte ou RG frente e verso para podermos emitir seus vouchers.",
+    document_type: "Passport",
+  },
+  biolink_newsletter_box: {
+    type: "biolink_newsletter_box",
+    placeholder: "Inscreva seu e-mail...",
+    button_label: "Inscrever",
+  },
+  live_sales_counter: {
+    type: "live_sales_counter",
+    duration_sec: 10,
+  },
+  visa_checker: {
+    type: "visa_checker",
+    title: "Consulte Necessidade de Visto de Entrada",
+    default_nationality: "Brasil",
+  },
+  insurance_simulator: {
+    type: "insurance_simulator",
+    title: "Simule e Contrate seu Seguro Viagem",
+    description: "Viaje protegido com assistência médica global, extravio de bagagem e suporte 24h.",
+  },
+  reviews_submission_form: {
+    type: "reviews_submission_form",
+    title: "Deixe sua Avaliação",
+    subtitle: "Sua opinião é muito importante para nós. Compartilhe sua experiência de viagem!",
+  },
+  whatsapp_floating_bubble: {
+    type: "whatsapp_floating_bubble",
+    agent_id: "",
+    position: "right",
+    message: "Olá! Como posso te ajudar hoje?",
+  },
+  custom_package_lead_builder: {
+    type: "custom_package_lead_builder",
+    title: "Monte sua Viagem Personalizada",
+    subtitle: "Diga-nos para onde quer ir e nós cuidamos de todo o roteiro.",
+  },
+  news_announcements_ticker: {
+    type: "news_announcements_ticker",
+    title: "Últimas Atualizações & Avisos",
+    limit: 5,
+  },
+  faq_category_accordion: {
+    type: "faq_category_accordion",
+    title: "Dúvidas Frequentes",
+    category: "Geral",
+  },
+  agency_badges_trust: {
+    type: "agency_badges_trust",
+    title: "Garantia e Credibilidade Excetur",
+  },
+  currency_calculator: {
+    type: "currency_calculator",
+    title: "Calculadora de Conversão de Moedas",
+    default_from: "USD",
+    default_to: "BRL",
+  },
+  interactive_flight_tracker: {
+    type: "interactive_flight_tracker",
+    title: "Rastreamento & Status de Voos",
+  },
+  biolink_qr_code_share: {
+    type: "biolink_qr_code_share",
+    title: "Compartilhe este Biolink",
+    qr_data_url: "",
+  },
+  client_boarding_timeline: {
+    type: "client_boarding_timeline",
+    title: "Cronograma de Voo & Embarque",
   }
 };

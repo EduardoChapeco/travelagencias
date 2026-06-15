@@ -25,6 +25,25 @@ import {
   Settings,
   Eye,
   Globe,
+  Users,
+  Clock,
+  Coins,
+  MessageSquare,
+  Ticket,
+  CloudSun,
+  Calendar,
+  CreditCard,
+  BookOpen,
+  Compass,
+  Gift,
+  Building,
+  Upload,
+  Mail,
+  FileText,
+  QrCode,
+  Activity,
+  Check,
+  Plane,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
@@ -400,14 +419,34 @@ function PageEditorRoute() {
                   else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
                   else if (type === "contact") IconComponent = PhoneCall;
                   else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
-                  else if (type === "cta") IconComponent = Megaphone;
-                  else if (type === "faq" || type === "support_ticket_form") IconComponent = HelpCircle;
-                  else if (type === "testimonials") IconComponent = Quote;
-                  else if (type === "tours_grid") IconComponent = Bus;
+                  else if (type === "cta" || type === "promotional_banner" || type === "news_announcements_ticker") IconComponent = Megaphone;
+                  else if (type === "faq" || type === "support_ticket_form" || type === "travel_tips_faq" || type === "faq_category_accordion") IconComponent = HelpCircle;
+                  else if (type === "testimonials" || type === "live_reviews" || type === "reviews_submission_form") IconComponent = Quote;
+                  else if (type === "tours_grid" || type === "tours_carousel") IconComponent = Bus;
                   else if (type === "stats") IconComponent = BarChart2;
                   else if (type === "video") IconComponent = Play;
-                  else if (type === "map") IconComponent = Map;
+                  else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
                   else if (type === "blog_feed") IconComponent = Rss;
+                  else if (type === "featured_destination_filter") IconComponent = Globe;
+                  else if (type === "team_widget" || type === "agent_profile_card") IconComponent = Users;
+                  else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble") IconComponent = MessageSquare;
+                  else if (type === "countdown_tour" || type === "live_sales_counter" || type === "client_boarding_timeline") IconComponent = Clock;
+                  else if (type === "exchange_rates" || type === "currency_calculator") IconComponent = Coins;
+                  else if (type === "agency_vouchers") IconComponent = Ticket;
+                  else if (type === "weather_forecast") IconComponent = CloudSun;
+                  else if (type === "itinerary_timeline") IconComponent = Calendar;
+                  else if (type === "lead_capture_callback") IconComponent = PhoneCall;
+                  else if (type === "payment_gateways_display") IconComponent = CreditCard;
+                  else if (type === "live_tours_map" || type === "custom_package_lead_builder") IconComponent = Compass;
+                  else if (type === "gift_cards_store") IconComponent = Gift;
+                  else if (type === "corporate_rfp_form") IconComponent = Building;
+                  else if (type === "client_document_upload") IconComponent = Upload;
+                  else if (type === "biolink_newsletter_box") IconComponent = Mail;
+                  else if (type === "visa_checker") IconComponent = FileText;
+                  else if (type === "insurance_simulator") IconComponent = Activity;
+                  else if (type === "agency_badges_trust") IconComponent = Check;
+                  else if (type === "interactive_flight_tracker") IconComponent = Plane;
+                  else if (type === "biolink_qr_code_share") IconComponent = QrCode;
 
                   const isBiolinkType = type.startsWith("biolink_");
 

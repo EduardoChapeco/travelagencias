@@ -1107,6 +1107,747 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
           </div>
         );
 
+      case "tours_carousel":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+              />
+            </Field>
+            <Field label="Máximo de Roteiros a exibir">
+              <Input
+                type="number"
+                value={block.max_items || 8}
+                onChange={(e) => updateBlock(block.id, { max_items: parseInt(e.target.value) || 8 })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "featured_destination_filter":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "team_widget":
+      case "live_reviews":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "exchange_rates":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "countdown_tour":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Últimas vagas!"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Garanta seu lugar antes..."
+              />
+            </Field>
+            <Field label="Label do Botão">
+              <Input
+                value={block.button_label || ""}
+                onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
+                placeholder="Ex: Quero Garantir Minha Vaga"
+              />
+            </Field>
+            <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "dynamic_map_route":
+        return (
+          <div className="space-y-4">
+            <Field label="Título do Mapa">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Roteiro da Viagem no Mapa"
+              />
+            </Field>
+            <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "social_links_row":
+        return (
+          <div className="space-y-4">
+            <Field label="WhatsApp (apenas números com DDD)">
+              <Input
+                value={(block as any).whatsapp || ""}
+                onChange={(e) => updateBlock(block.id, { whatsapp: e.target.value })}
+                placeholder="Ex: 5549999999999"
+              />
+            </Field>
+            <Field label="Instagram (URL completa)">
+              <Input
+                value={(block as any).instagram || ""}
+                onChange={(e) => updateBlock(block.id, { instagram: e.target.value })}
+                placeholder="https://instagram.com/..."
+              />
+            </Field>
+            <Field label="Facebook (URL completa)">
+              <Input
+                value={(block as any).facebook || ""}
+                onChange={(e) => updateBlock(block.id, { facebook: e.target.value })}
+                placeholder="https://facebook.com/..."
+              />
+            </Field>
+            <Field label="YouTube (URL completa)">
+              <Input
+                value={(block as any).youtube || ""}
+                onChange={(e) => updateBlock(block.id, { youtube: e.target.value })}
+                placeholder="https://youtube.com/..."
+              />
+            </Field>
+            <Field label="LinkedIn (URL completa)">
+              <Input
+                value={(block as any).linkedin || ""}
+                onChange={(e) => updateBlock(block.id, { linkedin: e.target.value })}
+                placeholder="https://linkedin.com/..."
+              />
+            </Field>
+            <Field label="TikTok (URL completa)">
+              <Input
+                value={(block as any).tiktok || ""}
+                onChange={(e) => updateBlock(block.id, { tiktok: e.target.value })}
+                placeholder="https://tiktok.com/..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "whatsapp_departments":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+              />
+            </Field>
+            <div className="space-y-3">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">
+                Canais de Atendimento
+              </label>
+              {((block as any).departments || []).map((dept: any, idx: number) => (
+                <div key={idx} className="border border-border p-3 rounded-lg bg-surface space-y-2 relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newDepts = ((block as any).departments || []).filter((_: any, i: number) => i !== idx);
+                      updateBlock(block.id, { departments: newDepts });
+                    }}
+                    className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Nome do Setor">
+                      <Input
+                        value={dept.name || ""}
+                        onChange={(e) => {
+                          const newDepts = [...((block as any).departments || [])];
+                          newDepts[idx] = { ...newDepts[idx], name: e.target.value };
+                          updateBlock(block.id, { departments: newDepts });
+                        }}
+                        placeholder="Ex: Vendas"
+                      />
+                    </Field>
+                    <Field label="WhatsApp (com DDI/DDD)">
+                      <Input
+                        value={dept.phone || ""}
+                        onChange={(e) => {
+                          const newDepts = [...((block as any).departments || [])];
+                          newDepts[idx] = { ...newDepts[idx], phone: e.target.value };
+                          updateBlock(block.id, { departments: newDepts });
+                        }}
+                        placeholder="5549999999999"
+                      />
+                    </Field>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Ícone Lucide">
+                      <Input
+                        value={dept.icon || "chat"}
+                        onChange={(e) => {
+                          const newDepts = [...((block as any).departments || [])];
+                          newDepts[idx] = { ...newDepts[idx], icon: e.target.value };
+                          updateBlock(block.id, { departments: newDepts });
+                        }}
+                        placeholder="chat, safe, key, star"
+                      />
+                    </Field>
+                    <Field label="Mensagem Inicial (opcional)">
+                      <Input
+                        value={dept.message || ""}
+                        onChange={(e) => {
+                          const newDepts = [...((block as any).departments || [])];
+                          newDepts[idx] = { ...newDepts[idx], message: e.target.value };
+                          updateBlock(block.id, { departments: newDepts });
+                        }}
+                        placeholder="Olá, gostaria de..."
+                      />
+                    </Field>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const newDepts = [
+                    ...((block as any).departments || []),
+                    { name: "Novo Setor", phone: "5549999999999", icon: "chat", message: "" }
+                  ];
+                  updateBlock(block.id, { departments: newDepts });
+                }}
+                className="text-xs text-brand font-medium hover:underline mt-1 inline-block"
+              >
+                + Adicionar Canal
+              </button>
+            </div>
+          </div>
+        );
+
+      case "agency_vouchers":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Seus Vouchers de Viagem"
+              />
+            </Field>
+          </div>
+        );
+
+      case "weather_forecast":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Previsão do Tempo"
+              />
+            </Field>
+            <Field label="Cidade Alternativa (opcional)" hint="Se vazio, usará o destino da excursão">
+              <Input
+                value={(block as any).city || ""}
+                onChange={(e) => updateBlock(block.id, { city: e.target.value })}
+                placeholder="Ex: Chapada Diamantina, BA"
+              />
+            </Field>
+            <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "itinerary_timeline":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Como será a sua jornada?"
+              />
+            </Field>
+            <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "lead_capture_callback":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Queremos te ligar!"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={(block as any).subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Deixe seu telefone..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "promotional_banner":
+        return (
+          <div className="space-y-4">
+            <Field label="Texto do Banner">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Cupom de desconto ativo!"
+              />
+            </Field>
+            <Field label="Código do Cupom">
+              <Input
+                value={(block as any).discount_code || ""}
+                onChange={(e) => updateBlock(block.id, { discount_code: e.target.value })}
+                placeholder="Ex: EURO500"
+              />
+            </Field>
+            <Field label="Data de Expiração (opcional)">
+              <Input
+                type="date"
+                value={(block as any).expiration_date || ""}
+                onChange={(e) => updateBlock(block.id, { expiration_date: e.target.value })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "payment_gateways_display":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Opções de Pagamento Facilitado"
+              />
+            </Field>
+          </div>
+        );
+
+      case "agent_profile_card":
+        return (
+          <div className="space-y-4">
+            <Field label="Label do Botão">
+              <Input
+                value={(block as any).cta_label || ""}
+                onChange={(e) => updateBlock(block.id, { cta_label: e.target.value })}
+                placeholder="Ex: Falar com Consultor"
+              />
+            </Field>
+            <AgentSelectEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "travel_tips_faq":
+        return (
+          <div className="space-y-4">
+            <Field label="Categoria de Dicas (opcional)">
+              <Input
+                value={(block as any).category || ""}
+                onChange={(e) => updateBlock(block.id, { category: e.target.value })}
+                placeholder="Ex: Bagagem, Vacinas, Geral"
+              />
+            </Field>
+          </div>
+        );
+
+      case "live_tours_map":
+        return (
+          <div className="space-y-4">
+            <Field label="Máximo de Rotas a exibir">
+              <Input
+                type="number"
+                value={block.max_items || 4}
+                onChange={(e) => updateBlock(block.id, { max_items: parseInt(e.target.value) || 4 })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "gift_cards_store":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Dê Viagem de Presente"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={(block as any).subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Adquira um vale-viagem..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "corporate_rfp_form":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Solicitação de Viagem Corporativa (RFP)"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={(block as any).subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Preencha a demanda..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "client_document_upload":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Envio de Documento de Embarque"
+              />
+            </Field>
+            <Field label="Instruções de Preenchimento">
+              <Textarea
+                value={(block as any).instructions || ""}
+                onChange={(e) => updateBlock(block.id, { instructions: e.target.value })}
+                placeholder="Ex: Faça o upload do seu passaporte..."
+                rows={3}
+              />
+            </Field>
+            <Field label="Tipo de Documento Requerido">
+              <Select
+                value={(block as any).document_type || "Passport"}
+                onChange={(e) => updateBlock(block.id, { document_type: e.target.value })}
+              >
+                <option value="Passport">Passaporte</option>
+                <option value="RG">RG / Identidade</option>
+                <option value="CNH">CNH / Carteira de Motorista</option>
+              </Select>
+            </Field>
+          </div>
+        );
+
+      case "biolink_newsletter_box":
+        return (
+          <div className="space-y-4">
+            <Field label="Placeholder do Input">
+              <Input
+                value={(block as any).placeholder || ""}
+                onChange={(e) => updateBlock(block.id, { placeholder: e.target.value })}
+                placeholder="Ex: Inscreva seu e-mail..."
+              />
+            </Field>
+            <Field label="Texto do Botão">
+              <Input
+                value={(block as any).button_label || ""}
+                onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
+                placeholder="Ex: Inscrever"
+              />
+            </Field>
+          </div>
+        );
+
+      case "live_sales_counter":
+        return (
+          <div className="space-y-4">
+            <Field label="Intervalo de Atualização (segundos)">
+              <Input
+                type="number"
+                value={(block as any).duration_sec || 10}
+                onChange={(e) => updateBlock(block.id, { duration_sec: parseInt(e.target.value) || 10 })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "visa_checker":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Consulte Exigência de Visto"
+              />
+            </Field>
+            <Field label="Nacionalidade Padrão">
+              <Input
+                value={(block as any).default_nationality || ""}
+                onChange={(e) => updateBlock(block.id, { default_nationality: e.target.value })}
+                placeholder="Ex: Brasil"
+              />
+            </Field>
+          </div>
+        );
+
+      case "insurance_simulator":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Seguro Viagem Global"
+              />
+            </Field>
+            <Field label="Descrição">
+              <Textarea
+                value={(block as any).description || ""}
+                onChange={(e) => updateBlock(block.id, { description: e.target.value })}
+                placeholder="Ex: Faça cotações e viaje com suporte médico..."
+                rows={3}
+              />
+            </Field>
+          </div>
+        );
+
+      case "reviews_submission_form":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Deixe sua Avaliação"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={(block as any).subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Compartilhe sua experiência conosco..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "whatsapp_floating_bubble":
+        return (
+          <div className="space-y-4">
+            <Field label="Posição da Bolha">
+              <Select
+                value={(block as any).position || "right"}
+                onChange={(e) => updateBlock(block.id, { position: e.target.value as "right" | "left" })}
+              >
+                <option value="right">Canto Inferior Direito</option>
+                <option value="left">Canto Inferior Esquerdo</option>
+              </Select>
+            </Field>
+            <Field label="Mensagem Inicial no WhatsApp">
+              <Input
+                value={(block as any).message || ""}
+                onChange={(e) => updateBlock(block.id, { message: e.target.value })}
+                placeholder="Ex: Olá, preciso de ajuda."
+              />
+            </Field>
+            <AgentSelectEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+          </div>
+        );
+
+      case "custom_package_lead_builder":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Monte seu Pacote Personalizado"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={(block as any).subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Planeje sua rota nos mínimos detalhes..."
+              />
+            </Field>
+          </div>
+        );
+
+      case "news_announcements_ticker":
+        return (
+          <div className="space-y-4">
+            <Field label="Título do Marcador">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Novidades"
+              />
+            </Field>
+            <Field label="Limite de Notícias a exibir">
+              <Input
+                type="number"
+                value={(block as any).limit || 5}
+                onChange={(e) => updateBlock(block.id, { limit: parseInt(e.target.value) || 5 })}
+              />
+            </Field>
+          </div>
+        );
+
+      case "faq_category_accordion":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Dúvidas Frequentes"
+              />
+            </Field>
+            <Field label="Categoria do FAQ">
+              <Input
+                value={(block as any).category || ""}
+                onChange={(e) => updateBlock(block.id, { category: e.target.value })}
+                placeholder="Ex: Geral, Destinos, Contratos"
+              />
+            </Field>
+          </div>
+        );
+
+      case "agency_badges_trust":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Garantia e Credibilidade"
+              />
+            </Field>
+          </div>
+        );
+
+      case "currency_calculator":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Conversor de Câmbio"
+              />
+            </Field>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="De (Padrão)">
+                <Select
+                  value={(block as any).default_from || "USD"}
+                  onChange={(e) => updateBlock(block.id, { default_from: e.target.value })}
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="BRL">BRL</option>
+                </Select>
+              </Field>
+              <Field label="Para (Padrão)">
+                <Select
+                  value={(block as any).default_to || "BRL"}
+                  onChange={(e) => updateBlock(block.id, { default_to: e.target.value })}
+                >
+                  <option value="BRL">BRL</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                </Select>
+              </Field>
+            </div>
+          </div>
+        );
+
+      case "interactive_flight_tracker":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Rastrear Meu Voo"
+              />
+            </Field>
+          </div>
+        );
+
+      case "biolink_qr_code_share":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Compartilhar Meu Link"
+              />
+            </Field>
+          </div>
+        );
+
+      case "client_boarding_timeline":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Cronograma de Voo"
+              />
+            </Field>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -1370,5 +2111,53 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
         </Field>
       )}
     </div>
+  );
+}
+
+function AgentSelectEditor({ block, updateBlock, agencyId }: Props) {
+  const [agents, setAgents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      if (!agencyId) return;
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("agency_id", agencyId);
+      
+      if (roles && roles.length > 0) {
+        const userIds = roles.map((r) => r.user_id);
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", userIds);
+        setAgents(profiles || []);
+      }
+      setLoading(false);
+    }
+    load();
+  }, [agencyId]);
+
+  return (
+    <Field label="Selecionar Especialista / Consultor">
+      {loading ? (
+        <div className="text-xs text-muted-foreground">Carregando consultores...</div>
+      ) : agents.length === 0 ? (
+        <div className="text-xs text-destructive font-medium">Nenhum consultor cadastrado para esta agência.</div>
+      ) : (
+        <Select
+          value={(block as any).agent_id || ""}
+          onChange={(e) => updateBlock(block.id, { agent_id: e.target.value })}
+        >
+          <option value="">Selecione um consultor...</option>
+          {agents.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.full_name}
+            </option>
+          ))}
+        </Select>
+      )}
+    </Field>
   );
 }
