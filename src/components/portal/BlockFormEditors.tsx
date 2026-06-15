@@ -19,6 +19,16 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
       case "hero":
         return (
           <>
+            <Field label="Layout do Banner">
+              <Select
+                value={block.layout || "centered"}
+                onChange={(e) => updateBlock(block.id, { layout: e.target.value as any })}
+              >
+                <option value="centered">Centralizado (Padrão)</option>
+                <option value="split">Dividido (Imagem ao lado)</option>
+                <option value="minimal">Minimalista (Sem imagem)</option>
+              </Select>
+            </Field>
             <Field label="Título (Headline)">
               <Input
                 value={block.title || ""}
@@ -132,6 +142,16 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
       case "features":
         return (
           <div className="space-y-4">
+            <Field label="Layout dos Diferenciais">
+              <Select
+                value={block.layout || "grid"}
+                onChange={(e) => updateBlock(block.id, { layout: e.target.value as any })}
+              >
+                <option value="grid">Grade Simples (Grid)</option>
+                <option value="cards">Cards Premium (Efeitos/Sombra)</option>
+                <option value="list">Lista Compacta (List)</option>
+              </Select>
+            </Field>
             <Field label="Título da Seção">
               <Input
                 value={block.title || ""}
@@ -244,6 +264,15 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
       case "faq":
         return (
           <div className="space-y-4">
+            <Field label="Layout das Perguntas">
+              <Select
+                value={block.layout || "accordion"}
+                onChange={(e) => updateBlock(block.id, { layout: e.target.value as any })}
+              >
+                <option value="accordion">Acordeão (Retrátil)</option>
+                <option value="grid">Grade Estática (Grid)</option>
+              </Select>
+            </Field>
             <Field label="Título Principal">
               <Input
                 value={block.title || ""}
@@ -311,6 +340,15 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
       case "testimonials":
         return (
           <div className="space-y-4">
+            <Field label="Layout dos Depoimentos">
+              <Select
+                value={block.layout || "grid"}
+                onChange={(e) => updateBlock(block.id, { layout: e.target.value as any })}
+              >
+                <option value="grid">Grade Simples (Grid)</option>
+                <option value="bubble">Balões de Fala (Bubble)</option>
+              </Select>
+            </Field>
             <Field label="Título da seção">
               <Input
                 value={block.title || ""}
@@ -421,6 +459,15 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
       case "tours_grid":
         return (
           <div className="space-y-4">
+            <Field label="Layout dos Roteiros">
+              <Select
+                value={block.layout || "grid"}
+                onChange={(e) => updateBlock(block.id, { layout: e.target.value as any })}
+              >
+                <option value="grid">Grade (Grid)</option>
+                <option value="list">Lista (List)</option>
+              </Select>
+            </Field>
             <Field label="Título da seção">
               <Input
                 value={block.title || ""}
@@ -852,6 +899,212 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
               />
             </Field>
           </>
+        );
+
+      case "featured_destinations":
+        return (
+          <div className="space-y-4">
+            <Field label="Título da Seção">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Destinos Recomendados"
+              />
+            </Field>
+            <Field label="Subtítulo">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Explore os lugares mais cobiçados..."
+              />
+            </Field>
+            <div className="space-y-3">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">
+                Lista de Destinos
+              </label>
+              {(block.items || []).map((item, idx) => (
+                <div key={idx} className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-sm">
+                  <div className="flex justify-between items-center pb-2 border-b border-border/40">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Destino #{idx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateBlock(block.id, {
+                          items: (block.items || []).filter((_, i) => i !== idx),
+                        })
+                      }
+                      className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                      title="Excluir Destino"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Destino">
+                      <Input
+                        placeholder="Paris, França"
+                        value={item.destination || ""}
+                        onChange={(e) => {
+                          const arr = [...(block.items || [])];
+                          arr[idx] = { ...arr[idx], destination: e.target.value };
+                          updateBlock(block.id, { items: arr });
+                        }}
+                      />
+                    </Field>
+                    <Field label="Preço (Ex: R$ 4.500)">
+                      <Input
+                        placeholder="R$ 6.900"
+                        value={item.price || ""}
+                        onChange={(e) => {
+                          const arr = [...(block.items || [])];
+                          arr[idx] = { ...arr[idx], price: e.target.value };
+                          updateBlock(block.id, { items: arr });
+                        }}
+                      />
+                    </Field>
+                  </div>
+                  <Field label="Descrição Curta">
+                    <Textarea
+                      placeholder="Descrição breve do destino..."
+                      rows={2}
+                      value={item.description || ""}
+                      onChange={(e) => {
+                        const arr = [...(block.items || [])];
+                        arr[idx] = { ...arr[idx], description: e.target.value };
+                        updateBlock(block.id, { items: arr });
+                      }}
+                    />
+                  </Field>
+                  <Field label="Link de Destino (CTA)">
+                    <Input
+                      placeholder="Ex: #contato"
+                      value={item.link || ""}
+                      onChange={(e) => {
+                        const arr = [...(block.items || [])];
+                        arr[idx] = { ...arr[idx], link: e.target.value };
+                        updateBlock(block.id, { items: arr });
+                      }}
+                    />
+                  </Field>
+                  <FileUploader
+                    label="Imagem do Destino"
+                    value={item.image_url || ""}
+                    onChange={(url) => {
+                      const arr = [...(block.items || [])];
+                      arr[idx] = { ...arr[idx], image_url: url ?? "" };
+                      updateBlock(block.id, { items: arr });
+                    }}
+                    bucket="agency-logos"
+                    folder={`${agencyId}/destinations`}
+                    variant="image"
+                    publicBucket={true}
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  updateBlock(block.id, {
+                    items: [
+                      ...(block.items || []),
+                      {
+                        destination: "Novo Destino",
+                        price: "Sob consulta",
+                        description: "Descrição breve do destino...",
+                        image_url: "",
+                        link: "#contato",
+                      },
+                    ],
+                  })
+                }
+                className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
+              >
+                + Adicionar Destino
+              </button>
+            </div>
+          </div>
+        );
+
+      case "social_links":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Siga-nos nas redes"
+              />
+            </Field>
+            <Field label="Instagram (Link completo)">
+              <Input
+                value={block.instagram || ""}
+                onChange={(e) => updateBlock(block.id, { instagram: e.target.value })}
+                placeholder="https://instagram.com/sua_agencia"
+              />
+            </Field>
+            <Field label="Facebook (Link completo)">
+              <Input
+                value={block.facebook || ""}
+                onChange={(e) => updateBlock(block.id, { facebook: e.target.value })}
+                placeholder="https://facebook.com/sua_agencia"
+              />
+            </Field>
+            <Field label="YouTube (Link completo)">
+              <Input
+                value={block.youtube || ""}
+                onChange={(e) => updateBlock(block.id, { youtube: e.target.value })}
+                placeholder="https://youtube.com/c/sua_agencia"
+              />
+            </Field>
+            <Field label="WhatsApp (Apenas número com DDD ou link)">
+              <Input
+                value={block.whatsapp || ""}
+                onChange={(e) => updateBlock(block.id, { whatsapp: e.target.value })}
+                placeholder="Ex: 5549999999999"
+              />
+            </Field>
+            <Field label="LinkedIn (Link completo)">
+              <Input
+                value={block.linkedin || ""}
+                onChange={(e) => updateBlock(block.id, { linkedin: e.target.value })}
+                placeholder="https://linkedin.com/company/sua_agencia"
+              />
+            </Field>
+          </div>
+        );
+
+      case "newsletter":
+        return (
+          <div className="space-y-4">
+            <Field label="Título Principal">
+              <Input
+                value={block.title || ""}
+                onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                placeholder="Ex: Receba Nossas Ofertas Exclusivas"
+              />
+            </Field>
+            <Field label="Subtítulo / Descrição">
+              <Input
+                value={block.subtitle || ""}
+                onChange={(e) => updateBlock(block.id, { subtitle: e.target.value })}
+                placeholder="Ex: Inscreva seu e-mail e seja o primeiro a saber..."
+              />
+            </Field>
+            <Field label="Placeholder do Input">
+              <Input
+                value={block.placeholder || ""}
+                onChange={(e) => updateBlock(block.id, { placeholder: e.target.value })}
+                placeholder="Ex: Seu melhor e-mail"
+              />
+            </Field>
+            <Field label="Texto do Botão">
+              <Input
+                value={block.button_label || ""}
+                onChange={(e) => updateBlock(block.id, { button_label: e.target.value })}
+                placeholder="Ex: Cadastrar"
+              />
+            </Field>
+          </div>
         );
 
       default:

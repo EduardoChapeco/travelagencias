@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CheckCircle2, Send, Star, Quote, Play } from "lucide-react";
+import { CheckCircle2, Send, Star, Quote, Play, Instagram, Facebook, Youtube, Linkedin, Phone, ChevronRight, Plane, Mail, AlertCircle, Sparkles } from "lucide-react";
 import type { PortalBlock } from "@/lib/cms-types";
 
 // Re-export so existing imports from this path continue to work
@@ -159,7 +159,82 @@ export function BlockRenderer({
 function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: string) => void, agencyId?: string) {
   switch (b.type) {
     // ── HERO ──────────────────────────────────────────────────────
-    case "hero":
+    case "hero": {
+      const layout = b.layout || "centered";
+
+      if (layout === "split") {
+        return (
+          <section className="relative overflow-hidden rounded-3xl bg-surface">
+            <div className="absolute inset-0 bg-brand/5 backdrop-blur-3xl opacity-30" />
+            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-16 p-8 lg:p-20">
+              <div className="flex-1 text-left space-y-6">
+                <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground leading-tight">
+                  {b.title}
+                </h1>
+                <p className="text-base lg:text-lg text-muted-foreground font-medium leading-relaxed">
+                  {b.subtitle}
+                </p>
+                {b.cta_label && b.cta_link && (
+                  <div className="pt-2">
+                    <a
+                      href={b.cta_link}
+                      target={b.cta_link.startsWith("http") ? "_blank" : undefined}
+                      rel="noreferrer"
+                      onClick={() => handleLinkClick(b.cta_link)}
+                      className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105 shadow hover:shadow-lg active:scale-95"
+                    >
+                      {b.cta_label}
+                    </a>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 w-full shrink-0">
+                {b.bg_image_url ? (
+                  <img
+                    src={b.bg_image_url}
+                    alt="Hero Split"
+                    className="rounded-2xl object-cover aspect-video lg:aspect-[4/3] w-full shadow-lg border border-border/40"
+                  />
+                ) : (
+                  <div className="rounded-2xl bg-surface-alt aspect-video w-full flex items-center justify-center border border-dashed border-border text-muted-foreground text-xs">
+                    Sem imagem de fundo
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      if (layout === "minimal") {
+        return (
+          <section className="relative overflow-hidden rounded-3xl bg-surface-alt/40 border border-border/40">
+            <div className="relative z-10 flex flex-col items-center justify-center p-12 lg:p-20 text-center space-y-4 max-w-2xl mx-auto">
+              <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-foreground">
+                {b.title}
+              </h1>
+              <p className="text-sm lg:text-base text-muted-foreground leading-relaxed">
+                {b.subtitle}
+              </p>
+              {b.cta_label && b.cta_link && (
+                <div className="pt-4">
+                  <a
+                    href={b.cta_link}
+                    target={b.cta_link.startsWith("http") ? "_blank" : undefined}
+                    rel="noreferrer"
+                    onClick={() => handleLinkClick(b.cta_link)}
+                    className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-5 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
+                  >
+                    {b.cta_label}
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      }
+
+      // Default: centered
       return (
         <section className="relative overflow-hidden rounded-3xl bg-surface">
           {b.bg_image_url ? (
@@ -180,30 +255,21 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
             </p>
             {b.cta_label && b.cta_link && (
               <div className="mt-10">
-                {b.cta_link.startsWith("http") ? (
-                  <a
-                    href={b.cta_link}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => handleLinkClick(b.cta_link)}
-                    className="inline-flex h-14 items-center justify-center rounded-full bg-brand px-8 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
-                  >
-                    {b.cta_label}
-                  </a>
-                ) : (
-                  <a
-                    href={b.cta_link}
-                    onClick={() => handleLinkClick(b.cta_link)}
-                    className="inline-flex h-14 items-center justify-center rounded-full bg-brand px-8 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
-                  >
-                    {b.cta_label}
-                  </a>
-                )}
+                <a
+                  href={b.cta_link}
+                  target={b.cta_link.startsWith("http") ? "_blank" : undefined}
+                  rel="noreferrer"
+                  onClick={() => handleLinkClick(b.cta_link)}
+                  className="inline-flex h-14 items-center justify-center rounded-full bg-brand px-8 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
+                >
+                  {b.cta_label}
+                </a>
               </div>
             )}
           </div>
         </section>
       );
+    }
 
     // ── TEXT ──────────────────────────────────────────────────────
     case "text":
@@ -258,7 +324,60 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
       return <ContactBlock key={b.id} block={b} agencySlug={agencySlug} />;
 
     // ── FEATURES ─────────────────────────────────────────────────
-    case "features":
+    case "features": {
+      const layout = b.layout || "grid";
+
+      if (layout === "cards") {
+        return (
+          <section className="mx-auto max-w-7xl w-full px-4">
+            {b.title && (
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">{b.title}</h2>
+            )}
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {b.items?.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-start bg-gradient-to-br from-surface to-surface-alt/30 p-7 rounded-3xl border border-border/80 shadow transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-brand/40 group"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-5 text-2xl group-hover:scale-110 transition-transform">
+                    {item.icon || "*"}
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-brand transition-colors">{item.title}</h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      if (layout === "list") {
+        return (
+          <section className="mx-auto max-w-4xl w-full px-4">
+            {b.title && (
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">{b.title}</h2>
+            )}
+            <div className="flex flex-col gap-4">
+              {b.items?.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-5 bg-surface-alt/15 p-5 rounded-2xl border border-border/40 hover:bg-surface-alt/25 transition-colors"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand text-xl">
+                    {item.icon || "*"}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
+                    <p className="text-muted-foreground text-xs mt-0.5">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      // Default: grid
       return (
         <section className="mx-auto max-w-7xl w-full px-4">
           {b.title && (
@@ -271,7 +390,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                 className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50 transition-all hover:-translate-y-1"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4 text-2xl">
-                  {item.icon || "✨"}
+                  {item.icon || "*"}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                 <p className="text-muted-foreground">{item.description}</p>
@@ -280,6 +399,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
           </div>
         </section>
       );
+    }
 
     // ── CTA ───────────────────────────────────────────────────────
     case "cta":
@@ -313,7 +433,34 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
       );
 
     // ── FAQ ───────────────────────────────────────────────────────
-    case "faq":
+    case "faq": {
+      const layout = b.layout || "accordion";
+
+      if (layout === "grid") {
+        return (
+          <section className="mx-auto max-w-5xl w-full px-4">
+            {b.title && (
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">{b.title}</h2>
+            )}
+            <div className="grid gap-6 md:grid-cols-2">
+              {b.items?.map((item, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-border bg-surface-alt/20 p-6 shadow-sm hover:border-brand/20 transition-colors"
+                >
+                  <h3 className="font-bold text-base text-foreground mb-2">{item.question}</h3>
+                  <div
+                    className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground text-xs leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.answer || "") }}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      // Default: accordion
       return (
         <section className="mx-auto max-w-3xl w-full px-4">
           {b.title && (
@@ -340,9 +487,62 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
           </div>
         </section>
       );
+    }
 
     // ── TESTIMONIALS ─────────────────────────────────────────────
-    case "testimonials":
+    case "testimonials": {
+      const layout = b.layout || "grid";
+
+      if (layout === "bubble") {
+        return (
+          <section className="mx-auto max-w-6xl w-full px-4">
+            {b.title && (
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">{b.title}</h2>
+            )}
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {b.items?.map((item, i) => (
+                <div key={i} className="flex flex-col gap-4">
+                  <div className="relative bg-surface-alt/45 border border-border/60 p-6 rounded-2xl shadow-sm hover:border-brand/20 transition-all duration-300">
+                    <Quote className="h-6 w-6 text-brand/20 mb-3" />
+                    <p className="text-muted-foreground text-xs leading-relaxed italic">
+                      "{item.text}"
+                    </p>
+                    {/* Speech bubble tail pointer */}
+                    <div
+                      className="absolute -bottom-2.5 left-8 w-5 h-5 bg-surface border-r border-b border-border/60 rotate-45"
+                      style={{ clipPath: "polygon(100% 100%, 0 100%, 100% 0)" }}
+                    ></div>
+                  </div>
+                  <div className="flex items-center gap-3 pl-4 mt-1">
+                    {item.avatar_url ? (
+                      <img
+                        src={item.avatar_url}
+                        alt={item.author}
+                        className="h-9 w-9 rounded-full object-cover shadow-sm border border-border"
+                      />
+                    ) : (
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-xs">
+                        {item.author.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-bold text-xs text-foreground">{item.author}</div>
+                      {item.role && <div className="text-[10px] text-muted-foreground">{item.role}</div>}
+                    </div>
+                    <div className="ml-auto flex shrink-0">
+                      {Array.from({ length: item.stars || 5 }).map((_, si) => (
+                        <Star key={si} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      // Default: grid
       return (
         <section className="mx-auto max-w-6xl w-full px-4">
           {b.title && (
@@ -385,6 +585,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
           </div>
         </section>
       );
+    }
 
     // ── TOURS GRID ────────────────────────────────────────────────
     case "tours_grid":
@@ -403,7 +604,7 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
                 key={i}
                 className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50"
               >
-                <div className="text-4xl mb-2">{item.icon || "📊"}</div>
+                <div className="text-2xl font-bold text-brand mb-2">{item.icon || "*"}</div>
                 <div className="text-3xl font-extrabold text-brand mb-1">{item.value}</div>
                 <div className="text-sm text-muted-foreground">{item.label}</div>
               </div>
@@ -563,8 +764,8 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
     case "client_portal_access":
       return (
         <section className="mx-auto max-w-lg bg-surface border border-border/80 rounded-3xl p-8 shadow-lg text-center flex flex-col items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-brand/10 text-brand flex items-center justify-center text-2xl">
-            ✈️
+          <div className="h-14 w-14 rounded-full bg-brand/10 text-brand flex items-center justify-center">
+            <Plane className="h-6 w-6" />
           </div>
           <h2 className="text-2xl font-bold tracking-tight">{b.title || "Área do Passageiro"}</h2>
           <p className="text-muted-foreground text-sm max-w-sm">
@@ -584,9 +785,195 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
     case "pending_contracts_widget":
       return <PendingContractsWidgetBlock block={b} agencyId={agencyId} handleLinkClick={handleLinkClick} />;
 
+    // ── FEATURED DESTINATIONS ──────────────────────────────────────
+    case "featured_destinations":
+      return (
+        <section className="mx-auto max-w-6xl w-full px-4">
+          {b.title && (
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-extrabold tracking-tight">{b.title}</h2>
+              {b.subtitle && <p className="mt-2 text-muted-foreground text-sm leading-relaxed">{b.subtitle}</p>}
+            </div>
+          )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {b.items?.map((item, i) => (
+              <a
+                key={i}
+                href={item.link || "#"}
+                onClick={() => item.link && handleLinkClick(item.link)}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-brand/40"
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  {item.image_url ? (
+                    <img
+                      src={item.image_url}
+                      alt={item.destination}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-surface-alt" />
+                  )}
+                  {item.price && (
+                    <div className="absolute top-3 right-3 rounded-md bg-brand px-2.5 py-1 text-xs font-bold text-brand-foreground shadow">
+                      {item.price}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col p-5 flex-1 justify-between">
+                  <div>
+                    <h3 className="font-bold text-base leading-tight group-hover:text-brand transition-colors mb-2">
+                      {item.destination}
+                    </h3>
+                    <p className="text-muted-foreground text-[11px] leading-relaxed line-clamp-3">
+                      {item.description}
+                    </p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-border/40 text-xs font-bold text-brand flex items-center gap-1 group-hover:underline">
+                    Fazer Cotação <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      );
+
+    // ── SOCIAL LINKS ───────────────────────────────────────────────
+    case "social_links":
+      return (
+        <section className="mx-auto max-w-xl w-full text-center px-4">
+          {b.title && (
+            <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-4">
+              {b.title}
+            </h3>
+          )}
+          <div className="flex justify-center items-center gap-3.5">
+            {b.instagram && (
+              <a
+                href={b.instagram}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleLinkClick(b.instagram!)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                title="Instagram"
+              >
+                <Instagram className="h-4.5 w-4.5" />
+              </a>
+            )}
+            {b.facebook && (
+              <a
+                href={b.facebook}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleLinkClick(b.facebook!)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                title="Facebook"
+              >
+                <Facebook className="h-4.5 w-4.5" />
+              </a>
+            )}
+            {b.youtube && (
+              <a
+                href={b.youtube}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleLinkClick(b.youtube!)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                title="YouTube"
+              >
+                <Youtube className="h-4.5 w-4.5" />
+              </a>
+            )}
+            {b.linkedin && (
+              <a
+                href={b.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleLinkClick(b.linkedin!)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                title="LinkedIn"
+              >
+                <Linkedin className="h-4.5 w-4.5" />
+              </a>
+            )}
+            {b.whatsapp && (
+              <a
+                href={b.whatsapp.startsWith("http") ? b.whatsapp : `https://wa.me/${b.whatsapp.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleLinkClick(b.whatsapp!)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-emerald-50 hover:text-emerald-600 transition-all hover:scale-110 shadow-sm"
+                title="WhatsApp"
+              >
+                <Phone className="h-4.5 w-4.5" />
+              </a>
+            )}
+          </div>
+        </section>
+      );
+
+    // ── NEWSLETTER ─────────────────────────────────────────────────
+    case "newsletter":
+      return <NewsletterBlock block={b} handleLinkClick={handleLinkClick} />;
+
     default:
       return null;
   }
+}
+
+function NewsletterBlock({
+  block,
+  handleLinkClick,
+}: {
+  block: any;
+  handleLinkClick: (url: string) => void;
+}) {
+  const [emailInput, setEmailInput] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleNewsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailInput.trim()) return;
+    toast.success("E-mail cadastrado com sucesso! Obrigado por se inscrever.");
+    setEmailInput("");
+    setSubscribed(true);
+  };
+
+  return (
+    <section className="mx-auto max-w-3xl w-full px-4 py-4">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand/10 to-indigo-50 dark:from-brand/5 dark:to-slate-800/20 border border-brand/20 p-8 md:p-12 text-center flex flex-col items-center gap-4">
+        <div className="h-12 w-12 rounded-full bg-brand/15 text-brand flex items-center justify-center mb-2">
+          <Mail className="h-5 w-5" />
+        </div>
+        <h3 className="text-xl md:text-2xl font-black text-foreground">{block.title || "Receba Nossas Ofertas"}</h3>
+        <p className="text-xs md:text-sm text-muted-foreground max-w-md">
+          {block.subtitle || "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros."}
+        </p>
+        {subscribed ? (
+          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs bg-emerald-50 dark:bg-emerald-900/10 px-4 py-2 rounded-xl border border-emerald-200/40 font-semibold">
+            <CheckCircle2 className="h-4 w-4" /> Cadastro realizado com sucesso!
+          </div>
+        ) : (
+          <form onSubmit={handleNewsSubmit} className="flex flex-col sm:flex-row gap-2 w-full max-w-md mt-4">
+            <input
+              type="email"
+              required
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              placeholder={block.placeholder || "Seu melhor e-mail"}
+              className="flex-1 h-11 px-4 rounded-xl border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
+            />
+            <button
+              type="submit"
+              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
+            >
+              {block.button_label || "Cadastrar"}
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  );
 }
 
 // ─── PendingContractsWidgetBlock ──────────────────────────────────────────────
@@ -685,8 +1072,8 @@ function PendingContractsWidgetBlock({
 
   return (
     <section className="mx-auto max-w-lg bg-yellow-500/10 border border-yellow-500/25 rounded-3xl p-6 flex flex-col items-center gap-4 text-center">
-      <div className="h-10 w-10 rounded-full bg-yellow-500/15 text-yellow-500 flex items-center justify-center text-xl">
-        ⚠️
+      <div className="h-10 w-10 rounded-full bg-yellow-500/15 text-yellow-500 flex items-center justify-center">
+        <AlertCircle className="h-5 w-5" />
       </div>
       <div>
         <h3 className="font-bold text-base text-yellow-600 dark:text-yellow-500">{block.title || "Contratos Pendentes"}</h3>
@@ -983,16 +1370,20 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
           {block.subtitle && <p className="mt-2 text-muted-foreground">{block.subtitle}</p>}
         </div>
       )}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+      <div className={`mt-8 ${block.layout === "list" ? "flex flex-col gap-4" : "grid gap-6 sm:grid-cols-2 md:grid-cols-3"}`}>
         {tours.map((t) => (
           <Link
             key={t.id}
             to="/p/$agency_slug/tour/$id"
             params={{ agency_slug: agencySlug, id: t.id }}
             onClick={() => handleLinkClick(`/p/${agencySlug}/tour/${t.id}`)}
-            className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface transition-all hover:-translate-y-1 hover:border-brand/40"
+            className={`group overflow-hidden border-2 border-border/50 bg-surface transition-all hover:border-brand/40 ${
+              block.layout === "list"
+                ? "flex flex-col sm:flex-row rounded-2xl items-stretch min-h-[140px] hover:-translate-y-0.5"
+                : "flex flex-col rounded-2xl hover:-translate-y-1"
+            }`}
           >
-            <div className="relative aspect-video overflow-hidden">
+            <div className={`relative overflow-hidden shrink-0 ${block.layout === "list" ? "aspect-video sm:w-60 sm:aspect-[4/3]" : "aspect-video w-full"}`}>
               {t.cover_image_url ? (
                 <img
                   src={t.cover_image_url}
@@ -1013,20 +1404,27 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
                 <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">
                   {t.destination}
                 </div>
-                <h3 className="font-bold text-lg leading-tight group-hover:text-brand transition-colors">
+                <h3 className="font-bold text-base md:text-lg leading-tight group-hover:text-brand transition-colors">
                   {t.title}
                 </h3>
               </div>
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <span className="text-[10px] uppercase text-muted-foreground font-bold">
-                  A partir de
-                </span>
-                <div className="font-mono text-xl font-bold text-brand">
-                  {Number(t.base_price).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+              <div className={`mt-4 pt-3 border-t border-border/50 flex ${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}>
+                <div>
+                  <span className="text-[10px] uppercase text-muted-foreground font-bold block">
+                    A partir de
+                  </span>
+                  <div className="font-mono text-lg font-bold text-brand leading-none">
+                    {Number(t.base_price).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </div>
                 </div>
+                {block.layout === "list" && (
+                  <span className="text-xs font-bold text-brand hover:underline flex items-center gap-0.5">
+                    Ver detalhes <ChevronRight className="h-3.5 w-3.5" />
+                  </span>
+                )}
               </div>
             </div>
           </Link>

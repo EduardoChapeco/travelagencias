@@ -25,6 +25,7 @@ export type PortalBlock =
       bg_image_url: string;
       cta_label: string;
       cta_link: string;
+      layout?: "centered" | "split" | "minimal";
       styles?: SectionStyle;
     }
   | {
@@ -53,6 +54,7 @@ export type PortalBlock =
       type: "features";
       title: string;
       items: { icon: string; title: string; description: string }[];
+      layout?: "grid" | "cards" | "list";
       styles?: SectionStyle;
     }
   | {
@@ -69,6 +71,7 @@ export type PortalBlock =
       type: "faq";
       title: string;
       items: { question: string; answer: string }[];
+      layout?: "accordion" | "grid";
       styles?: SectionStyle;
     }
   | {
@@ -76,6 +79,7 @@ export type PortalBlock =
       type: "testimonials";
       title: string;
       items: { author: string; role: string; text: string; avatar_url: string; stars: number }[];
+      layout?: "grid" | "bubble";
       styles?: SectionStyle;
     }
   | {
@@ -83,8 +87,8 @@ export type PortalBlock =
       type: "tours_grid";
       title: string;
       subtitle: string;
-      /** se vazio, busca automaticamente os roteiros publicados da agência */
       max_items: number;
+      layout?: "grid" | "list";
       styles?: SectionStyle;
     }
   | {
@@ -99,7 +103,6 @@ export type PortalBlock =
       type: "video";
       title: string;
       url: string;
-      /** YouTube ou Vimeo embed URL */
       caption: string;
       styles?: SectionStyle;
     }
@@ -107,7 +110,6 @@ export type PortalBlock =
       id: string;
       type: "map";
       title: string;
-      /** Embed iframe src do Google Maps */
       embed_url: string;
       address_label: string;
       styles?: SectionStyle;
@@ -140,7 +142,7 @@ export type PortalBlock =
   | {
       id: string;
       type: "group_tour_details";
-      tour_id: string; // The UUID of the group tour to fetch and render dynamically
+      tour_id: string;
       styles?: SectionStyle;
     }
   | {
@@ -163,6 +165,34 @@ export type PortalBlock =
       type: "pending_contracts_widget";
       title: string;
       description: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "featured_destinations";
+      title: string;
+      subtitle: string;
+      items: { image_url: string; destination: string; price?: string; description: string; link: string }[];
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "social_links";
+      title: string;
+      instagram?: string;
+      facebook?: string;
+      youtube?: string;
+      whatsapp?: string;
+      linkedin?: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "newsletter";
+      title: string;
+      subtitle: string;
+      placeholder?: string;
+      button_label?: string;
       styles?: SectionStyle;
     };
 
@@ -190,6 +220,9 @@ export const BLOCK_LABELS: Record<PortalBlockType, string> = {
   support_ticket_form: "Abertura de Ticket (Suporte)",
   client_portal_access: "Acesso Área do Cliente",
   pending_contracts_widget: "Contratos Pendentes",
+  featured_destinations: "Destinos em Destaque",
+  social_links: "Redes Sociais",
+  newsletter: "Newsletter / Captura",
 };
 
 /** Default empty values for each block type */
@@ -203,6 +236,7 @@ export const BLOCK_DEFAULTS: {
     bg_image_url: "",
     cta_label: "Conhecer roteiros",
     cta_link: "#roteiros",
+    layout: "centered",
   },
   text: {
     type: "text",
@@ -224,21 +258,22 @@ export const BLOCK_DEFAULTS: {
     title: "Por que nos escolher?",
     items: [
       {
-        icon: "✈️",
+        icon: "Vip",
         title: "Destinos exclusivos",
         description: "Acesso a destinos nacionais e internacionais com preços especiais.",
       },
       {
-        icon: "🛡️",
+        icon: "Safe",
         title: "Segurança total",
         description: "Viaje com tranquilidade com suporte 24h e seguro viagem incluso.",
       },
       {
-        icon: "💼",
+        icon: "Care",
         title: "Atendimento personalizado",
         description: "Um consultor dedicado para cada cliente.",
       },
     ],
+    layout: "grid",
   },
   cta: {
     type: "cta",
@@ -261,6 +296,7 @@ export const BLOCK_DEFAULTS: {
         answer: "Sim! Trabalhamos com as melhores seguradoras do mercado.",
       },
     ],
+    layout: "accordion",
   },
   testimonials: {
     type: "testimonials",
@@ -281,21 +317,23 @@ export const BLOCK_DEFAULTS: {
         stars: 5,
       },
     ],
+    layout: "grid",
   },
   tours_grid: {
     type: "tours_grid",
     title: "Próximas viagens em grupo",
     subtitle: "Junte-se a outros viajantes em roteiros especialmente selecionados.",
     max_items: 6,
+    layout: "grid",
   },
   stats: {
     type: "stats",
     title: "Nossos números",
     items: [
-      { value: "500+", label: "Viagens realizadas", icon: "✈️" },
-      { value: "2.000+", label: "Clientes satisfeitos", icon: "😊" },
-      { value: "50+", label: "Destinos atendidos", icon: "🌍" },
-      { value: "10+", label: "Anos de experiência", icon: "⭐" },
+      { value: "500+", label: "Viagens realizadas", icon: "Trips" },
+      { value: "2.000+", label: "Clientes satisfeitos", icon: "Clients" },
+      { value: "50+", label: "Destinos atendidos", icon: "Places" },
+      { value: "10+", label: "Anos de experiência", icon: "Awards" },
     ],
   },
   video: {
@@ -326,9 +364,9 @@ export const BLOCK_DEFAULTS: {
   biolink_links: {
     type: "biolink_links",
     items: [
-      { title: "Fale com um Especialista", url: "#", icon: "💬", highlight: true },
-      { title: "Nossos Roteiros", url: "#", icon: "✈️", highlight: false },
-      { title: "Visite nosso Site", url: "#", icon: "🌐", highlight: false },
+      { title: "Fale com um Especialista", url: "#", icon: "Chat", highlight: true },
+      { title: "Nossos Roteiros", url: "#", icon: "Trip", highlight: false },
+      { title: "Visite nosso Site", url: "#", icon: "Web", highlight: false },
     ],
   },
   group_tour_details: {
@@ -349,6 +387,50 @@ export const BLOCK_DEFAULTS: {
   pending_contracts_widget: {
     type: "pending_contracts_widget",
     title: "Contratos Pendentes",
-    description: "Você possui termos ou contratos aguardando sua assinatura eletrônica eletrônica.",
+    description: "Você possui termos ou contratos aguardando sua assinatura eletrônica.",
   },
+  featured_destinations: {
+    type: "featured_destinations",
+    title: "Destinos Recomendados",
+    subtitle: "Explore os lugares mais cobiçados da temporada.",
+    items: [
+      {
+        destination: "Paris, França",
+        price: "R$ 6.900",
+        description: "A cidade luz te espera com museus incríveis e gastronomia impecável.",
+        image_url: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80",
+        link: "#contato",
+      },
+      {
+        destination: "Cancun, México",
+        price: "R$ 4.500",
+        description: "Resorts all-inclusive à beira do mar do Caribe com praias de areia branca.",
+        image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+        link: "#contato",
+      },
+      {
+        destination: "Tóquio, Japão",
+        price: "R$ 9.800",
+        description: "Uma fusão única entre templos milenares e tecnologia futurista.",
+        image_url: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=400&q=80",
+        link: "#contato",
+      }
+    ]
+  },
+  social_links: {
+    type: "social_links",
+    title: "Siga-nos nas redes",
+    instagram: "",
+    facebook: "",
+    youtube: "",
+    whatsapp: "",
+    linkedin: "",
+  },
+  newsletter: {
+    type: "newsletter",
+    title: "Receba Nossas Ofertas Exclusivas",
+    subtitle: "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros e cupons de desconto.",
+    placeholder: "Seu melhor e-mail",
+    button_label: "Cadastrar",
+  }
 };

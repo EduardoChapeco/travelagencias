@@ -23,18 +23,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { StatusBadge } from "@/components/ui/form";
+import { StatusBadge, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { useConfirm } from "@/hooks/use-confirm";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages")({
   head: () => ({ meta: [{ title: "Painel de Páginas do Portal · TravelOS" }] }),
@@ -91,7 +84,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
                 : "bg-indigo-100 border-indigo-200 text-indigo-600"
           }`}
         >
-          🌴
+          P
         </div>
         <div
           className={`w-14 h-1.5 rounded-full ${
@@ -429,7 +422,7 @@ function PagesPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            📋 Todas as Páginas
+            Todas as Páginas
           </button>
           <button
             onClick={() => setActiveTab("sites")}
@@ -439,7 +432,7 @@ function PagesPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            💻 Websites & Landing Pages
+            Websites & Landing Pages
           </button>
           <button
             onClick={() => setActiveTab("biolinks")}
@@ -449,7 +442,7 @@ function PagesPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            📱 Links na Bio (Biolinks)
+            Links na Bio (Biolinks)
           </button>
           <button
             onClick={() => setActiveTab("templates")}
@@ -459,7 +452,7 @@ function PagesPage() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            🎨 Biblioteca de Templates
+            Biblioteca de Templates
           </button>
         </div>
 
@@ -611,7 +604,7 @@ function PagesPage() {
                       <div className="space-y-1">
                         <div className="flex items-center justify-between w-full">
                           <span className="text-[10px] uppercase font-black font-mono tracking-wider text-muted-foreground">
-                            {isBiolink ? "📱 Link na Bio" : "💻 Website / Landing"}
+                            {isBiolink ? "Link na Bio" : "Website / Landing"}
                           </span>
                           <StatusBadge tone={p.is_published ? "success" : "neutral"}>
                             {p.is_published ? "Publicada" : "Rascunho"}
@@ -694,93 +687,81 @@ function PagesPage() {
         </>
       )}
 
-      {/* Visual page creation Modal */}
-      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-1.5 text-base font-bold text-foreground">
-              <Sparkles className="h-4 w-4 text-brand" /> Criar Nova Página
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              Preencha os dados e escolha um design base para iniciar no editor visual.
-            </DialogDescription>
-          </DialogHeader>
+      {/* Visual page creation Sheet */}
+      <SheetPage
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        title="Criar Nova Página"
+      >
+        <form onSubmit={handleCreatePage} className="space-y-4 py-2">
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-muted-foreground">Título Interno</label>
+            <Input
+              required
+              value={newPageTitle}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="Ex: Minha Nova Promoção"
+            />
+          </div>
 
-          <form onSubmit={handleCreatePage} className="space-y-4 py-2">
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-muted-foreground">Título Interno</label>
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-muted-foreground">Endereço da Página (URL Slug)</label>
+            <div className="flex h-10 w-full items-center rounded-lg border border-border bg-surface overflow-hidden">
+              <span className="bg-surface-alt/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
+                /{agency?.slug}/
+              </span>
               <input
                 type="text"
                 required
-                value={newPageTitle}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Ex: Minha Nova Promoção"
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
+                value={newPageSlug}
+                onChange={(e) => setNewPageSlug(slugify(e.target.value))}
+                placeholder="Ex: nova-promocao"
+                className="flex-1 px-3 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none h-full bg-transparent border-0"
               />
             </div>
+          </div>
 
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-muted-foreground">Endereço da Página (URL Slug)</label>
-              <div className="flex h-10 w-full items-center rounded-lg border border-border bg-surface overflow-hidden">
-                <span className="bg-surface-alt/70 border-r border-border px-3 text-[11px] font-medium text-muted-foreground/80 h-full flex items-center select-none">
-                  /{agency?.slug}/
-                </span>
-                <input
-                  type="text"
-                  required
-                  value={newPageSlug}
-                  onChange={(e) => setNewPageSlug(slugify(e.target.value))}
-                  placeholder="Ex: nova-promocao"
-                  className="flex-1 px-3 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none h-full bg-transparent"
-                />
-              </div>
-            </div>
+          {/* Template Selector dropdown in sheet */}
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-muted-foreground">Template Inicial</label>
+            <Select
+              value={selectedTemplateId}
+              onChange={(e) => setSelectedTemplateId(e.target.value)}
+            >
+              <option value="empty">Em Branco (Vazia)</option>
+              <optgroup label="Websites & Landing Pages">
+                {CMS_TEMPLATES.filter((t) => t.category === "site").map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Biolinks Sociais">
+                {CMS_TEMPLATES.filter((t) => t.category === "biolink").map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </optgroup>
+            </Select>
+          </div>
 
-            {/* Template Selector dropdown in modal */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-muted-foreground">Template Inicial</label>
-              <select
-                value={selectedTemplateId}
-                onChange={(e) => setSelectedTemplateId(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground outline-none focus:border-brand/60"
-              >
-                <option value="empty">📄 Em Branco (Vazia)</option>
-                <optgroup label="Websites & Landing Pages">
-                  {CMS_TEMPLATES.filter((t) => t.category === "site").map((t) => (
-                    <option key={t.id} value={t.id}>
-                      💻 {t.name}
-                    </option>
-                  ))}
-                </optgroup>
-                <optgroup label="Biolinks Sociais">
-                  {CMS_TEMPLATES.filter((t) => t.category === "biolink").map((t) => (
-                    <option key={t.id} value={t.id}>
-                      📱 {t.name}
-                    </option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-
-            <DialogFooter className="pt-4 border-t border-border/40 mt-4 flex sm:justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setCreateModalOpen(false)}
-                className="h-9 rounded-lg border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="h-9 rounded-lg bg-primary hover:bg-primary/90 px-4 text-xs font-semibold text-primary-foreground transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-              >
-                {submitting ? "Criando..." : "Criar e Editar"}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
+            <GhostButton
+              type="button"
+              onClick={() => setCreateModalOpen(false)}
+            >
+              Cancelar
+            </GhostButton>
+            <PrimaryButton
+              type="submit"
+              disabled={submitting}
+            >
+              {submitting ? "Criando..." : "Criar e Editar"}
+            </PrimaryButton>
+          </div>
+        </form>
+      </SheetPage>
     </div>
   );
 }
