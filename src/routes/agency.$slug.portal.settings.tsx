@@ -31,6 +31,8 @@ type PortalSettings = {
   seo_title_suffix: string;
   seo_default_description: string;
   seo_og_image_url: string;
+  // Domain
+  custom_domain: string;
   // Header
   header_style: "simple" | "full" | "minimal";
   header_cta_label: string;
@@ -49,6 +51,7 @@ const defaults = (agencyName = ""): PortalSettings => ({
   seo_title_suffix: ` · ${agencyName}`,
   seo_default_description: `Agência de viagens especializada em experiências inesquecíveis.`,
   seo_og_image_url: "",
+  custom_domain: "",
   header_style: "full",
   header_cta_label: "Fale conosco",
   header_cta_url: "#contato",
@@ -224,6 +227,34 @@ function PortalSettingsPage() {
                 alt="OG Preview"
                 className="mt-2 h-24 rounded-lg border border-border object-cover"
               />
+            )}
+          </Field>
+
+          <Field
+            label="Domínio Personalizado"
+            hint="Configure um domínio próprio (ex: viagens.minhaagencia.com.br). Requer configuração de DNS apontando para os servidores do TravelOS."
+          >
+            <div className="flex items-center gap-2">
+              <Link2 className="w-4 h-4 text-muted-foreground shrink-0" />
+              <Input
+                value={form.custom_domain || ""}
+                onChange={(e) => set("custom_domain", e.target.value as any)}
+                placeholder="Ex: viagens.minhaagencia.com.br"
+              />
+            </div>
+            {form.custom_domain && (
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Seu portal ficará acessível em{" "}
+                <a
+                  href={`https://${form.custom_domain}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-brand underline"
+                >
+                  {form.custom_domain}
+                </a>{" "}
+                após configurar o DNS.
+              </p>
             )}
           </Field>
 

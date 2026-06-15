@@ -46,38 +46,73 @@ serve(async (req) => {
     }
 
     // 2. OpenRouter AI Generation
-    const systemPrompt = `Você é um Web Designer Especialista em Turismo.
-Crie a estrutura de uma Landing Page focada em alta conversão.
+    const systemPrompt = `Você é um Web Designer Especialista em Turismo e especialista em conversão.
+Crie a estrutura de uma Landing Page ou Biolink focada em alta conversão para agências de viagem.
 Abaixo está o conteúdo/contexto base.
 
 DIRETRIZ ESTRITA DE SAÍDA:
 Você DEVE retornar APENAS UM ARRAY JSON VÁLIDO. NADA MAIS. SEM BLOCOS DE MARKDOWN. SEM TEXTO ANTES OU DEPOIS.
 
-Tipos de blocos válidos:
-1. hero: { id: "xx", type: "hero", title: "...", subtitle: "...", bg_image_url: "...", cta_label: "...", cta_link: "...", layout: "centered"|"split"|"minimal" }
-2. text: { id: "xx", type: "text", content: "HTML seguro <p>...</p>", align: "left"|"right"|"center", image_url: "..." }
-3. gallery: { id: "xx", type: "gallery", images: ["url1", "url2", ...] }
-4. contact: { id: "xx", type: "contact", title: "...", text: "..." }
-5. features: { id: "xx", type: "features", title: "...", items: [{ icon: "trip"|"safe"|"hotel"|"union"|"eco"|"award"|"care"|"world"|"clients"|"chat"|"web"|"star"|"insta"|"pack"|"nature"|"vip", title: "...", description: "..." }], layout: "grid"|"cards"|"list" }
-6. cta: { id: "xx", type: "cta", title: "...", subtitle: "...", button_label: "...", button_link: "..." }
-7. faq: { id: "xx", type: "faq", title: "...", items: [{ question: "...", answer: "..." }], layout: "accordion"|"grid" }
-8. testimonials: { id: "xx", type: "testimonials", title: "...", items: [{ author: "...", role: "...", text: "...", avatar_url: "...", stars: 5 }], layout: "grid"|"bubble" }
-9. tours_grid: { id: "xx", type: "tours_grid", title: "...", subtitle: "...", max_items: 6, layout: "grid"|"list" }
-10. stats: { id: "xx", type: "stats", title: "...", items: [{ value: "...", label: "...", icon: "trip"|"safe"|"hotel"|"union"|"eco"|"award"|"care"|"world"|"clients"|"chat"|"web"|"star"|"insta"|"pack"|"nature"|"vip" }] }
-11. video: { id: "xx", type: "video", title: "...", url: "...", caption: "..." }
-12. map: { id: "xx", type: "map", title: "...", embed_url: "...", address_label: "..." }
-13. blog_feed: { id: "xx", type: "blog_feed", title: "...", max_items: 3 }
-14. support_ticket_form: { id: "xx", type: "support_ticket_form", title: "...", subtitle: "..." }
-15. client_portal_access: { id: "xx", type: "client_portal_access", title: "...", description: "...", button_label: "..." }
-16. pending_contracts_widget: { id: "xx", type: "pending_contracts_widget", title: "...", description: "..." }
-17. featured_destinations: { id: "xx", type: "featured_destinations", title: "...", subtitle: "...", items: [{ destination: "...", price: "...", description: "...", image_url: "...", link: "..." }] }
-18. social_links: { id: "xx", type: "social_links", title: "...", instagram: "...", facebook: "...", youtube: "...", whatsapp: "...", linkedin: "..." }
-19. newsletter: { id: "xx", type: "newsletter", title: "...", subtitle: "...", placeholder: "...", button_label: "..." }
+Tipos de blocos válidos (use os que fizerem sentido para o contexto):
 
-Importante:
-- Use os nomes de ícones descritivos recomendados acima no lugar de emojis ou caracteres especiais (ex: "trip", "safe", "hotel", "award", "care", "vip").
-- Sanitização rigorosa: Jamais insira tags <script>, <iframe> maliciosas.
-- Retorne apenas a array JSON, pronta para JSON.parse().`;
+BLOCOS ESTRUTURAIS:
+1. hero: { id: "xx", type: "hero", title: "...", subtitle: "...", bg_image_url: "...", cta_label: "...", cta_link: "...", layout: "centered"|"split"|"minimal" }
+2. text: { id: "xx", type: "text", content: "<p>HTML seguro</p>", align: "left"|"right"|"center", image_url: "..." }
+3. gallery: { id: "xx", type: "gallery", images: ["url1", "url2"] }
+4. cta: { id: "xx", type: "cta", title: "...", subtitle: "...", button_label: "...", button_link: "..." }
+5. video: { id: "xx", type: "video", title: "...", url: "youtube_embed_url", caption: "..." }
+6. map: { id: "xx", type: "map", title: "...", embed_url: "...", address_label: "..." }
+
+BLOCOS DE CONTEÚDO:
+7. features: { id: "xx", type: "features", title: "...", items: [{ icon: "trip"|"safe"|"hotel"|"clients"|"eco"|"award"|"care"|"world"|"chat"|"pack"|"vip"|"key"|"star"|"map"|"ticket"|"flight"|"lux", title: "...", description: "..." }], layout: "grid"|"cards"|"list" }
+8. stats: { id: "xx", type: "stats", title: "...", items: [{ value: "...", label: "...", icon: "trip"|"safe"|"award"|"clients"|"places"|"world" }] }
+9. testimonials: { id: "xx", type: "testimonials", title: "...", items: [{ author: "...", role: "...", text: "...", avatar_url: "", stars: 5 }], layout: "grid"|"bubble" }
+10. faq: { id: "xx", type: "faq", title: "...", items: [{ question: "...", answer: "..." }], layout: "accordion"|"grid" }
+11. featured_destinations: { id: "xx", type: "featured_destinations", title: "...", subtitle: "...", items: [{ destination: "...", price: "...", description: "...", image_url: "...", link: "#contato" }] }
+12. blog_feed: { id: "xx", type: "blog_feed", title: "...", max_items: 3 }
+
+BLOCOS DE ROTEIROS:
+13. tours_grid: { id: "xx", type: "tours_grid", title: "...", subtitle: "...", max_items: 6, layout: "grid"|"list" }
+14. tours_carousel: { id: "xx", type: "tours_carousel", title: "...", subtitle: "...", max_items: 8 }
+15. featured_destination_filter: { id: "xx", type: "featured_destination_filter", title: "...", subtitle: "..." }
+16. countdown_tour: { id: "xx", type: "countdown_tour", tour_id: "", title: "...", subtitle: "...", button_label: "..." }
+
+BLOCOS DE CAPTAÇÃO DE LEADS:
+17. contact: { id: "xx", type: "contact", title: "...", text: "..." }
+18. newsletter: { id: "xx", type: "newsletter", title: "...", subtitle: "...", placeholder: "Seu melhor e-mail", button_label: "Cadastrar" }
+19. lead_capture_callback: { id: "xx", type: "lead_capture_callback", title: "...", subtitle: "..." }
+20. insurance_simulator: { id: "xx", type: "insurance_simulator", title: "...", description: "..." }
+21. custom_package_lead_builder: { id: "xx", type: "custom_package_lead_builder", title: "...", subtitle: "..." }
+22. reviews_submission_form: { id: "xx", type: "reviews_submission_form", title: "...", subtitle: "..." }
+23. corporate_rfp_form: { id: "xx", type: "corporate_rfp_form", title: "...", subtitle: "..." }
+24. visa_checker: { id: "xx", type: "visa_checker", title: "...", default_nationality: "BR" }
+
+BLOCOS DE REDES SOCIAIS E CONTATO:
+25. social_links: { id: "xx", type: "social_links", title: "...", instagram: "...", facebook: "...", youtube: "...", whatsapp: "...", linkedin: "..." }
+26. social_links_row: { id: "xx", type: "social_links_row", instagram: "...", whatsapp: "...", facebook: "", youtube: "", tiktok: "" }
+27. whatsapp_departments: { id: "xx", type: "whatsapp_departments", title: "...", departments: [{ name: "...", phone: "5549999999999", icon: "chat", message: "..." }] }
+28. team_widget: { id: "xx", type: "team_widget", title: "...", subtitle: "..." }
+
+BLOCOS DE INFORMAÇÕES:
+29. exchange_rates: { id: "xx", type: "exchange_rates", title: "...", currencies: ["USD", "EUR", "GBP"] }
+30. weather_forecast: { id: "xx", type: "weather_forecast", tour_id: "", city: "São Paulo, SP" }
+31. live_reviews: { id: "xx", type: "live_reviews", title: "...", subtitle: "..." }
+32. news_announcements_ticker: { id: "xx", type: "news_announcements_ticker", title: "...", limit: 5 }
+33. agency_badges_trust: { id: "xx", type: "agency_badges_trust", title: "..." }
+34. promotional_banner: { id: "xx", type: "promotional_banner", title: "...", discount_code: "BEMVINDO10", expiration_date: "" }
+
+BLOCOS DE BIOLINK (use quando for página de biolink):
+35. biolink_header: { id: "xx", type: "biolink_header", avatar_url: "", name: "...", bio: "...", bg_color: "#1E293B", text_color: "#FFFFFF" }
+36. biolink_links: { id: "xx", type: "biolink_links", button_style: "solid"|"outline"|"soft", button_rounded: "full"|"md"|"none", items: [{ icon: "chat"|"trip"|"web", title: "...", url: "#", highlight: false }] }
+37. biolink_newsletter_box: { id: "xx", type: "biolink_newsletter_box", placeholder: "Seu e-mail", button_label: "Inscrever" }
+38. biolink_qr_code_share: { id: "xx", type: "biolink_qr_code_share", title: "..." }
+
+Regras:
+- Use ícones descritivos: "trip", "safe", "hotel", "award", "care", "vip", "flight", "chat", "world", "star", "pack", "lux", "map", "ticket", "gift", "phone", "mail", "card", "clock", "dollar", "faq", "eco", "clients", "key"
+- Jamais insira tags <script>, <iframe> maliciosas no HTML
+- Retorne apenas o array JSON, pronto para JSON.parse()
+- Gere pelo menos 5 blocos para uma boa página`;
+
 
     const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",

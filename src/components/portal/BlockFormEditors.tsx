@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plane, ShieldCheck, Hotel, Users, Leaf, Award, Heart, Globe, MessageSquare, Briefcase, Crown, Key, Star, MapPin, Compass, Ticket, Gift, Phone, Mail, CreditCard, Clock, DollarSign, HelpCircle, Sparkles, ChevronDown } from "lucide-react";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
@@ -12,6 +12,74 @@ type Props = {
   updateBlock: (id: string, patch: Partial<PortalBlock>) => void;
   agencyId: string;
 };
+
+// ─── ICON PICKER ─────────────────────────────────────────────────────────────
+const ICON_OPTIONS: { key: string; label: string; Component: React.ComponentType<any> }[] = [
+  { key: "flight", label: "Avião", Component: Plane },
+  { key: "safe", label: "Segurança", Component: ShieldCheck },
+  { key: "hotel", label: "Hotel", Component: Hotel },
+  { key: "clients", label: "Clientes", Component: Users },
+  { key: "eco", label: "Natureza", Component: Leaf },
+  { key: "award", label: "Prêmio", Component: Award },
+  { key: "care", label: "Cuidado", Component: Heart },
+  { key: "world", label: "Mundo", Component: Globe },
+  { key: "chat", label: "Chat", Component: MessageSquare },
+  { key: "pack", label: "Mala", Component: Briefcase },
+  { key: "vip", label: "VIP", Component: Crown },
+  { key: "key", label: "Chave", Component: Key },
+  { key: "star", label: "Estrela", Component: Star },
+  { key: "map", label: "Mapa", Component: MapPin },
+  { key: "trip", label: "Bússola", Component: Compass },
+  { key: "ticket", label: "Ingresso", Component: Ticket },
+  { key: "gift", label: "Presente", Component: Gift },
+  { key: "phone", label: "Telefone", Component: Phone },
+  { key: "mail", label: "E-mail", Component: Mail },
+  { key: "card", label: "Pagamento", Component: CreditCard },
+  { key: "clock", label: "Tempo", Component: Clock },
+  { key: "dollar", label: "Financeiro", Component: DollarSign },
+  { key: "faq", label: "Ajuda", Component: HelpCircle },
+  { key: "lux", label: "Premium", Component: Sparkles },
+];
+
+function IconPicker({ value, onChange }: { value: string; onChange: (key: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const current = ICON_OPTIONS.find((o) => o.key === value.toLowerCase());
+  const CurrentIcon = current?.Component;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-alt text-xs font-medium hover:border-brand/60 transition-colors w-full"
+      >
+        {CurrentIcon ? <CurrentIcon className="w-4 h-4 text-brand shrink-0" /> : <span className="w-4 h-4" />}
+        <span className="flex-1 text-left truncate">{current?.label || value || "Selecionar ícone"}</span>
+        <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+      </button>
+      {open && (
+        <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-xl border border-border bg-surface shadow-xl">
+          <div className="grid grid-cols-6 gap-1.5">
+            {ICON_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                title={opt.label}
+                onClick={() => { onChange(opt.key); setOpen(false); }}
+                className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg border text-[9px] font-medium transition-all hover:border-brand hover:bg-brand/10 ${
+                  value === opt.key ? "border-brand bg-brand/10 text-brand" : "border-transparent bg-surface-alt text-muted-foreground"
+                }`}
+              >
+                <opt.Component className="w-4 h-4" />
+                <span className="leading-tight text-center">{opt.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
   const renderForm = () => {
@@ -159,53 +227,61 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                 placeholder="Ex: Nossos diferenciais"
               />
             </Field>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <label className="text-xs font-semibold text-muted-foreground uppercase">
-                Itens da Grade
+                Itens de Diferencial
               </label>
               {(block.items || []).map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-start border border-border p-2 rounded-lg bg-surface"
+                  className="border border-border rounded-xl p-4 space-y-3 bg-surface shadow-sm"
                 >
-                  <Input
-                    className="w-12 text-center px-1"
-                    placeholder="Icon"
-                    value={item.icon || ""}
-                    onChange={(e) => {
-                      const newItems = [...(block.items || [])];
-                      newItems[itemIdx] = { ...newItems[itemIdx], icon: e.target.value };
-                      updateBlock(block.id, { items: newItems });
-                    }}
-                  />
-                  <Input
-                    placeholder="Título"
-                    value={item.title || ""}
-                    onChange={(e) => {
-                      const newItems = [...(block.items || [])];
-                      newItems[itemIdx] = { ...newItems[itemIdx], title: e.target.value };
-                      updateBlock(block.id, { items: newItems });
-                    }}
-                  />
-                  <Input
-                    placeholder="Descrição breve"
-                    value={item.description || ""}
-                    onChange={(e) => {
-                      const newItems = [...(block.items || [])];
-                      newItems[itemIdx] = { ...newItems[itemIdx], description: e.target.value };
-                      updateBlock(block.id, { items: newItems });
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
-                      updateBlock(block.id, { items: newItems });
-                    }}
-                    className="p-2 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Item #{itemIdx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
+                        updateBlock(block.id, { items: newItems });
+                      }}
+                      className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <Field label="Ícone">
+                    <IconPicker
+                      value={item.icon || ""}
+                      onChange={(key) => {
+                        const newItems = [...(block.items || [])];
+                        newItems[itemIdx] = { ...newItems[itemIdx], icon: key };
+                        updateBlock(block.id, { items: newItems });
+                      }}
+                    />
+                  </Field>
+                  <Field label="Título do Diferencial">
+                    <Input
+                      placeholder="Ex: Destinos exclusivos"
+                      value={item.title || ""}
+                      onChange={(e) => {
+                        const newItems = [...(block.items || [])];
+                        newItems[itemIdx] = { ...newItems[itemIdx], title: e.target.value };
+                        updateBlock(block.id, { items: newItems });
+                      }}
+                    />
+                  </Field>
+                  <Field label="Descrição">
+                    <Textarea
+                      placeholder="Descreva este diferencial brevemente..."
+                      rows={2}
+                      value={item.description || ""}
+                      onChange={(e) => {
+                        const newItems = [...(block.items || [])];
+                        newItems[itemIdx] = { ...newItems[itemIdx], description: e.target.value };
+                        updateBlock(block.id, { items: newItems });
+                      }}
+                    />
+                  </Field>
                 </div>
               ))}
               <button
@@ -214,9 +290,9 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
                   const newItems = [
                     ...(block.items || []),
                     {
-                      icon: "Vip",
-                      title: "Novo item",
-                      description: "Descrição",
+                      icon: "trip",
+                      title: "Novo diferencial",
+                      description: "Descreva este diferencial aqui.",
                     },
                   ];
                   updateBlock(block.id, { items: newItems });
@@ -2110,6 +2186,49 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
           )}
         </Field>
       )}
+
+      {/* ─── Animation Controls ───────────────────────────────────────── */}
+      <div className="pt-4 border-t border-border/60 space-y-3">
+        <label className="text-xs font-semibold text-muted-foreground uppercase">Animacao de Entrada</label>
+        <Field label="Tipo de Animacao">
+          <Select
+            value={styles.animation || "none"}
+            onChange={(e) => updateStyle({ animation: e.target.value })}
+          >
+            <option value="none">Sem Animacao</option>
+            <option value="fade">Fade (Aparece suavemente)</option>
+            <option value="slide-up">Deslizar para Cima</option>
+            <option value="slide-down">Deslizar para Baixo</option>
+            <option value="slide-left">Deslizar da Direita</option>
+            <option value="slide-right">Deslizar da Esquerda</option>
+            <option value="zoom-in">Zoom In (Aumentar)</option>
+          </Select>
+        </Field>
+        {styles.animation && styles.animation !== "none" && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Duracao (ms)" hint="Ex: 600">
+              <Input
+                type="number"
+                min={100}
+                max={3000}
+                step={100}
+                value={styles.animation_duration ?? 600}
+                onChange={(e) => updateStyle({ animation_duration: Number(e.target.value) })}
+              />
+            </Field>
+            <Field label="Atraso (ms)" hint="Ex: 0 ou 200">
+              <Input
+                type="number"
+                min={0}
+                max={2000}
+                step={100}
+                value={styles.animation_delay ?? 0}
+                onChange={(e) => updateStyle({ animation_delay: Number(e.target.value) })}
+              />
+            </Field>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

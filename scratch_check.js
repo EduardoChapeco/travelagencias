@@ -7,14 +7,16 @@ const supabase = createClient(
 
 async function check() {
   const { data, error } = await supabase
-    .from("agencies")
-    .select("id, integrations_config")
+    .from("pg_proc")
+    .select("*")
     .limit(1);
   if (error) {
-    console.log("agencies check FAILED:", error.message);
+    console.log("pg_proc check FAILED:", error.message);
   } else {
-    console.log("agencies check SUCCESS! sample:", data);
+    console.log("pg_proc check SUCCESS! sample:", data);
   }
 }
 
 check();
+
+

@@ -14,6 +14,12 @@ export type SectionStyle = {
   text_color?: string;
   padding_y: "none" | "sm" | "md" | "lg";
   border_radius: "none" | "md" | "lg" | "full";
+  /** Entrance animation */
+  animation?: "none" | "fade" | "slide-up" | "slide-down" | "zoom-in" | "slide-left" | "slide-right";
+  /** Animation duration in milliseconds (default: 600) */
+  animation_duration?: number;
+  /** Animation delay in milliseconds (default: 0) */
+  animation_delay?: number;
 };
 
 export type PortalBlock =

@@ -91,11 +91,38 @@ export function renderIconByName(name: string, className?: string) {
   return <span className={className}>{name}</span>;
 }
 
+// Singleton animation keyframe injection — only injected once in the DOM
+const ANIM_KEYFRAMES_ID = "ta-block-animations";
+function ensureAnimationKeyframes() {
+  if (typeof document === "undefined") return;
+  if (document.getElementById(ANIM_KEYFRAMES_ID)) return;
+  const style = document.createElement("style");
+  style.id = ANIM_KEYFRAMES_ID;
+  style.textContent = `
+    @keyframes ta-fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ta-slide-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ta-slide-down { from { opacity: 0; transform: translateY(-32px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ta-slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes ta-slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes ta-zoom-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+  `;
+  document.head.appendChild(style);
+}
+
+const ANIMATION_NAME_MAP: Record<string, string> = {
+  fade: "ta-fade",
+  "slide-up": "ta-slide-up",
+  "slide-down": "ta-slide-down",
+  "slide-left": "ta-slide-left",
+  "slide-right": "ta-slide-right",
+  "zoom-in": "ta-zoom-in",
+};
+
 export function BlockStyleWrapper({ block, children }: { block: PortalBlock; children: React.ReactNode }) {
   const styles = (block as any).styles;
   if (!styles) return <div className="w-full">{children}</div>;
 
-  const { bg_type, bg_color, bg_gradient, bg_image_url, text_color, padding_y, border_radius } = styles;
+  const { bg_type, bg_color, bg_gradient, bg_image_url, text_color, padding_y, border_radius, animation, animation_duration, animation_delay } = styles;
 
   const inlineStyles: React.CSSProperties = {};
   if (text_color) inlineStyles.color = text_color;
@@ -108,6 +135,15 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
     inlineStyles.backgroundImage = `url(${bg_image_url})`;
     inlineStyles.backgroundSize = "cover";
     inlineStyles.backgroundPosition = "center";
+  }
+
+  // Inject CSS keyframes if there's an animation set
+  if (animation && animation !== "none") {
+    ensureAnimationKeyframes();
+    const animName = ANIMATION_NAME_MAP[animation];
+    if (animName) {
+      inlineStyles.animation = `${animName} ${animation_duration ?? 600}ms ease-out ${animation_delay ?? 0}ms both`;
+    }
   }
 
   const paddingMap = {
@@ -137,6 +173,7 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
     </div>
   );
 }
+
 
 export function BlockRenderer({
   blocks,
@@ -1148,6 +1185,7 @@ function NewsletterBlock({
         _estimated_value: 0,
         _source: "newsletter",
         _notes: "Inscrição de newsletter capturada pelo portal da agência",
+        _tags: ["Newsletter Site"],
       });
       if (error) {
         toast.error("Erro ao se inscrever: " + error.message);
@@ -1766,6 +1804,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
       _estimated_value: 0,
       _source: "landing_page_block",
       _notes: f.notes || null,
+      _tags: ["Lead Form Site"],
     });
 
     setBusy(false);
@@ -2643,6 +2682,7 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
         _estimated_value: 0,
         _source: "callback_request",
         _notes: "Solicitação de retorno / ligação urgente capturada no biolink.",
+        _tags: ["Callback Site"],
       });
 
       if (error) throw error;
@@ -3181,6 +3221,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
         _estimated_value: 0,
         _source: "biolink_newsletter",
         _notes: "Inscrição realizada pelo rodapé/box do biolink.",
+        _tags: ["Newsletter Site", "Biolink"],
       });
 
       if (error) throw error;
@@ -3456,6 +3497,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
         _estimated_value: Math.round(selectedPlan.price),
         _source: "insurance_simulator",
         _notes: notes,
+        _tags: ["Insurance Simulator Site"],
       });
 
       if (error) throw error;
@@ -3824,6 +3866,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         _estimated_value: 0,
         _source: "package_builder",
         _notes: notes,
+        _tags: ["Package Lead Site"],
       });
 
       if (error) throw error;

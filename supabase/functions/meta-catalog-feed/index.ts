@@ -35,12 +35,13 @@ serve(async (req) => {
       return new Response("Agency not found", { status: 404 });
     }
 
-    // 2. Get Published Tours
+    // 2. Get Public Active Tours (status open or confirmed with is_public flag)
     const { data: tours, error: toursError } = await supabase
       .from("group_tours")
-      .select("id, title, description, cover_image_url, base_price, available_seats")
+      .select("id, title, description, cover_image_url, base_price, total_seats, reserved_seats")
       .eq("agency_id", agency.id)
-      .eq("status", "published");
+      .in("status", ["open", "confirmed"])
+      .eq("is_public", true);
 
     if (toursError) throw toursError;
 
@@ -50,7 +51,9 @@ serve(async (req) => {
         const link = `https://${agency.slug}.travelos.com/tour/${t.id}`;
         const imageLink =
           t.cover_image_url || `https://${agency.slug}.travelos.com/placeholder.jpg`;
-        const availability = t.available_seats > 0 ? "in stock" : "out of stock";
+        // Calculate availability dynamically
+        const availableSeats = (t.total_seats || 0) - (t.reserved_seats || 0);
+        const availability = availableSeats > 0 ? "in stock" : "out of stock";
         const price = Number(t.base_price).toFixed(2);
 
         // Escape XML characters
