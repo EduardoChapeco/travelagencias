@@ -17,6 +17,27 @@ const pwaPlugins = VitePWA({
   },
 });
 
+const wrapHook = (hook: any) => {
+  if (!hook) return undefined;
+  if (typeof hook === "function") {
+    return function (this: any, ...args: any[]) {
+      if (this._isSsr) return;
+      return hook.apply(this, args);
+    };
+  }
+  if (typeof hook === "object" && typeof hook.handler === "function") {
+    const handler = hook.handler;
+    return {
+      ...hook,
+      handler(this: any, ...args: any[]) {
+        if (this._isSsr) return;
+        return handler.apply(this, args);
+      },
+    };
+  }
+  return hook;
+};
+
 const safePwaPlugins = (Array.isArray(pwaPlugins) ? pwaPlugins : [pwaPlugins]).map((p: any) => {
   if (!p) return p;
   return {
@@ -25,18 +46,9 @@ const safePwaPlugins = (Array.isArray(pwaPlugins) ? pwaPlugins : [pwaPlugins]).m
       this._isSsr = !!config.build?.ssr;
       return p.configResolved?.call(this, config);
     },
-    closeBundle() {
-      if (this._isSsr) return;
-      return p.closeBundle?.call(this);
-    },
-    writeBundle() {
-      if (this._isSsr) return;
-      return p.writeBundle?.call(this);
-    },
-    generateBundle(...args: any[]) {
-      if (this._isSsr) return;
-      return p.generateBundle?.call(this, ...args);
-    },
+    closeBundle: wrapHook(p.closeBundle),
+    writeBundle: wrapHook(p.writeBundle),
+    generateBundle: wrapHook(p.generateBundle),
   };
 });
 
