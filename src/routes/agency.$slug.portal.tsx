@@ -28,6 +28,12 @@ function Page() {
     { path: `/agency/${slug}/portal/settings`, label: "Configurações" },
   ];
 
+  const isEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+
+  if (isEditor) {
+    return <Outlet />;
+  }
+
   return (
     <>
       <PageHeader title="Portal Público" description="CMS do portal público" />

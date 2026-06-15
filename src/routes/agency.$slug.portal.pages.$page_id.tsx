@@ -189,6 +189,7 @@ function PageEditorRoute() {
   const [tab, setTab] = useState<"content" | "seo" | "history">("content");
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -308,9 +309,9 @@ function PageEditorRoute() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-surface px-6">
+      <div className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
@@ -342,105 +343,187 @@ function PageEditorRoute() {
       </div>
 
       {/* Main 3-Column Studio Area */}
-      <div className="flex flex-1 overflow-hidden h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-1 overflow-hidden min-h-0">
         {/* ── 1. LEFT SIDEBAR: Biblioteca de Seções & Camadas (width 320px) ── */}
         <div className="w-[320px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
-          {/* Seção 1: Biblioteca de Seções */}
-          <div className="p-4 border-b border-border bg-surface-alt/20 shrink-0">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /> Adicionar Seções
-            </h3>
-            <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1 no-scrollbar">
-              {(Object.keys(BLOCK_LABELS) as PortalBlockType[]).map((type) => {
-                let IconComponent = LayoutTemplate;
-                if (type === "text") IconComponent = Type;
-                else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
-                else if (type === "contact") IconComponent = PhoneCall;
-                else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
-                else if (type === "cta") IconComponent = Megaphone;
-                else if (type === "faq" || type === "support_ticket_form") IconComponent = HelpCircle;
-                else if (type === "testimonials") IconComponent = Quote;
-                else if (type === "tours_grid") IconComponent = Bus;
-                else if (type === "stats") IconComponent = BarChart2;
-                else if (type === "video") IconComponent = Play;
-                else if (type === "map") IconComponent = Map;
-                else if (type === "blog_feed") IconComponent = Rss;
-
-                const isBiolinkType = type.startsWith("biolink_");
-
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => addBlock(type)}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all hover:scale-105 active:scale-95 group hover:border-brand/50 hover:bg-brand/5
-                      ${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
-                  >
-                    <IconComponent className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand ${isBiolinkType ? "text-brand" : "text-muted-foreground"}`} />
-                    <span className="text-[10px] font-bold leading-tight">
-                      {BLOCK_LABELS[type].split(" ")[0]}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Seletor de Abas Esquerdo */}
+          <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
             <button
               type="button"
-              onClick={() => setAiModalOpen(true)}
-              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-brand/20 bg-brand/5 py-2 mt-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+              onClick={() => setLeftTab("sections")}
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+                leftTab === "sections"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              }`}
             >
-              <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
+              Seções
+            </button>
+            <button
+              type="button"
+              onClick={() => setLeftTab("templates")}
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+                leftTab === "templates"
+                  ? "bg-background text-brand shadow-sm border border-brand/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              }`}
+            >
+              Templates
+            </button>
+            <button
+              type="button"
+              onClick={() => setLeftTab("layers")}
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+                leftTab === "layers"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              }`}
+            >
+              Camadas ({blocks.length})
             </button>
           </div>
 
-          {/* Seção 2: Camadas da Página (Estrutura) */}
-          <div className="flex-1 flex flex-col min-h-0">
-            <div className="px-4 py-3 border-b border-border bg-surface-alt/10 flex justify-between items-center">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5" /> Camadas da Página
-              </h3>
-              <span className="text-[10px] bg-border px-1.5 py-0.5 rounded font-bold text-muted-foreground">
-                {blocks.length}
-              </span>
+          {/* ABA 1: SEÇÕES */}
+          {leftTab === "sections" && (
+            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+              <div>
+                <h4 className="text-xs font-bold text-foreground">Biblioteca de Seções</h4>
+                <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                  Adicione novos blocos visuais arrastáveis ao layout de sua página.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {(Object.keys(BLOCK_LABELS) as PortalBlockType[]).map((type) => {
+                  let IconComponent = LayoutTemplate;
+                  if (type === "text") IconComponent = Type;
+                  else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
+                  else if (type === "contact") IconComponent = PhoneCall;
+                  else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
+                  else if (type === "cta") IconComponent = Megaphone;
+                  else if (type === "faq" || type === "support_ticket_form") IconComponent = HelpCircle;
+                  else if (type === "testimonials") IconComponent = Quote;
+                  else if (type === "tours_grid") IconComponent = Bus;
+                  else if (type === "stats") IconComponent = BarChart2;
+                  else if (type === "video") IconComponent = Play;
+                  else if (type === "map") IconComponent = Map;
+                  else if (type === "blog_feed") IconComponent = Rss;
+
+                  const isBiolinkType = type.startsWith("biolink_");
+
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => addBlock(type)}
+                      className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5
+                        ${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
+                    >
+                      <IconComponent className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand ${isBiolinkType ? "text-brand" : "text-muted-foreground"}`} />
+                      <span className="text-[10px] font-bold leading-tight">
+                        {BLOCK_LABELS[type].split(" ")[0]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAiModalOpen(true)}
+                className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+              >
+                <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
+              </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
-              {blocks.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border p-8 text-center bg-surface-alt/10">
-                  <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
-                  <p className="text-[10px] text-muted-foreground/70 mt-1">
-                    Adicione seções prontas pela biblioteca acima ou escolha um template na direita.
-                  </p>
-                </div>
-              ) : (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={blocks.map((b) => b.id)}
-                    strategy={verticalListSortingStrategy}
+          )}
+
+          {/* ABA 2: TEMPLATES */}
+          {leftTab === "templates" && (
+            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+              <div>
+                <h4 className="text-xs font-bold text-foreground">Designs Prontos</h4>
+                <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                  Substitua a estrutura atual por um template profissional em um clique.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                {CMS_TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => handleApplyTemplate(tpl.id)}
+                    className={`w-full text-left p-3 rounded-xl border hover:border-brand/40 transition-all flex flex-col gap-1.5 group
+                      ${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
                   >
-                    <div className="space-y-2">
-                      {blocks.map((block) => (
-                        <SortableBlock
-                          key={block.id}
-                          block={block}
-                          selectedBlockId={selectedBlockId}
-                          setSelectedBlockId={setSelectedBlockId}
-                          removeBlock={removeBlock}
-                        />
-                      ))}
+                    <div className="flex justify-between items-center w-full">
+                      <span className={`text-xs font-bold transition-colors group-hover:text-brand ${template === tpl.id ? "text-brand" : "text-foreground"}`}>
+                        {tpl.name}
+                      </span>
+                      <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
+                        {tpl.category}
+                      </span>
                     </div>
-                  </SortableContext>
-                </DndContext>
-              )}
+                    <span className="text-[10px] text-muted-foreground leading-normal">
+                      {tpl.description}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* ABA 3: CAMADAS */}
+          {leftTab === "layers" && (
+            <div className="flex-1 flex flex-col min-h-0">
+              <div className="px-4 py-3 border-b border-border bg-surface-alt/10 flex justify-between items-center shrink-0">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5" /> Ordenar Seções
+                </h3>
+                <span className="text-[10px] bg-border px-1.5 py-0.5 rounded font-bold text-muted-foreground">
+                  {blocks.length}
+                </span>
+              </div>
+              <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+                {blocks.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border p-8 text-center bg-surface-alt/10">
+                    <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
+                    <p className="text-[10px] text-muted-foreground/70 mt-1">
+                      Adicione seções pela aba "Seções" ou selecione um template em "Templates".
+                    </p>
+                  </div>
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={blocks.map((b) => b.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-2">
+                        {blocks.map((block) => (
+                          <SortableBlock
+                            key={block.id}
+                            block={block}
+                            selectedBlockId={selectedBlockId}
+                            setSelectedBlockId={setSelectedBlockId}
+                            removeBlock={removeBlock}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
-        <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start pt-4 px-4 pb-4">
+        <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start pt-4 px-4 pb-4 min-h-0 h-full">
           {/* Seletor de Viewport */}
           <div className="flex items-center gap-1.5 mb-4 bg-surface p-1 rounded-full border border-border shadow-sm z-10 shrink-0">
             <button
@@ -465,7 +548,7 @@ function PageEditorRoute() {
 
           {/* Browser / Device Mockup Frame */}
           <div
-            className={`flex-1 bg-surface border border-border rounded-2xl shadow-2xl overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+            className={`flex-1 min-h-0 bg-surface border border-border rounded-2xl shadow-2xl overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
               viewport === "desktop"
                 ? "w-full max-w-5xl"
                 : viewport === "tablet"
@@ -683,38 +766,6 @@ function PageEditorRoute() {
                         </Select>
                       </Field>
 
-                      {/* Templates Biblioteca visual */}
-                      <div className="space-y-4 pt-4 border-t border-border">
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">
-                          Biblioteca de Templates Prontos
-                        </label>
-                        <p className="text-[10px] text-muted-foreground leading-normal">
-                          Selecione um design pronto abaixo para preencher o canvas instantaneamente com seções de alta conversão.
-                        </p>
-                        <div className="space-y-2">
-                          {CMS_TEMPLATES.map((tpl) => (
-                            <button
-                              key={tpl.id}
-                              type="button"
-                              onClick={() => handleApplyTemplate(tpl.id)}
-                              className={`w-full text-left p-3 rounded-xl border hover:border-brand/40 transition-all flex flex-col gap-1.5 group
-                                ${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
-                            >
-                              <div className="flex justify-between items-center w-full">
-                                <span className={`text-xs font-bold transition-colors group-hover:text-brand ${template === tpl.id ? "text-brand" : "text-foreground"}`}>
-                                  {tpl.name}
-                                </span>
-                                <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
-                                  {tpl.category}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-muted-foreground leading-normal">
-                                {tpl.description}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   )}
                 </form>

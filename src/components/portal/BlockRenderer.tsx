@@ -186,15 +186,14 @@ export function BlockRenderer({
   };
 
   return (
-    <div className="flex flex-col gap-4 py-8">
+    <div className="flex flex-col gap-4 pb-20">
       {blocks.map((b) => {
         const isSelected = selectedBlockId === b.id;
-        const Wrapper = onSelectBlock ? "button" : "div";
+        const Wrapper = "div";
 
         return (
           <Wrapper
             key={b.id}
-            type={onSelectBlock ? "button" : undefined}
             onClick={onSelectBlock ? () => onSelectBlock(b.id) : undefined}
             className={`w-full text-left relative outline-none transition-all duration-200 group block-wrapper-preview
               ${onSelectBlock ? "cursor-pointer hover:ring-2 hover:ring-brand/50 hover:ring-offset-4 rounded-3xl" : ""}

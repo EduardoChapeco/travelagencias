@@ -41,6 +41,18 @@ export function AppShell({
     pathname.includes("/proposals/") ||
     pathname.includes("/vouchers");
 
+  const isVisualEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+
+  if (isVisualEditor) {
+    return (
+      <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
+        <div className="flex flex-col flex-1 h-full overflow-hidden">
+          <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
       <AppSidebar isPinned={isPinned} onTogglePin={togglePin} />
