@@ -104,7 +104,7 @@ export function BlockRenderer({
       });
     } else {
       // Fallback a supabase standard insert se as variáveis de ambiente não estiverem prontas
-      supabase
+      (supabase as any)
         .from("portal_page_analytics")
         .insert({
           page_id: pageId,
@@ -113,7 +113,7 @@ export function BlockRenderer({
           link_url: url,
           device_type: deviceType,
         })
-        .then(({ error }) => {
+        .then(({ error }: any) => {
           if (error) console.error("Error logging click fallback:", error.message);
         });
     }
@@ -571,8 +571,8 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
             {b.description || "Acesse seus vouchers, passagens aéreas e guias de embarque da sua viagem."}
           </p>
           <Link
-            to="/client/login"
-            onClick={() => handleLinkClick("/client/login")}
+            to={"/auth/login" as any}
+            onClick={() => handleLinkClick("/auth/login")}
             className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
           >
             {b.button_label || "Acessar Painel"}
@@ -659,7 +659,7 @@ function PendingContractsWidgetBlock({
     }
     setSearching(true);
     try {
-      const { data, error } = await supabase.rpc("get_contracts_by_payer_info", {
+      const { data, error } = await (supabase as any).rpc("get_contracts_by_payer_info", {
         p_email: email.trim() || null,
         p_document: document.trim() || null,
         p_agency_id: agencyId

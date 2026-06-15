@@ -684,7 +684,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
               <Field label="Estilo do Botão">
                 <Select
                   value={block.button_style || "solid"}
-                  onChange={(e) => updateBlock(block.id, { button_style: e.target.value })}
+                  onChange={(e) => updateBlock(block.id, { button_style: e.target.value as any })}
                 >
                   <option value="solid">Sólido (Preenchido)</option>
                   <option value="outline">Contorno (Outline)</option>
@@ -694,7 +694,7 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
               <Field label="Arredondamento">
                 <Select
                   value={block.button_rounded || "full"}
-                  onChange={(e) => updateBlock(block.id, { button_rounded: e.target.value })}
+                  onChange={(e) => updateBlock(block.id, { button_rounded: e.target.value as any })}
                 >
                   <option value="none">Quadrado</option>
                   <option value="md">Arredondado</option>

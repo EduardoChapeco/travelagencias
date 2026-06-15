@@ -105,7 +105,7 @@ function HomePage() {
   useEffect(() => {
     if (homePage && agency) {
       const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
-      supabase
+      (supabase as any)
         .from("portal_page_analytics")
         .insert({
           page_id: homePage.id,
@@ -113,7 +113,7 @@ function HomePage() {
           event_type: "view",
           device_type: deviceType,
         })
-        .then(({ error }) => {
+        .then(({ error }: any) => {
           if (error) console.error("Error logging home view:", error.message);
         });
     }
