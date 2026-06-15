@@ -6,10 +6,12 @@ import { Loader2, Pin, PinOff } from "lucide-react";
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
 export type SlimSidebarItem = {
-  to: string;
+  type?: "link" | "header";
+  to?: string;
   label: string;
-  icon: Icon;
+  icon?: Icon;
   exact?: boolean;
+  adminOnly?: boolean;
 };
 
 export function SlimSidebar({
@@ -52,8 +54,28 @@ export function SlimSidebar({
         aria-label="Navegação principal"
       >
         <ul className="space-y-0.5">
-          {items.map((item) => {
-            const normalizedTo = item.to.replace(/\/$/, "") || "/";
+          {items.map((item, idx) => {
+            if (item.type === "header") {
+              return (
+                <li key={`header-${idx}`} className={cn("px-3 pb-1 pt-3", idx === 0 && "pt-1")}>
+                  <div
+                    className={cn(
+                      "text-[10px] font-bold uppercase tracking-widest text-sidebar-foreground/40 transition-opacity duration-200",
+                      isPinned
+                        ? "opacity-100"
+                        : "opacity-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:opacity-100",
+                    )}
+                  >
+                    {item.label}
+                  </div>
+                  {!isPinned && (
+                    <div className="mx-auto mt-2 h-px w-4 bg-sidebar-border group-hover/sidebar:hidden group-focus-within/sidebar:hidden" />
+                  )}
+                </li>
+              );
+            }
+
+            const normalizedTo = item.to!.replace(/\/$/, "") || "/";
             const active = item.exact
               ? pathname === normalizedTo
               : pathname === normalizedTo || pathname.startsWith(`${normalizedTo}/`);
@@ -63,12 +85,12 @@ export function SlimSidebar({
                 ? pendingLocation === normalizedTo
                 : pendingLocation === normalizedTo ||
                   pendingLocation.startsWith(`${normalizedTo}/`));
-            const ItemIcon = item.icon;
+            const ItemIcon = item.icon!;
 
             return (
               <li key={item.to}>
                 <Link
-                  to={item.to}
+                  to={item.to!}
                   title={item.label}
                   className={cn(
                     "group/item relative flex h-8 items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",

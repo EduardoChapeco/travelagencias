@@ -6,7 +6,7 @@ interface Props {
   save: (patch: Partial<Proposal>) => void;
 }
 
-type Insurance = { provider: string; policy: string; coverage: string; phone: string };
+type Insurance = { provider: string; policy: string; coverage: string; phone: string; price?: number };
 
 export function SectionInsurance({ draft, save }: Props) {
   const ins: Insurance = (draft as any).insurance ?? {
@@ -38,6 +38,14 @@ export function SectionInsurance({ draft, save }: Props) {
         </L>
         <L label="Telefone de Acionamento">
           <Inp value={ins.phone} onChange={(v) => upd({ phone: v })} ph="ex. +0800-xxx-xxxx" />
+        </L>
+        <L label="Valor / Preço">
+          <Inp
+            value={ins.price?.toString() || ""}
+            onChange={(v) => upd({ price: parseFloat(v) || 0 })}
+            ph="ex. 150.00"
+            type="number"
+          />
         </L>
       </div>
     </Accordion>

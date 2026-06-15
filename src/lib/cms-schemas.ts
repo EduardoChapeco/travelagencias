@@ -83,7 +83,7 @@ export const TestimonialsBlockSchema = z.object({
         text: z.string().max(2000, "Texto do depoimento muito longo").default(""),
         avatar_url: z.string().max(1000).or(z.literal("")).default(""),
         stars: z.number().min(1).max(5).default(5),
-      })
+      }),
     )
     .max(50, "No máximo 50 depoimentos")
     .default([]),
@@ -107,7 +107,7 @@ export const StatsBlockSchema = z.object({
         value: z.string().max(100, "Valor muito longo").default(""),
         label: z.string().max(200, "Rótulo muito longo").default(""),
         icon: z.string().max(50, "Ícone muito longo").default(""),
-      })
+      }),
     )
     .max(20, "No máximo 20 números")
     .default([]),
@@ -151,7 +151,6 @@ export const PortalBlockSchema = z.discriminatedUnion("type", [
   MapBlockSchema,
   BlogFeedBlockSchema,
 ]);
-
 
 export const PortalBlocksArraySchema = z.array(PortalBlockSchema);
 

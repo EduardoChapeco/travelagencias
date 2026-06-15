@@ -21,27 +21,47 @@ import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
 const STEPS = ["Identidade B2B", "Comercial & Markups", "Contatos (SLA)"];
 
-const supplierWizardSchema = z.object({
-  name: z.string().min(2, "Nome fantasia deve ter no mínimo 2 caracteres"),
-  legalName: z.string().optional().nullable(),
-  kind: z.enum(["operator", "airline", "hotel", "car_rental", "insurance", "transfer", "visa", "other"]).default("operator"),
-  document: z.string().optional().nullable(),
-  commission: z.number({ invalid_type_error: "Insira um número válido" }).min(0, "Comissão mínima é 0%").max(100, "Comissão máxima é 100%").default(0),
-  notes: z.string().optional().nullable(),
-  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
-  phone: z.string().optional().nullable(),
-}).refine((data) => {
-  if (data.document) {
-    const raw = data.document.replace(/[^\d]/g, "");
-    if (raw.length > 0) {
-      return validateCNPJ(raw);
-    }
-  }
-  return true;
-}, {
-  message: "CNPJ inválido",
-  path: ["document"],
-});
+const supplierWizardSchema = z
+  .object({
+    name: z.string().min(2, "Nome fantasia deve ter no mínimo 2 caracteres"),
+    legalName: z.string().optional().nullable(),
+    kind: z
+      .enum([
+        "operator",
+        "airline",
+        "hotel",
+        "car_rental",
+        "insurance",
+        "transfer",
+        "visa",
+        "other",
+      ])
+      .default("operator"),
+    document: z.string().optional().nullable(),
+    commission: z
+      .number({ invalid_type_error: "Insira um número válido" })
+      .min(0, "Comissão mínima é 0%")
+      .max(100, "Comissão máxima é 100%")
+      .default(0),
+    notes: z.string().optional().nullable(),
+    email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+    phone: z.string().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.document) {
+        const raw = data.document.replace(/[^\d]/g, "");
+        if (raw.length > 0) {
+          return validateCNPJ(raw);
+        }
+      }
+      return true;
+    },
+    {
+      message: "CNPJ inválido",
+      path: ["document"],
+    },
+  );
 
 type SupplierWizardFormData = z.infer<typeof supplierWizardSchema>;
 
@@ -185,7 +205,10 @@ export function NewSupplierWizard({
             {/* STEP 0: Identidade */}
             {step === 0 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-                <Field label="Nome Fantasia (Visível nos Relatórios) *" error={errors.name?.message}>
+                <Field
+                  label="Nome Fantasia (Visível nos Relatórios) *"
+                  error={errors.name?.message}
+                >
                   <Input
                     {...register("name")}
                     placeholder="Ex: CVC Viagens"
@@ -195,10 +218,7 @@ export function NewSupplierWizard({
                 </Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Razão Social (Contratos)" error={errors.legalName?.message}>
-                    <Input
-                      {...register("legalName")}
-                      placeholder="CVC Brasil Operadora Ltda"
-                    />
+                    <Input {...register("legalName")} placeholder="CVC Brasil Operadora Ltda" />
                   </Field>
                   <Field label="CNPJ / Documento" error={errors.document?.message}>
                     <Input
@@ -227,7 +247,10 @@ export function NewSupplierWizard({
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="rounded-xl border border-brand/20 bg-brand/5 p-6">
-                  <Field label="Comissão Base ou Markup Acordado (%)" error={errors.commission?.message}>
+                  <Field
+                    label="Comissão Base ou Markup Acordado (%)"
+                    error={errors.commission?.message}
+                  >
                     <Input
                       type="number"
                       min="0"
@@ -237,13 +260,16 @@ export function NewSupplierWizard({
                       className="text-2xl font-mono text-brand h-12"
                     />
                     <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
-                      Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes deste
-                      fornecedor.
+                      Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes
+                      deste fornecedor.
                     </p>
                   </Field>
                 </div>
 
-                <Field label="Política de Comissionamento & Condições" error={errors.notes?.message}>
+                <Field
+                  label="Política de Comissionamento & Condições"
+                  error={errors.notes?.message}
+                >
                   <Textarea
                     {...register("notes")}
                     rows={4}
@@ -271,11 +297,7 @@ export function NewSupplierWizard({
                   <Field label="Telefone / SLA Helpdesk" error={errors.phone?.message}>
                     <div className="relative">
                       <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        {...register("phone")}
-                        placeholder="0800 123 456"
-                        className="pl-9"
-                      />
+                      <Input {...register("phone")} placeholder="0800 123 456" className="pl-9" />
                     </div>
                   </Field>
                 </div>
@@ -304,7 +326,12 @@ export function NewSupplierWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+          <GhostButton
+            type="button"
+            onClick={handleBack}
+            disabled={step === 0}
+            className="gap-2 w-28"
+          >
             <ChevronLeft className="h-4 w-4" /> Voltar
           </GhostButton>
 

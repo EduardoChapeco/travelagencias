@@ -19,12 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import {
-  fetchPlans,
-  deletePlan,
-  togglePlanActive,
-  savePlan,
-} from "@/services/admin";
+import { fetchPlans, deletePlan, togglePlanActive, savePlan } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
@@ -37,7 +32,6 @@ import {
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 
 export const Route = createFileRoute("/admin/plans")({
   head: () => ({ meta: [{ title: "Planos · TravelOS Admin" }] }),
@@ -239,7 +233,7 @@ function Page() {
           }}
           onSave={async (plan) => {
             try {
-              // We omit the auto-generated slug in new inserts to let service/DB handle it 
+              // We omit the auto-generated slug in new inserts to let service/DB handle it
               // or let savePlan do the upsert. In plans schema, slug is a unique required text.
               // So we slugify the name if it is a new plan, or generate one in service.
               // Let's pass a slug if it doesn't have one.
@@ -288,7 +282,9 @@ const planSchema = z.object({
   price_monthly: z.coerce.number().min(0, "O preço mensal deve ser maior ou igual a zero"),
   price_annual: z.coerce.number().min(0, "O preço anual deve ser maior ou igual a zero"),
   max_agents: z.coerce.number().min(1, "O número máximo de agentes deve ser pelo menos 1"),
-  max_trips_per_month: z.coerce.number().min(-1, "O número máximo de viagens deve ser pelo menos -1"),
+  max_trips_per_month: z.coerce
+    .number()
+    .min(-1, "O número máximo de viagens deve ser pelo menos -1"),
   max_storage_gb: z.coerce.number().min(1, "O espaço mínimo de armazenamento é 1 GB"),
   is_active: z.boolean(),
   is_featured: z.boolean(),
@@ -296,7 +292,7 @@ const planSchema = z.object({
     z.object({
       label: z.string().min(1, "Nome da feature é obrigatório"),
       included: z.boolean(),
-    })
+    }),
   ),
 });
 
@@ -344,73 +340,41 @@ function PlanEditor({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nome do plano *" error={errors.name?.message}>
-              <Input
-                placeholder="Starter, Pro, Enterprise…"
-                {...register("name")}
-              />
+              <Input placeholder="Starter, Pro, Enterprise…" {...register("name")} />
             </Field>
             <Field label="Badge (opcional)" error={errors.badge?.message}>
-              <Input
-                placeholder="Mais popular"
-                {...register("badge")}
-              />
+              <Input placeholder="Mais popular" {...register("badge")} />
             </Field>
           </div>
           <Field label="Descrição" error={errors.description?.message}>
-            <Textarea
-              rows={2}
-              {...register("description")}
-            />
+            <Textarea rows={2} {...register("description")} />
           </Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Preço mensal (R$)" error={errors.price_monthly?.message}>
-              <Input
-                type="number"
-                step="0.01"
-                {...register("price_monthly")}
-              />
+              <Input type="number" step="0.01" {...register("price_monthly")} />
             </Field>
             <Field label="Preço anual (R$)" error={errors.price_annual?.message}>
-              <Input
-                type="number"
-                step="0.01"
-                {...register("price_annual")}
-              />
+              <Input type="number" step="0.01" {...register("price_annual")} />
             </Field>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field label="Max agentes" error={errors.max_agents?.message}>
-              <Input
-                type="number"
-                {...register("max_agents")}
-              />
+              <Input type="number" {...register("max_agents")} />
             </Field>
             <Field label="Viagens/mês" error={errors.max_trips_per_month?.message}>
-              <Input
-                type="number"
-                {...register("max_trips_per_month")}
-              />
+              <Input type="number" {...register("max_trips_per_month")} />
             </Field>
             <Field label="Storage (GB)" error={errors.max_storage_gb?.message}>
-              <Input
-                type="number"
-                {...register("max_storage_gb")}
-              />
+              <Input type="number" {...register("max_storage_gb")} />
             </Field>
           </div>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                {...register("is_active")}
-              />
+              <input type="checkbox" {...register("is_active")} />
               Ativo
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                {...register("is_featured")}
-              />
+              <input type="checkbox" {...register("is_featured")} />
               Destaque (badge)
             </label>
           </div>

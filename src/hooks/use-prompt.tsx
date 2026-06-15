@@ -34,13 +34,15 @@ export function usePrompt() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{options?.title}</AlertDialogTitle>
-          {options?.description && <AlertDialogDescription>{options?.description}</AlertDialogDescription>}
+          {options?.description && (
+            <AlertDialogDescription>{options?.description}</AlertDialogDescription>
+          )}
         </AlertDialogHeader>
         <div className="py-2">
-          <Input 
+          <Input
             autoFocus
-            value={value} 
-            onChange={(e) => setValue(e.target.value)} 
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && value.trim()) {
                 options?.onConfirm(value);

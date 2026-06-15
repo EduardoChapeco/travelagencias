@@ -13,6 +13,7 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
@@ -150,14 +151,18 @@ export function NewCorporateRfpWizard({
           {step === 0 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <Field label="Empresa Cliente (CNPJ) *">
-                <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                  <option value="">Selecione a empresa vinculada...</option>
-                  {clientsQ.data?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.full_name} {c.document ? `(${c.document})` : ""}
-                    </option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  value={clientId}
+                  onChange={setClientId}
+                  placeholder="Buscar empresa cadastrada..."
+                  searchPlaceholder="Razão social, CNPJ..."
+                  options={clientsQ.data?.map((c) => ({
+                    value: c.id,
+                    label: c.full_name,
+                    sublabel: c.document ?? undefined,
+                  }))}
+                  loading={clientsQ.isLoading}
+                />
               </Field>
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Nome do Solicitante (Passageiro) *">

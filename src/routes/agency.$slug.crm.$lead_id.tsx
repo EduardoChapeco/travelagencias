@@ -215,6 +215,23 @@ function LeadDetailPage() {
   }
 
   async function handleConvert() {
+    // ── Validate mandatory fields before conversion ──────────────────────────
+    const missing: string[] = [];
+    if (!lead.name?.trim()) missing.push("Nome completo");
+    if (!(lead as any).document?.trim() && !(lead as any).cpf?.trim())
+      missing.push("CPF / Documento");
+    if (!(lead as any).birth_date?.trim()) missing.push("Data de nascimento");
+    if (!lead.phone?.trim()) missing.push("WhatsApp / Telefone");
+
+    if (missing.length > 0) {
+      toast.error(
+        `Preencha os campos obrigatórios antes de converter:\n• ${missing.join("\n• ")}`,
+        { duration: 6000 }
+      );
+      setEditing(true); // Open edit form so user can fill in
+      return;
+    }
+
     try {
       await promoteLeadToClient(lead.id);
     } catch (error: any) {
@@ -339,7 +356,7 @@ function LeadDetailPage() {
         } catch (e) {
           toast.error("Falha ao remover anexo");
         }
-      }
+      },
     });
   }
 
@@ -478,6 +495,19 @@ function LeadDetailPage() {
               >
                 <FileText className="h-3.5 w-3.5" /> Link Form
               </button>
+
+              <PrimaryButton
+                onClick={() =>
+                  navigate({
+                    to: "/agency/$slug/proposals/new",
+                    params: { slug },
+                    search: { lead_id: lead.id, client_id: lead.client_id || undefined },
+                  })
+                }
+                className="gap-1.5 text-xs font-bold h-9 bg-brand hover:bg-brand/90 text-brand-foreground"
+              >
+                <Sparkles className="h-4 w-4" /> Nova Cotação
+              </PrimaryButton>
               {!lead.client_id ? (
                 <PrimaryButton
                   onClick={() => setConfirmConvertOpen(true)}
@@ -890,7 +920,7 @@ function LeadDetailPage() {
                                   } catch (e) {
                                     toast.error("Falha ao salvar");
                                   }
-                                }
+                                },
                               });
                             }}
                             className="absolute right-3 top-3 text-muted-foreground hover:text-danger p-1 cursor-pointer"
@@ -1231,12 +1261,14 @@ function LeadDetailPage() {
                                   onConfirm: async () => {
                                     try {
                                       await deleteLeadMeeting(meeting.id);
-                                      qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
+                                      qc.invalidateQueries({
+                                        queryKey: ["lead-meetings", lead.id],
+                                      });
                                       toast.success("Compromisso removido.");
                                     } catch (e) {
                                       toast.error("Erro ao remover");
                                     }
-                                  }
+                                  },
                                 });
                               }}
                               className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-lg transition-colors cursor-pointer"
@@ -1418,8 +1450,8 @@ function LeadDetailPage() {
               <DialogHeader>
                 <DialogTitle>Confirmar Conversão de Cliente</DialogTitle>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba
-                  serão vinculados automaticamente no banco de dados.
+                  Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba serão
+                  vinculados automaticamente no banco de dados.
                 </p>
               </DialogHeader>
 
@@ -1542,8 +1574,17 @@ function LeadDetailPage() {
                 </GhostButton>
                 <PrimaryButton
                   onClick={async () => {
-                    if (!clientPayload.full_name || !clientPayload.document) {
-                      toast.error("Nome completo e CPF são obrigatórios!");
+                    const missing: string[] = [];
+                    if (!clientPayload.full_name?.trim()) missing.push("Nome completo");
+                    if (!clientPayload.document?.trim()) missing.push("CPF / Documento");
+                    if (!clientPayload.birth_date?.trim()) missing.push("Data de nascimento");
+                    if (!clientPayload.phone?.trim()) missing.push("WhatsApp / Telefone");
+
+                    if (missing.length > 0) {
+                      toast.error(
+                        `Preencha os campos obrigatórios para converter:\n• ${missing.join("\n• ")}`,
+                        { duration: 5000 }
+                      );
                       return;
                     }
                     try {

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Download, FileText, Image as ImageIcon, Server, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import { type Proposal } from "@/services/proposals";
-import { generateProposalPdfViaServer } from "@/services/proposals";
+import {
+  type Proposal,
+  generateProposalPdfViaServer,
+  logProposalActivity,
+} from "@/services/proposals";
 
 import {
   DropdownMenu,
@@ -26,16 +29,55 @@ export function ExportPdfButton({ proposal }: Props) {
     try {
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
-      const el = document.getElementById("proposal-canvas");
-      if (!el) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
-      const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
-      const img = canvas.toDataURL("image/jpeg", 0.95);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pdfW = 210;
-      const pdfH = (canvas.height * pdfW) / canvas.width;
-      pdf.addImage(img, "JPEG", 0, 0, pdfW, pdfH);
+      const container = document.getElementById("proposal-canvas");
+      if (!container) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
+
+      const pages = Array.from(
+        container.querySelectorAll(".a4-page, .a4-landscape-page, .presentation-page"),
+      ) as HTMLElement[];
+      const targets = pages.length > 0 ? pages : [container];
+
+      const isLandscape =
+        proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
+      const orientation = isLandscape ? "landscape" : "portrait";
+
+      const pdf = new jsPDF({ orientation, unit: "mm", format: "a4" });
+      const pdfW = isLandscape ? 297 : 210;
+      const pdfH = isLandscape ? 210 : 297;
+
+      for (let i = 0; i < targets.length; i++) {
+        const el = targets[i];
+
+        // Temporarily clear margin for rendering
+        const originalMargin = el.style.margin;
+        el.style.margin = "0";
+
+        const canvas = await html2canvas(el, {
+          scale: 2.5,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+        });
+
+        el.style.margin = originalMargin;
+
+        const img = canvas.toDataURL("image/jpeg", 0.95);
+
+        if (i > 0) {
+          pdf.addPage("a4", orientation);
+        }
+
+        pdf.addImage(img, "JPEG", 0, 0, pdfW, pdfH);
+      }
+
       pdf.save(`proposta-${proposal.number}.pdf`);
       toast.success("PDF exportado com sucesso!");
+
+      // Log activity
+      await logProposalActivity(proposal.id, proposal.agency_id, "pdf_exported", {
+        format: proposal.canvas_format,
+        pages_count: targets.length,
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao exportar PDF");
     } finally {
@@ -100,9 +142,15 @@ export function ExportPdfButton({ proposal }: Props) {
     const toastId = "server-pdf";
     toast.loading("Gerando PDF de alta qualidade no servidor…", { id: toastId });
     try {
-      const isLandscape = proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
+      const isLandscape =
+        proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
       const pdfFormat = proposal.canvas_format === "presentation-169" ? "presentation-169" : "A4";
-      const url = await generateProposalPdfViaServer(proposal.id, proposal.agency_id, pdfFormat, isLandscape);
+      const url = await generateProposalPdfViaServer(
+        proposal.id,
+        proposal.agency_id,
+        pdfFormat,
+        isLandscape,
+      );
       setServerPdfUrl(url);
       toast.success("PDF gerado com sucesso! Clique para baixar.", {
         id: toastId,

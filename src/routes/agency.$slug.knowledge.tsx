@@ -68,7 +68,10 @@ function KnowledgePage() {
         title="Base de conhecimento"
         description="Procedimentos, fornecedores, regras internas e guias de destino."
         actions={
-          <PrimaryButton onClick={() => setOpen(true)} className="gap-1.5 h-9 text-xs font-bold px-3">
+          <PrimaryButton
+            onClick={() => setOpen(true)}
+            className="gap-1.5 h-9 text-xs font-bold px-3"
+          >
             <Plus className="h-3.5 w-3.5" /> Novo artigo
           </PrimaryButton>
         }

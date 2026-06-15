@@ -1,7 +1,16 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User } from "lucide-react";
+import {
+  Search,
+  Filter,
+  FileText,
+  Building2,
+  Calendar,
+  FileSignature,
+  ArrowRight,
+  User,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
@@ -58,7 +67,7 @@ function ContractsPage() {
       if (statusFilter !== "all") {
         query = query.eq("status", statusFilter);
       }
-      
+
       // We don't easily have 'client_name' as a top level column, but we can search in package_summary
       if (debouncedSearch.trim()) {
         query = query.ilike("package_summary", `%${debouncedSearch}%`);
@@ -87,8 +96,8 @@ function ContractsPage() {
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar por pacote..." 
+          <Input
+            placeholder="Buscar por pacote..."
             className="pl-9"
             value={search}
             onChange={(e) => {
@@ -98,8 +107,8 @@ function ContractsPage() {
           />
         </div>
         <div className="w-full sm:w-48">
-          <Select 
-            value={statusFilter} 
+          <Select
+            value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setPage(1);

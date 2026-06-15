@@ -16,7 +16,7 @@ type Signature = {
 type Contract = {
   id: string;
   status: string;
-  client_data?: Record<string, string>;
+  client_data?: any;
   signatures?: Signature[];
 };
 
@@ -49,10 +49,14 @@ export function ContractSignatureControl({
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-bold text-foreground">
-                {contract.client_data?.name || "Cliente Contratante"}
+                {Array.isArray(contract.client_data)
+                  ? contract.client_data.map((c: any) => c.name).filter(Boolean).join(", ")
+                  : (contract.client_data as any)?.name || "Cliente Contratante"}
               </div>
               <div className="text-[10px] text-muted-foreground font-mono">
-                {contract.client_data?.document || contract.client_data?.cpf || "Sem doc informado"}
+                {Array.isArray(contract.client_data)
+                  ? contract.client_data.map((c: any) => c.cpf || c.document).filter(Boolean).join(" / ")
+                  : (contract.client_data as any)?.document || (contract.client_data as any)?.cpf || "Sem doc informado"}
               </div>
             </div>
             <div>
@@ -72,46 +76,52 @@ export function ContractSignatureControl({
             </div>
           </div>
 
-          {contract.signatures && contract.signatures.map((sig, i) => (
-            <div key={i} className="mt-3 border-t border-border/40 pt-2.5 space-y-2 text-[10px] text-muted-foreground">
-              <div className="flex items-center justify-between">
-                <span>IP: <strong className="font-mono text-foreground/80">{sig.ip}</strong></span>
-                <span>
-                  {new Date(sig.signed_at).toLocaleDateString("pt-BR")}{" "}
-                  {new Date(sig.signed_at).toLocaleTimeString("pt-BR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-              <div className="truncate" title={sig.user_agent}>
-                UA: {sig.user_agent || "Desconhecido"}
-              </div>
+          {contract.signatures &&
+            contract.signatures.map((sig, i) => (
+              <div
+                key={i}
+                className="mt-3 border-t border-border/40 pt-2.5 space-y-2 text-[10px] text-muted-foreground"
+              >
+                <div className="flex items-center justify-between">
+                  <span>
+                    IP: <strong className="font-mono text-foreground/80">{sig.ip}</strong>
+                  </span>
+                  <span>
+                    {new Date(sig.signed_at).toLocaleDateString("pt-BR")}{" "}
+                    {new Date(sig.signed_at).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <div className="truncate" title={sig.user_agent}>
+                  UA: {sig.user_agent || "Desconhecido"}
+                </div>
 
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {sig.selfie_image && (
-                  <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
-                    ✓ Selfie KYC
-                  </span>
-                )}
-                {sig.doc_front && (
-                  <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
-                    ✓ Doc (Frente)
-                  </span>
-                )}
-                {sig.doc_back && (
-                  <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
-                    ✓ Doc (Verso)
-                  </span>
-                )}
-                {sig.video_kyc && (
-                  <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
-                    ✓ Vídeo KYC
-                  </span>
-                )}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {sig.selfie_image && (
+                    <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                      ✓ Selfie KYC
+                    </span>
+                  )}
+                  {sig.doc_front && (
+                    <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                      ✓ Doc (Frente)
+                    </span>
+                  )}
+                  {sig.doc_back && (
+                    <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                      ✓ Doc (Verso)
+                    </span>
+                  )}
+                  {sig.video_kyc && (
+                    <span className="inline-flex items-center gap-0.5 rounded border border-success/30 bg-success/5 px-1.5 py-0.5 text-[9px] font-semibold text-success">
+                      ✓ Vídeo KYC
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 

@@ -26,6 +26,21 @@ function TripOverview() {
     },
   });
 
+  const clientsQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["clients-pick", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clients")
+        .select("id, full_name, document")
+        .eq("agency_id", agency!.id)
+        .order("full_name")
+        .limit(5000);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const [form, setForm] = useState<any>(null);
   useEffect(() => {
     if (tripQ.data) setForm(tripQ.data);
@@ -43,12 +58,10 @@ function TripOverview() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
 
-  if (tripQ.isLoading)
-    return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
+  if (tripQ.isLoading) return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
   if (!tripQ.data)
     return <div className="text-sm text-muted-foreground p-6">Viagem não encontrada.</div>;
-  if (!form)
-    return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
+  if (!form) return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
 
   const t = form;
   const margin = Number(t.total_sale || 0) - Number(t.total_cost || 0);
@@ -70,6 +83,7 @@ function TripOverview() {
             total_cost: t.total_cost,
             notes: t.notes,
             code: t.code,
+            client_id: t.client_id || null,
           });
         }}
       >
@@ -90,13 +104,29 @@ function TripOverview() {
             />
           </Field>
         </div>
-        <Field label="Destino Principal">
-          <Input
-            value={t.destination ?? ""}
-            onChange={(e) => setForm({ ...t, destination: e.target.value })}
-            className="bg-surface-alt"
-          />
-        </Field>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Destino Principal">
+            <Input
+              value={t.destination ?? ""}
+              onChange={(e) => setForm({ ...t, destination: e.target.value })}
+              className="bg-surface-alt"
+            />
+          </Field>
+          <Field label="Cliente Responsável">
+            <Select
+              value={t.client_id ?? ""}
+              onChange={(e) => setForm({ ...t, client_id: e.target.value || null })}
+              className="bg-surface-alt"
+            >
+              <option value="">— Sem cliente ainda —</option>
+              {(clientsQ.data ?? []).map((c: any) => (
+                <option key={c.id} value={c.id}>
+                  {c.full_name} {c.document ? `(${c.document})` : ""}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Data de Ida">
             <Input

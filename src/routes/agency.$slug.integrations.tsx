@@ -15,12 +15,7 @@ import {
   ShieldCheck,
   Cpu,
 } from "lucide-react";
-import {
-  fetchApiKeys,
-  saveApiKey,
-  toggleApiKey,
-  deleteApiKey,
-} from "@/services/settings";
+import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -40,8 +35,18 @@ export const Route = createFileRoute("/agency/$slug/integrations")({
 });
 
 const AI_PROVIDERS: Array<{ key: string; label: string; hint?: string; icon?: string }> = [
-  { key: "gemini", label: "Gemini API Key", hint: "Para IA e OCR — opcional se quiser usar a chave global", icon: "G" },
-  { key: "anthropic", label: "Anthropic API Key", hint: "Claude Sonnet — análise de contratos, IA avançada", icon: "A" },
+  {
+    key: "gemini",
+    label: "Gemini API Key",
+    hint: "Para IA e OCR — opcional se quiser usar a chave global",
+    icon: "G",
+  },
+  {
+    key: "anthropic",
+    label: "Anthropic API Key",
+    hint: "Claude Sonnet — análise de contratos, IA avançada",
+    icon: "A",
+  },
   { key: "openai", label: "OpenAI API Key", hint: "GPT-4 — opcional", icon: "O" },
 ];
 
@@ -50,7 +55,11 @@ const COMM_PROVIDERS: Array<{ key: string; label: string; hint?: string }> = [
   { key: "whatsapp_phone_id", label: "WhatsApp Phone Number ID" },
   { key: "whatsapp_token", label: "WhatsApp Access Token" },
   { key: "google_business", label: "Google Business Client ID" },
-  { key: "google_calendar_client_id", label: "Google Calendar Client ID", hint: "ID do cliente OAuth 2.0" },
+  {
+    key: "google_calendar_client_id",
+    label: "Google Calendar Client ID",
+    hint: "ID do cliente OAuth 2.0",
+  },
   { key: "google_calendar_client_secret", label: "Google Calendar Client Secret" },
   { key: "google_calendar_refresh_token", label: "Google Calendar Refresh Token" },
 ];
@@ -89,11 +98,22 @@ function IntegrationsPage() {
         </TabsList>
 
         <TabsContent value="ai">
-          <ProviderKeysSection agencyId={agency.id} providers={AI_PROVIDERS} title="Chaves de Inteligência Artificial" description="Quando ausentes, o sistema usa as chaves globais do administrador da plataforma." />
+          <ProviderKeysSection
+            agencyId={agency.id}
+            providers={AI_PROVIDERS}
+            title="Chaves de Inteligência Artificial"
+            description="Quando ausentes, o sistema usa as chaves globais do administrador da plataforma."
+          />
+          <AiAgentSettingsSection agencyId={agency.id} />
         </TabsContent>
 
         <TabsContent value="comms">
-          <ProviderKeysSection agencyId={agency.id} providers={COMM_PROVIDERS} title="Comunicação & Calendário" description="Configure e-mail, WhatsApp básico e Google Calendar para esta agência." />
+          <ProviderKeysSection
+            agencyId={agency.id}
+            providers={COMM_PROVIDERS}
+            title="Comunicação & Calendário"
+            description="Configure e-mail, WhatsApp básico e Google Calendar para esta agência."
+          />
         </TabsContent>
 
         <TabsContent value="whatsapp">
@@ -201,9 +221,7 @@ function IntegrationRow({
         </Field>
       </div>
       <div className="flex items-center gap-2 pb-0.5">
-        {existing && (
-          <StatusBadge tone="success">ativa</StatusBadge>
-        )}
+        {existing && <StatusBadge tone="success">ativa</StatusBadge>}
         <PrimaryButton
           type="button"
           disabled={busy || !v.trim()}
@@ -277,7 +295,9 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     e.preventDefault();
     setBusy(true);
     try {
+      const existingConfig = (agencyData as any)?.integrations_config || {};
       const nonSecrets = {
+        ...existingConfig,
         meta_pixel_id: config.meta_pixel_id,
         evolution_api_url: config.evolution_api_url,
         preferred_provider: config.preferred_provider,
@@ -290,10 +310,26 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
       const secrets = [
         { provider: "meta_capi_token", val: config.meta_capi_token, label: "Meta CAPI Token" },
-        { provider: "meta_verify_token", val: config.meta_verify_token, label: "Meta Verify Token" },
-        { provider: "whatsapp_phone_id", val: config.whatsapp_phone_id, label: "WhatsApp Phone ID" },
-        { provider: "whatsapp_access_token", val: config.whatsapp_access_token, label: "WhatsApp Access Token" },
-        { provider: "evolution_api_key", val: config.evolution_api_key, label: "Evolution API Key" },
+        {
+          provider: "meta_verify_token",
+          val: config.meta_verify_token,
+          label: "Meta Verify Token",
+        },
+        {
+          provider: "whatsapp_phone_id",
+          val: config.whatsapp_phone_id,
+          label: "WhatsApp Phone ID",
+        },
+        {
+          provider: "whatsapp_access_token",
+          val: config.whatsapp_access_token,
+          label: "WhatsApp Access Token",
+        },
+        {
+          provider: "evolution_api_key",
+          val: config.evolution_api_key,
+          label: "Evolution API Key",
+        },
       ];
       for (const secret of secrets) {
         if (secret.val.trim() !== "") {
@@ -372,7 +408,9 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
         <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
           <Zap className="h-4 w-4" /> URL do Webhook
         </div>
-        <p className="text-xs text-muted-foreground">Configure este endereço no painel Meta ou Evolution API.</p>
+        <p className="text-xs text-muted-foreground">
+          Configure este endereço no painel Meta ou Evolution API.
+        </p>
         <div className="flex items-center gap-2">
           <code className="flex-1 text-xs bg-surface-alt border border-border rounded px-3 py-2 font-mono truncate">
             {`[SUPABASE_URL]/functions/v1/whatsapp-webhook`}
@@ -422,7 +460,9 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
             </Field>
           </div>
           <div className="border-t border-border/50 pt-4">
-            <div className="text-xs font-semibold text-muted-foreground mb-3">Rastreamento de Anúncios (CAPI)</div>
+            <div className="text-xs font-semibold text-muted-foreground mb-3">
+              Rastreamento de Anúncios (CAPI)
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Meta Pixel ID">
                 <Input
@@ -523,7 +563,8 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
   async function remove(id: string) {
     confirm({
       title: "Remover esta chave?",
-      description: "Tem certeza de que deseja remover esta chave de API? Esta ação não pode ser desfeita.",
+      description:
+        "Tem certeza de que deseja remover esta chave de API? Esta ação não pode ser desfeita.",
       variant: "destructive",
       onConfirm: async () => {
         try {
@@ -542,21 +583,39 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
       <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
-        Gerencie livremente qualquer chave de API para integrações customizadas. Estas chaves ficam associadas exclusivamente a esta agência.
+        Gerencie livremente qualquer chave de API para integrações customizadas. Estas chaves ficam
+        associadas exclusivamente a esta agência.
       </div>
 
-      <form onSubmit={add} className="grid gap-2 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5">
+      <form
+        onSubmit={add}
+        className="grid gap-2 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5"
+      >
         <Field label="Provider">
-          <Input placeholder="anthropic, openai…" value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })} required />
+          <Input
+            placeholder="anthropic, openai…"
+            value={form.provider}
+            onChange={(e) => setForm({ ...form, provider: e.target.value })}
+            required
+          />
         </Field>
         <Field label="Label">
           <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
         </Field>
         <Field label="Chave">
-          <Input type="password" value={form.key_value} onChange={(e) => setForm({ ...form, key_value: e.target.value })} required />
+          <Input
+            type="password"
+            value={form.key_value}
+            onChange={(e) => setForm({ ...form, key_value: e.target.value })}
+            required
+          />
         </Field>
         <Field label="Limite/mês">
-          <Input type="number" value={form.monthly_limit} onChange={(e) => setForm({ ...form, monthly_limit: e.target.value })} />
+          <Input
+            type="number"
+            value={form.monthly_limit}
+            onChange={(e) => setForm({ ...form, monthly_limit: e.target.value })}
+          />
         </Field>
         <div className="flex items-end">
           <PrimaryButton disabled={busy} className="w-full">
@@ -588,9 +647,12 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
                 <tr key={k.id} className="border-t border-border hover:bg-surface-alt/20">
                   <td className="px-3 py-2.5 font-mono text-xs">{k.provider}</td>
                   <td className="px-3 py-2.5 text-xs">{k.label ?? "—"}</td>
-                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">{mask(k.key_value)}</td>
+                  <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
+                    {mask(k.key_value)}
+                  </td>
                   <td className="px-3 py-2.5 text-right font-mono text-xs">
-                    {k.used_count}{k.monthly_limit ? `/${k.monthly_limit}` : ""}
+                    {k.used_count}
+                    {k.monthly_limit ? `/${k.monthly_limit}` : ""}
                   </td>
                   <td className="px-3 py-2.5 text-center">
                     <input
@@ -616,6 +678,125 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
           </table>
         )}
       </div>
+    </div>
+  );
+}
+
+function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
+  const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const [responderActive, setResponderActive] = useState(false);
+  const [context, setContext] = useState("");
+  const [persona, setPersona] = useState<"conversion" | "retention" | "balanced">("balanced");
+
+  const { data: agencyData, isLoading } = useQuery({
+    queryKey: ["agency-integrations-ai-config", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agencies")
+        .select("integrations_config")
+        .eq("id", agencyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (agencyData?.integrations_config) {
+      const cfg = agencyData.integrations_config as any;
+      setResponderActive(cfg.ai_responder_active === true);
+      setContext(cfg.ai_context || "");
+      setPersona(cfg.ai_persona || "balanced");
+    }
+  }, [agencyData]);
+
+  async function saveSettings() {
+    setBusy(true);
+    try {
+      const existingConfig = (agencyData?.integrations_config as Record<string, any>) || {};
+      const newConfig = {
+        ...existingConfig,
+        ai_responder_active: responderActive,
+        ai_context: context.trim(),
+        ai_persona: persona,
+      };
+
+      const { error } = await supabase
+        .from("agencies")
+        .update({ integrations_config: newConfig })
+        .eq("id", agencyId);
+
+      if (error) throw error;
+      toast.success("Configurações do Agente de IA salvas!");
+      qc.invalidateQueries({ queryKey: ["agency-integrations-ai-config", agencyId] });
+      qc.invalidateQueries({ queryKey: ["agency-integrations", agencyId] });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao salvar configurações");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (isLoading)
+    return <div className="text-xs text-muted-foreground">Carregando agente de IA...</div>;
+
+  return (
+    <div className="mt-6 rounded-xl border border-border bg-surface p-5 space-y-4">
+      <div className="flex items-center gap-2 text-foreground font-semibold">
+        <Cpu className="h-5 w-5 text-brand" />
+        Configurações do Agente de IA (Auto-Responder)
+      </div>
+
+      <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+        Configure as diretrizes comportamentais e o tom de voz do agente de IA que responde
+        autonomamente às mensagens dos seus clientes no WhatsApp.
+      </p>
+
+      <div className="flex items-center justify-between rounded-lg border border-border bg-surface-alt/10 p-3.5">
+        <div>
+          <label className="text-xs font-bold text-foreground">Auto-Responder Ativo</label>
+          <p className="text-[10px] text-muted-foreground font-sans">
+            Se ativado, a IA responderá diretamente às mensagens recebidas via WhatsApp.
+          </p>
+        </div>
+        <input
+          type="checkbox"
+          checked={responderActive}
+          onChange={(e) => setResponderActive(e.target.checked)}
+          className="h-4 w-4 accent-brand cursor-pointer"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field label="Persona de Atendimento">
+          <Select value={persona} onChange={(e: any) => setPersona(e.target.value)}>
+            <option value="balanced">Equilibrado / Neutro</option>
+            <option value="conversion">Foco em Conversão (Vendas Agressivas)</option>
+            <option value="retention">Foco em Retenção (Suporte & Pós-Venda)</option>
+          </Select>
+          <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
+            Ajusta o estilo de comunicação e os objetivos de vendas da inteligência artificial.
+          </p>
+        </Field>
+      </div>
+
+      <Field label="Instruções de Contexto Base (System Prompt)">
+        <textarea
+          rows={5}
+          value={context}
+          onChange={(e) => setContext(e.target.value)}
+          placeholder="Ex: Somos uma agência focada em ecoturismo de luxo. Sempre chame o cliente pelo primeiro nome. Destaque que nossos pacotes incluem guias bilíngues..."
+          className="w-full text-xs bg-surface-alt border border-border/60 rounded-xl px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed text-foreground"
+        />
+        <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
+          Adicione diretrizes operacionais, regras de negócio ou ofertas exclusivas da sua agência.
+        </p>
+      </Field>
+
+      <PrimaryButton type="button" disabled={busy} onClick={saveSettings} className="w-full">
+        {busy ? "Salvando..." : "Salvar Configurações do Agente de IA"}
+      </PrimaryButton>
     </div>
   );
 }

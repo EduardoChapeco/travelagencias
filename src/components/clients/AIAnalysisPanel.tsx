@@ -71,7 +71,8 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
   "nextAction": "Recomendação clara da próxima ação comercial com o cliente."
 }`;
 
-      const systemPromptText = "Você é uma IA analista de comportamento do cliente em uma agência de viagens premium. Sua tarefa é analisar o perfil, o histórico de compras, preferências e interesses para sugerir ações personalizadas.";
+      const systemPromptText =
+        "Você é uma IA analista de comportamento do cliente em uma agência de viagens premium. Sua tarefa é analisar o perfil, o histórico de compras, preferências e interesses para sugerir ações personalizadas.";
 
       const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
         body: {
@@ -79,8 +80,8 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
           prompt: promptText,
           systemPrompt: systemPromptText,
           agency_id: client.agency_id || client.agencyId,
-          modelPreference: "smart"
-        }
+          modelPreference: "smart",
+        },
       });
 
       if (error) throw error;
@@ -123,7 +124,8 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
             <div className="pt-4 text-center">
               <Sparkles className="h-8 w-8 text-brand mx-auto mb-3 opacity-60" />
               <p className="text-sm text-muted-foreground mb-4">
-                A IA analisará o histórico de viagens, cotações e padrões de comportamento do cliente.
+                A IA analisará o histórico de viagens, cotações e padrões de comportamento do
+                cliente.
               </p>
               <button
                 onClick={runAnalysis}
@@ -144,27 +146,41 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
           {analysis && (
             <div className="pt-4 space-y-4">
               <div className="rounded-xl bg-surface border border-border p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Resumo</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                  Resumo
+                </div>
                 <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
               </div>
 
-              <div className={`rounded-xl border p-4 ${
-                analysis.retentionScore === "alto"
-                  ? "border-success/30 bg-success/5"
-                  : analysis.retentionScore === "médio"
-                    ? "border-brand/30 bg-brand/5"
-                    : "border-danger/30 bg-danger/5"
-              }`}>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">Score de Retenção</div>
-                <div className={`text-2xl font-black capitalize ${
-                  analysis.retentionScore === "alto" ? "text-success" : analysis.retentionScore === "médio" ? "text-brand" : "text-danger"
-                }`}>
+              <div
+                className={`rounded-xl border p-4 ${
+                  analysis.retentionScore === "alto"
+                    ? "border-success/30 bg-success/5"
+                    : analysis.retentionScore === "médio"
+                      ? "border-brand/30 bg-brand/5"
+                      : "border-danger/30 bg-danger/5"
+                }`}
+              >
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+                  Score de Retenção
+                </div>
+                <div
+                  className={`text-2xl font-black capitalize ${
+                    analysis.retentionScore === "alto"
+                      ? "text-success"
+                      : analysis.retentionScore === "médio"
+                        ? "text-brand"
+                        : "text-danger"
+                  }`}
+                >
                   {analysis.retentionScore} risco de churn
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sugestões da IA</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Sugestões da IA
+                </div>
                 {analysis.suggestions.map((s: string, i: number) => (
                   <div key={i} className="flex gap-2 text-sm text-foreground">
                     <Sparkles className="h-4 w-4 text-brand flex-shrink-0 mt-0.5" />
@@ -174,7 +190,9 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </div>
 
               <div className="rounded-xl border border-brand/30 bg-brand/5 p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">Próxima ação recomendada</div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
+                  Próxima ação recomendada
+                </div>
                 <p className="text-sm font-semibold text-foreground">{analysis.nextAction}</p>
               </div>
 

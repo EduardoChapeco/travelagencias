@@ -58,9 +58,7 @@ function VisasCatalogPage() {
     },
   });
 
-  const filteredData = q.data?.filter(
-    (req) => activeTab === "all" || req.category === activeTab
-  );
+  const filteredData = q.data?.filter((req) => activeTab === "all" || req.category === activeTab);
 
   return (
     <div className="flex h-full flex-col">
@@ -148,7 +146,8 @@ function VisasCatalogPage() {
                       onClick={() => {
                         confirm({
                           title: "Remover do catálogo?",
-                          description: "Tem certeza de que deseja remover este requisito do catálogo?",
+                          description:
+                            "Tem certeza de que deseja remover este requisito do catálogo?",
                           variant: "destructive",
                           onConfirm: () => removeMut.mutate(req.id),
                         });
@@ -190,13 +189,21 @@ function VisasCatalogPage() {
                 {req.processing_days && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5" />
-                    <span>Prazo: <span className="font-bold text-foreground">{req.processing_days} d</span></span>
+                    <span>
+                      Prazo:{" "}
+                      <span className="font-bold text-foreground">{req.processing_days} d</span>
+                    </span>
                   </div>
                 )}
                 {req.price_estimate !== null && (
                   <div className="flex items-center gap-1">
                     <DollarSign className="h-3.5 w-3.5" />
-                    <span>Custo: <span className="font-bold text-foreground">{req.price_estimate === 0 ? 'Grátis' : `${req.price_estimate} USD`}</span></span>
+                    <span>
+                      Custo:{" "}
+                      <span className="font-bold text-foreground">
+                        {req.price_estimate === 0 ? "Grátis" : `${req.price_estimate} USD`}
+                      </span>
+                    </span>
                   </div>
                 )}
               </div>
@@ -333,11 +340,7 @@ function RequirementFormSheet({
           </Field>
 
           <Field label="Links Oficiais / Consulta">
-            <Input
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://..."
-            />
+            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
           </Field>
 
           <Field label="Notas e Avisos Importantes">

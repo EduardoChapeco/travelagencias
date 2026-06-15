@@ -12,36 +12,45 @@ import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
 const STEPS = ["Perfil", "Contato", "Endereço e Classificação", "Revisão"];
 
-const clientWizardSchema = z.object({
-  kind: z.enum(["individual", "company"]).default("individual"),
-  fullName: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
-  legalName: z.string().optional().nullable(),
-  document: z.string().optional().nullable(),
-  birthDate: z.string().optional().nullable(),
-  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
-  phone: z.string().optional().nullable(),
-  tags: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-}).refine((data) => {
-  if (data.kind === "company" && (!data.legalName || data.legalName.trim() === "")) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Razão social é obrigatória para empresas",
-  path: ["legalName"],
-}).refine((data) => {
-  if (data.kind === "company" && data.document) {
-    const raw = data.document.replace(/[^\d]/g, "");
-    if (raw.length > 0) {
-      return validateCNPJ(raw);
-    }
-  }
-  return true;
-}, {
-  message: "CNPJ inválido",
-  path: ["document"],
-});
+const clientWizardSchema = z
+  .object({
+    kind: z.enum(["individual", "company"]).default("individual"),
+    fullName: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
+    legalName: z.string().optional().nullable(),
+    document: z.string().optional().nullable(),
+    birthDate: z.string().optional().nullable(),
+    email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+    phone: z.string().optional().nullable(),
+    tags: z.string().optional().nullable(),
+    notes: z.string().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.kind === "company" && (!data.legalName || data.legalName.trim() === "")) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Razão social é obrigatória para empresas",
+      path: ["legalName"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.kind === "company" && data.document) {
+        const raw = data.document.replace(/[^\d]/g, "");
+        if (raw.length > 0) {
+          return validateCNPJ(raw);
+        }
+      }
+      return true;
+    },
+    {
+      message: "CNPJ inválido",
+      path: ["document"],
+    },
+  );
 
 type ClientWizardFormData = z.infer<typeof clientWizardSchema>;
 
@@ -243,10 +252,7 @@ export function NewClientWizard({
 
                 {watchKind === "company" && (
                   <Field label="Razão Social" error={errors.legalName?.message}>
-                    <Input
-                      {...register("legalName")}
-                      placeholder="Ex: Acme Corporation LTDA"
-                    />
+                    <Input {...register("legalName")} placeholder="Ex: Acme Corporation LTDA" />
                   </Field>
                 )}
 
@@ -258,15 +264,14 @@ export function NewClientWizard({
                     <Input
                       value={watchDocument || ""}
                       onChange={handleDocumentChange}
-                      placeholder={watchKind === "individual" ? "123.456.789-00" : "00.000.000/0001-00"}
+                      placeholder={
+                        watchKind === "individual" ? "123.456.789-00" : "00.000.000/0001-00"
+                      }
                     />
                   </Field>
                   {watchKind === "individual" && (
                     <Field label="Data de Nascimento" error={errors.birthDate?.message}>
-                      <Input
-                        type="date"
-                        {...register("birthDate")}
-                      />
+                      <Input type="date" {...register("birthDate")} />
                     </Field>
                   )}
                 </div>
@@ -277,22 +282,15 @@ export function NewClientWizard({
             {step === 1 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                 <Field label="E-mail Principal" error={errors.email?.message}>
-                  <Input
-                    type="email"
-                    {...register("email")}
-                    placeholder="contato@exemplo.com"
-                  />
+                  <Input type="email" {...register("email")} placeholder="contato@exemplo.com" />
                 </Field>
                 <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
-                  <Input
-                    {...register("phone")}
-                    placeholder="+55 11 99999-9999"
-                  />
+                  <Input {...register("phone")} placeholder="+55 11 99999-9999" />
                 </Field>
                 <div className="rounded-xl border border-border bg-surface-alt/40 p-4 mt-2">
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Mais opções de contato e redes sociais poderão ser cadastradas na tela de detalhes
-                    do cliente após a criação.
+                    Mais opções de contato e redes sociais poderão ser cadastradas na tela de
+                    detalhes do cliente após a criação.
                   </p>
                 </div>
               </div>
@@ -301,7 +299,10 @@ export function NewClientWizard({
             {/* STEP 2: Endereço e Classificação */}
             {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <Field label="Tags de Classificação (separadas por vírgula)" error={errors.tags?.message}>
+                <Field
+                  label="Tags de Classificação (separadas por vírgula)"
+                  error={errors.tags?.message}
+                >
                   <Input
                     {...register("tags")}
                     placeholder="VIP, Corporativo, Preferência Janela..."
@@ -375,9 +376,13 @@ export function NewClientWizard({
 
                     <div className="flex items-center gap-2 col-span-full">
                       <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium text-foreground">{watchPhone || "S/ Telefone"}</span>
+                      <span className="font-medium text-foreground">
+                        {watchPhone || "S/ Telefone"}
+                      </span>
                       <span className="text-muted-foreground mx-2">•</span>
-                      <span className="font-medium text-foreground">{watchEmail || "S/ E-mail"}</span>
+                      <span className="font-medium text-foreground">
+                        {watchEmail || "S/ E-mail"}
+                      </span>
                     </div>
 
                     {watchTags && (
@@ -406,7 +411,12 @@ export function NewClientWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+          <GhostButton
+            type="button"
+            onClick={handleBack}
+            disabled={step === 0}
+            className="gap-2 w-28"
+          >
             <ChevronLeft className="h-4 w-4" /> Voltar
           </GhostButton>
 

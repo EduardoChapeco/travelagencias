@@ -26,40 +26,45 @@ import {
   Palette,
   Users2,
   Puzzle,
+  ListTodo,
+  BrainCircuit,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
 
-type NavItem = { label: string; segment: string; icon: typeof LayoutDashboard; exact?: boolean };
-
-const items: NavItem[] = [
-  { label: "Dashboard", segment: "", icon: LayoutDashboard, exact: true },
-  { label: "Negociações & Leads", segment: "crm", icon: Users },
-  { label: "Agenda", segment: "calendar", icon: Calendar },
-  { label: "Monitor de Concorrentes", segment: "competitors", icon: Radar },
-  { label: "Orçamentos & Propostas", segment: "proposals", icon: FileText },
-  { label: "Viagens", segment: "trips", icon: Luggage },
-  { label: "Embarques", segment: "boarding", icon: Plane },
-  { label: "Contratos", segment: "contracts", icon: ScrollText },
-  { label: "Vouchers", segment: "vouchers", icon: Ticket },
-  { label: "Financeiro", segment: "financial", icon: Wallet },
-  { label: "Roteiros em Grupo", segment: "group-tours", icon: Bus },
-  { label: "Frota & Ônibus", segment: "bus-layouts", icon: Bus },
-  { label: "Vistos", segment: "visas", icon: Globe2 },
-  { label: "Corporativo", segment: "corporate", icon: Building2 },
-  { label: "Clientes", segment: "clients", icon: UserRound },
-  { label: "Fornecedores", segment: "suppliers", icon: Store },
-  { label: "Suporte", segment: "support", icon: LifeBuoy },
-  { label: "Conversas & Mensagens", segment: "omnichannel", icon: MessageSquare },
-  { label: "Site da Agência", segment: "portal", icon: Globe },
-  { label: "Biblioteca de Apoio", segment: "knowledge", icon: BookOpen },
-  // ── Gestão ──
-  { label: "Minha Empresa", segment: "company", icon: Building2 },
-  { label: "Equipe", segment: "team", icon: Users2 },
-  { label: "Identidade Visual", segment: "brand", icon: Palette },
-  { label: "Conexões", segment: "integrations", icon: Puzzle },
-  { label: "Configurações", segment: "settings", icon: Settings },
+const items: SlimSidebarItem[] = [
+  { label: "Dashboard", to: "", icon: LayoutDashboard, exact: true },
+  { type: "header", label: "Fluxo Diário" },
+  { label: "Meu Dia (Tarefas)", to: "daily-tasks", icon: ListTodo },
+  { label: "Negociações & Leads", to: "crm", icon: Users },
+  { label: "Agenda", to: "calendar", icon: Calendar },
+  { label: "Conversas & Mensagens", to: "omnichannel", icon: MessageSquare },
+  { label: "Orçamentos & Propostas", to: "proposals", icon: FileText },
+  { label: "Viagens", to: "trips", icon: Luggage },
+  { label: "Roteiros em Grupo", to: "group-tours", icon: Bus },
+  { type: "header", label: "Clientes & Parceiros" },
+  { label: "Clientes", to: "clients", icon: UserRound },
+  { label: "Corporativo", to: "corporate", icon: Building2 },
+  { label: "Fornecedores", to: "suppliers", icon: Store },
+  { type: "header", label: "Operacional" },
+  { label: "Suporte", to: "support", icon: LifeBuoy },
+  { label: "Vistos", to: "visas", icon: Globe2 },
+  { label: "Frota & Ônibus", to: "bus-layouts", icon: Bus },
+  { label: "Embarques", to: "boarding", icon: Plane },
+  { label: "Financeiro", to: "financial", icon: Wallet },
+  { type: "header", label: "Site & Marketing" },
+  { label: "Site da Agência", to: "portal", icon: Globe, adminOnly: true },
+  { label: "Monitor de Concorrentes", to: "competitors", icon: Radar, adminOnly: true },
+  { type: "header", label: "Gestão", adminOnly: true },
+  { label: "Produtividade Master", to: "productivity", icon: BrainCircuit, adminOnly: true },
+  { label: "Minha Empresa", to: "company", icon: Building2, adminOnly: true },
+  { label: "Equipe", to: "team", icon: Users2, adminOnly: true },
+  { label: "Identidade Visual", to: "brand", icon: Palette, adminOnly: true },
+  { label: "Conexões", to: "integrations", icon: Puzzle, adminOnly: true },
+  { label: "Configurações", to: "settings", icon: Settings, adminOnly: true },
 ];
 
 export function AppSidebar({
@@ -70,24 +75,27 @@ export function AppSidebar({
   onTogglePin?: () => void;
 }) {
   const navigate = useNavigate();
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const params = useParams({ strict: false }) as { slug?: string };
   const slug = params.slug ?? agency?.slug;
 
-  if (!slug) return null;
-  const base = `/agency/${slug}`;
-  const sidebarItems: SlimSidebarItem[] = items.map((item) => ({
-    to: item.segment ? `${base}/${item.segment}` : base,
-    label: item.label,
-    icon: item.icon,
-    exact: item.segment === "",
-  }));
+  if (!slug || !agency) return null;
+
+  const isAdmin = isAgencyAdmin;
+
+  const visibleItems = items.filter((i) => {
+    if ((i as any).adminOnly && !isAdmin) return false;
+    return true;
+  });
 
   return (
     <SlimSidebar
       isPinned={isPinned}
       onTogglePin={onTogglePin}
-      items={sidebarItems}
+      items={visibleItems.map((i) => ({
+        ...i,
+        to: i.to !== undefined ? `/agency/${slug}${i.to ? `/${i.to}` : ""}` : undefined,
+      }))}
       brand={
         <>
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground">

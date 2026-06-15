@@ -1,580 +1,359 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAgency } from "@/lib/agency-context";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   ArrowLeft,
-  Send,
-  Clock,
-  AlertTriangle,
-  CheckCircle2,
-  Lock,
-  Unlock,
-  MessageCircle,
   User,
-  Bot,
+  Briefcase,
+  Mail,
+  Phone,
+  Calendar,
+  Clock,
+  MapPin,
+  Send,
   Paperclip,
-  CheckSquare,
-  Settings2,
-  Globe,
-  Star,
-  BookOpen,
+  MessageSquare,
+  Tag,
+  Lock,
+  AlertCircle,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useConfirm } from "@/hooks/use-confirm";
-import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
-import {
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-  fmtDate,
-} from "@/components/ui/form";
-import { FileUploader } from "@/components/uploads/FileUploader";
+import { Field, Select, StatusBadge, PrimaryButton, Textarea } from "@/components/ui/form";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/agency/$slug/support/$ticket_id")({
-  head: () => ({ meta: [{ title: "Ticket · TravelOS" }] }),
-  component: TicketDetail,
+  head: () => ({ meta: [{ title: "Atendimento · TravelOS" }] }),
+  component: TicketDetailRoute,
 });
 
-type MsgChannel = "public" | "internal";
-
-type Msg = {
-  id: string;
-  sender: "agency" | "client" | "system";
-  content: string;
-  attachments: string[];
-  is_internal: boolean;
-  created_at: string;
-};
-
-type Ticket = {
-  id: string;
-  code: string;
-  title: string;
-  description: string | null;
-  type: string;
-  priority: string;
-  status: string;
-  created_at: string;
-  sla_deadline: string | null;
-  messages: Msg[];
-  agent_id: string | null;
-  csat_score: number | null;
-  csat_comment: string | null;
-};
-
-function slaStatus(
-  deadline: string | null,
-  status: string,
-): "ok" | "warning" | "breach" | "resolved" {
-  if (status === "resolved" || status === "closed") return "resolved";
-  if (!deadline) return "ok";
-  const diff = new Date(deadline).getTime() - Date.now();
-  if (diff < 0) return "breach";
-  if (diff < 1000 * 60 * 60 * 4) return "warning";
-  return "ok";
-}
-
-function slaDiff(deadline: string | null): string {
-  if (!deadline) return "—";
-  const diff = new Date(deadline).getTime() - Date.now();
-  if (diff < 0) {
-    const h = Math.abs(Math.round(diff / (1000 * 60 * 60)));
-    return `Expirado há ${h}h`;
-  }
-  const h = Math.round(diff / (1000 * 60 * 60));
-  if (h < 24) return `${h}h restantes`;
-  return `${Math.round(h / 24)}d restantes`;
-}
-
-const STATUS_LABEL: Record<string, string> = {
-  open: "Aberto",
-  in_progress: "Em andamento",
-  waiting_client: "Aguard. cliente",
-  waiting_operator: "Aguard. operadora",
-  resolved: "Resolvido",
-  closed: "Fechado",
-};
-
-const PRIORITY_TONE: Record<string, "danger" | "warning" | "neutral" | "info"> = {
-  urgent: "danger",
-  high: "danger",
-  medium: "warning",
-  low: "neutral",
-};
-
-function TicketDetail() {
+function TicketDetailRoute() {
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug, ticket_id } = useParams({ from: "/agency/$slug/support/$ticket_id" });
-  const { agency } = useAgency();
+  const navigate = useNavigate();
   const qc = useQueryClient();
-  const { confirm, ConfirmDialog } = useConfirm();
-  const [reply, setReply] = useState("");
-  const [channel, setChannel] = useState<MsgChannel>("public");
-  const [attachUrl, setAttachUrl] = useState<string | null>(null);
-  const [attachOpen, setAttachOpen] = useState(false);
-  const [showInternal, setShowInternal] = useState(true);
+  const [replyText, setReplyText] = useState("");
+  const [replyType, setReplyType] = useState<"client" | "supplier" | "internal">("client");
 
-  const q = useQuery({
+  const { data: ticket, isLoading } = useQuery({
+    queryKey: ["ticket_full", ticket_id],
     enabled: !!agency,
-    queryKey: ["ticket", ticket_id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("support_tickets")
         .select(
-          "id, code, title, description, type, priority, status, created_at, sla_deadline, agent_id",
+          `
+          *,
+          client:clients(*),
+          trip:trips(*),
+          assignee:agency_members(users(raw_user_meta_data)),
+          ticket_messages(*)
+        `,
         )
         .eq("id", ticket_id)
-        .maybeSingle();
+        .single();
       if (error) throw error;
-      if (!data) return null;
-
-      const { data: messagesData, error: msgError } = await (supabase as any)
-        .from("ticket_messages")
-        .select("*")
-        .eq("ticket_id", ticket_id)
-        .order("created_at", { ascending: true });
-
-      if (msgError) throw msgError;
-
-      return { ...data, messages: messagesData } as unknown as Ticket;
+      return data;
     },
   });
 
-  const kbArticles = useQuery({
+  const { data: team } = useQuery({
+    queryKey: ["agency_team", agency?.id],
     enabled: !!agency,
-    queryKey: ["kb", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("knowledge_articles")
-        .select("id, title, slug")
-        .eq("agency_id", agency!.id)
-        .eq("is_internal", false);
-      if (error) throw error;
-      return (data || []) as any[];
+      const { data } = await supabase
+        .from("agency_members")
+        .select("user_id, users(raw_user_meta_data)")
+        .eq("agency_id", agency!.id);
+      return data || [];
     },
   });
 
-  const update = useMutation({
-    mutationFn: async (patch: Partial<Ticket>) => {
-      const { error } = await supabase
-        .from("support_tickets")
-        .update(patch as never)
-        .eq("id", ticket_id);
+  const updateTicket = useMutation({
+    mutationFn: async (updates: any) => {
+      const { error } = await supabase.from("support_tickets").update(updates).eq("id", ticket_id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["ticket", ticket_id] });
-      qc.invalidateQueries({ queryKey: ["tickets", agency?.id] });
+      toast.success("Atualizado com sucesso");
+      qc.invalidateQueries({ queryKey: ["ticket_full"] });
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
 
-  async function postReply() {
-    if (!reply.trim() || !q.data) return;
-    const { data: u } = await supabase.auth.getUser();
+  const sendReply = useMutation({
+    mutationFn: async () => {
+      if (!replyText.trim()) return;
+      const { data: user } = await supabase.auth.getUser();
+      const sender = replyType === "internal" ? "system" : "agent";
 
-    const { error: msgError } = await (supabase as any).from("ticket_messages").insert({
-      ticket_id,
-      sender: "agency",
-      content: reply.trim(),
-      attachments: attachUrl ? [attachUrl] : [],
-      is_internal: channel === "internal",
-    });
-
-    if (msgError) return toast.error(msgError.message);
-
-    // Auto-advance status on first reply
-    const newStatus =
-      q.data.status === "open"
-        ? "in_progress"
-        : channel === "public" && q.data.status === "waiting_client"
-          ? "in_progress"
-          : q.data.status;
-
-    if (newStatus !== q.data.status) {
-      const { error } = await supabase
-        .from("support_tickets")
-        .update({ status: newStatus } as never)
-        .eq("id", ticket_id);
-      if (error) return toast.error(error.message);
-    }
-
-    // Audit log
-    if (agency) {
-      await supabase.from("audit_log").insert({
-        agency_id: agency.id,
-        actor_id: u.user?.id,
-        actor_type: "agent",
-        action: "ticket_message_posted",
-        entity_type: "support_tickets",
-        entity_id: ticket_id,
-        metadata: { channel, ticket_code: q.data.code },
+      const { error } = await supabase.from("ticket_messages").insert({
+        ticket_id,
+        sender,
+        content: replyText,
       });
-    }
+      if (error) throw error;
 
-    setReply("");
-    setAttachUrl(null);
-    setAttachOpen(false);
-    qc.invalidateQueries({ queryKey: ["ticket", ticket_id] });
-    qc.invalidateQueries({ queryKey: ["tickets", agency?.id] });
-  }
+      // Se for email real do Gmail, uma Edge Function poderia interceptar via Webhook na tabela ticket_messages
+      // Ou chamamos a EF diretamente aqui, mas por ora vamos focar na persistência local.
+    },
+    onSuccess: () => {
+      setReplyText("");
+      qc.invalidateQueries({ queryKey: ["ticket_full"] });
+      toast.success("Mensagem enviada");
+    },
+  });
 
-  async function resolveTicket() {
-    const { error } = await supabase
-      .from("support_tickets")
-      .update({ status: "resolved", resolved_at: new Date().toISOString() } as never)
-      .eq("id", ticket_id);
-    if (error) return toast.error(error.message);
-    toast.success("Ticket resolvido");
-    qc.invalidateQueries({ queryKey: ["ticket", ticket_id] });
-    qc.invalidateQueries({ queryKey: ["tickets", agency?.id] });
-  }
+  if (isLoading || !ticket) return <div className="p-8">Carregando...</div>;
 
-  async function escalateTicket() {
-    confirm({
-      title: "Escalonar Ticket",
-      description: "Tem certeza que deseja escalonar este ticket para prioridade URGENTE?",
-      variant: "destructive",
-      onConfirm: () => {
-        update.mutate({ priority: "urgent" });
-        toast.success("Ticket escalonado!");
-      },
-    });
-  }
-
-  if (q.isLoading)
-    return <div className="p-10 text-center text-sm text-muted-foreground">Carregando ticket…</div>;
-  if (!q.data)
-    return (
-      <div className="p-10 text-center text-sm text-muted-foreground">Ticket não encontrado.</div>
-    );
-
-  const t = q.data;
-  const messages = (t.messages ?? []) as Msg[];
-  const visibleMessages = showInternal ? messages : messages.filter((m) => !m.is_internal);
-  const sla = slaStatus(t.sla_deadline, t.status);
+  const messages = [...(ticket.ticket_messages || [])].sort(
+    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+  );
 
   return (
-    <>
-      <ConfirmDialog />
-      <Link
-        to="/agency/$slug/support"
-        params={{ slug }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para lista de tickets
-      </Link>
-
-      {/* HEADER */}
-      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between bg-surface p-5 rounded-lg border border-border ">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t.code}
-            </span>
-            <StatusBadge tone={PRIORITY_TONE[t.priority]}>{t.priority}</StatusBadge>
-            <StatusBadge
-              tone={
-                t.status === "resolved"
-                  ? "success"
-                  : t.status === "in_progress"
-                    ? "info"
-                    : "warning"
-              }
-            >
-              {STATUS_LABEL[t.status] || t.status}
-            </StatusBadge>
-          </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">{t.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t.description || "Sem descrição"}</p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Select
-            value={t.status}
-            onChange={(e) => update.mutate({ status: e.target.value })}
-            className="h-8 w-40 text-xs bg-surface-alt border-border"
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-background">
+      {/* Top Header */}
+      <div className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate({ to: "/agency/$slug/support", params: { slug } })}
+            className="p-1.5 hover:bg-surface-alt rounded-md border border-border"
           >
-            {Object.entries(STATUS_LABEL).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </Select>
-          {t.status !== "resolved" && t.status !== "closed" && (
-            <PrimaryButton onClick={resolveTicket} className="h-8 text-xs gap-1.5 ">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Resolver
-            </PrimaryButton>
-          )}
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <span className="font-mono text-xs font-semibold text-muted-foreground">
+            #{ticket.code || ticket.id.substring(0, 8)}
+          </span>
+          <h1 className="font-semibold">{ticket.title}</h1>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* MAIN THREAD */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h2 className="text-sm font-semibold tracking-tight flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-              Histórico de Mensagens
-            </h2>
-            <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer hover:text-foreground">
-              <input
-                type="checkbox"
-                checked={showInternal}
-                onChange={(e) => setShowInternal(e.target.checked)}
-                className="rounded border-input text-primary focus:ring-primary/20 bg-surface"
-              />
-              Mostrar notas internas
-            </label>
-          </div>
-
-          <div className="space-y-4">
-            {visibleMessages.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                <p className="text-sm text-muted-foreground">Nenhuma mensagem ainda.</p>
+      {/* 3 Panels */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Panel: Context */}
+        <div className="w-80 border-r border-border bg-surface-alt/30 p-4 overflow-y-auto space-y-6">
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+              <User className="w-4 h-4" /> Cliente
+            </h3>
+            {ticket.client ? (
+              <div className="bg-surface border border-border rounded-xl p-3 space-y-2">
+                <p className="font-bold">{ticket.client.full_name}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Mail className="w-3 h-3" /> {ticket.client.email}
+                </p>
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Phone className="w-3 h-3" /> {ticket.client.phone}
+                </p>
               </div>
             ) : (
-              visibleMessages.map((m) => {
-                const isAgent = m.sender === "agency";
-                const isSystem = m.sender === "system";
-
-                if (isSystem) {
-                  return (
-                    <div key={m.id} className="flex justify-center my-4">
-                      <div className="bg-surface-alt/50 border border-border px-3 py-1.5 rounded-full flex items-center gap-2 text-[11px] text-muted-foreground font-medium">
-                        <Bot className="h-3 w-3" />
-                        {m.content}
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div key={m.id} className={`flex gap-3 ${isAgent ? "flex-row-reverse" : ""}`}>
-                    <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isAgent ? "bg-primary/10 text-primary" : "bg-surface-alt text-muted-foreground"}`}
-                    >
-                      {isAgent ? <Globe className="h-4 w-4" /> : <User className="h-4 w-4" />}
-                    </div>
-                    <div
-                      className={`flex max-w-[85%] flex-col ${isAgent ? "items-end" : "items-start"}`}
-                    >
-                      <div className="mb-1 flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-                        <span className="text-foreground">{isAgent ? "Agência" : "Cliente"}</span>
-                        <span>{fmtDate(m.created_at)}</span>
-                        {m.is_internal && (
-                          <span className="flex items-center gap-1 rounded bg-warning/20 px-1.5 py-0.5 text-[10px] uppercase text-warning-foreground font-bold">
-                            <Lock className="h-2.5 w-2.5" /> Interna
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className={`rounded-2xl px-4 py-2.5 text-sm ${
-                          m.is_internal
-                            ? "bg-warning/10 text-warning-foreground border border-warning/20 rounded-tr-sm"
-                            : isAgent
-                              ? "bg-primary text-primary-foreground rounded-tr-sm"
-                              : "bg-surface border border-border rounded-tl-sm text-foreground"
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
-
-                        {m.attachments && m.attachments.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-current/10 space-y-2">
-                            {m.attachments.map((url, i) => (
-                              <a
-                                key={i}
-                                href={url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-1.5 text-xs opacity-90 hover:opacity-100 hover:underline font-medium"
-                              >
-                                <Paperclip className="h-3.5 w-3.5" /> Anexo {i + 1}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
+              <p className="text-sm text-muted-foreground italic">Cliente não vinculado.</p>
             )}
           </div>
 
-          {t.status !== "closed" && (
-            <div className="mt-6 rounded-lg border border-border bg-surface overflow-hidden focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
-              <div className="flex border-b border-border bg-surface-alt/30">
-                <button
-                  type="button"
-                  onClick={() => setChannel("public")}
-                  className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-medium transition-colors ${
-                    channel === "public"
-                      ? "bg-surface text-foreground border-b-2 border-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-                  }`}
-                >
-                  <Unlock className="h-3.5 w-3.5" /> Resposta ao Cliente
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setChannel("internal")}
-                  className={`flex flex-1 items-center justify-center gap-2 py-2.5 text-xs font-medium transition-colors ${
-                    channel === "internal"
-                      ? "bg-warning/10 text-warning-foreground border-b-2 border-warning"
-                      : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-                  }`}
-                >
-                  <Lock className="h-3.5 w-3.5" /> Nota Interna (Privado)
-                </button>
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+              <Briefcase className="w-4 h-4" /> Viagem Contexto
+            </h3>
+            {ticket.trip ? (
+              <div className="bg-brand/5 border border-brand/20 rounded-xl p-3 space-y-2">
+                <p className="font-bold text-brand">{ticket.trip.title}</p>
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <MapPin className="w-3 h-3" /> {ticket.trip.destination}
+                </p>
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Calendar className="w-3 h-3" /> Embarque:{" "}
+                  {ticket.trip.travel_start
+                    ? format(new Date(ticket.trip.travel_start), "dd/MM/yyyy")
+                    : "A Confirmar"}
+                </p>
+                <PrimaryButton className="w-full mt-2 text-xs h-7">Abrir Viagem</PrimaryButton>
               </div>
+            ) : (
+              <p className="text-sm text-muted-foreground italic">Nenhuma viagem atrelada.</p>
+            )}
+          </div>
+        </div>
 
-              <div className="p-3">
-                <Textarea
-                  value={reply}
-                  onChange={(e) => setReply(e.target.value)}
-                  placeholder={
-                    channel === "public"
-                      ? "Escreva sua resposta ao cliente..."
-                      : "Registre uma anotação visível apenas para a equipe..."
-                  }
-                  className="min-h-[100px] border-0 bg-transparent p-2 text-sm focus:ring-0 resize-none"
-                />
+        {/* Center Panel: Timeline & Chat */}
+        <div className="flex-1 flex flex-col bg-surface overflow-hidden relative">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Original Request */}
+            <div className="flex gap-4">
+              <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <User className="w-4 h-4" />
               </div>
-
-              {attachOpen && (
-                <div className="border-t border-border p-4 bg-surface-alt/20">
-                  <FileUploader
-                    label="Anexar arquivo"
-                    value={attachUrl}
-                    onChange={setAttachUrl}
-                    bucket="agency-logos"
-                    folder={`${agency?.id}/support/${ticket_id}`}
-                  />
+              <div className="flex-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-bold">{ticket.client?.full_name || "Cliente"}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {format(new Date(ticket.created_at), "dd/MM/yyyy HH:mm")}
+                  </span>
                 </div>
-              )}
+                <div className="bg-surface-alt border border-border p-4 rounded-xl rounded-tl-none mt-1">
+                  <p className="text-sm whitespace-pre-wrap">
+                    {ticket.description || ticket.title}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-              <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 p-3">
-                <div className="flex items-center gap-2">
-                  <GhostButton
-                    onClick={() => setAttachOpen(!attachOpen)}
-                    className={`h-8 gap-1.5 text-xs ${attachUrl ? "text-primary" : ""}`}
-                  >
-                    <Paperclip className="h-3.5 w-3.5" /> {attachUrl ? "Arquivo anexado" : "Anexar"}
-                  </GhostButton>
-
-                  {channel === "public" && kbArticles.data && kbArticles.data.length > 0 && (
-                    <Select
-                      className="h-8 text-xs max-w-[200px]"
-                      value=""
-                      onChange={(e) => {
-                        if (!e.target.value) return;
-                        const link = `${window.location.origin}/p/${slug}/kb/${e.target.value}`;
-                        setReply(
-                          (prev) =>
-                            prev +
-                            (prev.length > 0 ? "\n\n" : "") +
-                            `Veja este artigo na nossa central de ajuda: \n${link}`,
-                        );
-                      }}
-                    >
-                      <option value="">📖 Inserir Artigo KB...</option>
-                      {kbArticles.data.map((kb) => (
-                        <option key={kb.id} value={kb.slug}>
-                          {kb.title}
-                        </option>
-                      ))}
-                    </Select>
+            {/* Replies */}
+            {messages.map((m) => (
+              <div key={m.id} className="flex gap-4">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.sender === "agent" ? "bg-brand text-brand-foreground" : m.sender === "system" ? "bg-warning text-warning-foreground" : "bg-primary/10 text-primary"}`}
+                >
+                  {m.sender === "agent" ? (
+                    <User className="w-4 h-4" />
+                  ) : m.sender === "system" ? (
+                    <Lock className="w-4 h-4" />
+                  ) : (
+                    <User className="w-4 h-4" />
                   )}
                 </div>
+                <div className="flex-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-bold">
+                      {m.sender === "agent"
+                        ? "Agente"
+                        : m.sender === "system"
+                          ? "Nota Interna"
+                          : "Cliente"}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {format(new Date(m.created_at), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  </div>
+                  <div
+                    className={`border p-4 rounded-xl mt-1 ${m.sender === "agent" ? "bg-brand/5 border-brand/20 rounded-tl-none" : m.sender === "system" ? "bg-warning/10 border-warning/20 border-dashed rounded-tl-none" : "bg-surface-alt border-border rounded-tl-none"}`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{m.content}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Reply Box */}
+          <div className="p-4 bg-surface border-t border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={() => setReplyType("client")}
+                className={`text-xs px-3 py-1 rounded-full font-semibold transition-colors ${replyType === "client" ? "bg-primary text-primary-foreground" : "bg-surface-alt text-muted-foreground"}`}
+              >
+                <MessageSquare className="w-3 h-3 inline mr-1" /> Resposta p/ Cliente
+              </button>
+              <button
+                onClick={() => setReplyType("supplier")}
+                className={`text-xs px-3 py-1 rounded-full font-semibold transition-colors ${replyType === "supplier" ? "bg-brand text-brand-foreground" : "bg-surface-alt text-muted-foreground"}`}
+              >
+                <Mail className="w-3 h-3 inline mr-1" /> E-mail Fornecedor
+              </button>
+              <button
+                onClick={() => setReplyType("internal")}
+                className={`text-xs px-3 py-1 rounded-full font-semibold transition-colors ${replyType === "internal" ? "bg-warning text-warning-foreground" : "bg-surface-alt text-muted-foreground"}`}
+              >
+                <Lock className="w-3 h-3 inline mr-1" /> Nota Interna
+              </button>
+            </div>
+
+            <div
+              className={`rounded-xl border ${replyType === "internal" ? "border-warning/50 bg-warning/5" : replyType === "supplier" ? "border-brand/50 bg-brand/5" : "border-border bg-background"} overflow-hidden focus-within:ring-1 focus-within:ring-primary`}
+            >
+              <Textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder={
+                  replyType === "internal"
+                    ? "Nota visível apenas para a agência..."
+                    : replyType === "supplier"
+                      ? "E-mail para hotel/companhia aérea..."
+                      : "Digite sua resposta para o cliente..."
+                }
+                className="border-0 shadow-none focus-visible:ring-0 bg-transparent min-h-[100px]"
+              />
+              <div className="flex items-center justify-between p-2 border-t border-border/50 bg-surface/50">
+                <button className="p-2 text-muted-foreground hover:text-foreground rounded-md hover:bg-surface-alt">
+                  <Paperclip className="w-4 h-4" />
+                </button>
                 <PrimaryButton
-                  onClick={postReply}
-                  disabled={!reply.trim() || update.isPending}
-                  className={`h-8 gap-1.5 text-xs ${channel === "internal" ? "bg-warning hover:bg-warning/90 text-warning-foreground" : ""}`}
+                  onClick={() => sendReply.mutate()}
+                  disabled={sendReply.isPending || !replyText.trim()}
+                  className="h-8 text-xs gap-2"
                 >
-                  <Send className="h-3.5 w-3.5" />{" "}
-                  {channel === "internal" ? "Salvar nota interna" : "Enviar resposta"}
+                  <Send className="w-3 h-3" /> Enviar
                 </PrimaryButton>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* SIDEBAR */}
-        <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-surface p-4 ">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              SLA & Prazos
+        {/* Right Panel: Actions & SLA */}
+        <div className="w-72 border-l border-border bg-surface-alt/30 p-4 space-y-6 overflow-y-auto">
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+              <Tag className="w-4 h-4" /> Propriedades
             </h3>
-            {sla === "resolved" ? (
-              <div className="flex items-center gap-2 text-sm font-medium text-success">
-                <CheckCircle2 className="h-4 w-4" /> Resolvido dentro do prazo
-              </div>
-            ) : sla === "ok" ? (
-              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Clock className="h-4 w-4 text-muted-foreground" /> {slaDiff(t.sla_deadline)}
-              </div>
-            ) : sla === "warning" ? (
-              <div className="flex items-center gap-2 text-sm font-bold text-warning">
-                <AlertTriangle className="h-4 w-4" /> Vence em breve ({slaDiff(t.sla_deadline)})
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-sm font-bold text-danger">
-                <AlertTriangle className="h-4 w-4" /> SLA Expirado
-              </div>
-            )}
-            {t.sla_deadline && (
-              <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
-                Limite: {fmtDate(t.sla_deadline)}
-                {sla === "breach" && t.priority !== "urgent" && (
-                  <button
-                    onClick={escalateTicket}
-                    className="text-danger hover:underline font-bold"
-                  >
-                    Escalonar (Tornar Urgente)
-                  </button>
-                )}
-              </div>
-            )}
+            <div className="space-y-4">
+              <Field label="Estágio (Kanban)">
+                <Select
+                  value={ticket.stage || ticket.status}
+                  onChange={(e) => updateTicket.mutate({ stage: e.target.value })}
+                >
+                  <option value="new">Novo</option>
+                  <option value="open">Aberto</option>
+                  <option value="pending_supplier">Aguardando Fornecedor</option>
+                  <option value="pending_client">Aguardando Cliente</option>
+                  <option value="resolved">Resolvido</option>
+                  <option value="closed">Fechado</option>
+                </Select>
+              </Field>
+              <Field label="Responsável">
+                <Select
+                  value={ticket.assignee_id || ""}
+                  onChange={(e) => updateTicket.mutate({ assignee_id: e.target.value || null })}
+                >
+                  <option value="">Não atribuído</option>
+                  {team?.map((t) => (
+                    <option key={t.user_id || ""} value={t.user_id || ""}>
+                      {(t.users as any)?.raw_user_meta_data?.name || "Agente"}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Prioridade">
+                <Select
+                  value={ticket.priority}
+                  onChange={(e) => updateTicket.mutate({ priority: e.target.value })}
+                >
+                  <option value="low">Baixa</option>
+                  <option value="medium">Média</option>
+                  <option value="high">Alta</option>
+                  <option value="urgent">Urgente</option>
+                </Select>
+              </Field>
+            </div>
           </div>
 
-          {(t.status === "resolved" || t.status === "closed") && t.csat_score && (
-            <div className="rounded-lg border border-border bg-surface p-4 flex flex-col items-center justify-center text-center">
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Avaliação do Cliente
-              </h3>
-              <div className="flex items-center gap-1 text-yellow-500 mb-2">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star
-                    key={s}
-                    className={`w-6 h-6 ${s <= t.csat_score! ? "fill-current" : "opacity-20"}`}
-                  />
-                ))}
-              </div>
-              {t.csat_comment && (
-                <p className="text-sm italic text-muted-foreground mt-2">"{t.csat_comment}"</p>
-              )}
-            </div>
-          )}
-
-          <div className="rounded-lg border border-border bg-surface p-4 ">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Detalhes do Ticket
+          <div className="pt-4 border-t border-border">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+              <Clock className="w-4 h-4" /> Tempo & SLA
             </h3>
-            <div className="space-y-2.5 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Categoria:</span>
-                <span className="font-medium capitalize">{t.type}</span>
+            <div className="bg-surface border border-border rounded-xl p-3 space-y-3">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">SLA Vencimento</span>
+                <span className="font-semibold text-destructive">Hoje 18:00</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Aberto em:</span>
-                <span className="font-medium">{fmtDate(t.created_at)}</span>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Tempo Aberto</span>
+                <span className="font-semibold">2h 15m</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

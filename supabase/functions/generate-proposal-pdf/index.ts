@@ -23,7 +23,10 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
     const { proposal_id, agency_id, format = "A4", landscape = false } = await req.json();
@@ -58,7 +61,7 @@ serve(async (req) => {
     });
 
     const page = await browser.newPage();
-    
+
     // Set viewport based on format
     if (landscape) {
       if (format === "presentation-169" || format === "16:9") {
@@ -77,7 +80,7 @@ serve(async (req) => {
     await page.goto(targetUrl, { waitUntil: "networkidle0" });
 
     // For PDF page format setting
-    const pdfFormat = (format === "presentation-169" || format === "16:9") ? "Letter" : format;
+    const pdfFormat = format === "presentation-169" || format === "16:9" ? "Letter" : format;
 
     const pdfBuffer = await page.pdf({
       format: pdfFormat as any,
@@ -90,9 +93,8 @@ serve(async (req) => {
 
     // Upload to proposals-exports bucket
     const fileName = `${agency_id}/${proposal_id}/export_${Date.now()}.pdf`;
-    
-    const { data: uploadData, error: uploadError } = await supabaseClient
-      .storage
+
+    const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from("proposals-exports")
       .upload(fileName, pdfBuffer, {
         contentType: "application/pdf",
@@ -101,10 +103,9 @@ serve(async (req) => {
 
     if (uploadError) throw uploadError;
 
-    const { data: { publicUrl } } = supabaseClient
-      .storage
-      .from("proposals-exports")
-      .getPublicUrl(fileName);
+    const {
+      data: { publicUrl },
+    } = supabaseClient.storage.from("proposals-exports").getPublicUrl(fileName);
 
     return new Response(JSON.stringify({ pdf_url: publicUrl }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

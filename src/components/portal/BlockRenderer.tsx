@@ -12,17 +12,47 @@ export type { PortalBlock };
 export function BlockRenderer({
   blocks,
   agencySlug,
+  onSelectBlock,
+  selectedBlockId,
 }: {
   blocks: PortalBlock[];
   agencySlug: string;
+  onSelectBlock?: (id: string) => void;
+  selectedBlockId?: string | null;
 }) {
   if (!blocks || blocks.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-16 py-8">
-      {blocks.map((b) => (
-        <React.Fragment key={b.id}>{renderBlock(b, agencySlug)}</React.Fragment>
-      ))}
+    <div className="flex flex-col gap-4 py-8">
+      {blocks.map((b) => {
+        const isSelected = selectedBlockId === b.id;
+        const Wrapper = onSelectBlock ? "button" : "div";
+
+        return (
+          <Wrapper
+            key={b.id}
+            type={onSelectBlock ? "button" : undefined}
+            onClick={onSelectBlock ? () => onSelectBlock(b.id) : undefined}
+            className={`w-full text-left relative outline-none transition-all duration-200 group block-wrapper-preview
+              ${onSelectBlock ? "cursor-pointer hover:ring-2 hover:ring-brand/50 hover:ring-offset-4 rounded-3xl" : ""}
+              ${isSelected ? "ring-2 ring-brand ring-offset-4 scale-[1.01]" : ""}
+            `}
+          >
+            {onSelectBlock && (
+              <div
+                className={`absolute -top-3 -right-3 z-50 rounded-full bg-brand text-white px-2 py-0.5 text-[10px] font-bold transition-opacity duration-200 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+              >
+                {b.type.toUpperCase()}
+              </div>
+            )}
+            <div
+              className={`pointer-events-none transition-opacity ${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
+            >
+              {renderBlock(b, agencySlug)}
+            </div>
+          </Wrapper>
+        );
+      })}
     </div>
   );
 }
@@ -107,7 +137,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
         <section className="mx-auto max-w-6xl w-full">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {b.images.map((img, i) => (
-              <div key={i} className="aspect-square overflow-hidden rounded-xl bg-surface-alt group">
+              <div
+                key={i}
+                className="aspect-square overflow-hidden rounded-xl bg-surface-alt group"
+              >
                 <img
                   src={img}
                   alt={`Gallery ${i}`}
@@ -134,7 +167,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             {b.items?.map((item, i) => (
               <div
                 key={i}
-                className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50 transition-all hover:-translate-y-1 hover:shadow-md"
+                className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50 transition-all hover:-translate-y-1"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4 text-2xl">
                   {item.icon || "✨"}
@@ -216,13 +249,19 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             {b.items?.map((item, i) => (
               <div
                 key={i}
-                className="relative flex flex-col bg-surface border border-border/50 rounded-2xl p-6 shadow-sm hover:-translate-y-1 transition-transform"
+                className="relative flex flex-col bg-surface border border-border/50 rounded-2xl p-6 hover:-translate-y-1 transition-transform"
               >
                 <Quote className="h-8 w-8 text-brand/20 mb-4" />
-                <p className="flex-1 text-muted-foreground leading-relaxed italic mb-6">"{item.text}"</p>
+                <p className="flex-1 text-muted-foreground leading-relaxed italic mb-6">
+                  "{item.text}"
+                </p>
                 <div className="flex items-center gap-3 border-t border-border pt-4">
                   {item.avatar_url ? (
-                    <img src={item.avatar_url} alt={item.author} className="h-10 w-10 rounded-full object-cover" />
+                    <img
+                      src={item.avatar_url}
+                      alt={item.author}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
                   ) : (
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand font-bold">
                       {item.author.charAt(0)}
@@ -257,7 +296,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
           )}
           <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {b.items?.map((item, i) => (
-              <div key={i} className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50">
+              <div
+                key={i}
+                className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50"
+              >
                 <div className="text-4xl mb-2">{item.icon || "📊"}</div>
                 <div className="text-3xl font-extrabold text-brand mb-1">{item.value}</div>
                 <div className="text-sm text-muted-foreground">{item.label}</div>
@@ -306,7 +348,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             <h2 className="text-3xl font-bold tracking-tight text-center mb-8">{b.title}</h2>
           )}
           {b.embed_url ? (
-            <div className="relative overflow-hidden rounded-2xl border border-border" style={{ height: "400px" }}>
+            <div
+              className="relative overflow-hidden rounded-2xl border border-border"
+              style={{ height: "400px" }}
+            >
               <iframe
                 src={b.embed_url}
                 className="absolute inset-0 h-full w-full"
@@ -318,7 +363,9 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             </div>
           ) : (
             <div className="flex h-64 items-center justify-center rounded-2xl bg-surface-alt border border-border">
-              <span className="text-sm text-muted-foreground">Configure o embed do Google Maps</span>
+              <span className="text-sm text-muted-foreground">
+                Configure o embed do Google Maps
+              </span>
             </div>
           )}
           {b.address_label && (
@@ -331,9 +378,239 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
     case "blog_feed":
       return <BlogFeedBlock block={b} agencySlug={agencySlug} />;
 
+    // ── BIOLINK HEADER ────────────────────────────────────────────
+    case "biolink_header":
+      return (
+        <section
+          className="mx-auto max-w-md w-full px-4 text-center pb-8 pt-12 rounded-t-3xl"
+          style={{ backgroundColor: b.bg_color, color: b.text_color }}
+        >
+          {b.avatar_url ? (
+            <img
+              src={b.avatar_url}
+              alt={b.name}
+              className="w-24 h-24 mx-auto rounded-full object-cover border-4 border-background/20 mb-4"
+            />
+          ) : (
+            <div className="w-24 h-24 mx-auto rounded-full bg-surface-alt/30 border-4 border-background/20 mb-4 flex items-center justify-center text-3xl">
+              {b.name?.charAt(0) || "?"}
+            </div>
+          )}
+          <h1 className="text-2xl font-bold tracking-tight mb-2">{b.name}</h1>
+          <p className="opacity-90 max-w-sm mx-auto">{b.bio}</p>
+        </section>
+      );
+
+    // ── BIOLINK LINKS ─────────────────────────────────────────────
+    case "biolink_links":
+      return (
+        <section className="mx-auto max-w-md w-full px-4 pb-12 space-y-3">
+          {(b.items || []).map((item, idx) => (
+            <a
+              key={idx}
+              href={item.url}
+              target={item.url?.startsWith("http") ? "_blank" : undefined}
+              rel="noreferrer"
+              className={`flex items-center p-4 rounded-xl transition-transform hover:scale-105 active:scale-95 border ${
+                item.highlight
+                  ? "bg-brand text-brand-foreground border-brand font-bold"
+                  : "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40"
+              }`}
+            >
+              <span className="text-xl mr-3">{item.icon}</span>
+              <span className="flex-1 text-center pr-8">{item.title}</span>
+            </a>
+          ))}
+        </section>
+      );
+
+    // ── SUPPORT TICKET FORM ───────────────────────────────────────
+    case "support_ticket_form":
+      return <SupportTicketBlock key={b.id} block={b} agencySlug={agencySlug} />;
+
+    // ── GROUP TOUR DETAILS ────────────────────────────────────────
+    case "group_tour_details":
+      return <GroupTourDetailsBlock key={b.id} block={b} agencySlug={agencySlug} />;
+
     default:
       return null;
   }
+}
+
+// ─── GroupTourDetailsBlock ───────────────────────────────────────────────────
+function GroupTourDetailsBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
+  const [tour, setTour] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      if (!block.tour_id) {
+        setLoading(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("group_tours")
+        .select("*")
+        .eq("id", block.tour_id)
+        .maybeSingle();
+      setTour(data);
+      setLoading(false);
+    }
+    load();
+  }, [block.tour_id]);
+
+  if (loading)
+    return (
+      <div className="mx-auto max-w-4xl w-full px-4 h-64 animate-pulse rounded-2xl bg-surface-alt" />
+    );
+  if (!tour)
+    return (
+      <div className="mx-auto max-w-4xl p-8 border border-dashed border-border rounded-xl text-center bg-surface-alt/30 text-muted-foreground">
+        <p className="font-semibold text-sm">Tour não encontrado</p>
+        <p className="text-xs mt-1">Configure o ID do roteiro no painel lateral.</p>
+      </div>
+    );
+
+  return (
+    <section className="mx-auto max-w-5xl w-full px-4 py-8">
+      <div className="grid lg:grid-cols-2 gap-10">
+        <div>
+          {tour.cover_image_url ? (
+            <img
+              src={tour.cover_image_url}
+              alt={tour.title}
+              className="w-full rounded-3xl object-cover aspect-[4/3] shadow-lg"
+            />
+          ) : (
+            <div className="w-full rounded-3xl aspect-[4/3] bg-surface-alt flex items-center justify-center border border-border" />
+          )}
+        </div>
+        <div className="flex flex-col justify-center space-y-6">
+          <div className="inline-flex px-3 py-1 bg-brand/10 text-brand font-bold text-xs rounded-full uppercase tracking-widest w-fit">
+            {tour.destination}
+          </div>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight">{tour.title}</h2>
+          <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            {tour.description}
+          </p>
+
+          <div className="flex flex-col space-y-4 pt-6 border-t border-border">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground font-medium">Data de Partida</span>
+              <span className="font-bold">
+                {tour.departure_date
+                  ? new Date(tour.departure_date).toLocaleDateString("pt-BR")
+                  : "A Confirmar"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground font-medium">Preço Base</span>
+              <span className="text-2xl font-black text-brand">
+                {Number(tour.base_price).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground font-medium">Vagas Disponíveis</span>
+              <span className="font-bold">{tour.available_seats || 0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── SupportTicketBlock ────────────────────────────────────────────────────────
+function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
+  const [f, setF] = useState({ subject: "", description: "", email: "" });
+  const [busy, setBusy] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+
+    const { error } = await (supabase.rpc as any)("submit_public_ticket", {
+      _agency_slug: agencySlug,
+      _email: f.email,
+      _subject: f.subject,
+      _description: f.description,
+    });
+
+    if (error) {
+      toast.error("Erro ao enviar: " + error.message);
+      setBusy(false);
+      return;
+    }
+
+    setBusy(false);
+    setSubmitted(true);
+    toast.success("Ticket aberto com sucesso!");
+  }
+
+  return (
+    <section className="mx-auto max-w-3xl bg-surface border border-border rounded-3xl p-8 shadow-sm">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold tracking-tight mb-2">{block.title}</h2>
+        <p className="text-muted-foreground">{block.subtitle}</p>
+      </div>
+
+      {submitted ? (
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <CheckCircle2 className="h-12 w-12 text-success mb-4" />
+          <h3 className="text-xl font-bold mb-2">Chamado Aberto!</h3>
+          <p className="text-muted-foreground text-sm">
+            Recebemos sua solicitação. Responderemos em seu email brevemente.
+          </p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Email para Contato *</label>
+            <input
+              required
+              type="email"
+              value={f.email}
+              onChange={(e) => setF({ ...f, email: e.target.value })}
+              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              placeholder="seu@email.com"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Assunto *</label>
+            <input
+              required
+              value={f.subject}
+              onChange={(e) => setF({ ...f, subject: e.target.value })}
+              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              placeholder="Ex: Dúvida sobre reserva"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Descrição *</label>
+            <textarea
+              required
+              value={f.description}
+              onChange={(e) => setF({ ...f, description: e.target.value })}
+              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none resize-y"
+              placeholder="Descreva o problema com detalhes..."
+              rows={4}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full h-12 rounded-xl bg-brand text-brand-foreground font-bold hover:bg-brand/90 disabled:opacity-50 transition-colors"
+          >
+            {busy ? "Enviando..." : "Abrir Chamado"}
+          </button>
+        </form>
+      )}
+    </section>
+  );
 }
 
 // ─── ToursGridBlock ────────────────────────────────────────────────────────────
@@ -349,7 +626,10 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
         .select("id")
         .eq("slug", agencySlug)
         .maybeSingle();
-      if (!ag) { setLoading(false); return; }
+      if (!ag) {
+        setLoading(false);
+        return;
+      }
 
       const { data } = await supabase
         .from("group_tours")
@@ -364,7 +644,10 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
     load();
   }, [agencySlug, block.max_items]);
 
-  if (loading) return <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (tours.length === 0) return null;
 
   return (
@@ -381,7 +664,7 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
             key={t.id}
             to="/p/$agency_slug/tour/$id"
             params={{ agency_slug: agencySlug, id: t.id }}
-            className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg"
+            className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface transition-all hover:-translate-y-1 hover:border-brand/40"
           >
             <div className="relative aspect-video overflow-hidden">
               {t.cover_image_url ? (
@@ -409,9 +692,14 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
                 </h3>
               </div>
               <div className="mt-4 pt-4 border-t border-border/50">
-                <span className="text-[10px] uppercase text-muted-foreground font-bold">A partir de</span>
+                <span className="text-[10px] uppercase text-muted-foreground font-bold">
+                  A partir de
+                </span>
                 <div className="font-mono text-xl font-bold text-brand">
-                  {Number(t.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                  {Number(t.base_price).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
                 </div>
               </div>
             </div>
@@ -435,7 +723,10 @@ function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }
         .select("id")
         .eq("slug", agencySlug)
         .maybeSingle();
-      if (!agency) { setLoading(false); return; }
+      if (!agency) {
+        setLoading(false);
+        return;
+      }
 
       const { data } = await supabase
         .from("blog_posts")
@@ -450,7 +741,10 @@ function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }
     load();
   }, [agencySlug, block.max_items]);
 
-  if (loading) return <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (posts.length === 0) return null;
 
   return (
@@ -464,7 +758,7 @@ function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }
             key={p.id}
             to="/p/$agency_slug/blog/$slug"
             params={{ agency_slug: agencySlug, slug: p.slug }}
-            className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/40 hover:shadow-md transition-all"
+            className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/40 transition-all"
           >
             {p.cover_image_url && (
               <div className="aspect-video overflow-hidden">
@@ -478,10 +772,16 @@ function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }
             <div className="p-4">
               {p.published_at && (
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-                  {new Date(p.published_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
+                  {new Date(p.published_at).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </div>
               )}
-              <h3 className="font-bold text-base group-hover:text-brand transition-colors">{p.title}</h3>
+              <h3 className="font-bold text-base group-hover:text-brand transition-colors">
+                {p.title}
+              </h3>
               {p.excerpt && (
                 <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{p.excerpt}</p>
               )}
@@ -518,7 +818,10 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
     });
 
     setBusy(false);
-    if (error) { toast.error("Erro ao enviar: " + error.message); return; }
+    if (error) {
+      toast.error("Erro ao enviar: " + error.message);
+      return;
+    }
     setSubmitted(true);
     toast.success("Mensagem enviada com sucesso!");
   }
@@ -537,7 +840,8 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
           </div>
           <h3 className="text-2xl font-bold mb-2">Tudo certo!</h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Recebemos sua mensagem. Um de nossos consultores especialistas entrará em contato em breve.
+            Recebemos sua mensagem. Um de nossos consultores especialistas entrará em contato em
+            breve.
           </p>
         </div>
       ) : (
@@ -590,7 +894,13 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
               disabled={busy}
               className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-foreground text-background font-bold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
             >
-              {busy ? "Enviando..." : <><Send className="w-4 h-4" /> Enviar Mensagem</>}
+              {busy ? (
+                "Enviando..."
+              ) : (
+                <>
+                  <Send className="w-4 h-4" /> Enviar Mensagem
+                </>
+              )}
             </button>
           </div>
         </form>

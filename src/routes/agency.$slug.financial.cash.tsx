@@ -21,7 +21,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 export const Route = createFileRoute("/agency/$slug/financial/cash")({
   component: CashPage,
@@ -39,6 +39,9 @@ type Record_ = {
   paid_at: string | null;
   payment_method: string | null;
   trip_id: string | null;
+  client_id: string | null;
+  trips?: { title: string } | null;
+  clients?: { name: string } | null;
   created_at: string;
 };
 
@@ -75,7 +78,7 @@ function CashPage() {
       let qb = supabase
         .from("financial_records")
         .select(
-          "id, type, category, description, amount, currency, status, due_date, paid_at, payment_method, trip_id, created_at",
+          "id, type, category, description, amount, currency, status, due_date, paid_at, payment_method, trip_id, client_id, trips(title), clients(name), created_at",
           { count: "exact" },
         )
         .eq("agency_id", agency!.id)
@@ -166,9 +169,19 @@ function CashPage() {
                   <tr key={r.id} className="border-t border-border hover:bg-surface-alt/30">
                     <td className="px-3 py-2.5">
                       <div className="font-medium">{r.description ?? "—"}</div>
-                      {r.payment_method && (
-                        <div className="text-[11px] text-muted-foreground">{r.payment_method}</div>
-                      )}
+                      <div className="mt-1 flex flex-col gap-0.5">
+                        {r.payment_method && (
+                          <div className="text-[11px] text-muted-foreground">
+                            Método: {r.payment_method}
+                          </div>
+                        )}
+                        {r.clients?.name && (
+                          <div className="text-[11px] text-brand">👤 {r.clients.name}</div>
+                        )}
+                        {r.trips?.title && (
+                          <div className="text-[11px] text-brand">✈️ {r.trips.title}</div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-3 py-2.5 text-xs text-muted-foreground">
                       {r.category ?? "—"}
@@ -280,6 +293,8 @@ const newRecordSchema = z.object({
   paymentMethod: z.string().optional(),
   amount: z.coerce.number().positive("O valor deve ser maior que zero"),
   dueDate: z.string().optional(),
+  clientId: z.string().optional(),
+  tripId: z.string().optional(),
 });
 
 type NewRecordFormData = z.infer<typeof newRecordSchema>;
@@ -296,6 +311,8 @@ function NewRecord({
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<NewRecordFormData>({
     resolver: zodResolver(newRecordSchema),
@@ -307,12 +324,14 @@ function NewRecord({
       paymentMethod: "",
       amount: 0,
       dueDate: "",
+      clientId: "",
+      tripId: "",
     },
   });
 
   async function submit(data: NewRecordFormData) {
     const { data: u } = await supabase.auth.getUser();
-    const { error } = await (supabase as any).from("financial_records").insert({
+    const { error } = await supabase.from("financial_records").insert({
       agency_id: agencyId,
       type: data.type,
       category: data.category || null,
@@ -321,6 +340,8 @@ function NewRecord({
       due_date: data.dueDate || null,
       payment_method: data.paymentMethod || null,
       status: data.status,
+      client_id: data.clientId || null,
+      trip_id: data.tripId || null,
       paid_at: data.status === "paid" ? new Date().toISOString() : null,
       created_by: u.user?.id ?? null,
     });
@@ -352,28 +373,56 @@ function NewRecord({
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Categoria" error={errors.category?.message}>
-            <Input
-              placeholder="Hospedagem, comissão…"
-              {...register("category")}
-            />
+            <Input placeholder="Hospedagem, comissão…" {...register("category")} />
           </Field>
           <Field label="Forma de pagamento" error={errors.paymentMethod?.message}>
-            <Input
-              placeholder="Pix, cartão…"
-              {...register("paymentMethod")}
-            />
+            <Input placeholder="Pix, cartão…" {...register("paymentMethod")} />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Valor (R$)" error={errors.amount?.message}>
-            <Input
-              type="number"
-              step="0.01"
-              {...register("amount")}
-            />
+            <Input type="number" step="0.01" {...register("amount")} />
           </Field>
           <Field label="Vencimento" error={errors.dueDate?.message}>
             <Input type="date" {...register("dueDate")} />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Cliente" error={errors.clientId?.message}>
+            <SearchableSelect
+              placeholder="Vincular a cliente..."
+              onSearch={async (search: string) => {
+                let q = supabase.from("clients").select("id, full_name").eq("agency_id", agencyId);
+                if (search) {
+                  q = q.ilike("full_name", `%${search}%`);
+                }
+                const { data } = await q.limit(10);
+                return (data || []).map((c) => ({ value: c.id, label: c.full_name || "" }));
+              }}
+              value={watch("clientId") || ""}
+              onChange={(v) => setValue("clientId", v)}
+            />
+          </Field>
+          <Field label="Viagem" error={errors.tripId?.message}>
+            <SearchableSelect
+              placeholder="Vincular a viagem..."
+              onSearch={async (search: string) => {
+                let q = supabase
+                  .from("trips")
+                  .select("id, title, destination")
+                  .eq("agency_id", agencyId);
+                if (search) {
+                  q = q.ilike("title", `%${search}%`);
+                }
+                const { data } = await q.limit(10);
+                return (data || []).map((t) => ({
+                  value: t.id,
+                  label: `${t.title} ${t.destination ? `(${t.destination})` : ""}`,
+                }));
+              }}
+              value={watch("tripId") || ""}
+              onChange={(v) => setValue("tripId", v)}
+            />
           </Field>
         </div>
         <div className="flex justify-end gap-2 pt-2">

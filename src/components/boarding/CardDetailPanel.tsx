@@ -2,7 +2,15 @@ import { useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { X, Clock, Users, AlertTriangle, Link as LinkIcon, CheckSquare, Square } from "lucide-react";
+import {
+  X,
+  Clock,
+  Users,
+  AlertTriangle,
+  Link as LinkIcon,
+  CheckSquare,
+  Square,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PrimaryButton, GhostButton, fmtDate } from "@/components/ui/form";
 import {
@@ -235,19 +243,29 @@ export function CardDetailPanel({
           {/* Proposta Original Vincular */}
           {card.proposal_details && (
             <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Proposta Original</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Proposta Original
+              </div>
               <div className="text-xs font-bold text-foreground">{card.proposal_details.title}</div>
-              
+
               {/* Voos da Proposta */}
               {card.proposal_details.flights && card.proposal_details.flights.length > 0 && (
                 <div className="space-y-2 border-t border-border/40 pt-2">
-                  <div className="text-[10px] font-semibold text-muted-foreground">Voos Propostos:</div>
+                  <div className="text-[10px] font-semibold text-muted-foreground">
+                    Voos Propostos:
+                  </div>
                   {card.proposal_details.flights.map((f: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between text-xs rounded border border-border/50 p-2 bg-surface-alt/10">
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between text-xs rounded border border-border/50 p-2 bg-surface-alt/10"
+                    >
                       <div>
-                        <div className="font-semibold text-foreground">{f.origin} ➔ {f.destination}</div>
+                        <div className="font-semibold text-foreground">
+                          {f.origin} ➔ {f.destination}
+                        </div>
                         <div className="text-[10px] text-muted-foreground font-mono">
-                          {f.airline} · {f.flight_number || "Sem nº"} · {f.date ? new Date(f.date).toLocaleDateString("pt-BR") : "S/Data"}
+                          {f.airline} · {f.flight_number || "Sem nº"} ·{" "}
+                          {f.date ? new Date(f.date).toLocaleDateString("pt-BR") : "S/Data"}
                         </div>
                       </div>
                       <button
@@ -256,7 +274,9 @@ export function CardDetailPanel({
                           setAirline(f.airline ?? "");
                           setDepartureDate(f.date ? f.date.split("T")[0] : "");
                           setEditDirty(true);
-                          toast.success("Dados do voo importados! Clique em 'Salvar alterações' no topo para registrar.");
+                          toast.success(
+                            "Dados do voo importados! Clique em 'Salvar alterações' no topo para registrar.",
+                          );
                         }}
                         className="h-6 rounded bg-brand/10 text-brand text-[10px] font-bold px-2 hover:bg-brand/20 transition-colors shrink-0"
                       >
@@ -270,12 +290,22 @@ export function CardDetailPanel({
               {/* Hotéis da Proposta */}
               {card.proposal_details.hotels && card.proposal_details.hotels.length > 0 && (
                 <div className="space-y-2 border-t border-border/40 pt-2">
-                  <div className="text-[10px] font-semibold text-muted-foreground">Hotéis Propostos:</div>
+                  <div className="text-[10px] font-semibold text-muted-foreground">
+                    Hotéis Propostos:
+                  </div>
                   {card.proposal_details.hotels.map((h: any, idx: number) => (
-                    <div key={idx} className="text-xs rounded border border-border/50 p-2 bg-surface-alt/10">
-                      <div className="font-semibold text-foreground">{h.name} ({h.city})</div>
+                    <div
+                      key={idx}
+                      className="text-xs rounded border border-border/50 p-2 bg-surface-alt/10"
+                    >
+                      <div className="font-semibold text-foreground">
+                        {h.name} ({h.city})
+                      </div>
                       <div className="text-[10px] text-muted-foreground font-mono">
-                        Check-in: {h.checkin ? new Date(h.checkin).toLocaleDateString("pt-BR") : "—"} · Check-out: {h.checkout ? new Date(h.checkout).toLocaleDateString("pt-BR") : "—"}
+                        Check-in:{" "}
+                        {h.checkin ? new Date(h.checkin).toLocaleDateString("pt-BR") : "—"} ·
+                        Check-out:{" "}
+                        {h.checkout ? new Date(h.checkout).toLocaleDateString("pt-BR") : "—"}
                       </div>
                     </div>
                   ))}
@@ -298,54 +328,81 @@ export function CardDetailPanel({
 
           {/* Edição inline: PNR, Cia, Data */}
           <div className="space-y-3">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Dados do Voo</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Dados do Voo
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] text-muted-foreground font-medium">PNR / Localizador</label>
+                <label className="text-[11px] text-muted-foreground font-medium">
+                  PNR / Localizador
+                </label>
                 <input
                   type="text"
                   value={pnr}
-                  onChange={(e) => { setPnr(e.target.value); setEditDirty(true); }}
+                  onChange={(e) => {
+                    setPnr(e.target.value);
+                    setEditDirty(true);
+                  }}
                   placeholder="ABC123"
                   className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-muted-foreground font-medium">Cia / Operadora</label>
+                <label className="text-[11px] text-muted-foreground font-medium">
+                  Cia / Operadora
+                </label>
                 <input
                   type="text"
                   value={airline}
-                  onChange={(e) => { setAirline(e.target.value); setEditDirty(true); }}
+                  onChange={(e) => {
+                    setAirline(e.target.value);
+                    setEditDirty(true);
+                  }}
                   placeholder="LATAM, GOL…"
                   className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
               </div>
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground font-medium">Data de Embarque</label>
+              <label className="text-[11px] text-muted-foreground font-medium">
+                Data de Embarque
+              </label>
               <input
                 type="date"
                 value={departureDate}
-                onChange={(e) => { setDepartureDate(e.target.value); setEditDirty(true); }}
+                onChange={(e) => {
+                  setDepartureDate(e.target.value);
+                  setEditDirty(true);
+                }}
                 className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
               />
             </div>
             <div className="grid grid-cols-2 gap-3 mt-2">
               <div>
-                <label className="text-[11px] text-muted-foreground font-medium">Reunião de Briefing</label>
+                <label className="text-[11px] text-muted-foreground font-medium">
+                  Reunião de Briefing
+                </label>
                 <input
                   type="datetime-local"
                   value={briefingDate ? briefingDate.slice(0, 16) : ""}
-                  onChange={(e) => { setBriefingDate(e.target.value); setEditDirty(true); }}
+                  onChange={(e) => {
+                    setBriefingDate(e.target.value);
+                    setEditDirty(true);
+                  }}
                   className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
               </div>
               <div>
-                <label className="text-[11px] text-muted-foreground font-medium">Link da Reunião</label>
+                <label className="text-[11px] text-muted-foreground font-medium">
+                  Link da Reunião
+                </label>
                 <input
                   type="text"
                   value={briefingUrl}
-                  onChange={(e) => { setBriefingUrl(e.target.value); setEditDirty(true); }}
+                  onChange={(e) => {
+                    setBriefingUrl(e.target.value);
+                    setEditDirty(true);
+                  }}
                   placeholder="https://meet.google.com/..."
                   className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
@@ -355,7 +412,9 @@ export function CardDetailPanel({
 
           {/* Tags */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Tags / Alertas</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+              Tags / Alertas
+            </div>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {tags.map((tag) => (
                 <span
@@ -363,7 +422,11 @@ export function CardDetailPanel({
                   className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
                 >
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-danger">
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="hover:text-danger"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 </span>
@@ -371,23 +434,30 @@ export function CardDetailPanel({
             </div>
             {/* Presets rápidos */}
             <div className="flex flex-wrap gap-1 mb-2">
-              {PRESET_TAGS.filter((t) => !tags.includes(t)).slice(0, 5).map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => addTag(tag)}
-                  className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
-                >
-                  + {tag}
-                </button>
-              ))}
+              {PRESET_TAGS.filter((t) => !tags.includes(t))
+                .slice(0, 5)
+                .map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => addTag(tag)}
+                    className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
+                  >
+                    + {tag}
+                  </button>
+                ))}
             </div>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(newTag); } }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTag(newTag);
+                  }
+                }}
                 placeholder="Nova tag personalizada…"
                 className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
               />
@@ -480,10 +550,15 @@ export function CardDetailPanel({
 
           {/* Notas livres */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">Notas do Operador</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+              Notas do Operador
+            </div>
             <textarea
               value={notes}
-              onChange={(e) => { setNotes(e.target.value); setEditDirty(true); }}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                setEditDirty(true);
+              }}
               placeholder="Observações internas sobre este embarque…"
               rows={3}
               className="w-full rounded-md border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
@@ -517,7 +592,9 @@ export function CardDetailPanel({
           {/* Suporte / Chamados */}
           <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Chamados de Suporte</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                Chamados de Suporte
+              </div>
               {!showTicketForm && (
                 <button
                   type="button"
@@ -581,7 +658,11 @@ export function CardDetailPanel({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setShowTicketForm(false); setTicketTitle(""); setTicketDesc(""); }}
+                    onClick={() => {
+                      setShowTicketForm(false);
+                      setTicketTitle("");
+                      setTicketDesc("");
+                    }}
                     className="h-7 rounded border border-border text-xs px-3 hover:bg-surface-alt text-foreground"
                   >
                     Cancelar
@@ -590,12 +671,17 @@ export function CardDetailPanel({
               </div>
             )}
 
-            {ticketsQ.isLoading && <p className="text-[10px] text-muted-foreground">Carregando chamados...</p>}
+            {ticketsQ.isLoading && (
+              <p className="text-[10px] text-muted-foreground">Carregando chamados...</p>
+            )}
 
             {ticketsQ.data && ticketsQ.data.length > 0 ? (
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {ticketsQ.data.map((t: any) => (
-                  <div key={t.id} className="flex items-center justify-between border border-border/60 rounded-lg p-2.5 text-xs bg-surface-alt/10">
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between border border-border/60 rounded-lg p-2.5 text-xs bg-surface-alt/10"
+                  >
                     <div>
                       <div className="font-mono text-[9px] text-muted-foreground">{t.code}</div>
                       <Link
@@ -607,25 +693,35 @@ export function CardDetailPanel({
                       </Link>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${
-                        t.status === 'resolved' ? 'bg-success/15 text-success' : 'bg-warning/15 text-warning'
-                      }`}>
-                        {t.status === 'resolved' ? 'Resolvido' : 'Pendente'}
+                      <span
+                        className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${
+                          t.status === "resolved"
+                            ? "bg-success/15 text-success"
+                            : "bg-warning/15 text-warning"
+                        }`}
+                      >
+                        {t.status === "resolved" ? "Resolvido" : "Pendente"}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[10px] text-muted-foreground">Nenhum chamado de suporte aberto para esta viagem.</p>
+              <p className="text-[10px] text-muted-foreground">
+                Nenhum chamado de suporte aberto para esta viagem.
+              </p>
             )}
           </div>
 
           {/* Atividades Timeline */}
           <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Atividades / Histórico</div>
-            
-            {activitiesQ.isLoading && <p className="text-[10px] text-muted-foreground">Carregando histórico...</p>}
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Atividades / Histórico
+            </div>
+
+            {activitiesQ.isLoading && (
+              <p className="text-[10px] text-muted-foreground">Carregando histórico...</p>
+            )}
 
             {activitiesQ.data && activitiesQ.data.length > 0 ? (
               <div className="relative border-l border-border/60 pl-3.5 space-y-3.5 ml-1.5 max-h-52 overflow-y-auto">
@@ -640,7 +736,9 @@ export function CardDetailPanel({
                 ))}
               </div>
             ) : (
-              <p className="text-[10px] text-muted-foreground">Nenhuma atividade registrada ainda.</p>
+              <p className="text-[10px] text-muted-foreground">
+                Nenhuma atividade registrada ainda.
+              </p>
             )}
           </div>
         </div>

@@ -1,9 +1,11 @@
 # Workflow 02 — Bug Fix
 
 ## Gatilho
+
 Quando o usuário relata um erro, botão quebrado, tela branca ou falha de lógica.
 
 ## Etapas Específicas
+
 1. **Reprodução Teórica:** Entender o caminho exato que causou o bug.
 2. **Investigação de Causa Raiz:**
    - Erro de tipagem?

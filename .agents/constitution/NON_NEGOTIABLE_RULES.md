@@ -1,7 +1,7 @@
 # Regras Pétreas do TravelOS
 
 **Status:** INVIOLÁVEL  
-**Violação:** Bloqueio automático de entrega  
+**Violação:** Bloqueio automático de entrega
 
 ---
 

@@ -1,9 +1,11 @@
 # Workflow 03 — UI Refactor
 
 ## Gatilho
+
 Quando o usuário pede para melhorar design, arrumar alinhamento, deixar premium.
 
 ## Etapas Específicas
+
 1. **UI Audit:** Invocar `06_ui_flat_premium_auditor.md`.
 2. **Limpeza de Classes:**
    - Remover `shadow-*`

@@ -43,7 +43,7 @@ type Contract = {
   payment_terms: string | null;
   fixed_clauses: Clause[];
   custom_clauses: Clause[];
-  client_data: Record<string, string>;
+  client_data: any[];
   passengers_data: Array<Record<string, string>>;
   agency_data: Record<string, string>;
   signatures: Array<{
@@ -249,12 +249,22 @@ function TripContract() {
   const [packageSummary, setPackageSummary] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [customClauses, setCustomClauses] = useState<Clause[]>([]);
+  const [clientData, setClientData] = useState<any[]>([]);
 
   useEffect(() => {
     if (contractQ.data) {
       setPackageSummary(contractQ.data.package_summary ?? "");
       setPaymentTerms(contractQ.data.payment_terms ?? "");
       setCustomClauses(contractQ.data.custom_clauses ?? []);
+      
+      const cData = contractQ.data.client_data;
+      if (Array.isArray(cData)) {
+        setClientData(cData);
+      } else if (cData && typeof cData === "object") {
+        setClientData([cData]);
+      } else {
+        setClientData([]);
+      }
     } else if (tripQ.data) {
       const t = tripQ.data;
       setPackageSummary(
@@ -266,8 +276,19 @@ function TripContract() {
           .filter(Boolean)
           .join(" · "),
       );
+      if (clientQ.data) {
+        const client = clientQ.data;
+        setClientData([{
+            name: client.full_name,
+            email: client.email ?? "",
+            phone: client.phone ?? "",
+            cpf: client.cpf ?? "",
+            passport_number: client.passport_number ?? "",
+            address: client.address ? Object.values(client.address).filter(Boolean).join(", ") : "",
+        }]);
+      }
     }
-  }, [contractQ.data, tripQ.data]);
+  }, [contractQ.data, tripQ.data, clientQ.data]);
 
   // ── Auto-generate package summary ──────────────────────────────────────────
 
@@ -285,20 +306,8 @@ function TripContract() {
     mutationFn: async () => {
       if (!agency || !tripQ.data) throw new Error("Dados insuficientes");
 
-      const client = clientQ.data;
       const pax = passengersQ.data ?? [];
       const clauses = clausesQ.data ?? [];
-
-      const client_data: Record<string, string> = client
-        ? {
-            name: client.full_name,
-            email: client.email ?? "",
-            phone: client.phone ?? "",
-            cpf: client.cpf ?? "",
-            passport_number: client.passport_number ?? "",
-            address: client.address ? Object.values(client.address).filter(Boolean).join(", ") : "",
-          }
-        : {};
 
       const agency_data: Record<string, string> = {
         name: agency.name,
@@ -327,7 +336,7 @@ function TripContract() {
           payment_terms: paymentTerms,
           fixed_clauses: clauses,
           custom_clauses: customClauses,
-          client_data,
+          client_data: clientData,
           agency_data,
           passengers_data,
         })
@@ -651,6 +660,7 @@ function TripContract() {
                     package_summary: packageSummary,
                     payment_terms: paymentTerms,
                     custom_clauses: customClauses,
+                    client_data: clientData,
                   } as Partial<Contract>)
                 }
                 disabled={updateContract.isPending}
@@ -733,6 +743,8 @@ function TripContract() {
             tripTotal={trip.total_sale}
             tripCurrency={trip.currency}
             totalPax={totalPax}
+            clientData={clientData}
+            setClientData={setClientData}
           />
 
           {contract && (

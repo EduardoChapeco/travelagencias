@@ -85,6 +85,33 @@ BEGIN
          trip_id  = v_trip_id
    WHERE id = p_proposal_id;
 
+  -- 5. Criar registro financeiro inicial (Contas a Receber)
+  IF COALESCE(v_proposal.total, 0) > 0 THEN
+    INSERT INTO financial_records (
+      agency_id,
+      client_id,
+      trip_id,
+      type,
+      category,
+      description,
+      amount,
+      currency,
+      status,
+      due_date
+    ) VALUES (
+      p_agency_id,
+      v_proposal.client_id,
+      v_trip_id,
+      'income',
+      'Vendas',
+      'Faturamento referente à Proposta #' || v_proposal.number,
+      v_proposal.total,
+      COALESCE(v_proposal.currency, 'BRL'),
+      'pending',
+      COALESCE(v_proposal.travel_start, CURRENT_DATE) -- Vencimento padrão na data da viagem ou hoje
+    );
+  END IF;
+
   RETURN v_trip_id;
 END;
 $$;

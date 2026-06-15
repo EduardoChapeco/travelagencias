@@ -84,17 +84,14 @@ function SuppliersPage() {
       {/* Filtros */}
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Input 
-            placeholder="Buscar por nome do fornecedor..." 
+          <Input
+            placeholder="Buscar por nome do fornecedor..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="w-full sm:w-48">
-          <Select 
-            value={kindFilter} 
-            onChange={(e) => setKindFilter(e.target.value)}
-          >
+          <Select value={kindFilter} onChange={(e) => setKindFilter(e.target.value)}>
             <option value="all">Todas as categorias</option>
             <option value="hotel">Hospedagem</option>
             <option value="airline">Cia Aérea</option>

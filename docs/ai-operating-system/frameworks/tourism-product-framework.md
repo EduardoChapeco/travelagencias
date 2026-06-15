@@ -30,16 +30,16 @@ Todo desenvolvedor ou agente deve validar as lógicas de negócio contra estes d
 ```
 
 1. **Gestão de Cotações e Propostas:**
-   * **Precificação Dinâmica:** O sistema deve suportar variação tarifária com base na idade dos passageiros. Classificar por Adulto, Criança (CHD - Child) e Bebê (INF - Infant).
-   * **Margem de Lucro (Markup):** Toda cotação deve conter uma distinção explícita entre o Custo Net (valor cobrado pelo fornecedor) e o Preço de Venda (Custo Net + Comissão + Markup de Operação).
+   - **Precificação Dinâmica:** O sistema deve suportar variação tarifária com base na idade dos passageiros. Classificar por Adulto, Criança (CHD - Child) e Bebê (INF - Infant).
+   - **Margem de Lucro (Markup):** Toda cotação deve conter uma distinção explícita entre o Custo Net (valor cobrado pelo fornecedor) e o Preço de Venda (Custo Net + Comissão + Markup de Operação).
 2. **Controle de Passageiros (Rooming List & Lotação):**
-   * Em viagens de grupo (ex: excursões rodoviárias ou bloqueios aéreos), o sistema deve gerenciar a distribuição de passageiros por quartos (Single, Duplo, Triplo, Quádruplo).
-   * Validação física da capacidade de lotação (bloqueio de assentos em ônibus ou aviões) para evitar overbooking operacional.
+   - Em viagens de grupo (ex: excursões rodoviárias ou bloqueios aéreos), o sistema deve gerenciar a distribuição de passageiros por quartos (Single, Duplo, Triplo, Quádruplo).
+   - Validação física da capacidade de lotação (bloqueio de assentos em ônibus ou aviões) para evitar overbooking operacional.
 3. **Estrutura de Vouchers de Viagem:**
-   * O voucher final é o documento oficial do cliente durante a viagem. Ele deve obrigatoriamente apresentar:
-     * Localizador de reservas (Aéreo/Hotel) e contatos de emergência do receptivo local.
-     * Franquia de bagagem inclusa e taxas locais (ex: taxa de turismo local).
-     * Termos específicos de cancelamento e no-show do respectivo fornecedor.
+   - O voucher final é o documento oficial do cliente durante a viagem. Ele deve obrigatoriamente apresentar:
+     - Localizador de reservas (Aéreo/Hotel) e contatos de emergência do receptivo local.
+     - Franquia de bagagem inclusa e taxas locais (ex: taxa de turismo local).
+     - Termos específicos de cancelamento e no-show do respectivo fornecedor.
 
 ---
 

@@ -180,7 +180,7 @@ function PublicLeadFormPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
       {/* Top Header Card */}
-      <header className="bg-surface border-b border-border py-6 px-4 shrink-0 shadow-sm">
+      <header className="bg-surface border-b border-border py-6 px-4 shrink-0">
         <div className="max-w-xl mx-auto flex items-center gap-4">
           {lead.agency_logo ? (
             <img
@@ -210,7 +210,7 @@ function PublicLeadFormPage() {
       {/* Main Body */}
       <main className="flex-1 max-w-xl w-full mx-auto px-4 py-8">
         {submitted ? (
-          <div className="bg-surface border border-success/30 rounded-2xl p-8 text-center space-y-4 shadow-sm animate-in zoom-in-95 duration-200">
+          <div className="bg-surface border border-success/30 rounded-2xl p-8 text-center space-y-4 animate-in zoom-in-95 duration-200">
             <div className="h-16 w-16 bg-success/15 border border-success/30 rounded-full flex items-center justify-center text-success mx-auto">
               <ShieldCheck className="h-8 w-8" />
             </div>
@@ -238,7 +238,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Travel Details Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-brand" /> Destino & Interesse
               </h3>
@@ -257,7 +257,10 @@ function PublicLeadFormPage() {
                 <Input
                   value={(form.custom_fields as any)?.interest_period ?? ""}
                   onChange={(e) => {
-                    const custom = { ...(form.custom_fields || {}), interest_period: e.target.value };
+                    const custom = {
+                      ...(form.custom_fields || {}),
+                      interest_period: e.target.value,
+                    };
                     setForm({ ...form, custom_fields: custom });
                   }}
                   placeholder="Ex: Julho/2026, Outubro, Final do ano"
@@ -283,7 +286,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Dates Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand" /> Datas Previstas
               </h3>
@@ -308,7 +311,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Passengers Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-brand" /> Passageiros & Idades
               </h3>
@@ -383,7 +386,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Acompanhantes Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-2">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
                   <Users className="h-4 w-4 text-brand" /> Viajantes Acompanhantes
@@ -529,7 +532,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Acessibilidade & Saúde Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Heart className="h-4 w-4 text-brand" /> Necessidades Especiais & Saúde
               </h3>
@@ -576,7 +579,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Custom Notes Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2">
                 Conte-nos Mais
               </h3>
@@ -592,7 +595,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* LGPD Acceptance */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-3 shadow-sm flex items-start gap-4">
+            <div className="bg-surface border border-border rounded-2xl p-5 space-y-3 flex items-start gap-4">
               <input
                 type="checkbox"
                 required

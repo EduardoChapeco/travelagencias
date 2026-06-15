@@ -8,6 +8,7 @@ import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   fetchClient,
   fetchClientsForMerge,
@@ -81,9 +82,17 @@ function ClientDetail() {
   });
 
   const timelineEvents = [
-    ...(proposalsQ.data ?? []).map((p) => ({ type: "proposal" as const, date: p.created_at, data: p })),
+    ...(proposalsQ.data ?? []).map((p) => ({
+      type: "proposal" as const,
+      date: p.created_at,
+      data: p,
+    })),
     ...(tripsQ.data ?? []).map((t) => ({ type: "trip" as const, date: t.created_at, data: t })),
-    ...(lgpdQ.data ?? []).map((l: any) => ({ type: "lgpd" as const, date: l.accepted_at, data: l })),
+    ...(lgpdQ.data ?? []).map((l: any) => ({
+      type: "lgpd" as const,
+      date: l.accepted_at,
+      data: l,
+    })),
     ...(ticketsQ.data ?? []).map((t) => ({ type: "ticket" as const, date: t.created_at, data: t })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -181,7 +190,7 @@ function ClientDetail() {
                         toast.error("Erro ao adicionar tag");
                       }
                     }
-                  }
+                  },
                 });
               }}
               className="px-3 py-1 border border-dashed border-border text-muted-foreground hover:text-foreground text-xs font-semibold rounded-full transition-colors cursor-pointer bg-transparent"
@@ -233,34 +242,38 @@ function ClientDetail() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Mover tudo para o cliente:
               </label>
-              <select
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm outline-none text-foreground"
+              <SearchableSelect
                 value={mergeTargetId}
-                onChange={(e) => setMergeTargetId(e.target.value)}
-              >
-                <option value="">Selecione um cliente de destino...</option>
-                {allClientsQ.data?.map((cli) => (
-                  <option key={cli.id} value={cli.id}>
-                    {cli.full_name} {cli.email ? `(${cli.email})` : ""}
-                  </option>
-                ))}
-              </select>
+                onChange={setMergeTargetId}
+                placeholder="Buscar cliente de destino..."
+                searchPlaceholder="Nome, e-mail..."
+                options={allClientsQ.data?.map((cli) => ({
+                  value: cli.id,
+                  label: cli.full_name,
+                  sublabel: cli.email ?? undefined,
+                }))}
+                loading={allClientsQ.isLoading}
+              />
             </div>
             <button
               onClick={() => {
                 if (!mergeTargetId) return toast.error("Selecione um cliente");
                 confirm({
                   title: "Confirmar Unificação",
-                  description: "Confirmar a unificação? Esta ação moverá todo o histórico e não poderá ser desfeita.",
+                  description:
+                    "Confirmar a unificação? Esta ação moverá todo o histórico e não poderá ser desfeita.",
                   onConfirm: async () => {
                     try {
                       await mergeClients(id, mergeTargetId);
                       toast.success("Clientes unificados!");
-                      navigate({ to: "/agency/$slug/clients/$id", params: { slug, id: mergeTargetId } });
+                      navigate({
+                        to: "/agency/$slug/clients/$id",
+                        params: { slug, id: mergeTargetId },
+                      });
                     } catch (e: any) {
                       toast.error(e.message || "Falha na unificação");
                     }
-                  }
+                  },
                 });
               }}
               disabled={!mergeTargetId || mergeClientsMutation.isPending}
@@ -341,7 +354,9 @@ function ClientDetail() {
                     <span className="text-xs font-bold text-danger uppercase">
                       Restrições Alimentares:
                     </span>
-                    <p className="text-sm font-medium mt-1 text-foreground">{c.preferences.dietary}</p>
+                    <p className="text-sm font-medium mt-1 text-foreground">
+                      {c.preferences.dietary}
+                    </p>
                   </div>
                 )}
                 {c.preferences?.notes && (
@@ -349,7 +364,9 @@ function ClientDetail() {
                     <span className="text-xs font-bold text-muted-foreground uppercase">
                       Outras Preferências:
                     </span>
-                    <p className="text-sm font-medium mt-1 text-foreground">{c.preferences.notes}</p>
+                    <p className="text-sm font-medium mt-1 text-foreground">
+                      {c.preferences.notes}
+                    </p>
                   </div>
                 )}
               </div>

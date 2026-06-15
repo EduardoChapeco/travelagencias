@@ -15,35 +15,44 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
-const clientSchema = z.object({
-  kind: z.enum(["individual", "company"]),
-  fullName: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
-  legalName: z.string().optional().nullable(),
-  document: z.string().optional().nullable(),
-  email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
-  phone: z.string().optional().nullable(),
-  birthDate: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-}).refine((data) => {
-  if (data.kind === "company" && (!data.legalName || data.legalName.trim() === "")) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Razão social é obrigatória para empresas",
-  path: ["legalName"],
-}).refine((data) => {
-  if (data.kind === "company" && data.document) {
-    const raw = data.document.replace(/[^\d]/g, "");
-    if (raw.length > 0) {
-      return validateCNPJ(raw);
-    }
-  }
-  return true;
-}, {
-  message: "CNPJ inválido",
-  path: ["document"],
-});
+const clientSchema = z
+  .object({
+    kind: z.enum(["individual", "company"]),
+    fullName: z.string().min(3, "O nome deve ter no mínimo 3 caracteres"),
+    legalName: z.string().optional().nullable(),
+    document: z.string().optional().nullable(),
+    email: z.string().email("E-mail inválido").optional().or(z.literal("")).nullable(),
+    phone: z.string().optional().nullable(),
+    birthDate: z.string().optional().nullable(),
+    notes: z.string().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.kind === "company" && (!data.legalName || data.legalName.trim() === "")) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Razão social é obrigatória para empresas",
+      path: ["legalName"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.kind === "company" && data.document) {
+        const raw = data.document.replace(/[^\d]/g, "");
+        if (raw.length > 0) {
+          return validateCNPJ(raw);
+        }
+      }
+      return true;
+    },
+    {
+      message: "CNPJ inválido",
+      path: ["document"],
+    },
+  );
 
 type ClientForm = z.infer<typeof clientSchema>;
 
@@ -144,10 +153,7 @@ export function ClientFormSheet({
         )}
 
         <div className="grid grid-cols-2 gap-3">
-          <Field
-            label={kind === "individual" ? "CPF" : "CNPJ"}
-            error={errors.document?.message}
-          >
+          <Field label={kind === "individual" ? "CPF" : "CNPJ"} error={errors.document?.message}>
             <Input value={watchDocument || ""} onChange={handleDocumentChange} />
           </Field>
           {kind === "individual" && (

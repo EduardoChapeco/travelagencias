@@ -297,7 +297,9 @@ function AgentCommissionSheet({
   const qc = useQueryClient();
   const [commissionType, setCommissionType] = useState<"fixed" | "scale">("scale");
   const [fixedPct, setFixedPct] = useState(0);
-  const [scaleRanges, setScaleRanges] = useState<Array<{ min: number; max: number | null; pct: number }>>([]);
+  const [scaleRanges, setScaleRanges] = useState<
+    Array<{ min: number; max: number | null; pct: number }>
+  >([]);
   const [submitting, setSubmitting] = useState(false);
 
   const { data: rule, isLoading } = useQuery({
@@ -330,7 +332,7 @@ function AgentCommissionSheet({
 
   function handleAddRange() {
     const lastRange = scaleRanges[scaleRanges.length - 1];
-    const newMin = lastRange ? (lastRange.max || 0) : 0;
+    const newMin = lastRange ? lastRange.max || 0 : 0;
     setScaleRanges([...scaleRanges, { min: newMin, max: null, pct: 5 }]);
   }
 
@@ -348,15 +350,16 @@ function AgentCommissionSheet({
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { error } = await supabase
-        .from("agent_commission_rules" as any)
-        .upsert({
+      const { error } = await supabase.from("agent_commission_rules" as any).upsert(
+        {
           agency_id: agencyId,
           user_id: agent.user_id,
           commission_type: commissionType,
           fixed_pct: fixedPct,
           scale_ranges: scaleRanges,
-        }, { onConflict: "agency_id,user_id" });
+        },
+        { onConflict: "agency_id,user_id" },
+      );
 
       if (error) throw error;
       toast.success("Comissão configurada com sucesso!");
@@ -386,7 +389,10 @@ function AgentCommissionSheet({
           </Field>
 
           {commissionType === "fixed" ? (
-            <Field label="Taxa de Comissão Fixa (%)" hint="Percentual fixo sobre a base comissionável">
+            <Field
+              label="Taxa de Comissão Fixa (%)"
+              hint="Percentual fixo sobre a base comissionável"
+            >
               <Input
                 type="number"
                 min={0}
@@ -400,7 +406,9 @@ function AgentCommissionSheet({
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase text-muted-foreground">Faixas de Faturamento</span>
+                <span className="text-xs font-semibold uppercase text-muted-foreground">
+                  Faixas de Faturamento
+                </span>
                 <button
                   type="button"
                   onClick={handleAddRange}
@@ -412,38 +420,57 @@ function AgentCommissionSheet({
 
               <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                 {scaleRanges.map((range, index) => (
-                  <div key={index} className="flex items-center gap-2 rounded-lg border border-border bg-surface p-2.5">
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 rounded-lg border border-border bg-surface p-2.5"
+                  >
                     <div className="grid grid-cols-3 gap-2 flex-1">
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Min (R$)</label>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                          Min (R$)
+                        </label>
                         <Input
                           type="number"
                           min={0}
                           value={range.min}
-                          onChange={(e) => handleRangeChange(index, "min", parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            handleRangeChange(index, "min", parseFloat(e.target.value) || 0)
+                          }
                           className="h-8 text-xs px-2"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Max (R$)</label>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                          Max (R$)
+                        </label>
                         <Input
                           type="number"
                           min={0}
                           placeholder="Sem limite"
                           value={range.max === null ? "" : range.max}
-                          onChange={(e) => handleRangeChange(index, "max", e.target.value === "" ? null : parseFloat(e.target.value))}
+                          onChange={(e) =>
+                            handleRangeChange(
+                              index,
+                              "max",
+                              e.target.value === "" ? null : parseFloat(e.target.value),
+                            )
+                          }
                           className="h-8 text-xs px-2"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">Taxa (%)</label>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                          Taxa (%)
+                        </label>
                         <Input
                           type="number"
                           min={0}
                           max={100}
                           step={0.1}
                           value={range.pct}
-                          onChange={(e) => handleRangeChange(index, "pct", parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            handleRangeChange(index, "pct", parseFloat(e.target.value) || 0)
+                          }
                           className="h-8 text-xs px-2"
                         />
                       </div>

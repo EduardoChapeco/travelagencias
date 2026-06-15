@@ -22,7 +22,10 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
     const body = await req.json();
@@ -36,10 +39,10 @@ serve(async (req) => {
     let geminiApiKey = Deno.env.get("GEMINI_API_KEY");
     if (agency_id) {
       const { data: agencyKeyData } = await supabaseClient
-        .from('api_keys')
-        .select('key_value')
-        .eq('agency_id', agency_id)
-        .eq('provider', 'gemini')
+        .from("api_keys")
+        .select("key_value")
+        .eq("agency_id", agency_id)
+        .eq("provider", "gemini")
         .maybeSingle();
       if (agencyKeyData?.key_value) {
         geminiApiKey = agencyKeyData.key_value;

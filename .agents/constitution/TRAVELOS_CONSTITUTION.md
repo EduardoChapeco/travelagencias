@@ -2,7 +2,7 @@
 
 **Versão:** 1.0.0  
 **Data:** 2026-06-11  
-**Status:** ATIVO — Inviolável  
+**Status:** ATIVO — Inviolável
 
 ---
 
@@ -26,27 +26,28 @@ A partir da data de criação deste documento, **nenhum trabalho no TravelOS pod
 
 Todo trabalho deve seguir esta sequência:
 
-| # | Etapa | Artefato Produzido |
-|---|-------|--------------------|
-| 1 | Intent Capture | `artifact_intent_brief` |
-| 2 | Inventory First | `artifact_inventory_report` |
-| 3 | Architecture Plan | Implementation Plan |
-| 4 | Business Rules Review | `artifact_business_rules_matrix` |
-| 5 | Tourism Operations Review | `artifact_tourism_operations_matrix` |
-| 6 | UI/UX Premium Review | `artifact_ui_premium_scorecard` |
-| 7 | Supabase/RLS/Storage Review | `artifact_supabase_schema_matrix` + `artifact_rls_policy_matrix` |
-| 8 | Security Review | `artifact_security_threat_model` |
-| 9 | Implementation | Código |
-| 10 | Prompt-to-Code Match Review | `artifact_prompt_to_code_match` |
-| 11 | Runtime/Build Validation | `artifact_build_validation_report` |
-| 12 | Release Gate | `artifact_release_gate` |
-| 13 | Git Delivery Proof | `artifact_git_delivery_proof` |
+| #   | Etapa                       | Artefato Produzido                                               |
+| --- | --------------------------- | ---------------------------------------------------------------- |
+| 1   | Intent Capture              | `artifact_intent_brief`                                          |
+| 2   | Inventory First             | `artifact_inventory_report`                                      |
+| 3   | Architecture Plan           | Implementation Plan                                              |
+| 4   | Business Rules Review       | `artifact_business_rules_matrix`                                 |
+| 5   | Tourism Operations Review   | `artifact_tourism_operations_matrix`                             |
+| 6   | UI/UX Premium Review        | `artifact_ui_premium_scorecard`                                  |
+| 7   | Supabase/RLS/Storage Review | `artifact_supabase_schema_matrix` + `artifact_rls_policy_matrix` |
+| 8   | Security Review             | `artifact_security_threat_model`                                 |
+| 9   | Implementation              | Código                                                           |
+| 10  | Prompt-to-Code Match Review | `artifact_prompt_to_code_match`                                  |
+| 11  | Runtime/Build Validation    | `artifact_build_validation_report`                               |
+| 12  | Release Gate                | `artifact_release_gate`                                          |
+| 13  | Git Delivery Proof          | `artifact_git_delivery_proof`                                    |
 
 **Se uma etapa não for executada, a entrega NÃO PODE ser marcada como pronta.**
 
 ## Artigo 3 — Proibição de Autoengano
 
 Nenhum agente pode:
+
 - Declarar "concluído" sem evidência.
 - Usar linguagem otimista antes do Release Gate.
 - Chamar CRUD raso de "premium".
@@ -61,6 +62,7 @@ Ver: `NO_SELF_APPROVAL_POLICY.md`.
 ## Artigo 4 — Princípio do Inventário Primeiro
 
 Antes de criar qualquer:
+
 - Componente
 - Rota
 - Tabela
@@ -74,19 +76,20 @@ O agente DEVE verificar se já existe implementação equivalente no projeto. Se
 
 ## Artigo 5 — Princípio da Evidência
 
-| Afirmação | Evidência Obrigatória |
-|-----------|-----------------------|
-| "Build limpo" | Saída do comando `tsc --noEmit` ou `npm run build` |
-| "Push feito" | Saída de `git log -1` + `git status` |
-| "Migration aplicada" | Arquivo em `supabase/migrations/` com conteúdo |
-| "RLS ok" | Policy listada com `SELECT * FROM pg_policies` ou arquivo |
-| "Feature funciona" | Fluxo ponta a ponta descrito |
-| "UI premium" | Scorecard preenchido contra Definition of Premium |
-| "Seguro" | Checklist preenchido contra Definition of Secure |
+| Afirmação            | Evidência Obrigatória                                     |
+| -------------------- | --------------------------------------------------------- |
+| "Build limpo"        | Saída do comando `tsc --noEmit` ou `npm run build`        |
+| "Push feito"         | Saída de `git log -1` + `git status`                      |
+| "Migration aplicada" | Arquivo em `supabase/migrations/` com conteúdo            |
+| "RLS ok"             | Policy listada com `SELECT * FROM pg_policies` ou arquivo |
+| "Feature funciona"   | Fluxo ponta a ponta descrito                              |
+| "UI premium"         | Scorecard preenchido contra Definition of Premium         |
+| "Seguro"             | Checklist preenchido contra Definition of Secure          |
 
 ## Artigo 6 — Design System
 
 O TravelOS segue o padrão **Flat Premium**:
+
 - Sem sombras (`shadow-*` proibido)
 - Sem gradientes (`bg-gradient-*`, `from-*`, `via-*`, `to-*` proibidos)
 - Sem glassmorphism
@@ -117,19 +120,19 @@ Ver: `TRAVEL_BUSINESS_RULES.md`.
 
 Esta Constituição é complementada por:
 
-| Documento | Propósito |
-|-----------|-----------|
-| `NON_NEGOTIABLE_RULES.md` | 45 regras invioláveis |
-| `DEFINITION_OF_DONE.md` | Critério de conclusão |
-| `DEFINITION_OF_PREMIUM.md` | Critério de qualidade |
-| `DEFINITION_OF_SECURE.md` | Critério de segurança |
+| Documento                     | Propósito                  |
+| ----------------------------- | -------------------------- |
+| `NON_NEGOTIABLE_RULES.md`     | 45 regras invioláveis      |
+| `DEFINITION_OF_DONE.md`       | Critério de conclusão      |
+| `DEFINITION_OF_PREMIUM.md`    | Critério de qualidade      |
+| `DEFINITION_OF_SECURE.md`     | Critério de segurança      |
 | `DEFINITION_OF_FUNCTIONAL.md` | Critério de funcionalidade |
-| `UI_RULES_FLAT_PREMIUM.md` | Regras de interface |
-| `SUPABASE_RULES.md` | Regras de banco/infra |
-| `CMS_BUILDER_RULES.md` | Regras de CMS |
-| `TRAVEL_BUSINESS_RULES.md` | Regras de negócio |
-| `GIT_DELIVERY_RULES.md` | Regras de entrega |
-| `NO_SELF_APPROVAL_POLICY.md` | Anti-autoengano |
+| `UI_RULES_FLAT_PREMIUM.md`    | Regras de interface        |
+| `SUPABASE_RULES.md`           | Regras de banco/infra      |
+| `CMS_BUILDER_RULES.md`        | Regras de CMS              |
+| `TRAVEL_BUSINESS_RULES.md`    | Regras de negócio          |
+| `GIT_DELIVERY_RULES.md`       | Regras de entrega          |
+| `NO_SELF_APPROVAL_POLICY.md`  | Anti-autoengano            |
 
 ## Artigo 10 — Emendas
 

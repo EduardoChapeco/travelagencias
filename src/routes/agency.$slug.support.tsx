@@ -1,314 +1,287 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { supabase } from "@/integrations/supabase/client";
+import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star } from "lucide-react";
+import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  Sheet,
-  StatusBadge,
-  fmtDate,
-} from "@/components/ui/form";
-import { Search } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
-import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
-import { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/agency/$slug/support")({
-  head: () => ({ meta: [{ title: "Suporte · TravelOS" }] }),
-  component: SupportPage,
+  head: () => ({ meta: [{ title: "Central de Suporte · TravelOS" }] }),
+  component: SupportRoute,
 });
 
-type Ticket = {
-  id: string;
-  code: string;
-  title: string;
-  type: string;
-  priority: string;
-  status: string;
-  sla_deadline: string | null;
-  created_at: string;
-  client_id: string | null;
+const STAGE_LABELS: Record<string, string> = {
+  new: "Novo",
+  open: "Aberto",
+  pending_supplier: "Aguardando Fornecedor",
+  pending_client: "Aguardando Cliente",
+  resolved: "Resolvido",
+  closed: "Fechado",
 };
 
-function SupportPage() {
+function SupportRoute() {
   const { agency } = useAgency();
-  const { slug } = useParams({ from: "/agency/$slug/support" });
-  const qc = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [filter, setFilter] = useState<"all" | "open" | "resolved">("all");
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 15;
+  const navigate = useNavigate({ from: "/agency/$slug/support" });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [stageFilter, setStageFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
-  const [qStr, setQStr] = useState("");
-  const debouncedQ = useDebounce(qStr, 400);
-
-  const q = useQuery({
+  const { data: tickets, isLoading } = useQuery({
+    queryKey: ["support_tickets_advanced", agency?.id],
     enabled: !!agency,
-    queryKey: ["tickets", agency?.id, filter, page, debouncedQ],
     queryFn: async () => {
-      let qb = supabase
+      const { data, error } = await supabase
         .from("support_tickets")
-        .select("id, code, title, type, priority, status, sla_deadline, created_at, client_id", {
-          count: "exact",
-        })
-        .eq("agency_id", agency!.id);
-
-      if (filter === "open") qb = qb.in("status", ["open", "in_progress"]);
-      if (filter === "resolved") qb = qb.eq("status", "resolved");
-      
-      if (debouncedQ.trim()) {
-        qb = qb.or(`title.ilike.%${debouncedQ}%,code.ilike.%${debouncedQ}%`);
-      }
-
-      const { data, error, count } = await qb
-        .order("created_at", { ascending: false })
-        .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
-        
+        .select(
+          `
+          *,
+          client:clients(full_name, email),
+          assignee:agency_members(users(raw_user_meta_data))
+        `,
+        )
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
-      return { data: data as unknown as Ticket[], count: count ?? 0 };
+      return data || [];
     },
-    placeholderData: keepPreviousData,
   });
 
-  const columns: ColumnDef<Ticket>[] = [
-    {
-      accessorKey: "code",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Código" />,
-      cell: ({ row }) => <span className="font-mono text-xs">{row.original.code}</span>,
-    },
-    {
-      accessorKey: "title",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Título" />,
-      cell: ({ row }) => (
-        <Link
-          to="/agency/$slug/support/$ticket_id"
-          params={{ slug, ticket_id: row.original.id }}
-          className="font-medium hover:underline text-foreground"
-        >
-          {row.original.title}
-        </Link>
-      ),
-    },
-    {
-      accessorKey: "type",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Tipo" />,
-      cell: ({ row }) => <span className="text-xs text-muted-foreground">{row.original.type}</span>,
-    },
-    {
-      accessorKey: "priority",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Prioridade" />,
-      cell: ({ row }) => {
-        const priority = row.original.priority;
-        return (
-          <StatusBadge
-            tone={
-              priority === "high" || priority === "urgent"
-                ? "danger"
-                : priority === "low"
-                  ? "neutral"
-                  : "warning"
-            }
-          >
-            {priority}
-          </StatusBadge>
-        );
-      },
-    },
-    {
-      accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-      cell: ({ row }) => {
-        const status = row.original.status;
-        return (
-          <StatusBadge
-            tone={
-              status === "resolved"
-                ? "success"
-                : status === "in_progress"
-                  ? "info"
-                  : "warning"
-            }
-          >
-            {status}
-          </StatusBadge>
-        );
-      },
-    },
-    {
-      accessorKey: "sla_deadline",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="SLA" />,
-      cell: ({ row }) => <span className="text-xs text-muted-foreground">{fmtDate(row.original.sla_deadline)}</span>,
-    },
-    {
-      accessorKey: "created_at",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Aberto em" />,
-      cell: ({ row }) => <span className="text-xs text-muted-foreground">{fmtDate(row.original.created_at)}</span>,
-    },
-  ];
+  if (!agency) return null;
 
-  const totalPages = Math.ceil((q.data?.count ?? 0) / PAGE_SIZE);
+  const filteredTickets = (tickets || []).filter((t: any) => {
+    const matchesSearch =
+      t.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.client?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      t.code?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStage = stageFilter === "all" || (t.stage || t.status) === stageFilter;
+    const matchesPriority = priorityFilter === "all" || t.priority === priorityFilter;
+    return matchesSearch && matchesStage && matchesPriority;
+  });
+
+  const kpiNew = tickets?.filter((t: any) => (t.stage || t.status) === "new").length || 0;
+  const kpiOpen =
+    tickets?.filter((t: any) =>
+      ["open", "pending_supplier", "pending_client"].includes(t.stage || t.status),
+    ).length || 0;
+  const kpiResolved =
+    tickets?.filter((t: any) => ["resolved", "closed"].includes(t.stage || t.status)).length || 0;
+
+  const csatTickets = tickets?.filter((t: any) => t.csat_score) || [];
+  const avgCsat =
+    csatTickets.length > 0
+      ? csatTickets.reduce((acc: number, t: any) => acc + t.csat_score, 0) / csatTickets.length
+      : 0;
 
   return (
-    <>
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-background overflow-hidden">
       <PageHeader
-        title="Suporte"
-        description="Atendimento pós-venda com SLA, prioridade e thread de mensagens."
+        title="Central de Atendimento"
+        description="Gestão de chamados, SLAs e comunicação corporativa/B2B."
         actions={
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+          <PrimaryButton
+            className="h-9 text-xs"
+            onClick={() =>
+              window.alert(
+                "Na v3, tickets devem ser abertos pelo Kanban 'Meu Dia' ou pelos clientes.",
+              )
+            }
           >
-            <Plus className="h-3.5 w-3.5" /> Novo ticket
-          </button>
+            Novo Ticket Interno
+          </PrimaryButton>
         }
       />
 
-      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs w-full sm:w-fit shrink-0">
-          {(["all", "open", "resolved"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => {
-                setFilter(f);
-                setPage(1);
-              }}
-              className={`rounded px-3 py-1.5 flex-1 sm:flex-none font-medium transition-colors ${filter === f ? "bg-surface-alt text-foreground border border-border" : "text-muted-foreground hover:text-foreground"}`}
+      <div className="flex-1 overflow-y-auto p-6 flex flex-col space-y-6">
+        {/* KPI Dashboards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
+          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{kpiNew}</p>
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                Novos / Sem Triagem
+              </p>
+            </div>
+          </div>
+          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{kpiOpen}</p>
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                Em Andamento
+              </p>
+            </div>
+          </div>
+          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{kpiResolved}</p>
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                Resolvidos
+              </p>
+            </div>
+          </div>
+          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center">
+              <Star className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">
+                {avgCsat === 0 ? "0.0" : avgCsat.toFixed(1)}{" "}
+                <span className="text-sm font-normal text-muted-foreground">/ 5</span>
+              </p>
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                CSAT Médio
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters & List */}
+        <div className="flex flex-col space-y-4 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por código, assunto ou cliente..."
+                className="pl-9 h-9"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Select
+              value={stageFilter}
+              onChange={(e) => setStageFilter(e.target.value)}
+              className="w-48 h-9 text-sm"
             >
-              {f === "all" ? "Todos" : f === "open" ? "Abertos" : "Resolvidos"}
-            </button>
-          ))}
-        </div>
-
-        <div className="relative flex-1 max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={qStr}
-            onChange={(e) => {
-              setQStr(e.target.value);
-              setPage(1);
-            }}
-            className="pl-9 w-full"
-            placeholder="Buscar ticket..."
-          />
-        </div>
-      </div>
-
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      
-      {q.data?.data.length === 0 && !debouncedQ && filter === "all" ? (
-        <EmptyState title="Sem tickets" description="Nenhum ticket de suporte aberto." />
-      ) : q.data?.data.length === 0 ? (
-        <EmptyState title="Nenhum ticket encontrado" description="Tente ajustar a busca ou filtro." />
-      ) : null}
-
-      {q.data && q.data.data.length > 0 && (
-        <div className="mt-4">
-          <DataTable
-            columns={columns}
-            data={q.data.data}
-            pageCount={Math.ceil(q.data.count / PAGE_SIZE)}
-            pagination={{ pageIndex: page - 1, pageSize: PAGE_SIZE }}
-            onPaginationChange={(updater: any) => {
-              if (typeof updater === "function") {
-                const newState = updater({ pageIndex: page - 1, pageSize: PAGE_SIZE });
-                setPage(newState.pageIndex + 1);
-              }
-            }}
-          />
-        </div>
-      )}
-
-      {open && agency && (
-        <NewTicket
-          agencyId={agency.id}
-          onClose={() => setOpen(false)}
-          onCreated={() => {
-            setOpen(false);
-            qc.invalidateQueries({ queryKey: ["tickets", agency.id] });
-          }}
-        />
-      )}
-    </>
-  );
-}
-
-function NewTicket({
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("general");
-  const [priority, setPriority] = useState("medium");
-  const [submitting, setSubmitting] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("support_tickets").insert({
-      agency_id: agencyId,
-      title,
-      description: description || null,
-      type,
-      priority,
-    });
-    setSubmitting(false);
-    if (error) return toast.error(error.message);
-    toast.success("Ticket criado");
-    onCreated();
-  }
-
-  return (
-    <Sheet onClose={onClose} title="Novo ticket">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Título *">
-          <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
-        </Field>
-        <Field label="Descrição">
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-        </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Tipo">
-            <Select value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="general">Geral</option>
-              <option value="trip">Viagem</option>
-              <option value="financial">Financeiro</option>
-              <option value="complaint">Reclamação</option>
-              <option value="refund">Reembolso</option>
+              <option value="all">Todos os Estágios</option>
+              {Object.entries(STAGE_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
             </Select>
-          </Field>
-          <Field label="Prioridade">
-            <Select value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <Select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="w-48 h-9 text-sm"
+            >
+              <option value="all">Todas Prioridades</option>
               <option value="low">Baixa</option>
               <option value="medium">Média</option>
               <option value="high">Alta</option>
               <option value="urgent">Urgente</option>
             </Select>
-          </Field>
+          </div>
         </div>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar"}
-          </PrimaryButton>
+
+        <div className="bg-surface border border-border rounded-xl flex-1 overflow-hidden flex flex-col shadow-sm">
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-surface-alt/50 sticky top-0 z-10 border-b border-border">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Código</th>
+                  <th className="px-4 py-3 font-semibold">Assunto / Cliente</th>
+                  <th className="px-4 py-3 font-semibold">Estágio</th>
+                  <th className="px-4 py-3 font-semibold">Prioridade</th>
+                  <th className="px-4 py-3 font-semibold">Responsável</th>
+                  <th className="px-4 py-3 font-semibold">Aberto em</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {isLoading && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-16 text-muted-foreground">
+                      Carregando tickets...
+                    </td>
+                  </tr>
+                )}
+                {!isLoading && filteredTickets.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-10">
+                      <EmptyState
+                        title="Nenhum ticket encontrado"
+                        description="Nenhum ticket atende aos filtros atuais."
+                      />
+                    </td>
+                  </tr>
+                )}
+                {filteredTickets.map((t: any) => (
+                  <tr
+                    key={t.id}
+                    className="hover:bg-surface-alt/30 cursor-pointer transition-colors"
+                    onClick={() =>
+                      navigate({
+                        to: "/agency/$slug/support/$ticket_id",
+                        params: { slug: agency.slug, ticket_id: t.id },
+                      })
+                    }
+                  >
+                    <td className="px-4 py-4 font-mono text-xs font-semibold text-muted-foreground">
+                      #{t.code || t.id.substring(0, 8)}
+                    </td>
+                    <td className="px-4 py-4">
+                      <p
+                        className="font-semibold text-foreground truncate max-w-xs"
+                        title={t.title}
+                      >
+                        {t.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <User className="w-3 h-3" /> {t.client?.full_name || "Anônimo"}
+                      </p>
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge
+                        tone={
+                          ["resolved", "closed"].includes(t.stage || t.status)
+                            ? "success"
+                            : (t.stage || t.status) === "new"
+                              ? "danger"
+                              : "warning"
+                        }
+                      >
+                        {STAGE_LABELS[t.stage || t.status] || t.stage || t.status}
+                      </StatusBadge>
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge
+                        tone={
+                          t.priority === "urgent"
+                            ? "danger"
+                            : t.priority === "high"
+                              ? "warning"
+                              : "neutral"
+                        }
+                      >
+                        {t.priority}
+                      </StatusBadge>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {(t.assignee?.users as any)?.raw_user_meta_data?.name || "Não atribuído"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-xs text-muted-foreground">
+                      {format(new Date(t.created_at), "dd MMM yyyy, HH:mm", { locale: ptBR })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </form>
-    </Sheet>
+      </div>
+    </div>
   );
 }

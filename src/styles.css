@@ -264,9 +264,34 @@
 }
 
 @layer base {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     box-shadow: none !important;
     --tw-shadow: none !important;
     --tw-shadow-colored: none !important;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  .print-landscape {
+    @page {
+      size: A4 landscape !important;
+      margin: 0 !important;
+    }
+  }
+
+  .a4-page,
+  .a4-landscape-page,
+  .presentation-page {
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    margin: 0 !important;
+    border: none !important;
   }
 }

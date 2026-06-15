@@ -55,7 +55,12 @@ export const Route = createFileRoute("/p/$agency_slug/")({
 // ─── Social Links ──────────────────────────────────────────────────────────────
 function SocialLinks({ company, className = "" }: { company: any; className?: string }) {
   const links = [
-    { key: "instagram", icon: Instagram, href: (v: string) => `https://instagram.com/${v.replace("@", "")}`, color: "hover:text-pink-500" },
+    {
+      key: "instagram",
+      icon: Instagram,
+      href: (v: string) => `https://instagram.com/${v.replace("@", "")}`,
+      color: "hover:text-pink-500",
+    },
     { key: "facebook", icon: Facebook, href: (v: string) => v, color: "hover:text-blue-600" },
     { key: "youtube", icon: Youtube, href: (v: string) => v, color: "hover:text-red-500" },
     { key: "linkedin", icon: Linkedin, href: (v: string) => v, color: "hover:text-blue-700" },
@@ -64,11 +69,16 @@ function SocialLinks({ company, className = "" }: { company: any; className?: st
     <div className={`flex items-center gap-3 ${className}`}>
       {links.map(({ key, icon: Icon, href, color }) =>
         company?.[key] ? (
-          <a key={key} href={href(company[key])} target="_blank" rel="noreferrer"
-            className={`text-muted-foreground transition-colors ${color}`}>
+          <a
+            key={key}
+            href={href(company[key])}
+            target="_blank"
+            rel="noreferrer"
+            className={`text-muted-foreground transition-colors ${color}`}
+          >
             <Icon className="h-5 w-5" />
           </a>
-        ) : null
+        ) : null,
       )}
     </div>
   );
@@ -79,14 +89,15 @@ function HomePage() {
   const { agency_slug } = Route.useParams();
   const { agency, company, tours, posts, homePage } = Route.useLoaderData();
 
-  if (!agency) return (
-    <div className="flex min-h-screen items-center justify-center p-10">
-      <div className="text-center">
-        <Globe className="mx-auto h-12 w-12 text-muted-foreground/30 mb-4" />
-        <p className="text-sm font-medium text-muted-foreground">Agência não encontrada</p>
+  if (!agency)
+    return (
+      <div className="flex min-h-screen items-center justify-center p-10">
+        <div className="text-center">
+          <Globe className="mx-auto h-12 w-12 text-muted-foreground/30 mb-4" />
+          <p className="text-sm font-medium text-muted-foreground">Agência não encontrada</p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
   // CMS mode — renderiza blocos configurados
   if (homePage?.blocks && Array.isArray(homePage.blocks) && homePage.blocks.length > 0) {
@@ -120,10 +131,16 @@ function HomePage() {
           <>
             <div
               className="absolute inset-0"
-              style={{ background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%)` }}
+              style={{
+                background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%)`,
+              }}
             />
-            <div className="absolute inset-0 opacity-10"
-              style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 0%, transparent 50%), radial-gradient(circle at 75% 75%, white 0%, transparent 50%)" }}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 25% 25%, white 0%, transparent 50%), radial-gradient(circle at 75% 75%, white 0%, transparent 50%)",
+              }}
             />
           </>
         )}
@@ -170,12 +187,20 @@ function HomePage() {
             )}
           </div>
 
-          <SocialLinks company={company} className="mt-8 [&_a]:text-white/60 [&_a]:hover:text-white" />
+          <SocialLinks
+            company={company}
+            className="mt-8 [&_a]:text-white/60 [&_a]:hover:text-white"
+          />
         </div>
 
         {/* Wave divider */}
         <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" className="w-full" preserveAspectRatio="none" style={{ height: 60 }}>
+          <svg
+            viewBox="0 0 1440 60"
+            className="w-full"
+            preserveAspectRatio="none"
+            style={{ height: 60 }}
+          >
             <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="hsl(var(--background))" />
           </svg>
         </div>
@@ -187,15 +212,21 @@ function HomePage() {
           <div className="mx-auto max-w-4xl px-6">
             <div className="grid grid-cols-3 divide-x divide-border text-center">
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>{tours.length}+</div>
+                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
+                  {tours.length}+
+                </div>
                 <div className="text-xs text-muted-foreground mt-0.5">Roteiros disponíveis</div>
               </div>
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>100%</div>
+                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
+                  100%
+                </div>
                 <div className="text-xs text-muted-foreground mt-0.5">Satisfação garantida</div>
               </div>
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>24h</div>
+                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
+                  24h
+                </div>
                 <div className="text-xs text-muted-foreground mt-0.5">Suporte ao viajante</div>
               </div>
             </div>
@@ -215,7 +246,8 @@ function HomePage() {
                 Roteiros em grupo
               </h2>
               <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-                Viagens organizadas com tudo incluso. Junte-se ao grupo e aproveite cada detalhe sem preocupações.
+                Viagens organizadas com tudo incluso. Junte-se ao grupo e aproveite cada detalhe sem
+                preocupações.
               </p>
             </div>
 
@@ -235,15 +267,20 @@ function HomePage() {
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center"
-                        style={{ background: `${brandColor}15` }}>
+                      <div
+                        className="h-full w-full flex items-center justify-center"
+                        style={{ background: `${brandColor}15` }}
+                      >
                         <Globe className="h-12 w-12 opacity-20" style={{ color: brandColor }} />
                       </div>
                     )}
                     {/* Date badge */}
                     <div className="absolute top-3 right-3 rounded-lg bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
                       {t.departure_date
-                        ? new Date(t.departure_date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
+                        ? new Date(t.departure_date).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "short",
+                          })
                         : "A Confirmar"}
                     </div>
                     {/* Destination badge */}
@@ -261,7 +298,10 @@ function HomePage() {
                         <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
                           A partir de
                         </span>
-                        <div className="font-mono text-2xl font-extrabold" style={{ color: brandColor }}>
+                        <div
+                          className="font-mono text-2xl font-extrabold"
+                          style={{ color: brandColor }}
+                        >
                           {Number(t.base_price).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
@@ -331,10 +371,16 @@ function HomePage() {
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-full min-h-48 items-center justify-center"
-                      style={{ background: `${brandColor}15` }}>
+                    <div
+                      className="flex h-full min-h-48 items-center justify-center"
+                      style={{ background: `${brandColor}15` }}
+                    >
                       {agency.logo_url && (
-                        <img src={agency.logo_url} alt="" className="h-24 w-24 object-contain opacity-30" />
+                        <img
+                          src={agency.logo_url}
+                          alt=""
+                          className="h-24 w-24 object-contain opacity-30"
+                        />
                       )}
                     </div>
                   )}
@@ -409,7 +455,10 @@ function HomePage() {
                     {p.excerpt && (
                       <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{p.excerpt}</p>
                     )}
-                    <div className="mt-3 flex items-center gap-1 text-xs font-medium" style={{ color: brandColor }}>
+                    <div
+                      className="mt-3 flex items-center gap-1 text-xs font-medium"
+                      style={{ color: brandColor }}
+                    >
                       Ler mais <ArrowRight className="h-3 w-3" />
                     </div>
                   </div>
@@ -430,12 +479,17 @@ function HomePage() {
                 </h2>
                 <div className="space-y-4 text-sm">
                   {company.email && (
-                    <a href={`mailto:${company.email}`} className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group">
+                    <a
+                      href={`mailto:${company.email}`}
+                      className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
+                    >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-brand/30 transition-colors">
                         <Mail className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Email</div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                          Email
+                        </div>
                         <div className="font-medium">{company.email}</div>
                       </div>
                     </a>
@@ -446,7 +500,9 @@ function HomePage() {
                         <Phone className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Telefone</div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                          Telefone
+                        </div>
                         <div className="font-medium">{company.phone}</div>
                       </div>
                     </div>
@@ -454,29 +510,38 @@ function HomePage() {
                   {company.whatsapp && (
                     <a
                       href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
-                      target="_blank" rel="noreferrer"
+                      target="_blank"
+                      rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-green-500/30 transition-colors">
                         <MessageCircle className="h-4 w-4 group-hover:text-green-500 transition-colors" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">WhatsApp</div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                          WhatsApp
+                        </div>
                         <div className="font-medium">{company.whatsapp}</div>
                       </div>
                     </a>
                   )}
                   {company.website && (
                     <a
-                      href={company.website} target="_blank" rel="noreferrer"
+                      href={company.website}
+                      target="_blank"
+                      rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-brand/30 transition-colors">
                         <Globe className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Website</div>
-                        <div className="font-medium flex items-center gap-1">{company.website} <ExternalLink className="h-3 w-3" /></div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                          Website
+                        </div>
+                        <div className="font-medium flex items-center gap-1">
+                          {company.website} <ExternalLink className="h-3 w-3" />
+                        </div>
                       </div>
                     </a>
                   )}
@@ -486,12 +551,16 @@ function HomePage() {
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">Endereço</div>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                          Endereço
+                        </div>
                         <div className="font-medium">
                           {(company.address as any).street}, {(company.address as any).number}
-                          {(company.address as any).complement && ` - ${(company.address as any).complement}`}
+                          {(company.address as any).complement &&
+                            ` - ${(company.address as any).complement}`}
                           <br />
-                          {(company.address as any).neighborhood} — {(company.address as any).city}/{(company.address as any).state}
+                          {(company.address as any).neighborhood} — {(company.address as any).city}/
+                          {(company.address as any).state}
                         </div>
                       </div>
                     </div>
@@ -505,32 +574,55 @@ function HomePage() {
               {company.business_hours && (
                 <div className="rounded-3xl border border-border bg-surface p-8">
                   <h2 className="mb-6 text-xl font-bold tracking-tight flex items-center gap-2">
-                    <Clock className="h-5 w-5" style={{ color: brandColor }} /> Horários de Atendimento
+                    <Clock className="h-5 w-5" style={{ color: brandColor }} /> Horários de
+                    Atendimento
                   </h2>
                   <div className="space-y-3">
                     {["seg", "ter", "qua", "qui", "sex", "sab", "dom"].map((day) => {
                       const h = (company.business_hours as any)[day];
                       if (!h) return null;
                       const labels: Record<string, string> = {
-                        seg: "Segunda", ter: "Terça", qua: "Quarta", qui: "Quinta",
-                        sex: "Sexta", sab: "Sábado", dom: "Domingo",
+                        seg: "Segunda",
+                        ter: "Terça",
+                        qua: "Quarta",
+                        qui: "Quinta",
+                        sex: "Sexta",
+                        sab: "Sábado",
+                        dom: "Domingo",
                       };
-                      const isToday = new Date().getDay() === ["dom", "seg", "ter", "qua", "qui", "sex", "sab"].indexOf(day);
+                      const isToday =
+                        new Date().getDay() ===
+                        ["dom", "seg", "ter", "qua", "qui", "sex", "sab"].indexOf(day);
                       return (
                         <div
                           key={day}
                           className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-sm transition-colors ${
-                            isToday ? "border border-brand/20 bg-brand/5" : "border border-transparent"
+                            isToday
+                              ? "border border-brand/20 bg-brand/5"
+                              : "border border-transparent"
                           }`}
                         >
-                          <span className={`font-medium ${isToday ? "text-foreground" : "text-muted-foreground"}`}>
+                          <span
+                            className={`font-medium ${isToday ? "text-foreground" : "text-muted-foreground"}`}
+                          >
                             {labels[day]}
-                            {isToday && <span className="ml-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: brandColor }}>hoje</span>}
+                            {isToday && (
+                              <span
+                                className="ml-2 text-[10px] font-bold uppercase tracking-widest"
+                                style={{ color: brandColor }}
+                              >
+                                hoje
+                              </span>
+                            )}
                           </span>
                           {h.closed ? (
-                            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Fechado</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">
+                              Fechado
+                            </span>
                           ) : (
-                            <span className="font-mono font-semibold">{h.open} – {h.close}</span>
+                            <span className="font-mono font-semibold">
+                              {h.open} – {h.close}
+                            </span>
                           )}
                         </div>
                       );
@@ -550,10 +642,16 @@ function HomePage() {
             {/* Brand */}
             <div className="flex items-center gap-3">
               {agency.logo_url ? (
-                <img src={agency.logo_url} alt={agency.name} className="h-8 w-8 rounded-lg object-contain" />
+                <img
+                  src={agency.logo_url}
+                  alt={agency.name}
+                  className="h-8 w-8 rounded-lg object-contain"
+                />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
-                  style={{ background: brandColor }}>
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
+                  style={{ background: brandColor }}
+                >
                   {agency.name.charAt(0)}
                 </div>
               )}

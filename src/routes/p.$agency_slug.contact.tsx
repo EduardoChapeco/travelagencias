@@ -357,8 +357,7 @@ function ContactPage() {
           disabled={isSubmitting}
           className="w-full h-14 rounded-full bg-foreground text-background text-sm font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          {isSubmitting ? "Enviando..." : "Solicitar Orçamento"}{" "}
-          <ArrowRight className="w-4 h-4" />
+          {isSubmitting ? "Enviando..." : "Solicitar Orçamento"} <ArrowRight className="w-4 h-4" />
         </button>
       </form>
     </div>

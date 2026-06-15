@@ -19,6 +19,7 @@ export type FinancialRecord = {
   receipt_url: string | null;
   invoice_number: string | null;
   created_at: string;
+  is_third_party?: boolean;
 };
 
 export type PaymentInstallment = {
@@ -31,6 +32,10 @@ export type PaymentInstallment = {
   paid_at: string | null;
   payment_method: string | null;
   late_fee: number;
+  boleto_url?: string | null;
+  barcode?: string | null;
+  payment_warning?: string | null;
+  is_third_party?: boolean;
 };
 
 export type PaymentPlan = {
@@ -73,17 +78,26 @@ export async function fetchFinancialRecords(tripId: string): Promise<FinancialRe
   return (data ?? []) as FinancialRecord[];
 }
 
-export async function fetchPaymentPlan(tripId: string): Promise<PaymentPlan | null> {
-  const { data, error } = await supabase
+export async function fetchPaymentPlan(tripId: string): Promise<PaymentPlan[]> {
+  const { data, error } = await (supabase
     .from("payment_plans")
-    .select("*, payment_installments(*)")
+    .select("*, payment_installments(*)") as any)
     .eq("trip_id", tripId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return data as PaymentPlan | null;
+  return (data ?? []) as PaymentPlan[];
 }
+
+export async function fetchAllPaymentPlans(tripId: string): Promise<PaymentPlan[]> {
+  const { data, error } = await (supabase
+    .from("payment_plans")
+    .select("*, payment_installments(*)") as any)
+    .eq("trip_id", tripId)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as PaymentPlan[];
+}
+
 
 // ─── Mutations ─────────────────────────────────────────────────────────────────
 
@@ -132,10 +146,11 @@ export type CreatePlanPayload = {
   installmentsCount: number;
   method: string;
   firstDueDate: string;
+  isThirdParty?: boolean;
 };
 
 export async function createPaymentPlan(payload: CreatePlanPayload): Promise<void> {
-  const { agencyId, tripId, totalAmount, installmentsCount: n, method, firstDueDate } = payload;
+  const { agencyId, tripId, totalAmount, installmentsCount: n, method, firstDueDate, isThirdParty } = payload;
   const per = Math.round((totalAmount / n) * 100) / 100;
   const firstDue = new Date(firstDueDate);
 
@@ -157,6 +172,7 @@ export async function createPaymentPlan(payload: CreatePlanPayload): Promise<voi
       amount: i === n - 1 ? Math.round((totalAmount - per * (n - 1)) * 100) / 100 : per,
       status: "pending" as const,
       payment_method: method,
+      is_third_party: isThirdParty || false,
     };
   });
 

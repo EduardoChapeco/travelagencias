@@ -4,23 +4,23 @@
 
 ## Um CMS Só É Real Se Tiver
 
-| Componente | Obrigatório | Status Mínimo |
-|------------|-------------|---------------|
-| Página/Post entity | ✅ | Tabela + CRUD |
-| Blocos/Sections | ✅ | Schema por tipo de bloco |
-| Editor por bloco | ✅ | UI para editar cada tipo |
-| Renderer por bloco | ✅ | Renderização pública |
-| Persistência | ✅ | Salvar no banco |
-| Draft/Published | ✅ | Campo `status` com lógica |
-| Preview | ✅ | Ver antes de publicar |
-| Slug | ✅ | URL amigável única |
-| SEO | ✅ | title, description, og:image |
-| Storage/Media | ✅ | Upload de imagens integrado |
-| RLS | ✅ | Segurança multi-tenant |
-| Logs | ✅ | Quem editou, quando |
-| Permissões | ✅ | Quem pode publicar |
-| Página pública | ✅ | URL acessível externamente |
-| Erro tratado | ✅ | Falhas visíveis ao editor |
+| Componente         | Obrigatório | Status Mínimo                |
+| ------------------ | ----------- | ---------------------------- |
+| Página/Post entity | ✅          | Tabela + CRUD                |
+| Blocos/Sections    | ✅          | Schema por tipo de bloco     |
+| Editor por bloco   | ✅          | UI para editar cada tipo     |
+| Renderer por bloco | ✅          | Renderização pública         |
+| Persistência       | ✅          | Salvar no banco              |
+| Draft/Published    | ✅          | Campo `status` com lógica    |
+| Preview            | ✅          | Ver antes de publicar        |
+| Slug               | ✅          | URL amigável única           |
+| SEO                | ✅          | title, description, og:image |
+| Storage/Media      | ✅          | Upload de imagens integrado  |
+| RLS                | ✅          | Segurança multi-tenant       |
+| Logs               | ✅          | Quem editou, quando          |
+| Permissões         | ✅          | Quem pode publicar           |
+| Página pública     | ✅          | URL acessível externamente   |
+| Erro tratado       | ✅          | Falhas visíveis ao editor    |
 
 **Se faltar qualquer item acima, chamar de "CRUD de páginas", não "CMS avançado".**
 
@@ -57,15 +57,15 @@
 
 ## Tipos de Bloco Mínimos para CMS de Turismo
 
-| Bloco | Campos |
-|-------|--------|
-| Hero | title, subtitle, bg_image_url, cta_label, cta_link |
-| Text | content (rich text), align, image_url |
-| Features | title, items[{icon, title, description}] |
-| Gallery | title, images[{url, caption}] |
-| FAQ | title, items[{question, answer}] |
-| CTA | title, subtitle, button_label, button_link |
-| Testimonials | title, items[{name, text, avatar, rating}] |
-| Pricing | title, plans[{name, price, features, cta}] |
-| Contact Form | title, fields config |
-| Map | title, address, coordinates |
+| Bloco        | Campos                                             |
+| ------------ | -------------------------------------------------- |
+| Hero         | title, subtitle, bg_image_url, cta_label, cta_link |
+| Text         | content (rich text), align, image_url              |
+| Features     | title, items[{icon, title, description}]           |
+| Gallery      | title, images[{url, caption}]                      |
+| FAQ          | title, items[{question, answer}]                   |
+| CTA          | title, subtitle, button_label, button_link         |
+| Testimonials | title, items[{name, text, avatar, rating}]         |
+| Pricing      | title, plans[{name, price, features, cta}]         |
+| Contact Form | title, fields config                               |
+| Map          | title, address, coordinates                        |

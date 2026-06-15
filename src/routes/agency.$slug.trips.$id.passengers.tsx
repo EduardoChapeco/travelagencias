@@ -38,7 +38,9 @@ function PassengersPage() {
 
   // Estados para Upload & OCR por passageiro
   const [uploadingPid, setUploadingPid] = useState<string | null>(null);
-  const [selectedDocType, setSelectedDocType] = useState<Record<string, "passport" | "visa" | "ticket" | "other">>({});
+  const [selectedDocType, setSelectedDocType] = useState<
+    Record<string, "passport" | "visa" | "ticket" | "other">
+  >({});
   const [expDates, setExpDates] = useState<Record<string, string>>({});
 
   // 1. Query de Passageiros
@@ -58,14 +60,13 @@ function PassengersPage() {
     },
   });
 
-  // 2. Query da Viagem (para saber a data de embarque/início)
+  // 2. Query da Viagem (para saber a data de embarque/início e lead_id)
   const tripQ = useQuery({
     enabled: !!agency,
     queryKey: ["trip", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, travel_start, travel_end")
+      const { data, error } = await (supabase.from("trips") as any)
+        .select("id, title, travel_start, travel_end, lead_id, proposal_id")
         .eq("id", id)
         .single();
       if (error) throw error;
@@ -110,15 +111,12 @@ function PassengersPage() {
         .select("file_path")
         .eq("id", docId)
         .single();
-      
+
       if (doc?.file_path) {
         await supabase.storage.from("passenger-documents").remove([doc.file_path]);
       }
 
-      const { error } = await supabase
-        .from("passenger_documents")
-        .delete()
-        .eq("id", docId);
+      const { error } = await supabase.from("passenger_documents").delete().eq("id", docId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -127,13 +125,40 @@ function PassengersPage() {
       qc.invalidateQueries({ queryKey: ["passengers", id] });
       qc.invalidateQueries({ queryKey: ["boarding-cards"] });
     },
+  });
+
+  // 6. Mutação para confirmar todos os passageiros importados
+  const confirmAllImported = useMutation({
+    mutationFn: async () => {
+      const importedPids = list.data
+        ?.filter((p: any) => p.notes?.includes("Importado automaticamente"))
+        .map((p: any) => p.id) ?? [];
+
+      if (importedPids.length === 0) return;
+
+      const { error } = await supabase
+        .from("trip_passengers")
+        .update({ notes: "Passageiro revisado e confirmado." } as any)
+        .in("id", importedPids);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Todos os passageiros foram confirmados!");
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+    },
     onError: (err: any) => {
-      toast.error("Erro ao excluir: " + err.message);
-    }
+      toast.error("Erro ao confirmar passageiros: " + err.message);
+    },
   });
 
   // Upload & Processamento OCR
-  async function handleFileUpload(pid: string, file: File, docType: "passport" | "visa" | "ticket" | "other", customExpDate?: string) {
+  async function handleFileUpload(
+    pid: string,
+    file: File,
+    docType: "passport" | "visa" | "ticket" | "other",
+    customExpDate?: string,
+  ) {
     if (!agency) return;
     setUploadingPid(pid);
     const toastId = toast.loading("Enviando documento...");
@@ -166,13 +191,16 @@ function PassengersPage() {
       let extractedData: any = {};
       let expirationDate = customExpDate || null;
       try {
-        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke("ocr-passenger-document", {
-          body: {
-            file_base64: fileBase64,
-            mime: file.type,
-            agency_id: agency.id,
-          }
-        });
+        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke(
+          "ocr-passenger-document",
+          {
+            body: {
+              file_base64: fileBase64,
+              mime: file.type,
+              agency_id: agency.id,
+            },
+          },
+        );
         if (!ocrErr && ocrData?.result) {
           extractedData = ocrData.result;
           if (extractedData.expiration_date) {
@@ -189,17 +217,15 @@ function PassengersPage() {
       }
 
       // D. Salvar no banco
-      const { error: insertErr } = await supabase
-        .from("passenger_documents")
-        .insert({
-          trip_id: id,
-          passenger_id: pid,
-          agency_id: agency.id,
-          document_type: docType,
-          file_path: filePath,
-          extracted_metadata: extractedData,
-          expiration_date: expirationDate || null,
-        } as any);
+      const { error: insertErr } = await supabase.from("passenger_documents").insert({
+        trip_id: id,
+        passenger_id: pid,
+        agency_id: agency.id,
+        document_type: docType,
+        file_path: filePath,
+        extracted_metadata: extractedData,
+        expiration_date: expirationDate || null,
+      } as any);
 
       if (insertErr) throw insertErr;
 
@@ -266,6 +292,39 @@ function PassengersPage() {
         </button>
       </div>
 
+      {/* ── Banner: Passageiros importados da cotação (aguardando revisão) ─── */}
+      {list.data && list.data.some((p: any) => p.notes?.includes('Importado automaticamente')) && (
+        <div className="mb-6 rounded-2xl bg-warning/10 border border-warning/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold text-warning">Passageiros importados da cotação</h4>
+              <p className="text-xs text-warning/80 mt-0.5 leading-relaxed">
+                {list.data.filter((p: any) => p.notes?.includes('Importado automaticamente')).length} passageiro(s) foram importados automaticamente a partir do formulário do lead.
+                Revise os dados, corrija se necessário, e confirme antes do embarque.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => confirmAllImported.mutate()}
+              disabled={confirmAllImported.isPending}
+              className="h-9 px-4 rounded-xl bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {confirmAllImported.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <ShieldCheck className="h-3.5 w-3.5" />
+              )}
+              Confirmar Todos
+            </button>
+            <span className="text-[10px] font-bold text-warning bg-warning/10 border border-warning/20 px-2 py-1 rounded whitespace-nowrap">
+              Pendente de Revisão
+            </span>
+          </div>
+        </div>
+      )}
+
       {(list.isLoading || docsQ.isLoading || tripQ.isLoading) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -282,7 +341,8 @@ function PassengersPage() {
           <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
-            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o grupo.
+            Esta viagem ainda não possui passageiros. Clique em "Adicionar Passageiro" para formar o
+            grupo.
           </p>
         </div>
       )}
@@ -308,7 +368,9 @@ function PassengersPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         {translateKind(p.kind)}
                       </span>
-                      {p.is_lead_passenger && <StatusBadge tone="info">Líder da Reserva</StatusBadge>}
+                      {p.is_lead_passenger && (
+                        <StatusBadge tone="info">Líder da Reserva</StatusBadge>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -338,7 +400,9 @@ function PassengersPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
-                        {p.document_type ? String(p.document_type).toUpperCase() : "Documento Principal"}
+                        {p.document_type
+                          ? String(p.document_type).toUpperCase()
+                          : "Documento Principal"}
                       </div>
                       <div className="text-xs font-mono font-medium truncate">
                         {p.document || "Não informado"}
@@ -407,70 +471,90 @@ function PassengersPage() {
 
                   {/* List of current passenger documents */}
                   <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    {docsQ.data?.filter((d: any) => d.passenger_id === p.id).map((doc: any) => {
-                      const daysToDeparture = tripQ.data?.travel_start && doc.expiration_date
-                        ? Math.ceil((new Date(doc.expiration_date).getTime() - new Date(tripQ.data.travel_start).getTime()) / (1000 * 3600 * 24))
-                        : null;
-                      const isExpiringSoon = daysToDeparture !== null && daysToDeparture >= 0 && daysToDeparture < 180; // < 6 months
-                      const isExpired = daysToDeparture !== null && daysToDeparture < 0;
+                    {docsQ.data
+                      ?.filter((d: any) => d.passenger_id === p.id)
+                      .map((doc: any) => {
+                        const daysToDeparture =
+                          tripQ.data?.travel_start && doc.expiration_date
+                            ? Math.ceil(
+                                (new Date(doc.expiration_date).getTime() -
+                                  new Date(tripQ.data.travel_start).getTime()) /
+                                  (1000 * 3600 * 24),
+                              )
+                            : null;
+                        const isExpiringSoon =
+                          daysToDeparture !== null && daysToDeparture >= 0 && daysToDeparture < 180; // < 6 months
+                        const isExpired = daysToDeparture !== null && daysToDeparture < 0;
 
-                      return (
-                        <div key={doc.id} className="flex flex-col gap-1 rounded-lg border border-border/60 bg-surface-alt/10 p-2.5 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold text-foreground flex items-center gap-1">
-                              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                              {doc.document_type === 'passport' ? 'Passaporte' : 
-                               doc.document_type === 'visa' ? 'Visto' : 
-                               doc.document_type === 'ticket' ? 'Passagem' : 'Outro'}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => handleDownloadDoc(doc.file_path)}
-                                className="text-muted-foreground hover:text-brand transition-colors p-0.5"
-                                title="Visualizar / Baixar"
-                              >
-                                <Download className="h-3.5 w-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  confirm({
-                                    title: "Excluir documento?",
-                                    description: "Tem certeza que deseja excluir permanentemente este documento?",
-                                    variant: "destructive",
-                                    onConfirm: () => deleteDoc.mutate(doc.id),
-                                  });
-                                }}
-                                className="text-muted-foreground hover:text-danger transition-colors p-0.5"
-                                title="Excluir"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
+                        return (
+                          <div
+                            key={doc.id}
+                            className="flex flex-col gap-1 rounded-lg border border-border/60 bg-surface-alt/10 p-2.5 text-xs"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-foreground flex items-center gap-1">
+                                <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                                {doc.document_type === "passport"
+                                  ? "Passaporte"
+                                  : doc.document_type === "visa"
+                                    ? "Visto"
+                                    : doc.document_type === "ticket"
+                                      ? "Passagem"
+                                      : "Outro"}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDownloadDoc(doc.file_path)}
+                                  className="text-muted-foreground hover:text-brand transition-colors p-0.5"
+                                  title="Visualizar / Baixar"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    confirm({
+                                      title: "Excluir documento?",
+                                      description:
+                                        "Tem certeza que deseja excluir permanentemente este documento?",
+                                      variant: "destructive",
+                                      onConfirm: () => deleteDoc.mutate(doc.id),
+                                    });
+                                  }}
+                                  className="text-muted-foreground hover:text-danger transition-colors p-0.5"
+                                  title="Excluir"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
                             </div>
+                            {doc.expiration_date && (
+                              <div className="text-[10px] text-muted-foreground font-mono">
+                                Validade:{" "}
+                                {new Date(doc.expiration_date + "T12:00:00").toLocaleDateString(
+                                  "pt-BR",
+                                )}
+                              </div>
+                            )}
+                            {isExpired && (
+                              <div className="flex items-center gap-1 text-[10px] text-danger font-bold mt-1">
+                                <AlertTriangle className="h-3 w-3 shrink-0" />
+                                Expirado!
+                              </div>
+                            )}
+                            {isExpiringSoon && !isExpired && (
+                              <div className="flex items-center gap-1 text-[9px] text-danger font-bold bg-danger/5 border border-danger/10 rounded px-1.5 py-0.5 mt-1">
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                Expira em menos de 6 meses no embarque!
+                              </div>
+                            )}
                           </div>
-                          {doc.expiration_date && (
-                            <div className="text-[10px] text-muted-foreground font-mono">
-                              Validade: {new Date(doc.expiration_date + 'T12:00:00').toLocaleDateString("pt-BR")}
-                            </div>
-                          )}
-                          {isExpired && (
-                            <div className="flex items-center gap-1 text-[10px] text-danger font-bold mt-1">
-                              <AlertTriangle className="h-3 w-3 shrink-0" />
-                              Expirado!
-                            </div>
-                          )}
-                          {isExpiringSoon && !isExpired && (
-                            <div className="flex items-center gap-1 text-[9px] text-danger font-bold bg-danger/5 border border-danger/10 rounded px-1.5 py-0.5 mt-1">
-                              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                              Expira em menos de 6 meses no embarque!
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
 
-                    {(!docsQ.data || docsQ.data.filter((d: any) => d.passenger_id === p.id).length === 0) && (
+                    {(!docsQ.data ||
+                      docsQ.data.filter((d: any) => d.passenger_id === p.id).length === 0) && (
                       <div className="text-[10px] text-muted-foreground italic py-1">
                         Nenhum anexo cadastrado.
                       </div>
@@ -482,7 +566,9 @@ function PassengersPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={selectedDocType[p.id] || "passport"}
-                        onChange={(e) => setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })}
+                        onChange={(e) =>
+                          setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })
+                        }
                         className="h-8 rounded-md border border-border bg-surface px-2 text-[10px] font-medium outline-none text-foreground"
                       >
                         <option value="passport">Passaporte</option>
@@ -511,7 +597,7 @@ function PassengersPage() {
                               p.id,
                               e.target.files[0],
                               selectedDocType[p.id] || "passport",
-                              expDates[p.id]
+                              expDates[p.id],
                             );
                           }
                         }}
@@ -520,7 +606,6 @@ function PassengersPage() {
                     </label>
                   </div>
                 </div>
-
               </div>
             </div>
           ))}

@@ -64,13 +64,15 @@ export function CommissionSection({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_roles")
-        .select(`
+        .select(
+          `
           user_id,
           role,
           profile:profiles (
             full_name
           )
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id);
       if (error) throw error;
       return (data as any[]).map((d) => ({
@@ -125,9 +127,7 @@ export function CommissionSection({
         .eq("trips.status", "confirmed")
         .gte("trips.travel_start", startOfMonth.toISOString().slice(0, 10));
 
-      return (
-        data?.reduce((sum: number, item: any) => sum + (item.base_comissionavel || 0), 0) || 0
-      );
+      return data?.reduce((sum: number, item: any) => sum + (item.base_comissionavel || 0), 0) || 0;
     },
   });
 
@@ -211,7 +211,10 @@ export function CommissionSection({
       net_profit: netProfit,
     };
     const { error } = commQ.data
-      ? await supabase.from("trip_commissions" as any).update(payload).eq("trip_id", tripId)
+      ? await supabase
+          .from("trip_commissions" as any)
+          .update(payload)
+          .eq("trip_id", tripId)
       : await supabase.from("trip_commissions" as any).insert(payload);
     setSaving(false);
     if (error) return toast.error("Erro ao salvar: " + error.message);
@@ -234,7 +237,11 @@ export function CommissionSection({
           <span className="text-xs font-mono text-success font-bold">
             Agência: {money(agencyCommission, currency)}
           </span>
-          {open ? <ChevronDown className="h-4 w-4 text-foreground" /> : <ChevronRight className="h-4 w-4 text-foreground" />}
+          {open ? (
+            <ChevronDown className="h-4 w-4 text-foreground" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-foreground" />
+          )}
         </div>
       </button>
 

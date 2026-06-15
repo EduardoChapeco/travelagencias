@@ -19,10 +19,10 @@ classDiagram
 ```
 
 1. **Estrutura de Registro do Bloco (Block Registry):**
-   * Cada bloco disponível no sistema deve possuir três arquivos ou representações lógicas fundamentais:
-     * **O Componente Renderizador (`/portal/blocks/*`):** Componente React puro que lê o JSON e renderiza o HTML otimizado para o visitante.
-     * **O Componente Editor (`/admin/blocks/*`):** Componente React administrativo com formulários tipados para edição dos dados do bloco.
-     * **O Esquema de Validação (`/schemas/*`):** Um esquema de validação (ex: schema Zod ou JSON Schema) que valida o JSON antes de gravá-lo no banco de dados.
+   - Cada bloco disponível no sistema deve possuir três arquivos ou representações lógicas fundamentais:
+     - **O Componente Renderizador (`/portal/blocks/*`):** Componente React puro que lê o JSON e renderiza o HTML otimizado para o visitante.
+     - **O Componente Editor (`/admin/blocks/*`):** Componente React administrativo com formulários tipados para edição dos dados do bloco.
+     - **O Esquema de Validação (`/schemas/*`):** Um esquema de validação (ex: schema Zod ou JSON Schema) que valida o JSON antes de gravá-lo no banco de dados.
 
 ---
 
@@ -48,15 +48,15 @@ CREATE TABLE public.cms_pages (
 );
 ```
 
-* **Versionamento de Conteúdo:** Toda alteração publicada deve incrementar a versão da página e manter um log histórico para rollback, se requisitado.
-* **Status do Conteúdo:** Alterações feitas no editor do CMS devem ser salvas como `status = 'draft'` e gravadas em um campo temporário de preview, sem afetar o portal público até que a ação explícita de "Publicar" (Publish) seja acionada.
+- **Versionamento de Conteúdo:** Toda alteração publicada deve incrementar a versão da página e manter um log histórico para rollback, se requisitado.
+- **Status do Conteúdo:** Alterações feitas no editor do CMS devem ser salvas como `status = 'draft'` e gravadas em um campo temporário de preview, sem afetar o portal público até que a ação explícita de "Publicar" (Publish) seja acionada.
 
 ---
 
 ## 3. Diretrizes de SEO e Carregamento Rápido (Performance)
 
 1. **Metadados Dinâmicos:**
-   * O renderizador do portal público deve injetar tags `<title>` exclusivas, `<meta name="description">`, tags Open Graph (para compartilhamento em redes sociais) e schemas estruturados JSON-LD (ex: `Product`, `Article` ou `FAQPage`).
+   - O renderizador do portal público deve injetar tags `<title>` exclusivas, `<meta name="description">`, tags Open Graph (para compartilhamento em redes sociais) e schemas estruturados JSON-LD (ex: `Product`, `Article` ou `FAQPage`).
 2. **Otimização de Assets:**
-   * Todas as imagens servidas pelo CMS nas landing pages devem passar por otimização automática (redimensionamento responsivo, uso de tags `srcset` e formatos modernos de imagem como `.webp`).
-   * Imagens abaixo da dobra de página (below-the-fold) devem usar lazy loading por padrão (`loading="lazy"`).
+   - Todas as imagens servidas pelo CMS nas landing pages devem passar por otimização automática (redimensionamento responsivo, uso de tags `srcset` e formatos modernos de imagem como `.webp`).
+   - Imagens abaixo da dobra de página (below-the-fold) devem usar lazy loading por padrão (`loading="lazy"`).

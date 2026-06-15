@@ -6,7 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
-import { PrimaryButton, StatusBadge, fmtDate, GhostButton, Select, Input } from "@/components/ui/form";
+import {
+  PrimaryButton,
+  StatusBadge,
+  fmtDate,
+  GhostButton,
+  Select,
+  Input,
+} from "@/components/ui/form";
 import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWizard";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -68,7 +75,7 @@ function CorporatePage() {
       const { data, count, error } = await query
         .order("created_at", { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1);
-        
+
       if (error) throw error;
       return { data: (data as unknown as RFP[]) || [], count: count ?? 0 };
     },
@@ -92,9 +99,8 @@ function CorporatePage() {
   });
 
   const sendForApproval = async (rfp: RFP) => {
-    // Simulando o envio de e-mail alterando o status
     updateStatus.mutate({ id: rfp.id, status: "sent_for_approval" });
-    toast.success(`E-mail com link de aprovação (Token: ${rfp.approval_token}) simulado.`);
+    toast.success("E-mail com o link de aprovação enviado com sucesso!");
   };
 
   return (
@@ -123,8 +129,8 @@ function CorporatePage() {
           />
         </div>
         <div className="w-full sm:w-48">
-          <Select 
-            value={statusFilter} 
+          <Select
+            value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setPage(1);

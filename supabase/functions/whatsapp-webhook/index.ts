@@ -33,7 +33,7 @@ serve(async (req) => {
       if (tokenQuery !== verifyToken && tokenHeader !== verifyToken) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
     }
@@ -47,7 +47,7 @@ serve(async (req) => {
 
     // Lógica para injetar na tabela omnichannel_messages
     // Suporta Meta Oficial WhatsApp E Evolution API
-    
+
     // 1. Meta Oficial API
     if (body.object === "whatsapp_business_account") {
       for (const entry of body.entry) {
@@ -62,14 +62,15 @@ serve(async (req) => {
           }
         }
       }
-    } 
+    }
     // 2. Evolution API / Baileys
     else if (body.event && body.event.startsWith("messages.")) {
       const messages = body.data?.message || body.data;
       const msgList = Array.isArray(messages) ? messages : [messages];
-      
+
       for (const msg of msgList) {
-        if (!msg.key?.fromMe) { // Ignore sent messages
+        if (!msg.key?.fromMe) {
+          // Ignore sent messages
           const phone = msg.key?.remoteJid?.split("@")[0] || "";
           const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
           const msgId = msg.key?.id || "";
@@ -92,7 +93,7 @@ serve(async (req) => {
 
 async function processIncomingMessage(supabase: any, phone: string, text: string, msgId: string) {
   if (!phone || !text) return;
-  
+
   // 1. Procurar qual lead tem esse telefone
   const cleanPhone = phone.replace(/\D/g, "");
   const { data: leads } = await supabase
@@ -100,9 +101,9 @@ async function processIncomingMessage(supabase: any, phone: string, text: string
     .select("id, agency_id")
     .ilike("phone", `%${cleanPhone.slice(-8)}%`) // Match last 8 digits for safety
     .limit(1);
-    
+
   const lead = leads?.[0];
-  
+
   if (lead) {
     // 2. Inserir a mensagem
     await supabase.from("omnichannel_messages").insert({
@@ -112,7 +113,7 @@ async function processIncomingMessage(supabase: any, phone: string, text: string
       direction: "inbound",
       content: text,
       status: "delivered",
-      external_message_id: msgId
+      external_message_id: msgId,
     });
   }
 }

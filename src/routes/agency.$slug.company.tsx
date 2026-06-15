@@ -51,12 +51,22 @@ const defaultHours = (): BusinessHours =>
   ) as BusinessHours;
 
 type Address = {
-  street: string; number: string; complement: string;
-  neighborhood: string; city: string; state: string; zip: string;
+  street: string;
+  number: string;
+  complement: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip: string;
 };
 const defaultAddress = (): Address => ({
-  street: "", number: "", complement: "",
-  neighborhood: "", city: "", state: "", zip: "",
+  street: "",
+  number: "",
+  complement: "",
+  neighborhood: "",
+  city: "",
+  state: "",
+  zip: "",
 });
 
 type PortalTheme = {
@@ -84,45 +94,83 @@ const defaultPortalTheme = (): PortalTheme => ({
 
 type CP = {
   id?: string;
-  name: string; short_description: string; description: string;
-  category: string; cnpj: string; phone: string; whatsapp: string;
-  email: string; website: string; instagram: string; facebook: string;
-  youtube: string; linkedin: string; tiktok: string;
-  google_business_id: string; google_maps_url: string;
-  logo_url: string; cover_image_url: string; gallery: string[];
-  address: Address; business_hours: BusinessHours;
+  name: string;
+  short_description: string;
+  description: string;
+  category: string;
+  cnpj: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  website: string;
+  instagram: string;
+  facebook: string;
+  youtube: string;
+  linkedin: string;
+  tiktok: string;
+  google_business_id: string;
+  google_maps_url: string;
+  logo_url: string;
+  cover_image_url: string;
+  gallery: string[];
+  address: Address;
+  business_hours: BusinessHours;
   portal_theme: PortalTheme;
 };
 
 const defaultCP = (agencyName = ""): CP => ({
-  name: agencyName, short_description: "", description: "",
-  category: "", cnpj: "", phone: "", whatsapp: "", email: "",
-  website: "", instagram: "", facebook: "", youtube: "", linkedin: "",
-  tiktok: "", google_business_id: "", google_maps_url: "",
-  logo_url: "", cover_image_url: "", gallery: [],
-  address: defaultAddress(), business_hours: defaultHours(),
+  name: agencyName,
+  short_description: "",
+  description: "",
+  category: "",
+  cnpj: "",
+  phone: "",
+  whatsapp: "",
+  email: "",
+  website: "",
+  instagram: "",
+  facebook: "",
+  youtube: "",
+  linkedin: "",
+  tiktok: "",
+  google_business_id: "",
+  google_maps_url: "",
+  logo_url: "",
+  cover_image_url: "",
+  gallery: [],
+  address: defaultAddress(),
+  business_hours: defaultHours(),
   portal_theme: defaultPortalTheme(),
 });
 
 // ─── Brand kit state ──────────────────────────────────────────────
 type BrandKit = {
-  brand_color: string; brand_color_light: string; brand_color_fg: string;
-  font_heading: string; font_body: string;
-  logo_url: string; favicon_url: string;
+  brand_color: string;
+  brand_color_light: string;
+  brand_color_fg: string;
+  font_heading: string;
+  font_body: string;
+  logo_url: string;
+  favicon_url: string;
 };
 const defaultBrandKit = (): BrandKit => ({
-  brand_color: "#1E293B", brand_color_light: "#F1F5F9", brand_color_fg: "#FFFFFF",
-  font_heading: "Inter", font_body: "Inter", logo_url: "", favicon_url: "",
+  brand_color: "#1E293B",
+  brand_color_light: "#F1F5F9",
+  brand_color_fg: "#FFFFFF",
+  font_heading: "Inter",
+  font_body: "Inter",
+  logo_url: "",
+  favicon_url: "",
 });
 
 type Tab = "identity" | "contact" | "location" | "social" | "media" | "hours";
 const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: "identity",      label: "Identidade",       icon: Building2 },
-  { id: "contact",       label: "Contato",           icon: Phone },
-  { id: "location",      label: "Localização",       icon: MapPin },
-  { id: "social",        label: "Redes sociais",     icon: Share2 },
-  { id: "media",         label: "Mídia",             icon: Globe },
-  { id: "hours",         label: "Horários",          icon: Clock },
+  { id: "identity", label: "Identidade", icon: Building2 },
+  { id: "contact", label: "Contato", icon: Phone },
+  { id: "location", label: "Localização", icon: MapPin },
+  { id: "social", label: "Redes sociais", icon: Share2 },
+  { id: "media", label: "Mídia", icon: Globe },
+  { id: "hours", label: "Horários", icon: Clock },
 ];
 
 function Page() {
@@ -312,7 +360,10 @@ function Page() {
     const { error } = await supabase.storage
       .from("agency-logos")
       .upload(path, file, { upsert: true });
-    if (error) { setUploading(false); return toast.error(error.message); }
+    if (error) {
+      setUploading(false);
+      return toast.error(error.message);
+    }
     const { data: pub } = supabase.storage.from("agency-logos").getPublicUrl(path);
     if (pub?.publicUrl) setBrand((b) => ({ ...b, logo_url: pub.publicUrl }));
     setUploading(false);
@@ -392,9 +443,16 @@ function Page() {
                 <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
                   <h3 className="text-sm font-semibold">Identidade da empresa</h3>
                   <Field label="Nome comercial *">
-                    <Input required value={form.name} onChange={(e) => set("name", e.target.value)} />
+                    <Input
+                      required
+                      value={form.name}
+                      onChange={(e) => set("name", e.target.value)}
+                    />
                   </Field>
-                  <Field label="Slogan / Descrição curta" hint="Exibido no cabeçalho do portal público">
+                  <Field
+                    label="Slogan / Descrição curta"
+                    hint="Exibido no cabeçalho do portal público"
+                  >
                     <Input
                       value={form.short_description}
                       onChange={(e) => set("short_description", e.target.value)}
@@ -434,18 +492,35 @@ function Page() {
                   <h3 className="text-sm font-semibold">Contato</h3>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <Field label="E-mail comercial">
-                      <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
+                      <Input
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => set("email", e.target.value)}
+                      />
                     </Field>
                     <Field label="Telefone fixo">
-                      <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="(49) 3300-0000" />
+                      <Input
+                        value={form.phone}
+                        onChange={(e) => set("phone", e.target.value)}
+                        placeholder="(49) 3300-0000"
+                      />
                     </Field>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <Field label="WhatsApp" hint="Com DDI: +55 49 99999-0000">
-                      <Input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+55 49 99999-0000" />
+                      <Input
+                        value={form.whatsapp}
+                        onChange={(e) => set("whatsapp", e.target.value)}
+                        placeholder="+55 49 99999-0000"
+                      />
                     </Field>
                     <Field label="Site">
-                      <Input type="url" value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://suaagencia.com.br" />
+                      <Input
+                        type="url"
+                        value={form.website}
+                        onChange={(e) => set("website", e.target.value)}
+                        placeholder="https://suaagencia.com.br"
+                      />
                     </Field>
                   </div>
                 </div>
@@ -457,36 +532,63 @@ function Page() {
                   <h3 className="text-sm font-semibold">Localização</h3>
                   <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
                     <Field label="Rua / Avenida">
-                      <Input value={form.address.street} onChange={(e) => setAddr("street", e.target.value)} />
+                      <Input
+                        value={form.address.street}
+                        onChange={(e) => setAddr("street", e.target.value)}
+                      />
                     </Field>
                     <Field label="Número">
-                      <Input value={form.address.number} onChange={(e) => setAddr("number", e.target.value)} />
+                      <Input
+                        value={form.address.number}
+                        onChange={(e) => setAddr("number", e.target.value)}
+                      />
                     </Field>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <Field label="Complemento">
-                      <Input value={form.address.complement} onChange={(e) => setAddr("complement", e.target.value)} placeholder="Sala 101, 2º andar" />
+                      <Input
+                        value={form.address.complement}
+                        onChange={(e) => setAddr("complement", e.target.value)}
+                        placeholder="Sala 101, 2º andar"
+                      />
                     </Field>
                     <Field label="Bairro">
-                      <Input value={form.address.neighborhood} onChange={(e) => setAddr("neighborhood", e.target.value)} />
+                      <Input
+                        value={form.address.neighborhood}
+                        onChange={(e) => setAddr("neighborhood", e.target.value)}
+                      />
                     </Field>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[1fr_100px_80px]">
                     <Field label="Cidade">
-                      <Input value={form.address.city} onChange={(e) => setAddr("city", e.target.value)} />
+                      <Input
+                        value={form.address.city}
+                        onChange={(e) => setAddr("city", e.target.value)}
+                      />
                     </Field>
                     <Field label="Estado (UF)">
-                      <Input maxLength={2} value={form.address.state} onChange={(e) => setAddr("state", e.target.value.toUpperCase())} placeholder="SC" />
+                      <Input
+                        maxLength={2}
+                        value={form.address.state}
+                        onChange={(e) => setAddr("state", e.target.value.toUpperCase())}
+                        placeholder="SC"
+                      />
                     </Field>
                     <Field label="CEP">
-                      <Input value={form.address.zip} onChange={(e) => setAddr("zip", e.target.value)} placeholder="89800-000" />
+                      <Input
+                        value={form.address.zip}
+                        onChange={(e) => setAddr("zip", e.target.value)}
+                        placeholder="89800-000"
+                      />
                     </Field>
                   </div>
 
                   {/* Google Business */}
                   <div className="border-t border-border pt-4">
                     <div className="mb-3 flex items-center justify-between">
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Google</h4>
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Google
+                      </h4>
                       <button
                         type="button"
                         onClick={syncGbp}
@@ -500,15 +602,26 @@ function Page() {
                     <div className="mb-3 flex items-start gap-2 rounded-md border border-border/50 bg-surface-alt px-3 py-2">
                       <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       <p className="text-[11px] text-muted-foreground">
-                        Preencha o Google Business ID e o Maps URL para sincronizar dados com o Google Meu Negócio. A sincronização automática via API requer configuração OAuth no Google Cloud Console.
+                        Preencha o Google Business ID e o Maps URL para sincronizar dados com o
+                        Google Meu Negócio. A sincronização automática via API requer configuração
+                        OAuth no Google Cloud Console.
                       </p>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Field label="Google Business ID">
-                        <Input value={form.google_business_id} onChange={(e) => set("google_business_id", e.target.value)} placeholder="ChIJ..." />
+                        <Input
+                          value={form.google_business_id}
+                          onChange={(e) => set("google_business_id", e.target.value)}
+                          placeholder="ChIJ..."
+                        />
                       </Field>
                       <Field label="Google Maps URL">
-                        <Input type="url" value={form.google_maps_url} onChange={(e) => set("google_maps_url", e.target.value)} placeholder="https://maps.google.com/..." />
+                        <Input
+                          type="url"
+                          value={form.google_maps_url}
+                          onChange={(e) => set("google_maps_url", e.target.value)}
+                          placeholder="https://maps.google.com/..."
+                        />
                       </Field>
                     </div>
                     {form.google_maps_url && (
@@ -536,7 +649,11 @@ function Page() {
                         { key: "instagram", label: "Instagram", placeholder: "@agencia" },
                         { key: "facebook", label: "Facebook", placeholder: "facebook.com/agencia" },
                         { key: "youtube", label: "YouTube", placeholder: "youtube.com/@agencia" },
-                        { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/company/agencia" },
+                        {
+                          key: "linkedin",
+                          label: "LinkedIn",
+                          placeholder: "linkedin.com/company/agencia",
+                        },
                         { key: "tiktok", label: "TikTok", placeholder: "@agencia" },
                       ] as { key: keyof CP; label: string; placeholder: string }[]
                     ).map(({ key, label, placeholder }) => (
@@ -552,7 +669,12 @@ function Page() {
                   <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
                     <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
                     <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
-                    <a href={portalUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline">
+                    <a
+                      href={portalUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline"
+                    >
                       <ExternalLink className="h-3 w-3" /> Abrir portal
                     </a>
                   </div>
@@ -599,7 +721,9 @@ function Page() {
               {tab === "hours" && (
                 <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
                   <h3 className="text-sm font-semibold">Horários de atendimento</h3>
-                  <p className="text-xs text-muted-foreground">Exibidos no portal público e sincronizados com o Google.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Exibidos no portal público e sincronizados com o Google.
+                  </p>
                   <div className="space-y-2">
                     {DAY_KEYS.map((key, i) => {
                       const h = form.business_hours[key];
@@ -617,12 +741,26 @@ function Page() {
                           </label>
                           {!h.closed && (
                             <>
-                              <Input type="time" value={h.open} onChange={(e) => setHours(key, "open", e.target.value)} className="w-28 text-xs" />
+                              <Input
+                                type="time"
+                                value={h.open}
+                                onChange={(e) => setHours(key, "open", e.target.value)}
+                                className="w-28 text-xs"
+                              />
                               <span className="text-xs text-muted-foreground">até</span>
-                              <Input type="time" value={h.close} onChange={(e) => setHours(key, "close", e.target.value)} className="w-28 text-xs" />
+                              <Input
+                                type="time"
+                                value={h.close}
+                                onChange={(e) => setHours(key, "close", e.target.value)}
+                                className="w-28 text-xs"
+                              />
                             </>
                           )}
-                          {h.closed && <span className="text-xs text-muted-foreground italic">Fechado este dia</span>}
+                          {h.closed && (
+                            <span className="text-xs text-muted-foreground italic">
+                              Fechado este dia
+                            </span>
+                          )}
                         </div>
                       );
                     })}
@@ -650,8 +788,15 @@ function Page() {
         {previewOpen && (
           <aside className="shrink-0 rounded-lg border border-border bg-surface overflow-hidden h-fit sticky top-4">
             <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Prévia do portal</span>
-              <a href={portalUrl} target="_blank" rel="noreferrer" className="text-xs text-brand hover:underline flex items-center gap-1">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Prévia do portal
+              </span>
+              <a
+                href={portalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-brand hover:underline flex items-center gap-1"
+              >
                 <ExternalLink className="h-3 w-3" /> Abrir
               </a>
             </div>
@@ -659,35 +804,79 @@ function Page() {
               {/* Hero preview */}
               <div className="relative flex h-32 items-end bg-surface-alt overflow-hidden">
                 {form.cover_image_url && (
-                  <img src={form.cover_image_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+                  <img
+                    src={form.cover_image_url}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover opacity-60"
+                  />
                 )}
                 <div className="relative z-10 p-3 w-full">
                   {form.logo_url && (
-                    <img src={form.logo_url} alt="" className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface" />
+                    <img
+                      src={form.logo_url}
+                      alt=""
+                      className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface"
+                    />
                   )}
-                  <div className="font-bold text-sm leading-tight">{form.name || "Nome da agência"}</div>
+                  <div className="font-bold text-sm leading-tight">
+                    {form.name || "Nome da agência"}
+                  </div>
                   {form.short_description && (
-                    <div className="text-[10px] text-muted-foreground line-clamp-1">{form.short_description}</div>
+                    <div className="text-[10px] text-muted-foreground line-clamp-1">
+                      {form.short_description}
+                    </div>
                   )}
                 </div>
               </div>
               {/* Portal config preview */}
               <div className="p-3 border-b border-border">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Seções ativas</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Seções ativas
+                </div>
                 <div className="flex flex-wrap gap-1">
-                  {form.portal_theme.show_tours && <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">Roteiros</span>}
-                  {form.portal_theme.show_blog && <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">Blog</span>}
-                  {form.portal_theme.show_gallery && <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">Galeria</span>}
-                  {form.portal_theme.show_hours && <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">Horários</span>}
-                  {form.portal_theme.show_map && <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">Mapa</span>}
+                  {form.portal_theme.show_tours && (
+                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      Roteiros
+                    </span>
+                  )}
+                  {form.portal_theme.show_blog && (
+                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      Blog
+                    </span>
+                  )}
+                  {form.portal_theme.show_gallery && (
+                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      Galeria
+                    </span>
+                  )}
+                  {form.portal_theme.show_hours && (
+                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      Horários
+                    </span>
+                  )}
+                  {form.portal_theme.show_map && (
+                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      Mapa
+                    </span>
+                  )}
                 </div>
               </div>
               {/* Cores preview */}
               <div className="p-3">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Cores</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Cores
+                </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: agency.brand_color || "#1E293B" }} title="Primária" />
-                  <div className="h-8 w-8 rounded-md border border-border" style={{ background: agency.brand_color_light || "#F1F5F9" }} title="Fundo claro" />
+                  <div
+                    className="h-8 w-8 rounded-md border border-border"
+                    style={{ background: agency.brand_color || "#1E293B" }}
+                    title="Primária"
+                  />
+                  <div
+                    className="h-8 w-8 rounded-md border border-border"
+                    style={{ background: agency.brand_color_light || "#F1F5F9" }}
+                    title="Fundo claro"
+                  />
                 </div>
               </div>
             </div>

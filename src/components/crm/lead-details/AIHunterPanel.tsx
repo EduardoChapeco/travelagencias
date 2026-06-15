@@ -35,7 +35,11 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
   const [analyzing, setAnalyzing] = useState(false);
 
   const [generatingProposal, setGeneratingProposal] = useState(false);
-  const [createdProposal, setCreatedProposal] = useState<{ id: string; number: string; publicToken: string } | null>(null);
+  const [createdProposal, setCreatedProposal] = useState<{
+    id: string;
+    number: string;
+    publicToken: string;
+  } | null>(null);
   const [sendingWa, setSendingWa] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -85,15 +89,15 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
     setErrorMsg("");
     try {
       const { data, error } = await supabase.functions.invoke("ai-message-processor", {
-        body: { action: "create_proposal", lead_id: leadId, agency_id: agencyId }
+        body: { action: "create_proposal", lead_id: leadId, agency_id: agencyId },
       });
       if (error) throw error;
       if (!data || !data.proposal_id) throw new Error("ID da proposta não retornado pela IA.");
-      
+
       setCreatedProposal({
         id: data.proposal_id,
         number: data.number,
-        publicToken: data.public_token
+        publicToken: data.public_token,
       });
       toast.success(`Cotação #${data.number} gerada com sucesso!`);
       // Invalida a lista de cotações para que atualize na aba de cotações
@@ -111,7 +115,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
     if (!createdProposal) return;
     navigate({
       to: "/agency/$slug/proposals/$id",
-      params: { slug, id: createdProposal.id }
+      params: { slug, id: createdProposal.id },
     });
   }
 
@@ -121,7 +125,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
     try {
       const url = `${window.location.origin}/m/proposal/${createdProposal.publicToken}`;
       const content = `Olá! Preparamos uma proposta personalizada de viagem para você. Você pode acessá-la e detalhar todos os serviços por este link: ${url}`;
-      
+
       const { error } = await supabase.from("omnichannel_messages").insert({
         agency_id: agencyId,
         lead_id: leadId,
@@ -187,14 +191,14 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             </span>
           )}
         </div>
-        
+
         <p className="text-xs text-muted-foreground leading-relaxed">
-          O Copiloto de IA analisa as últimas 30 mensagens deste lead no chat do WhatsApp para extrair o roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no formato de rascunho com apenas 1 clique.
+          O Copiloto de IA analisa as últimas 30 mensagens deste lead no chat do WhatsApp para
+          extrair o roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no
+          formato de rascunho com apenas 1 clique.
         </p>
 
-        {errorMsg && (
-          <p className="text-xs text-danger font-medium">{errorMsg}</p>
-        )}
+        {errorMsg && <p className="text-xs text-danger font-medium">{errorMsg}</p>}
 
         <div className="flex flex-wrap gap-2 pt-1">
           <button
@@ -202,7 +206,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             disabled={generatingProposal}
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
           >
-            <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? 'animate-spin' : ''}`} />
+            <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? "animate-spin" : ""}`} />
             {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta com IA"}
           </button>
 
@@ -220,7 +224,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
                 disabled={sendingWa}
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 px-3 text-xs font-bold transition-all disabled:opacity-50"
               >
-                <Send className="h-3.5 w-3.5" /> 
+                <Send className="h-3.5 w-3.5" />
                 {sendingWa ? "Enviando..." : "Enviar por WhatsApp"}
               </button>
 
@@ -230,7 +234,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
               >
                 <FileText className="h-3.5 w-3.5" /> Copiar Link
               </button>
-              
+
               <a
                 href={`${window.location.origin}/m/proposal/${createdProposal.publicToken}`}
                 target="_blank"

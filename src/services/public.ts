@@ -13,17 +13,13 @@ export async function fetchPublicAgencyLayout(slug: string) {
       .eq("agency_id", agency.id)
       .eq("is_published", true)
       .order("created_at"),
-    (supabase as any)
-      .from("portal_settings")
-      .select("*")
-      .eq("agency_id", agency.id)
-      .maybeSingle()
+    (supabase as any).from("portal_settings").select("*").eq("agency_id", agency.id).maybeSingle(),
   ]);
 
   return {
     agency,
     pages: pagesRes.data || [],
-    settings: settingsRes.data || null
+    settings: settingsRes.data || null,
   };
 }
 

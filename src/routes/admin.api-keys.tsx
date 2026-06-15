@@ -14,7 +14,6 @@ import {
   type ApiKey,
 } from "@/services/admin";
 
-
 export const Route = createFileRoute("/admin/api-keys")({
   head: () => ({ meta: [{ title: "Chaves Globais · TravelOS Admin" }] }),
   component: Page,
@@ -72,7 +71,8 @@ function Page() {
   async function remove(id: string) {
     confirm({
       title: "Remover esta chave global?",
-      description: "Tem certeza de que deseja remover esta chave de API global? Esta ação não pode ser desfeita.",
+      description:
+        "Tem certeza de que deseja remover esta chave de API global? Esta ação não pode ser desfeita.",
       variant: "destructive",
       onConfirm: async () => {
         try {
@@ -134,14 +134,19 @@ function Page() {
             />
           </Field>
           <div>
-            <PrimaryButton disabled={busy} className="w-full h-9 flex items-center justify-center gap-1.5">
+            <PrimaryButton
+              disabled={busy}
+              className="w-full h-9 flex items-center justify-center gap-1.5"
+            >
               <Plus className="h-4 w-4" /> Adicionar
             </PrimaryButton>
           </div>
         </form>
 
         {q.isLoading && (
-          <div className="text-sm text-muted-foreground p-6 text-center">Carregando chaves globais...</div>
+          <div className="text-sm text-muted-foreground p-6 text-center">
+            Carregando chaves globais...
+          </div>
         )}
 
         {!q.isLoading && keysList.length === 0 && (
@@ -167,9 +172,13 @@ function Page() {
               <tbody className="divide-y divide-border">
                 {keysList.map((k: ApiKey) => (
                   <tr key={k.id} className="hover:bg-surface-alt/30 transition-colors">
-                    <td className="px-4 py-3 font-mono text-xs font-semibold text-foreground/80">{k.provider}</td>
+                    <td className="px-4 py-3 font-mono text-xs font-semibold text-foreground/80">
+                      {k.provider}
+                    </td>
                     <td className="px-4 py-3">{k.label ?? "—"}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{mask(k.key_value)}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                      {mask(k.key_value)}
+                    </td>
                     <td className="px-4 py-3 text-right font-mono text-xs">
                       {k.used_count}
                       {k.monthly_limit ? ` / ${k.monthly_limit}` : " / ∞"}

@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Building2, PhoneCall, Mail, Percent, MapPin, FileText, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  PhoneCall,
+  Mail,
+  Percent,
+  MapPin,
+  FileText,
+  User,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -21,21 +30,19 @@ function SupplierDetailsPage() {
     enabled: !!agency,
     queryKey: ["supplier", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("suppliers")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.from("suppliers").select("*").eq("id", id).single();
       if (error) throw error;
       return data;
     },
   });
 
   if (isLoading) {
-    return <div className="p-8 space-y-4">
-      <Skeleton className="h-8 w-1/4" />
-      <Skeleton className="h-[400px] w-full" />
-    </div>;
+    return (
+      <div className="p-8 space-y-4">
+        <Skeleton className="h-8 w-1/4" />
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    );
   }
 
   if (!supplier) {
@@ -63,7 +70,6 @@ function SupplierDetailsPage() {
       />
 
       <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_320px]">
-        
         {/* Main Content Area */}
         <div className="space-y-6">
           <Tabs defaultValue="geral" className="w-full">
@@ -98,18 +104,31 @@ function SupplierDetailsPage() {
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Categoria</div>
-                    <div className="font-medium text-sm mt-1 uppercase text-brand tracking-widest">{supplier.kind}</div>
+                    <div className="font-medium text-sm mt-1 uppercase text-brand tracking-widest">
+                      {supplier.kind}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Documento (CNPJ/Tax ID)</div>
-                    <div className="font-medium font-mono text-sm mt-1">{supplier.document || "—"}</div>
+                    <div className="font-medium font-mono text-sm mt-1">
+                      {supplier.document || "—"}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Site / Portal B2B</div>
                     <div className="font-medium text-sm mt-1">
                       {supplier.website ? (
-                        <a href={supplier.website} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Acessar portal</a>
-                      ) : "—"}
+                        <a
+                          href={supplier.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          Acessar portal
+                        </a>
+                      ) : (
+                        "—"
+                      )}
                     </div>
                   </div>
                 </div>
@@ -130,7 +149,7 @@ function SupplierDetailsPage() {
 
             <TabsContent value="contratos" className="mt-6">
               <div className="rounded-xl border border-border bg-surface p-6">
-                 <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-4">
                   <h3 className="font-semibold">Arquivos & Políticas</h3>
                   <GhostButton className="h-8 text-xs">Fazer Upload</GhostButton>
                 </div>
@@ -152,7 +171,8 @@ function SupplierDetailsPage() {
               {Number(supplier.commission_rate).toFixed(2)}%
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Esta comissão será calculada automaticamente na criação de orçamentos e faturamentos ao escolher este fornecedor.
+              Esta comissão será calculada automaticamente na criação de orçamentos e faturamentos
+              ao escolher este fornecedor.
             </p>
           </div>
 
@@ -174,14 +194,17 @@ function SupplierDetailsPage() {
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground">E-mail Operacional</div>
-                  <div className="text-sm font-medium truncate max-w-[200px]" title={supplier.email || ""}>{supplier.email || "—"}</div>
+                  <div
+                    className="text-sm font-medium truncate max-w-[200px]"
+                    title={supplier.email || ""}
+                  >
+                    {supplier.email || "—"}
+                  </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

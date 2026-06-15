@@ -105,7 +105,7 @@ function PortalSettingsPage() {
     field: "nav_links" | "footer_links",
     idx: number,
     key: "label" | "url",
-    v: string
+    v: string,
   ) {
     setForm((f) => {
       const arr = [...f[field]];
@@ -414,7 +414,9 @@ function PortalSettingsPage() {
               <span className="text-[11px] text-muted-foreground">{form.footer_text}</span>
               <div className="flex gap-3 flex-wrap">
                 {form.footer_links.map((l, i) => (
-                  <span key={i} className="text-[11px] text-brand">{l.label}</span>
+                  <span key={i} className="text-[11px] text-brand">
+                    {l.label}
+                  </span>
                 ))}
               </div>
             </div>
@@ -460,9 +462,7 @@ function PortalSettingsPage() {
               className="font-mono"
             />
             {form.meta_pixel_id && (
-              <p className="mt-1 text-[10px] text-success">
-                ✓ Meta Pixel será ativado no portal
-              </p>
+              <p className="mt-1 text-[10px] text-success">✓ Meta Pixel será ativado no portal</p>
             )}
           </Field>
 
@@ -474,7 +474,7 @@ function PortalSettingsPage() {
               value={form.custom_head_script}
               onChange={(e) => set("custom_head_script", e.target.value)}
               rows={6}
-              placeholder={"<!-- Ex: Tidio chat, Hotjar, etc. -->\n<script src=\"...\"></script>"}
+              placeholder={'<!-- Ex: Tidio chat, Hotjar, etc. -->\n<script src="..."></script>'}
               className="w-full rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-foreground outline-none focus:border-brand resize-y"
             />
           </Field>

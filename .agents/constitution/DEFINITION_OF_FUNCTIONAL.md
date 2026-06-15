@@ -7,6 +7,7 @@
 ## Critérios Obrigatórios
 
 ### Camada de UI
+
 - [ ] A UI existe e é renderizada sem erro
 - [ ] O botão executa ação real (não é estático)
 - [ ] A validação de formulário existe (campos obrigatórios, tipos)
@@ -15,6 +16,7 @@
 - [ ] Error state existe e mostra causa
 
 ### Camada de Dados
+
 - [ ] A mutation/query existe e é chamada
 - [ ] O service/hook existe
 - [ ] O dado persiste após refresh (não é apenas state local)
@@ -23,6 +25,7 @@
 - [ ] A exclusão/arquivamento segue regra definida (soft delete ou hard delete)
 
 ### Camada de Banco
+
 - [ ] A tabela existe
 - [ ] A migration existe em `supabase/migrations/`
 - [ ] As colunas usadas no frontend existem no schema
@@ -30,6 +33,7 @@
 - [ ] O Storage existe quando há upload
 
 ### Integridade
+
 - [ ] A operação respeita permissões (quem pode fazer o quê)
 - [ ] A operação é auditável quando crítica (log de quem fez)
 - [ ] O erro do backend é tratado no frontend (não engole silenciosamente)

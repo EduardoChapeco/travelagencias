@@ -23,24 +23,37 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const STEPS = ["Destino e Datas", "Passageiros", "Financeiro e Status", "Revisão"];
 
-const tripWizardSchema = z.object({
-  title: z.string().min(3, "O título da viagem precisa ter pelo menos 3 caracteres"),
-  destination: z.string().optional().nullable(),
-  travel_start: z.string().optional().nullable(),
-  travel_end: z.string().optional().nullable(),
-  client_id: z.string().optional().nullable(),
-  currency: z.string().default("BRL"),
-  total_sale: z.number({ invalid_type_error: "Insira um número válido" }).min(0, "O valor de venda não pode ser negativo").default(0),
-  status: z.enum(["planning", "confirmed", "in_progress", "completed"]).default("planning"),
-}).refine((data) => {
-  if (data.travel_start && data.travel_end) {
-    return new Date(data.travel_end) >= new Date(data.travel_start);
-  }
-  return true;
-}, {
-  message: "A data de volta deve ser posterior à data de ida",
-  path: ["travel_end"],
-});
+const tripWizardSchema = z
+  .object({
+    title: z.string().min(3, "O título da viagem precisa ter pelo menos 3 caracteres"),
+    destination: z.string().optional().nullable(),
+    travel_start: z.string().optional().nullable(),
+    travel_end: z.string().optional().nullable(),
+    client_id: z.string().optional().nullable(),
+    currency: z.string().default("BRL"),
+    total_sale: z
+      .number({ invalid_type_error: "Insira um número válido" })
+      .min(0, "O valor de venda não pode ser negativo")
+      .default(0),
+    status: z.enum(["planning", "confirmed", "in_progress", "completed"]).default("planning"),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.travel_start &&
+        data.travel_end &&
+        data.travel_start.trim() !== "" &&
+        data.travel_end.trim() !== ""
+      ) {
+        return new Date(data.travel_end) >= new Date(data.travel_start);
+      }
+      return true;
+    },
+    {
+      message: "A data de volta deve ser posterior à data de ida",
+      path: ["travel_end"],
+    },
+  );
 
 type TripWizardFormData = z.infer<typeof tripWizardSchema>;
 
@@ -94,7 +107,7 @@ export function NewTripWizard({
         .select("id, full_name, document")
         .eq("agency_id", agencyId)
         .order("full_name")
-        .limit(500);
+        .limit(5000);
       if (error) throw error;
       return data;
     },
@@ -151,6 +164,8 @@ export function NewTripWizard({
           await supabase.from("trip_passengers").insert({
             agency_id: agencyId,
             trip_id: tripData.id,
+            client_id: client.id,
+            is_lead_passenger: true,
             full_name: client.full_name,
             document: client.document || null,
           });
@@ -176,7 +191,9 @@ export function NewTripWizard({
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-6">
           <div>
             <h2 className="text-base font-semibold">Novo Roteiro de Viagem</h2>
-            <p className="text-[11px] text-muted-foreground">Gestão completa de viagens, orçamentos e passageiros.</p>
+            <p className="text-[11px] text-muted-foreground">
+              Gestão completa de viagens, orçamentos e passageiros.
+            </p>
           </div>
           <button
             type="button"
@@ -213,7 +230,9 @@ export function NewTripWizard({
                   {s}
                 </span>
               </div>
-              {i < STEPS.length - 1 && <ChevronRight className="h-4 w-4 text-muted-foreground/30 mx-1 shrink-0" />}
+              {i < STEPS.length - 1 && (
+                <ChevronRight className="h-4 w-4 text-muted-foreground/30 mx-1 shrink-0" />
+              )}
             </React.Fragment>
           ))}
         </div>
@@ -222,7 +241,6 @@ export function NewTripWizard({
         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
             <div className="mx-auto max-w-xl space-y-6">
-
               {/* STEP 0: Destino e Datas */}
               {step === 0 && (
                 <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -233,11 +251,11 @@ export function NewTripWizard({
                       autoFocus
                     />
                   </Field>
-                  <Field label="Destino (País, Cidade ou Região)" error={errors.destination?.message}>
-                    <Input
-                      {...register("destination")}
-                      placeholder="Ex: Cancún, México"
-                    />
+                  <Field
+                    label="Destino (País, Cidade ou Região)"
+                    error={errors.destination?.message}
+                  >
+                    <Input {...register("destination")} placeholder="Ex: Cancún, México" />
                   </Field>
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="Data de Ida Prevista" error={errors.travel_start?.message}>
@@ -254,9 +272,9 @@ export function NewTripWizard({
               {step === 1 && (
                 <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="rounded-xl border border-border bg-surface-alt/40 p-5 text-sm text-muted-foreground">
-                    O cliente responsável é aquele que realiza o pagamento ou responde pela viagem. Se
-                    ele também viajar, será automaticamente adicionado como o primeiro passageiro do
-                    roteiro.
+                    O cliente responsável é aquele que realiza o pagamento ou responde pela viagem.
+                    Se ele também viajar, será automaticamente adicionado como o primeiro passageiro
+                    do roteiro.
                   </div>
                   <Field label="Cliente Responsável (Opcional)" error={errors.client_id?.message}>
                     <Select {...register("client_id")}>
@@ -292,10 +310,19 @@ export function NewTripWizard({
                       </Select>
                     </Field>
                   </div>
-                  <Field label="Meta de Orçamento / Valor de Venda" error={errors.total_sale?.message}>
+                  <Field
+                    label="Meta de Orçamento / Valor de Venda"
+                    error={errors.total_sale?.message}
+                  >
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm">
-                        {watchCurrency === "BRL" ? "R$" : watchCurrency === "USD" ? "$" : watchCurrency === "EUR" ? "€" : "£"}
+                        {watchCurrency === "BRL"
+                          ? "R$"
+                          : watchCurrency === "USD"
+                            ? "$"
+                            : watchCurrency === "EUR"
+                              ? "€"
+                              : "£"}
                       </span>
                       <Input
                         type="number"
@@ -319,20 +346,29 @@ export function NewTripWizard({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">{watchDestination || "Sem destino definido"}</span>
+                        <span className="font-medium text-foreground">
+                          {watchDestination || "Sem destino definido"}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">{selectedClient?.full_name || "Sem cliente"}</span>
+                        <span className="font-medium text-foreground">
+                          {selectedClient?.full_name || "Sem cliente"}
+                        </span>
                       </div>
-                      {(watchTravelStart || watchTravelEnd) && (
+                      {((watchTravelStart && watchTravelStart.trim() !== "") ||
+                        (watchTravelEnd && watchTravelEnd.trim() !== "")) && (
                         <div className="flex items-center gap-2 col-span-full">
                           <CalendarDays className="h-4 w-4 text-muted-foreground" />
                           <span className="text-muted-foreground">Ida e Volta:</span>
                           <span className="font-medium text-foreground">
-                            {watchTravelStart ? new Date(watchTravelStart + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}{" "}
+                            {watchTravelStart && watchTravelStart.trim() !== ""
+                              ? new Date(watchTravelStart + "T00:00:00").toLocaleDateString("pt-BR")
+                              : "Indefinido"}{" "}
                             →{" "}
-                            {watchTravelEnd ? new Date(watchTravelEnd + "T00:00:00").toLocaleDateString("pt-BR") : "Indefinido"}
+                            {watchTravelEnd && watchTravelEnd.trim() !== ""
+                              ? new Date(watchTravelEnd + "T00:00:00").toLocaleDateString("pt-BR")
+                              : "Indefinido"}
                           </span>
                         </div>
                       )}
@@ -347,14 +383,18 @@ export function NewTripWizard({
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">Venda:</span>
                         <span className="font-bold text-brand">
-                          {watchCurrency} {(watchTotalSale || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                          {watchCurrency}{" "}
+                          {(watchTotalSale || 0).toLocaleString("pt-BR", {
+                            minimumFractionDigits: 2,
+                          })}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-lg border border-brand/20 bg-brand/5 p-4 text-sm text-muted-foreground">
-                    <span className="font-semibold text-brand">Tudo certo!</span> Você poderá adicionar passageiros, voos, vouchers e contratos após criar o roteiro.
+                    <span className="font-semibold text-brand">Tudo certo!</span> Você poderá
+                    adicionar passageiros, voos, vouchers e contratos após criar o roteiro.
                   </div>
                 </div>
               )}
@@ -363,7 +403,12 @@ export function NewTripWizard({
 
           {/* Footer */}
           <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-            <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+            <GhostButton
+              type="button"
+              onClick={handleBack}
+              disabled={step === 0}
+              className="gap-2 w-28"
+            >
               <ChevronLeft className="h-4 w-4" /> Voltar
             </GhostButton>
 

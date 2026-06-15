@@ -27,17 +27,20 @@ O Match Judge deve obrigatoriamente produzir o seguinte relatório final:
 # 🔍 PROMPT-TO-CODE MATCH REPORT: [Nome da Feature]
 
 ## 1. Tabela Comparativa de Requisitos
-| Requisito Aprovado | Arquivo e Linhas de Implementação | Status | Comprovação / Desvio técnico |
-| :--- | :--- | :--- | :--- |
-| [Ex: RLS isolando tenants] | [types.ts] e [migrations.sql] | OK | Verificado nas políticas criadas na migration X |
-| [Ex: Paginação na tabela] | `src/routes/leads.tsx` | OK | Adicionado botões de Próximo/Anterior e limites físicos |
+
+| Requisito Aprovado         | Arquivo e Linhas de Implementação | Status | Comprovação / Desvio técnico                            |
+| :------------------------- | :-------------------------------- | :----- | :------------------------------------------------------ |
+| [Ex: RLS isolando tenants] | [types.ts] e [migrations.sql]     | OK     | Verificado nas políticas criadas na migration X         |
+| [Ex: Paginação na tabela]  | `src/routes/leads.tsx`            | OK     | Adicionado botões de Próximo/Anterior e limites físicos |
 
 ## 2. Auditoria de Elementos Fake/Mocks
-* **Callbacks Funcionais:** [Sim / Não - Se não, listar botões/formulários sem envio real de dados]
-* **Consumo do Supabase:** [Confirmado / Mocado]
-* **Comentários de TODO no código:** [Listar trechos de código com marcações "TODO", "Ajustar depois", "Fixme"]
+
+- **Callbacks Funcionais:** [Sim / Não - Se não, listar botões/formulários sem envio real de dados]
+- **Consumo do Supabase:** [Confirmado / Mocado]
+- **Comentários de TODO no código:** [Listar trechos de código com marcações "TODO", "Ajustar depois", "Fixme"]
 
 ## 3. Status Final de Match
-* **Status:** [MATCH COMPLETO / MATCH PARCIAL / MATCH FALHOU / NÃO FOI POSSÍVEL COMPROVAR]
-* **Ações de Ajuste Necessárias:** [Lista de correções para obter Match Completo se o status não for 100% OK]
+
+- **Status:** [MATCH COMPLETO / MATCH PARCIAL / MATCH FALHOU / NÃO FOI POSSÍVEL COMPROVAR]
+- **Ações de Ajuste Necessárias:** [Lista de correções para obter Match Completo se o status não for 100% OK]
 ```

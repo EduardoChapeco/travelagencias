@@ -39,7 +39,9 @@ export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; age
       {open && (
         <div className="px-6 pb-6 space-y-4 border-t border-border/50 pt-4 bg-background">
           {leads.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center">Nenhuma oportunidade vinculada.</p>
+            <p className="text-sm text-muted-foreground text-center">
+              Nenhuma oportunidade vinculada.
+            </p>
           ) : (
             leads.map((l: any) => (
               <Link
@@ -52,7 +54,9 @@ export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; age
                   <div className="font-bold text-sm text-foreground">{l.name}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     {l.destination || "Destino não informado"} · Estágio:{" "}
-                    <span style={{ color: l.stages?.color }} className="font-semibold">{l.stages?.name}</span>
+                    <span style={{ color: l.stages?.color }} className="font-semibold">
+                      {l.stages?.name}
+                    </span>
                   </div>
                 </div>
                 <div className="text-xs font-bold bg-brand/10 text-brand px-3 py-1.5 rounded-full">

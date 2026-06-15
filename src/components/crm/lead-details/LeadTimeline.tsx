@@ -124,7 +124,13 @@ export function NewActivity({
   );
 }
 
-export function Timeline({ activities, onChanged }: { activities: Activity[]; onChanged: () => void }) {
+export function Timeline({
+  activities,
+  onChanged,
+}: {
+  activities: Activity[];
+  onChanged: () => void;
+}) {
   if (activities.length === 0) {
     return (
       <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-xl border border-border/50 border-dashed">
@@ -213,7 +219,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
                     title: "Deletar Registro",
                     description: "Apagar permanentemente este registro?",
                     variant: "destructive",
-                    onConfirm: () => remove.mutate()
+                    onConfirm: () => remove.mutate(),
                   });
                 }}
                 className="text-muted-foreground hover:text-danger transition-colors p-0.5"

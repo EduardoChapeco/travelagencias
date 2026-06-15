@@ -34,11 +34,24 @@ export type Transfer = {
   price: number;
   notes: string;
 };
+export type Insurance = {
+  provider?: string | null;   // Ex: "Assist Card", "Allianz"
+  policy?: string | null;     // Número da apólice
+  plan?: string | null;       // Nome do plano (ex: "Premium Internacional")
+  price?: number | null;      // Preço de venda ao cliente
+  cost?: number | null;       // Custo da agência
+  coverage?: string | null;   // Descrição da cobertura
+  start_date?: string | null;
+  end_date?: string | null;
+};
+
 export type Tour = {
   id: string;
   description: string;
   date: string;
-  price: number;
+  price: number;              // Preço padrão (adulto)
+  price_child?: number | null; // Preço criança (se diferente)
+  price_senior?: number | null;// Preço sênior (se diferente)
   image_url: string;
   notes: string;
 };
@@ -86,6 +99,10 @@ export type Proposal = {
   extra_pages?: any[] | null;
   canvas_format?: string;
   cover_prompt?: string | null;
+  client_id?: string | null;
+  lead_id?: string | null;
+  is_public_template?: boolean;
+  insurance?: Insurance | null;
 };
 
 export async function fetchProposal(id: string): Promise<Proposal | null> {
@@ -225,6 +242,7 @@ export async function createProposal(
     notes: payload.notes || null,
     visibility: payload.visibility || "private",
     owner_id: ownerId || null,
+    is_public_template: false,
     // Safely enforce defaults for JSONB NOT NULL fields
     flights: [],
     hotels: [],
@@ -245,6 +263,9 @@ export async function createProposal(
     throw new Error(error.message);
   }
 
+  // Log activity
+  await logProposalActivity(data.id, agencyId, "created", { title: payload.title });
+
   return data as { id: string };
 }
 
@@ -252,15 +273,16 @@ export async function fetchProposalsList(
   agencyId: string,
   page: number,
   pageSize: number,
-  options?: { search?: string; status?: string }
+  options?: { search?: string; status?: string },
 ): Promise<{ data: any[]; count: number }> {
   let query = supabase
     .from("proposals")
     .select(
-      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility",
+      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility, is_public_template, client:clients(id, full_name), lead:leads(id, name)",
       { count: "exact" },
     )
-    .eq("agency_id", agencyId);
+    .eq("agency_id", agencyId)
+    .is("deleted_at", null);
 
   if (options?.search) {
     query = query.ilike("title", `%${options.search}%`);
@@ -283,7 +305,7 @@ export async function fetchClientsPick(agencyId: string) {
     .select("id, full_name")
     .eq("agency_id", agencyId)
     .order("full_name")
-    .limit(500);
+    .limit(5000);
   if (error) throw new Error(error.message);
   return data ?? [];
 }
@@ -294,7 +316,7 @@ export async function fetchLeadsPick(agencyId: string) {
     .select("id, name")
     .eq("agency_id", agencyId)
     .order("created_at", { ascending: false })
-    .limit(500);
+    .limit(5000);
   if (error) throw new Error(error.message);
   return data ?? [];
 }
@@ -325,11 +347,21 @@ export async function duplicateProposal(proposalId: string): Promise<{ id: strin
     .single();
 
   if (error) throw new Error(error.message);
+
+  // Log duplication activity
+  await logProposalActivity(data.id, existing.agency_id, "created", {
+    title: `${existing.title} (Cópia)`,
+    duplicated_from: proposalId,
+  });
+
   return data as { id: string };
 }
 
 export async function deleteProposal(proposalId: string): Promise<void> {
-  const { error } = await supabase.from("proposals").delete().eq("id", proposalId);
+  const { error } = await supabase
+    .from("proposals")
+    .update({ deleted_at: new Date().toISOString() } as any)
+    .eq("id", proposalId);
 
   if (error) throw new Error(error.message);
 }
@@ -394,4 +426,55 @@ Retorne EXATAMENTE um JSON com as chaves "includes" e "excludes", que são array
     includes: Array.isArray(parsed.includes) ? parsed.includes : [],
     excludes: Array.isArray(parsed.excludes) ? parsed.excludes : [],
   };
+}
+
+export interface ProposalHistoryEntry {
+  id: string;
+  proposal_id: string;
+  agency_id: string;
+  agent_id: string | null;
+  action: string;
+  details: any;
+  created_at: string;
+}
+
+export async function logProposalActivity(
+  proposalId: string,
+  agencyId: string,
+  action: string,
+  details: any = {},
+  agentId?: string | null,
+): Promise<void> {
+  const insertData: any = {
+    proposal_id: proposalId,
+    agency_id: agencyId,
+    action,
+    details: details || {},
+  };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    insertData.agent_id = user.id;
+    if (!insertData.details.agent_name) {
+      insertData.details.agent_name = user.user_metadata?.full_name || user.email;
+    }
+  }
+
+  const { error } = await supabase.from("proposal_history").insert(insertData);
+  if (error) {
+    console.error("Failed to log proposal activity:", error);
+  }
+}
+
+export async function fetchProposalHistory(proposalId: string): Promise<ProposalHistoryEntry[]> {
+  const { data, error } = await supabase
+    .from("proposal_history")
+    .select("*")
+    .eq("proposal_id", proposalId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return (data as any) || [];
 }

@@ -67,12 +67,14 @@ import { Route as AgencySlugTeamRouteImport } from './routes/agency.$slug.team'
 import { Route as AgencySlugSupportRouteImport } from './routes/agency.$slug.support'
 import { Route as AgencySlugSettingsRouteImport } from './routes/agency.$slug.settings'
 import { Route as AgencySlugProposalsRouteImport } from './routes/agency.$slug.proposals'
+import { Route as AgencySlugProductivityRouteImport } from './routes/agency.$slug.productivity'
 import { Route as AgencySlugPortalRouteImport } from './routes/agency.$slug.portal'
 import { Route as AgencySlugOmnichannelRouteImport } from './routes/agency.$slug.omnichannel'
 import { Route as AgencySlugKnowledgeRouteImport } from './routes/agency.$slug.knowledge'
 import { Route as AgencySlugIntegrationsRouteImport } from './routes/agency.$slug.integrations'
 import { Route as AgencySlugGroupToursRouteImport } from './routes/agency.$slug.group-tours'
 import { Route as AgencySlugFinancialRouteImport } from './routes/agency.$slug.financial'
+import { Route as AgencySlugDailyTasksRouteImport } from './routes/agency.$slug.daily-tasks'
 import { Route as AgencySlugCrmRouteImport } from './routes/agency.$slug.crm'
 import { Route as AgencySlugCorporateRouteImport } from './routes/agency.$slug.corporate'
 import { Route as AgencySlugContractsRouteImport } from './routes/agency.$slug.contracts'
@@ -408,6 +410,11 @@ const AgencySlugProposalsRoute = AgencySlugProposalsRouteImport.update({
   path: '/proposals',
   getParentRoute: () => AgencySlugRoute,
 } as any)
+const AgencySlugProductivityRoute = AgencySlugProductivityRouteImport.update({
+  id: '/productivity',
+  path: '/productivity',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
 const AgencySlugPortalRoute = AgencySlugPortalRouteImport.update({
   id: '/portal',
   path: '/portal',
@@ -436,6 +443,11 @@ const AgencySlugGroupToursRoute = AgencySlugGroupToursRouteImport.update({
 const AgencySlugFinancialRoute = AgencySlugFinancialRouteImport.update({
   id: '/financial',
   path: '/financial',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
+const AgencySlugDailyTasksRoute = AgencySlugDailyTasksRouteImport.update({
+  id: '/daily-tasks',
+  path: '/daily-tasks',
   getParentRoute: () => AgencySlugRoute,
 } as any)
 const AgencySlugCrmRoute = AgencySlugCrmRouteImport.update({
@@ -720,12 +732,14 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursRouteWithChildren
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
   '/agency/$slug/portal': typeof AgencySlugPortalRouteWithChildren
+  '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
@@ -825,11 +839,13 @@ export interface FileRoutesByTo {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursRouteWithChildren
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
+  '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
   '/agency/$slug/team': typeof AgencySlugTeamRoute
@@ -933,12 +949,14 @@ export interface FileRoutesById {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursRouteWithChildren
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
   '/agency/$slug/portal': typeof AgencySlugPortalRouteWithChildren
+  '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/settings': typeof AgencySlugSettingsRoute
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
@@ -1045,12 +1063,14 @@ export interface FileRouteTypes {
     | '/agency/$slug/contracts'
     | '/agency/$slug/corporate'
     | '/agency/$slug/crm'
+    | '/agency/$slug/daily-tasks'
     | '/agency/$slug/financial'
     | '/agency/$slug/group-tours'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
     | '/agency/$slug/portal'
+    | '/agency/$slug/productivity'
     | '/agency/$slug/proposals'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
@@ -1150,11 +1170,13 @@ export interface FileRouteTypes {
     | '/agency/$slug/contracts'
     | '/agency/$slug/corporate'
     | '/agency/$slug/crm'
+    | '/agency/$slug/daily-tasks'
     | '/agency/$slug/financial'
     | '/agency/$slug/group-tours'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
+    | '/agency/$slug/productivity'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
     | '/agency/$slug/team'
@@ -1257,12 +1279,14 @@ export interface FileRouteTypes {
     | '/agency/$slug/contracts'
     | '/agency/$slug/corporate'
     | '/agency/$slug/crm'
+    | '/agency/$slug/daily-tasks'
     | '/agency/$slug/financial'
     | '/agency/$slug/group-tours'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
     | '/agency/$slug/portal'
+    | '/agency/$slug/productivity'
     | '/agency/$slug/proposals'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
@@ -1749,6 +1773,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugProposalsRouteImport
       parentRoute: typeof AgencySlugRoute
     }
+    '/agency/$slug/productivity': {
+      id: '/agency/$slug/productivity'
+      path: '/productivity'
+      fullPath: '/agency/$slug/productivity'
+      preLoaderRoute: typeof AgencySlugProductivityRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
     '/agency/$slug/portal': {
       id: '/agency/$slug/portal'
       path: '/portal'
@@ -1789,6 +1820,13 @@ declare module '@tanstack/react-router' {
       path: '/financial'
       fullPath: '/agency/$slug/financial'
       preLoaderRoute: typeof AgencySlugFinancialRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
+    '/agency/$slug/daily-tasks': {
+      id: '/agency/$slug/daily-tasks'
+      path: '/daily-tasks'
+      fullPath: '/agency/$slug/daily-tasks'
+      preLoaderRoute: typeof AgencySlugDailyTasksRouteImport
       parentRoute: typeof AgencySlugRoute
     }
     '/agency/$slug/crm': {
@@ -2379,12 +2417,14 @@ interface AgencySlugRouteChildren {
   AgencySlugContractsRoute: typeof AgencySlugContractsRoute
   AgencySlugCorporateRoute: typeof AgencySlugCorporateRouteWithChildren
   AgencySlugCrmRoute: typeof AgencySlugCrmRouteWithChildren
+  AgencySlugDailyTasksRoute: typeof AgencySlugDailyTasksRoute
   AgencySlugFinancialRoute: typeof AgencySlugFinancialRouteWithChildren
   AgencySlugGroupToursRoute: typeof AgencySlugGroupToursRouteWithChildren
   AgencySlugIntegrationsRoute: typeof AgencySlugIntegrationsRoute
   AgencySlugKnowledgeRoute: typeof AgencySlugKnowledgeRoute
   AgencySlugOmnichannelRoute: typeof AgencySlugOmnichannelRoute
   AgencySlugPortalRoute: typeof AgencySlugPortalRouteWithChildren
+  AgencySlugProductivityRoute: typeof AgencySlugProductivityRoute
   AgencySlugProposalsRoute: typeof AgencySlugProposalsRouteWithChildren
   AgencySlugSettingsRoute: typeof AgencySlugSettingsRoute
   AgencySlugSupportRoute: typeof AgencySlugSupportRouteWithChildren
@@ -2410,12 +2450,14 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugContractsRoute: AgencySlugContractsRoute,
   AgencySlugCorporateRoute: AgencySlugCorporateRouteWithChildren,
   AgencySlugCrmRoute: AgencySlugCrmRouteWithChildren,
+  AgencySlugDailyTasksRoute: AgencySlugDailyTasksRoute,
   AgencySlugFinancialRoute: AgencySlugFinancialRouteWithChildren,
   AgencySlugGroupToursRoute: AgencySlugGroupToursRouteWithChildren,
   AgencySlugIntegrationsRoute: AgencySlugIntegrationsRoute,
   AgencySlugKnowledgeRoute: AgencySlugKnowledgeRoute,
   AgencySlugOmnichannelRoute: AgencySlugOmnichannelRoute,
   AgencySlugPortalRoute: AgencySlugPortalRouteWithChildren,
+  AgencySlugProductivityRoute: AgencySlugProductivityRoute,
   AgencySlugProposalsRoute: AgencySlugProposalsRouteWithChildren,
   AgencySlugSettingsRoute: AgencySlugSettingsRoute,
   AgencySlugSupportRoute: AgencySlugSupportRouteWithChildren,

@@ -88,12 +88,22 @@ function PageEditorRoute() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
 
-  const { blocks, setBlocks, setInitialBlocks, addBlock, updateBlock, removeBlock, moveBlock } =
-    useBlockEditor();
+  const {
+    blocks,
+    setBlocks,
+    setInitialBlocks,
+    addBlock,
+    updateBlock,
+    removeBlock,
+    moveBlock,
+    selectedBlockId,
+    setSelectedBlockId,
+  } = useBlockEditor();
 
   const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<"content" | "seo" | "history">("content");
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
   // Sync data when loaded
   useEffect(() => {
@@ -175,7 +185,8 @@ function PageEditorRoute() {
   async function revertVersion(v: any) {
     confirm({
       title: "Reverter versão",
-      description: "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
+      description:
+        "Tem certeza que deseja reverter a página para esta versão? Todo o conteúdo atual será substituído.",
       onConfirm: () => {
         setTitle(v.title);
         setInitialBlocks(v.blocks || []);
@@ -329,6 +340,7 @@ function PageEditorRoute() {
                       <option value="default">Padrão</option>
                       <option value="about">Sobre nós</option>
                       <option value="contact">Contato</option>
+                      <option value="biolink">Biolink (Link na Bio)</option>
                     </Select>
                   </Field>
 
@@ -350,13 +362,15 @@ function PageEditorRoute() {
                         <DropdownMenuContent align="end" className="w-64">
                           <DropdownMenuLabel>Layout Básico</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => addBlock("hero")}>
-                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero (Capa principal)
+                            <LayoutTemplate className="w-4 h-4 mr-2 text-muted-foreground" /> Hero
+                            (Capa principal)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("text")}>
                             <Type className="w-4 h-4 mr-2 text-muted-foreground" /> Texto com imagem
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("gallery")}>
-                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de fotos
+                            <ImageIcon className="w-4 h-4 mr-2 text-muted-foreground" /> Galeria de
+                            fotos
                           </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
@@ -365,7 +379,8 @@ function PageEditorRoute() {
                             <Quote className="w-4 h-4 mr-2 text-muted-foreground" /> Depoimentos
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("stats")}>
-                            <BarChart2 className="w-4 h-4 mr-2 text-muted-foreground" /> Números em destaque
+                            <BarChart2 className="w-4 h-4 mr-2 text-muted-foreground" /> Números em
+                            destaque
                           </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
@@ -377,16 +392,19 @@ function PageEditorRoute() {
                             <Rss className="w-4 h-4 mr-2 text-muted-foreground" /> Feed do Blog
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("features")}>
-                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais (Features)
+                            <ListPlus className="w-4 h-4 mr-2 text-muted-foreground" /> Diferenciais
+                            (Features)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("faq")}>
-                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas Frequentes (FAQ)
+                            <HelpCircle className="w-4 h-4 mr-2 text-muted-foreground" /> Perguntas
+                            Frequentes (FAQ)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("video")}>
                             <Play className="w-4 h-4 mr-2 text-muted-foreground" /> Vídeo embed
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("map")}>
-                            <Map className="w-4 h-4 mr-2 text-muted-foreground" /> Mapa / Localização
+                            <Map className="w-4 h-4 mr-2 text-muted-foreground" /> Mapa /
+                            Localização
                           </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
@@ -395,7 +413,16 @@ function PageEditorRoute() {
                             <Megaphone className="w-4 h-4 mr-2 text-brand" /> Call to Action (Faixa)
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => addBlock("contact")}>
-                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato Integrado
+                            <PhoneCall className="w-4 h-4 mr-2 text-muted-foreground" /> Contato
+                            Integrado
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel>Biolink (Mobile)</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => addBlock("biolink_header")}>
+                            <ImageIcon className="w-4 h-4 mr-2 text-brand" /> Cabeçalho (Foto + Bio)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => addBlock("biolink_links")}>
+                            <ListPlus className="w-4 h-4 mr-2 text-brand" /> Lista de Links
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -424,18 +451,32 @@ function PageEditorRoute() {
                       {blocks.map((block, index) => (
                         <div
                           key={block.id}
-                          className="rounded-lg border border-border bg-surface overflow-hidden"
+                          className={`rounded-lg border overflow-hidden transition-all ${
+                            selectedBlockId === block.id
+                              ? "border-brand bg-surface shadow-md"
+                              : "border-border bg-surface-alt/30 hover:border-brand/40"
+                          }`}
                         >
-                          <div className="flex items-center justify-between bg-surface-alt/50 px-3 py-2 border-b border-border">
+                          <div
+                            className="flex items-center justify-between px-3 py-2 cursor-pointer select-none"
+                            onClick={() =>
+                              setSelectedBlockId(selectedBlockId === block.id ? null : block.id)
+                            }
+                          >
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                              <span
+                                className={`text-xs font-semibold uppercase tracking-wider ${selectedBlockId === block.id ? "text-brand" : "text-muted-foreground"}`}
+                              >
                                 {BLOCK_LABELS[block.type] ?? block.type}
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
                               <button
                                 type="button"
-                                onClick={() => moveBlock(index, -1)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  moveBlock(index, -1);
+                                }}
                                 disabled={index === 0}
                                 className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
                               >
@@ -443,7 +484,10 @@ function PageEditorRoute() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => moveBlock(index, 1)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  moveBlock(index, 1);
+                                }}
                                 disabled={index === blocks.length - 1}
                                 className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
                               >
@@ -451,20 +495,15 @@ function PageEditorRoute() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() => removeBlock(block.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeBlock(block.id);
+                                }}
                                 className="p-1 ml-2 text-muted-foreground hover:text-destructive"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
                             </div>
-                          </div>
-
-                          <div className="p-4 space-y-4">
-                            <BlockFormEditor
-                              block={block}
-                              updateBlock={updateBlock}
-                              agencyId={agency.id}
-                            />
                           </div>
                         </div>
                       ))}
@@ -477,25 +516,60 @@ function PageEditorRoute() {
         </div>
 
         {/* Right Live Canvas */}
-        <div className="flex-1 bg-background relative overflow-hidden flex flex-col items-center pt-8 px-8 pb-8">
-          <div className="w-full max-w-5xl h-full bg-surface border border-border rounded-xl shadow-none overflow-y-auto ring-1 ring-border relative">
+        <div className="flex-1 bg-background relative overflow-hidden flex flex-col items-center pt-6 px-4 pb-4">
+          <div className="w-full flex items-center justify-center gap-2 mb-4 bg-surface p-1 rounded-full border border-border shadow-sm max-w-fit mx-auto z-10">
+            <button
+              onClick={() => setViewport("desktop")}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${viewport === "desktop" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              Desktop
+            </button>
+            <button
+              onClick={() => setViewport("tablet")}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${viewport === "tablet" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              Tablet
+            </button>
+            <button
+              onClick={() => setViewport("mobile")}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${viewport === "mobile" ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              Mobile
+            </button>
+          </div>
+
+          <div
+            className={`h-full bg-surface border border-border rounded-xl shadow-xl overflow-y-auto ring-1 ring-border relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+              viewport === "desktop"
+                ? "w-full max-w-5xl"
+                : viewport === "tablet"
+                  ? "w-[768px]"
+                  : "w-[390px]"
+            }`}
+          >
             {/* Minimalist browser bar */}
-            <div className="sticky top-0 z-20 flex h-10 w-full items-center border-b border-border bg-surface px-4 shadow-none">
+            <div className="sticky top-0 z-20 flex h-10 w-full items-center border-b border-border bg-surface px-4 shadow-sm backdrop-blur-md bg-surface/90">
               <div className="flex gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
                 <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
                 <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
               </div>
-              <div className="mx-auto px-4 py-0.5 text-[10px] font-medium text-muted-foreground bg-surface-alt rounded-md border border-border">
+              <div className="mx-auto px-4 py-0.5 text-[10px] font-medium text-muted-foreground bg-surface-alt rounded-md border border-border flex items-center gap-2">
+                <span className="text-brand">https://</span>
                 {agency.slug}.travelos.com/{pageSlug || "preview"}
               </div>
             </div>
 
             <div className="w-full min-h-full">
-              <BlockRenderer blocks={blocks} agencySlug="preview" />
+              <BlockRenderer
+                blocks={blocks}
+                agencySlug={agency.slug || "preview"}
+                onSelectBlock={setSelectedBlockId}
+                selectedBlockId={selectedBlockId}
+              />
 
               {blocks.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-[500px] text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-[500px] text-muted-foreground bg-surface-alt/10">
                   <LayoutTemplate className="w-12 h-12 mb-4 opacity-20" />
                   <p className="text-sm font-medium">Sua página está vazia</p>
                   <p className="text-xs mt-1">
@@ -505,6 +579,33 @@ function PageEditorRoute() {
               )}
             </div>
           </div>
+
+          {/* Floating Property Panel */}
+          {selectedBlockId && (
+            <div className="absolute top-6 bottom-6 right-6 w-[360px] bg-surface rounded-xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in slide-in-from-right-8 fade-in z-30">
+              <div className="flex items-center justify-between p-4 border-b border-border bg-surface-alt/50">
+                <h3 className="font-semibold text-sm">Editar Propriedades</h3>
+                <button
+                  onClick={() => setSelectedBlockId(null)}
+                  className="text-muted-foreground hover:text-foreground p-1 rounded-md"
+                >
+                  <ArrowLeft className="w-4 h-4 rotate-180" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-5">
+                {blocks.map((block) =>
+                  block.id === selectedBlockId ? (
+                    <BlockFormEditor
+                      key={block.id}
+                      block={block}
+                      updateBlock={updateBlock}
+                      agencyId={agency.id}
+                    />
+                  ) : null,
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -155,10 +155,7 @@ function Page() {
               <Field label="URL dos Termos de Uso" error={errors.terms_url?.message}>
                 <Input {...register("terms_url")} placeholder="/termos" />
               </Field>
-              <Field
-                label="URL da Política de Privacidade"
-                error={errors.privacy_url?.message}
-              >
+              <Field label="URL da Política de Privacidade" error={errors.privacy_url?.message}>
                 <Input {...register("privacy_url")} placeholder="/privacidade" />
               </Field>
             </div>

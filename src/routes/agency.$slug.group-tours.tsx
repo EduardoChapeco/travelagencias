@@ -7,13 +7,7 @@ import { fetchGroupTours } from "@/services/tours";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
-import {
-  Input,
-  PrimaryButton,
-  StatusBadge,
-  fmtDate,
-  money,
-} from "@/components/ui/form";
+import { Input, PrimaryButton, StatusBadge, fmtDate, money } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/group-tours")({
   head: () => ({ meta: [{ title: "Excursões em grupo · TravelOS" }] }),
@@ -60,7 +54,8 @@ function GroupToursPage() {
 
   const filtered = useMemo(() => {
     return (q.data ?? []).filter((t) => {
-      const matchSearch = !qSearch ||
+      const matchSearch =
+        !qSearch ||
         t.title.toLowerCase().includes(qSearch.toLowerCase()) ||
         (t.destination ?? "").toLowerCase().includes(qSearch.toLowerCase());
       const matchStatus = statusFilter === "all" || t.status === statusFilter;

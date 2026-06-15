@@ -15,7 +15,7 @@ async function getCryptoKey(password: string) {
     enc.encode(password.padEnd(32, "0").substring(0, 32)),
     { name: "AES-GCM" },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
   return keyMaterial;
 }
@@ -40,88 +40,141 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const payload = await req.json();
-    // Disparado no UPDATE da tabela proposals (quando status for para 'converted')
-    const record = payload.record;
-    const oldRecord = payload.old_record;
 
-    // Apenas rodar se o status mudou para converted
-    if (record.status !== 'converted' || oldRecord?.status === 'converted') {
-      return new Response("Not a conversion event", { status: 200 });
+    // Verifica a origem: Webhook do DB ou Request do Frontend Público
+    const authHeader = req.headers.get("Authorization");
+    const isWebhook = authHeader === `Bearer ${serviceRoleKey}`;
+
+    // Extrair parâmetros baseados na origem
+    let agencyId = "";
+    let clickId = "";
+    let email = "";
+    let phone = "";
+    let eventName = "Purchase";
+    let eventValue = 0;
+    let customFbc = "";
+    let customFbp = "";
+
+    if (isWebhook) {
+      // Disparado no UPDATE da tabela proposals (quando status for para 'converted')
+      const record = payload.record;
+      const oldRecord = payload.old_record;
+
+      if (!record || record.status !== "converted" || oldRecord?.status === "converted") {
+        return new Response("Not a conversion event", { status: 200 });
+      }
+
+      agencyId = record.agency_id;
+      eventValue = record.total_price || 0;
+
+      const { data: lead } = await supabase
+        .from("leads")
+        .select("click_id, email, phone")
+        .eq("id", record.lead_id)
+        .single();
+
+      if (lead) {
+        clickId = lead.click_id || "";
+        email = lead.email || "";
+        phone = lead.phone || "";
+      }
+    } else {
+      // Request direto do Frontend (ex: Landing Page gerando Lead ou ViewContent)
+      if (!payload.agency_slug || !payload.event_name) {
+        return new Response("Missing tracking params", { status: 400 });
+      }
+
+      const { data: ag } = await supabase
+        .from("agencies")
+        .select("id")
+        .eq("slug", payload.agency_slug)
+        .maybeSingle();
+      if (!ag) return new Response("Agency not found", { status: 404 });
+
+      agencyId = ag.id;
+      eventName = payload.event_name;
+      email = payload.email || "";
+      phone = payload.phone || "";
+      customFbc = payload.fbc || "";
+      customFbp = payload.fbp || "";
     }
 
-    // 1. Buscar o lead atrelado para pegar o click_id (fbclid)
-    const { data: lead } = await supabase
-      .from("leads")
-      .select("click_id, email, phone")
-      .eq("id", record.lead_id)
-      .single();
-
-    if (!lead || !lead.click_id) {
-      return new Response("No click_id found for Meta", { status: 200 });
+    if (!agencyId) {
+      return new Response("No agency context", { status: 200 });
     }
 
-    // 2. Buscar as integrações da agência para pegar o Pixel (não secreto)
-    const { data: agency } = await supabase
-      .from("agencies")
-      .select("integrations_config")
-      .eq("id", record.agency_id)
-      .single();
-
-    const config = agency?.integrations_config;
-    if (!config || !config.meta_pixel_id) {
-      return new Response("Meta Pixel ID not configured for this agency", { status: 200 });
-    }
-
-    // 2.1 Buscar o CAPI Token seguro em api_keys
-    const { data: apiKeyRow } = await supabase
-      .from("api_keys")
-      .select("key_value")
-      .eq("agency_id", record.agency_id)
-      .eq("provider", "meta_capi_token")
+    // 2. Buscar as integrações da agência
+    const { data: integration } = await supabase
+      .from("agency_integrations")
+      .select("config, secret_id")
+      .eq("agency_id", agencyId)
+      .eq("provider", "meta_capi")
       .eq("is_active", true)
       .maybeSingle();
 
-    if (!apiKeyRow || !apiKeyRow.key_value) {
-      return new Response("Meta CAPI Token not configured for this agency", { status: 200 });
+    if (!integration || !integration.config?.meta_pixel_id) {
+      return new Response("Meta CAPI not configured for this agency", { status: 200 });
     }
 
+    const config = integration.config;
+
+    // 2.1 Buscar o CAPI Token seguro via Vault (decrypted_secret em vault.decrypted_secrets)
     let metaCapiToken = "";
-    if (apiKeyRow.key_value.includes("=====")) {
-      const API_KEY_SECRET = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
-      metaCapiToken = await decryptData(apiKeyRow.key_value, API_KEY_SECRET);
-    } else {
-      metaCapiToken = apiKeyRow.key_value;
+    if (integration.secret_id) {
+      // Since we are using serviceRoleKey, we can query the vault directly
+      const { data: vaultSecret } = await supabase
+        .from("decrypted_secrets")
+        .select("decrypted_secret")
+        .eq("id", integration.secret_id)
+        .maybeSingle();
+      if (vaultSecret) {
+        metaCapiToken = vaultSecret.decrypted_secret;
+      }
+    }
+
+    if (!metaCapiToken) {
+      // Fallback for legacy api_keys table or error
+      return new Response("Meta CAPI Token missing in Vault", { status: 200 });
     }
 
     // 3. Montar Payload da Conversions API
     const crypto = await import("https://deno.land/std@0.168.0/node/crypto.ts");
-    const hash = (str: string) => crypto.createHash('sha256').update(str.toLowerCase().trim()).digest('hex');
+    const hash = (str: string) =>
+      crypto.createHash("sha256").update(str.toLowerCase().trim()).digest("hex");
+
+    const fbcValue =
+      customFbc || (clickId ? `fb.1.${Math.floor(Date.now() / 1000)}.${clickId}` : undefined);
+
+    const userData: any = {};
+    if (fbcValue) userData.fbc = fbcValue;
+    if (customFbp) userData.fbp = customFbp;
+    if (email) userData.em = [hash(email)];
+    if (phone) userData.ph = [hash(phone.replace(/\D/g, ""))];
 
     const eventPayload = {
       data: [
         {
-          event_name: "Purchase",
+          event_name: eventName,
           event_time: Math.floor(Date.now() / 1000),
-          action_source: "system_generated",
-          user_data: {
-            fbc: `fb.1.${Math.floor(Date.now() / 1000)}.${lead.click_id}`, // Simulando cookie fbc
-            em: lead.email ? [hash(lead.email)] : [],
-            ph: lead.phone ? [hash(lead.phone.replace(/\D/g, ''))] : []
-          },
+          action_source: isWebhook ? "system_generated" : "website",
+          user_data: userData,
           custom_data: {
             currency: "BRL",
-            value: record.total_price || 0
-          }
-        }
-      ]
+            value: eventValue || undefined,
+          },
+        },
+      ],
     };
 
     // 4. Enviar para a Meta
-    const metaRes = await fetch(`https://graph.facebook.com/v19.0/${config.meta_pixel_id}/events?access_token=${metaCapiToken}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(eventPayload)
-    });
+    const metaRes = await fetch(
+      `https://graph.facebook.com/v19.0/${config.meta_pixel_id}/events?access_token=${metaCapiToken}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventPayload),
+      },
+    );
 
     const result = await metaRes.json();
 

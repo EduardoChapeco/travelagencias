@@ -91,7 +91,7 @@ function LoginPage() {
         // Sign out and show message
         await supabase.auth.signOut();
         showError(
-          "Confirme seu e-mail antes de continuar. Verifique sua caixa de entrada e clique no link de confirmação."
+          "Confirme seu e-mail antes de continuar. Verifique sua caixa de entrada e clique no link de confirmação.",
         );
         return;
       }
@@ -110,9 +110,7 @@ function LoginPage() {
 
       // No agency or onboarding incomplete
       if (!agency || agency.onboarding_completed === false) {
-        toast.info(
-          "Sua conta foi criada! Configure sua agência para começar a usar o TravelOS."
-        );
+        toast.info("Sua conta foi criada! Configure sua agência para começar a usar o TravelOS.");
         navigate({ to: "/auth/onboarding", replace: true });
         return;
       }
@@ -121,9 +119,7 @@ function LoginPage() {
       navigate({ to: "/agency/$slug", params: { slug: agency.slug }, replace: true });
     } catch (err: any) {
       console.error("[auth.login] redirectToDefault unexpected error:", err);
-      showError(
-        err?.message || "Ocorreu um erro inesperado ao redirecionar. Tente novamente."
-      );
+      showError(err?.message || "Ocorreu um erro inesperado ao redirecionar. Tente novamente.");
     }
   }
 
@@ -172,12 +168,7 @@ function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">
           <Field label="Email" error={errors.email?.message}>
-            <Input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              {...register("email")}
-            />
+            <Input id="login-email" type="email" autoComplete="email" {...register("email")} />
           </Field>
           <Field label="Senha" error={errors.password?.message}>
             <Input
@@ -195,12 +186,7 @@ function LoginPage() {
               Esqueci minha senha
             </Link>
           </div>
-          <PrimaryButton
-            id="login-submit"
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full"
-          >
+          <PrimaryButton id="login-submit" type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? "Entrando…" : "Entrar"}
           </PrimaryButton>
         </form>
@@ -215,4 +201,3 @@ function LoginPage() {
     </div>
   );
 }
-

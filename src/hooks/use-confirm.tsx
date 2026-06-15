@@ -43,7 +43,9 @@ export function useConfirm() {
               options?.onConfirm();
               setOpen(false);
             }}
-            className={options?.variant === "destructive" ? "bg-danger hover:bg-danger/90 text-white" : ""}
+            className={
+              options?.variant === "destructive" ? "bg-danger hover:bg-danger/90 text-white" : ""
+            }
           >
             Confirmar
           </AlertDialogAction>

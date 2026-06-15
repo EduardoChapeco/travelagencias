@@ -80,9 +80,7 @@ export function Timeline360({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-xs font-bold text-success mb-1">
-                        Viagem Confirmada
-                      </div>
+                      <div className="text-xs font-bold text-success mb-1">Viagem Confirmada</div>
                       <div className="font-semibold text-sm">
                         #{event.data.number} {event.data.title}
                       </div>
@@ -114,22 +112,16 @@ export function Timeline360({
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="text-xs font-bold text-danger mb-1">
-                        Ticket de Suporte
-                      </div>
+                      <div className="text-xs font-bold text-danger mb-1">Ticket de Suporte</div>
                       <div className="font-semibold text-sm">
                         {event.data.code} - {event.data.title}
                       </div>
                     </div>
-                    <StatusBadge
-                      tone={event.data.status === "resolved" ? "success" : "warning"}
-                    >
+                    <StatusBadge tone={event.data.status === "resolved" ? "success" : "warning"}>
                       {event.data.status}
                     </StatusBadge>
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">
-                    {fmtDate(event.date)}
-                  </div>
+                  <div className="mt-3 text-xs text-muted-foreground">{fmtDate(event.date)}</div>
                 </Link>
               )}
 
@@ -139,9 +131,7 @@ export function Timeline360({
                   <div className="font-semibold text-sm">
                     Aceitou Política via {event.data.context}
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">
-                    {fmtDate(event.date)}
-                  </div>
+                  <div className="mt-3 text-xs text-muted-foreground">{fmtDate(event.date)}</div>
                 </div>
               )}
             </div>

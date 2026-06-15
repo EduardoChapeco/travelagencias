@@ -1,4 +1,13 @@
-import { Plane, GripVertical, Users, Calendar, CheckSquare, AlertTriangle, Clock, ChevronRight } from "lucide-react";
+import {
+  Plane,
+  GripVertical,
+  Users,
+  Calendar,
+  CheckSquare,
+  AlertTriangle,
+  Clock,
+  ChevronRight,
+} from "lucide-react";
 import { fmtDate } from "@/components/ui/form";
 import { type BoardingCard as Card, type ChecklistItem } from "@/services/boarding";
 
@@ -67,17 +76,19 @@ export function CardView({
         <div className="flex flex-wrap gap-1 px-4 pb-2">
           {card.briefing_date && (
             <span className="rounded bg-info/15 border border-info/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-info flex items-center gap-1">
-              <Clock className="h-2.5 w-2.5" /> Briefing: {new Date(card.briefing_date).toLocaleDateString("pt-BR")}
+              <Clock className="h-2.5 w-2.5" /> Briefing:{" "}
+              {new Date(card.briefing_date).toLocaleDateString("pt-BR")}
             </span>
           )}
-          {card.tags && card.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded bg-brand/10 border border-brand/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand"
-            >
-              {t}
-            </span>
-          ))}
+          {card.tags &&
+            card.tags.map((t) => (
+              <span
+                key={t}
+                className="rounded bg-brand/10 border border-brand/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand"
+              >
+                {t}
+              </span>
+            ))}
         </div>
       )}
 

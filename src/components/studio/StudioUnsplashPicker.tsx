@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Loader2, Check } from "lucide-react";
 import { searchUnsplash, type UnsplashPhoto } from "@/services/proposals";
 import { saveUnsplashImageToStorage } from "@/services/proposal-storage";
@@ -29,7 +29,7 @@ export function StudioUnsplashPicker({
   const [loading, setLoading] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
 
-  async function handleSearch() {
+  const handleSearch = useCallback(async () => {
     if (!query) return;
     setLoading(true);
     try {
@@ -40,11 +40,11 @@ export function StudioUnsplashPicker({
     } finally {
       setLoading(false);
     }
-  }
+  }, [query]);
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [handleSearch]);
 
   async function handleSelect(photo: UnsplashPhoto) {
     setSavingId(photo.id);
@@ -116,7 +116,7 @@ export function StudioUnsplashPicker({
                 </div>
 
                 {savingId === photo.id && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[2px]">
+                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center backdrop-blur-[2px]">
                     <Loader2 className="h-5 w-5 animate-spin text-white" />
                   </div>
                 )}

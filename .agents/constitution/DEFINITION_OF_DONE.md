@@ -7,12 +7,14 @@
 ## Checklist Obrigatório
 
 ### Captura e Planejamento
+
 - [ ] O pedido original foi reescrito em requisitos verificáveis
 - [ ] O inventário do código existente foi feito
 - [ ] O plano foi aprovado pelo usuário (ou é alteração pequena justificada)
 - [ ] Não houve duplicação de módulo/componente/rota/tabela sem justificativa
 
 ### Implementação
+
 - [ ] UI foi implementada (se feature tem interface)
 - [ ] Backend foi implementado (se feature tem lógica server-side)
 - [ ] Banco/migration foi implementado (se há alteração de schema)
@@ -21,6 +23,7 @@
 - [ ] Logs/auditoria foram aplicados (se ação crítica)
 
 ### Qualidade
+
 - [ ] Build/typecheck passaram ou falhas foram documentadas com plano
 - [ ] A feature foi rastreada ponta a ponta (dado entra → persiste → aparece)
 - [ ] Não há mock/fake/demo no código entregue
@@ -30,11 +33,13 @@
 - [ ] Não há arquivos temporários ou de teste no commit
 
 ### Entrega
+
 - [ ] Foi gerado relatório pedido vs entrega (o que foi pedido vs o que foi feito)
 - [ ] Foi aplicado Release Gate
 - [ ] Git delivery proof foi produzido (se houve commit/push)
 
 ### Estados da UI
+
 - [ ] Empty state implementado
 - [ ] Loading state implementado
 - [ ] Error state implementado (mostra causa + ação sugerida)

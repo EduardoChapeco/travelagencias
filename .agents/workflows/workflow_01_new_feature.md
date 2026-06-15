@@ -1,9 +1,11 @@
 # Workflow 01 — New Feature
 
 ## Gatilho
+
 Quando o usuário pede para criar algo totalmente novo (módulo, página, integração).
 
 ## Etapas Específicas
+
 1. Executar `workflow_00_every_task_bootstrap.md`.
 2. **Tourism Operations Review:** Validar o caso de uso na rotina real de agência.
 3. **Database Migration:** Criar nova tabela/colunas em `supabase/migrations/`.

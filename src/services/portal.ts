@@ -52,6 +52,11 @@ export async function savePortalPageDraft(
   seo: { meta_title: string; meta_description: string },
 ): Promise<string> {
   if (!title) throw new Error("O título é obrigatório");
+  if (blocks.length > 50) {
+    throw new Error(
+      "A página não pode exceder 50 blocos (proteção de segurança / render bombing). Divida o conteúdo em sub-páginas.",
+    );
+  }
 
   const payload = {
     agency_id: agencyId,

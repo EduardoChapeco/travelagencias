@@ -4,14 +4,8 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-} from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useCrmKanban } from "@/hooks/use-crm-kanban";
@@ -158,7 +152,7 @@ function CRMPage() {
         } catch (error) {
           toast.error("Falha ao arquivar");
         }
-      }
+      },
     });
   }
 
@@ -309,7 +303,8 @@ function CRMPage() {
                             onClick={() => {
                               confirm({
                                 title: "Excluir Permanentemente",
-                                description: "Deseja EXCLUIR este lead permanentemente? Essa ação não pode ser desfeita.",
+                                description:
+                                  "Deseja EXCLUIR este lead permanentemente? Essa ação não pode ser desfeita.",
                                 variant: "destructive",
                                 onConfirm: async () => {
                                   try {
@@ -319,7 +314,7 @@ function CRMPage() {
                                   } catch (e) {
                                     toast.error("Falha ao excluir permanentemente");
                                   }
-                                }
+                                },
                               });
                             }}
                             className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
@@ -534,21 +529,35 @@ function NewLeadSheet({
   }
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Novo Lead / Oportunidade" width="clamp(480px, 45vw, 640px)">
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Novo Lead / Oportunidade"
+      width="clamp(480px, 45vw, 640px)"
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2 pb-20">
-        
         {/* Seção Cliente */}
         <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             1. Perfil do Cliente
           </h3>
           <Field label="Vincular a Cliente Existente (Opcional)" error={errors.client_id?.message}>
-            <Select {...register("client_id")}>
-              <option value="">Novo Cliente (Sem vínculo)</option>
-              {clientsQ.data?.map((c: any) => (
-                <option key={c.id} value={c.id}>{c.full_name} ({c.email || c.phone})</option>
-              ))}
-            </Select>
+            <SearchableSelect
+              value={watch("client_id") ?? ""}
+              onChange={(val) => setValue("client_id", val, { shouldValidate: true })}
+              placeholder="Novo cliente (sem vínculo)"
+              searchPlaceholder="Buscar por nome, e-mail..."
+              options={[
+                { value: "", label: "Novo cliente (sem vínculo)" },
+                ...(clientsQ.data?.map((c: any) => ({
+                  value: c.id,
+                  label: c.full_name,
+                  sublabel: c.email || c.phone || undefined,
+                })) ?? []),
+              ]}
+              loading={clientsQ.isLoading}
+              clearable={true}
+            />
             <p className="text-[11px] text-muted-foreground mt-1">
               Vincular preencherá os dados de contato automaticamente.
             </p>
@@ -572,19 +581,27 @@ function NewLeadSheet({
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             2. Detalhes do Interesse
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <Field label="Destino de Interesse" error={errors.destination?.message}>
               <Input {...register("destination")} placeholder="Ex: Paris, Orlando" />
             </Field>
-            <Field label="Período/Mês Flexível de Interesse" error={errors.interest_period?.message}>
+            <Field
+              label="Período/Mês Flexível de Interesse"
+              error={errors.interest_period?.message}
+            >
               <Input {...register("interest_period")} placeholder="Ex: Julho/2026, Outubro" />
             </Field>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
-              <Input type="number" min={0} step="0.01" {...register("estimated_value", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                {...register("estimated_value", { valueAsNumber: true })}
+              />
             </Field>
             <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
               <Select {...register("interest_type")}>
@@ -602,7 +619,9 @@ function NewLeadSheet({
             <Field label="Estágio no Funil *" error={errors.stage_id?.message}>
               <Select {...register("stage_id")}>
                 {stages.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
                 ))}
               </Select>
             </Field>
@@ -632,10 +651,18 @@ function NewLeadSheet({
                 <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
               </Field>
               <Field label="Crianças (2 a 11)" error={errors.pax_children?.message}>
-                <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
+                <Input
+                  type="number"
+                  min={0}
+                  {...register("pax_children", { valueAsNumber: true })}
+                />
               </Field>
               <Field label="Bebês (0 a 2)" error={errors.pax_infants?.message}>
-                <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
+                <Input
+                  type="number"
+                  min={0}
+                  {...register("pax_infants", { valueAsNumber: true })}
+                />
               </Field>
             </div>
           </div>
@@ -721,7 +748,7 @@ function StageSettingsModal({
               toast.error(err.message || "Erro na operação");
               setBusy(false);
             }
-          }
+          },
         });
       }
     } catch (err: any) {
@@ -735,10 +762,12 @@ function StageSettingsModal({
     try {
       const targetStage = localStages.find((s) => s.id === transferTargetId);
       if (!targetStage) throw new Error("Estágio de destino inválido.");
-      
+
       await moveLeadsToStage(deletePrompt.id, transferTargetId);
       await deleteStageService(deletePrompt.id);
-      toast.success(`${deletePrompt.count} leads transferidos para ${targetStage.name} e estágio excluído.`);
+      toast.success(
+        `${deletePrompt.count} leads transferidos para ${targetStage.name} e estágio excluído.`,
+      );
       setDeletePrompt(null);
       setTransferTargetId("");
       onUpdated();
@@ -764,7 +793,12 @@ function StageSettingsModal({
   }
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Configurar Funil (Kanban)" width="clamp(480px, 45vw, 640px)">
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Configurar Funil (Kanban)"
+      width="clamp(480px, 45vw, 640px)"
+    >
       <div className="flex flex-col h-full justify-between pb-20 space-y-6">
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground -mt-3">
@@ -874,7 +908,7 @@ function StageSettingsModal({
           </div>
         </div>
       </div>
-      
+
       <ConfirmDialog />
 
       <AlertDialog open={!!deletePrompt} onOpenChange={(open) => !open && setDeletePrompt(null)}>
@@ -882,7 +916,8 @@ function StageSettingsModal({
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir e Transferir Leads</AlertDialogTitle>
             <AlertDialogDescription>
-              Este estágio possui {deletePrompt?.count} leads ativos. Para deletá-lo, você deve transferi-los para outro estágio.
+              Este estágio possui {deletePrompt?.count} leads ativos. Para deletá-lo, você deve
+              transferi-los para outro estágio.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">
@@ -891,14 +926,16 @@ function StageSettingsModal({
               {localStages
                 .filter((s) => s.id !== deletePrompt?.id && !s.id.startsWith("temp_"))
                 .map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
                 ))}
             </Select>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeletePrompt(null)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmTransferAndDelete} 
+            <AlertDialogAction
+              onClick={confirmTransferAndDelete}
               disabled={!transferTargetId || busy}
               className="bg-danger hover:bg-danger/90 text-white"
             >

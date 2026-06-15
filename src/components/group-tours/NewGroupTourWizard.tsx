@@ -42,45 +42,60 @@ const STEPS = ["Essencial", "Data & Vagas", "Valores & Inclusos", "Itinerário &
 
 type ItineraryDay = { day: number; title: string; description: string };
 
-const tourWizardSchema = z.object({
-  title: z.string().min(3, "Título deve ter no mínimo 3 caracteres"),
-  destination: z.string().min(2, "Destino é obrigatório"),
-  transportType: z.string().default("air"),
-  slug: z.string().min(2, "Slug inválido ou curto"),
-  departure: z.string().min(1, "Data de saída é obrigatória"),
-  ret: z.string().optional().nullable(),
-  regDeadline: z.string().optional().nullable(),
-  seats: z.number({ invalid_type_error: "Deve ser um número" }).min(1, "Mínimo 1 vaga"),
-  busLayout: z.string().optional().nullable(),
-  price: z.number({ invalid_type_error: "Insira um valor válido" }).min(0, "O preço base não pode ser negativo"),
-  includes: z.array(z.string()).default([]),
-  excludes: z.array(z.string()).default([]),
-  hasFlights: z.boolean().default(false),
-  coverUrl: z.string().optional().nullable(),
-  itinerary: z.array(z.object({
-    day: z.number(),
-    title: z.string(),
-    description: z.string(),
-  })).default([]),
-  isPublic: z.boolean().default(false),
-  status: z.string().default("draft"),
-}).refine((data) => {
-  if (data.departure && data.ret) {
-    return new Date(data.ret) >= new Date(data.departure);
-  }
-  return true;
-}, {
-  message: "Retorno deve ser posterior ou igual à saída",
-  path: ["ret"],
-}).refine((data) => {
-  if (data.departure && data.regDeadline) {
-    return new Date(data.regDeadline) <= new Date(data.departure);
-  }
-  return true;
-}, {
-  message: "Prazo de inscrição deve ser anterior ou igual à saída",
-  path: ["regDeadline"],
-});
+const tourWizardSchema = z
+  .object({
+    title: z.string().min(3, "Título deve ter no mínimo 3 caracteres"),
+    destination: z.string().min(2, "Destino é obrigatório"),
+    transportType: z.string().default("air"),
+    slug: z.string().min(2, "Slug inválido ou curto"),
+    departure: z.string().min(1, "Data de saída é obrigatória"),
+    ret: z.string().optional().nullable(),
+    regDeadline: z.string().optional().nullable(),
+    seats: z.number({ invalid_type_error: "Deve ser um número" }).min(1, "Mínimo 1 vaga"),
+    busLayout: z.string().optional().nullable(),
+    price: z
+      .number({ invalid_type_error: "Insira um valor válido" })
+      .min(0, "O preço base não pode ser negativo"),
+    includes: z.array(z.string()).default([]),
+    excludes: z.array(z.string()).default([]),
+    hasFlights: z.boolean().default(false),
+    coverUrl: z.string().optional().nullable(),
+    itinerary: z
+      .array(
+        z.object({
+          day: z.number(),
+          title: z.string(),
+          description: z.string(),
+        }),
+      )
+      .default([]),
+    isPublic: z.boolean().default(false),
+    status: z.string().default("draft"),
+  })
+  .refine(
+    (data) => {
+      if (data.departure && data.ret) {
+        return new Date(data.ret) >= new Date(data.departure);
+      }
+      return true;
+    },
+    {
+      message: "Retorno deve ser posterior ou igual à saída",
+      path: ["ret"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.departure && data.regDeadline) {
+        return new Date(data.regDeadline) <= new Date(data.departure);
+      }
+      return true;
+    },
+    {
+      message: "Prazo de inscrição deve ser anterior ou igual à saída",
+      path: ["regDeadline"],
+    },
+  );
 
 type TourWizardFormData = z.infer<typeof tourWizardSchema>;
 
@@ -163,7 +178,9 @@ export function NewGroupTourWizard({
 
   const generateSlug = () => {
     if (!watchTitle) return;
-    setValue("slug", slugify(watchTitle) + "-" + Math.random().toString(36).slice(2, 6), { shouldValidate: true });
+    setValue("slug", slugify(watchTitle) + "-" + Math.random().toString(36).slice(2, 6), {
+      shouldValidate: true,
+    });
   };
 
   const handleNext = async () => {
@@ -305,10 +322,7 @@ export function NewGroupTourWizard({
                 </Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Destino Principal *" error={errors.destination?.message}>
-                    <Input
-                      {...register("destination")}
-                      placeholder="Ex: Gramado, RS"
-                    />
+                    <Input {...register("destination")} placeholder="Ex: Gramado, RS" />
                   </Field>
                   <Field label="Meio de Transporte" error={errors.transportType?.message}>
                     <Select {...register("transportType")}>
@@ -325,10 +339,7 @@ export function NewGroupTourWizard({
                     <span className="text-muted-foreground bg-surface-alt px-3 py-2 rounded-md border border-border text-sm">
                       /tour/
                     </span>
-                    <Input
-                      {...register("slug")}
-                      placeholder="reveillon-gramado-2027"
-                    />
+                    <Input {...register("slug")} placeholder="reveillon-gramado-2027" />
                     <GhostButton type="button" onClick={generateSlug} className="shrink-0 h-9">
                       Gerar
                     </GhostButton>
@@ -353,15 +364,14 @@ export function NewGroupTourWizard({
                     <Input type="date" {...register("regDeadline")} />
                   </Field>
                   <Field label="Total de Vagas *" error={errors.seats?.message}>
-                    <Input
-                      type="number"
-                      min={1}
-                      {...register("seats", { valueAsNumber: true })}
-                    />
+                    <Input type="number" min={1} {...register("seats", { valueAsNumber: true })} />
                   </Field>
                 </div>
                 {watchTransportType === "bus" && (
-                  <Field label="Mapa de Assentos (Frota de Ônibus)" error={errors.busLayout?.message}>
+                  <Field
+                    label="Mapa de Assentos (Frota de Ônibus)"
+                    error={errors.busLayout?.message}
+                  >
                     <Select {...register("busLayout")}>
                       <option value="">Sem ônibus atrelado (Não controlar mapa)</option>
                       {busesQ.data?.map((b) => (
@@ -411,7 +421,9 @@ export function NewGroupTourWizard({
                             if (e.key === "Enter") {
                               e.preventDefault();
                               if (newInclude.trim()) {
-                                setValue("includes", [...watchIncludes, newInclude.trim()], { shouldValidate: true });
+                                setValue("includes", [...watchIncludes, newInclude.trim()], {
+                                  shouldValidate: true,
+                                });
                                 setNewInclude("");
                               }
                             }
@@ -422,7 +434,9 @@ export function NewGroupTourWizard({
                           type="button"
                           onClick={() => {
                             if (newInclude.trim()) {
-                              setValue("includes", [...watchIncludes, newInclude.trim()], { shouldValidate: true });
+                              setValue("includes", [...watchIncludes, newInclude.trim()], {
+                                shouldValidate: true,
+                              });
                               setNewInclude("");
                             }
                           }}
@@ -442,7 +456,13 @@ export function NewGroupTourWizard({
                           </span>
                           <button
                             type="button"
-                            onClick={() => setValue("includes", watchIncludes.filter((_, idx) => idx !== i), { shouldValidate: true })}
+                            onClick={() =>
+                              setValue(
+                                "includes",
+                                watchIncludes.filter((_, idx) => idx !== i),
+                                { shouldValidate: true },
+                              )
+                            }
                             className="hover:text-danger"
                           >
                             <X className="h-3 w-3" />
@@ -468,7 +488,9 @@ export function NewGroupTourWizard({
                             if (e.key === "Enter") {
                               e.preventDefault();
                               if (newExclude.trim()) {
-                                setValue("excludes", [...watchExcludes, newExclude.trim()], { shouldValidate: true });
+                                setValue("excludes", [...watchExcludes, newExclude.trim()], {
+                                  shouldValidate: true,
+                                });
                                 setNewExclude("");
                               }
                             }
@@ -479,7 +501,9 @@ export function NewGroupTourWizard({
                           type="button"
                           onClick={() => {
                             if (newExclude.trim()) {
-                              setValue("excludes", [...watchExcludes, newExclude.trim()], { shouldValidate: true });
+                              setValue("excludes", [...watchExcludes, newExclude.trim()], {
+                                shouldValidate: true,
+                              });
                               setNewExclude("");
                             }
                           }}
@@ -499,7 +523,13 @@ export function NewGroupTourWizard({
                           </span>
                           <button
                             type="button"
-                            onClick={() => setValue("excludes", watchExcludes.filter((_, idx) => idx !== i), { shouldValidate: true })}
+                            onClick={() =>
+                              setValue(
+                                "excludes",
+                                watchExcludes.filter((_, idx) => idx !== i),
+                                { shouldValidate: true },
+                              )
+                            }
                             className="hover:text-danger/70"
                           >
                             <X className="h-3 w-3" />
@@ -570,10 +600,14 @@ export function NewGroupTourWizard({
                     <GhostButton
                       type="button"
                       onClick={() =>
-                        setValue("itinerary", [
-                          ...watchItinerary,
-                          { day: watchItinerary.length + 1, title: "", description: "" },
-                        ], { shouldValidate: true })
+                        setValue(
+                          "itinerary",
+                          [
+                            ...watchItinerary,
+                            { day: watchItinerary.length + 1, title: "", description: "" },
+                          ],
+                          { shouldValidate: true },
+                        )
                       }
                       className="h-8 text-xs gap-1.5 border border-border"
                     >
@@ -593,7 +627,15 @@ export function NewGroupTourWizard({
                           </div>
                           <button
                             type="button"
-                            onClick={() => setValue("itinerary", watchItinerary.filter((_, i) => i !== idx).map((d, i) => ({ ...d, day: i + 1 })), { shouldValidate: true })}
+                            onClick={() =>
+                              setValue(
+                                "itinerary",
+                                watchItinerary
+                                  .filter((_, i) => i !== idx)
+                                  .map((d, i) => ({ ...d, day: i + 1 })),
+                                { shouldValidate: true },
+                              )
+                            }
                             className="text-muted-foreground/50 hover:text-danger mt-auto pb-1"
                             title="Remover dia"
                           >
@@ -605,9 +647,13 @@ export function NewGroupTourWizard({
                             placeholder={`Título do Dia ${idx + 1} (ex: Chegada em Gramado)`}
                             value={day.title}
                             onChange={(e) =>
-                              setValue("itinerary", watchItinerary.map((d, i) =>
-                                i === idx ? { ...d, title: e.target.value } : d,
-                              ), { shouldValidate: true })
+                              setValue(
+                                "itinerary",
+                                watchItinerary.map((d, i) =>
+                                  i === idx ? { ...d, title: e.target.value } : d,
+                                ),
+                                { shouldValidate: true },
+                              )
                             }
                             className="font-semibold text-sm"
                           />
@@ -616,9 +662,13 @@ export function NewGroupTourWizard({
                             rows={3}
                             value={day.description}
                             onChange={(e) =>
-                              setValue("itinerary", watchItinerary.map((d, i) =>
-                                i === idx ? { ...d, description: e.target.value } : d,
-                              ), { shouldValidate: true })
+                              setValue(
+                                "itinerary",
+                                watchItinerary.map((d, i) =>
+                                  i === idx ? { ...d, description: e.target.value } : d,
+                                ),
+                                { shouldValidate: true },
+                              )
                             }
                           />
                         </div>
@@ -639,14 +689,20 @@ export function NewGroupTourWizard({
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="rounded-xl border border-border bg-surface-alt/20 p-6 flex gap-6">
                   {watchCoverUrl ? (
-                    <img src={watchCoverUrl} alt="Cover" className="w-32 h-32 rounded-lg object-cover" />
+                    <img
+                      src={watchCoverUrl}
+                      alt="Cover"
+                      className="w-32 h-32 rounded-lg object-cover"
+                    />
                   ) : (
                     <div className="w-32 h-32 rounded-lg bg-surface flex items-center justify-center border border-dashed border-border">
                       <Map className="h-8 w-8 text-muted-foreground/30" />
                     </div>
                   )}
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-foreground">{watchTitle || "Sem título"}</h3>
+                    <h3 className="text-xl font-bold text-foreground">
+                      {watchTitle || "Sem título"}
+                    </h3>
                     <p className="text-sm text-muted-foreground mb-3">
                       {watchDestination || "Destino não informado"}
                     </p>
@@ -665,13 +721,17 @@ export function NewGroupTourWizard({
                       <div className="flex flex-col">
                         <span className="text-muted-foreground">Saída:</span>
                         <strong>
-                          {watchDeparture ? new Date(watchDeparture + "T00:00:00").toLocaleDateString("pt-BR") : "A definir"}
+                          {watchDeparture
+                            ? new Date(watchDeparture + "T00:00:00").toLocaleDateString("pt-BR")
+                            : "A definir"}
                         </strong>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-muted-foreground">Retorno:</span>
                         <strong>
-                          {watchRet ? new Date(watchRet + "T00:00:00").toLocaleDateString("pt-BR") : "A definir"}
+                          {watchRet
+                            ? new Date(watchRet + "T00:00:00").toLocaleDateString("pt-BR")
+                            : "A definir"}
                         </strong>
                       </div>
                     </div>
@@ -684,11 +744,7 @@ export function NewGroupTourWizard({
                   </h4>
 
                   <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id="isPublic"
-                      {...register("isPublic")}
-                    />
+                    <input type="checkbox" id="isPublic" {...register("isPublic")} />
                     <label
                       htmlFor="isPublic"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -718,7 +774,12 @@ export function NewGroupTourWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <GhostButton type="button" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+          <GhostButton
+            type="button"
+            onClick={handleBack}
+            disabled={step === 0}
+            className="gap-2 w-28"
+          >
             <ChevronLeft className="h-4 w-4" /> Voltar
           </GhostButton>
 

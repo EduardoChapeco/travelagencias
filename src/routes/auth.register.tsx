@@ -18,18 +18,20 @@ export const Route = createFileRoute("/auth/register")({
   component: RegisterPage,
 });
 
-const registerSchema = z.object({
-  fullName: z.string().min(2, "Nome completo é obrigatório"),
-  email: z.string().min(1, "E-mail é obrigatório").email("Digite um e-mail válido"),
-  password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
-  confirmPassword: z.string().min(8, "A confirmação de senha é obrigatória"),
-  acceptedTerms: z.boolean().refine((val) => val === true, {
-    message: "Você precisa aceitar os termos de serviço e a política de privacidade",
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "As senhas não coincidem",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    fullName: z.string().min(2, "Nome completo é obrigatório"),
+    email: z.string().min(1, "E-mail é obrigatório").email("Digite um e-mail válido"),
+    password: z.string().min(8, "A senha deve ter no mínimo 8 caracteres"),
+    confirmPassword: z.string().min(8, "A confirmação de senha é obrigatória"),
+    acceptedTerms: z.boolean().refine((val) => val === true, {
+      message: "Você precisa aceitar os termos de serviço e a política de privacidade",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -96,8 +98,7 @@ function RegisterPage() {
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Verifique seu e-mail</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Enviamos um e-mail de confirmação. Clique no link da
-            mensagem para ativar sua conta.
+            Enviamos um e-mail de confirmação. Clique no link da mensagem para ativar sua conta.
           </p>
           <div className="mt-8 space-y-3">
             <Link
@@ -131,11 +132,7 @@ function RegisterPage() {
           </Field>
 
           <Field label="E-mail" error={errors.email?.message}>
-            <Input
-              type="email"
-              autoComplete="email"
-              {...register("email")}
-            />
+            <Input type="email" autoComplete="email" {...register("email")} />
           </Field>
 
           <Field label="Senha" error={errors.password?.message}>
@@ -148,11 +145,7 @@ function RegisterPage() {
           </Field>
 
           <Field label="Confirmação de senha" error={errors.confirmPassword?.message}>
-            <Input
-              type="password"
-              autoComplete="new-password"
-              {...register("confirmPassword")}
-            />
+            <Input type="password" autoComplete="new-password" {...register("confirmPassword")} />
           </Field>
 
           <div>
@@ -161,11 +154,7 @@ function RegisterPage() {
                 control={control}
                 name="acceptedTerms"
                 render={({ field }) => (
-                  <Checkbox
-                    id="terms"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
+                  <Checkbox id="terms" checked={field.value} onCheckedChange={field.onChange} />
                 )}
               />
               <label
@@ -188,11 +177,7 @@ function RegisterPage() {
             )}
           </div>
 
-          <PrimaryButton
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full mt-6"
-          >
+          <PrimaryButton type="submit" disabled={isSubmitting} className="w-full mt-6">
             {isSubmitting ? "Criando conta…" : "Criar conta"}
           </PrimaryButton>
         </form>

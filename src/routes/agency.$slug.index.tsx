@@ -376,4 +376,3 @@ function QuickLink({ to, label }: { to: string; label: string }) {
     </Link>
   );
 }
-

@@ -21,6 +21,8 @@ export function ContractEditor({
   tripTotal,
   tripCurrency,
   totalPax,
+  clientData,
+  setClientData,
 }: {
   isEditable: boolean;
   packageSummary: string;
@@ -33,6 +35,8 @@ export function ContractEditor({
   tripTotal: number;
   tripCurrency: string;
   totalPax: number;
+  clientData: any[];
+  setClientData: (data: any[]) => void;
 }) {
   const [showClauses, setShowClauses] = useState(false);
   const [editingCustom, setEditingCustom] = useState(false);
@@ -51,6 +55,102 @@ export function ContractEditor({
           placeholder="Descreva o pacote contratado: destino, datas, serviços incluídos…"
           className="w-full rounded-md border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
         />
+      </div>
+
+      {/* Contratantes */}
+      <div className="rounded-lg border border-border bg-surface p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Contratantes (Pagantes)</h2>
+          {isEditable && (
+            <button
+              onClick={() => {
+                setClientData([
+                  ...clientData,
+                  { name: "", cpf: "", email: "", phone: "", address: "" },
+                ]);
+              }}
+              className="flex items-center gap-1 text-xs text-primary hover:underline font-bold"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Adicionar
+            </button>
+          )}
+        </div>
+        <div className="space-y-3">
+          {clientData.length === 0 && (
+            <p className="text-xs text-muted-foreground">Nenhum contratante adicionado.</p>
+          )}
+          {clientData.map((c, i) => (
+            <div key={i} className="flex flex-col gap-2 rounded-md border border-border p-3 bg-surface-alt/10 relative">
+              {isEditable && (
+                <button
+                  onClick={() => setClientData(clientData.filter((_, x) => x !== i))}
+                  className="absolute top-2 right-2 text-muted-foreground hover:text-danger p-1"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <input
+                  readOnly={!isEditable}
+                  placeholder="Nome Completo"
+                  value={c.name || ""}
+                  onChange={(e) => {
+                    const nd = [...clientData];
+                    nd[i].name = e.target.value;
+                    setClientData(nd);
+                  }}
+                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                />
+                <input
+                  readOnly={!isEditable}
+                  placeholder="CPF / CNPJ / Passaporte"
+                  value={c.cpf || c.document || ""}
+                  onChange={(e) => {
+                    const nd = [...clientData];
+                    nd[i].cpf = e.target.value;
+                    nd[i].document = e.target.value;
+                    setClientData(nd);
+                  }}
+                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                />
+                <input
+                  readOnly={!isEditable}
+                  placeholder="Email"
+                  value={c.email || ""}
+                  onChange={(e) => {
+                    const nd = [...clientData];
+                    nd[i].email = e.target.value;
+                    setClientData(nd);
+                  }}
+                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                />
+                <input
+                  readOnly={!isEditable}
+                  placeholder="Telefone"
+                  value={c.phone || ""}
+                  onChange={(e) => {
+                    const nd = [...clientData];
+                    nd[i].phone = e.target.value;
+                    setClientData(nd);
+                  }}
+                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                />
+                <input
+                  readOnly={!isEditable}
+                  placeholder="Endereço"
+                  value={c.address || ""}
+                  onChange={(e) => {
+                    const nd = [...clientData];
+                    nd[i].address = e.target.value;
+                    setClientData(nd);
+                  }}
+                  className="col-span-1 md:col-span-2 w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Payment terms */}
@@ -99,7 +199,10 @@ export function ContractEditor({
 
           <div className="space-y-2">
             {customClauses.map((c, i) => (
-              <div key={i} className="flex gap-2 rounded-md border border-border p-2.5 text-xs bg-surface-alt/10">
+              <div
+                key={i}
+                className="flex gap-2 rounded-md border border-border p-2.5 text-xs bg-surface-alt/10"
+              >
                 <div className="flex-1">
                   <div className="font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
                     {c.section}
@@ -193,7 +296,9 @@ export function ContractEditor({
                   </span>
                   <Shield className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <p className="text-xs text-foreground leading-relaxed font-medium">{c.clause_text}</p>
+                <p className="text-xs text-foreground leading-relaxed font-medium">
+                  {c.clause_text}
+                </p>
               </div>
             ))}
           </div>

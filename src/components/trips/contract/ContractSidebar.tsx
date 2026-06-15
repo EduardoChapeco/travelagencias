@@ -49,20 +49,12 @@ export function ContractSidebar({
           </h3>
           <div className="space-y-1.5 text-xs text-foreground font-medium">
             <div className="font-bold text-foreground">{client.full_name}</div>
-            {client.cpf && (
-              <div className="text-muted-foreground">CPF: {client.cpf}</div>
-            )}
+            {client.cpf && <div className="text-muted-foreground">CPF: {client.cpf}</div>}
             {client.passport_number && (
-              <div className="text-muted-foreground">
-                Passaporte: {client.passport_number}
-              </div>
+              <div className="text-muted-foreground">Passaporte: {client.passport_number}</div>
             )}
-            {client.email && (
-              <div className="text-muted-foreground">{client.email}</div>
-            )}
-            {client.phone && (
-              <div className="text-muted-foreground">{client.phone}</div>
-            )}
+            {client.email && <div className="text-muted-foreground">{client.email}</div>}
+            {client.phone && <div className="text-muted-foreground">{client.phone}</div>}
           </div>
         </div>
       )}
@@ -106,9 +98,7 @@ export function ContractSidebar({
           </div>
           <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-foreground font-bold">
             <span>Valor total</span>
-            <span className="font-mono">
-              {money(trip.total_sale, trip.currency)}
-            </span>
+            <span className="font-mono">{money(trip.total_sale, trip.currency)}</span>
           </div>
         </div>
       </div>

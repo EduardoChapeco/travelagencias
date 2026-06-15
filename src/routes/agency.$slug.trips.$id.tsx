@@ -58,7 +58,12 @@ function TripLayout() {
     enabled: !!agency,
     queryKey: ["trip", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("trips").select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase
+        .from("trips")
+        .select("*")
+        .eq("id", id)
+        .is("deleted_at", null)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -92,7 +97,10 @@ function TripLayout() {
   // ─── Excluir viagem ────────────────────────────────────────────
   const delMut = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("trips").delete().eq("id", id);
+      const { error } = await supabase
+        .from("trips")
+        .update({ deleted_at: new Date().toISOString() } as any)
+        .eq("id", id);
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
@@ -106,7 +114,10 @@ function TripLayout() {
   // ─── Alterar status rápido ─────────────────────────────────────
   const statusMut = useMutation({
     mutationFn: async (newStatus: string) => {
-      const { error } = await supabase.from("trips").update({ status: newStatus } as any).eq("id", id);
+      const { error } = await supabase
+        .from("trips")
+        .update({ status: newStatus } as any)
+        .eq("id", id);
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
@@ -290,7 +301,8 @@ function TripLayout() {
             <>
               <Clock className="h-4 w-4 text-brand" />
               <span className="font-semibold text-foreground">
-                Faltam <span className="text-brand font-bold">{daysToTrip} dias</span> para o embarque
+                Faltam <span className="text-brand font-bold">{daysToTrip} dias</span> para o
+                embarque
               </span>
             </>
           ) : t.status === "completed" ? (

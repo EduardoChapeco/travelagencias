@@ -9,7 +9,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
-import { createProposal, fetchClientsPick, fetchLeadsPick, updateProposal, processOcrFile } from "@/services/proposals";
+import {
+  createProposal,
+  fetchClientsPick,
+  fetchLeadsPick,
+  updateProposal,
+  processOcrFile,
+} from "@/services/proposals";
 
 export const Route = createFileRoute("/agency/$slug/proposals/new")({
   validateSearch: z.object({
@@ -88,32 +94,60 @@ function NewProposal() {
     try {
       setOcrStep("IA lendo PDF e imagens...");
       const data = await processOcrFile(file, undefined, agency.id);
-      
+
       setOcrStep("Estruturando voos, hotéis e roteiro...");
       // Auto-preencher dados gerais
       if (data.destination) {
         setValue("destination", data.destination, { shouldValidate: true });
         setValue("title", `Cotação inteligente: ${data.destination}`, { shouldValidate: true });
       } else {
-        setValue("title", `Cotação importada: ${file.name.replace(/\.[^/.]+$/, "")}`, { shouldValidate: true });
+        setValue("title", `Cotação importada: ${file.name.replace(/\.[^/.]+$/, "")}`, {
+          shouldValidate: true,
+        });
       }
-      
+
       // Datas
       if (data.flights && data.flights.length > 0) {
-        const sortedFlights = [...data.flights].sort((a, b) => new Date(a.date || a.departure_time).getTime() - new Date(b.date || b.departure_time).getTime());
+        const sortedFlights = [...data.flights].sort(
+          (a, b) =>
+            new Date(a.date || a.departure_time).getTime() -
+            new Date(b.date || b.departure_time).getTime(),
+        );
         if (sortedFlights[0]?.date || sortedFlights[0]?.departure_time) {
-          setValue("travel_start", new Date(sortedFlights[0].date || sortedFlights[0].departure_time).toISOString().split("T")[0], { shouldValidate: true });
+          setValue(
+            "travel_start",
+            new Date(sortedFlights[0].date || sortedFlights[0].departure_time)
+              .toISOString()
+              .split("T")[0],
+            { shouldValidate: true },
+          );
         }
-        if (sortedFlights[sortedFlights.length - 1]?.date || sortedFlights[sortedFlights.length - 1]?.departure_time) {
-          setValue("travel_end", new Date(sortedFlights[sortedFlights.length - 1].date || sortedFlights[sortedFlights.length - 1].departure_time).toISOString().split("T")[0], { shouldValidate: true });
+        if (
+          sortedFlights[sortedFlights.length - 1]?.date ||
+          sortedFlights[sortedFlights.length - 1]?.departure_time
+        ) {
+          setValue(
+            "travel_end",
+            new Date(
+              sortedFlights[sortedFlights.length - 1].date ||
+                sortedFlights[sortedFlights.length - 1].departure_time,
+            )
+              .toISOString()
+              .split("T")[0],
+            { shouldValidate: true },
+          );
         }
       } else if (data.hotels && data.hotels.length > 0) {
-        const sortedHotels = [...data.hotels].sort((a, b) => new Date(a.checkin).getTime() - new Date(b.checkin).getTime());
+        const sortedHotels = [...data.hotels].sort(
+          (a, b) => new Date(a.checkin).getTime() - new Date(b.checkin).getTime(),
+        );
         if (sortedHotels[0]?.checkin) {
           setValue("travel_start", sortedHotels[0].checkin, { shouldValidate: true });
         }
         if (sortedHotels[sortedHotels.length - 1]?.checkout) {
-          setValue("travel_end", sortedHotels[sortedHotels.length - 1].checkout, { shouldValidate: true });
+          setValue("travel_end", sortedHotels[sortedHotels.length - 1].checkout, {
+            shouldValidate: true,
+          });
         }
       }
 
@@ -244,7 +278,9 @@ function NewProposal() {
           <div className="flex flex-col items-center justify-center py-4 space-y-3">
             <Loader2 className="h-8 w-8 animate-spin text-brand animate-pulse" />
             <div className="text-sm font-semibold text-foreground">{ocrStep}</div>
-            <div className="text-xs text-muted-foreground">Isso pode levar alguns segundos dependendo do tamanho do arquivo.</div>
+            <div className="text-xs text-muted-foreground">
+              Isso pode levar alguns segundos dependendo do tamanho do arquivo.
+            </div>
           </div>
         ) : (
           <label className="flex flex-col items-center justify-center cursor-pointer group py-4">
@@ -252,10 +288,12 @@ function NewProposal() {
               <Upload className="h-6 w-6" />
             </div>
             <h3 className="font-bold text-foreground text-sm flex items-center justify-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento com Inteligência Artificial
+              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento com Inteligência
+              Artificial
             </h3>
             <p className="text-xs text-muted-foreground mt-1 max-w-md">
-              Arraste um PDF/Imagem aqui ou clique para selecionar. A IA criará voos, hotéis e o itinerário completo automaticamente.
+              Arraste um PDF/Imagem aqui ou clique para selecionar. A IA criará voos, hotéis e o
+              itinerário completo automaticamente.
             </p>
             <input
               type="file"
@@ -269,13 +307,15 @@ function NewProposal() {
             />
           </label>
         )}
-        
+
         {extractedItems && (
           <div className="mt-4 rounded-xl bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
               <p className="text-[10px] text-muted-foreground mt-0.5">
-                {(extractedItems.flights?.length ?? 0)} voo(s), {(extractedItems.hotels?.length ?? 0)} hotel(eis) e {(extractedItems.itinerary?.length ?? 0)} dia(s) de roteiro serão salvos ao criar a cotação.
+                {extractedItems.flights?.length ?? 0} voo(s), {extractedItems.hotels?.length ?? 0}{" "}
+                hotel(eis) e {extractedItems.itinerary?.length ?? 0} dia(s) de roteiro serão salvos
+                ao criar a cotação.
               </p>
             </div>
             <button
@@ -294,10 +334,7 @@ function NewProposal() {
         className="max-w-2xl space-y-3 rounded-lg border border-border bg-surface p-5"
       >
         <Field label="Título *" error={errors.title?.message}>
-          <Input
-            {...register("title")}
-            placeholder="Ex: Lua de mel em Maldivas"
-          />
+          <Input {...register("title")} placeholder="Ex: Lua de mel em Maldivas" />
         </Field>
         <Field label="Destino" error={errors.destination?.message}>
           <Input {...register("destination")} />
@@ -326,10 +363,7 @@ function NewProposal() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Início" error={errors.travel_start?.message}>
-            <Input
-              type="date"
-              {...register("travel_start")}
-            />
+            <Input type="date" {...register("travel_start")} />
           </Field>
           <Field label="Volta" error={errors.travel_end?.message}>
             <Input type="date" {...register("travel_end")} />
@@ -337,25 +371,13 @@ function NewProposal() {
         </div>
         <div className="grid grid-cols-3 gap-3">
           <Field label="Adultos" error={errors.pax_adults?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_adults", { valueAsNumber: true })}
-            />
+            <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
           </Field>
           <Field label="Crianças" error={errors.pax_children?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_children", { valueAsNumber: true })}
-            />
+            <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
           </Field>
           <Field label="Infantes" error={errors.pax_infants?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_infants", { valueAsNumber: true })}
-            />
+            <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">

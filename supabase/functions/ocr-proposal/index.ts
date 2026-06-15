@@ -47,7 +47,10 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
     const body = await req.json();
@@ -66,7 +69,8 @@ serve(async (req) => {
 
     let groqKey = "";
     if (gs?.value?.payload) {
-      const encryptionKey = Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
+      const encryptionKey =
+        Deno.env.get("MASTER_ENCRYPTION_KEY") || "fallback_dev_key_never_use_in_prod";
       try {
         const decryptedString = await decryptData(gs.value.payload, encryptionKey);
         const keys = JSON.parse(decryptedString);
@@ -80,10 +84,10 @@ serve(async (req) => {
     let geminiApiKey = Deno.env.get("GEMINI_API_KEY");
     if (agency_id) {
       const { data: agencyKeyData } = await supabaseClient
-        .from('api_keys')
-        .select('key_value')
-        .eq('agency_id', agency_id)
-        .eq('provider', 'gemini')
+        .from("api_keys")
+        .select("key_value")
+        .eq("agency_id", agency_id)
+        .eq("provider", "gemini")
         .maybeSingle();
       if (agencyKeyData?.key_value) {
         geminiApiKey = agencyKeyData.key_value;
@@ -161,7 +165,7 @@ ${text ? text.substring(0, 10000) : "Use a imagem enviada para leitura visual OC
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.1 } }),
           });
-          
+
           if (aiResponse.ok) {
             const aiData = await aiResponse.json();
             resultText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;

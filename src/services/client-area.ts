@@ -30,6 +30,7 @@ export async function fetchClientDashboard() {
     .from("trips")
     .select("id, code, title, travel_start, status, total_sale, currency")
     .in("client_id", clientIds)
+    .is("deleted_at", null)
     .order("travel_start", { ascending: false })
     .limit(3);
 
@@ -48,6 +49,7 @@ export async function fetchClientTrips() {
       "id, code, title, destination, travel_start, travel_end, status, total_sale, currency, agency_id",
     )
     .in("client_id", clientIds)
+    .is("deleted_at", null)
     .order("travel_start", { ascending: false, nullsFirst: false });
   if (error) throw error;
   return data;
@@ -58,6 +60,7 @@ export async function fetchClientTripDetail(tripId: string) {
     .from("trips")
     .select("*, agency:agencies(*)")
     .eq("id", tripId)
+    .is("deleted_at", null)  // ✅ Never show soft-deleted trips to client
     .maybeSingle();
   if (error) throw error;
   return data;
@@ -111,10 +114,11 @@ export async function fetchClientTripMemories(tripId: string) {
   return data || [];
 }
 
-export async function requestTripCancellation(tripId: string, reason: string) {
-  const { error } = await (supabase as any).rpc("request_trip_cancellation", {
-    _trip_id: tripId,
-    _reason: reason,
+export async function requestTripCancellation(tripId: string, clientId: string, reason: string) {
+  const { error } = await supabase.rpc("request_trip_cancellation" as any, {
+    p_trip_id: tripId,
+    p_client_id: clientId,
+    p_reason: reason,
   });
   if (error) throw error;
 }

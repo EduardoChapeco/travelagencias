@@ -158,13 +158,11 @@ export async function saveGlobalApiKey(payload: {
       .eq("id", existing.data.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase
-      .from("api_keys")
-      .insert({
-        ...payload,
-        agency_id: null,
-        is_active: payload.is_active ?? true,
-      });
+    const { error } = await supabase.from("api_keys").insert({
+      ...payload,
+      agency_id: null,
+      is_active: payload.is_active ?? true,
+    });
     if (error) throw error;
   }
 }
@@ -221,7 +219,10 @@ export async function togglePlanActive(id: string, is_active: boolean): Promise<
 export async function savePlan(plan: Partial<Plan> & { id: string }): Promise<void> {
   const existing = await supabase.from("plans").select("id").eq("id", plan.id).maybeSingle();
   if (existing.data) {
-    const { error } = await supabase.from("plans").update(plan as any).eq("id", plan.id);
+    const { error } = await supabase
+      .from("plans")
+      .update(plan as any)
+      .eq("id", plan.id);
     if (error) throw error;
   } else {
     const { error } = await supabase.from("plans").insert(plan as any);
@@ -297,14 +298,13 @@ export async function saveBrandingConfig(data: any): Promise<void> {
 export async function fetchAdminTrips(filters: { search: string; page: number; pageSize: number }) {
   let query = supabase
     .from("trips")
-    .select(
-      "id, code, title, status, destination, travel_start, total_sale, currency, agency_id",
-      { count: "exact" }
-    );
+    .select("id, code, title, status, destination, travel_start, total_sale, currency, agency_id", {
+      count: "exact",
+    });
 
   if (filters.search) {
     query = query.or(
-      `title.ilike.%${filters.search}%,code.ilike.%${filters.search}%,destination.ilike.%${filters.search}%`
+      `title.ilike.%${filters.search}%,code.ilike.%${filters.search}%,destination.ilike.%${filters.search}%`,
     );
   }
 
@@ -332,7 +332,11 @@ export async function fetchAdminTrips(filters: { search: string; page: number; p
   };
 }
 
-export async function fetchAdminTravelers(filters: { search: string; page: number; pageSize: number }) {
+export async function fetchAdminTravelers(filters: {
+  search: string;
+  page: number;
+  pageSize: number;
+}) {
   let query = supabase
     .from("clients")
     .select("id, full_name, email, phone, agency_id, created_at", { count: "exact" });
@@ -365,12 +369,16 @@ export async function fetchAdminTravelers(filters: { search: string; page: numbe
   };
 }
 
-export async function fetchAdminContracts(filters: { search: string; page: number; pageSize: number }) {
+export async function fetchAdminContracts(filters: {
+  search: string;
+  page: number;
+  pageSize: number;
+}) {
   let query = supabase
     .from("contracts")
     .select(
       "id, status, total_value, signed_at, created_at, agency_id, trip_id, client_data, certificate",
-      { count: "exact" }
+      { count: "exact" },
     );
 
   if (filters.search) {
@@ -481,7 +489,7 @@ export async function fetchAdminOverview(): Promise<AdminOverviewData> {
           r.type === "income" &&
           r.status === "paid" &&
           r.created_at >= start.toISOString() &&
-          r.created_at < end.toISOString()
+          r.created_at < end.toISOString(),
       )
       .reduce((s, r) => s + Number(r.amount ?? 0), 0);
     return { label, total };
@@ -529,7 +537,11 @@ export async function fetchBillingSummary(): Promise<any[]> {
 
 // ─── Agents list ──────────────────────────────────────────────────────────────
 
-export async function fetchAdminAgents(filters: { search: string; page: number; pageSize: number }): Promise<{ data: any[]; count: number }> {
+export async function fetchAdminAgents(filters: {
+  search: string;
+  page: number;
+  pageSize: number;
+}): Promise<{ data: any[]; count: number }> {
   let query = (supabase as any).from("vw_admin_agents").select("*", { count: "exact" });
 
   if (filters.search) {

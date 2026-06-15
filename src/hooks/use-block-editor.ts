@@ -3,6 +3,7 @@ import { PortalBlock, PortalBlockType, BLOCK_DEFAULTS } from "@/lib/cms-types";
 
 export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
   const [blocks, setBlocks] = useState<PortalBlock[]>(initialBlocks);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
   const setInitialBlocks = useCallback((newBlocks: PortalBlock[]) => {
     setBlocks(newBlocks || []);
@@ -12,6 +13,7 @@ export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
     const id = Math.random().toString(36).slice(2, 8);
     const newBlock: PortalBlock = { id, ...BLOCK_DEFAULTS[type] } as PortalBlock;
     setBlocks((prev) => [...prev, newBlock]);
+    setSelectedBlockId(id);
   }, []);
 
   const updateBlock = useCallback((id: string, updates: Partial<PortalBlock>) => {
@@ -20,6 +22,7 @@ export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
 
   const removeBlock = useCallback((id: string) => {
     setBlocks((prev) => prev.filter((b) => b.id !== id));
+    setSelectedBlockId((prev) => (prev === id ? null : prev));
   }, []);
 
   const moveBlock = useCallback((index: number, direction: -1 | 1) => {
@@ -41,5 +44,7 @@ export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
     updateBlock,
     removeBlock,
     moveBlock,
+    selectedBlockId,
+    setSelectedBlockId,
   };
 }

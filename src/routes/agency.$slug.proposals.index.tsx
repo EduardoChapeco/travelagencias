@@ -1,7 +1,18 @@
 import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Search, Filter, Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Plus,
+  Link2,
+  Edit2,
+  Eye,
+  MoreHorizontal,
+  Copy,
+  Trash2,
+  PencilLine,
+} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
@@ -73,7 +84,11 @@ function ProposalsList() {
   const list = useQuery({
     enabled: !!agency,
     queryKey: ["proposals", agency?.id, page, debouncedSearch, statusFilter],
-    queryFn: () => fetchProposalsList(agency!.id, page, pageSize, { search: debouncedSearch, status: statusFilter }),
+    queryFn: () =>
+      fetchProposalsList(agency!.id, page, pageSize, {
+        search: debouncedSearch,
+        status: statusFilter,
+      }),
   });
 
   const qc = useQueryClient();
@@ -97,8 +112,7 @@ function ProposalsList() {
   });
 
   const updateMut = useMutation({
-    mutationFn: (args: { id: string; updates: any }) =>
-      updateProposal(args.id, args.updates),
+    mutationFn: (args: { id: string; updates: any }) => updateProposal(args.id, args.updates),
     onSuccess: () => {
       toast.success("Cotação atualizada!");
       qc.invalidateQueries({ queryKey: ["proposals"] });
@@ -115,9 +129,9 @@ function ProposalsList() {
         if (newTitle && newTitle !== currentTitle) {
           updateMut.mutate({ id, updates: { title: newTitle } });
         }
-      }
+      },
     });
-  };
+  }
 
   return (
     <>
@@ -146,8 +160,8 @@ function ProposalsList() {
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar por título..." 
+              <Input
+                placeholder="Buscar por título..."
                 className="pl-9 h-10 w-full"
                 value={searchQuery}
                 onChange={(e) => {
@@ -157,9 +171,9 @@ function ProposalsList() {
               />
             </div>
             <div className="w-full sm:w-48">
-              <Select 
-                className="h-10" 
-                value={statusFilter} 
+              <Select
+                className="h-10"
+                value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setPage(1);
@@ -293,7 +307,7 @@ function ProposalsList() {
                                 variant: "destructive",
                                 onConfirm: () => {
                                   delMut.mutate(p.id);
-                                }
+                                },
                               });
                             }}
                           >

@@ -3,7 +3,11 @@ function money(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+  return new Date(d).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 const INTEREST_TYPES = [
@@ -30,13 +34,15 @@ export function LeadInterestCard({ lead }: { lead: any }) {
     : null;
 
   const travelPeriodDisplay = interestPeriod
-    ? (datesStr ? `${interestPeriod} (${datesStr})` : interestPeriod)
-    : (datesStr || "Indefinido");
+    ? datesStr
+      ? `${interestPeriod} (${datesStr})`
+      : interestPeriod
+    : datesStr || "Indefinido";
 
   const adults = lead.pax_adults || 0;
   const children = lead.pax_children || 0;
   const infants = lead.pax_infants || 0;
-  const totalPax = lead.pax_count || (adults + children + infants) || 1;
+  const totalPax = lead.pax_count || adults + children + infants || 1;
   const parts = [];
   if (adults > 0) parts.push(`${adults} Adulto(s)`);
   if (children > 0) parts.push(`${children} Criança(s)`);
@@ -52,10 +58,7 @@ export function LeadInterestCard({ lead }: { lead: any }) {
         <Row k="Destino" v={lead.destination || "Não definido"} />
         <Row
           k="Tipo de Interesse"
-          v={
-            INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label ||
-            "Não informado"
-          }
+          v={INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label || "Não informado"}
         />
         <Row k="Orçamento Estimado" v={money(lead.estimated_value || 0)} />
         <Row k="Período" v={travelPeriodDisplay} />
@@ -66,11 +69,7 @@ export function LeadInterestCard({ lead }: { lead: any }) {
         <Row k="Canal / Origem" v={lead.source || "Direto"} />
         <Row
           k="Detalhe do Canal"
-          v={
-            lead.lead_source_detail
-              ? lead.lead_source_detail.replace("_", " ")
-              : "Orgânico"
-          }
+          v={lead.lead_source_detail ? lead.lead_source_detail.replace("_", " ") : "Orgânico"}
         />
       </div>
     </div>

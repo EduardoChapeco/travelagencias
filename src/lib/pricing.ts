@@ -16,6 +16,7 @@ export type QuoteTotals = {
     hoteis: number;
     transfers: number;
     passeios: number;
+    seguro: number;
     extrasObrigatorios: number;
     extrasOpcionais: number;
   };
@@ -52,8 +53,12 @@ export function calculateQuoteTotals(state: Partial<Proposal>): QuoteTotals {
     }
   }
 
+  // Seguro Viagem (typed, no more `as any` cast)
+  const insurance = state.insurance;
+  const insurancePrice = Number(insurance?.price) || 0;
+
   // The base Subtotal only includes mandatory items
-  const subtotal = voos + hoteis + transfersTotal + passeios + extrasObrigatorios;
+  const subtotal = voos + hoteis + transfersTotal + passeios + extrasObrigatorios + insurancePrice;
 
   // Pix Discount
   const descontoPixPercentual = Number(state.pix_discount_percent) || 0;
@@ -99,6 +104,7 @@ export function calculateQuoteTotals(state: Partial<Proposal>): QuoteTotals {
       hoteis,
       transfers: transfersTotal,
       passeios,
+      seguro: insurancePrice,
       extrasObrigatorios,
       extrasOpcionais,
     },

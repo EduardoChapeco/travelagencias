@@ -32,7 +32,7 @@ serve(async (req) => {
           "Accept-Version": "v1",
           Authorization: `Client-ID ${accessKey}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {

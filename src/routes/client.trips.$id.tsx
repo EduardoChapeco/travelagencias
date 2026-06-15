@@ -25,6 +25,10 @@ import {
   Map,
   Lightbulb,
   Ban,
+  Square,
+  CheckSquare,
+  Loader2,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -63,11 +67,14 @@ function ClientTripDetail() {
   const { id } = useParams({ from: "/client/trips/$id" });
   const qc = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<"resumo" | "explorar" | "financeiro" | "memorias">(
+  const [activeTab, setActiveTab] = useState<"resumo" | "explorar" | "financeiro" | "memorias" | "contatos">(
     "resumo",
   );
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
+  const [contactsAiLoaded, setContactsAiLoaded] = useState(false);
+  const [contactsAiData, setContactsAiData] = useState<any[] | null>(null);
+  const [contactsAiLoading, setContactsAiLoading] = useState(false);
 
   const tripQ = useQuery({
     queryKey: ["client-trip", id],
@@ -104,10 +111,59 @@ function ClientTripDetail() {
     queryFn: () => fetchClientTripMemories(id),
   });
 
+  const boardingCardQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-boarding-card", id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).rpc("get_client_boarding_card", {
+        p_trip_id: id,
+      });
+      if (error) throw error;
+      return (data as any)?.[0] ?? null;
+    },
+  });
+
+  const [localChecklist, setLocalChecklist] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (boardingCardQ.data?.checklist) {
+      setLocalChecklist(boardingCardQ.data.checklist);
+    }
+  }, [boardingCardQ.data]);
+
+  const toggleBoardingItem = useMutation({
+    mutationFn: async (payload: { cardId: string; nextChecklist: any[] }) => {
+      const { error } = await (supabase as any).rpc("update_client_boarding_checklist", {
+        p_boarding_card_id: payload.cardId,
+        p_checklist: payload.nextChecklist,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-boarding-card", id] });
+      toast.success("Progresso do embarque atualizado!");
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao atualizar progresso: " + err.message);
+    },
+  });
+
+  const handleToggleChecklist = (index: number) => {
+    if (!boardingCardQ.data) return;
+    const updated = localChecklist.map((item, idx) =>
+      idx === index ? { ...item, done: !item.done } : item,
+    );
+    setLocalChecklist(updated);
+    toggleBoardingItem.mutate({
+      cardId: boardingCardQ.data.id,
+      nextChecklist: updated,
+    });
+  };
+
   const reqCancel = useMutation({
     mutationFn: async () => {
       try {
-        await requestTripCancellation(id, cancelReason);
+        await requestTripCancellation(id, trip.client_id, cancelReason);
         toast.success("Solicitação enviada. A agência entrará em contato em breve.");
         setCancelReason("");
         setShowCancelModal(false);
@@ -136,19 +192,17 @@ function ClientTripDetail() {
         .maybeSingle();
       if (error) return null;
       return data;
-    }
+    },
   });
 
   const acceptLgpd = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
-        .from("legal_acceptances" as any)
-        .insert({
-          client_id: tripQ.data!.client_id,
-          agency_id: tripQ.data!.agency_id,
-          terms_type: "lgpd_memories",
-          user_agent: navigator.userAgent
-        });
+      const { error } = await supabase.from("legal_acceptances" as any).insert({
+        client_id: tripQ.data!.client_id,
+        agency_id: tripQ.data!.agency_id,
+        terms_type: "lgpd_memories",
+        user_agent: navigator.userAgent,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -157,7 +211,7 @@ function ClientTripDetail() {
     },
     onError: (err: any) => {
       toast.error("Erro ao registrar consentimento: " + err.message);
-    }
+    },
   });
 
   if (tripQ.isLoading)
@@ -265,6 +319,12 @@ function ClientTripDetail() {
             icon={<CreditCard className="w-4 h-4" />}
             active={activeTab === "financeiro"}
             onClick={() => setActiveTab("financeiro")}
+          />
+          <TabButton
+            label="Contatos"
+            icon={<Phone className="w-4 h-4" />}
+            active={activeTab === "contatos"}
+            onClick={() => setActiveTab("contatos")}
           />
           <TabButton
             label="Memórias"
@@ -385,6 +445,97 @@ function ClientTripDetail() {
               </div>
 
               <div className="space-y-6">
+                {boardingCardQ.data && (
+                  <AppWidget
+                    title="Preparação e Pré-embarque"
+                    icon={<Plane className="h-5 w-5 text-brand" />}
+                  >
+                    <div className="space-y-4">
+                      {/* Briefing Box */}
+                      {(boardingCardQ.data.briefing_date || boardingCardQ.data.briefing_url) && (
+                        <div className="rounded-2xl border border-brand/20 bg-brand/5 p-4 text-sm">
+                          <div className="flex items-center gap-2 text-brand font-bold mb-1.5">
+                            <Clock className="w-4 h-4" /> Briefing Operacional
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                            Acompanhe os detalhes da sua viagem na reunião de alinhamento com seu
+                            consultor.
+                          </p>
+                          <div className="flex flex-wrap items-center gap-3">
+                            {boardingCardQ.data.briefing_date && (
+                              <span className="text-[11px] font-bold bg-surface border border-border px-2.5 py-1 rounded-full text-foreground whitespace-nowrap">
+                                📅{" "}
+                                {new Date(boardingCardQ.data.briefing_date).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    dateStyle: "short",
+                                    timeStyle: "short",
+                                  },
+                                )}
+                              </span>
+                            )}
+                            {boardingCardQ.data.briefing_url && (
+                              <a
+                                href={boardingCardQ.data.briefing_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-bold bg-brand text-brand-foreground px-3 py-1 rounded-full hover:opacity-90 transition-opacity"
+                              >
+                                Acessar Reunião <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Alertas */}
+                      {boardingCardQ.data.alerts && boardingCardQ.data.alerts.length > 0 && (
+                        <div className="rounded-2xl border border-warning/20 bg-warning/5 p-4">
+                          <div className="flex items-center gap-2 text-warning font-bold text-xs mb-2">
+                            <AlertTriangle className="w-4 h-4" /> Alertas Operacionais
+                          </div>
+                          <ul className="space-y-1.5 text-[11px] text-muted-foreground font-medium pl-5 list-disc leading-relaxed">
+                            {boardingCardQ.data.alerts.map((a: string, i: number) => (
+                              <li key={i}>{a}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {/* Checklist */}
+                      {localChecklist.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                            Checklist de Embarque
+                          </div>
+                          <div className="rounded-2xl border border-border/60 bg-surface/50 overflow-hidden divide-y divide-border/40">
+                            {localChecklist.map((it, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => handleToggleChecklist(idx)}
+                                disabled={toggleBoardingItem.isPending}
+                                className={`w-full flex items-center gap-3 p-3.5 text-left transition-colors hover:bg-surface-alt/40 active:bg-surface-alt ${it.done ? "bg-surface-alt/10" : ""}`}
+                              >
+                                {it.done ? (
+                                  <CheckSquare className="w-4 h-4 text-success shrink-0" />
+                                ) : (
+                                  <Square className="w-4 h-4 text-muted-foreground shrink-0" />
+                                )}
+                                <span
+                                  className={`text-xs font-semibold ${it.done ? "line-through text-muted-foreground" : "text-foreground"}`}
+                                >
+                                  {it.label}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </AppWidget>
+                )}
+
                 <AppWidget
                   title="Seus Documentos"
                   icon={<FileText className="h-5 w-5 text-brand" />}
@@ -437,26 +588,103 @@ function ClientTripDetail() {
                   </div>
                 </AppWidget>
 
-                {voucher?.emergency_contacts && voucher.emergency_contacts.length > 0 && (
+
+
+                {/* Logistics */}
+                {(trip.itinerary || trip.includes || trip.excludes || trip.insurance) && (
                   <AppWidget
-                    title="Assistência e Emergência"
-                    icon={<Phone className="h-5 w-5 text-danger" />}
+                    title="Detalhes do Roteiro e Serviços"
+                    icon={<Compass className="h-5 w-5 text-brand" />}
+                  >
+                    <div className="space-y-4">
+                      {trip.itinerary && Array.isArray(trip.itinerary) && trip.itinerary.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-bold text-foreground mb-2">Roteiro</h4>
+                          <div className="space-y-3">
+                            {trip.itinerary.map((day: any, i: number) => (
+                              <div key={i} className="flex gap-3 text-sm">
+                                <div className="font-bold text-brand min-w-[50px]">Dia {day.day}</div>
+                                <div className="text-muted-foreground">{day.description}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {trip.includes && Array.isArray(trip.includes) && trip.includes.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-bold text-success mb-2">O que está incluído</h4>
+                          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                            {trip.includes.map((item: string, i: number) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {trip.excludes && Array.isArray(trip.excludes) && trip.excludes.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-bold text-danger mb-2">O que NÃO está incluído</h4>
+                          <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                            {trip.excludes.map((item: string, i: number) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {trip.insurance && typeof trip.insurance === "object" && 
+                       Object.values(trip.insurance).some(v => v !== null && v !== "" && v !== undefined) && (
+                        <div>
+                          <h4 className="text-sm font-bold text-info mb-2">Seguro Viagem</h4>
+                          <div className="text-sm text-muted-foreground space-y-1 rounded-xl bg-info/5 border border-info/20 p-3">
+                            {(trip.insurance as any).provider && (
+                              <div><span className="font-semibold">Operadora:</span> {(trip.insurance as any).provider}</div>
+                            )}
+                            {(trip.insurance as any).plan && (
+                              <div><span className="font-semibold">Plano:</span> {(trip.insurance as any).plan}</div>
+                            )}
+                            {(trip.insurance as any).policy && (
+                              <div><span className="font-semibold">Apólice:</span> {(trip.insurance as any).policy}</div>
+                            )}
+                            {(trip.insurance as any).coverage && (
+                              <div><span className="font-semibold">Cobertura:</span> {(trip.insurance as any).coverage}</div>
+                            )}
+                            {!(trip.insurance as any).plan && !(trip.insurance as any).provider && (
+                              <div>Seguro viagem incluso neste pacote.</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </AppWidget>
+                )}
+
+                {passengers.length > 0 && (
+                  <AppWidget
+                    title="Passageiros e Participantes"
+                    icon={<Users className="h-5 w-5 text-foreground" />}
                   >
                     <div className="space-y-3">
-                      {voucher.emergency_contacts.map((ec: any, i: number) => (
-                        <a
+                      {passengers.map((p: any, i: number) => (
+                        <div
                           key={i}
-                          href={`tel:${ec.phone}`}
-                          className="flex items-center justify-between rounded-2xl bg-danger/10 p-4 border border-danger/20 hover:bg-danger/20 transition-colors"
+                          className="flex items-center justify-between rounded-2xl bg-surface p-4 border border-border"
                         >
                           <div>
-                            <div className="text-sm font-bold text-danger">{ec.role}</div>
-                            <div className="text-xs font-medium text-danger/80">{ec.name}</div>
+                            <div className="text-sm font-bold text-foreground">{p.full_name}</div>
+                            {p.document && (
+                              <div className="text-xs font-medium text-muted-foreground mt-0.5">
+                                Doc: {p.document}
+                              </div>
+                            )}
                           </div>
-                          <div className="text-sm font-black text-danger tracking-wider">
-                            {ec.phone}
-                          </div>
-                        </a>
+                          {p.is_lead && (
+                            <div className="text-[10px] font-bold text-brand bg-brand/10 px-2 py-1 rounded">
+                              Titular
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </AppWidget>
@@ -488,6 +716,97 @@ function ClientTripDetail() {
               </p>
             </div>
 
+            {/* Voos da Viagem (Estilo Cia Aérea / Boarding Pass) */}
+            {trip.flights && Array.isArray(trip.flights) && trip.flights.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-extrabold tracking-tight text-foreground flex items-center gap-2">
+                    <Plane className="h-5 w-5 text-brand" /> Passagens e Detalhes dos Voos
+                  </h3>
+                  <span className="text-xs font-semibold text-muted-foreground">{trip.flights.length} voo(s) localizado(s)</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {trip.flights.map((f: any, idx: number) => {
+                    const originCode = f.origin?.trim().length === 3 ? f.origin.toUpperCase() : (f.origin?.substring(0, 3).toUpperCase() || "SDU");
+                    const destCode = f.destination?.trim().length === 3 ? f.destination.toUpperCase() : (f.destination?.substring(0, 3).toUpperCase() || "GRU");
+                    return (
+                      <div key={f.id || idx} className="bg-surface border border-border/60 rounded-3xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col relative">
+                        {/* Top banner / Airline info */}
+                        <div className="bg-surface-alt/30 px-6 py-4 flex items-center justify-between border-b border-border/40">
+                          <div className="flex items-center gap-2">
+                            <div className="h-6 w-6 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black">
+                              ✈
+                            </div>
+                            <span className="text-xs font-bold text-foreground">{f.airline || "Companhia Aérea"}</span>
+                            <span className="text-xs font-mono text-muted-foreground">· Voo {f.flight_number || "—"}</span>
+                          </div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full">
+                            Confirmado
+                          </span>
+                        </div>
+
+                        {/* Ticket Main Section */}
+                        <div className="px-6 py-5 flex items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="text-3xl font-black text-foreground tracking-tight">{originCode}</div>
+                            <div className="text-[11px] font-bold text-muted-foreground truncate max-w-[100px]">{f.origin}</div>
+                            <div className="text-xs font-medium text-foreground mt-1">{f.departure_time || "—"}</div>
+                          </div>
+
+                          {/* Flight path line */}
+                          <div className="flex-1 flex flex-col items-center justify-center px-2">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                              {f.stops > 0 ? `${f.stops} parada(s)` : "Direto"}
+                            </span>
+                            <div className="w-full flex items-center relative">
+                              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-border border-dashed"></div>
+                              <Plane className="h-4 w-4 text-brand rotate-90 mx-auto relative z-10 bg-surface px-0.5" />
+                            </div>
+                            <span className="text-[9px] font-medium text-muted-foreground mt-1">{f.date ? fmtDate(f.date) : "—"}</span>
+                          </div>
+
+                          <div className="space-y-1 text-right">
+                            <div className="text-3xl font-black text-foreground tracking-tight">{destCode}</div>
+                            <div className="text-[11px] font-bold text-muted-foreground truncate max-w-[100px]">{f.destination}</div>
+                            <div className="text-xs font-medium text-foreground mt-1">{f.arrival_time || "—"}</div>
+                          </div>
+                        </div>
+
+                        {/* Dashed ticket tear line */}
+                        <div className="relative h-px my-1">
+                          <div className="absolute left-0 right-0 border-t border-dashed border-border/80"></div>
+                          {/* Cutouts */}
+                          <div className="absolute -left-3.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-background border border-border rounded-full z-10"></div>
+                          <div className="absolute -right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-background border border-border rounded-full z-10"></div>
+                        </div>
+
+                        {/* Bottom ticket details */}
+                        <div className="px-6 py-4 bg-surface-alt/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                          <div>
+                            <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Bagagem</div>
+                            <div className="font-semibold text-foreground mt-0.5 truncate">{f.baggage_rules || "Incluso"}</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Classe</div>
+                            <div className="font-semibold text-foreground mt-0.5">Econômica</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Assento</div>
+                            <div className="font-semibold text-brand mt-0.5">Sob Check-in</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Localizador</div>
+                            <div className="font-mono font-bold text-foreground mt-0.5">{trip.pnr || "Pendente"}</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 <AppWidget
@@ -503,9 +822,7 @@ function ClientTripDetail() {
                       </div>
                     </div>
                     <div className="bg-surface p-4 rounded-2xl border border-border">
-                      <div className="text-sm font-bold text-foreground mb-1">
-                        Leis Regionais (Simulado)
-                      </div>
+                      <div className="text-sm font-bold text-foreground mb-1">Leis Regionais</div>
                       <div className="text-xs text-muted-foreground leading-relaxed">
                         É terminantemente proibido o consumo de bebidas alcoólicas nas ruas ou
                         transporte público neste destino.
@@ -650,19 +967,37 @@ function ClientTripDetail() {
                             </div>
                           </div>
 
-                          <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full border-t sm:border-0 border-border/50 pt-3 sm:pt-0">
-                            <div className="text-left sm:text-right">
-                              <div className="text-base font-black text-foreground">
-                                {money(inst.amount, trip.currency)}
+                          <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto border-t sm:border-0 border-border/50 pt-3 sm:pt-0">
+                            <div className="text-left sm:text-right flex items-center sm:items-end justify-between sm:flex-col sm:justify-start w-full gap-2">
+                              <div>
+                                <div className="text-base font-black text-foreground">
+                                  {money(inst.amount, trip.currency)}
+                                </div>
+                                <div
+                                  className={`text-[10px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
+                                >
+                                  {INST_STATUS[inst.status] ?? inst.status}
+                                </div>
                               </div>
-                              <div
-                                className={`text-[10px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
-                              >
-                                {INST_STATUS[inst.status] ?? inst.status}
-                              </div>
+                              {inst.status !== "paid" && (inst.boleto_url || inst.barcode) && (
+                                <a
+                                  href={inst.boleto_url || "#"}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => {
+                                    if (!inst.boleto_url && inst.barcode) {
+                                      e.preventDefault();
+                                      navigator.clipboard.writeText(inst.barcode);
+                                      toast.success("Código de barras copiado!");
+                                    }
+                                  }}
+                                  className="h-8 rounded bg-foreground text-background text-xs font-bold px-3 py-1 flex items-center justify-center hover:opacity-90 transition-opacity"
+                                >
+                                  {inst.boleto_url ? "Ver Boleto" : "Copiar Linha Digitável"}
+                                </a>
+                              )}
                             </div>
-
-                            {!isOperator && inst.status !== "paid" && (
+                            {!isOperator && inst.status !== "paid" && !inst.boleto_url && !inst.barcode && (
                               <button
                                 onClick={() =>
                                   toast.info("Funcionalidade de gateway em desenvolvimento.")
@@ -683,15 +1018,182 @@ function ClientTripDetail() {
           </div>
         )}
 
+        {/* ABA: CONTATOS */}
+        {activeTab === "contatos" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-danger/10 rounded-3xl p-8 relative overflow-hidden border border-danger/20">
+              <Phone className="w-10 h-10 mb-4 opacity-90 text-danger" />
+              <h2 className="text-3xl font-black tracking-tight mb-2 text-danger">Contatos e Emergência</h2>
+              <p className="text-danger/80 font-medium max-w-lg leading-relaxed">
+                Tenha sempre em mãos os contatos do seu agente e números úteis do seu destino.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <AppWidget title="Agência e Suporte" icon={<Phone className="h-5 w-5 text-brand" />}>
+                  <div className="space-y-3">
+                    <a href={`tel:${trip.agency?.phone || ""}`}
+                      className="flex items-center justify-between rounded-2xl bg-surface p-4 border border-border hover:border-brand/50 transition-colors">
+                      <div>
+                        <div className="text-sm font-bold text-foreground">Sua Agência</div>
+                        <div className="text-xs font-medium text-muted-foreground">{trip.agency?.name}</div>
+                      </div>
+                      <div className="text-sm font-black text-brand tracking-wider">{trip.agency?.phone || "Não informado"}</div>
+                    </a>
+                  </div>
+                </AppWidget>
+
+                {voucher?.emergency_contacts && voucher.emergency_contacts.length > 0 && (
+                  <AppWidget title="Contatos Operacionais" icon={<AlertCircle className="h-5 w-5 text-warning" />}>
+                    <div className="space-y-3">
+                      {voucher.emergency_contacts.map((ec: any, i: number) => (
+                        <a key={i} href={`tel:${ec.phone}`}
+                          className="flex items-center justify-between rounded-2xl bg-warning/10 p-4 border border-warning/20 hover:bg-warning/20 transition-colors">
+                          <div>
+                            <div className="text-sm font-bold text-warning">{ec.role}</div>
+                            <div className="text-xs font-medium text-warning/80">{ec.name}</div>
+                          </div>
+                          <div className="text-sm font-black text-warning tracking-wider">{ec.phone}</div>
+                        </a>
+                      ))}
+                    </div>
+                  </AppWidget>
+                )}
+              </div>
+
+              <div className="space-y-6">
+                <AppWidget title="Números Úteis por Destino · IA" icon={<Compass className="h-5 w-5 text-info" />}>
+                  {!contactsAiLoaded && (
+                    <div className="text-center py-4 space-y-3">
+                      <button
+                        onClick={async () => {
+                          if (!trip.destination) return;
+                          setContactsAiLoading(true);
+                          setContactsAiLoaded(true);
+                          try {
+                            const destinations = [trip.destination];
+                            if (trip.flights && Array.isArray(trip.flights)) {
+                              trip.flights.forEach((f: any) => {
+                                if (f.destination) destinations.push(f.destination);
+                              });
+                            }
+                            const uniqueDests = [...new Set(destinations)].join(", ");
+                            const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+                              body: {
+                                action: "completion",
+                                prompt: `Viajante brasileiro indo para: ${uniqueDests}. Retorne JSON array com dados de cada pais (incluindo conexoes): [{\"country\": \"Nome\", \"flag\": \"Emoji\", \"emergency\": \"Numero\", \"police\": \"Numero\", \"ambulance\": \"Numero\", \"consulate\": {\"name\": \"Consulado Brasileiro\", \"phone\": \"+XX...\", \"address\": \"Endereco\"}, \"key_rules\": [\"Regra 1\", \"Regra 2\"], \"mandatory_taxes\": [\"Taxa 1\"], \"currency\": \"Moeda local\", \"voltage\": \"V\", \"timezone\": \"UTC+/-X\"}]. Retorne APENAS JSON valido, sem markdown.`,
+                                systemPrompt: "Voce e especialista em viagens internacionais. Retorne APENAS JSON valido.",
+                                modelPreference: "smart",
+                              },
+                            });
+                            if (error) throw error;
+                            const text = data?.result || "";
+                            const match = text.match(/\[[\s\S]*\]/);
+                            setContactsAiData(match ? JSON.parse(match[0]) : []);
+                          } catch {
+                            setContactsAiData([]);
+                          } finally {
+                            setContactsAiLoading(false);
+                          }
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-info/10 text-info text-xs font-bold border border-info/20 hover:bg-info/20 transition-colors"
+                      >
+                        <Lightbulb className="h-3.5 w-3.5" /> Carregar Informações do Destino
+                      </button>
+                      <p className="text-[10px] text-muted-foreground">A IA analisa seu destino e rotas de conexão.</p>
+                    </div>
+                  )}
+
+                  {contactsAiLoading && (
+                    <div className="flex flex-col items-center py-8 gap-3">
+                      <Loader2 className="h-8 w-8 text-info animate-spin" />
+                      <p className="text-sm text-muted-foreground">Analisando países da sua rota...</p>
+                    </div>
+                  )}
+
+                  {contactsAiData && !contactsAiLoading && contactsAiData.length === 0 && (
+                    <p className="text-xs text-muted-foreground py-2 text-center">Não foi possível obter dados para este destino.</p>
+                  )}
+
+                  {contactsAiData && !contactsAiLoading && contactsAiData.length > 0 && (
+                    <div className="space-y-4">
+                      {contactsAiData.map((country: any, i: number) => (
+                        <div key={i} className="rounded-2xl border border-border overflow-hidden">
+                          <div className="flex items-center gap-3 p-3 bg-surface-alt/30 border-b border-border/50">
+                            <span className="text-2xl">{country.flag}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold text-sm text-foreground">{country.country}</div>
+                              <div className="text-[10px] text-muted-foreground">{country.currency} · {country.timezone} · {country.voltage}</div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3 divide-x divide-border/50 border-b border-border/50">
+                            {country.emergency && (
+                              <a href={`tel:${country.emergency}`} className="flex flex-col items-center py-3 hover:bg-danger/5 transition-colors">
+                                <span className="text-xs font-black text-danger">{country.emergency}</span>
+                                <span className="text-[9px] text-muted-foreground uppercase tracking-wide">Emergência</span>
+                              </a>
+                            )}
+                            {country.police && (
+                              <a href={`tel:${country.police}`} className="flex flex-col items-center py-3 hover:bg-warning/5 transition-colors">
+                                <span className="text-xs font-black text-warning">{country.police}</span>
+                                <span className="text-[9px] text-muted-foreground uppercase tracking-wide">Polícia</span>
+                              </a>
+                            )}
+                            {country.ambulance && (
+                              <a href={`tel:${country.ambulance}`} className="flex flex-col items-center py-3 hover:bg-info/5 transition-colors">
+                                <span className="text-xs font-black text-info">{country.ambulance}</span>
+                                <span className="text-[9px] text-muted-foreground uppercase tracking-wide">Ambulância</span>
+                              </a>
+                            )}
+                          </div>
+                          {country.consulate?.phone && (
+                            <a href={`tel:${country.consulate.phone}`} className="flex items-center gap-3 px-3 py-3 border-b border-border/50 hover:bg-brand/5 transition-colors">
+                              <div className="h-7 w-7 rounded-full bg-brand/10 flex items-center justify-center shrink-0 text-sm">🇧🇷</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-bold text-foreground truncate">{country.consulate.name}</div>
+                                {country.consulate.address && <div className="text-[9px] text-muted-foreground truncate">{country.consulate.address}</div>}
+                              </div>
+                              <div className="text-xs font-black text-brand shrink-0">{country.consulate.phone}</div>
+                            </a>
+                          )}
+                          {country.key_rules && country.key_rules.length > 0 && (
+                            <div className="px-3 py-2.5">
+                              <div className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">Regras Importantes</div>
+                              <ul className="space-y-0.5">
+                                {country.key_rules.slice(0, 3).map((rule: string, ri: number) => (
+                                  <li key={ri} className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
+                                    <span className="text-warning mt-0.5 shrink-0">⚠</span> {rule}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </AppWidget>
+              </div>
+            </div>
+          </div>
+        )}
+
+
         {/* ABA: MEMÓRIAS */}
         {activeTab === "memorias" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {!lgpdQ.isLoading && !lgpdQ.data ? (
               <div className="rounded-3xl border border-warning/30 bg-warning/5 p-8 max-w-2xl mx-auto space-y-4 text-center">
                 <ShieldAlert className="w-12 h-12 text-warning mx-auto" />
-                <h3 className="text-base font-bold text-foreground">Autorização de Uso de Imagem (LGPD)</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  Autorização de Uso de Imagem (LGPD)
+                </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Para poder salvar fotos das suas viagens no portal, precisamos do seu consentimento para armazenar estas mídias de forma segura. A agência poderá visualizar as imagens e, com a sua permissão, utilizá-las em comunicações ou divulgações institucionais de marketing.
+                  Para poder salvar fotos das suas viagens no portal, precisamos do seu
+                  consentimento para armazenar estas mídias de forma segura. A agência poderá
+                  visualizar as imagens e, com a sua permissão, utilizá-las em comunicações ou
+                  divulgações institucionais de marketing.
                 </p>
                 <div className="pt-2">
                   <button
@@ -733,7 +1235,9 @@ function ClientTripDetail() {
                 {memories.length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-border p-12 text-center bg-surface">
                     <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <div className="text-lg font-bold text-foreground mb-1">Nenhuma memória ainda</div>
+                    <div className="text-lg font-bold text-foreground mb-1">
+                      Nenhuma memória ainda
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       Faça o upload da sua primeira foto.
                     </div>

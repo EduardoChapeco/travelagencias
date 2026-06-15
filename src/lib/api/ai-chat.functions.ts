@@ -254,3 +254,90 @@ export const clearAIChatConversation = createServerFn({ method: "POST" })
     void data;
     return { ok: true };
   });
+
+export const generateOmnichannelReply = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(
+    z.object({
+      agencyId: z.string().uuid(),
+      sessionId: z.string().uuid(),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    // Confirm membership
+    const { data: membership } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("agency_id", data.agencyId)
+      .limit(1)
+      .maybeSingle();
+    if (!membership) throw new Error("Usuário não pertence a esta agência.");
+
+    await checkAndIncrementRateLimit(supabase, data.agencyId);
+
+    // Fetch the last 10 messages of this session
+    const { data: messages, error: messagesErr } = await supabase
+      .from("omnichannel_messages")
+      .select("direction, content")
+      .eq("session_id", data.sessionId)
+      .order("created_at", { ascending: true })
+      .limit(10);
+
+    if (messagesErr) throw new Error(messagesErr.message);
+
+    if (!messages || messages.length === 0) {
+      return { suggestion: "Olá! Como posso ajudar você hoje?" };
+    }
+
+    const sessionMessages = messages.map((m: any) => ({
+      role: m.direction === "inbound" ? ("user" as const) : ("assistant" as const),
+      content: m.content || "",
+    }));
+
+    const systemPrompt = `Você é o assistente de IA da agência de viagens. Seu papel é analisar a conversa do cliente com o agente humano e sugerir a próxima resposta ideal em português.
+Seja conciso, profissional, amigável e focado em tirar dúvidas de viagem, roteiros, vistos, pagamentos ou fechamento de vendas.
+Retorne apenas a sugestão de resposta direta, sem explicações, aspas ou textos adicionais.`;
+
+    const requestMessages = [{ role: "system", content: systemPrompt }, ...sessionMessages];
+
+    const _processEnv = typeof process !== "undefined" ? process.env : {};
+    const apiKey = _processEnv.OPENROUTER_API_KEY || _processEnv.LOVABLE_API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing AI API key. Configure OPENROUTER_API_KEY or LOVABLE_API_KEY.");
+    }
+    const isOpenRouter = !!_processEnv.OPENROUTER_API_KEY;
+    const url = isOpenRouter ? OPENROUTER_URL : GATEWAY_URL;
+    const model = isOpenRouter ? OPENROUTER_MODEL : "google/gemini-2.5-flash";
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    };
+
+    if (isOpenRouter) {
+      headers["HTTP-Referer"] = "https://travelos.com";
+      headers["X-Title"] = "TravelOS";
+    }
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ model, messages: requestMessages, temperature: 0.7, max_tokens: 250 }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error(`Falha no provedor de IA (${res.status}): ${txt.slice(0, 200)}`);
+    }
+
+    const json = (await res.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const suggestion = json.choices?.[0]?.message?.content?.trim() ?? "";
+    if (!suggestion) throw new Error("Sugestão vazia gerada pela IA.");
+
+    return { suggestion };
+  });

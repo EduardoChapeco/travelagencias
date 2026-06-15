@@ -1,14 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  MessageCircle,
-  Check,
-  AlertCircle,
-  Clock,
-  Paperclip,
-  Send,
-} from "lucide-react";
+import { MessageCircle, Check, AlertCircle, Clock, Paperclip, Send } from "lucide-react";
 
 type OmniMsg = {
   id: string;

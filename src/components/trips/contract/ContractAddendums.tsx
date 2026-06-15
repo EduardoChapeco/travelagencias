@@ -3,13 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
-import {
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-  Input,
-  Field,
-} from "@/components/ui/form";
+import { PrimaryButton, GhostButton, StatusBadge, Input, Field } from "@/components/ui/form";
 
 type Addendum = {
   id: string;
@@ -68,13 +62,11 @@ export function ContractAddendums({
       if (error) throw error;
 
       // Cria log na cadeia de auditoria ledger
-      const { error: auditErr } = await supabase
-        .from("contract_audit_chain")
-        .insert({
-          contract_id: contractId,
-          action: "ADDENDUM_CREATED",
-          metadata: { addendum_id: data.id, title },
-        });
+      const { error: auditErr } = await supabase.from("contract_audit_chain").insert({
+        contract_id: contractId,
+        action: "ADDENDUM_CREATED",
+        metadata: { addendum_id: data.id, title },
+      });
       if (auditErr) console.warn("Erro ao registrar auditoria de aditivo:", auditErr);
 
       return data;
@@ -87,7 +79,8 @@ export function ContractAddendums({
       setAddendumContent("");
       setShowAddForm(false);
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao criar aditivo", { id: "addendum" }),
+    onError: (e) =>
+      toast.error(e instanceof Error ? e.message : "Erro ao criar aditivo", { id: "addendum" }),
   });
 
   return (
@@ -128,7 +121,9 @@ export function ContractAddendums({
           <div className="flex gap-2">
             <PrimaryButton
               disabled={createAddendum.isPending || !addendumTitle || !addendumContent}
-              onClick={() => createAddendum.mutate({ title: addendumTitle, content: addendumContent })}
+              onClick={() =>
+                createAddendum.mutate({ title: addendumTitle, content: addendumContent })
+              }
             >
               {createAddendum.isPending ? "Criando..." : "Enviar Aditivo"}
             </PrimaryButton>
@@ -154,14 +149,19 @@ export function ContractAddendums({
       {addendums && addendums.length > 0 && (
         <div className="space-y-3">
           {addendums.map((ad) => (
-            <div key={ad.id} className="rounded-xl border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs">
+            <div
+              key={ad.id}
+              className="rounded-xl border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs"
+            >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-foreground">{ad.title}</span>
                 <StatusBadge tone={STATUS_TONE[ad.status] || "neutral"}>
                   {STATUS_LABEL[ad.status] || ad.status}
                 </StatusBadge>
               </div>
-              <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">{ad.content}</p>
+              <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">
+                {ad.content}
+              </p>
               <div className="flex items-center justify-between text-[10px] text-muted-foreground border-t border-border/30 pt-2 font-mono">
                 <span>Criado: {new Date(ad.created_at).toLocaleDateString("pt-BR")}</span>
                 {ad.signed_at && (

@@ -42,26 +42,28 @@ export function ClientShell() {
 
     if (token) {
       setAuthenticatingToken(true);
-      
+
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
 
-      supabase.functions.invoke("client-token-login", {
-        body: { token, redirect_to: cleanUrl }
-      }).then(({ data, error }) => {
-        if (cancel) return;
-        if (error || !data?.action_link) {
-          toast.error(error?.message || "Link de login inválido ou expirado.");
-          setAuthenticatingToken(false);
-          supabase.auth.getUser().then(({ data: userData }) => {
-            if (cancel) return;
-            setAuthed(!!userData.user);
-            setReady(true);
-          });
-        } else {
-          window.location.href = data.action_link;
-        }
-      });
+      supabase.functions
+        .invoke("client-token-login", {
+          body: { token, redirect_to: cleanUrl },
+        })
+        .then(({ data, error }) => {
+          if (cancel) return;
+          if (error || !data?.action_link) {
+            toast.error(error?.message || "Link de login inválido ou expirado.");
+            setAuthenticatingToken(false);
+            supabase.auth.getUser().then(({ data: userData }) => {
+              if (cancel) return;
+              setAuthed(!!userData.user);
+              setReady(true);
+            });
+          } else {
+            window.location.href = data.action_link;
+          }
+        });
     } else {
       supabase.auth.getUser().then(({ data }) => {
         if (cancel) return;

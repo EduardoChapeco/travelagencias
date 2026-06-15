@@ -20,12 +20,13 @@ function Page() {
 
   const q = useQuery({
     queryKey: ["admin-audit", page, filterAction, filterEntity],
-    queryFn: () => fetchAdminAuditLogs({
-      action: filterAction,
-      entityType: filterEntity,
-      page,
-      pageSize: PAGE_SIZE,
-    }),
+    queryFn: () =>
+      fetchAdminAuditLogs({
+        action: filterAction,
+        entityType: filterEntity,
+        page,
+        pageSize: PAGE_SIZE,
+      }),
     placeholderData: (prev) => prev,
   });
 

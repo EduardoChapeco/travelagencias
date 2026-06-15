@@ -43,7 +43,9 @@ export function LeadCardView({
   const interestPeriod = (lead.custom_fields as any)?.interest_period;
   const formattedDates = lead.travel_start
     ? `${new Date(lead.travel_start).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}` +
-      (lead.travel_end ? ` a ${new Date(lead.travel_end).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}` : "")
+      (lead.travel_end
+        ? ` a ${new Date(lead.travel_end).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}`
+        : "")
     : null;
   const travelPeriod = interestPeriod || formattedDates;
 

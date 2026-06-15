@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { SheetPage } from "./sheet";
-import { Field, PrimaryButton, GhostButton, Textarea } from "./form";
+import { Field, PrimaryButton, GhostButton, Textarea, Input } from "./form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Wand2 } from "lucide-react";
+import { Wand2, Copy } from "lucide-react";
 type PortalBlock = any;
 
 type AILandingPageSheetProps = {
@@ -14,65 +14,34 @@ type AILandingPageSheetProps = {
 
 export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILandingPageSheetProps) {
   const [topic, setTopic] = useState("");
+  const [urlToClone, setUrlToClone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"prompt" | "clone">("prompt");
 
   async function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
-    if (!topic.trim()) return toast.warning("Digite o tema ou objetivo da sua Landing Page.");
+    if (mode === "prompt" && !topic.trim())
+      return toast.warning("Digite o tema ou objetivo da sua Landing Page.");
+    if (mode === "clone" && !urlToClone.trim())
+      return toast.warning("Digite a URL do site que deseja usar como base.");
 
     setLoading(true);
     toast.loading("O arquiteto IA está construindo sua página...", { id: "ai-lp" });
 
     try {
-      const systemPrompt = `Você é um Growth Hacker e Web Designer Especialista em Turismo.
-Crie a estrutura de uma Landing Page focada em alta conversão.
-O usuário quer uma página sobre: "${topic}".
-
-Você DEVE retornar **APENAS UM ARRAY JSON VÁLIDO**. NADA MAIS. SEM MARKDOWN (\`\`\`json).
-Os objetos do array devem usar EXATAMENTE uma das seguintes interfaces de blocos:
-
-1. Hero Block:
-{ "id": "gerado_por_vc", "type": "hero", "title": "Títulão", "subtitle": "Subtítulo atraente", "bg_image_url": "", "cta_label": "Comprar Agora", "cta_link": "/contato" }
-
-2. Features Block (Diferenciais):
-{ "id": "gerado", "type": "features", "title": "Por que nos escolher?", "items": [{ "icon": "✨", "title": "Diferencial", "description": "Texto" }] }
-
-3. Text Block:
-{ "id": "gerado", "type": "text", "content": "Seu texto em html simples com <p> e <strong>...", "align": "center", "image_url": "" }
-
-4. FAQ Block:
-{ "id": "gerado", "type": "faq", "title": "Dúvidas Comuns", "items": [{ "question": "Pergunta", "answer": "Resposta" }] }
-
-5. CTA Block:
-{ "id": "gerado", "type": "cta", "title": "Fale com um consultor", "subtitle": "Não perca tempo", "button_label": "WhatsApp", "button_link": "https://wa.me/..." }
-
-Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque Textos/Features, resolva objeções no FAQ e feche com um CTA. Responda apenas com o Array JSON.`;
-
-      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+      const { data, error } = await supabase.functions.invoke("generate-site-ai", {
         body: {
-          action: "completion",
-          prompt: "Por favor, retorne agora o array JSON contendo todos os blocos.",
-          systemPrompt,
-          modelPreference: "smart",
+          prompt: mode === "prompt" ? topic : undefined,
+          urlToClone: mode === "clone" ? urlToClone : undefined,
         },
       });
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-
-      const resultText = data.result || "";
-      const jsonMatch = resultText.match(/\[\s*\{[\s\S]*\}\s*\]/);
-      if (!jsonMatch) throw new Error("A IA não retornou um formato estruturado válido.");
-
-      let blocks: PortalBlock[] = [];
-      try {
-        blocks = JSON.parse(jsonMatch[0]);
-      } catch (err) {
-        throw new Error("Erro ao interpretar a resposta da IA.");
-      }
+      if (!data?.blocks || !Array.isArray(data.blocks)) throw new Error("Retorno inválido da IA.");
 
       toast.success("Página mágica gerada com sucesso!", { id: "ai-lp" });
-      onGenerate(blocks);
+      onGenerate(data.blocks);
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || "Erro na geração", { id: "ai-lp" });
@@ -91,31 +60,68 @@ Regra: A página deve ter uma narrativa vendedora. Comece com um Hero, coloque T
       <div className="mb-6 bg-surface-alt/50 p-4 rounded-xl border border-border">
         <p className="text-sm text-muted-foreground flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-brand" />
-          Deixe o Growth Hacker da Inteligência Artificial desenhar sua página focada em conversão
-          em poucos segundos.
+          Gere páginas completas em segundos usando Prompts ou clonando o layout de sites
+          existentes.
         </p>
       </div>
 
-      <form onSubmit={handleGenerate} className="space-y-4">
-        <Field
-          label="Descreva o que quer vender"
-          hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais."
+      <div className="flex border-b border-border mb-6">
+        <button
+          type="button"
+          onClick={() => setMode("prompt")}
+          className={`flex-1 pb-3 text-sm font-semibold border-b-2 ${mode === "prompt" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
         >
-          <Textarea
-            placeholder="Digite o objetivo da sua página..."
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            rows={4}
-          />
-        </Field>
+          Criar por Texto
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("clone")}
+          className={`flex-1 pb-3 text-sm font-semibold border-b-2 ${mode === "clone" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
+        >
+          Clonar Site (URL)
+        </button>
+      </div>
+
+      <form onSubmit={handleGenerate} className="space-y-4">
+        {mode === "prompt" && (
+          <Field
+            label="Descreva o que quer vender"
+            hint="Ex: Landing page para Pacote Neve em Bariloche 2026, com foco em casais."
+          >
+            <Textarea
+              placeholder="Digite o objetivo da sua página..."
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              rows={4}
+            />
+          </Field>
+        )}
+
+        {mode === "clone" && (
+          <Field
+            label="URL do site inspiração"
+            hint="A IA lerá o site (via Firecrawl) e construirá os blocos TravelOS com base nele."
+          >
+            <Input
+              type="url"
+              placeholder="https://exemplo.com.br/landing-page"
+              value={urlToClone}
+              onChange={(e) => setUrlToClone(e.target.value)}
+            />
+          </Field>
+        )}
 
         <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
           <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancelar
           </GhostButton>
           <PrimaryButton type="submit" disabled={loading} className="gap-2">
-            <Wand2 className="w-4 h-4" />
-            {loading ? "Montando Estrutura..." : "Gerar Landing Page Inteira"}
+            {mode === "clone" ? <Copy className="w-4 h-4" /> : <Wand2 className="w-4 h-4" />}
+            {loading
+              ? "Processando..."
+              : mode === "clone"
+                ? "Clonar Layout"
+                : "Gerar Landing Page Inteira"}
           </PrimaryButton>
         </div>
       </form>

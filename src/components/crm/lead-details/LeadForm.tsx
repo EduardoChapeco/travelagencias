@@ -3,14 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { updateLead, type Lead, type Stage } from "@/services/crm";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-} from "@/components/ui/form";
+import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 
 const INTEREST_TYPES = [
   { v: "flights", label: "Passagens Aéreas" },
@@ -102,7 +95,8 @@ export function LeadForm({
         pax_adults: data.pax_adults,
         pax_children: data.pax_children,
         pax_infants: data.pax_infants,
-        pax_count: Number(data.pax_adults) + Number(data.pax_children) + Number(data.pax_infants) || 1,
+        pax_count:
+          Number(data.pax_adults) + Number(data.pax_children) + Number(data.pax_infants) || 1,
         pax_ages: paxAges,
         estimated_value: data.estimated_value,
         source: data.source || null,
@@ -127,29 +121,16 @@ export function LeadForm({
       <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Nome completo *" error={errors.name?.message}>
-          <Input
-            {...register("name")}
-            className="rounded-lg h-9"
-          />
+          <Input {...register("name")} className="rounded-lg h-9" />
         </Field>
         <Field label="E-mail" error={errors.email?.message}>
-          <Input
-            type="email"
-            {...register("email")}
-            className="rounded-lg h-9"
-          />
+          <Input type="email" {...register("email")} className="rounded-lg h-9" />
         </Field>
         <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
-          <Input
-            {...register("phone")}
-            className="rounded-lg h-9"
-          />
+          <Input {...register("phone")} className="rounded-lg h-9" />
         </Field>
         <Field label="Destino de interesse" error={errors.destination?.message}>
-          <Input
-            {...register("destination")}
-            className="rounded-lg h-9"
-          />
+          <Input {...register("destination")} className="rounded-lg h-9" />
         </Field>
         <Field label="Período/Mês Flexível de Interesse" error={errors.interest_period?.message}>
           <Input
@@ -159,18 +140,10 @@ export function LeadForm({
           />
         </Field>
         <Field label="Data de início (Se houver data)" error={errors.travel_start?.message}>
-          <Input
-            type="date"
-            {...register("travel_start")}
-            className="rounded-lg h-9"
-          />
+          <Input type="date" {...register("travel_start")} className="rounded-lg h-9" />
         </Field>
         <Field label="Data de término (Se houver data)" error={errors.travel_end?.message}>
-          <Input
-            type="date"
-            {...register("travel_end")}
-            className="rounded-lg h-9"
-          />
+          <Input type="date" {...register("travel_end")} className="rounded-lg h-9" />
         </Field>
 
         <div className="grid grid-cols-3 gap-2">
@@ -235,10 +208,7 @@ export function LeadForm({
         </Field>
 
         <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
-          <Select
-            {...register("interest_type")}
-            className="rounded-lg h-9"
-          >
+          <Select {...register("interest_type")} className="rounded-lg h-9">
             <option value="">Não informado</option>
             {INTEREST_TYPES.map((t) => (
               <option key={t.v} value={t.v}>
@@ -249,17 +219,11 @@ export function LeadForm({
         </Field>
 
         <Field label="Origem / Canal" error={errors.source?.message}>
-          <Input
-            {...register("source")}
-            className="rounded-lg h-9"
-          />
+          <Input {...register("source")} className="rounded-lg h-9" />
         </Field>
 
         <Field label="Estágio do Funil" error={errors.stage_id?.message}>
-          <Select
-            {...register("stage_id")}
-            className="rounded-lg h-9"
-          >
+          <Select {...register("stage_id")} className="rounded-lg h-9">
             {stages.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -270,18 +234,11 @@ export function LeadForm({
       </div>
 
       <Field label="Anotações gerais" error={errors.notes?.message}>
-        <Textarea
-          rows={3}
-          {...register("notes")}
-          className="rounded-lg"
-        />
+        <Textarea rows={3} {...register("notes")} className="rounded-lg" />
       </Field>
 
       <Field label="Motivo da Perda (Se perdido)" error={errors.lost_reason?.message}>
-        <Input
-          {...register("lost_reason")}
-          className="rounded-lg h-9"
-        />
+        <Input {...register("lost_reason")} className="rounded-lg h-9" />
       </Field>
 
       <div className="flex justify-end gap-2.5 pt-4 border-t border-border">

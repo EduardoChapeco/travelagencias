@@ -88,11 +88,7 @@ export function NewPassengerSheet({
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
         <div className="px-6 py-6 space-y-5">
           <Field label="Nome Completo *" error={errors.fullName?.message}>
-            <Input
-              {...register("fullName")}
-              placeholder="Nome conforme o documento"
-              autoFocus
-            />
+            <Input {...register("fullName")} placeholder="Nome conforme o documento" autoFocus />
           </Field>
 
           <div className="grid grid-cols-2 gap-4">
@@ -123,33 +119,20 @@ export function NewPassengerSheet({
                 </Select>
               </Field>
               <Field label="Número do Documento" error={errors.document?.message}>
-                <Input
-                  {...register("document")}
-                  placeholder="Ex: AB123456"
-                />
+                <Input {...register("document")} placeholder="Ex: AB123456" />
               </Field>
             </div>
             <Field label="Nacionalidade Emissora" error={errors.nationality?.message}>
-              <Input
-                {...register("nationality")}
-                placeholder="Ex: Brasileiro"
-              />
+              <Input {...register("nationality")} placeholder="Ex: Brasileiro" />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Email (Opcional)" error={errors.email?.message}>
-              <Input
-                type="email"
-                {...register("email")}
-                placeholder="passageiro@email.com"
-              />
+              <Input type="email" {...register("email")} placeholder="passageiro@email.com" />
             </Field>
             <Field label="Telefone (Opcional)" error={errors.phone?.message}>
-              <Input
-                {...register("phone")}
-                placeholder="+55 11 99999-9999"
-              />
+              <Input {...register("phone")} placeholder="+55 11 99999-9999" />
             </Field>
           </div>
 

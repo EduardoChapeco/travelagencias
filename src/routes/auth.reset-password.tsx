@@ -47,11 +47,7 @@ function ResetPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Nova senha</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">
           <Field label="Nova senha" error={errors.password?.message}>
-            <Input
-              type="password"
-              placeholder="Mínimo 8 caracteres"
-              {...register("password")}
-            />
+            <Input type="password" placeholder="Mínimo 8 caracteres" {...register("password")} />
           </Field>
           <PrimaryButton type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? "Salvando…" : "Atualizar senha"}

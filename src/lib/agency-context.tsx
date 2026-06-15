@@ -1,4 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Agency = {
   id: string;
@@ -15,6 +17,8 @@ type Ctx = {
   loading: boolean;
   error: string | null;
   refresh: () => void;
+  role: string | null;
+  isAgencyAdmin: boolean;
 };
 
 const AgencyContext = createContext<Ctx>({
@@ -22,6 +26,8 @@ const AgencyContext = createContext<Ctx>({
   loading: false,
   error: null,
   refresh: () => {},
+  role: null,
+  isAgencyAdmin: false,
 });
 
 export function AgencyProvider({
@@ -31,6 +37,25 @@ export function AgencyProvider({
   preloadedAgency: Agency;
   children: ReactNode;
 }) {
+  const roleQuery = useQuery({
+    queryKey: ["current-user-role", preloadedAgency?.id],
+    enabled: !!preloadedAgency?.id,
+    queryFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return null;
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("agency_id", preloadedAgency.id)
+        .eq("user_id", userData.user.id)
+        .maybeSingle();
+      return data?.role || null;
+    },
+  });
+
+  const role = roleQuery.data || null;
+  const isAgencyAdmin = role === "agency_admin" || role === "super_admin";
+
   // Apply runtime brand color tokens
   useEffect(() => {
     const el = document.documentElement;
@@ -49,7 +74,14 @@ export function AgencyProvider({
 
   return (
     <AgencyContext.Provider
-      value={{ agency: preloadedAgency, loading: false, error: null, refresh: () => {} }}
+      value={{
+        agency: preloadedAgency,
+        loading: roleQuery.isLoading,
+        error: null,
+        refresh: () => {},
+        role,
+        isAgencyAdmin,
+      }}
     >
       {children}
     </AgencyContext.Provider>

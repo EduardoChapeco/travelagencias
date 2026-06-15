@@ -1,7 +1,7 @@
 # Política de Proibição de Autoaprovação
 
 **Status:** INVIOLÁVEL  
-**Aplica-se a:** Todo agente de IA trabalhando no TravelOS  
+**Aplica-se a:** Todo agente de IA trabalhando no TravelOS
 
 ---
 
@@ -13,23 +13,23 @@ O Antigravity e qualquer agente de IA tendem a usar linguagem otimista antes de 
 
 As seguintes frases **não podem** ser usadas antes de todas as evidências estarem produzidas:
 
-| Frase Proibida | Motivo |
-|----------------|--------|
-| "Missão cumprida" | Implica conclusão sem evidência |
-| "Tudo certo" | Generalização sem prova |
-| "Sistema blindado" | Implica segurança sem auditoria |
-| "Impecável" | Impossível de provar |
-| "Premium" | Requer scorecard preenchido |
-| "Enterprise" | Requer auditoria completa |
-| "Luxuoso" | Subjetivo sem critério |
-| "Zero erros" | Requer build + runtime comprovados |
-| "Build limpo" | Requer output de comando |
-| "Pode ficar tranquilo" | Transfere responsabilidade |
-| "Casa arrumada" | Metáfora sem evidência |
-| "Estável" | Requer teste de runtime |
-| "100% concluído" | Requer Release Gate completo |
-| "Corrigido definitivamente" | Requer verificação pós-fix |
-| "Sem nenhum problema" | Impossível de provar negativamente |
+| Frase Proibida              | Motivo                             |
+| --------------------------- | ---------------------------------- |
+| "Missão cumprida"           | Implica conclusão sem evidência    |
+| "Tudo certo"                | Generalização sem prova            |
+| "Sistema blindado"          | Implica segurança sem auditoria    |
+| "Impecável"                 | Impossível de provar               |
+| "Premium"                   | Requer scorecard preenchido        |
+| "Enterprise"                | Requer auditoria completa          |
+| "Luxuoso"                   | Subjetivo sem critério             |
+| "Zero erros"                | Requer build + runtime comprovados |
+| "Build limpo"               | Requer output de comando           |
+| "Pode ficar tranquilo"      | Transfere responsabilidade         |
+| "Casa arrumada"             | Metáfora sem evidência             |
+| "Estável"                   | Requer teste de runtime            |
+| "100% concluído"            | Requer Release Gate completo       |
+| "Corrigido definitivamente" | Requer verificação pós-fix         |
+| "Sem nenhum problema"       | Impossível de provar negativamente |
 
 ## Condições para Usar Linguagem Positiva
 

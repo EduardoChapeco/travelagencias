@@ -139,8 +139,7 @@ function Layout() {
 
   if (q.isLoading)
     return <div className="p-10 text-center text-sm text-muted-foreground">Carregando…</div>;
-  if (!agency)
-    return <div className="p-10 text-center text-sm">Agência não encontrada</div>;
+  if (!agency) return <div className="p-10 text-center text-sm">Agência não encontrada</div>;
 
   const headerStyle = settings?.header_style || "full";
 

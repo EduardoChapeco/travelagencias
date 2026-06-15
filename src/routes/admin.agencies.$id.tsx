@@ -275,7 +275,10 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
         setBusy(true);
         try {
           await forceChangeAgencyPlan(agency.id, planId);
-          await logAuditAction("superadmin_changed_plan", { new_plan_id: planId, plan_name: planName });
+          await logAuditAction("superadmin_changed_plan", {
+            new_plan_id: planId,
+            plan_name: planName,
+          });
           toast.success("Plano atualizado com sucesso!");
           qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
         } catch (error: any) {
@@ -333,14 +336,18 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
           <h3 className="font-bold tracking-tight">Zona de Perigo</h3>
         </div>
         <p className="text-xs text-danger/80 mb-5 leading-relaxed">
-          Ações destrutivas e forçadas. Todas as ações realizadas aqui são irreversíveis e registradas
-          na trilha de auditoria do sistema.
+          Ações destrutivas e forçadas. Todas as ações realizadas aqui são irreversíveis e
+          registradas na trilha de auditoria do sistema.
         </p>
 
         {!subscription ? (
           <div className="space-y-3 border-b border-danger/10 pb-4 mb-4">
             <div className="text-xs font-semibold text-foreground">Resolver Assinatura Ausente</div>
-            <PrimaryButton onClick={handleProvisionTrial} disabled={busy} className="w-full text-xs">
+            <PrimaryButton
+              onClick={handleProvisionTrial}
+              disabled={busy}
+              className="w-full text-xs"
+            >
               Provisionar Trial Essencial
             </PrimaryButton>
           </div>

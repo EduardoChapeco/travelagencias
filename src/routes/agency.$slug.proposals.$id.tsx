@@ -111,21 +111,72 @@ function ProposalEditor() {
       if (!draft || !agency) return null;
 
       // Usa a função RPC atômica que transfere voos, hotéis, itinerário, etc.
-      const { data: tripId, error } = await (supabase.rpc as any)(
-        "convert_proposal_to_trip",
-        { p_proposal_id: draft.id, p_agency_id: agency.id },
-      );
+      const { data: tripId, error } = await (supabase.rpc as any)("convert_proposal_to_trip", {
+        p_proposal_id: draft.id,
+        p_agency_id: agency.id,
+      });
       if (error) throw new Error(error.message);
 
-      // Criar contrato automaticamente
+      // ── Buscar dados reais do cliente para montar o contrato ──────────────────
+      let clientDataArray: any[] = [];
+      if (draft.client_id) {
+        const { data: clientRow } = await supabase
+          .from("clients")
+          .select("id, full_name, email, phone, cpf, passport_number, address")
+          .eq("id", draft.client_id)
+          .maybeSingle();
+        if (clientRow) {
+          clientDataArray = [{
+            name: clientRow.full_name ?? "",
+            email: clientRow.email ?? "",
+            phone: clientRow.phone ?? "",
+            cpf: clientRow.cpf ?? "",
+            passport_number: clientRow.passport_number ?? "",
+            address: clientRow.address
+              ? Object.values(clientRow.address as Record<string, string>).filter(Boolean).join(", ")
+              : "",
+          }];
+        }
+      }
+
+      // ── Buscar cláusulas do template ──────────────────────────────────────────
+      const { data: templateClauses } = await (supabase.rpc as any)("contract_template_clauses");
+
+      // ── Buscar dados da agência ───────────────────────────────────────────────
+      const { data: agencyPrivate } = await supabase
+        .from("agency_private")
+        .select("email, phone, legal_name, document")
+        .eq("agency_id", agency.id)
+        .maybeSingle();
+
+      const agency_data = {
+        name: agency.name,
+        legal_name: agencyPrivate?.legal_name ?? agency.name,
+        document: agencyPrivate?.document ?? "",
+        email: agencyPrivate?.email ?? "",
+        phone: agencyPrivate?.phone ?? "",
+      };
+
+      // ── Criar contrato com dados completos e corretos ─────────────────────────
       const { error: contractError } = await supabase.from("contracts").insert({
         agency_id: agency.id,
         trip_id: tripId,
         status: "draft",
         version: "1.0",
         total_value: draft.total,
-        package_summary: `Contrato gerado a partir da cotação #${draft.number} - ${draft.title}`,
-        client_data: { name: draft.title },
+        package_summary: [
+          draft.destination ? `Destino: ${draft.destination}` : null,
+          draft.travel_start ? `Partida: ${draft.travel_start}` : null,
+          draft.travel_end ? `Retorno: ${draft.travel_end}` : null,
+          `Pax: ${(draft.pax_adults ?? 0) + (draft.pax_children ?? 0) + (draft.pax_infants ?? 0)} viajante(s)`,
+        ].filter(Boolean).join(" · "),
+        payment_terms: `Condições de pagamento conforme cotação #${draft.number}.`,
+        // ✅ CORRETO: array de contratantes com dados reais
+        client_data: clientDataArray,
+        agency_data,
+        passengers_data: [],
+        fixed_clauses: templateClauses ?? [],
+        custom_clauses: [],
       });
       if (contractError)
         toast.warning("Viagem criada, mas falha ao criar contrato: " + contractError.message);
@@ -141,6 +192,7 @@ function ProposalEditor() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao converter"),
   });
+
 
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;

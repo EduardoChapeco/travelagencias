@@ -13,6 +13,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 
@@ -138,6 +139,36 @@ export function NewVisaWizard({
       return;
     }
 
+    // 1.5 Auto-create Lead for this Visa
+    try {
+      const { data: crmStages } = await supabase
+        .from("lead_stages")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .order("position")
+        .limit(1);
+
+      if (crmStages && crmStages.length > 0) {
+        const client = clientsQ.data?.find((c) => c.id === clientId);
+        const { data: userData } = await supabase.auth.getUser();
+
+        await supabase.from("leads").insert({
+          agency_id: agencyId,
+          stage_id: crmStages[0].id,
+          owner_id: userData.user?.id,
+          client_id: clientId,
+          name: client?.full_name || "Novo Cliente (Visto)",
+          destination: country,
+          pax_count: 1,
+          interest_type: "visa",
+          source: "internal",
+          notes: `Lead criado automaticamente via Solicitação de Visto (${category}).\n${notes}`,
+        });
+      }
+    } catch (err) {
+      console.warn("Falha ao criar lead automático:", err);
+    }
+
     // 2. Upload Documentos
     if (documents.length > 0) {
       setUploading(true);
@@ -217,14 +248,18 @@ export function NewVisaWizard({
           {step === 0 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <Field label="Cliente (Requerente) *">
-                <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                  <option value="">Selecione um cliente da agência...</option>
-                  {clientsQ.data?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.full_name} {c.document ? `(${c.document})` : ""}
-                    </option>
-                  ))}
-                </Select>
+                <SearchableSelect
+                  value={clientId}
+                  onChange={setClientId}
+                  placeholder="Buscar cliente da agência..."
+                  searchPlaceholder="Nome, CPF..."
+                  options={clientsQ.data?.map((c) => ({
+                    value: c.id,
+                    label: c.full_name,
+                    sublabel: c.document ?? undefined,
+                  }))}
+                  loading={clientsQ.isLoading}
+                />
               </Field>
               <div className="grid grid-cols-2 gap-4">
                 <Field label="País de Destino *">

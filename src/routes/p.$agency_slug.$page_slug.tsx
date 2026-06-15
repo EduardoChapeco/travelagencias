@@ -6,6 +6,8 @@ import { GhostButton } from "@/components/ui/form";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
+import { AILandingAgent } from "@/components/portal/AILandingAgent";
+
 export const Route = createFileRoute("/p/$agency_slug/$page_slug")({
   head: ({ params, context }: any) => {
     // SEO metadata is resolved via the loader context (populated below)
@@ -54,10 +56,13 @@ function DynamicPage() {
   const { page } = q.data;
 
   return (
-    <div className="w-full px-4 sm:px-6">
+    <div className="w-full px-4 sm:px-6 relative">
       {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
       {page.title && <h1 className="sr-only">{page.title}</h1>}
       <BlockRenderer blocks={(page.blocks || []) as PortalBlock[]} agencySlug={agency_slug} />
+
+      {/* AI Sales Agent */}
+      <AILandingAgent agencySlug={agency_slug} blocks={page.blocks || []} />
     </div>
   );
 }

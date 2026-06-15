@@ -20,7 +20,9 @@ export function Field({
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>}
+      {hint && !error && (
+        <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>
+      )}
       {error && <span className="mt-1 block text-[11px] text-red-500">{error}</span>}
     </label>
   );
@@ -32,28 +34,29 @@ const baseInput =
 export const Input = React.forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   (props, ref) => {
     return <input ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
-  }
+  },
 );
 Input.displayName = "Input";
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
   (props, ref) => {
     return <select ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
-  }
+  },
 );
 Select.displayName = "Select";
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
-  (props, ref) => {
-    return (
-      <textarea
-        ref={ref}
-        {...props}
-        className={`w-full min-h-[80px] p-2.5 rounded-md border border-border bg-surface text-sm outline-none focus:border-border-strong ${props.className ?? ""}`}
-      />
-    );
-  }
-);
+export const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  TextareaHTMLAttributes<HTMLTextAreaElement>
+>((props, ref) => {
+  return (
+    <textarea
+      ref={ref}
+      {...props}
+      className={`w-full min-h-[80px] p-2.5 rounded-md border border-border bg-surface text-sm outline-none focus:border-border-strong ${props.className ?? ""}`}
+    />
+  );
+});
 Textarea.displayName = "Textarea";
 
 export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -120,7 +123,7 @@ export function StatusBadge({
 }
 
 export const money = (n: number, currency?: string | null) => {
-  const code = (currency && currency.trim()) ? currency.trim().toUpperCase() : "BRL";
+  const code = currency && currency.trim() ? currency.trim().toUpperCase() : "BRL";
   try {
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: code }).format(n || 0);
   } catch (e) {

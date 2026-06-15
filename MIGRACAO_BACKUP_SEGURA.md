@@ -1,8 +1,8 @@
 # 🛡️ TravelOS — Guia de Migração / Backup Seguro (Zero-Loss)
 
 > **Framework adotado:** **PPRR — Preserve → Prepare → Replicate → Reconcile**
-> (variação adaptada do framework de *Safe System Migration* da Google SRE Workbook,
-> combinado com o checklist *Zero-Data-Loss Migration* da AWS DMS Best Practices).
+> (variação adaptada do framework de _Safe System Migration_ da Google SRE Workbook,
+> combinado com o checklist _Zero-Data-Loss Migration_ da AWS DMS Best Practices).
 >
 > Cada etapa é **idempotente, reversível e auditável**. Nada é apagado. Nada é
 > sobrescrito. Tudo é copiado antes de ser tocado.
@@ -28,14 +28,14 @@
 
 ### 1.1 Identificadores públicos (já presentes no `.env` do projeto)
 
-| Variável | Valor | Onde usa |
-|---|---|---|
-| `SUPABASE_PROJECT_ID` | `ezfgelkamreguhapcgfm` | CLI, dashboard URL |
-| `SUPABASE_URL` | `https://ezfgelkamreguhapcgfm.supabase.co` | Cliente browser + server |
-| `VITE_SUPABASE_PROJECT_ID` | `ezfgelkamreguhapcgfm` | Build Vite |
-| `VITE_SUPABASE_URL` | `https://ezfgelkamreguhapcgfm.supabase.co` | Build Vite |
+| Variável                          | Valor                                                                                                                                                                                                              | Onde usa                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| `SUPABASE_PROJECT_ID`             | `ezfgelkamreguhapcgfm`                                                                                                                                                                                             | CLI, dashboard URL                                |
+| `SUPABASE_URL`                    | `https://ezfgelkamreguhapcgfm.supabase.co`                                                                                                                                                                         | Cliente browser + server                          |
+| `VITE_SUPABASE_PROJECT_ID`        | `ezfgelkamreguhapcgfm`                                                                                                                                                                                             | Build Vite                                        |
+| `VITE_SUPABASE_URL`               | `https://ezfgelkamreguhapcgfm.supabase.co`                                                                                                                                                                         | Build Vite                                        |
 | `SUPABASE_PUBLISHABLE_KEY` (anon) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6ZmdlbGthbXJlZ3VoYXBjZ2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDMxNDEsImV4cCI6MjA5NjAxOTE0MX0.MN4Rtx7mq6uK2G-zkj1_WTzYR901qTVIUh_q0_ARJSY` | Cliente browser (pública por design, RLS protege) |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | (idêntica acima) | Build Vite |
+| `VITE_SUPABASE_PUBLISHABLE_KEY`   | (idêntica acima)                                                                                                                                                                                                   | Build Vite                                        |
 
 ✅ Essas chaves **podem** ser versionadas (são públicas por design — protegidas por RLS).
 
@@ -43,13 +43,13 @@
 
 Listados pelo `fetch_secrets` (valores **mascarados** — você precisa exportá-los manualmente):
 
-| Secret Name | Tipo | Como recuperar |
-|---|---|---|
-| `SUPABASE_URL` | público duplicado | já tem (1.1) |
-| `SUPABASE_PUBLISHABLE_KEY` | público duplicado | já tem (1.1) |
-| `SUPABASE_SERVICE_ROLE_KEY` | **PRIVADO** | Veja 1.3 |
-| `SUPABASE_DB_URL` | **PRIVADO** (string `postgresql://...`) | Veja 1.3 |
-| `LOVABLE_API_KEY` | **PRIVADO** (AI Gateway) | Lovable → Workspace Settings → API Keys (ou rotacionar) |
+| Secret Name                 | Tipo                                    | Como recuperar                                          |
+| --------------------------- | --------------------------------------- | ------------------------------------------------------- |
+| `SUPABASE_URL`              | público duplicado                       | já tem (1.1)                                            |
+| `SUPABASE_PUBLISHABLE_KEY`  | público duplicado                       | já tem (1.1)                                            |
+| `SUPABASE_SERVICE_ROLE_KEY` | **PRIVADO**                             | Veja 1.3                                                |
+| `SUPABASE_DB_URL`           | **PRIVADO** (string `postgresql://...`) | Veja 1.3                                                |
+| `LOVABLE_API_KEY`           | **PRIVADO** (AI Gateway)                | Lovable → Workspace Settings → API Keys (ou rotacionar) |
 
 ### 1.3 Como recuperar Service Role Key e Database URL
 
@@ -57,20 +57,21 @@ No Lovable Cloud essas duas chaves são **gerenciadas** e não expostas pelas
 ferramentas do agente. Para obtê-las você tem **duas rotas**:
 
 **Rota A — Migrar projeto Supabase para sua conta pessoal (recomendado)**
+
 1. No Lovable: `Connectors → Lovable Cloud → Settings → Transfer to my Supabase account`
    (se disponível no seu plano).
 2. Aceite o convite no Supabase Dashboard.
 3. Agora você acessa `Project Settings → API` e `Project Settings → Database`
    diretamente, copiando:
    - `service_role` key
-   - `Database URL` (modo *session* e *transaction*)
+   - `Database URL` (modo _session_ e _transaction_)
    - `Database password`
 
 **Rota B — Suporte Lovable**
 Se a transferência não estiver disponível, abra ticket em
-[support.lovable.dev](https://support.lovable.dev) pedindo *"export of
+[support.lovable.dev](https://support.lovable.dev) pedindo _"export of
 Supabase credentials for project `ezfgelkamreguhapcgfm` to set up an
-independent backup environment"*.
+independent backup environment"_.
 
 > 🚫 **Não invente** valores para essas chaves. **Não comite** mesmo após obter.
 
@@ -251,11 +252,13 @@ sha256sum travelos-CODE-*.bundle travelos-MIGRATIONS-*.tar.gz \
 #### 2.1 Novo projeto Lovable (ou novo Supabase)
 
 **Opção A — Novo projeto Lovable (mais simples):**
+
 1. Lovable Dashboard → `New Project → Blank`
 2. `Connectors → Lovable Cloud → Enable` (cria novo Supabase automaticamente)
 3. Anote o novo `SUPABASE_PROJECT_ID` (estará em `.env` do novo projeto)
 
 **Opção B — Novo projeto Supabase puro:**
+
 1. supabase.com → `New project`
 2. Anote URL, anon key, service role, db password
 
@@ -268,6 +271,7 @@ sha256sum travelos-CODE-*.bundle travelos-MIGRATIONS-*.tar.gz \
 #### 2.3 Provisionar secrets no destino
 
 No novo projeto: `Settings → Secrets → Add`:
+
 - `LOVABLE_API_KEY` (mesmo valor ou rotacionar)
 - `MASTER_ENCRYPTION_KEY` (⚠️ **MESMO valor** — senão `global_settings.integrations_config_encrypted` fica ilegível)
 - Quaisquer outros secrets de integração que você usa
@@ -281,6 +285,7 @@ No novo projeto: `Settings → Secrets → Add`:
 #### 3.1 Copiar código
 
 Na sua máquina:
+
 ```bash
 # clone destino
 git clone https://github.com/<seu-user>/travelos-novo.git destino
@@ -319,7 +324,7 @@ arquivos `supabase/migrations/*.sql`. Como já vieram no rsync, basta:
 
 1. Abrir o novo projeto Lovable.
 2. Verifique `Cloud → Database → Tables` — devem aparecer as 45 tabelas.
-3. Se algo falhar, peça ao Lovable: *"reaplicar todas as migrations pendentes"*.
+3. Se algo falhar, peça ao Lovable: _"reaplicar todas as migrations pendentes"_.
 
 #### 3.3 Copiar Edge Functions
 
@@ -344,7 +349,9 @@ Upload com script (espelho do 1.4):
 
 ```js
 // restore-storage.mjs — itera backup/storage/<bucket>/** e faz upload
-const { data, error } = await sbDestino.storage.from(bucket).upload(path, fileBuf, { upsert: true });
+const { data, error } = await sbDestino.storage
+  .from(bucket)
+  .upload(path, fileBuf, { upsert: true });
 ```
 
 `upsert: true` garante **idempotência** (rerodar não duplica).
@@ -360,6 +367,7 @@ ou via psql/SQL no destino:
 ```
 
 **Importante:**
+
 - Importe `auth.users` separadamente (veja 3.6) — `profiles` depende dele.
 - Se `id` de tabela é UUID gerado, **mantenha** o UUID do CSV (não regenere).
 
@@ -371,7 +379,7 @@ Use a API admin:
 ```js
 // para cada usuário do origem:
 await sbDestino.auth.admin.createUser({
-  id: user.id,           // preserva UUID — crítico para FKs
+  id: user.id, // preserva UUID — crítico para FKs
   email: user.email,
   email_confirm: true,
   user_metadata: user.raw_user_meta_data,
@@ -380,6 +388,7 @@ await sbDestino.auth.admin.createUser({
 ```
 
 Liste origem:
+
 ```js
 const { data } = await sbOrigem.auth.admin.listUsers({ perPage: 1000 });
 ```
@@ -390,6 +399,7 @@ novo ambiente. Logins sociais (Google) re-vinculam automaticamente pelo email.
 #### 3.7 Reconfigurar Auth Providers
 
 No Supabase Dashboard do destino → `Authentication → Providers`:
+
 - Habilitar Google (mesmas credenciais OAuth se você quer)
 - Configurar Redirect URLs para o novo domínio
 - Configurar SMTP se usava email customizado
@@ -400,26 +410,27 @@ No Supabase Dashboard do destino → `Authentication → Providers`:
 
 #### 4.1 Checklist de integridade
 
-| Item | Origem | Destino | OK? |
-|---|---|---|---|
-| Contagem `agencies` | `select count(*)` | `select count(*)` | ☐ |
-| Contagem `clients` | | | ☐ |
-| Contagem `trips` | | | ☐ |
-| Contagem `proposals` | | | ☐ |
-| Contagem `contracts` | | | ☐ |
-| Contagem `financial_records` | | | ☐ |
-| Contagem `auth.users` | | | ☐ |
-| 13 buckets criados | ✓ | ☐ | |
-| Total de arquivos em storage | | | ☐ |
-| 4 edge functions ativas | ✓ | ☐ | |
-| 19 funções SQL presentes | ✓ | ☐ | |
-| RLS habilitada em todas as tabelas | ✓ | ☐ | |
-| Build do app passa | ✓ | ☐ | |
-| Login funciona (após reset senha) | | ☐ | |
-| Upload de arquivo funciona | | ☐ | |
-| Criar lead/trip/proposal funciona | | ☐ | |
+| Item                               | Origem            | Destino           | OK? |
+| ---------------------------------- | ----------------- | ----------------- | --- |
+| Contagem `agencies`                | `select count(*)` | `select count(*)` | ☐   |
+| Contagem `clients`                 |                   |                   | ☐   |
+| Contagem `trips`                   |                   |                   | ☐   |
+| Contagem `proposals`               |                   |                   | ☐   |
+| Contagem `contracts`               |                   |                   | ☐   |
+| Contagem `financial_records`       |                   |                   | ☐   |
+| Contagem `auth.users`              |                   |                   | ☐   |
+| 13 buckets criados                 | ✓                 | ☐                 |     |
+| Total de arquivos em storage       |                   |                   | ☐   |
+| 4 edge functions ativas            | ✓                 | ☐                 |     |
+| 19 funções SQL presentes           | ✓                 | ☐                 |     |
+| RLS habilitada em todas as tabelas | ✓                 | ☐                 |     |
+| Build do app passa                 | ✓                 | ☐                 |     |
+| Login funciona (após reset senha)  |                   | ☐                 |     |
+| Upload de arquivo funciona         |                   | ☐                 |     |
+| Criar lead/trip/proposal funciona  |                   | ☐                 |     |
 
 Use SQL no Lovable de cada lado:
+
 ```sql
 select 'agencies' as t, count(*) from agencies union all
 select 'clients', count(*) from clients union all
@@ -433,6 +444,7 @@ As contagens **devem bater exatamente**. Se não, identifique a tabela e refaça
 #### 4.2 Smoke test funcional
 
 No destino, com um usuário de teste:
+
 1. Login
 2. Criar lead → kanban
 3. Converter em proposta → PDF
@@ -443,6 +455,7 @@ No destino, com um usuário de teste:
 #### 4.3 Período de coexistência
 
 Mantenha origem **ligada e read-only** por pelo menos **30 dias**:
+
 - No origem, opcionalmente revogar grants de INSERT/UPDATE/DELETE para `authenticated`
   (rollback simples se algo der errado).
 - Só **apague** quando: 30 dias de uso sem incidente + backup `.bundle` + `.sha256` arquivados.
@@ -451,22 +464,23 @@ Mantenha origem **ligada e read-only** por pelo menos **30 dias**:
 
 ## 4. Matriz de Risco e Mitigação
 
-| Risco | Probabilidade | Mitigação |
-|---|---|---|
-| Perda de Service Role Key | Alta (não exposta no Lovable Cloud) | Rota A da seção 1.3 |
-| `MASTER_ENCRYPTION_KEY` diferente no destino | Alta | Reusar mesmo valor; senão restaurar e re-encriptar `global_settings` |
-| FK violation no import de dados | Média | Importar na ordem da seção 1.3 |
-| Senhas de usuários perdidas | Certa (by design) | Comunicar reset de senha |
-| Storage com paths longos/UTF8 | Baixa | Script usa `path.join` e mantém estrutura |
-| Edge Function com secret faltando | Média | Checklist 2.3 antes de testar |
-| Migration idempotência | Baixa | Migrations já usam `IF NOT EXISTS` em geral |
-| Repo origem deletado por engano | Crítico | NÃO APAGAR até FASE 4 concluída + 30 dias |
+| Risco                                        | Probabilidade                       | Mitigação                                                            |
+| -------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| Perda de Service Role Key                    | Alta (não exposta no Lovable Cloud) | Rota A da seção 1.3                                                  |
+| `MASTER_ENCRYPTION_KEY` diferente no destino | Alta                                | Reusar mesmo valor; senão restaurar e re-encriptar `global_settings` |
+| FK violation no import de dados              | Média                               | Importar na ordem da seção 1.3                                       |
+| Senhas de usuários perdidas                  | Certa (by design)                   | Comunicar reset de senha                                             |
+| Storage com paths longos/UTF8                | Baixa                               | Script usa `path.join` e mantém estrutura                            |
+| Edge Function com secret faltando            | Média                               | Checklist 2.3 antes de testar                                        |
+| Migration idempotência                       | Baixa                               | Migrations já usam `IF NOT EXISTS` em geral                          |
+| Repo origem deletado por engano              | Crítico                             | NÃO APAGAR até FASE 4 concluída + 30 dias                            |
 
 ---
 
 ## 5. Comandos de Verificação Rápida (cole no SQL Editor)
 
 **RLS em todas as tabelas públicas:**
+
 ```sql
 select relname, relrowsecurity from pg_class
 where relnamespace = 'public'::regnamespace and relkind='r' and relrowsecurity=false;
@@ -474,12 +488,14 @@ where relnamespace = 'public'::regnamespace and relkind='r' and relrowsecurity=f
 ```
 
 **Funções presentes:**
+
 ```sql
 select proname from pg_proc where pronamespace='public'::regnamespace order by proname;
 -- deve listar as 19 funções
 ```
 
 **Buckets:**
+
 ```sql
 select id, public from storage.buckets order by id;
 -- deve listar 13, todos public=false

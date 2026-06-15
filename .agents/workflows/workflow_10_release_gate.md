@@ -1,9 +1,11 @@
 # Workflow 10 — Release Gate
 
 ## Gatilho
+
 Etapa final ANTES de declarar qualquer tarefa como concluída para o usuário.
 
 ## Etapas Específicas
+
 1. **Invocar o False Claims Investigator (`13_false_claims_investigator.md`)**.
 2. **Revisar Evidências:**
    - Build rodou? Cadê o log?

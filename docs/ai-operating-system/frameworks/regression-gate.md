@@ -3,6 +3,7 @@
 **Propósito:** Garantir que nenhuma linha de código entregue quebre o que já estava funcionando antes. O TravelOS não pode sofrer de regressões bobas.
 
 ## Checklist Obrigatório (Pré-Deploy)
+
 1. **Linter & Types:** Executar as verificações de TypeScript para garantir que a feature nova não contaminou arquivos adjacentes.
 2. **Caça aos Fantasmas (Grep estrito):**
    - Buscar por restos de testes (`mockData`, `console.log`, `alert`).

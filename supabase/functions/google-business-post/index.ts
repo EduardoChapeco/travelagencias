@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
     // ── Auth guard ─────────────────────────────────────────────────
@@ -41,9 +41,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { data: { user }, error: authErr } = await supabase.auth.getUser(
-      authHeader.replace("Bearer ", "")
-    );
+    const {
+      data: { user },
+      error: authErr,
+    } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authErr || !user) {
       return new Response(JSON.stringify({ error: "Token inválido" }), {
         status: 401,
@@ -90,10 +91,13 @@ Deno.serve(async (req) => {
     }
 
     if (post.status !== "published") {
-      return new Response(JSON.stringify({ error: "Apenas posts publicados podem ser enviados ao Google" }), {
-        status: 422,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Apenas posts publicados podem ser enviados ao Google" }),
+        {
+          status: 422,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     // ── Load agency settings for google_business_id ───────────────
@@ -107,12 +111,16 @@ Deno.serve(async (req) => {
     const locationId = company?.google_business_id;
 
     if (!googleAccountId) {
-      return new Response(JSON.stringify({
-        error: "Variável GOOGLE_ACCOUNT_ID não configurada no Supabase. Configure em: Settings > Edge Functions > Secrets"
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error:
+            "Variável GOOGLE_ACCOUNT_ID não configurada no Supabase. Configure em: Settings > Edge Functions > Secrets",
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     // ── Get Google Access Token via Refresh Token ─────────────────
@@ -121,12 +129,16 @@ Deno.serve(async (req) => {
     const refreshToken = Deno.env.get("GOOGLE_REFRESH_TOKEN");
 
     if (!clientId || !clientSecret || !refreshToken) {
-      return new Response(JSON.stringify({
-        error: "Credenciais Google OAuth não configuradas. Acesse: https://developers.google.com/oauthplayground/"
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error:
+            "Credenciais Google OAuth não configuradas. Acesse: https://developers.google.com/oauthplayground/",
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
@@ -142,13 +154,16 @@ Deno.serve(async (req) => {
 
     const tokenData = await tokenRes.json();
     if (!tokenData.access_token) {
-      return new Response(JSON.stringify({
-        error: "Falha ao obter token Google. Verifique GOOGLE_REFRESH_TOKEN.",
-        details: tokenData
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Falha ao obter token Google. Verifique GOOGLE_REFRESH_TOKEN.",
+          details: tokenData,
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     const accessToken = tokenData.access_token;
@@ -162,18 +177,17 @@ Deno.serve(async (req) => {
 
     const gbpPostBody: Record<string, any> = {
       languageCode: "pt-BR",
-      summary: [
-        post.title,
-        post.excerpt ? `\n\n${post.excerpt}` : "",
-      ].join(""),
+      summary: [post.title, post.excerpt ? `\n\n${post.excerpt}` : ""].join(""),
       topicType: "STANDARD",
     };
 
     if (post.cover_image_url) {
-      gbpPostBody.media = [{
-        mediaFormat: "PHOTO",
-        sourceUrl: post.cover_image_url,
-      }];
+      gbpPostBody.media = [
+        {
+          mediaFormat: "PHOTO",
+          sourceUrl: post.cover_image_url,
+        },
+      ];
     }
 
     // ── POST to Google Business Profile API ───────────────────────
@@ -181,7 +195,7 @@ Deno.serve(async (req) => {
     const gbpRes = await fetch(gbpUrl, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(gbpPostBody),
@@ -191,13 +205,16 @@ Deno.serve(async (req) => {
 
     if (!gbpRes.ok) {
       console.error("GBP API error:", JSON.stringify(gbpData));
-      return new Response(JSON.stringify({
-        error: "Erro na API do Google Business.",
-        details: gbpData
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Erro na API do Google Business.",
+          details: gbpData,
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     // ── Update post record ────────────────────────────────────────
@@ -213,15 +230,17 @@ Deno.serve(async (req) => {
       console.error("Failed to update post google fields:", updateErr);
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      google_post_id: gbpData.name,
-      message: "Post publicado com sucesso no Google Meu Negócio!",
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        google_post_id: gbpData.name,
+        message: "Post publicado com sucesso no Google Meu Negócio!",
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
   } catch (err) {
     console.error("Unhandled error:", err);
     return new Response(JSON.stringify({ error: String(err) }), {

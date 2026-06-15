@@ -17,7 +17,7 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    
+
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       auth: { persistSession: false },
     });
@@ -40,18 +40,21 @@ serve(async (req) => {
 
     // 2. Garantir que o usuário existe no auth.users
     let user_id = client.user_id;
-    
-    const { data: { users }, error: listErr } = await supabaseAdmin.auth.admin.listUsers();
+
+    const {
+      data: { users },
+      error: listErr,
+    } = await supabaseAdmin.auth.admin.listUsers();
     if (listErr) throw listErr;
-    
-    let authUser = users?.find(u => u.email === client.email);
+
+    let authUser = users?.find((u) => u.email === client.email);
 
     if (!authUser) {
       // Criar usuário de autenticação para o cliente
       const { data: createData, error: createErr } = await supabaseAdmin.auth.admin.createUser({
         email: client.email,
         email_confirm: true,
-        user_metadata: { role: 'client' }
+        user_metadata: { role: "client" },
       });
       if (createErr) throw createErr;
       authUser = createData.user;
@@ -59,20 +62,17 @@ serve(async (req) => {
 
     // Vincular user_id se estiver nulo
     if (authUser && !client.user_id) {
-      await supabaseAdmin
-        .from("clients")
-        .update({ user_id: authUser.id })
-        .eq("id", client.id);
+      await supabaseAdmin.from("clients").update({ user_id: authUser.id }).eq("id", client.id);
       user_id = authUser.id;
     }
 
     // 3. Gerar link mágico de login
     const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
+      type: "magiclink",
       email: client.email,
       options: {
-        redirectTo: redirect_to || `${supabaseUrl}/client`
-      }
+        redirectTo: redirect_to || `${supabaseUrl}/client`,
+      },
     });
 
     if (linkErr) throw linkErr;
@@ -85,23 +85,20 @@ serve(async (req) => {
 
     // Retornar link de ação direta que autentica o usuário
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         action_link: linkData.properties.action_link,
-        email: client.email
+        email: client.email,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (error: any) {
     console.error("Token Login Error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });

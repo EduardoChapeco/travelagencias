@@ -75,7 +75,10 @@ export async function fetchBoardingCards(agencyId: string): Promise<BoardingCard
   if (error) throw new Error(error.message);
 
   const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
-  const tripMap: Record<string, { title: string; destination?: string; proposal_id?: string | null }> = {};
+  const tripMap: Record<
+    string,
+    { title: string; destination?: string; proposal_id?: string | null }
+  > = {};
   const proposalMap: Record<string, ProposedDetails> = {};
 
   if (tripIds.length > 0) {
@@ -164,7 +167,21 @@ export async function updateBoardingCardChecklist(
 
 export async function updateBoardingCard(
   cardId: string,
-  patch: Partial<Pick<BoardingCard, "pnr" | "airline" | "departure_date" | "passengers_count" | "tags" | "notes" | "internal_ref" | "alerts" | "briefing_date" | "briefing_url">>,
+  patch: Partial<
+    Pick<
+      BoardingCard,
+      | "pnr"
+      | "airline"
+      | "departure_date"
+      | "passengers_count"
+      | "tags"
+      | "notes"
+      | "internal_ref"
+      | "alerts"
+      | "briefing_date"
+      | "briefing_url"
+    >
+  >,
 ): Promise<void> {
   const { error } = await supabase
     .from("boarding_cards")

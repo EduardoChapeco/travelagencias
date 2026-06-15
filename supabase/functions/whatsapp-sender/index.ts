@@ -10,7 +10,7 @@ async function getCryptoKey(password: string) {
     enc.encode(password.padEnd(32, "0").substring(0, 32)),
     { name: "AES-GCM" },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
   return keyMaterial;
 }
@@ -32,6 +32,12 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 serve(async (req) => {
   try {
+    // STRICT SECURITY: Only allow invocations from Supabase Database Webhooks (Service Role)
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || authHeader !== `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`) {
+      throw new Error("Unauthorized: Only internal webhooks can trigger this function.");
+    }
+
     const payload = await req.json();
     const message = payload.record; // from pg_net trigger (after insert on omnichannel_messages)
 
@@ -39,25 +45,45 @@ serve(async (req) => {
       return new Response("Not an outbound pending message", { status: 200 });
     }
 
-    const { data: agency } = await supabase.from("agencies").select("integrations_config").eq("id", message.agency_id).single();
-    const config = agency?.integrations_config || {};
+    // Buscar a configuração do WhatsApp na nova tabela agency_integrations
+    const { data: integration } = await supabase
+      .from("agency_integrations")
+      .select("config, secret_id")
+      .eq("agency_id", message.agency_id)
+      .eq("provider", "whatsapp")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    const config = integration?.config || {};
     const preferredProvider = config.preferred_provider || "meta_official";
 
-    const { data: lead } = await supabase.from("leads").select("phone").eq("id", message.lead_id).single();
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("phone")
+      .eq("id", message.lead_id)
+      .single();
     if (!lead || !lead.phone) {
       await supabase.from("omnichannel_messages").update({ status: "failed" }).eq("id", message.id);
       throw new Error("Lead has no phone number");
     }
 
-    // Load API Keys
-    const { data: apiKeys } = await supabase.from("api_keys").select("*").eq("agency_id", message.agency_id);
+    // Load API Keys from Vault
     const keys: Record<string, string> = {};
-    if (apiKeys) {
-      for (const k of apiKeys) {
-        if (k.key_value && k.key_value.includes("=====")) {
-          keys[k.provider] = await decryptData(k.key_value, API_KEY_SECRET);
-        } else {
-          keys[k.provider] = k.key_value; // fallback plain
+    if (integration?.secret_id) {
+      // O secret do vault contém um JSON com os tokens necessários (ex: { whatsapp_access_token: '...', evolution_api_key: '...' })
+      const { data: vaultSecret } = await supabase
+        .from("decrypted_secrets")
+        .select("decrypted_secret")
+        .eq("id", integration.secret_id)
+        .maybeSingle();
+
+      if (vaultSecret && vaultSecret.decrypted_secret) {
+        try {
+          const parsedKeys = JSON.parse(vaultSecret.decrypted_secret);
+          Object.assign(keys, parsedKeys);
+        } catch (e) {
+          // Fallback se não for JSON
+          keys["whatsapp_access_token"] = vaultSecret.decrypted_secret;
         }
       }
     }
@@ -90,29 +116,29 @@ serve(async (req) => {
 
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
       const resData = await res.json();
       if (!res.ok) throw new Error(JSON.stringify(resData));
-      
+
       externalId = resData.messages?.[0]?.id;
       success = true;
     } else if (preferredProvider === "evolution_api") {
       const apiUrl = config.evolution_api_url;
       const apiKey = keys["evolution_api_key"];
       const instance = config.evolution_api_instance || "default"; // or configured
-      
+
       if (!apiUrl || !apiKey) throw new Error("Missing Evolution API Config");
 
       const url = `${apiUrl}/message/sendText/${instance}`;
       const res = await fetch(url, {
         method: "POST",
-        headers: { "apikey": apiKey, "Content-Type": "application/json" },
+        headers: { apikey: apiKey, "Content-Type": "application/json" },
         body: JSON.stringify({
           number: lead.phone.replace(/\D/g, ""),
-          text: message.content
+          text: message.content,
         }),
       });
 
@@ -126,20 +152,31 @@ serve(async (req) => {
     }
 
     if (success) {
-      await supabase.from("omnichannel_messages").update({ status: "sent", external_message_id: externalId }).eq("id", message.id);
+      await supabase
+        .from("omnichannel_messages")
+        .update({ status: "sent", external_message_id: externalId })
+        .eq("id", message.id);
     }
 
-    return new Response(JSON.stringify({ success }), { headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success }), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error: any) {
     console.error("Error sending whatsapp message:", error);
     // Mark as failed if possible
     try {
       const payload = await req.clone().json();
       if (payload?.record?.id) {
-        await supabase.from("omnichannel_messages").update({ status: "failed" }).eq("id", payload.record.id);
+        await supabase
+          .from("omnichannel_messages")
+          .update({ status: "failed" })
+          .eq("id", payload.record.id);
       }
     } catch (_) {}
 
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 });

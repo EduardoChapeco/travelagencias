@@ -23,18 +23,10 @@ const schema = z.object({
     .string()
     .min(3, "Slug deve ter pelo menos 3 caracteres")
     .max(50, "Slug deve ter no máximo 50 caracteres")
-    .regex(
-      /^[a-z0-9][a-z0-9-]*[a-z0-9]$/,
-      "Slug inválido (apenas minúsculas, números e hifens)"
-    ),
+    .regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, "Slug inválido (apenas minúsculas, números e hifens)"),
   legal_name: z.string().optional().nullable(),
   document: z.string().optional().nullable(),
-  email: z
-    .string()
-    .email("Digite um e-mail válido")
-    .or(z.literal(""))
-    .optional()
-    .nullable(),
+  email: z.string().email("Digite um e-mail válido").or(z.literal("")).optional().nullable(),
   phone: z.string().optional().nullable(),
 });
 
@@ -90,9 +82,26 @@ function Page() {
     try {
       await saveSettings(
         agency.id,
-        { name: data.name, cnpj: data.document || null, phone: data.phone || null, email: data.email || null },
-        { name: data.name, slug: data.slug, email: data.email || null, phone: data.phone || null, document: data.document || null, legal_name: data.legal_name || null },
-        { email: data.email || null, phone: data.phone || null, document: data.document || null, legal_name: data.legal_name || null }
+        {
+          name: data.name,
+          cnpj: data.document || null,
+          phone: data.phone || null,
+          email: data.email || null,
+        },
+        {
+          name: data.name,
+          slug: data.slug,
+          email: data.email || null,
+          phone: data.phone || null,
+          document: data.document || null,
+          legal_name: data.legal_name || null,
+        },
+        {
+          email: data.email || null,
+          phone: data.phone || null,
+          document: data.document || null,
+          legal_name: data.legal_name || null,
+        },
       );
       toast.success("Configurações salvas com sucesso!");
       refresh();
@@ -155,10 +164,16 @@ function Page() {
                   }}
                 />
               </Field>
-              <Field label="Slug (URL) *" hint="Identificador único na URL" error={errors.slug?.message}>
+              <Field
+                label="Slug (URL) *"
+                hint="Identificador único na URL"
+                error={errors.slug?.message}
+              >
                 <Input
                   {...register("slug")}
-                  onChange={(e) => setValue("slug", slugify(e.target.value), { shouldValidate: true })}
+                  onChange={(e) =>
+                    setValue("slug", slugify(e.target.value), { shouldValidate: true })
+                  }
                   className="font-mono"
                 />
               </Field>
@@ -202,7 +217,8 @@ function Page() {
               <span>
                 Atenção: alterar o slug mudará a URL da agência de{" "}
                 <code className="font-mono">/{q.data?.agency?.slug}</code> para{" "}
-                <code className="font-mono">/{watch("slug")}</code>. Links antigos deixarão de funcionar.
+                <code className="font-mono">/{watch("slug")}</code>. Links antigos deixarão de
+                funcionar.
               </span>
             </div>
           )}

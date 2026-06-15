@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
+import { generateOmnichannelReply } from "@/lib/api/ai-chat.functions";
 
 export const Route = createFileRoute("/agency/$slug/omnichannel")({
   head: () => ({ meta: [{ title: "Omnichannel · TravelOS" }] }),
@@ -72,7 +73,8 @@ function formatTime(iso: string | null) {
   const diff = now.getTime() - d.getTime();
   if (diff < 60_000) return "agora";
   if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m`;
-  if (diff < 86_400_000) return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  if (diff < 86_400_000)
+    return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
@@ -85,6 +87,7 @@ function OmnichannelPage() {
   const [reply, setReply] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
+  const [generatingAi, setGeneratingAi] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // ── Sessions ───────────────────────────────────────────────────
@@ -93,7 +96,9 @@ function OmnichannelPage() {
     queryKey: ["omnichannel-sessions", agency?.id, filterChannel],
     queryFn: async () => {
       let q = (supabase.from as any)("omnichannel_sessions")
-        .select("id, channel, contact_id, contact_name, contact_avatar_url, unread_count, last_message_at, last_message_preview, status, tags, assigned_to")
+        .select(
+          "id, channel, contact_id, contact_name, contact_avatar_url, unread_count, last_message_at, last_message_preview, status, tags, assigned_to",
+        )
         .eq("agency_id", agency!.id)
         .order("last_message_at", { ascending: false, nullsFirst: false });
       if (filterChannel) q = q.eq("channel", filterChannel);
@@ -128,11 +133,13 @@ function OmnichannelPage() {
   useEffect(() => {
     if (selectedId) {
       (supabase.rpc as any)("mark_session_read", { p_session_id: selectedId }).catch(() => {});
-      qc.setQueryData(["omnichannel-sessions", agency?.id, filterChannel], (old: Session[] | undefined) =>
-        old?.map((s) => s.id === selectedId ? { ...s, unread_count: 0 } : s) ?? []
+      qc.setQueryData(
+        ["omnichannel-sessions", agency?.id, filterChannel],
+        (old: Session[] | undefined) =>
+          old?.map((s) => (s.id === selectedId ? { ...s, unread_count: 0 } : s)) ?? [],
       );
     }
-  }, [selectedId]);
+  }, [selectedId, agency?.id, filterChannel, qc]);
 
   const filteredSessions = sessions.filter((s) => {
     if (!search) return true;
@@ -165,14 +172,23 @@ function OmnichannelPage() {
     setSendingReply(false);
   }
 
-  function generateAiSuggestion() {
-    // Placeholder — em produção chamaria a Edge Function de IA
-    const suggestions = [
-      "Olá! Fico feliz em ajudar. Poderia me informar a data de saída desejada e quantas pessoas viajarão?",
-      "Claro! Temos excelentes pacotes para esse destino. Posso enviar mais detalhes por aqui?",
-      "Sem problemas! Nosso processo é muito simples. Quer que eu explique como funciona o pagamento?",
-    ];
-    setAiSuggestion(suggestions[Math.floor(Math.random() * suggestions.length)]);
+  async function generateAiSuggestion() {
+    if (!selectedId || !agency?.id) return;
+    setGeneratingAi(true);
+    setAiSuggestion(null);
+    try {
+      const res = await generateOmnichannelReply({
+        data: {
+          agencyId: agency.id,
+          sessionId: selectedId,
+        },
+      });
+      setAiSuggestion(res.suggestion);
+    } catch (error: any) {
+      toast.error("Erro ao gerar sugestão de IA: " + error.message);
+    } finally {
+      setGeneratingAi(false);
+    }
   }
 
   if (!agency) return null;
@@ -198,7 +214,10 @@ function OmnichannelPage() {
                 className="w-full rounded-md border border-border bg-surface-alt pl-8 pr-3 py-2 text-xs outline-none focus:border-brand"
               />
               {search && (
-                <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
@@ -223,7 +242,9 @@ function OmnichannelPage() {
                       <span className="capitalize">{ch}</span>
                     </>
                   ) : (
-                    <><Inbox className="h-3 w-3" /> Todas</>
+                    <>
+                      <Inbox className="h-3 w-3" /> Todas
+                    </>
                   )}
                 </button>
               ))}
@@ -234,7 +255,7 @@ function OmnichannelPage() {
           <div className="flex-1 overflow-y-auto">
             {sessionsLoading && (
               <div className="space-y-2 p-3">
-                {[1,2,3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="h-16 rounded-lg bg-surface-alt animate-pulse" />
                 ))}
               </div>
@@ -260,13 +281,21 @@ function OmnichannelPage() {
                   <div className="relative shrink-0">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-alt border border-border">
                       {s.contact_avatar_url ? (
-                        <img src={s.contact_avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+                        <img
+                          src={s.contact_avatar_url}
+                          alt=""
+                          className="h-9 w-9 rounded-full object-cover"
+                        />
                       ) : (
                         <UserCircle className="h-5 w-5 text-muted-foreground" />
                       )}
                     </div>
-                    <div className={`absolute -bottom-0.5 -right-0.5 rounded-full bg-surface p-0.5`}>
-                      <Icon className={`h-3 w-3 ${CHANNEL_COLORS[s.channel] ?? "text-muted-foreground"}`} />
+                    <div
+                      className={`absolute -bottom-0.5 -right-0.5 rounded-full bg-surface p-0.5`}
+                    >
+                      <Icon
+                        className={`h-3 w-3 ${CHANNEL_COLORS[s.channel] ?? "text-muted-foreground"}`}
+                      />
                     </div>
                   </div>
                   {/* Content */}
@@ -292,7 +321,10 @@ function OmnichannelPage() {
                     {s.tags.length > 0 && (
                       <div className="mt-1 flex gap-1">
                         {s.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="rounded-full bg-surface-alt px-1.5 py-0.5 text-[9px] text-muted-foreground border border-border">
+                          <span
+                            key={tag}
+                            className="rounded-full bg-surface-alt px-1.5 py-0.5 text-[9px] text-muted-foreground border border-border"
+                          >
                             {tag}
                           </span>
                         ))}
@@ -322,7 +354,9 @@ function OmnichannelPage() {
                     <>
                       {(() => {
                         const Icon = CHANNEL_ICONS[selectedSession.channel] ?? MessageSquare;
-                        return <Icon className={`h-3 w-3 ${CHANNEL_COLORS[selectedSession.channel]}`} />;
+                        return (
+                          <Icon className={`h-3 w-3 ${CHANNEL_COLORS[selectedSession.channel]}`} />
+                        );
                       })()}
                       via {selectedSession.channel}
                     </>
@@ -332,9 +366,11 @@ function OmnichannelPage() {
               <div className="ml-auto flex items-center gap-2">
                 <button
                   onClick={generateAiSuggestion}
-                  className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-brand hover:bg-surface-alt transition-colors"
+                  disabled={generatingAi}
+                  className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-brand hover:bg-surface-alt transition-colors disabled:opacity-50"
                 >
-                  <Sparkles className="h-3.5 w-3.5" /> Sugerir resposta IA
+                  <Sparkles className={`h-3.5 w-3.5 ${generatingAi ? "animate-pulse" : ""}`} />
+                  {generatingAi ? "Gerando..." : "Sugerir resposta IA"}
                 </button>
               </div>
             </div>
@@ -345,17 +381,25 @@ function OmnichannelPage() {
                 <div className="flex items-start gap-2">
                   <Sparkles className="h-4 w-4 text-brand mt-0.5 shrink-0" />
                   <div className="flex-1">
-                    <div className="text-[10px] font-semibold uppercase tracking-wide text-brand mb-1">Sugestão da IA</div>
+                    <div className="text-[10px] font-semibold uppercase tracking-wide text-brand mb-1">
+                      Sugestão da IA
+                    </div>
                     <p className="text-xs text-foreground">{aiSuggestion}</p>
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button
-                      onClick={() => { setReply(aiSuggestion); setAiSuggestion(null); }}
+                      onClick={() => {
+                        setReply(aiSuggestion);
+                        setAiSuggestion(null);
+                      }}
                       className="rounded-md bg-brand px-2 py-1 text-[10px] font-medium text-brand-foreground hover:bg-brand/90"
                     >
                       Usar
                     </button>
-                    <button onClick={() => setAiSuggestion(null)} className="text-muted-foreground hover:text-foreground">
+                    <button
+                      onClick={() => setAiSuggestion(null)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </div>
@@ -381,7 +425,9 @@ function OmnichannelPage() {
                       <img src={m.media_url} alt="Media" className="mb-2 rounded-lg max-w-full" />
                     )}
                     <p>{m.content}</p>
-                    <div className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${m.direction === "outbound" ? "text-brand-foreground/70" : "text-muted-foreground"}`}>
+                    <div
+                      className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${m.direction === "outbound" ? "text-brand-foreground/70" : "text-muted-foreground"}`}
+                    >
                       {formatTime(m.created_at)}
                       {m.direction === "outbound" && <CheckCheck className="h-3 w-3" />}
                     </div>
@@ -398,7 +444,10 @@ function OmnichannelPage() {
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
                   }}
                   placeholder="Digite uma mensagem… (Enter para enviar)"
                   rows={2}

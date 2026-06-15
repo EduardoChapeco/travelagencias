@@ -240,7 +240,9 @@ function Page() {
                 <button
                   type="button"
                   onClick={handleCnpjLookup}
-                  disabled={loadingCnpj || (documentValue || "").replace(/[^\d]/g, "").length !== 14}
+                  disabled={
+                    loadingCnpj || (documentValue || "").replace(/[^\d]/g, "").length !== 14
+                  }
                   className="mb-[2px] h-10 rounded-md border border-border px-4 text-sm font-medium hover:bg-surface-alt disabled:opacity-50"
                 >
                   {loadingCnpj ? "Buscando..." : "Buscar CNPJ"}

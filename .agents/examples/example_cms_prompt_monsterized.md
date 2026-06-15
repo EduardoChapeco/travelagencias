@@ -10,6 +10,7 @@
 O agente `00_prompt_intake_architect` intercepta e traduz o pedido vago para:
 
 **Requisitos Verificáveis:**
+
 1. Auditar atual implementação de CMS.
 2. Identificar falta de renderizador, persistência ou RLS.
 3. Implementar Flat Premium UI para o CMS (sem popups).
@@ -41,6 +42,7 @@ O agente executa `grep` e mapeia que o CMS atual é apenas um arquivo `CMSBuilde
 ## 6. Release Gate Interceptando
 
 O agente tenta dizer "CMS Premium concluído e seguro!", mas o `13_false_claims_investigator` verifica que:
+
 - Não há RLS na tabela nova.
 - Não houve output de `npm run build`.
 

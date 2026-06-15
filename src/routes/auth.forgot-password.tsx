@@ -62,11 +62,7 @@ function ForgotPage() {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">
             <Field label="Email" error={errors.email?.message}>
-              <Input
-                type="email"
-                placeholder="seu@email.com"
-                {...register("email")}
-              />
+              <Input type="email" placeholder="seu@email.com" {...register("email")} />
             </Field>
             <PrimaryButton type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? "Enviando…" : "Enviar link"}

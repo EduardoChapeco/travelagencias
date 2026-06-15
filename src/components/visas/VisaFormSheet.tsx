@@ -11,6 +11,7 @@ import {
   GhostButton,
   Sheet,
 } from "@/components/ui/form";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { toast } from "sonner";
 
 type VisaFormSheetProps = {
@@ -111,14 +112,18 @@ export function VisaFormSheet({ agencyId, onClose, onSaved }: VisaFormSheetProps
       <form onSubmit={handleSubmit} className="flex flex-col h-[calc(100vh-64px)]">
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           <Field label="Cliente *">
-            <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-              <option value="">Selecione um cliente...</option>
-              {clientsQ.data?.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.full_name} {c.document ? `(${c.document})` : ""}
-                </option>
-              ))}
-            </Select>
+            <SearchableSelect
+              value={clientId}
+              onChange={setClientId}
+              placeholder="Buscar cliente..."
+              searchPlaceholder="Nome, CPF..."
+              options={clientsQ.data?.map((c) => ({
+                value: c.id,
+                label: c.full_name,
+                sublabel: c.document ?? undefined,
+              }))}
+              loading={clientsQ.isLoading}
+            />
           </Field>
 
           <Field label="Data de Emissão">

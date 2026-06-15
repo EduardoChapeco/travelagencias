@@ -301,7 +301,9 @@ function BlogSheet({
     if (!post?.id) return;
     setGbpPosting(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const res = await supabase.functions.invoke("google-business-post", {
         body: { post_id: post.id, agency_id: agencyId },
       });

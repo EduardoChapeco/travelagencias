@@ -161,19 +161,11 @@ export function AddRecordSheet({
             </Select>
           </Field>
           <Field label="Valor (R$)" error={errors.amount?.message}>
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="0,00"
-              {...register("amount")}
-            />
+            <Input type="number" step="0.01" placeholder="0,00" {...register("amount")} />
           </Field>
         </div>
         <Field label="Descrição" error={errors.description?.message}>
-          <Input
-            placeholder="Ex: Passagem aérea GRU → LIS"
-            {...register("description")}
-          />
+          <Input placeholder="Ex: Passagem aérea GRU → LIS" {...register("description")} />
         </Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Forma de pagamento" error={errors.payment_method?.message}>
@@ -187,10 +179,7 @@ export function AddRecordSheet({
             </Select>
           </Field>
           <Field label="Vencimento" error={errors.due_date?.message}>
-            <Input
-              type="date"
-              {...register("due_date")}
-            />
+            <Input type="date" {...register("due_date")} />
           </Field>
         </div>
         <Field label="Status" error={errors.status?.message}>

@@ -21,7 +21,13 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ doc_type: "passport", doc_number: "", issued_at: "", expires_at: "", notes: "" });
+  const [form, setForm] = useState({
+    doc_type: "passport",
+    doc_number: "",
+    issued_at: "",
+    expires_at: "",
+    notes: "",
+  });
   const [saving, setSaving] = useState(false);
   const { confirm, ConfirmDialog } = useConfirm();
 
@@ -64,13 +70,16 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
       variant: "destructive",
       onConfirm: async () => {
         try {
-          await supabase.from("client_documents" as any).delete().eq("id", docId);
+          await supabase
+            .from("client_documents" as any)
+            .delete()
+            .eq("id", docId);
           qc.invalidateQueries({ queryKey: ["client-documents", clientId] });
           toast.success("Documento removido.");
         } catch (e) {
           toast.error("Erro ao remover documento");
         }
-      }
+      },
     });
   }
 
@@ -117,7 +126,9 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
       {open && (
         <div className="px-6 pb-6 space-y-4 border-t border-border/50 bg-background">
           {docs.length === 0 && !adding && (
-            <p className="pt-4 text-sm text-muted-foreground text-center">Nenhum documento cadastrado.</p>
+            <p className="pt-4 text-sm text-muted-foreground text-center">
+              Nenhum documento cadastrado.
+            </p>
           )}
 
           {docs.map((doc: any) => {
@@ -147,7 +158,11 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {doc.doc_number && <span>Nº {doc.doc_number} · </span>}
-                    {doc.expires_at && <span>Vence: {new Date(doc.expires_at + "T00:00:00").toLocaleDateString("pt-BR")}</span>}
+                    {doc.expires_at && (
+                      <span>
+                        Vence: {new Date(doc.expires_at + "T00:00:00").toLocaleDateString("pt-BR")}
+                      </span>
+                    )}
                     {doc.notes && <span> · {doc.notes}</span>}
                   </div>
                 </div>
@@ -165,17 +180,25 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
             <div className="rounded-xl border border-brand/30 bg-brand/5 p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                    Tipo
+                  </label>
                   <select
                     value={form.doc_type}
                     onChange={(e) => setForm({ ...form, doc_type: e.target.value })}
                     className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none text-foreground"
                   >
-                    {DOC_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    {DOC_TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Número</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                    Número
+                  </label>
                   <input
                     value={form.doc_number}
                     onChange={(e) => setForm({ ...form, doc_number: e.target.value })}
@@ -184,7 +207,9 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Emissão</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                    Emissão
+                  </label>
                   <input
                     type="date"
                     value={form.issued_at}
@@ -193,7 +218,9 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Vencimento</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                    Vencimento
+                  </label>
                   <input
                     type="date"
                     value={form.expires_at}

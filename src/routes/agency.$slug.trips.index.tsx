@@ -20,12 +20,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import {
-  StatusBadge,
-  GhostButton,
-  money,
-  fmtDate,
-} from "@/components/ui/form";
+import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { NewTripWizard } from "@/components/trips/NewTripWizard";
@@ -83,6 +78,7 @@ function TripsList() {
           { count: "exact" },
         )
         .eq("agency_id", agency!.id)
+        .is("deleted_at", null)
         .order("created_at", { ascending: false })
         .range((page - 1) * pageSize, page * pageSize - 1);
 
@@ -115,7 +111,10 @@ function TripsList() {
   // ─── Excluir viagem ────────────────────────────────────────────
   const delMut = useMutation({
     mutationFn: async (tripId: string) => {
-      const { error } = await supabase.from("trips").delete().eq("id", tripId);
+      const { error } = await supabase
+        .from("trips")
+        .update({ deleted_at: new Date().toISOString() } as any)
+        .eq("id", tripId);
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
@@ -147,7 +146,9 @@ function TripsList() {
             {row.getValue("title")}
           </Link>
           {row.original.destination && (
-            <div className="text-[11px] text-muted-foreground mt-0.5">{row.original.destination}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {row.original.destination}
+            </div>
           )}
         </div>
       ),
@@ -227,7 +228,7 @@ function TripsList() {
                       title: "Excluir Viagem",
                       description: "Tem certeza que deseja excluir esta viagem?",
                       variant: "destructive",
-                      onConfirm: () => delMut.mutate(trip.id)
+                      onConfirm: () => delMut.mutate(trip.id),
                     });
                   }}
                   disabled={delMut.isPending}
@@ -266,7 +267,10 @@ function TripsList() {
           <input
             type="text"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             placeholder="Buscar por título..."
             className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
           />
@@ -275,7 +279,10 @@ function TripsList() {
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <select
             value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
             className="h-9 appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
           >
             <option value="all">Todos os status</option>

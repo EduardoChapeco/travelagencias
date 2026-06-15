@@ -6,34 +6,34 @@
 
 ## Entidades do Domínio
 
-| Entidade | Descrição | Relações Principais |
-|----------|-----------|---------------------|
-| Lead | Contato interessado em viajar | → Cliente, → Cotação |
-| Cliente | Pessoa física ou jurídica cadastrada | → Viagem, → Contrato, → Pagamento |
-| Viajante | Pessoa que viaja (pode ser diferente do cliente) | → Passageiro |
-| Passageiro | Pessoa em um trecho/viagem específica | → Viagem, → Voucher, → Embarque |
-| Cotação | Proposta de preço para viagem | → Lead/Cliente, → Viagem |
-| Proposta | Documento formal de venda | → Cliente, → Viagem |
-| Viagem (Trip) | Pacote vendido com roteiro | → Cliente, → Passageiros, → Vouchers, → Pagamentos |
-| Roteiro (Itinerary) | Dia a dia da viagem | → Viagem |
-| Fornecedor (Supplier) | Operadora, hotel, aéreo | → Viagem, → Voucher |
-| Voucher | Documento de confirmação de serviço | → Viagem, → Passageiro |
-| Contrato | Documento jurídico de venda | → Viagem, → Cliente |
-| Pagamento | Parcela ou transação financeira | → Viagem, → Plano de Pagamento |
-| Comissão | Valor recebido pela agência | → Viagem, → Fornecedor |
-| Embarque (Boarding) | Controle de embarque | → Viagem, → Passageiro |
-| PNR | Código de reserva aérea | → Viagem |
-| Documento | Passaporte, RG, CPF | → Passageiro |
-| Visto | Processo consular | → Cliente |
-| Seguro Viagem | Apólice de seguro | → Viagem, → Passageiro |
-| Suporte/Pós-Venda | Atendimento pós-viagem | → Viagem, → Cliente |
-| Cancelamento | Solicitação de cancelamento | → Viagem, → Contrato |
-| Reembolso | Devolução financeira | → Cancelamento, → Pagamento |
-| Remarcação | Alteração de datas/roteiro | → Viagem |
-| Corporate/RFP | Requisição corporativa | → Cliente (empresa), → Cotação |
-| Agente | Consultor/funcionário da agência | → Lead, → Viagem |
-| Agência | Empresa de turismo (tenant) | → tudo |
-| Admin Master | Super admin da plataforma | → Agências |
+| Entidade              | Descrição                                        | Relações Principais                                |
+| --------------------- | ------------------------------------------------ | -------------------------------------------------- |
+| Lead                  | Contato interessado em viajar                    | → Cliente, → Cotação                               |
+| Cliente               | Pessoa física ou jurídica cadastrada             | → Viagem, → Contrato, → Pagamento                  |
+| Viajante              | Pessoa que viaja (pode ser diferente do cliente) | → Passageiro                                       |
+| Passageiro            | Pessoa em um trecho/viagem específica            | → Viagem, → Voucher, → Embarque                    |
+| Cotação               | Proposta de preço para viagem                    | → Lead/Cliente, → Viagem                           |
+| Proposta              | Documento formal de venda                        | → Cliente, → Viagem                                |
+| Viagem (Trip)         | Pacote vendido com roteiro                       | → Cliente, → Passageiros, → Vouchers, → Pagamentos |
+| Roteiro (Itinerary)   | Dia a dia da viagem                              | → Viagem                                           |
+| Fornecedor (Supplier) | Operadora, hotel, aéreo                          | → Viagem, → Voucher                                |
+| Voucher               | Documento de confirmação de serviço              | → Viagem, → Passageiro                             |
+| Contrato              | Documento jurídico de venda                      | → Viagem, → Cliente                                |
+| Pagamento             | Parcela ou transação financeira                  | → Viagem, → Plano de Pagamento                     |
+| Comissão              | Valor recebido pela agência                      | → Viagem, → Fornecedor                             |
+| Embarque (Boarding)   | Controle de embarque                             | → Viagem, → Passageiro                             |
+| PNR                   | Código de reserva aérea                          | → Viagem                                           |
+| Documento             | Passaporte, RG, CPF                              | → Passageiro                                       |
+| Visto                 | Processo consular                                | → Cliente                                          |
+| Seguro Viagem         | Apólice de seguro                                | → Viagem, → Passageiro                             |
+| Suporte/Pós-Venda     | Atendimento pós-viagem                           | → Viagem, → Cliente                                |
+| Cancelamento          | Solicitação de cancelamento                      | → Viagem, → Contrato                               |
+| Reembolso             | Devolução financeira                             | → Cancelamento, → Pagamento                        |
+| Remarcação            | Alteração de datas/roteiro                       | → Viagem                                           |
+| Corporate/RFP         | Requisição corporativa                           | → Cliente (empresa), → Cotação                     |
+| Agente                | Consultor/funcionário da agência                 | → Lead, → Viagem                                   |
+| Agência               | Empresa de turismo (tenant)                      | → tudo                                             |
+| Admin Master          | Super admin da plataforma                        | → Agências                                         |
 
 ---
 
@@ -62,21 +62,25 @@ Antes de implementar qualquer feature, responder:
 ## Fluxos Críticos
 
 ### Fluxo de Venda
+
 ```
 Lead → Qualificação → Cotação → Proposta → Contrato → Pagamento → Viagem Confirmada
 ```
 
 ### Fluxo Operacional
+
 ```
 Viagem Confirmada → Roteiro → Fornecedores → Vouchers → Embarque → Pós-Venda
 ```
 
 ### Fluxo Financeiro
+
 ```
 Cotação → Plano de Pagamento → Parcelas → Cobranças → Comissões → Relatório
 ```
 
 ### Fluxo do Cliente (Portal)
+
 ```
 Login → Minhas Viagens → Detalhes → Vouchers → Documentos → Financeiro → Memórias
 ```

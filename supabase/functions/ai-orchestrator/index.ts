@@ -33,7 +33,7 @@ async function decryptData(encodedBase64: string, password: string) {
 async function resolveApiKey(
   supabaseAdmin: any,
   provider: string,
-  agencyId?: string | null
+  agencyId?: string | null,
 ): Promise<{ keyValue: string | null; keyId: string | null }> {
   try {
     const { data, error } = await supabaseAdmin.rpc("pick_active_api_key", {
@@ -63,7 +63,7 @@ async function resolveApiKeyWithFallback(
   supabaseAdmin: any,
   provider: string,
   agencyId?: string | null,
-  legacyKeys?: any
+  legacyKeys?: any,
 ): Promise<{ keyValue: string | null; keyId: string | null }> {
   // 1. Try pick_active_api_key (dynamic API keys table)
   const { keyValue, keyId } = await resolveApiKey(supabaseAdmin, provider, agencyId);
@@ -106,10 +106,7 @@ async function incrementKeyUsage(supabaseAdmin: any, keyId: string) {
       .single();
     if (!selectError && data) {
       const newCount = (data.used_count || 0) + 1;
-      await supabaseAdmin
-        .from("api_keys")
-        .update({ used_count: newCount })
-        .eq("id", keyId);
+      await supabaseAdmin.from("api_keys").update({ used_count: newCount }).eq("id", keyId);
     }
   } catch (e) {
     console.error(`Failed to increment usage for key ${keyId}:`, e);
@@ -182,7 +179,12 @@ serve(async (req) => {
       let usedProvider = "";
 
       // 1. Try GEMINI first (if modelPreference !== "fast")
-      const { keyValue: geminiKey, keyId: geminiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "gemini", agencyId, keys);
+      const { keyValue: geminiKey, keyId: geminiKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "gemini",
+        agencyId,
+        keys,
+      );
       if (modelPreference !== "fast" && geminiKey) {
         try {
           const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
@@ -209,7 +211,12 @@ serve(async (req) => {
       }
 
       // 2. Try OpenAI second (if modelPreference !== "fast")
-      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openai", agencyId, keys);
+      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "openai",
+        agencyId,
+        keys,
+      );
       if (modelPreference !== "fast" && !aiResult && openaiKey) {
         try {
           const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -242,7 +249,12 @@ serve(async (req) => {
       }
 
       // 3. Fallback: GROQ (Llama 3)
-      const { keyValue: groqKey, keyId: groqKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "groq", agencyId, keys);
+      const { keyValue: groqKey, keyId: groqKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "groq",
+        agencyId,
+        keys,
+      );
       if (!aiResult && groqKey) {
         try {
           const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -275,7 +287,12 @@ serve(async (req) => {
       }
 
       // 4. Fallback: OpenRouter
-      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openrouter", agencyId, keys);
+      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "openrouter",
+        agencyId,
+        keys,
+      );
       if (!aiResult && openrouterKey) {
         try {
           const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -319,7 +336,12 @@ serve(async (req) => {
       const { url, useStell } = body;
       const agencyId = body.agency_id || body.agencyId;
 
-      const { keyValue: stellKey, keyId: stellKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "stell", agencyId, keys);
+      const { keyValue: stellKey, keyId: stellKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "stell",
+        agencyId,
+        keys,
+      );
       if (useStell && stellKey) {
         if (stellKeyId) await incrementKeyUsage(supabaseAdmin, stellKeyId);
         return new Response(
@@ -333,7 +355,12 @@ serve(async (req) => {
         );
       }
 
-      const { keyValue: firecrawlKey, keyId: firecrawlKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "firecrawl", agencyId, keys);
+      const { keyValue: firecrawlKey, keyId: firecrawlKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "firecrawl",
+        agencyId,
+        keys,
+      );
       if (firecrawlKey) {
         const res = await fetch("https://api.firecrawl.dev/v0/scrape", {
           method: "POST",
@@ -373,13 +400,18 @@ serve(async (req) => {
       let imageUrl = "";
       let usedImageProvider = "";
 
-      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openai", agency_id, keys);
+      const { keyValue: openaiKey, keyId: openaiKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "openai",
+        agency_id,
+        keys,
+      );
       if (openaiKey) {
         try {
           const res = await fetch("https://api.openai.com/v1/images/generations", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${openaiKey}`,
+              Authorization: `Bearer ${openaiKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -404,13 +436,18 @@ serve(async (req) => {
         }
       }
 
-      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(supabaseAdmin, "openrouter", agency_id, keys);
+      const { keyValue: openrouterKey, keyId: openrouterKeyId } = await resolveApiKeyWithFallback(
+        supabaseAdmin,
+        "openrouter",
+        agency_id,
+        keys,
+      );
       if (!imageUrl && openrouterKey) {
         try {
           const res = await fetch("https://openrouter.ai/api/v1/images/generations", {
             method: "POST",
             headers: {
-              "Authorization": `Bearer ${openrouterKey}`,
+              Authorization: `Bearer ${openrouterKey}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -434,7 +471,9 @@ serve(async (req) => {
       }
 
       if (!imageUrl) {
-        throw new Error("Geração de imagem falhou. Chaves de API não configuradas ou limite excedido.");
+        throw new Error(
+          "Geração de imagem falhou. Chaves de API não configuradas ou limite excedido.",
+        );
       }
 
       // Fetch the generated image bytes
@@ -460,9 +499,9 @@ serve(async (req) => {
 
       if (uploadErr) throw new Error("Erro de Storage: " + uploadErr.message);
 
-      const { data: { publicUrl } } = supabaseAdminForStorage.storage
-        .from("agency-media")
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabaseAdminForStorage.storage.from("agency-media").getPublicUrl(filePath);
 
       return new Response(JSON.stringify({ url: publicUrl }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
