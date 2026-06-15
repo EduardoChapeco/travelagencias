@@ -117,7 +117,7 @@ function Page() {
         {/* Header card com identidade */}
         <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white shadow-sm"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white"
             style={{ background: agency.brand_color || "#334155" }}
           >
             {agency.name.charAt(0).toUpperCase()}

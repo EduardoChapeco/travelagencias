@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { usePrompt } from "@/hooks/use-prompt";
 import {
   fetchPolicies,
   savePolicyDraft,
@@ -40,6 +41,7 @@ function Page() {
   const [activeKind, setActiveKind] = useState<string>("privacy");
   const [busy, setBusy] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const { prompt, PromptDialog } = usePrompt();
 
   const q = useQuery({ queryKey: ["admin-policies"], queryFn: fetchPolicies });
 
@@ -69,18 +71,24 @@ function Page() {
 
   async function saveAsNewVersion() {
     if (!activeDoc) return;
-    const newVer = prompt("Nova versao?", activeDoc.version);
-    if (!newVer) return;
-    setBusy(true);
-    try {
-      await savePolicyNewVersion(activeDoc, newVer);
-      toast.success("Nova versao criada");
-      qc.invalidateQueries({ queryKey: ["admin-policies"] });
-    } catch (e: any) {
-      toast.error(e.message);
-    } finally {
-      setBusy(false);
-    }
+    prompt({
+      title: "Nova Versão",
+      description: "Digite a identificação da nova versão do documento:",
+      defaultValue: activeDoc.version,
+      onConfirm: async (newVer) => {
+        if (!newVer) return;
+        setBusy(true);
+        try {
+          await savePolicyNewVersion(activeDoc, newVer);
+          toast.success("Nova versao criada");
+          qc.invalidateQueries({ queryKey: ["admin-policies"] });
+        } catch (e: any) {
+          toast.error(e.message);
+        } finally {
+          setBusy(false);
+        }
+      },
+    });
   }
 
   async function publish() {
@@ -116,6 +124,7 @@ function Page() {
 
   return (
     <>
+      <PromptDialog />
       <PageHeader
         title="Politicas LGPD"
         description="Documentos juridicos e de conformidade da plataforma. Edite e publique Politica de Privacidade, Termos de Uso e DPA."

@@ -99,7 +99,7 @@ function KnowledgePage() {
           <button
             key={a.id}
             onClick={() => setViewing(a)}
-            className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 hover:shadow-sm"
+            className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40"
           >
             <div className="flex items-start justify-between gap-2">
               <BookOpen className="h-4 w-4 text-muted-foreground" />

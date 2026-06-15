@@ -13,6 +13,7 @@ import { FileUploader } from "@/components/uploads/FileUploader";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePrompt } from "@/hooks/use-prompt";
 
 export const Route = createFileRoute("/client/profile")({
   head: () => ({ meta: [{ title: "Perfil · TravelOS" }] }),
@@ -52,6 +53,7 @@ function Page() {
     queryKey: ["client-profile"],
     queryFn: () => fetchClientProfile(),
   });
+  const { prompt, PromptDialog } = usePrompt();
 
   const {
     register,
@@ -97,22 +99,28 @@ function Page() {
   }
 
   async function changePassword() {
-    const pwd = window.prompt("Nova senha (mínimo 8 caracteres)");
-    if (!pwd || pwd.length < 8) {
-      toast.error("Senha muito curta");
-      return;
-    }
-    try {
-      await updateClientPassword(pwd);
-      toast.success("Senha alterada");
-    } catch (e: any) {
-      toast.error(e.message);
-    }
+    prompt({
+      title: "Alterar Senha",
+      description: "Digite sua nova senha (mínimo de 8 caracteres):",
+      onConfirm: async (pwd) => {
+        if (!pwd || pwd.length < 8) {
+          toast.error("Senha muito curta");
+          return;
+        }
+        try {
+          await updateClientPassword(pwd);
+          toast.success("Senha alterada");
+        } catch (e: any) {
+          toast.error(e.message);
+        }
+      },
+    });
   }
 
   if (!me.data) return null;
   return (
     <>
+      <PromptDialog />
       <PageHeader title="Meu perfil" description="Atualize seus dados pessoais e de viagem" />
       <form
         onSubmit={handleSubmit(onSubmit)}

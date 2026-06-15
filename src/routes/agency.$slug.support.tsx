@@ -181,7 +181,7 @@ function SupportPage() {
                 setFilter(f);
                 setPage(1);
               }}
-              className={`rounded px-3 py-1.5 flex-1 sm:flex-none font-medium transition-colors ${filter === f ? "bg-surface-alt text-foreground shadow-sm border border-border/50" : "text-muted-foreground hover:text-foreground"}`}
+              className={`rounded px-3 py-1.5 flex-1 sm:flex-none font-medium transition-colors ${filter === f ? "bg-surface-alt text-foreground border border-border" : "text-muted-foreground hover:text-foreground"}`}
             >
               {f === "all" ? "Todos" : f === "open" ? "Abertos" : "Resolvidos"}
             </button>

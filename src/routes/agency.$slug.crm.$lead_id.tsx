@@ -741,7 +741,7 @@ function LeadDetailPage() {
                         return (
                           <span
                             key={tag}
-                            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold text-white shadow-sm"
+                            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-bold text-white"
                             style={{ backgroundColor: color || "#3b82f6" }}
                           >
                             {name}
