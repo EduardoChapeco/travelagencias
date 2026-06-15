@@ -40,10 +40,12 @@ CREATE TABLE IF NOT EXISTS trip_commissions (
 -- RLS
 ALTER TABLE trip_commissions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "agency_members_access" ON trip_commissions;
 CREATE POLICY "agency_members_access" ON trip_commissions
   USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Trigger para updated_at
+DROP TRIGGER IF EXISTS trip_commissions_updated_at ON trip_commissions;
 CREATE TRIGGER trip_commissions_updated_at
   BEFORE UPDATE ON trip_commissions
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();

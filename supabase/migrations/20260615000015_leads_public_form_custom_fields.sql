@@ -1,6 +1,7 @@
 -- Migration: 20260615000001_leads_public_form_custom_fields
 -- Objetivo: Atualizar funções de formulário público para ler e gravar custom_fields (Período Flexível de Interesse) mantendo os campos de acessibilidade e acompanhantes
 
+DROP FUNCTION IF EXISTS public.public_lead_by_id(uuid);
 CREATE OR REPLACE FUNCTION public.public_lead_by_id(_lead_id uuid)
 RETURNS TABLE (
   id uuid,

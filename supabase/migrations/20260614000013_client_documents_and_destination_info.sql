@@ -28,10 +28,12 @@ CREATE TABLE IF NOT EXISTS client_documents (
 -- RLS
 ALTER TABLE client_documents ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "agency_members_access" ON client_documents;
 CREATE POLICY "agency_members_access" ON client_documents
   USING (public.is_agency_member(auth.uid(), agency_id));
 
 -- Trigger para updated_at
+DROP TRIGGER IF EXISTS client_documents_updated_at ON client_documents;
 CREATE TRIGGER client_documents_updated_at
   BEFORE UPDATE ON client_documents
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
@@ -111,9 +113,12 @@ CREATE TABLE IF NOT EXISTS destination_info (
 
 -- Acesso público (leitura) para a área do cliente
 ALTER TABLE destination_info ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "public_read" ON destination_info;
 CREATE POLICY "public_read" ON destination_info FOR SELECT USING (true);
 
 -- Trigger para updated_at
+DROP TRIGGER IF EXISTS destination_info_updated_at ON destination_info;
 CREATE TRIGGER destination_info_updated_at
   BEFORE UPDATE ON destination_info
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();

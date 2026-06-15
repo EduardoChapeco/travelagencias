@@ -16,15 +16,18 @@ CREATE TABLE IF NOT EXISTS public.cms_templates (
 ALTER TABLE public.cms_templates ENABLE ROW LEVEL SECURITY;
 
 -- Agency members can read global public templates or their own
+DROP POLICY IF EXISTS "read_cms_templates" ON public.cms_templates;
 CREATE POLICY "read_cms_templates" ON public.cms_templates
   FOR SELECT TO authenticated
   USING (is_public = true OR public.is_agency_member(auth.uid(), agency_id));
 
 -- Agency admins can create/update their own templates
+DROP POLICY IF EXISTS "write_cms_templates" ON public.cms_templates;
 CREATE POLICY "write_cms_templates" ON public.cms_templates
   FOR ALL TO authenticated
   USING (public.is_agency_member(auth.uid(), agency_id));
 
+DROP TRIGGER IF EXISTS trg_cms_templates_updated_at ON public.cms_templates;
 CREATE TRIGGER trg_cms_templates_updated_at 
   BEFORE UPDATE ON public.cms_templates 
-  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();

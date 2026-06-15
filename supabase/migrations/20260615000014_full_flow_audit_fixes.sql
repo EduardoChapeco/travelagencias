@@ -217,7 +217,6 @@ DROP TRIGGER IF EXISTS trg_installment_paid_recalc ON public.payment_installment
 CREATE TRIGGER trg_installment_paid_recalc
 AFTER INSERT OR UPDATE OF status ON public.payment_installments
 FOR EACH ROW
-WHEN (NEW.status = 'paid' OR (TG_OP = 'UPDATE' AND OLD.status IS DISTINCT FROM NEW.status))
 EXECUTE FUNCTION public.trg_recalculate_trip_total_paid();
 
 -- ── 4. Add notes column to trip_passengers if not exists (for imported flag) ──
