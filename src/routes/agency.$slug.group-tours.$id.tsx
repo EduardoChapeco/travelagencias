@@ -124,9 +124,9 @@ function TourDetailPage() {
               className="h-9 text-xs"
             >
               <option value="draft">Rascunho</option>
-              <option value="open">Aberta</option>
-              <option value="published">Publicada</option>
-              <option value="closed">Encerrada</option>
+              <option value="open">Aberta / Inscrições</option>
+              <option value="confirmed">Confirmada</option>
+              <option value="completed">Concluída / Encerrada</option>
               <option value="cancelled">Cancelada</option>
             </Select>
             <GhostButton onClick={togglePublic} type="button">

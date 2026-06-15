@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { fetchPublicAgencyHome } from "@/services/public";
 import {
   Instagram,
@@ -99,11 +101,34 @@ function HomePage() {
       </div>
     );
 
+  // Track page view event
+  useEffect(() => {
+    if (homePage && agency) {
+      const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
+      supabase
+        .from("portal_page_analytics")
+        .insert({
+          page_id: homePage.id,
+          agency_id: agency.id,
+          event_type: "view",
+          device_type: deviceType,
+        })
+        .then(({ error }) => {
+          if (error) console.error("Error logging home view:", error.message);
+        });
+    }
+  }, [homePage?.id, agency?.id]);
+
   // CMS mode — renderiza blocos configurados
   if (homePage?.blocks && Array.isArray(homePage.blocks) && homePage.blocks.length > 0) {
     return (
       <div className="w-full px-4 sm:px-6">
-        <BlockRenderer blocks={homePage.blocks as PortalBlock[]} agencySlug={agency_slug} />
+        <BlockRenderer
+          blocks={homePage.blocks as PortalBlock[]}
+          agencySlug={agency_slug}
+          pageId={homePage.id}
+          agencyId={agency.id}
+        />
       </div>
     );
   }

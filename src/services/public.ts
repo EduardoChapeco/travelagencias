@@ -9,7 +9,7 @@ export async function fetchPublicAgencyLayout(slug: string) {
   const [pagesRes, settingsRes] = await Promise.all([
     supabase
       .from("portal_pages")
-      .select("slug, title")
+      .select("slug, title, template")
       .eq("agency_id", agency.id)
       .eq("is_published", true)
       .order("created_at"),
@@ -48,7 +48,7 @@ export async function fetchPublicAgencyHome(slug: string) {
       .limit(6),
     (supabase as any)
       .from("portal_pages")
-      .select("blocks:published_blocks, seo:published_seo")
+      .select("blocks:published_blocks, seo:published_seo, template")
       .eq("agency_id", agency.id)
       .eq("slug", "home")
       .eq("is_published", true)
@@ -123,7 +123,7 @@ export async function fetchPublicDynamicPage(agencySlug: string, pageSlug: strin
 
   const { data: page } = await (supabase as any)
     .from("portal_pages")
-    .select("title:published_title, blocks:published_blocks, seo:published_seo")
+    .select("title:published_title, blocks:published_blocks, seo:published_seo, template")
     .eq("agency_id", agency.id)
     .eq("slug", pageSlug)
     .eq("is_published", true)

@@ -40,17 +40,32 @@ serve(async (req) => {
 
     // 2. Garantir que o usuário existe no auth.users
     let user_id = client.user_id;
+    let authUser = null;
 
-    const {
-      data: { users },
-      error: listErr,
-    } = await supabaseAdmin.auth.admin.listUsers();
-    if (listErr) throw listErr;
-
-    let authUser = users?.find((u) => u.email === client.email);
+    if (user_id) {
+      // Se já temos o user_id vinculado, buscamos o usuário diretamente
+      const { data: { user }, error: getErr } = await supabaseAdmin.auth.admin.getUserById(user_id);
+      if (!getErr && user) {
+        authUser = user;
+      }
+    }
 
     if (!authUser) {
-      // Criar usuário de autenticação para o cliente
+      // Se não temos ou não achamos por ID, verificamos por e-mail via RPC seguro
+      const { data: existingUserId, error: rpcErr } = await supabaseAdmin.rpc("get_auth_user_id_by_email", {
+        p_email: client.email,
+      });
+
+      if (!rpcErr && existingUserId) {
+        const { data: { user }, error: getErr } = await supabaseAdmin.auth.admin.getUserById(existingUserId);
+        if (!getErr && user) {
+          authUser = user;
+        }
+      }
+    }
+
+    if (!authUser) {
+      // Se o usuário realmente não existe em auth.users, nós o criamos
       const { data: createData, error: createErr } = await supabaseAdmin.auth.admin.createUser({
         email: client.email,
         email_confirm: true,
@@ -60,8 +75,8 @@ serve(async (req) => {
       authUser = createData.user;
     }
 
-    // Vincular user_id se estiver nulo
-    if (authUser && !client.user_id) {
+    // Vincular user_id se estiver nulo ou desatualizado no cliente
+    if (authUser && client.user_id !== authUser.id) {
       await supabaseAdmin.from("clients").update({ user_id: authUser.id }).eq("id", client.id);
       user_id = authUser.id;
     }

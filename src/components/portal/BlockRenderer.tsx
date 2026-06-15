@@ -9,18 +9,115 @@ import type { PortalBlock } from "@/lib/cms-types";
 // Re-export so existing imports from this path continue to work
 export type { PortalBlock };
 
+export function BlockStyleWrapper({ block, children }: { block: PortalBlock; children: React.ReactNode }) {
+  const styles = (block as any).styles;
+  if (!styles) return <div className="w-full">{children}</div>;
+
+  const { bg_type, bg_color, bg_gradient, bg_image_url, text_color, padding_y, border_radius } = styles;
+
+  const inlineStyles: React.CSSProperties = {};
+  if (text_color) inlineStyles.color = text_color;
+
+  if (bg_type === "color" && bg_color) {
+    inlineStyles.backgroundColor = bg_color;
+  } else if (bg_type === "gradient" && bg_gradient) {
+    inlineStyles.background = bg_gradient;
+  } else if (bg_type === "image" && bg_image_url) {
+    inlineStyles.backgroundImage = `url(${bg_image_url})`;
+    inlineStyles.backgroundSize = "cover";
+    inlineStyles.backgroundPosition = "center";
+  }
+
+  const paddingMap = {
+    none: "py-0 px-0",
+    sm: "py-6 px-4 md:py-8 md:px-6",
+    md: "py-12 px-6 md:py-16 md:px-10",
+    lg: "py-24 px-8 md:py-32 md:px-16",
+  };
+  const paddingClass = paddingMap[padding_y as keyof typeof paddingMap] || "py-8 px-4";
+
+  const radiusMap = {
+    none: "rounded-none",
+    md: "rounded-xl",
+    lg: "rounded-3xl",
+    full: "rounded-[2rem]",
+  };
+  const radiusClass = radiusMap[border_radius as keyof typeof radiusMap] || "";
+
+  return (
+    <div
+      style={inlineStyles}
+      className={`w-full transition-all overflow-hidden ${paddingClass} ${radiusClass} ${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
+    >
+      <div className={bg_type === "image" ? "relative z-10 w-full" : "w-full"}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function BlockRenderer({
   blocks,
   agencySlug,
+  pageId,
+  agencyId,
   onSelectBlock,
   selectedBlockId,
 }: {
   blocks: PortalBlock[];
   agencySlug: string;
+  pageId?: string;
+  agencyId?: string;
   onSelectBlock?: (id: string) => void;
   selectedBlockId?: string | null;
 }) {
   if (!blocks || blocks.length === 0) return null;
+
+  const handleLinkClick = (url: string) => {
+    if (!pageId || !agencyId) return;
+    const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
+    
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    
+    if (supabaseUrl && supabaseKey) {
+      const payload = {
+        page_id: pageId,
+        agency_id: agencyId,
+        event_type: "click",
+        link_url: url,
+        device_type: deviceType,
+      };
+
+      fetch(`${supabaseUrl}/rest/v1/portal_page_analytics`, {
+        method: "POST",
+        headers: {
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(err => {
+        console.error("Error logging click keepalive:", err);
+      });
+    } else {
+      // Fallback a supabase standard insert se as variáveis de ambiente não estiverem prontas
+      supabase
+        .from("portal_page_analytics")
+        .insert({
+          page_id: pageId,
+          agency_id: agencyId,
+          event_type: "click",
+          link_url: url,
+          device_type: deviceType,
+        })
+        .then(({ error }) => {
+          if (error) console.error("Error logging click fallback:", error.message);
+        });
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 py-8">
@@ -48,7 +145,9 @@ export function BlockRenderer({
             <div
               className={`pointer-events-none transition-opacity ${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
             >
-              {renderBlock(b, agencySlug)}
+              <BlockStyleWrapper block={b}>
+                {renderBlock(b, agencySlug, handleLinkClick, agencyId)}
+              </BlockStyleWrapper>
             </div>
           </Wrapper>
         );
@@ -57,7 +156,7 @@ export function BlockRenderer({
   );
 }
 
-function renderBlock(b: PortalBlock, agencySlug: string) {
+function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: string) => void, agencyId?: string) {
   switch (b.type) {
     // ── HERO ──────────────────────────────────────────────────────
     case "hero":
@@ -86,6 +185,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
                     href={b.cta_link}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={() => handleLinkClick(b.cta_link)}
                     className="inline-flex h-14 items-center justify-center rounded-full bg-brand px-8 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
                   >
                     {b.cta_label}
@@ -93,6 +193,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
                 ) : (
                   <a
                     href={b.cta_link}
+                    onClick={() => handleLinkClick(b.cta_link)}
                     className="inline-flex h-14 items-center justify-center rounded-full bg-brand px-8 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
                   >
                     {b.cta_label}
@@ -114,7 +215,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             <div
               className="prose prose-sm md:prose-base dark:prose-invert"
               dangerouslySetInnerHTML={{
-                __html: sanitizeHtml(b.content.replace(/\n/g, "<br/>")),
+                __html: sanitizeHtml(b.content || ""),
               }}
             />
           </div>
@@ -200,6 +301,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
                   href={b.button_link}
                   target={b.button_link.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
+                  onClick={() => handleLinkClick(b.button_link)}
                   className="inline-flex h-14 items-center justify-center rounded-full bg-background px-8 text-sm font-bold text-foreground transition-transform hover:scale-105"
                 >
                   {b.button_label}
@@ -229,9 +331,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
                     ↓
                   </span>
                 </summary>
-                <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                  {item.answer}
-                </p>
+                <div
+                  className="mt-4 prose prose-sm dark:prose-invert max-w-none text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.answer || "") }}
+                />
               </details>
             ))}
           </div>
@@ -285,7 +388,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
 
     // ── TOURS GRID ────────────────────────────────────────────────
     case "tours_grid":
-      return <ToursGridBlock block={b} agencySlug={agencySlug} />;
+      return <ToursGridBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />;
 
     // ── STATS ─────────────────────────────────────────────────────
     case "stats":
@@ -376,7 +479,7 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
 
     // ── BLOG FEED ─────────────────────────────────────────────────
     case "blog_feed":
-      return <BlogFeedBlock block={b} agencySlug={agencySlug} />;
+      return <BlogFeedBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />;
 
     // ── BIOLINK HEADER ────────────────────────────────────────────
     case "biolink_header":
@@ -397,7 +500,10 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
             </div>
           )}
           <h1 className="text-2xl font-bold tracking-tight mb-2">{b.name}</h1>
-          <p className="opacity-90 max-w-sm mx-auto">{b.bio}</p>
+          <div
+            className="opacity-90 max-w-sm mx-auto prose prose-sm dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(b.bio || "") }}
+          />
         </section>
       );
 
@@ -405,22 +511,43 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
     case "biolink_links":
       return (
         <section className="mx-auto max-w-md w-full px-4 pb-12 space-y-3">
-          {(b.items || []).map((item, idx) => (
-            <a
-              key={idx}
-              href={item.url}
-              target={item.url?.startsWith("http") ? "_blank" : undefined}
-              rel="noreferrer"
-              className={`flex items-center p-4 rounded-xl transition-transform hover:scale-105 active:scale-95 border ${
-                item.highlight
-                  ? "bg-brand text-brand-foreground border-brand font-bold"
-                  : "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40"
-              }`}
-            >
-              <span className="text-xl mr-3">{item.icon}</span>
-              <span className="flex-1 text-center pr-8">{item.title}</span>
-            </a>
-          ))}
+          {(b.items || []).map((item, idx) => {
+            const style = b.button_style || "solid";
+            const rounded = b.button_rounded || "full";
+            
+            let baseClasses = "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border ";
+            
+            if (rounded === "none") baseClasses += "rounded-none ";
+            else if (rounded === "md") baseClasses += "rounded-xl ";
+            else baseClasses += "rounded-full ";
+
+            if (item.highlight) {
+              baseClasses += "bg-brand text-brand-foreground border-brand font-bold shadow-lg shadow-brand/20 ";
+            } else {
+              if (style === "solid") {
+                 baseClasses += "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40 shadow-sm ";
+              } else if (style === "outline") {
+                 baseClasses += "bg-transparent text-foreground border-border font-medium hover:border-foreground ";
+              } else {
+                 // soft
+                 baseClasses += "bg-surface-alt/50 text-foreground border-transparent font-medium hover:bg-surface-alt ";
+              }
+            }
+
+            return (
+              <a
+                key={idx}
+                href={item.url}
+                target={item.url?.startsWith("http") ? "_blank" : undefined}
+                rel="noreferrer"
+                onClick={() => handleLinkClick(item.url)}
+                className={baseClasses}
+              >
+                <span className="text-xl mr-3">{item.icon}</span>
+                <span className="flex-1 text-center pr-8">{item.title}</span>
+              </a>
+            );
+          })}
         </section>
       );
 
@@ -432,9 +559,207 @@ function renderBlock(b: PortalBlock, agencySlug: string) {
     case "group_tour_details":
       return <GroupTourDetailsBlock key={b.id} block={b} agencySlug={agencySlug} />;
 
+    // ── CLIENT PORTAL ACCESS ──────────────────────────────────────
+    case "client_portal_access":
+      return (
+        <section className="mx-auto max-w-lg bg-surface border border-border/80 rounded-3xl p-8 shadow-lg text-center flex flex-col items-center gap-4">
+          <div className="h-14 w-14 rounded-full bg-brand/10 text-brand flex items-center justify-center text-2xl">
+            ✈️
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight">{b.title || "Área do Passageiro"}</h2>
+          <p className="text-muted-foreground text-sm max-w-sm">
+            {b.description || "Acesse seus vouchers, passagens aéreas e guias de embarque da sua viagem."}
+          </p>
+          <Link
+            to="/client/login"
+            onClick={() => handleLinkClick("/client/login")}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
+          >
+            {b.button_label || "Acessar Painel"}
+          </Link>
+        </section>
+      );
+
+    // ── PENDING CONTRACTS WIDGET ──────────────────────────────────
+    case "pending_contracts_widget":
+      return <PendingContractsWidgetBlock block={b} agencyId={agencyId} handleLinkClick={handleLinkClick} />;
+
     default:
       return null;
   }
+}
+
+// ─── PendingContractsWidgetBlock ──────────────────────────────────────────────
+function PendingContractsWidgetBlock({ 
+  block, 
+  handleLinkClick,
+  agencyId 
+}: { 
+  block: any; 
+  handleLinkClick: (url: string) => void;
+  agencyId?: string;
+}) {
+  const [contracts, setContracts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Estados do formulário de busca para convidados/pagantes sem login
+  const [email, setEmail] = useState("");
+  const [document, setDocument] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setIsLoggedIn(true);
+          const { data: clients } = await supabase.from("clients").select("id").eq("user_id", user.id);
+          const clientIds = clients?.map((c) => c.id) || [];
+          if (clientIds.length) {
+            const { data: trips } = await supabase.from("trips").select("id").in("client_id", clientIds).is("deleted_at", null);
+            const tripIds = trips?.map((t) => t.id) || [];
+            if (tripIds.length) {
+              const { data: pending } = await supabase
+                .from("contracts")
+                .select("id, status, package_summary, public_token")
+                .in("trip_id", tripIds)
+                .neq("status", "signed");
+              
+              setContracts(
+                (pending || []).map(c => ({
+                  id: c.id,
+                  title: c.package_summary || "Contrato de Viagem",
+                  public_token: c.public_token,
+                  status: c.status
+                }))
+              );
+            }
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() && !document.trim()) {
+      toast.error("Por favor, preencha pelo menos um campo (E-mail ou Documento)");
+      return;
+    }
+    if (!agencyId) {
+      toast.error("Identificador da agência não disponível");
+      return;
+    }
+    setSearching(true);
+    try {
+      const { data, error } = await supabase.rpc("get_contracts_by_payer_info", {
+        p_email: email.trim() || null,
+        p_document: document.trim() || null,
+        p_agency_id: agencyId
+      });
+      if (error) {
+        toast.error("Erro ao buscar contratos: " + error.message);
+      } else {
+        setContracts(data || []);
+        setHasSearched(true);
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao consultar os contratos");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  if (loading) return <div className="h-24 w-full animate-pulse rounded-2xl bg-surface-alt/40" />;
+
+  // Se o usuário estiver logado e não possuir contratos pendentes, não exibe o widget
+  if (isLoggedIn && contracts.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-lg bg-yellow-500/10 border border-yellow-500/25 rounded-3xl p-6 flex flex-col items-center gap-4 text-center">
+      <div className="h-10 w-10 rounded-full bg-yellow-500/15 text-yellow-500 flex items-center justify-center text-xl">
+        ⚠️
+      </div>
+      <div>
+        <h3 className="font-bold text-base text-yellow-600 dark:text-yellow-500">{block.title || "Contratos Pendentes"}</h3>
+        <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+          {block.description || "Você possui termos ou contratos aguardando sua assinatura eletrônica."}
+        </p>
+      </div>
+
+      {!isLoggedIn && (
+        <form onSubmit={handleSearch} className="w-full space-y-3 mt-2 text-left bg-surface border border-border/85 p-4 rounded-2xl">
+          <div className="text-xs font-bold text-foreground mb-1">Buscar Contratos (Sem Login)</div>
+          <div className="space-y-2">
+            <div>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">E-mail</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mt-0.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                placeholder="seu@email.com"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">Documento (CPF ou CNPJ)</label>
+              <input
+                type="text"
+                value={document}
+                onChange={(e) => setDocument(e.target.value)}
+                className="w-full mt-0.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                placeholder="000.000.000-00"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={searching}
+            className="w-full mt-2 h-9 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
+          >
+            {searching ? "Buscando..." : "Consultar Contratos"}
+          </button>
+        </form>
+      )}
+
+      {contracts.length > 0 ? (
+        <div className="w-full space-y-2 mt-2">
+          {contracts.map((c) => (
+            <a
+              key={c.id}
+              href={`/m/contract/${c.public_token}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => handleLinkClick(`/m/contract/${c.public_token}`)}
+              className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 hover:border-yellow-500/50 transition-colors text-left"
+            >
+              <div className="flex flex-col truncate max-w-[220px]">
+                <span className="text-xs font-semibold text-foreground truncate">{c.title || "Contrato de Prestação de Serviços"}</span>
+                {c.status && (
+                  <span className="text-[9px] text-muted-foreground lowercase">Status: {c.status}</span>
+                )}
+              </div>
+              <span className="text-[10px] font-bold text-yellow-600 bg-yellow-500/15 px-2 py-0.5 rounded-full uppercase shrink-0">
+                {c.status === "signed" ? "Ver" : "Assinar"}
+              </span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        !isLoggedIn && hasSearched && (
+          <div className="text-xs text-muted-foreground py-2 italic">Nenhum contrato encontrado para os dados informados.</div>
+        )
+      )}
+    </section>
+  );
 }
 
 // ─── GroupTourDetailsBlock ───────────────────────────────────────────────────
@@ -614,7 +939,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
 }
 
 // ─── ToursGridBlock ────────────────────────────────────────────────────────────
-function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
+function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
   const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -635,7 +960,7 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
         .from("group_tours")
         .select("id, title, destination, departure_date, base_price, cover_image_url")
         .eq("agency_id", ag.id)
-        .eq("status", "published")
+        .in("status", ["open", "confirmed"])
         .order("departure_date", { ascending: true })
         .limit(block.max_items || 6);
       setTours(data ?? []);
@@ -664,6 +989,7 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
             key={t.id}
             to="/p/$agency_slug/tour/$id"
             params={{ agency_slug: agencySlug, id: t.id }}
+            onClick={() => handleLinkClick(`/p/${agencySlug}/tour/${t.id}`)}
             className="group flex flex-col overflow-hidden rounded-2xl border-2 border-border/50 bg-surface transition-all hover:-translate-y-1 hover:border-brand/40"
           >
             <div className="relative aspect-video overflow-hidden">
@@ -711,7 +1037,7 @@ function ToursGridBlock({ block, agencySlug }: { block: any; agencySlug: string 
 }
 
 // ─── BlogFeedBlock ─────────────────────────────────────────────────────────────
-function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
+function BlogFeedBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -758,6 +1084,7 @@ function BlogFeedBlock({ block, agencySlug }: { block: any; agencySlug: string }
             key={p.id}
             to="/p/$agency_slug/blog/$slug"
             params={{ agency_slug: agencySlug, slug: p.slug }}
+            onClick={() => handleLinkClick(`/p/${agencySlug}/blog/${p.slug}`)}
             className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/40 transition-all"
           >
             {p.cover_image_url && (
@@ -830,7 +1157,10 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
     <section className="mx-auto max-w-4xl bg-surface-alt/50 border border-border/50 rounded-3xl p-8 lg:p-12">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold tracking-tight mb-4">{block.title}</h2>
-        <p className="text-lg text-muted-foreground whitespace-pre-wrap">{block.text}</p>
+        <div
+          className="text-lg text-muted-foreground max-w-none prose prose-sm dark:prose-invert mx-auto"
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.text || "") }}
+        />
       </div>
 
       {submitted ? (

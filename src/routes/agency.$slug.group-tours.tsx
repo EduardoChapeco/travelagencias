@@ -87,7 +87,7 @@ function GroupToursPage() {
           />
         </div>
         <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0">
-          {["all", "draft", "published", "open", "closed"].map((s) => (
+          {["all", "draft", "open", "confirmed", "completed", "cancelled"].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
@@ -97,7 +97,17 @@ function GroupToursPage() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {s === "all" ? "Todos" : s}
+              {s === "all"
+                ? "Todos"
+                : s === "draft"
+                  ? "Rascunho"
+                  : s === "open"
+                    ? "Aberta"
+                    : s === "confirmed"
+                      ? "Confirmada"
+                      : s === "completed"
+                        ? "Concluída"
+                        : "Cancelada"}
             </button>
           ))}
         </div>
@@ -150,12 +160,26 @@ function GroupToursPage() {
                     tone={
                       t.status === "open"
                         ? "success"
-                        : t.status === "published"
+                        : t.status === "confirmed"
                           ? "info"
-                          : "neutral"
+                          : t.status === "completed"
+                            ? "neutral"
+                            : t.status === "cancelled"
+                              ? "danger"
+                              : "neutral"
                     }
                   >
-                    {t.status}
+                    {t.status === "draft"
+                      ? "Rascunho"
+                      : t.status === "open"
+                        ? "Aberta"
+                        : t.status === "confirmed"
+                          ? "Confirmada"
+                          : t.status === "completed"
+                            ? "Concluída"
+                            : t.status === "cancelled"
+                              ? "Cancelada"
+                              : t.status}
                   </StatusBadge>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">

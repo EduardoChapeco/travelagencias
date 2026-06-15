@@ -6,6 +6,16 @@
  * Never define PortalBlock locally in any route or component.
  */
 
+export type SectionStyle = {
+  bg_type: "default" | "color" | "gradient" | "image";
+  bg_color?: string;
+  bg_gradient?: string;
+  bg_image_url?: string;
+  text_color?: string;
+  padding_y: "none" | "sm" | "md" | "lg";
+  border_radius: "none" | "md" | "lg" | "full";
+};
+
 export type PortalBlock =
   | {
       id: string;
@@ -15,6 +25,7 @@ export type PortalBlock =
       bg_image_url: string;
       cta_label: string;
       cta_link: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -22,23 +33,27 @@ export type PortalBlock =
       content: string;
       align: "left" | "right" | "center";
       image_url: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "gallery";
       images: string[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "contact";
       title: string;
       text: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "features";
       title: string;
       items: { icon: string; title: string; description: string }[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -47,18 +62,21 @@ export type PortalBlock =
       subtitle: string;
       button_label: string;
       button_link: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "faq";
       title: string;
       items: { question: string; answer: string }[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "testimonials";
       title: string;
       items: { author: string; role: string; text: string; avatar_url: string; stars: number }[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -67,12 +85,14 @@ export type PortalBlock =
       subtitle: string;
       /** se vazio, busca automaticamente os roteiros publicados da agência */
       max_items: number;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "stats";
       title: string;
       items: { value: string; label: string; icon: string }[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -81,6 +101,7 @@ export type PortalBlock =
       url: string;
       /** YouTube ou Vimeo embed URL */
       caption: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -89,12 +110,14 @@ export type PortalBlock =
       /** Embed iframe src do Google Maps */
       embed_url: string;
       address_label: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "blog_feed";
       title: string;
       max_items: number;
+      styles?: SectionStyle;
     }
   | {
       id: string;
@@ -104,22 +127,43 @@ export type PortalBlock =
       bio: string;
       bg_color: string;
       text_color: string;
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "biolink_links";
+      button_style?: "solid" | "outline" | "soft";
+      button_rounded?: "none" | "md" | "full";
       items: { title: string; url: string; icon: string; highlight: boolean }[];
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "group_tour_details";
       tour_id: string; // The UUID of the group tour to fetch and render dynamically
+      styles?: SectionStyle;
     }
   | {
       id: string;
       type: "support_ticket_form";
       title: string;
       subtitle: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "client_portal_access";
+      title: string;
+      description: string;
+      button_label: string;
+      styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: "pending_contracts_widget";
+      title: string;
+      description: string;
+      styles?: SectionStyle;
     };
 
 /** All block type literals — useful for type-guards and addBlock() */
@@ -144,6 +188,8 @@ export const BLOCK_LABELS: Record<PortalBlockType, string> = {
   biolink_links: "Biolink: Lista de Links",
   group_tour_details: "Detalhes do Grupo (Dinâmico)",
   support_ticket_form: "Abertura de Ticket (Suporte)",
+  client_portal_access: "Acesso Área do Cliente",
+  pending_contracts_widget: "Contratos Pendentes",
 };
 
 /** Default empty values for each block type */
@@ -293,5 +339,16 @@ export const BLOCK_DEFAULTS: {
     type: "support_ticket_form",
     title: "Como podemos ajudar?",
     subtitle: "Abra um chamado e nossa equipe de suporte responderá em breve.",
+  },
+  client_portal_access: {
+    type: "client_portal_access",
+    title: "Área do Passageiro",
+    description: "Acesse seus vouchers, passagens aéreas e guias de embarque da sua viagem.",
+    button_label: "Acessar Painel",
+  },
+  pending_contracts_widget: {
+    type: "pending_contracts_widget",
+    title: "Contratos Pendentes",
+    description: "Você possui termos ou contratos aguardando sua assinatura eletrônica eletrônica.",
   },
 };

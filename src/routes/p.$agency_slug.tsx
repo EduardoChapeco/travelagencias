@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { fetchPublicAgencyLayout } from "@/services/public";
@@ -68,6 +68,8 @@ function resolveLink(url: string, agencySlug: string) {
 
 function Layout() {
   const { agency_slug } = Route.useParams();
+  const params = useParams({ strict: false }) as any;
+  const currentPageSlug = params.page_slug || "home";
 
   const q = useQuery({
     queryKey: ["portal-layout", agency_slug],
@@ -77,6 +79,9 @@ function Layout() {
   const agency = q.data?.agency;
   const pages = q.data?.pages || [];
   const settings = q.data?.settings;
+
+  const activePage = pages.find((p: any) => p.slug === currentPageSlug);
+  const isBiolink = activePage?.template === "biolink" || activePage?.template?.startsWith("hopp-");
 
   useEffect(() => {
     if (!settings) return;
@@ -160,6 +165,24 @@ function Layout() {
   // Build footer links
   const footerLinks: NavLink[] =
     settings?.footer_links && Array.isArray(settings.footer_links) ? settings.footer_links : [];
+
+  if (isBiolink) {
+    return (
+      <div
+        className="min-h-screen bg-background flex flex-col w-full"
+        style={
+          {
+            "--agency-brand": agency.brand_color || "#18181b",
+            "--agency-brand-fg": agency.brand_color_fg || "#ffffff",
+          } as React.CSSProperties
+        }
+      >
+        <main className="flex-1 flex flex-col items-center w-full">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div

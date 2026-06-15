@@ -1,5 +1,18 @@
 import { z } from "zod";
 
+export const SectionStyleSchema = z
+  .object({
+    bg_type: z.enum(["default", "color", "gradient", "image"]).default("default"),
+    bg_color: z.string().max(50).optional().nullable(),
+    bg_gradient: z.string().max(250).optional().nullable(),
+    bg_image_url: z.string().max(1000).optional().nullable(),
+    text_color: z.string().max(50).optional().nullable(),
+    padding_y: z.enum(["none", "sm", "md", "lg"]).default("md"),
+    border_radius: z.enum(["none", "md", "lg", "full"]).default("none"),
+  })
+  .optional()
+  .nullable();
+
 export const HeroBlockSchema = z.object({
   id: z.string(),
   type: z.literal("hero"),
@@ -8,6 +21,7 @@ export const HeroBlockSchema = z.object({
   bg_image_url: z.string().max(1000).or(z.literal("")).default(""),
   cta_label: z.string().max(100, "Label do botão muito longo").default(""),
   cta_link: z.string().max(500, "Link do botão muito longo").default(""),
+  styles: SectionStyleSchema,
 });
 
 export const TextBlockSchema = z.object({
@@ -16,12 +30,14 @@ export const TextBlockSchema = z.object({
   content: z.string().max(20000, "Conteúdo muito longo").default(""),
   align: z.enum(["left", "right", "center"]).default("left"),
   image_url: z.string().max(1000).or(z.literal("")).default(""),
+  styles: SectionStyleSchema,
 });
 
 export const GalleryBlockSchema = z.object({
   id: z.string(),
   type: z.literal("gallery"),
   images: z.array(z.string().max(1000)).max(30, "No máximo 30 imagens").default([]),
+  styles: SectionStyleSchema,
 });
 
 export const ContactBlockSchema = z.object({
@@ -29,6 +45,7 @@ export const ContactBlockSchema = z.object({
   type: z.literal("contact"),
   title: z.string().max(200, "Título muito longo").default(""),
   text: z.string().max(2000, "Texto muito longo").default(""),
+  styles: SectionStyleSchema,
 });
 
 export const FeaturesBlockSchema = z.object({
@@ -45,6 +62,7 @@ export const FeaturesBlockSchema = z.object({
     )
     .max(20, "No máximo 20 diferenciais")
     .default([]),
+  styles: SectionStyleSchema,
 });
 
 export const CtaBlockSchema = z.object({
@@ -54,6 +72,7 @@ export const CtaBlockSchema = z.object({
   subtitle: z.string().max(1000, "Subtítulo muito longo").default(""),
   button_label: z.string().max(100, "Label do botão muito longo").default(""),
   button_link: z.string().max(500, "Link do botão muito longo").default(""),
+  styles: SectionStyleSchema,
 });
 
 export const FaqBlockSchema = z.object({
@@ -69,6 +88,7 @@ export const FaqBlockSchema = z.object({
     )
     .max(50, "No máximo 50 perguntas")
     .default([]),
+  styles: SectionStyleSchema,
 });
 
 export const TestimonialsBlockSchema = z.object({
@@ -87,6 +107,7 @@ export const TestimonialsBlockSchema = z.object({
     )
     .max(50, "No máximo 50 depoimentos")
     .default([]),
+  styles: SectionStyleSchema,
 });
 
 export const ToursGridBlockSchema = z.object({
@@ -95,6 +116,7 @@ export const ToursGridBlockSchema = z.object({
   title: z.string().max(300, "Título muito longo").default(""),
   subtitle: z.string().max(1000, "Subtítulo muito longo").default(""),
   max_items: z.number().min(1).max(100).default(6),
+  styles: SectionStyleSchema,
 });
 
 export const StatsBlockSchema = z.object({
@@ -111,6 +133,7 @@ export const StatsBlockSchema = z.object({
     )
     .max(20, "No máximo 20 números")
     .default([]),
+  styles: SectionStyleSchema,
 });
 
 export const VideoBlockSchema = z.object({
@@ -119,6 +142,7 @@ export const VideoBlockSchema = z.object({
   title: z.string().max(300, "Título muito longo").default(""),
   url: z.string().max(1000, "URL do vídeo muito longa").default(""),
   caption: z.string().max(1000, "Legenda muito longa").default(""),
+  styles: SectionStyleSchema,
 });
 
 export const MapBlockSchema = z.object({
@@ -127,6 +151,7 @@ export const MapBlockSchema = z.object({
   title: z.string().max(300, "Título muito longo").default(""),
   embed_url: z.string().max(1000, "URL de embed muito longa").default(""),
   address_label: z.string().max(500, "Rótulo do endereço muito longo").default(""),
+  styles: SectionStyleSchema,
 });
 
 export const BlogFeedBlockSchema = z.object({
@@ -134,6 +159,68 @@ export const BlogFeedBlockSchema = z.object({
   type: z.literal("blog_feed"),
   title: z.string().max(300, "Título muito longo").default(""),
   max_items: z.number().min(1).max(100).default(3),
+  styles: SectionStyleSchema,
+});
+
+export const BiolinkHeaderBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("biolink_header"),
+  avatar_url: z.string().max(1000).or(z.literal("")).default(""),
+  name: z.string().max(200).default(""),
+  bio: z.string().max(5000).default(""),
+  bg_color: z.string().max(50).default("#1E293B"),
+  text_color: z.string().max(50).default("#FFFFFF"),
+  styles: SectionStyleSchema,
+});
+
+export const BiolinkLinksBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("biolink_links"),
+  button_style: z.enum(["solid", "outline", "soft"]).optional().default("solid"),
+  button_rounded: z.enum(["none", "md", "full"]).optional().default("full"),
+  items: z
+    .array(
+      z.object({
+        title: z.string().max(200).default(""),
+        url: z.string().max(1000).default(""),
+        icon: z.string().max(100).default(""),
+        highlight: z.boolean().default(false),
+      }),
+    )
+    .default([]),
+  styles: SectionStyleSchema,
+});
+
+export const GroupTourDetailsBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("group_tour_details"),
+  tour_id: z.string().max(200).default(""),
+  styles: SectionStyleSchema,
+});
+
+export const SupportTicketFormBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("support_ticket_form"),
+  title: z.string().max(300).default(""),
+  subtitle: z.string().max(1000).default(""),
+  styles: SectionStyleSchema,
+});
+
+export const ClientPortalAccessBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("client_portal_access"),
+  title: z.string().max(300).default(""),
+  description: z.string().max(1000).default(""),
+  button_label: z.string().max(100).default(""),
+  styles: SectionStyleSchema,
+});
+
+export const PendingContractsWidgetBlockSchema = z.object({
+  id: z.string(),
+  type: z.literal("pending_contracts_widget"),
+  title: z.string().max(300).default(""),
+  description: z.string().max(1000).default(""),
+  styles: SectionStyleSchema,
 });
 
 export const PortalBlockSchema = z.discriminatedUnion("type", [
@@ -150,6 +237,12 @@ export const PortalBlockSchema = z.discriminatedUnion("type", [
   VideoBlockSchema,
   MapBlockSchema,
   BlogFeedBlockSchema,
+  BiolinkHeaderBlockSchema,
+  BiolinkLinksBlockSchema,
+  GroupTourDetailsBlockSchema,
+  SupportTicketFormBlockSchema,
+  ClientPortalAccessBlockSchema,
+  PendingContractsWidgetBlockSchema,
 ]);
 
 export const PortalBlocksArraySchema = z.array(PortalBlockSchema);
