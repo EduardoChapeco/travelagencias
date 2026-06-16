@@ -7,7 +7,8 @@ import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star } from "
 import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { EmptyState } from "@/components/shell/PageHeader";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
 export const Route = createFileRoute("/agency/$slug/support")({
@@ -79,24 +80,23 @@ function SupportRoute() {
       : 0;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-background overflow-hidden">
-      {/* Unified Module Header Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border bg-surface shrink-0">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-2xl">
+    <div className="flex flex-col h-[calc(100vh-3rem)] bg-background overflow-hidden">
+      <HeaderPortal>
+        <div className="flex flex-1 flex-col sm:flex-row gap-2.5 max-w-2xl">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder="Buscar por código, assunto ou cliente..."
-              className="pl-9 h-9 text-xs w-full"
+              className="pl-8 h-8 text-xs w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="w-full sm:w-44 shrink-0">
+          <div className="w-full sm:w-40 shrink-0">
             <Select
               value={stageFilter}
               onChange={(e) => setStageFilter(e.target.value)}
-              className="h-9 text-xs w-full"
+              className="h-8 text-xs w-full"
             >
               <option value="all">Todos os Estágios</option>
               {Object.entries(STAGE_LABELS).map(([k, v]) => (
@@ -106,11 +106,11 @@ function SupportRoute() {
               ))}
             </Select>
           </div>
-          <div className="w-full sm:w-40 shrink-0">
+          <div className="w-full sm:w-36 shrink-0">
             <Select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="h-9 text-xs w-full"
+              className="h-8 text-xs w-full"
             >
               <option value="all">Todas Prioridades</option>
               <option value="low">Baixa</option>
@@ -122,15 +122,15 @@ function SupportRoute() {
         </div>
         <div className="flex items-center gap-2">
           <PrimaryButton
-            className="h-9 text-xs cursor-pointer"
+            className="h-8 text-[11px] font-bold rounded-lg cursor-pointer"
             onClick={() => setTicketSheetOpen(true)}
           >
             Novo Ticket Interno
           </PrimaryButton>
         </div>
-      </div>
+      </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col space-y-4">
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
           <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">

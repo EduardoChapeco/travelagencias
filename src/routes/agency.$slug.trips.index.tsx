@@ -12,6 +12,7 @@ import {
   Search,
   Filter,
   Archive,
+  Settings2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,6 +21,8 @@ import { ptBR } from "date-fns/locale";
 import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
@@ -55,10 +58,11 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function TripsList() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const [newOpen, setNewOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -284,11 +288,10 @@ function TripsList() {
 
   return (
     <>
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <div className="relative w-40">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
               value={search}
@@ -296,40 +299,44 @@ function TripsList() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Buscar por título..."
-              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+              placeholder="Buscar viagem..."
+              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
             />
           </div>
-          <div className="relative w-full sm:w-44">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
-            >
-              <option value="all">Todos os status</option>
-              <option value="planning">Planejamento</option>
-              <option value="confirmed">Confirmada</option>
-              <option value="in_progress">Em andamento</option>
-              <option value="completed">Concluída</option>
-              <option value="cancelled">Cancelada</option>
-              <option value="archived">Arquivadas</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+            className="h-8 w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+          >
+            <option value="all">Todos os status</option>
+            <option value="planning">Planejamento</option>
+            <option value="confirmed">Confirmada</option>
+            <option value="in_progress">Em andamento</option>
+            <option value="completed">Concluída</option>
+            <option value="cancelled">Cancelada</option>
+            <option value="archived">Arquivadas</option>
+          </select>
           <button
             id="btn-new-trip"
             onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" /> Nova viagem
           </button>
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Viagens"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-      </div>
+      </HeaderPortal>
 
       {list.isLoading && (
         <div className="flex h-32 items-center justify-center">
@@ -381,7 +388,15 @@ function TripsList() {
           }}
         />
       )}
-      <ConfirmDialog />
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="trips"
+          moduleName="Viagens"
+          agencyId={agency.id}
+        />
+      )}
     </>
   );
 }

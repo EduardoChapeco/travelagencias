@@ -4,7 +4,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Check, Clock, AlertCircle, ArrowRight, BrainCircuit, ListTodo } from "lucide-react";
+import { Plus, Check, Clock, AlertCircle, ArrowRight, BrainCircuit, ListTodo, Settings2 } from "lucide-react";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   Field,
   Input,
@@ -20,7 +22,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/daily-tasks")({
   head: () => ({ meta: [{ title: "Meu Dia · Tarefas e Embarques" }] }),
@@ -48,11 +49,12 @@ const COLUMNS = [
 ];
 
 function DailyTasksRoute() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const qc = useQueryClient();
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskType, setNewTaskType] = useState("manual");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const { data: tasks, isLoading } = useQuery({
     queryKey: ["agent_tasks", agency?.id],
@@ -110,17 +112,16 @@ function DailyTasksRoute() {
   if (!agency) return null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-background p-4 md:p-8 pb-0">
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl shrink-0">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
           Meu Dia · Tarefas e Embarques
         </div>
         <div className="flex items-center gap-2">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <button className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer">
-                <Plus className="w-4 h-4" /> Nova Tarefa
+              <button className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer">
+                <Plus className="w-3.5 h-3.5" /> Nova Tarefa
               </button>
             </DialogTrigger>
             <DialogContent>
@@ -153,11 +154,20 @@ function DailyTasksRoute() {
               </div>
             </DialogContent>
           </Dialog>
+
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Tarefas"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-      </div>
+      </HeaderPortal>
 
-      <div className="flex-1 overflow-x-auto pt-4 scrollbar-thin">
-
+      <div className="flex-1 overflow-x-auto pb-4 scrollbar-thin px-4 md:px-6 pt-4">
         <div className="flex gap-6 h-full min-w-max">
           {COLUMNS.map((col) => {
             const colTasks = tasks?.filter((t) => t.status === col.id) || [];
@@ -243,6 +253,16 @@ function DailyTasksRoute() {
           })}
         </div>
       </div>
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="daily-tasks"
+          moduleName="Tarefas"
+          agencyId={agency.id}
+        />
+      )}
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Settings2 } from "lucide-react";
 import { toast } from "sonner";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   DndContext,
   DragOverlay,
@@ -42,10 +44,11 @@ const BOARDING_STAGES = [
 ];
 
 function BoardingKanbanPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/boarding" });
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localCards, setLocalCards] = useState<Card[] | null>(null);
   const [detail, setDetail] = useState<Card | null>(null);
@@ -157,21 +160,26 @@ function BoardingKanbanPage() {
   const activeCard = activeId ? (localCards ?? []).find((c) => c.id === activeId) : null;
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden">
-      {/* Unified Toolbar Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 md:p-6 pb-0 shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground">
-            Embarques & Localizadores
-          </span>
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <PrimaryButton
+            onClick={() => setOpen(true)}
+            className="gap-1.5 text-xs font-semibold h-8 rounded-md"
+          >
+            <Plus className="h-3.5 w-3.5" /> Cadastrar Localizador
+          </PrimaryButton>
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Embarques"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-        <PrimaryButton
-          onClick={() => setOpen(true)}
-          className="gap-2 text-[11px] uppercase tracking-widest font-bold h-8 rounded-lg"
-        >
-          <Plus className="h-4 w-4" /> Cadastrar Localizador
-        </PrimaryButton>
-      </div>
+      </HeaderPortal>
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">
@@ -247,6 +255,16 @@ function BoardingKanbanPage() {
             setDetail(null);
             qc.invalidateQueries({ queryKey: ["boarding", agency?.id] });
           }}
+        />
+      )}
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="boarding"
+          moduleName="Embarques"
+          agencyId={agency.id}
         />
       )}
     </div>

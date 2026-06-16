@@ -18,10 +18,13 @@ import {
   X,
   Sparkles,
   RefreshCw,
+  Settings2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchAgencyMeetings,
   fetchAgencyUsers,
@@ -71,7 +74,7 @@ const MEETING_TYPE_COLORS: Record<string, string> = {
 };
 
 function CalendarPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/calendar" });
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -80,6 +83,7 @@ function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   // Filters state
   const [filterType, setFilterType] = useState<string>("all");
@@ -209,36 +213,56 @@ function CalendarPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Unified Toolbar Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
-              Filtros:
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Month Navigation */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handlePrevMonth}
+              className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+            >
+              <ChevronLeft className="h-3 w-3" />
+            </button>
+            <button
+              onClick={handleToday}
+              className="h-7 px-2 border border-border/80 hover:border-brand/40 bg-surface text-[10px] font-bold rounded transition-colors cursor-pointer"
+            >
+              Hoje
+            </button>
+            <span className="text-[11px] font-bold min-w-[90px] text-center text-foreground uppercase tracking-wide px-1">
+              {MONTHS[month].substring(0, 3)} {year}
             </span>
+            <button
+              onClick={handleNextMonth}
+              className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+            >
+              <ChevronRight className="h-3 w-3" />
+            </button>
           </div>
 
+          <div className="h-4 w-px bg-border/80" />
+
+          {/* Filters */}
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="h-8 text-xs bg-background border-border/80 w-40 rounded-lg"
+            className="h-7 text-[10px] bg-background border-border/80 w-28 rounded"
           >
-            <option value="all">Todos os tipos</option>
-            <option value="call">📞 Telefone / Voz</option>
-            <option value="video">💻 Vídeo / Meet</option>
+            <option value="all">Tipos</option>
+            <option value="call">📞 Telefone</option>
+            <option value="video">💻 Vídeo</option>
             <option value="in_person">👤 Presencial</option>
-            <option value="whatsapp">💬 WhatsApp / Follow</option>
+            <option value="whatsapp">💬 WhatsApp</option>
           </Select>
 
           {usersQ.data && (
             <Select
               value={filterUser}
               onChange={(e) => setFilterUser(e.target.value)}
-              className="h-8 text-xs bg-background border-border/80 w-44 rounded-lg"
+              className="h-7 text-[10px] bg-background border-border/80 w-32 rounded"
             >
-              <option value="all">Todos os agentes</option>
+              <option value="all">Agentes</option>
               {usersQ.data.map((u: any) => (
                 <option key={u.user_id} value={u.user_id || ""}>
                   👤 {u.user_name}
@@ -246,43 +270,29 @@ function CalendarPage() {
               ))}
             </Select>
           )}
+
+          {/* Actions */}
+          <PrimaryButton
+            onClick={() => setNewEventOpen(true)}
+            className="gap-1 text-[10px] font-bold h-7 rounded"
+          >
+            <Plus className="h-3 w-3" /> Evento
+          </PrimaryButton>
+
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-7 w-7 items-center justify-center rounded border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Calendário"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
+      </HeaderPortal>
 
-        {/* Center: Month navigation */}
-        <div className="flex items-center gap-2.5 self-center">
-          <button
-            onClick={handlePrevMonth}
-            className="p-1.5 border border-border/80 hover:border-brand/40 bg-surface rounded-lg transition-colors cursor-pointer"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handleToday}
-            className="h-8 px-3 border border-border/80 hover:border-brand/40 bg-surface text-xs font-bold rounded-lg transition-colors cursor-pointer"
-          >
-            Hoje
-          </button>
-          <span className="text-sm font-bold min-w-[120px] text-center text-foreground">
-            {MONTHS[month]} {year}
-          </span>
-          <button
-            onClick={handleNextMonth}
-            className="p-1.5 border border-border/80 hover:border-brand/40 bg-surface rounded-lg transition-colors cursor-pointer"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Right: Actions */}
-        <PrimaryButton
-          onClick={() => setNewEventOpen(true)}
-          className="gap-1.5 text-xs font-bold h-8 rounded-lg"
-        >
-          <Plus className="h-4 w-4" /> Novo Compromisso
-        </PrimaryButton>
-      </div>
-
-      <div className="bg-surface border border-border/70 rounded-xl overflow-hidden">
+      <div className="flex-1 overflow-auto bg-background p-2">
+        <div className="bg-surface border border-border/70 rounded-xl overflow-hidden h-full flex flex-col">
         <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
           {WEEKDAYS.map((day) => (
             <div
@@ -362,6 +372,7 @@ function CalendarPage() {
             );
           })}
         </div>
+      </div>
       </div>
 
       {selectedMeeting && (
@@ -647,6 +658,15 @@ function CalendarPage() {
         </div>
       )}
       <ConfirmDialog />
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="calendar"
+          moduleName="Agenda"
+          agencyId={agency.id}
+        />
+      )}
     </div>
   );
 }

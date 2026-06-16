@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, GripVertical, Search, Globe, FileText, Check, Clock } from "lucide-react";
+import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2 } from "lucide-react";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   DndContext,
   DragOverlay,
@@ -21,7 +23,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
 import { PrimaryButton, fmtDate, StatusBadge } from "@/components/ui/form";
 import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
@@ -46,12 +47,13 @@ type Visa = {
 };
 
 function VisasPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const qc = useQueryClient();
   const { slug } = Route.useParams();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [localVisas, setLocalVisas] = useState<Visa[] | null>(null);
   const [newOpen, setNewOpen] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const stagesQ = useQuery({
     enabled: !!agency,
@@ -160,13 +162,12 @@ function VisasPage() {
   const activeVisa = activeId ? (localVisas ?? []).find((v) => v.id === activeId) : null;
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col p-4 md:p-8">
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
           Painel de Processos Consulares
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link
             to="/agency/$slug/visas-catalog"
             params={{ slug }}
@@ -176,15 +177,24 @@ function VisasPage() {
           </Link>
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Novo Processo
           </button>
+
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Vistos"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-      </div>
+      </HeaderPortal>
 
-
-      <div className="flex-1 overflow-x-auto pt-4">
+      <div className="flex-1 overflow-x-auto pb-4 scrollbar-thin px-4 md:px-6 pt-4">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -208,6 +218,16 @@ function VisasPage() {
             setNewOpen(false);
             qc.invalidateQueries({ queryKey: ["visas", agency.id] });
           }}
+        />
+      )}
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="visas"
+          moduleName="Vistos"
+          agencyId={agency.id}
         />
       )}
     </div>

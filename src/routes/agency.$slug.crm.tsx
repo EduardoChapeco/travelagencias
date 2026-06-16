@@ -13,6 +13,8 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchStages,
   fetchLeads,
@@ -52,7 +54,7 @@ export const Route = createFileRoute("/agency/$slug/crm")({
 });
 
 function CRMPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/crm" });
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -168,24 +170,23 @@ function CRMPage() {
 
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
-      {/* Unified Module Header Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border bg-surface shrink-0">
-        <div className="flex flex-wrap items-center gap-3">
+      <HeaderPortal>
+        <div className="flex flex-wrap items-center gap-2">
           {!showArchived && (
             <>
-              <div className="relative w-48">
+              <div className="relative w-40">
                 <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   placeholder="Buscar lead..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 h-8 w-full rounded-md border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                  className="pl-7.5 h-8 w-full rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
                 />
               </div>
               <select
                 value={ownerFilter}
                 onChange={(e) => setOwnerFilter(e.target.value)}
-                className="h-8 w-36 rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="h-8 w-28 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
               >
                 <option value="">Responsáveis</option>
                 {usersQ.data?.map(
@@ -200,7 +201,7 @@ function CRMPage() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
-                className="h-8 w-32 rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="h-8 w-24 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
               >
                 <option value="">Origens</option>
                 <option value="whatsapp">WhatsApp</option>
@@ -211,13 +212,9 @@ function CRMPage() {
               </select>
             </>
           )}
-        </div>
-
-        {/* Right Side: Action Buttons */}
-        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowArchived((v) => !v)}
-            className={`flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors ${
+            className={`flex h-8 items-center gap-1 px-2.5 rounded-md border border-border text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors ${
               showArchived ? "bg-brand/10 border-brand text-brand hover:bg-brand/20" : "bg-surface"
             }`}
           >
@@ -232,19 +229,22 @@ function CRMPage() {
             )}
           </button>
           <button
-            onClick={() => setSettingsOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors"
-          >
-            <Settings2 className="h-3.5 w-3.5" /> Estágios
-          </button>
-          <button
             onClick={() => setNewOpen(true)}
             className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" /> Novo Lead
           </button>
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar CRM"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-      </div>
+      </HeaderPortal>
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
         <div className="flex flex-1 items-center justify-center">
@@ -404,11 +404,23 @@ function CRMPage() {
       )}
 
       {settingsOpen && agency && (
-        <StageSettingsModal
-          agencyId={agency.id}
-          stages={stagesQ.data ?? []}
+        <ModuleAdminPanel
+          isOpen={settingsOpen}
           onClose={() => setSettingsOpen(false)}
-          onUpdated={() => qc.invalidateQueries({ queryKey: ["stages", agency.id] })}
+          moduleKey="crm"
+          moduleName="CRM"
+          agencyId={agency.id}
+          customSettingsComponent={
+            <StageSettingsPanel
+              agencyId={agency.id}
+              stages={stagesQ.data ?? []}
+              onUpdated={() => {
+                qc.invalidateQueries({ queryKey: ["stages", agency.id] });
+                qc.invalidateQueries({ queryKey: ["leads", agency.id] });
+              }}
+              onClose={() => setSettingsOpen(false)}
+            />
+          }
         />
       )}
 
@@ -720,16 +732,16 @@ function NewLeadSheet({
   );
 }
 
-function StageSettingsModal({
+function StageSettingsPanel({
   agencyId,
   stages,
-  onClose,
   onUpdated,
+  onClose,
 }: {
   agencyId: string;
   stages: Stage[];
-  onClose: () => void;
   onUpdated: () => void;
+  onClose: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [localStages, setLocalStages] = useState<Stage[]>(stages);
@@ -821,13 +833,8 @@ function StageSettingsModal({
   }
 
   return (
-    <SheetPage
-      isOpen={true}
-      onClose={onClose}
-      title="Configurar Funil (Kanban)"
-      width="clamp(480px, 45vw, 640px)"
-    >
-      <div className="flex flex-col h-full justify-between pb-20 space-y-6">
+    <>
+      <div className="flex flex-col h-full justify-between pb-6 space-y-6">
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground -mt-3">
             Renomeie, mude cores ou crie novas colunas.
@@ -972,6 +979,6 @@ function StageSettingsModal({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </SheetPage>
+    </>
   );
 }

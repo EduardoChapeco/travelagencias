@@ -40,7 +40,12 @@ export function AppShell({
     pathname.includes("/crm/") ||
     pathname.includes("/proposals/") ||
     pathname.includes("/vouchers") ||
-    pathname.endsWith("/omnichannel");
+    pathname.endsWith("/omnichannel") ||
+    pathname.includes("/boarding") ||
+    pathname.includes("/calendar") ||
+    pathname.includes("/daily-tasks") ||
+    pathname.includes("/visas") ||
+    pathname.includes("/support");
 
   const isVisualEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 
@@ -70,11 +75,13 @@ export function AppShell({
             ))}
           </nav>
 
-          <div className="ml-2 flex-1">
-            {title && <h1 className="text-sm font-semibold tracking-tight">{title}</h1>}
+          <div className="ml-2">
+            {title && <h1 className="text-sm font-semibold tracking-tight whitespace-nowrap">{title}</h1>}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div id="app-header-portal" className="flex-1 flex items-center justify-end gap-2.5 min-w-0 px-2" />
+
+          <div className="flex items-center gap-2 shrink-0">
             <div
               className="hidden items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
               onClick={() =>
@@ -111,7 +118,7 @@ export function AppShell({
               className={
                 isFullPage
                   ? "flex w-full flex-1 flex-col"
-                  : "flex w-full flex-1 flex-col px-4 md:px-8 xl:px-16 py-6 md:py-8"
+                  : "flex w-full flex-1 flex-col px-4 md:px-6 py-4 md:py-6"
               }
             >
               <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>

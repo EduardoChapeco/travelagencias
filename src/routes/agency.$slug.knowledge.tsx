@@ -5,6 +5,7 @@ import { Plus, BookOpen, Edit2, Eye, Search, Workflow, ClipboardList, Trash2 } f
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
@@ -123,54 +124,60 @@ function KnowledgePage() {
 
   return (
     <>
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl shrink-0">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 items-center max-w-xl">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
           {/* Tab Switcher */}
-          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs">
+          <div className="flex items-center gap-1 rounded bg-surface p-0.5 text-[11px] border border-border/60">
             <button
               onClick={() => setTab("articles")}
-              className={`rounded px-3 py-1 font-semibold transition-colors ${tab === "articles" ? "bg-surface-alt text-foreground border border-border/50" : "text-muted-foreground hover:text-foreground"}`}
+              className={`rounded px-2.5 py-1 font-bold transition-all ${
+                tab === "articles" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              Artigos e Guias
+              Guias
             </button>
             <button
               onClick={() => setTab("playbooks")}
-              className={`rounded px-3 py-1 font-semibold transition-colors ${tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/50" : "text-muted-foreground hover:text-foreground"}`}
+              className={`rounded px-2.5 py-1 font-bold transition-all ${
+                tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              Playbooks e Processos
+              Playbooks
             </button>
           </div>
-          <div className="h-4 w-px bg-border/80 hidden sm:block" />
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+
+          <div className="h-4 w-px bg-border/80" />
+
+          {/* Search */}
+          <div className="relative w-40">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={tab === "articles" ? "Buscar por título ou tag..." : "Buscar playbook..."}
-              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+              placeholder="Buscar..."
+              className="h-8 w-full rounded border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
             />
           </div>
-        </div>
-        <div>
+
+          {/* Actions */}
           {tab === "articles" ? (
             <button
               onClick={() => setOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+              className="flex h-8 items-center gap-1 rounded bg-brand px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
             >
-              <Plus className="h-3.5 w-3.5" /> Novo artigo
+              <Plus className="h-3 w-3" /> Artigo
             </button>
           ) : (
             <button
               onClick={() => setPlaybookOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+              className="flex h-8 items-center gap-1 rounded bg-brand px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
             >
-              <Plus className="h-3.5 w-3.5" /> Novo playbook
+              <Plus className="h-3 w-3" /> Playbook
             </button>
           )}
         </div>
-      </div>
+      </HeaderPortal>
 
 
       {/* ARTICLES TAB */}

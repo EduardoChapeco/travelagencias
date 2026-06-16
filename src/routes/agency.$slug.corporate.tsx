@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter } from "lucide-react";
+import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter, Settings2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   PrimaryButton,
   StatusBadge,
@@ -46,13 +48,14 @@ const STATUS_MAP: Record<string, { label: string; tone: any }> = {
 };
 
 function CorporatePage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [q, setQ] = useState("");
   const [newOpen, setNewOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const debouncedQ = useDebounce(q, 400);
   const pageSize = 20;
 
@@ -105,11 +108,10 @@ function CorporatePage() {
 
   return (
     <>
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+      <HeaderPortal>
+        <div className="flex flex-1 flex-col sm:flex-row gap-2.5 max-w-xl">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
               value={q}
@@ -118,18 +120,18 @@ function CorporatePage() {
                 setPage(1);
               }}
               placeholder="Buscar RFP..."
-              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
             />
           </div>
-          <div className="relative w-full sm:w-44">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <div className="relative w-full sm:w-40">
+            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
+              className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
             >
               <option value="all">Todos os Status</option>
               <option value="pending">Pendente</option>
@@ -143,13 +145,22 @@ function CorporatePage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Nova RFP
           </button>
-        </div>
-      </div>
 
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Corporativo"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </HeaderPortal>
 
       {!rfpsQ.isLoading && rfps.length === 0 && (
         <EmptyState
@@ -277,6 +288,16 @@ function CorporatePage() {
             setNewOpen(false);
             qc.invalidateQueries({ queryKey: ["corporate-rfps", agency.id] });
           }}
+        />
+      )}
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="corporate"
+          moduleName="Corporativo"
+          agencyId={agency.id}
         />
       )}
     </>

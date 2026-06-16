@@ -4,8 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Plus, Save, Trash2, Calendar, DollarSign, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
   Field,
@@ -61,18 +61,17 @@ function VisasCatalogPage() {
   const filteredData = q.data?.filter((req) => activeTab === "all" || req.category === activeTab);
 
   return (
-    <div className="flex h-full flex-col p-4 md:p-8">
+    <div className="flex h-full flex-col">
       <ConfirmDialog />
       
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+      <HeaderPortal>
         <div className="flex items-center gap-3">
           <Link
             to="/agency/$slug/visas"
             params={{ slug }}
-            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1.5 rounded-md"
+            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-md"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Voltar
+            <ArrowLeft className="w-3 h-3" /> Voltar
           </Link>
           <div className="h-4 w-px bg-border/80" />
           <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs">
@@ -87,7 +86,7 @@ function VisasCatalogPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`rounded px-2.5 py-1 font-semibold transition-colors ${
+                className={`rounded px-2.5 py-1 font-semibold transition-colors cursor-pointer ${
                   activeTab === tab.id
                     ? "bg-surface-alt text-foreground border border-border/50"
                     : "text-muted-foreground hover:text-foreground"
@@ -100,14 +99,13 @@ function VisasCatalogPage() {
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+          className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" /> Novo Catálogo
         </button>
-      </div>
+      </HeaderPortal>
 
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (
             <div
               key={req.id}
