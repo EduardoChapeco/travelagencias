@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
+import { SECTION_REGISTRY } from "@/lib/sections/registry";
 import { Trash2, Plane, ShieldCheck, Hotel, Users, Leaf, Award, Heart, Globe, MessageSquare, Briefcase, Crown, Key, Star, MapPin, Compass, Ticket, Gift, Phone, Mail, CreditCard, Clock, DollarSign, HelpCircle, Sparkles, ChevronDown } from "lucide-react";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
-import { type PortalBlock } from "@/lib/cms-types";
+import { type PortalBlock, type LegacyPortalBlock } from "@/lib/cms-types";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type Props = {
   block: PortalBlock;
@@ -81,7 +83,92 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
   );
 }
 
-export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
+export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Props) {
+  const block = blockItem as LegacyPortalBlock;
+  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive">("content");
+  const [brandColors, setBrandColors] = useState<{
+    primary?: string;
+    secondary?: string;
+    accent?: string;
+    background?: string;
+    text?: string;
+    legacyMain?: string;
+    legacyLight?: string;
+    legacyFg?: string;
+  }>({});
+
+  useEffect(() => {
+    if (!agencyId) return;
+    async function loadColors() {
+      try {
+        const { data: agencyData } = await supabase
+          .from("agencies")
+          .select("brand_color, brand_color_light, brand_color_fg")
+          .eq("id", agencyId)
+          .maybeSingle();
+        
+        const { data: brandKitData } = await supabase
+          .from("brand_kit")
+          .select("primary_color, secondary_color, accent_color, background_color, text_color")
+          .eq("agency_id", agencyId)
+          .maybeSingle();
+        
+        setBrandColors({
+          primary: brandKitData?.primary_color || undefined,
+          secondary: brandKitData?.secondary_color || undefined,
+          accent: brandKitData?.accent_color || undefined,
+          background: brandKitData?.background_color || undefined,
+          text: brandKitData?.text_color || undefined,
+          legacyMain: agencyData?.brand_color || undefined,
+          legacyLight: agencyData?.brand_color_light || undefined,
+          legacyFg: agencyData?.brand_color_fg || undefined,
+        });
+      } catch (err) {
+        console.error("Error loading brand colors", err);
+      }
+    }
+    loadColors();
+  }, [agencyId]);
+
+  const blockStyles = (block as any).styles || {};
+  const updateStyle = (patch: any) => {
+    updateBlock(block.id, {
+      styles: {
+        ...blockStyles,
+        ...patch,
+      },
+    } as any);
+  };
+
+  const blockAnimation = (block as any).animation || {
+    enabled: false,
+    type: "none",
+    delay: 0,
+    duration: 600,
+    trigger: "onEnter",
+  };
+  const updateAnimation = (patch: any) => {
+    updateBlock(block.id, {
+      animation: {
+        ...blockAnimation,
+        ...patch,
+      },
+    } as any);
+  };
+
+  const blockResponsive = (block as any).responsive || {
+    hideOnMobile: false,
+    hideOnTablet: false,
+  };
+  const updateResponsive = (patch: any) => {
+    updateBlock(block.id, {
+      responsive: {
+        ...blockResponsive,
+        ...patch,
+      },
+    } as any);
+  };
+
   const renderForm = () => {
     switch (block.type) {
       case "hero":
@@ -1924,15 +2011,396 @@ export function BlockFormEditor({ block, updateBlock, agencyId }: Props) {
           </div>
         );
 
-      default:
+      default: {
+        const def = SECTION_REGISTRY[blockItem.type];
+        if (def) {
+          return (
+            <RegistryBlockFormEditor
+              block={blockItem as { id: string; type: string; config: Record<string, any>; styles?: any; animation?: any; responsive?: any; }}
+              updateBlock={updateBlock}
+              definition={def}
+              agencyId={agencyId}
+            />
+          );
+        }
         return null;
+      }
     }
   };
 
   return (
     <div className="space-y-6">
-      {renderForm()}
-      <SectionStyleEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+      {/* Tab Selector */}
+      <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
+        <button
+          type="button"
+          onClick={() => setActiveTab("content")}
+          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+            activeTab === "content"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+          }`}
+        >
+          Conteúdo
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("style")}
+          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+            activeTab === "style"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+          }`}
+        >
+          Estilo
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("animation")}
+          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+            activeTab === "animation"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+          }`}
+        >
+          Animação
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("responsive")}
+          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+            activeTab === "responsive"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+          }`}
+        >
+          Responsivo
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      <div className="space-y-4">
+        {activeTab === "content" && renderForm()}
+
+        {activeTab === "style" && (
+          <div className="space-y-4">
+            <Field label="Tipo de Fundo">
+              <Select
+                value={blockStyles.bg_type || "default"}
+                onChange={(e) => updateStyle({ bg_type: e.target.value })}
+              >
+                <option value="default">Padrão da Página</option>
+                <option value="color">Cor Sólida</option>
+                <option value="gradient">Gradiente CSS</option>
+                <option value="image">Imagem de Fundo</option>
+              </Select>
+            </Field>
+
+            {blockStyles.bg_type === "color" && (
+              <Field label="Cor de Fundo">
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    className="w-8 h-8 rounded cursor-pointer border border-border"
+                    value={blockStyles.bg_color || blockStyles.backgroundColor || "#ffffff"}
+                    onChange={(e) => updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })}
+                  />
+                  <Input
+                    value={blockStyles.bg_color || blockStyles.backgroundColor || ""}
+                    onChange={(e) => updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })}
+                    placeholder="#ffffff"
+                  />
+                </div>
+                {/* Agency Colors Swatches */}
+                <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">Cores da Agência:</span>
+                  {Object.entries(brandColors).map(([key, val]) => {
+                    if (!val) return null;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => updateStyle({ bg_color: val, backgroundColor: val })}
+                        className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                        style={{ backgroundColor: val as string }}
+                        title={`${key}: ${val}`}
+                      />
+                    );
+                  })}
+                </div>
+              </Field>
+            )}
+
+            {blockStyles.bg_type === "gradient" && (
+              <Field label="Gradiente CSS">
+                <Input
+                  value={blockStyles.bg_gradient || ""}
+                  onChange={(e) => updateStyle({ bg_gradient: e.target.value })}
+                  placeholder="linear-gradient(to right, #1e3a8a, #3b82f6)"
+                />
+              </Field>
+            )}
+
+            {blockStyles.bg_type === "image" && (
+              <div className="space-y-4">
+                <label className="text-xs font-semibold text-muted-foreground">Imagem de Fundo</label>
+                <Input
+                  value={blockStyles.bg_image_url || blockStyles.backgroundImage || ""}
+                  onChange={(e) => updateStyle({ bg_image_url: e.target.value, backgroundImage: e.target.value })}
+                  placeholder="URL da imagem..."
+                />
+                <div className="flex items-center gap-2 pt-1">
+                  <FileUploader
+                    bucket="agency-media"
+                    folder={`${agencyId}/media`}
+                    value={blockStyles.bg_image_url || blockStyles.backgroundImage || ""}
+                    onChange={(url) => updateStyle({ bg_image_url: url || "", backgroundImage: url || "" })}
+                  />
+                  <span className="text-xs text-muted-foreground font-semibold">ou</span>
+                  <UnsplashPicker
+                    value={blockStyles.bg_image_url || blockStyles.backgroundImage || ""}
+                    onChange={(url) => updateStyle({ bg_image_url: url, backgroundImage: url })}
+                  />
+                </div>
+                <Field label="Opacidade do Overlay (0.0 a 1.0)">
+                  <Input
+                    type="number"
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    value={blockStyles.backgroundOverlayOpacity !== undefined ? blockStyles.backgroundOverlayOpacity : 0.5}
+                    onChange={(e) => updateStyle({ backgroundOverlayOpacity: parseFloat(e.target.value) || 0 })}
+                  />
+                </Field>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Espaçamento Sup. (Padding Top)">
+                <Select
+                  value={blockStyles.paddingTop || blockStyles.padding_y || "md"}
+                  onChange={(e) => updateStyle({ paddingTop: e.target.value, padding_y: e.target.value })}
+                >
+                  <option value="none">Nenhum</option>
+                  <option value="sm">Pequeno (sm)</option>
+                  <option value="md">Médio (md)</option>
+                  <option value="lg">Grande (lg)</option>
+                  <option value="xl">Extra Grande (xl)</option>
+                </Select>
+              </Field>
+              <Field label="Espaçamento Inf. (Padding Bottom)">
+                <Select
+                  value={blockStyles.paddingBottom || blockStyles.padding_y || "md"}
+                  onChange={(e) => updateStyle({ paddingBottom: e.target.value, padding_y: e.target.value })}
+                >
+                  <option value="none">Nenhum</option>
+                  <option value="sm">Pequeno (sm)</option>
+                  <option value="md">Médio (md)</option>
+                  <option value="lg">Grande (lg)</option>
+                  <option value="xl">Extra Grande (xl)</option>
+                </Select>
+              </Field>
+            </div>
+
+            <Field label="Cantos Arredondados">
+              <Select
+                value={blockStyles.border_radius || "none"}
+                onChange={(e) => updateStyle({ border_radius: e.target.value })}
+              >
+                <option value="none">Quadrado (none)</option>
+                <option value="md">Suave (md)</option>
+                <option value="lg">Arredondado (lg)</option>
+                <option value="full">Pílula (full)</option>
+              </Select>
+            </Field>
+
+            <Field label="Cor do Texto" hint="Ajuste para garantir legibilidade">
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  className="w-8 h-8 rounded cursor-pointer border border-border"
+                  value={blockStyles.text_color || "#000000"}
+                  onChange={(e) => updateStyle({ text_color: e.target.value, textColor: e.target.value })}
+                />
+                <Input
+                  value={blockStyles.text_color || blockStyles.textColor || ""}
+                  onChange={(e) => updateStyle({ text_color: e.target.value, textColor: e.target.value })}
+                  placeholder="#000000"
+                />
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+                <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">Presets de Contraste:</span>
+                <button
+                  type="button"
+                  onClick={() => updateStyle({ text_color: "#ffffff", textColor: "light" })}
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm bg-white"
+                  title="Branco: #ffffff"
+                />
+                <button
+                  type="button"
+                  onClick={() => updateStyle({ text_color: "#0f172a", textColor: "dark" })}
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm bg-slate-900"
+                  title="Escuro: #0f172a"
+                />
+                {Object.entries(brandColors).map(([key, val]) => {
+                  if (!val) return null;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => updateStyle({ text_color: val, textColor: val })}
+                      className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                      style={{ backgroundColor: val as string }}
+                      title={`${key}: ${val}`}
+                    />
+                  );
+                })}
+              </div>
+            </Field>
+          </div>
+        )}
+
+        {activeTab === "animation" && (
+          <div className="space-y-4">
+            <Field label="Ativar Animação">
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  checked={!!blockAnimation.enabled}
+                  onChange={(e) => {
+                    updateAnimation({ enabled: e.target.checked });
+                    updateStyle({ animation: e.target.checked ? (blockAnimation.type === "none" ? "fade" : blockAnimation.type) : "none" });
+                  }}
+                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                />
+                <span className="text-xs text-muted-foreground">Animar entrada da seção</span>
+              </div>
+            </Field>
+
+            {blockAnimation.enabled && (
+              <div className="space-y-4">
+                <Field label="Tipo de Animação">
+                  <Select
+                    value={blockAnimation.type || "fadeIn"}
+                    onChange={(e) => {
+                      updateAnimation({ type: e.target.value });
+                      updateStyle({ animation: e.target.value });
+                    }}
+                  >
+                    <option value="none">Sem Animação</option>
+                    <option value="fadeIn">Fade In (Aparecer)</option>
+                    <option value="fadeInUp">Fade In Up (Subir e aparecer)</option>
+                    <option value="fadeInLeft">Fade In Left (Esquerda e aparecer)</option>
+                    <option value="fadeInRight">Fade In Right (Direita e aparecer)</option>
+                    <option value="scaleIn">Scale In (Zoom e aparecer)</option>
+                    <option value="parallax">Parallax (Efeito de rolagem de fundo)</option>
+                    <option value="countUp">Count Up (Contador numérico de estatísticas)</option>
+                  </Select>
+                </Field>
+
+                <Field label="Atraso (Delay em ms)">
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="range"
+                      min={0}
+                      max={2000}
+                      step={50}
+                      value={blockAnimation.delay || 0}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        updateAnimation({ delay: val });
+                        updateStyle({ animation_delay: val });
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs font-semibold w-12 text-right">{blockAnimation.delay || 0}ms</span>
+                  </div>
+                </Field>
+
+                <Field label="Duração (Duration em ms)">
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="range"
+                      min={200}
+                      max={2000}
+                      step={50}
+                      value={blockAnimation.duration || 600}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 600;
+                        updateAnimation({ duration: val });
+                        updateStyle({ animation_duration: val });
+                      }}
+                      className="flex-1"
+                    />
+                    <span className="text-xs font-semibold w-12 text-right">{blockAnimation.duration || 600}ms</span>
+                  </div>
+                </Field>
+
+                <Field label="Gatilho da Animação">
+                  <Select
+                    value={blockAnimation.trigger || "onEnter"}
+                    onChange={(e) => updateAnimation({ trigger: e.target.value })}
+                  >
+                    <option value="onEnter">Ao Entrar na Tela (onEnter)</option>
+                    <option value="onLoad">Ao Carregar a Página (onLoad)</option>
+                  </Select>
+                </Field>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === "responsive" && (
+          <div className="space-y-4">
+            <Field label="Ocultar no Mobile">
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  checked={!!blockResponsive.hideOnMobile}
+                  onChange={(e) => updateResponsive({ hideOnMobile: e.target.checked })}
+                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                />
+                <span className="text-xs text-muted-foreground">Ocultar quando visualizado em celulares</span>
+              </div>
+            </Field>
+
+            <Field label="Ocultar no Tablet">
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  checked={!!blockResponsive.hideOnTablet}
+                  onChange={(e) => updateResponsive({ hideOnTablet: e.target.checked })}
+                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                />
+                <span className="text-xs text-muted-foreground">Ocultar quando visualizado em tablets</span>
+              </div>
+            </Field>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Colunas no Mobile">
+                <Select
+                  value={String(blockResponsive.mobileColumns || 1)}
+                  onChange={(e) => updateResponsive({ mobileColumns: parseInt(e.target.value) || 1 })}
+                >
+                  <option value="1">1 Coluna</option>
+                  <option value="2">2 Colunas</option>
+                </Select>
+              </Field>
+
+              <Field label="Colunas no Tablet">
+                <Select
+                  value={String(blockResponsive.tabletColumns || 2)}
+                  onChange={(e) => updateResponsive({ tabletColumns: parseInt(e.target.value) || 2 })}
+                >
+                  <option value="1">1 Coluna</option>
+                  <option value="2">2 Colunas</option>
+                  <option value="3">3 Colunas</option>
+                </Select>
+              </Field>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -2280,3 +2748,458 @@ function AgentSelectEditor({ block, updateBlock, agencyId }: Props) {
     </Field>
   );
 }
+
+// ─── REGISTRY DYNAMIC FORM EDITOR ───────────────────────────────────────────
+
+interface RegistryBlockFormEditorProps {
+  block: any;
+  updateBlock: (id: string, patch: any) => void;
+  definition: any;
+  agencyId: string;
+}
+
+export function RegistryBlockFormEditor({ block, updateBlock, definition, agencyId }: RegistryBlockFormEditorProps) {
+  const config = block.config || {};
+  const fields = definition.fields || [];
+
+  const handleFieldChange = (key: string, value: any) => {
+    const newConfig = { ...config, [key]: value };
+    updateBlock(block.id, { config: newConfig });
+  };
+
+  return (
+    <div className="space-y-4">
+      {fields.map((field: any) => {
+        const value = config[field.key] !== undefined ? config[field.key] : field.defaultValue;
+
+        switch (field.type) {
+          case "text":
+            return (
+              <Field key={field.key} label={field.label}>
+                <Input
+                  value={value as string || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.placeholder}
+                />
+              </Field>
+            );
+          case "richtext":
+            return (
+              <Field key={field.key} label={field.label}>
+                <Textarea
+                  value={value as string || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.placeholder}
+                  rows={4}
+                />
+              </Field>
+            );
+          case "number":
+            return (
+              <Field key={field.key} label={field.label}>
+                <Input
+                  type="number"
+                  value={value !== undefined ? String(value) : ""}
+                  onChange={(e) => handleFieldChange(field.key, parseFloat(e.target.value) || 0)}
+                  min={field.min}
+                  max={field.max}
+                />
+              </Field>
+            );
+          case "url":
+            return (
+              <Field key={field.key} label={field.label}>
+                <Input
+                  type="url"
+                  value={value as string || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder="https://..."
+                />
+              </Field>
+            );
+          case "color":
+            return (
+              <Field key={field.key} label={field.label}>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={value as string || "#ffffff"}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    className="w-10 h-10 rounded-lg border border-border cursor-pointer"
+                  />
+                  <Input
+                    value={value as string || ""}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    className="flex-1"
+                    placeholder="#HEX"
+                  />
+                </div>
+              </Field>
+            );
+          case "select":
+            return (
+              <Field key={field.key} label={field.label}>
+                <Select
+                  value={value as string || ""}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                >
+                  {field.options?.map((opt: any) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            );
+          case "toggle":
+            return (
+              <Field key={field.key} label={field.label}>
+                <div className="flex items-center gap-2 py-1">
+                  <input
+                    type="checkbox"
+                    checked={!!value}
+                    onChange={(e) => handleFieldChange(field.key, e.target.checked)}
+                    className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                  />
+                  <span className="text-xs text-muted-foreground">Ativo / Exibir</span>
+                </div>
+              </Field>
+            );
+          case "image_unsplash":
+          case "image":
+            return (
+              <Field key={field.key} label={field.label}>
+                <div className="space-y-2">
+                  <Input
+                    value={value as string || ""}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    placeholder="URL da imagem..."
+                  />
+                  <div className="flex items-center gap-2 pt-1">
+                    <FileUploader
+                      bucket="agency-media"
+                      folder={`${agencyId}/media`}
+                      value={value as string || ""}
+                      onChange={(url) => handleFieldChange(field.key, url || "")}
+                    />
+                    <span className="text-xs text-muted-foreground font-semibold">ou</span>
+                    <UnsplashPicker
+                      value={value as string || ""}
+                      onChange={(url) => handleFieldChange(field.key, url)}
+                    />
+                  </div>
+                </div>
+              </Field>
+            );
+          case "icon":
+            return (
+              <Field key={field.key} label={field.label}>
+                <IconPicker
+                  value={value as string || ""}
+                  onChange={(key) => handleFieldChange(field.key, key)}
+                />
+              </Field>
+            );
+          case "list":
+            return (
+              <div key={field.key} className="border-t border-border pt-4 mt-4 space-y-2">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{field.label}</span>
+                </div>
+                <ListFieldEditor
+                  items={Array.isArray(value) ? value : []}
+                  onChange={(newVal) => handleFieldChange(field.key, newVal)}
+                  defaultValue={field.defaultValue}
+                  agencyId={agencyId}
+                />
+              </div>
+            );
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+// ─── UNSPLASH IMAGE PICKER ───────────────────────────────────────────────────
+
+function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: string) => void }) {
+  const [keyword, setKeyword] = useState("");
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const search = async () => {
+    if (!keyword.trim()) return;
+    setLoading(true);
+    try {
+      const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY || import.meta.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || "";
+      const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(keyword)}&orientation=landscape&per_page=9&client_id=${accessKey}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPhotos(data.results || []);
+      } else {
+        toast.error("Erro ao buscar no Unsplash. Verifique se a chave de acesso VITE_UNSPLASH_ACCESS_KEY está configurada.");
+      }
+    } catch {
+      toast.error("Erro na requisição ao Unsplash.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="inline-block">
+      <button 
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="px-3 h-9 rounded-lg border border-border bg-surface-alt text-xs font-semibold hover:border-brand/60 transition-colors"
+      >
+        {value ? "Buscar no Unsplash" : "Buscar no Unsplash"}
+      </button>
+      
+      {open && (
+        <div className="absolute z-50 right-4 w-72 p-4 rounded-xl border border-border bg-surface shadow-2xl space-y-3 mt-2">
+          <div className="flex gap-2">
+            <input 
+              type="text"
+              placeholder="Ex: travel paradise, hotel, beach..."
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-border outline-none bg-surface"
+              onKeyDown={(e) => e.key === 'Enter' && search()}
+            />
+            <button 
+              type="button"
+              onClick={search}
+              disabled={loading}
+              className="px-3 py-1.5 bg-brand text-white text-xs font-bold rounded-lg"
+            >
+              {loading ? "Buscando..." : "Buscar"}
+            </button>
+          </div>
+          {photos.length > 0 ? (
+            <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+              {photos.map((p) => (
+                <div 
+                  key={p.id}
+                  onClick={() => { onChange(p.urls.regular); setOpen(false); }}
+                  className="aspect-video cursor-pointer overflow-hidden rounded-lg hover:ring-2 hover:ring-brand"
+                >
+                  <img src={p.urls.thumb} alt={p.alt_description} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-[10px] text-muted-foreground text-center py-4">Sem resultados. Busque termos em inglês.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── REPEATABLE LIST EDITOR ──────────────────────────────────────────────────
+
+interface ListFieldEditorProps {
+  items: any[];
+  onChange: (newItems: any[]) => void;
+  defaultValue: any;
+  agencyId?: string;
+}
+
+function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldEditorProps) {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const addItem = () => {
+    // Determine the template item
+    const templateItem = (defaultValue && Array.isArray(defaultValue) && defaultValue[0]) || {};
+    const newItem = JSON.parse(JSON.stringify(templateItem));
+    
+    // Clear typical text fields in the duplicate
+    Object.keys(newItem).forEach((k) => {
+      if (typeof newItem[k] === 'string' && k !== 'image' && !newItem[k].startsWith('http')) {
+        newItem[k] = '';
+      }
+    });
+
+    const newItems = [...items, newItem];
+    onChange(newItems);
+    setExpandedIndex(newItems.length - 1);
+  };
+
+  const removeItem = (idx: number) => {
+    const newItems = items.filter((_, i) => i !== idx);
+    onChange(newItems);
+    if (expandedIndex === idx) setExpandedIndex(null);
+  };
+
+  const updateItemField = (idx: number, key: string, val: any) => {
+    const newItems = items.map((item, i) => {
+      if (i === idx) {
+        return { ...item, [key]: val };
+      }
+      return item;
+    });
+    onChange(newItems);
+  };
+
+  const moveItem = (idx: number, direction: -1 | 1) => {
+    if (idx + direction < 0 || idx + direction >= items.length) return;
+    const newItems = [...items];
+    const temp = newItems[idx];
+    newItems[idx] = newItems[idx + direction];
+    newItems[idx + direction] = temp;
+    onChange(newItems);
+    if (expandedIndex === idx) setExpandedIndex(idx + direction);
+    else if (expandedIndex === idx + direction) setExpandedIndex(idx);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-2">
+        {items.map((item, idx) => {
+          const isExpanded = expandedIndex === idx;
+          const displayLabel = item.name || item.title || item.city || item.label || `Item #${idx + 1}`;
+          
+          return (
+            <div key={idx} className="border border-border rounded-xl bg-surface-alt/20 overflow-hidden">
+              <div 
+                className="flex items-center justify-between px-3 py-2 cursor-pointer bg-surface-alt/45 select-none"
+                onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+              >
+                <span className="text-xs font-semibold text-foreground truncate max-w-[140px]">
+                  {displayLabel}
+                </span>
+                
+                <div className="flex items-center gap-1.5">
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); moveItem(idx, -1); }}
+                    disabled={idx === 0}
+                    className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  >
+                    ▲
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); moveItem(idx, 1); }}
+                    disabled={idx === items.length - 1}
+                    className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  >
+                    ▼
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); removeItem(idx); }}
+                    className="p-1 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {isExpanded && (
+                <div className="p-4 border-t border-border bg-surface space-y-3">
+                  {Object.keys(item).map((k) => {
+                    const val = item[k];
+                    
+                    // Simple heuristic for field types
+                    const isImage = k.toLowerCase().includes('image') || k.toLowerCase().includes('avatar') || k.toLowerCase().includes('logo');
+                    const isIcon = k.toLowerCase() === 'icon';
+                    const isRating = k.toLowerCase() === 'rating' || k.toLowerCase() === 'stars';
+                    const isTextarea = k.toLowerCase() === 'description' || k.toLowerCase() === 'text' || k.toLowerCase() === 'bio' || k.toLowerCase() === 'snippet';
+
+                    if (isImage) {
+                      return (
+                        <Field key={k} label={`${k.toUpperCase()}`}>
+                          <div className="space-y-1">
+                            <Input
+                              value={val as string || ""}
+                              onChange={(e) => updateItemField(idx, k, e.target.value)}
+                              placeholder="URL..."
+                            />
+                            <div className="flex gap-2">
+                              <FileUploader
+                                bucket="agency-media"
+                                folder={`${agencyId}/media`}
+                                value={val as string || ""}
+                                onChange={(url) => updateItemField(idx, k, url || "")}
+                              />
+                              <UnsplashPicker
+                                value={val as string || ""}
+                                onChange={(url) => updateItemField(idx, k, url)}
+                              />
+                            </div>
+                          </div>
+                        </Field>
+                      );
+                    }
+
+                    if (isIcon) {
+                      return (
+                        <Field key={k} label={`${k.toUpperCase()}`}>
+                          <IconPicker
+                            value={val as string || ""}
+                            onChange={(key) => updateItemField(idx, k, key)}
+                          />
+                        </Field>
+                      );
+                    }
+
+                    if (isRating) {
+                      return (
+                        <Field key={k} label={`${k.toUpperCase()}`}>
+                          <Input
+                            type="number"
+                            min={1}
+                            max={5}
+                            value={String(val || 5)}
+                            onChange={(e) => updateItemField(idx, k, parseInt(e.target.value) || 5)}
+                          />
+                        </Field>
+                      );
+                    }
+
+                    if (isTextarea) {
+                      return (
+                        <Field key={k} label={`${k.toUpperCase()}`}>
+                          <Textarea
+                            rows={3}
+                            value={val as string || ""}
+                            onChange={(e) => updateItemField(idx, k, e.target.value)}
+                            placeholder="Descreva..."
+                          />
+                        </Field>
+                      );
+                    }
+
+                    return (
+                      <Field key={k} label={`${k.toUpperCase()}`}>
+                        <Input
+                          value={val as string || ""}
+                          onChange={(e) => updateItemField(idx, k, e.target.value)}
+                          placeholder="..."
+                        />
+                      </Field>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <button
+        type="button"
+        onClick={addItem}
+        className="w-full py-2 border border-dashed border-border rounded-xl text-xs font-semibold hover:border-brand/40 hover:bg-surface-alt/25 transition-colors text-center"
+      >
+        + Adicionar Item
+      </button>
+    </div>
+  );
+}
+

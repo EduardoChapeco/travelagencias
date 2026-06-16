@@ -26,6 +26,7 @@ import { Route as ClientGiftcardsRouteImport } from './routes/client.giftcards'
 import { Route as ClientDocumentsRouteImport } from './routes/client.documents'
 import { Route as ClientCouponsRouteImport } from './routes/client.coupons'
 import { Route as ClientConsentsRouteImport } from './routes/client.consents'
+import { Route as BuilderAiRouteImport } from './routes/builder.ai'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthOnboardingRouteImport } from './routes/auth.onboarding'
@@ -205,6 +206,11 @@ const ClientConsentsRoute = ClientConsentsRouteImport.update({
   id: '/consents',
   path: '/consents',
   getParentRoute: () => ClientRoute,
+} as any)
+const BuilderAiRoute = BuilderAiRouteImport.update({
+  id: '/builder/ai',
+  path: '/builder/ai',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -715,6 +721,7 @@ export interface FileRoutesByFullPath {
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/builder/ai': typeof BuilderAiRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -824,6 +831,7 @@ export interface FileRoutesByTo {
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/builder/ai': typeof BuilderAiRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -933,6 +941,7 @@ export interface FileRoutesById {
   '/auth/onboarding': typeof AuthOnboardingRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/builder/ai': typeof BuilderAiRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -1048,6 +1057,7 @@ export interface FileRouteTypes {
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/builder/ai'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1157,6 +1167,7 @@ export interface FileRouteTypes {
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/builder/ai'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1265,6 +1276,7 @@ export interface FileRouteTypes {
     | '/auth/onboarding'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/builder/ai'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1361,6 +1373,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
+  BuilderAiRoute: typeof BuilderAiRoute
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
   VerifySerialRoute: typeof VerifySerialRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
@@ -1496,6 +1509,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/client/consents'
       preLoaderRoute: typeof ClientConsentsRouteImport
       parentRoute: typeof ClientRoute
+    }
+    '/builder/ai': {
+      id: '/builder/ai'
+      path: '/builder/ai'
+      fullPath: '/builder/ai'
+      preLoaderRoute: typeof BuilderAiRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
@@ -2528,6 +2548,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
   AgencySlugRoute: AgencySlugRouteWithChildren,
+  BuilderAiRoute: BuilderAiRoute,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
   VerifySerialRoute: VerifySerialRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,

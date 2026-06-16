@@ -12,6 +12,7 @@ import {
   Copy,
   Trash2,
   PencilLine,
+  History,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
@@ -23,6 +24,7 @@ import {
   updateProposal,
 } from "@/services/proposals";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+import { ProposalHistorySheet } from "@/components/proposals/ProposalHistorySheet";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 import {
@@ -75,6 +77,8 @@ function ProposalsList() {
   const [newOpen, setNewOpen] = useState(!!search.new);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyProposal, setHistoryProposal] = useState<{ id: string; title: string } | null>(null);
   const debouncedSearch = useDebounce(searchQuery, 400);
   const pageSize = 20;
 
@@ -298,6 +302,15 @@ function ProposalsList() {
                             <Copy className="mr-2 h-4 w-4" /> Duplicar Cotação
                           </DropdownMenuItem>
                           <DropdownMenuItem
+                            onClick={() => {
+                              setHistoryProposal({ id: p.id, title: p.title });
+                              setHistoryOpen(true);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <History className="mr-2 h-4 w-4" /> Histórico de Edições
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
                             className="text-danger"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -355,6 +368,17 @@ function ProposalsList() {
             setNewOpen(false);
             navigate({ to: "/agency/$slug/proposals/$id", params: { slug, id } });
           }}
+        />
+      )}
+      {historyProposal && (
+        <ProposalHistorySheet
+          isOpen={historyOpen}
+          onClose={() => {
+            setHistoryOpen(false);
+            setHistoryProposal(null);
+          }}
+          proposalId={historyProposal.id}
+          proposalTitle={historyProposal.title}
         />
       )}
       <ConfirmDialog />

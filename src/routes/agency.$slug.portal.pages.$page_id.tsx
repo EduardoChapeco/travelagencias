@@ -47,6 +47,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Field,
   Input,
@@ -209,6 +210,30 @@ function PageEditorRoute() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
+  
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [showNewPageModal, setShowNewPageModal] = useState(false);
+  const [newPageTitle, setNewPageTitle] = useState("");
+  const [newPageSlug, setNewPageSlug] = useState("");
+  const [newPageTemplate, setNewPageTemplate] = useState("default");
+
+  const [showRenameModal, setShowRenameModal] = useState<any | null>(null);
+  const [renameTitle, setRenameTitle] = useState("");
+  const [renameSlug, setRenameSlug] = useState("");
+
+  const { data: allPages, refetch: refetchPages } = useQuery({
+    enabled: !!agency,
+    queryKey: ["portal-pages", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("portal_pages")
+        .select("id, title, slug, template, status")
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -250,6 +275,204 @@ function PageEditorRoute() {
     queryKey: ["portal-page-versions", initialData?.id],
     queryFn: () => fetchPortalPageVersions(initialData!.id),
   });
+
+  async function handleCreatePage() {
+    if (!newPageTitle.trim()) {
+      toast.error("O título é obrigatório");
+      return;
+    }
+    const slugValue = newPageSlug.trim() || slugify(newPageTitle);
+    try {
+      const { data, error } = await supabase
+        .from("portal_pages")
+        .insert({
+          agency_id: agency!.id,
+          title: newPageTitle,
+          slug: slugValue,
+          template: newPageTemplate,
+          status: "draft",
+          blocks: [],
+          seo: {},
+        })
+        .select("id")
+        .single();
+
+      if (error) throw error;
+      toast.success("Página criada com sucesso!");
+      setShowNewPageModal(false);
+      setNewPageTitle("");
+      setNewPageSlug("");
+      
+      qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      navigate({
+        to: "/agency/$slug/portal/pages/$page_id",
+        params: { slug, page_id: data.id },
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar página");
+    }
+  }
+
+  async function handleRenamePage() {
+    if (!showRenameModal) return;
+    try {
+      const { error } = await supabase
+        .from("portal_pages")
+        .update({
+          title: renameTitle,
+          slug: renameSlug || slugify(renameTitle),
+        })
+        .eq("id", showRenameModal.id);
+      if (error) throw error;
+      toast.success("Página renomeada");
+      setShowRenameModal(null);
+      qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      if (page_id === showRenameModal.id) {
+        setTitle(renameTitle);
+        setPageSlug(renameSlug || slugify(renameTitle));
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao renomear");
+    }
+  }
+
+  async function handleDuplicatePage(p: any) {
+    try {
+      const { data: pageDetails, error: fetchErr } = await supabase
+        .from("portal_pages")
+        .select("*")
+        .eq("id", p.id)
+        .single();
+      if (fetchErr) throw fetchErr;
+
+      const randomSuffix = Math.random().toString(36).substring(2, 5);
+      const newTitle = `${pageDetails.title} (Cópia)`;
+      const newSlug = `${pageDetails.slug}-copia-${randomSuffix}`;
+
+      const { data: newPage, error: insertErr } = await supabase
+        .from("portal_pages")
+        .insert({
+          agency_id: agency!.id,
+          title: newTitle,
+          slug: newSlug,
+          blocks: pageDetails.blocks || [],
+          seo: pageDetails.seo || {},
+          template: pageDetails.template || "default",
+          status: "draft",
+        })
+        .select("id")
+        .single();
+      if (insertErr) throw insertErr;
+
+      toast.success("Página duplicada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      navigate({
+        to: "/agency/$slug/portal/pages/$page_id",
+        params: { slug, page_id: newPage.id },
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao duplicar");
+    }
+  }
+
+  async function handleSetAsHome(p: any) {
+    try {
+      const { data: existingHome } = await supabase
+        .from("portal_pages")
+        .select("id, slug")
+        .eq("agency_id", agency!.id)
+        .eq("slug", "home")
+        .maybeSingle();
+
+      if (existingHome && existingHome.id !== p.id) {
+        const tempSlug = `home-bkp-${Date.now()}`;
+        const { error: updateOldHomeErr } = await supabase
+          .from("portal_pages")
+          .update({ slug: tempSlug })
+          .eq("id", existingHome.id);
+        if (updateOldHomeErr) throw updateOldHomeErr;
+      }
+
+      const { error: updateNewHomeErr } = await supabase
+        .from("portal_pages")
+        .update({ slug: "home" })
+        .eq("id", p.id);
+      if (updateNewHomeErr) throw updateNewHomeErr;
+
+      toast.success("Página definida como Home!");
+      qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      if (page_id === p.id) {
+        setPageSlug("home");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao definir como Home");
+    }
+  }
+
+  async function handleDeletePage(p: any) {
+    if (p.slug === "home" || p.slug === "index" || p.title.toLowerCase() === "início") {
+      toast.error("A página de início não pode ser excluída");
+      return;
+    }
+    if (!confirm(`Tem certeza que deseja excluir a página "${p.title}"?`)) {
+      return;
+    }
+    try {
+      const { error } = await supabase
+        .from("portal_pages")
+        .delete()
+        .eq("id", p.id);
+      if (error) throw error;
+      toast.success("Página excluída");
+      qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
+      if (page_id === p.id) {
+        navigate({ to: "/agency/$slug/portal/pages", params: { slug } });
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao excluir página");
+    }
+  }
+
+  useEffect(() => {
+    if (!hasInitialized || isNew || isLoading || !agency || !initialData) return;
+
+    const hasChanged = 
+      title !== (initialData?.title || "") ||
+      pageSlug !== (initialData?.slug || "") ||
+      template !== (initialData?.template || "default") ||
+      metaTitle !== (initialData?.seo?.meta_title || "") ||
+      metaDesc !== (initialData?.seo?.meta_description || "") ||
+      JSON.stringify(blocks) !== JSON.stringify(initialData?.blocks || []);
+
+    if (!hasChanged) return;
+
+    setSaveStatus("saving");
+    const delayDebounce = setTimeout(async () => {
+      try {
+        setSubmitting(true);
+        const finalSlug = pageSlug || slugify(title);
+        await savePortalPageDraft(
+          agency.id,
+          initialData.id,
+          false,
+          title,
+          finalSlug,
+          template,
+          blocks,
+          { meta_title: metaTitle, meta_description: metaDesc },
+        );
+        setSaveStatus("saved");
+        qc.invalidateQueries({ queryKey: ["portal-page", page_id] });
+      } catch (err) {
+        console.error("Auto-save error:", err);
+        setSaveStatus("error");
+      } finally {
+        setSubmitting(false);
+      }
+    }, 1500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [blocks, title, pageSlug, template, metaTitle, metaDesc, hasInitialized, isNew, agency]);
 
   if (isLoading) {
     return <div className="p-8 text-sm text-muted-foreground">Carregando editor...</div>;
@@ -352,6 +575,9 @@ function PageEditorRoute() {
         </div>
 
         <div className="flex items-center gap-3">
+          {saveStatus === "saving" && <span className="text-xs text-muted-foreground animate-pulse mr-2">Salvando...</span>}
+          {saveStatus === "saved" && <span className="text-xs text-green-500 font-medium mr-2">✓ Salvo</span>}
+          {saveStatus === "error" && <span className="text-xs text-destructive font-medium mr-2">✗ Erro ao salvar</span>}
           <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting}>
             Salvar Rascunho
           </GhostButton>
@@ -359,6 +585,99 @@ function PageEditorRoute() {
             {submitting ? "Salvando..." : "Publicar Página"}
           </PrimaryButton>
         </div>
+      </div>
+
+      {/* Pages Tab Bar */}
+      <div className="bg-surface border-b border-border px-6 py-2 flex items-center justify-between shrink-0 gap-4 overflow-x-auto select-none">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-muted-foreground uppercase mr-2">Páginas:</span>
+          {allPages?.map((p) => {
+            const isActive = p.id === page_id;
+            return (
+              <div
+                key={p.id}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs font-medium transition-all ${
+                  isActive
+                    ? "bg-brand/10 border-brand text-brand shadow-sm"
+                    : "bg-surface-alt/40 border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground cursor-pointer"
+                }`}
+                onClick={() => {
+                  if (!isActive) {
+                    navigate({
+                      to: "/agency/$slug/portal/pages/$page_id",
+                      params: { slug, page_id: p.id },
+                    });
+                  }
+                }}
+              >
+                <span>{p.title}</span>
+                {p.slug === "home" && <span className="text-[9px] bg-brand text-white font-semibold px-1 rounded">Home</span>}
+                
+                {/* Options Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-0.5 hover:bg-surface-hover rounded transition-colors text-muted-foreground hover:text-foreground ml-1" onClick={(e) => e.stopPropagation()}>
+                      <Settings className="w-3 h-3" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuLabel>Opções da Página</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowRenameModal(p);
+                        setRenameTitle(p.title);
+                        setRenameSlug(p.slug);
+                      }}
+                    >
+                      Renomear
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDuplicatePage(p);
+                      }}
+                    >
+                      Duplicar
+                    </DropdownMenuItem>
+                    {p.slug !== "home" && (
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetAsHome(p);
+                        }}
+                      >
+                        Definir como Home
+                      </DropdownMenuItem>
+                    )}
+                    {p.slug !== "home" && p.title.toLowerCase() !== "início" && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePage(p);
+                          }}
+                          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                        >
+                          Excluir
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowNewPageModal(true)}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-dashed border-border text-xs font-bold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all bg-surface-alt/10"
+        >
+          <Plus className="w-3.5 h-3.5" /> Adicionar Página
+        </button>
       </div>
 
       {/* Main 3-Column Studio Area */}
@@ -932,6 +1251,80 @@ function PageEditorRoute() {
           }
         }}
       />
+
+      {showNewPageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
+          <div className="bg-surface border border-border rounded-xl shadow-2xl p-6 w-full max-w-md space-y-4">
+            <h3 className="text-sm font-bold text-foreground">Criar Nova Página</h3>
+            <div className="space-y-3">
+              <Field label="Título da Página">
+                <Input
+                  value={newPageTitle}
+                  onChange={(e) => {
+                    setNewPageTitle(e.target.value);
+                    setNewPageSlug(slugify(e.target.value));
+                  }}
+                  placeholder="Ex: Nossos Serviços"
+                />
+              </Field>
+              <Field label="URL (Slug)">
+                <Input
+                  value={newPageSlug}
+                  onChange={(e) => setNewPageSlug(e.target.value)}
+                  placeholder="Ex: nossos-servicos"
+                />
+              </Field>
+              <Field label="Template / Layout Inicial">
+                <Select value={newPageTemplate} onChange={(e) => setNewPageTemplate(e.target.value)}>
+                  <option value="default">Padrão / Em branco</option>
+                  <option value="about">Sobre nós</option>
+                  <option value="contact">Contato & Suporte</option>
+                  <option value="biolink">Biolink (Link na Bio)</option>
+                </Select>
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <GhostButton type="button" onClick={() => setShowNewPageModal(false)}>
+                Cancelar
+              </GhostButton>
+              <PrimaryButton type="button" onClick={handleCreatePage}>
+                Criar Página
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRenameModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
+          <div className="bg-surface border border-border rounded-xl shadow-2xl p-6 w-full max-w-md space-y-4">
+            <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
+            <div className="space-y-3">
+              <Field label="Título da Página">
+                <Input
+                  value={renameTitle}
+                  onChange={(e) => setRenameTitle(e.target.value)}
+                />
+              </Field>
+              <Field label="URL (Slug)">
+                <Input
+                  value={renameSlug}
+                  onChange={(e) => setRenameSlug(e.target.value)}
+                  disabled={showRenameModal.slug === "home"}
+                />
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <GhostButton type="button" onClick={() => setShowRenameModal(null)}>
+                Cancelar
+              </GhostButton>
+              <PrimaryButton type="button" onClick={handleRenamePage}>
+                Salvar Alterações
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NewSectionsRenderer } from "./NewSectionsRenderer";
 import { Link } from "@tanstack/react-router";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +50,7 @@ import {
   DollarSign,
   Check,
 } from "lucide-react";
-import type { PortalBlock } from "@/lib/cms-types";
+import type { PortalBlock, LegacyPortalBlock } from "@/lib/cms-types";
 
 // Re-export so existing imports from this path continue to work
 export type { PortalBlock };
@@ -240,7 +241,8 @@ export function BlockRenderer({
 
   return (
     <div className="flex flex-col gap-4 pb-20">
-      {blocks.map((b) => {
+      {blocks.map((blockItem) => {
+        const b = blockItem as LegacyPortalBlock;
         const isSelected = selectedBlockId === b.id;
         const Wrapper = "div";
 
@@ -264,7 +266,7 @@ export function BlockRenderer({
               className={`pointer-events-none transition-opacity ${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
             >
               <BlockStyleWrapper block={b}>
-                {renderBlock(b, agencySlug, handleLinkClick, agencyId)}
+                {renderBlock(b, agencySlug, handleLinkClick, agencyId, pageId)}
               </BlockStyleWrapper>
             </div>
           </Wrapper>
@@ -274,7 +276,8 @@ export function BlockRenderer({
   );
 }
 
-function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: string) => void, agencyId?: string) {
+function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick: (url: string) => void, agencyId?: string, pageId?: string) {
+  const b = blockItem as LegacyPortalBlock;
   switch (b.type) {
     // ── HERO ──────────────────────────────────────────────────────
     case "hero": {
@@ -1151,7 +1154,15 @@ function renderBlock(b: PortalBlock, agencySlug: string, handleLinkClick: (url: 
       return <ClientBoardingTimelineBlock block={b} agencyId={agencyId} />;
 
     default:
-      return null;
+      return (
+        <NewSectionsRenderer
+          block={blockItem as { id: string; type: string; config: Record<string, any>; styles?: any; animation?: any; responsive?: any; }}
+          agencySlug={agencySlug}
+          pageId={pageId}
+          agencyId={agencyId}
+          handleLinkClick={handleLinkClick}
+        />
+      );
   }
 }
 

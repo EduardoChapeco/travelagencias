@@ -355,6 +355,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      ai_generation_logs: {
+        Row: {
+          id: string;
+          agency_id: string;
+          site_id: string | null;
+          user_prompt: string;
+          conversation_history: Json;
+          sections_generated: string[] | null;
+          model_used: string | null;
+          tokens_used: number | null;
+          status: string | null;
+          error_message: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          agency_id: string;
+          site_id?: string | null;
+          user_prompt: string;
+          conversation_history?: Json;
+          sections_generated?: string[] | null;
+          model_used?: string | null;
+          tokens_used?: number | null;
+          status?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          agency_id?: string;
+          site_id?: string | null;
+          user_prompt?: string;
+          conversation_history?: Json;
+          sections_generated?: string[] | null;
+          model_used?: string | null;
+          tokens_used?: number | null;
+          status?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       ai_rate_limit: {
         Row: {
           agency_id: string;
@@ -700,6 +742,12 @@ export type Database = {
           voucher_theme: string | null;
           website: string | null;
           whatsapp: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          accent_color: string | null;
+          background_color: string | null;
+          text_color: string | null;
+          logo_white_url: string | null;
         };
         Insert: {
           agency_id: string;
@@ -723,6 +771,12 @@ export type Database = {
           voucher_theme?: string | null;
           website?: string | null;
           whatsapp?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          accent_color?: string | null;
+          background_color?: string | null;
+          text_color?: string | null;
+          logo_white_url?: string | null;
         };
         Update: {
           agency_id?: string;
@@ -746,6 +800,12 @@ export type Database = {
           voucher_theme?: string | null;
           website?: string | null;
           whatsapp?: string | null;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+          accent_color?: string | null;
+          background_color?: string | null;
+          text_color?: string | null;
+          logo_white_url?: string | null;
         };
         Relationships: [];
       };
@@ -3609,18 +3669,69 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "proposal_history_proposal_id_fkey";
-            columns: ["proposal_id"];
-            isOneToOne: false;
-            referencedRelation: "proposals";
-            referencedColumns: ["id"];
+            foreignKeyName: "proposal_history_proposal_id_fkey",
+            columns: ["proposal_id"],
+            isOneToOne: false,
+            referencedRelation: "proposals",
+            referencedColumns: ["id"],
           },
           {
-            foreignKeyName: "proposal_history_agency_id_fkey";
-            columns: ["agency_id"];
-            isOneToOne: false;
-            referencedRelation: "agencies";
-            referencedColumns: ["id"];
+            foreignKeyName: "proposal_history_agency_id_fkey",
+            columns: ["agency_id"],
+            isOneToOne: false,
+            referencedRelation: "agencies",
+            referencedColumns: ["id"],
+          },
+        ],
+      };
+      public_leads: {
+        Row: {
+          id: string;
+          agency_id: string;
+          site_id: string | null;
+          name: string;
+          email: string;
+          phone: string | null;
+          subject: string | null;
+          message: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          agency_id: string;
+          site_id?: string | null;
+          name: string;
+          email: string;
+          phone?: string | null;
+          subject?: string | null;
+          message: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          agency_id?: string;
+          site_id?: string | null;
+          name?: string;
+          email?: string;
+          phone?: string | null;
+          subject?: string | null;
+          message?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "public_leads_agency_id_fkey",
+            columns: ["agency_id"],
+            isOneToOne: false,
+            referencedRelation: "agencies",
+            referencedColumns: ["id"],
+          },
+          {
+            foreignKeyName: "public_leads_site_id_fkey",
+            columns: ["site_id"],
+            isOneToOne: false,
+            referencedRelation: "portal_pages",
+            referencedColumns: ["id"],
           },
         ];
       };

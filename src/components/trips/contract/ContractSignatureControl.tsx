@@ -1,4 +1,4 @@
-import { UserCheck, Clock, FileText, FileCheck, History } from "lucide-react";
+import { UserCheck, Clock, FileText, FileCheck, History, Eye, Check } from "lucide-react";
 
 type Signature = {
   signer_name: string;
@@ -31,13 +31,21 @@ type AuditLog = {
 
 export function ContractSignatureControl({
   contract,
-  auditChain,
+  auditChain = [],
   isLoadingAudit,
 }: {
   contract: Contract;
   auditChain?: AuditLog[];
   isLoadingAudit?: boolean;
 }) {
+  // Extract customer behavioral tracking metadata from the audit chain
+  const viewLogs = auditChain?.filter((a) => a.action === "CONTRACT_VIEWED") || [];
+  const readLogs = auditChain?.filter((a) => a.action === "CONTRACT_READ") || [];
+  const viewCount = viewLogs.length;
+  const hasBeenOpened = viewCount > 0;
+  const hasBeenRead = readLogs.length > 0;
+  const lastViewEvent = viewLogs[viewLogs.length - 1];
+
   return (
     <div className="space-y-4">
       {/* Controle de Assinaturas */}
@@ -76,6 +84,62 @@ export function ContractSignatureControl({
             </div>
           </div>
 
+          {/* Rastreamento Comportamental do Cliente */}
+          <div className="mt-4 border-t border-border/40 pt-3 space-y-2.5 text-[10px] text-muted-foreground">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">
+              Engajamento do Cliente
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Eye className="h-3.5 w-3.5 text-muted-foreground/75" /> Acesso ao Link:
+              </span>
+              {hasBeenOpened ? (
+                <span className="font-bold text-info bg-info/10 border border-info/20 px-1.5 py-0.5 rounded">
+                  Visualizado ({viewCount} {viewCount === 1 ? "vez" : "vezes"})
+                </span>
+              ) : (
+                <span className="font-bold text-muted-foreground bg-surface-alt px-1.5 py-0.5 rounded border border-border/40">
+                  Pendente de Acesso
+                </span>
+              )}
+            </div>
+            {hasBeenOpened && lastViewEvent && (
+              <div className="text-[9px] text-muted-foreground/80 pl-5 space-y-0.5 bg-surface-alt/10 p-1.5 rounded border border-border/30">
+                <div className="flex justify-between">
+                  <span>Último acesso:</span>
+                  <span className="font-medium text-foreground">
+                    {new Date(lastViewEvent.created_at).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                {lastViewEvent.metadata?.ip && (
+                  <div className="flex justify-between font-mono text-[8.5px]">
+                    <span>Endereço IP:</span>
+                    <span className="text-foreground">{lastViewEvent.metadata.ip}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <FileCheck className="h-3.5 w-3.5 text-muted-foreground/75" /> Leitura dos Termos:
+              </span>
+              {hasBeenRead ? (
+                <span className="font-bold text-success bg-success/10 border border-success/20 px-1.5 py-0.5 rounded">
+                  Lido até o Fim
+                </span>
+              ) : (
+                <span className="font-bold text-warning bg-warning/10 border border-warning/20 px-1.5 py-0.5 rounded animate-pulse">
+                  Pendente
+                </span>
+              )}
+            </div>
+          </div>
+
           {contract.signatures &&
             contract.signatures.map((sig, i) => (
               <div
@@ -94,7 +158,7 @@ export function ContractSignatureControl({
                     })}
                   </span>
                 </div>
-                <div className="truncate" title={sig.user_agent}>
+                <div className="truncate text-[9.5px]" title={sig.user_agent}>
                   UA: {sig.user_agent || "Desconhecido"}
                 </div>
 
@@ -140,6 +204,7 @@ export function ContractSignatureControl({
             {auditChain.map((audit) => {
               let icon = <Clock className="h-3 w-3 text-muted-foreground" />;
               let actionLabel = audit.action;
+              
               if (audit.action === "CONTRACT_SIGNED") {
                 icon = <UserCheck className="h-3 w-3 text-success" />;
                 actionLabel = "Contrato Assinado";
@@ -151,6 +216,12 @@ export function ContractSignatureControl({
                 actionLabel = "Aditivo Assinado";
               } else if (audit.action === "CONTRACT_CREATED") {
                 actionLabel = "Contrato Inicial";
+              } else if (audit.action === "CONTRACT_VIEWED") {
+                icon = <Eye className="h-3 w-3 text-info" />;
+                actionLabel = "Link Acessado pelo Cliente";
+              } else if (audit.action === "CONTRACT_READ") {
+                icon = <Check className="h-3 w-3 text-success" />;
+                actionLabel = "Leitura Completa Confirmada";
               }
 
               return (

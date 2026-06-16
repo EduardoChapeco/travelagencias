@@ -449,7 +449,16 @@ export type PortalBlock =
       type: "client_boarding_timeline";
       title: string;
       styles?: SectionStyle;
+    }
+  | {
+      id: string;
+      type: string;
+      config: Record<string, any>;
+      styles?: any;
+      animation?: any;
+      responsive?: any;
     };
+export type LegacyPortalBlock = Exclude<PortalBlock, { config: Record<string, any> }>;
 
 /** All block type literals — useful for type-guards and addBlock() */
 export type PortalBlockType = PortalBlock["type"];
@@ -516,9 +525,7 @@ export const BLOCK_LABELS: Record<PortalBlockType, string> = {
 };
 
 /** Default empty values for each block type */
-export const BLOCK_DEFAULTS: {
-  [K in PortalBlockType]: Omit<Extract<PortalBlock, { type: K }>, "id">;
-} = {
+export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
   hero: {
     type: "hero",
     title: "Viagens inesquecíveis para destinos incríveis",

@@ -269,29 +269,41 @@ export const NewsletterBlockSchema = z.object({
   styles: SectionStyleSchema,
 });
 
-export const PortalBlockSchema = z.discriminatedUnion("type", [
-  HeroBlockSchema,
-  TextBlockSchema,
-  GalleryBlockSchema,
-  ContactBlockSchema,
-  FeaturesBlockSchema,
-  CtaBlockSchema,
-  FaqBlockSchema,
-  TestimonialsBlockSchema,
-  ToursGridBlockSchema,
-  StatsBlockSchema,
-  VideoBlockSchema,
-  MapBlockSchema,
-  BlogFeedBlockSchema,
-  BiolinkHeaderBlockSchema,
-  BiolinkLinksBlockSchema,
-  GroupTourDetailsBlockSchema,
-  SupportTicketFormBlockSchema,
-  ClientPortalAccessBlockSchema,
-  PendingContractsWidgetBlockSchema,
-  FeaturedDestinationsBlockSchema,
-  SocialLinksBlockSchema,
-  NewsletterBlockSchema,
+export const CustomBlockSchema = z.object({
+  id: z.string(),
+  type: z.string(),
+  config: z.record(z.any()).optional().default({}),
+  styles: z.any().optional().nullable(),
+  animation: z.any().optional().nullable(),
+  responsive: z.any().optional().nullable(),
+});
+
+export const PortalBlockSchema = z.union([
+  z.discriminatedUnion("type", [
+    HeroBlockSchema,
+    TextBlockSchema,
+    GalleryBlockSchema,
+    ContactBlockSchema,
+    FeaturesBlockSchema,
+    CtaBlockSchema,
+    FaqBlockSchema,
+    TestimonialsBlockSchema,
+    ToursGridBlockSchema,
+    StatsBlockSchema,
+    VideoBlockSchema,
+    MapBlockSchema,
+    BlogFeedBlockSchema,
+    BiolinkHeaderBlockSchema,
+    BiolinkLinksBlockSchema,
+    GroupTourDetailsBlockSchema,
+    SupportTicketFormBlockSchema,
+    ClientPortalAccessBlockSchema,
+    PendingContractsWidgetBlockSchema,
+    FeaturedDestinationsBlockSchema,
+    SocialLinksBlockSchema,
+    NewsletterBlockSchema,
+  ]),
+  CustomBlockSchema
 ]);
 
 export const PortalBlocksArraySchema = z.array(PortalBlockSchema);
