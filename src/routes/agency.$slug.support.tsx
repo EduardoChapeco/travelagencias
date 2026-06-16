@@ -8,6 +8,7 @@ import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form"
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
 export const Route = createFileRoute("/agency/$slug/support")({
   head: () => ({ meta: [{ title: "Central de Suporte · TravelOS" }] }),
@@ -29,6 +30,7 @@ function SupportRoute() {
   const [searchTerm, setSearchTerm] = useState("");
   const [stageFilter, setStageFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [ticketSheetOpen, setTicketSheetOpen] = useState(false);
 
   const { data: tickets, isLoading } = useQuery({
     queryKey: ["support_tickets_advanced", agency?.id],
@@ -84,11 +86,7 @@ function SupportRoute() {
         actions={
           <PrimaryButton
             className="h-9 text-xs"
-            onClick={() =>
-              window.alert(
-                "Na v3, tickets devem ser abertos pelo Kanban 'Meu Dia' ou pelos clientes.",
-              )
-            }
+            onClick={() => setTicketSheetOpen(true)}
           >
             Novo Ticket Interno
           </PrimaryButton>
@@ -282,6 +280,11 @@ function SupportRoute() {
           </div>
         </div>
       </div>
+
+      <NewTicketSheet
+        isOpen={ticketSheetOpen}
+        onClose={() => setTicketSheetOpen(false)}
+      />
     </div>
   );
 }

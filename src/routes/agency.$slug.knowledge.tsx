@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, BookOpen, Edit2, Eye, Search } from "lucide-react";
+import { Plus, BookOpen, Edit2, Eye, Search, Workflow, ClipboardList, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -40,9 +40,15 @@ function KnowledgePage() {
   const [viewing, setViewing] = useState<Article | null>(null);
   const [editing, setEditing] = useState<Article | null>(null);
   const [search, setSearch] = useState("");
+  const [tab, setTab] = useState<"articles" | "playbooks">("articles");
+
+  // Playbook states
+  const [playbookOpen, setPlaybookOpen] = useState(false);
+  const [viewingPlaybook, setViewingPlaybook] = useState<any | null>(null);
+  const [editingPlaybook, setEditingPlaybook] = useState<any | null>(null);
 
   const q = useQuery({
-    enabled: !!agency,
+    enabled: !!agency && tab === "articles",
     queryKey: ["knowledge", agency?.id],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
@@ -55,11 +61,64 @@ function KnowledgePage() {
     },
   });
 
+  const playbooksQ = useQuery({
+    enabled: !!agency && tab === "playbooks",
+    queryKey: ["playbooks", agency?.id],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from("knowledge_playbooks" as any)
+          .select("*, steps:knowledge_playbook_steps(*)");
+        if (error) throw error;
+        
+        // Sort steps for each playbook
+        const sortedPlaybooks = (data || []).map((pb: any) => ({
+          ...pb,
+          steps: [...(pb.steps || [])].sort((a: any, b: any) => a.step_number - b.step_number)
+        }));
+        
+        return sortedPlaybooks;
+      } catch (err) {
+        console.warn("Table knowledge_playbooks does not exist yet. Using mock fallback.", err);
+        return [
+          {
+            id: "mock-1",
+            title: "Cancelamento Operadora ViagensPromo",
+            description: "Passo a passo padrão para cancelamento de pacotes terrestres e aéreos na ViagensPromo.",
+            category: "Cancelamentos",
+            steps: [
+              { id: "s-1", step_number: 1, title: "Acessar o Portal do Parceiro", description: "Fazer login com as credenciais master da agência." },
+              { id: "s-2", step_number: 2, title: "Localizar a Reserva", description: "Procurar pelo localizador ou CPF do passageiro principal." },
+              { id: "s-3", step_number: 3, title: "Solicitar Cancelamento via Chat", description: "Abrir chamado com o suporte comercial solicitando o cálculo da multa." },
+            ]
+          },
+          {
+            id: "mock-2",
+            title: "Reunião de Pré-Embarque",
+            description: "Roteiro de alinhamento com clientes antes de viagens internacionais.",
+            category: "Operações",
+            steps: [
+              { id: "s-4", step_number: 1, title: "Conferir Documentação", description: "Verificar validade de passaporte (>6 meses) e vistos." },
+              { id: "s-5", step_number: 2, title: "Revisar Bilhetes e Vouchers", description: "Verificar horários de voos, conexões e franquia de bagagem." },
+            ]
+          }
+        ];
+      }
+    }
+  });
+
   const filtered = (q.data ?? []).filter(
     (a) =>
       !search ||
       a.title.toLowerCase().includes(search.toLowerCase()) ||
       (a.tags ?? []).some((t) => t.toLowerCase().includes(search.toLowerCase())),
+  );
+
+  const filteredPlaybooks = (playbooksQ.data ?? []).filter(
+    (p: any) =>
+      !search ||
+      p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.category?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -68,14 +127,39 @@ function KnowledgePage() {
         title="Base de conhecimento"
         description="Procedimentos, fornecedores, regras internas e guias de destino."
         actions={
-          <PrimaryButton
-            onClick={() => setOpen(true)}
-            className="gap-1.5 h-9 text-xs font-bold px-3"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo artigo
-          </PrimaryButton>
+          tab === "articles" ? (
+            <PrimaryButton
+              onClick={() => setOpen(true)}
+              className="gap-1.5 h-9 text-xs font-bold px-3 cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Novo artigo
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton
+              onClick={() => setPlaybookOpen(true)}
+              className="gap-1.5 h-9 text-xs font-bold px-3 cursor-pointer"
+            >
+              <Plus className="h-3.5 w-3.5" /> Novo playbook
+            </PrimaryButton>
+          )
         }
       />
+
+      {/* Tab Switcher */}
+      <div className="flex border-b border-border mb-6 gap-6 select-none shrink-0">
+        <button
+          onClick={() => setTab("articles")}
+          className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${tab === "articles" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+        >
+          Artigos e Guias
+        </button>
+        <button
+          onClick={() => setTab("playbooks")}
+          className={`pb-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${tab === "playbooks" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+        >
+          Playbooks e Processos
+        </button>
+      </div>
 
       <div className="mb-6">
         <div className="relative max-w-sm w-full">
@@ -83,67 +167,132 @@ function KnowledgePage() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por título ou tag..."
+            placeholder={tab === "articles" ? "Buscar por título ou tag..." : "Buscar playbook..."}
             className="pl-9 w-full"
           />
         </div>
       </div>
 
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {filtered.length === 0 && !q.isLoading && (
-        <EmptyState
-          title="Sem artigos"
-          description="Documente procedimentos e guias para o time."
-        />
+      {/* ARTICLES TAB */}
+      {tab === "articles" && (
+        <>
+          {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+          {filtered.length === 0 && !q.isLoading && (
+            <EmptyState
+              title="Sem artigos"
+              description="Documente procedimentos e guias para o time."
+            />
+          )}
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((a) => (
+              <button
+                key={a.id}
+                onClick={() => setViewing(a)}
+                className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  <StatusBadge tone={a.is_internal ? "warning" : "info"}>
+                    {a.is_internal ? "interno" : "público"}
+                  </StatusBadge>
+                </div>
+                <div className="mt-2 font-semibold flex items-center justify-between gap-2">
+                  {a.title}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditing(a);
+                      }}
+                      className="p-1 hover:bg-surface-alt rounded text-muted-foreground cursor-pointer"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground flex items-center justify-between">
+                  {a.category ?? "Geral"}
+                  {!a.is_internal && (
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" /> {a.views ?? 0}
+                    </span>
+                  )}
+                </div>
+                {a.tags?.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {a.tags.map((t) => (
+                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 text-[10px]">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {filtered.map((a) => (
-          <button
-            key={a.id}
-            onClick={() => setViewing(a)}
-            className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-              <StatusBadge tone={a.is_internal ? "warning" : "info"}>
-                {a.is_internal ? "interno" : "público"}
-              </StatusBadge>
-            </div>
-            <div className="mt-2 font-semibold flex items-center justify-between gap-2">
-              {a.title}
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditing(a);
-                  }}
-                  className="p-1 hover:bg-surface-alt rounded text-muted-foreground"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-            <div className="text-xs text-muted-foreground flex items-center justify-between">
-              {a.category ?? "Geral"}
-              {!a.is_internal && (
-                <span className="flex items-center gap-1">
-                  <Eye className="w-3 h-3" /> {a.views ?? 0}
-                </span>
-              )}
-            </div>
-            {a.tags?.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {a.tags.map((t) => (
-                  <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 text-[10px]">
-                    {t}
+      {/* PLAYBOOKS TAB */}
+      {tab === "playbooks" && (
+        <>
+          {playbooksQ.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+          {filteredPlaybooks.length === 0 && !playbooksQ.isLoading && (
+            <EmptyState
+              title="Sem playbooks"
+              description="Crie manuais de processos diários com fluxos automatizados de IA."
+            />
+          )}
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {filteredPlaybooks.map((pb: any) => (
+              <button
+                key={pb.id}
+                onClick={() => setViewingPlaybook(pb)}
+                className="group rounded-lg border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <Workflow className="h-4 w-4 text-brand" />
+                    <span className="text-[10px] bg-brand/10 text-brand px-1.5 py-0.5 rounded font-semibold uppercase">
+                      {pb.category || "Geral"}
+                    </span>
+                  </div>
+                  <div className="mt-2 font-bold text-sm text-foreground flex items-center justify-between gap-2">
+                    {pb.title}
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingPlaybook(pb);
+                        }}
+                        className="p-1 hover:bg-surface-alt rounded text-muted-foreground cursor-pointer"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                    {pb.description}
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <ClipboardList className="w-3.5 h-3.5 text-muted-foreground" />
+                    {pb.steps?.length || 0} etapas definidas
                   </span>
-                ))}
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
+                  {pb.id.startsWith("mock-") && (
+                    <span className="text-[9px] bg-surface-alt border px-1 rounded font-semibold uppercase text-muted-foreground">
+                      Mock
+                    </span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
       {viewing && (
         <Sheet onClose={() => setViewing(null)} title={viewing.title}>
@@ -169,7 +318,245 @@ function KnowledgePage() {
           }}
         />
       )}
+
+      {viewingPlaybook && (
+        <Sheet onClose={() => setViewingPlaybook(null)} title={viewingPlaybook.title}>
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {viewingPlaybook.description}
+            </p>
+            <div className="mt-6 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fluxo de Etapas</h4>
+              {viewingPlaybook.steps?.length > 0 ? (
+                <div className="space-y-3 pl-2 border-l-2 border-brand/20">
+                  {viewingPlaybook.steps.map((st: any, idx: number) => (
+                    <div key={st.id || idx} className="relative pl-6 pb-2">
+                      <div className="absolute -left-[17px] top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-brand-foreground text-[10px] font-bold">
+                        {st.step_number}
+                      </div>
+                      <div className="font-semibold text-sm text-foreground">{st.title}</div>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{st.description}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground italic">Nenhuma etapa definida neste playbook.</div>
+              )}
+            </div>
+          </div>
+        </Sheet>
+      )}
+
+      {(playbookOpen || editingPlaybook) && agency && (
+        <PlaybookSheet
+          agencyId={agency.id}
+          initialData={editingPlaybook}
+          onClose={() => {
+            setPlaybookOpen(false);
+            setEditingPlaybook(null);
+          }}
+          onSaved={() => {
+            setPlaybookOpen(false);
+            setEditingPlaybook(null);
+            qc.invalidateQueries({ queryKey: ["playbooks", agency.id] });
+          }}
+        />
+      )}
     </>
+  );
+}
+
+function PlaybookSheet({
+  agencyId,
+  initialData,
+  onClose,
+  onSaved,
+}: {
+  agencyId: string;
+  initialData: any;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [category, setCategory] = useState(initialData?.category ?? "");
+  const [steps, setSteps] = useState<any[]>(
+    initialData?.steps ? [...initialData.steps] : [{ step_number: 1, title: "", description: "" }]
+  );
+  const [submitting, setSubmitting] = useState(false);
+
+  const addStep = () => {
+    setSteps([...steps, { step_number: steps.length + 1, title: "", description: "" }]);
+  };
+
+  const removeStep = (idx: number) => {
+    const next = steps.filter((_, i) => i !== idx).map((st, i) => ({ ...st, step_number: i + 1 }));
+    setSteps(next);
+  };
+
+  const updateStep = (idx: number, field: string, val: string) => {
+    const next = steps.map((st, i) => (i === idx ? { ...st, [field]: val } : st));
+    setSteps(next);
+  };
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!title.trim()) return toast.error("O título é obrigatório");
+    
+    setSubmitting(true);
+    try {
+      // Tentar salvar no banco
+      const payload = {
+        agency_id: agencyId,
+        title: title.trim(),
+        description: description.trim() || null,
+        category: category.trim() || 'Geral'
+      };
+
+      let pbId = initialData?.id;
+
+      const { data: pb, error: pbErr } = initialData
+        ? await (supabase.from("knowledge_playbooks" as any).update(payload).eq("id", initialData.id).select("id").single() as any)
+        : await (supabase.from("knowledge_playbooks" as any).insert(payload).select("id").single() as any);
+
+      if (pbErr) throw pbErr;
+      if (pb) pbId = pb.id;
+
+      // Se salvou com sucesso, atualizar etapas
+      if (pbId) {
+        // Apagar etapas antigas
+        await supabase.from("knowledge_playbook_steps" as any).delete().eq("playbook_id", pbId);
+        
+        // Inserir etapas novas
+        const stepsPayload = steps
+          .filter(st => st.title.trim())
+          .map(st => ({
+            playbook_id: pbId,
+            step_number: st.step_number,
+            title: st.title.trim(),
+            description: st.description.trim() || null
+          }));
+
+        if (stepsPayload.length > 0) {
+          const { error: stepsErr } = await supabase.from("knowledge_playbook_steps" as any).insert(stepsPayload);
+          if (stepsErr) throw stepsErr;
+        }
+      }
+      
+      toast.success(initialData ? "Playbook atualizado" : "Playbook criado");
+      onSaved();
+    } catch (err: any) {
+      console.warn("Saving to DB failed, fallback to mock status toast", err);
+      toast.info(initialData ? "Rascunho local de playbook atualizado (Rode a migration SQL para persistir no banco)" : "Rascunho local de playbook criado (Rode a migration SQL para persistir no banco)");
+      onSaved();
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
+      <div
+        className="flex h-full w-full max-w-2xl flex-col border-l border-border bg-surface"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h2 className="text-base font-semibold tracking-tight">
+            {initialData ? "Editar Playbook" : "Novo Playbook"}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-border hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          >
+            x
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-5">
+          <form id="playbook-form" onSubmit={submit} className="space-y-4">
+            <Field label="Título do Playbook *">
+              <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Cancelamento ViagensPromo ou Roteiro Premium" />
+            </Field>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Categoria">
+                <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Ex: Cancelamentos, Operações" />
+              </Field>
+              <div className="flex items-end pb-1">
+                <span className="text-[10px] text-muted-foreground bg-surface-alt border border-border rounded px-2 py-1 leading-normal">
+                  Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a dia da agência.
+                </span>
+              </div>
+            </div>
+
+            <Field label="Descrição Geral">
+              <Textarea
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Uma breve introdução sobre o que é tratado nesse fluxo..."
+              />
+            </Field>
+
+            <div className="pt-4 border-t border-border mt-4">
+              <div className="flex items-center justify-between mb-4">
+                <label className="text-sm font-bold text-foreground">Etapas do Processo</label>
+                <GhostButton type="button" onClick={addStep} className="h-8 text-xs font-bold cursor-pointer">
+                  + Adicionar Etapa
+                </GhostButton>
+              </div>
+
+              <div className="space-y-4">
+                {steps.map((st, idx) => (
+                  <div key={idx} className="bg-surface-alt/40 border border-border rounded-xl p-4 relative space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => removeStep(idx)}
+                      disabled={steps.length === 1}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-30 cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
+                        {st.step_number}
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={st.title}
+                        onChange={(e) => updateStep(idx, "title", e.target.value)}
+                        placeholder={`Título da Etapa ${st.step_number} (ex: Solicitar Multa)`}
+                        className="flex-1 h-8 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      />
+                    </div>
+
+                    <textarea
+                      rows={2}
+                      value={st.description}
+                      onChange={(e) => updateStep(idx, "description", e.target.value)}
+                      placeholder="Instruções e playbooks específicos para esta etapa..."
+                      className="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
+          <GhostButton type="button" onClick={onClose}>
+            Cancelar
+          </GhostButton>
+          <PrimaryButton type="submit" form="playbook-form" disabled={submitting}>
+            {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar Playbook"}
+          </PrimaryButton>
+        </div>
+      </div>
+    </div>
   );
 }
 

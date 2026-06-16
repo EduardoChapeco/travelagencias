@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { cn } from "@/lib/utils";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import {
   createProposal,
@@ -51,6 +52,7 @@ function NewProposal() {
 
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrStep, setOcrStep] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const [extractedItems, setExtractedItems] = useState<{
     flights?: any[];
     hotels?: any[];
@@ -273,7 +275,26 @@ function NewProposal() {
       <h1 className="mb-6 text-xl font-semibold tracking-tight">Nova cotação</h1>
 
       {/* OCR Dropzone */}
-      <div className="mb-6 max-w-2xl rounded-2xl border border-dashed border-border bg-surface p-6 text-center transition-all hover:border-brand/40">
+      <div
+        className={cn(
+          "mb-6 max-w-2xl rounded-2xl border border-dashed p-6 text-center transition-all duration-200",
+          isDragging
+            ? "border-brand bg-brand/5 scale-[1.01] shadow-sm"
+            : "border-border bg-surface hover:border-brand/40"
+        )}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragging(false);
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleOcrFile(e.dataTransfer.files[0]);
+          }
+        }}
+      >
         {ocrLoading ? (
           <div className="flex flex-col items-center justify-center py-4 space-y-3">
             <Loader2 className="h-8 w-8 animate-spin text-brand animate-pulse" />

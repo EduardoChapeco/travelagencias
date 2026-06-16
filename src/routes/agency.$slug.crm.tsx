@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen } from "lucide-react";
+import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen, Search } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
@@ -168,54 +168,83 @@ function CRMPage() {
 
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
-      <div className="px-6 pt-4 pb-2 border-b border-border/50 bg-surface/30">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">Negociações & Leads</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <GhostButton
-              onClick={() => setShowArchived((v) => !v)}
-              className={`gap-2 text-[11px] uppercase tracking-widest font-bold ${
-                showArchived ? "bg-brand/10 border-brand text-brand hover:bg-brand/20" : ""
-              }`}
-            >
-              {showArchived ? (
-                <>
-                  <FolderOpen className="h-4 w-4" /> Ver Funil Ativo
-                </>
-              ) : (
-                <>
-                  <Archive className="h-4 w-4" /> Pasta de Arquivados
-                </>
-              )}
-            </GhostButton>
-            <GhostButton
-              onClick={() => setSettingsOpen(true)}
-              className="gap-2 text-[11px] uppercase tracking-widest font-bold"
-            >
-              <Settings2 className="h-4 w-4" /> Configurar Estágios
-            </GhostButton>
-            <PrimaryButton
-              onClick={() => setNewOpen(true)}
-              className="gap-2 text-[11px] uppercase tracking-widest font-bold"
-            >
-              <Plus className="h-4 w-4" /> Novo Lead
-            </PrimaryButton>
-          </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-2 border-b border-border bg-surface shrink-0">
+        {/* Left Side: Title & Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-sm font-bold text-foreground mr-2">Negociações</h1>
+          {!showArchived && (
+            <>
+              <div className="relative w-48">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  placeholder="Buscar lead..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 h-8 w-full rounded-md border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                />
+              </div>
+              <select
+                value={ownerFilter}
+                onChange={(e) => setOwnerFilter(e.target.value)}
+                className="h-8 w-36 rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+              >
+                <option value="">Responsáveis</option>
+                {usersQ.data?.map(
+                  (u: any) =>
+                    u.user_id && (
+                      <option key={u.user_id} value={u.user_id}>
+                        {u.user_name || "Sem nome"}
+                      </option>
+                    ),
+                )}
+              </select>
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="h-8 w-32 rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+              >
+                <option value="">Origens</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="instagram">Instagram</option>
+                <option value="website">Site</option>
+                <option value="referral">Indicação</option>
+                <option value="walkin">Presencial</option>
+              </select>
+            </>
+          )}
         </div>
 
-        {!showArchived && (
-          <CrmFilterBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            ownerFilter={ownerFilter}
-            setOwnerFilter={setOwnerFilter}
-            sourceFilter={sourceFilter}
-            setSourceFilter={setSourceFilter}
-            users={usersQ.data ?? []}
-          />
-        )}
+        {/* Right Side: Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowArchived((v) => !v)}
+            className={`flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors ${
+              showArchived ? "bg-brand/10 border-brand text-brand hover:bg-brand/20" : "bg-surface"
+            }`}
+          >
+            {showArchived ? (
+              <>
+                <FolderOpen className="h-3.5 w-3.5" /> Funil Ativo
+              </>
+            ) : (
+              <>
+                <Archive className="h-3.5 w-3.5" /> Arquivados
+              </>
+            )}
+          </button>
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors"
+          >
+            <Settings2 className="h-3.5 w-3.5" /> Estágios
+          </button>
+          <button
+            onClick={() => setNewOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo Lead
+          </button>
+        </div>
       </div>
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (

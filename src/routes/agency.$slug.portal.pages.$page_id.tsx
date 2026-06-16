@@ -44,6 +44,11 @@ import {
   Activity,
   Check,
   Plane,
+  Monitor,
+  Tablet,
+  Smartphone,
+  ExternalLink,
+  PanelLeft,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
@@ -210,6 +215,11 @@ function PageEditorRoute() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
+  
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
+  const [pageSettingsOpen, setPageSettingsOpen] = useState(false);
+  const [seoSettingsOpen, setSeoSettingsOpen] = useState(false);
+  const [historySettingsOpen, setHistorySettingsOpen] = useState(false);
   
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [showNewPageModal, setShowNewPageModal] = useState(false);
@@ -554,18 +564,120 @@ function PageEditorRoute() {
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
             className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface-alt text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <div>
-            <h1 className="text-sm font-semibold text-foreground">
-              {isNew ? "Criar Nova Página" : `Editando: ${title}`}
-            </h1>
-          </div>
+          
+          {/* Page Dropdown Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-surface text-sm font-semibold text-foreground hover:bg-surface-hover transition-colors cursor-pointer select-none">
+                <span>Página: {title || "Nova Página"}</span>
+                <span className="text-muted-foreground text-[10px]">▼</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuLabel>Alternar Página</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {allPages?.map((p) => {
+                const isActive = p.id === page_id;
+                return (
+                  <DropdownMenuItem
+                    key={p.id}
+                    className={`flex items-center justify-between gap-2 cursor-pointer ${isActive ? "bg-brand/10 text-brand font-medium" : ""}`}
+                    onClick={() => {
+                      if (!isActive) {
+                        navigate({
+                          to: "/agency/$slug/portal/pages/$page_id",
+                          params: { slug, page_id: p.id },
+                        });
+                      }
+                    }}
+                  >
+                    <span className="truncate flex-1">{p.title}</span>
+                    {p.slug === "home" && <span className="text-[9px] bg-brand text-brand-foreground font-semibold px-1 rounded shrink-0">Home</span>}
+                  </DropdownMenuItem>
+                );
+              })}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer font-bold text-brand hover:text-brand focus:text-brand"
+                onClick={() => setShowNewPageModal(true)}
+              >
+                <Plus className="w-3.5 h-3.5 mr-1.5" /> Adicionar Página
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Active Page Options Button */}
+          {!isNew && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors cursor-pointer">
+                  <Settings className="w-4 h-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>Opções da Página</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    const activePage = allPages?.find((p) => p.id === page_id);
+                    if (activePage) {
+                      setShowRenameModal(activePage);
+                      setRenameTitle(activePage.title);
+                      setRenameSlug(activePage.slug);
+                    }
+                  }}
+                >
+                  Renomear
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const activePage = allPages?.find((p) => p.id === page_id);
+                    if (activePage) {
+                      handleDuplicatePage(activePage);
+                    }
+                  }}
+                >
+                  Duplicar
+                </DropdownMenuItem>
+                {pageSlug !== "home" && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const activePage = allPages?.find((p) => p.id === page_id);
+                      if (activePage) {
+                        handleSetAsHome(activePage);
+                      }
+                    }}
+                  >
+                    Definir como Home
+                  </DropdownMenuItem>
+                )}
+                {pageSlug !== "home" && title.toLowerCase() !== "início" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        const activePage = allPages?.find((p) => p.id === page_id);
+                        if (activePage) {
+                          handleDeletePage(activePage);
+                        }
+                      }}
+                      className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                    >
+                      Excluir Página
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           {!isNew && initialData?.is_published && (
             <StatusBadge tone="success">Publicada</StatusBadge>
           )}
@@ -574,10 +686,86 @@ function PageEditorRoute() {
           )}
         </div>
 
+        {/* Viewport controls inside header */}
+        <div className="flex items-center bg-surface-alt/45 border border-border p-0.5 rounded-lg gap-0.5 shadow-sm">
+          <button
+            onClick={() => setViewport("desktop")}
+            title="Modo Desktop"
+            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "desktop" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Monitor className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => setViewport("tablet")}
+            title="Modo Tablet"
+            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "tablet" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Tablet className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => setViewport("mobile")}
+            title="Modo Celular"
+            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "mobile" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Smartphone className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
         <div className="flex items-center gap-3">
           {saveStatus === "saving" && <span className="text-xs text-muted-foreground animate-pulse mr-2">Salvando...</span>}
           {saveStatus === "saved" && <span className="text-xs text-green-500 font-medium mr-2">✓ Salvo</span>}
           {saveStatus === "error" && <span className="text-xs text-destructive font-medium mr-2">✗ Erro ao salvar</span>}
+          
+          <div className="flex items-center gap-1 border-r border-border pr-3">
+            {/* Left Sidebar Toggle Button */}
+            <button
+              onClick={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+              title={isLeftSidebarOpen ? "Recolher Biblioteca" : "Expandir Biblioteca"}
+              className={`p-1.5 rounded-md border border-border transition-colors hover:bg-surface-alt cursor-pointer ${isLeftSidebarOpen ? "bg-surface-alt/70 text-foreground" : "bg-surface text-muted-foreground"}`}
+            >
+              <PanelLeft className="h-4 w-4" />
+            </button>
+
+            {/* Global Config Toggles */}
+            <button
+              onClick={() => setPageSettingsOpen(true)}
+              title="Configurações da Página"
+              className="p-1.5 rounded-md border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+            >
+              <Settings className="h-4 w-4" />
+            </button>
+            
+            <button
+              onClick={() => setSeoSettingsOpen(true)}
+              title="Configurações SEO"
+              className="p-1.5 rounded-md border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+            >
+              <Globe className="h-4 w-4" />
+            </button>
+            
+            {!isNew && (
+              <button
+                onClick={() => setHistorySettingsOpen(true)}
+                title="Histórico de Versões"
+                className="p-1.5 rounded-md border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+              >
+                <History className="h-4 w-4" />
+              </button>
+            )}
+            
+            {!isNew && (
+              <a
+                href={`https://${agency.slug}.travelos.com/${pageSlug || slugify(title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Visualizar Página Ao Vivo"
+                className="p-1.5 rounded-md border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
+
           <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting}>
             Salvar Rascunho
           </GhostButton>
@@ -587,103 +775,11 @@ function PageEditorRoute() {
         </div>
       </div>
 
-      {/* Pages Tab Bar */}
-      <div className="bg-surface border-b border-border px-6 py-2 flex items-center justify-between shrink-0 gap-4 overflow-x-auto select-none">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-muted-foreground uppercase mr-2">Páginas:</span>
-          {allPages?.map((p) => {
-            const isActive = p.id === page_id;
-            return (
-              <div
-                key={p.id}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs font-medium transition-all ${
-                  isActive
-                    ? "bg-brand/10 border-brand text-brand shadow-sm"
-                    : "bg-surface-alt/40 border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground cursor-pointer"
-                }`}
-                onClick={() => {
-                  if (!isActive) {
-                    navigate({
-                      to: "/agency/$slug/portal/pages/$page_id",
-                      params: { slug, page_id: p.id },
-                    });
-                  }
-                }}
-              >
-                <span>{p.title}</span>
-                {p.slug === "home" && <span className="text-[9px] bg-brand text-white font-semibold px-1 rounded">Home</span>}
-                
-                {/* Options Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="p-0.5 hover:bg-surface-hover rounded transition-colors text-muted-foreground hover:text-foreground ml-1" onClick={(e) => e.stopPropagation()}>
-                      <Settings className="w-3 h-3" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenuLabel>Opções da Página</DropdownMenuLabel>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowRenameModal(p);
-                        setRenameTitle(p.title);
-                        setRenameSlug(p.slug);
-                      }}
-                    >
-                      Renomear
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDuplicatePage(p);
-                      }}
-                    >
-                      Duplicar
-                    </DropdownMenuItem>
-                    {p.slug !== "home" && (
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSetAsHome(p);
-                        }}
-                      >
-                        Definir como Home
-                      </DropdownMenuItem>
-                    )}
-                    {p.slug !== "home" && p.title.toLowerCase() !== "início" && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeletePage(p);
-                          }}
-                          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                        >
-                          Excluir
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowNewPageModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-dashed border-border text-xs font-bold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all bg-surface-alt/10"
-        >
-          <Plus className="w-3.5 h-3.5" /> Adicionar Página
-        </button>
-      </div>
-
       {/* Main 3-Column Studio Area */}
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* ── 1. LEFT SIDEBAR: Biblioteca de Seções & Camadas (width 320px) ── */}
-        <div className="w-[320px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
+        {isLeftSidebarOpen && (
+          <div className="w-[320px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
           {/* Seletor de Abas Esquerdo */}
           <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
             <button
@@ -879,31 +975,10 @@ function PageEditorRoute() {
             </div>
           )}
         </div>
+        )}
 
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
         <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start pt-4 px-4 pb-4 min-h-0 h-full">
-          {/* Seletor de Viewport */}
-          <div className="flex items-center gap-1.5 mb-4 bg-surface p-1 rounded-full border border-border shadow-sm z-10 shrink-0">
-            <button
-              onClick={() => setViewport("desktop")}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${viewport === "desktop" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
-            >
-              Desktop
-            </button>
-            <button
-              onClick={() => setViewport("tablet")}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${viewport === "tablet" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
-            >
-              Tablet
-            </button>
-            <button
-              onClick={() => setViewport("mobile")}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${viewport === "mobile" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
-            >
-              Mobile
-            </button>
-          </div>
-
           {/* Browser / Device Mockup Frame */}
           <div
             className={`flex-1 min-h-0 bg-surface border border-border rounded-2xl shadow-2xl overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
@@ -914,20 +989,6 @@ function PageEditorRoute() {
                   : "w-[390px]"
             }`}
           >
-            {/* Address Bar */}
-            <div className="sticky top-0 z-20 flex h-10 w-full items-center border-b border-border bg-surface px-4 shadow-sm backdrop-blur-md bg-surface/90 shrink-0">
-              <div className="flex gap-1.5 shrink-0">
-                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-border"></div>
-              </div>
-              <div className="mx-auto px-4 py-0.5 text-[10px] font-mono text-muted-foreground bg-surface-alt rounded border border-border flex items-center gap-1 max-w-xs md:max-w-md truncate">
-                <Globe className="w-3 h-3 text-muted-foreground/60 shrink-0" />
-                <span className="text-brand">https://</span>
-                <span>{agency.slug}.travelos.com/{pageSlug || slugify(title) || "preview"}</span>
-              </div>
-            </div>
-
             {/* Rendering Canvas area */}
             <div className="w-full min-h-full">
               {blocks.length === 0 ? (
@@ -954,10 +1015,10 @@ function PageEditorRoute() {
           </div>
         </div>
 
-        {/* ── 3. RIGHT SIDEBAR: Editor de Propriedades & Configurações Globais (width 360px) ── */}
-        <div className="w-[360px] flex-shrink-0 border-l border-border bg-surface flex flex-col overflow-hidden">
-          {selectedBlockId ? (
-            /* A: Edição do Bloco Selecionado */
+        {/* ── 3. RIGHT SIDEBAR: Editor de Propriedades (width 360px) ── */}
+        {selectedBlockId && (
+          <div className="w-[360px] flex-shrink-0 border-l border-border bg-surface flex flex-col overflow-hidden">
+            {/* A: Edição do Bloco Selecionado */}
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-border bg-surface-alt/30 shrink-0">
                 <div>
@@ -1006,131 +1067,8 @@ function PageEditorRoute() {
                 </PrimaryButton>
               </div>
             </div>
-          ) : (
-            /* B: Configurações Globais da Página */
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex border-b border-border px-4 shrink-0 bg-surface">
-                <button
-                  type="button"
-                  onClick={() => setTab("content")}
-                  className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 ${tab === "content" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-                >
-                  <Settings className="w-3.5 h-3.5" /> Página
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTab("seo")}
-                  className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 ${tab === "seo" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-                >
-                  <Eye className="w-3.5 h-3.5" /> SEO
-                </button>
-                {!isNew && (
-                  <button
-                    type="button"
-                    onClick={() => setTab("history")}
-                    className={`py-3 px-3 text-xs font-bold border-b-2 flex items-center gap-1.5 ${tab === "history" ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-                  >
-                    <History className="w-3.5 h-3.5" /> Histórico
-                  </button>
-                )}
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-5 scrollbar-thin">
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                  {tab === "history" && (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-sm font-semibold">Versões Salvas</h3>
-                        <p className="text-xs text-muted-foreground">Últimas alterações</p>
-                      </div>
-                      {versionsQuery.isLoading && (
-                        <div className="text-xs text-muted-foreground">Carregando histórico...</div>
-                      )}
-                      {versionsQuery.data?.length === 0 && (
-                        <div className="text-xs text-muted-foreground">Nenhuma versão salva ainda.</div>
-                      )}
-                      {versionsQuery.data?.map((v) => (
-                        <div
-                          key={v.id}
-                          className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30"
-                        >
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <span className="text-sm font-medium">{v.title}</span>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">
-                                {new Date(v.created_at).toLocaleString()}
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => revertVersion(v)}
-                              className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-                            >
-                              <History className="w-3.5 h-3.5" /> Reverter
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {tab === "seo" && (
-                    <div className="space-y-4">
-                      <Field label="Título SEO" hint="Substitui o título padrão na aba do navegador">
-                        <Input
-                          value={metaTitle}
-                          onChange={(e) => setMetaTitle(e.target.value)}
-                          placeholder={title || "Ex: Viagens Incríveis"}
-                        />
-                      </Field>
-                      <Field label="Descrição SEO" hint="Aparece no Google e compartilhamentos">
-                        <Textarea
-                          value={metaDesc}
-                          onChange={(e) => setMetaDesc(e.target.value)}
-                          rows={4}
-                          placeholder="Ex: Conheça os melhores destinos..."
-                        />
-                      </Field>
-                    </div>
-                  )}
-
-                  {tab === "content" && (
-                    <div className="space-y-5">
-                      <div className="grid gap-4">
-                        <Field label="Título interno *">
-                          <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Minha Nova Página" />
-                        </Field>
-                        <Field label="URL (Slug)">
-                          <Input
-                            value={pageSlug}
-                            onChange={(e) => setPageSlug(e.target.value)}
-                            placeholder={slugify(title) || "minha-pagina"}
-                          />
-                        </Field>
-                      </div>
-
-                      <Field label="Layout Base / Template">
-                        <Select value={template} onChange={(e) => setTemplate(e.target.value)}>
-                          <option value="default">Padrão / Landing Page</option>
-                          <option value="about">Sobre nós</option>
-                          <option value="contact">Contato & Suporte</option>
-                          <option value="biolink">Biolink (Link na Bio Padrão)</option>
-                          <option value="roteiros-landing">Template Roteiro Premium</option>
-                          <option value="sobre-nos">Template Sobre Nós Estético</option>
-                          <option value="contato-suporte">Template Contato Integrado</option>
-                          <option value="hopp-clean">Hopp Wix: Clean Light</option>
-                          <option value="hopp-dark">Hopp Wix: Dark Premium</option>
-                          <option value="hopp-vibrant">Hopp Wix: Vibrant Color</option>
-                        </Select>
-                      </Field>
-
-                    </div>
-                  )}
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Visual template application confirm Sheet */}
@@ -1230,6 +1168,145 @@ function PageEditorRoute() {
             >
               {submitting ? "Revertendo..." : "Confirmar Reversão"}
             </PrimaryButton>
+          </div>
+        </div>
+      </SheetPage>
+
+      {/* Page Settings Drawer Sheet */}
+      <SheetPage
+        isOpen={pageSettingsOpen}
+        onClose={() => setPageSettingsOpen(false)}
+        title="Configurações da Página"
+        width="450px"
+      >
+        <div className="space-y-5 py-2">
+          <div className="text-xs text-muted-foreground">
+            Ajuste as propriedades básicas de identificação interna e URL desta página.
+          </div>
+          <div className="space-y-4">
+            <Field label="Título interno *">
+              <Input
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Minha Nova Página"
+              />
+            </Field>
+            <Field label="URL (Slug)">
+              <Input
+                value={pageSlug}
+                onChange={(e) => setPageSlug(e.target.value)}
+                placeholder={slugify(title) || "minha-pagina"}
+                disabled={pageSlug === "home"}
+              />
+            </Field>
+            <Field label="Layout Base / Template">
+              <Select value={template} onChange={(e) => setTemplate(e.target.value)}>
+                <option value="default">Padrão / Landing Page</option>
+                <option value="about">Sobre nós</option>
+                <option value="contact">Contato & Suporte</option>
+                <option value="biolink">Biolink (Link na Bio Padrão)</option>
+                <option value="roteiros-landing">Template Roteiro Premium</option>
+                <option value="sobre-nos">Template Sobre Nós Estético</option>
+                <option value="contato-suporte">Template Contato Integrado</option>
+                <option value="hopp-clean">Hopp Wix: Clean Light</option>
+                <option value="hopp-dark">Hopp Wix: Dark Premium</option>
+                <option value="hopp-vibrant">Hopp Wix: Vibrant Color</option>
+              </Select>
+            </Field>
+          </div>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end">
+            <PrimaryButton type="button" onClick={() => setPageSettingsOpen(false)}>
+              Concluído
+            </PrimaryButton>
+          </div>
+        </div>
+      </SheetPage>
+
+      {/* SEO Settings Drawer Sheet */}
+      <SheetPage
+        isOpen={seoSettingsOpen}
+        onClose={() => setSeoSettingsOpen(false)}
+        title="Configurações SEO"
+        width="450px"
+      >
+        <div className="space-y-5 py-2">
+          <div className="text-xs text-muted-foreground">
+            Otimize como os mecanismos de busca (Google, Bing) e redes sociais exibem esta página.
+          </div>
+          <div className="space-y-4">
+            <Field label="Título SEO" hint="Substitui o título padrão na aba do navegador">
+              <Input
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                placeholder={title || "Ex: Viagens Incríveis"}
+              />
+            </Field>
+            <Field label="Descrição SEO" hint="Aparece no Google e compartilhamentos de redes sociais">
+              <Textarea
+                value={metaDesc}
+                onChange={(e) => setMetaDesc(e.target.value)}
+                rows={5}
+                placeholder="Ex: Conheça os melhores destinos..."
+              />
+            </Field>
+          </div>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end">
+            <PrimaryButton type="button" onClick={() => setSeoSettingsOpen(false)}>
+              Concluído
+            </PrimaryButton>
+          </div>
+        </div>
+      </SheetPage>
+
+      {/* History Settings Drawer Sheet */}
+      <SheetPage
+        isOpen={historySettingsOpen}
+        onClose={() => setHistorySettingsOpen(false)}
+        title="Histórico de Versões"
+        width="450px"
+      >
+        <div className="space-y-4 py-2">
+          <div className="text-xs text-muted-foreground">
+            Selecione uma das versões anteriores salvas automaticamente ou publicadas para restaurar seu conteúdo.
+          </div>
+          {versionsQuery.isLoading && (
+            <div className="text-xs text-muted-foreground">Carregando histórico...</div>
+          )}
+          {versionsQuery.data?.length === 0 && (
+            <div className="text-xs text-muted-foreground">Nenhuma versão salva ainda.</div>
+          )}
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+            {versionsQuery.data?.map((v) => (
+              <div
+                key={v.id}
+                className="flex flex-col gap-2 p-3 rounded-lg border border-border bg-surface-alt/30"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="text-sm font-semibold">{v.title}</span>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                      {new Date(v.created_at).toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      revertVersion(v);
+                      setHistorySettingsOpen(false);
+                    }}
+                    className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                  >
+                    <History className="w-3.5 h-3.5" /> Reverter
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="pt-6 border-t border-border mt-6 flex justify-end">
+            <GhostButton type="button" onClick={() => setHistorySettingsOpen(false)}>
+              Fechar
+            </GhostButton>
           </div>
         </div>
       </SheetPage>

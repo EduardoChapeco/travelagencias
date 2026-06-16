@@ -39,7 +39,8 @@ export function AppShell({
     pathname.endsWith("/crm") ||
     pathname.includes("/crm/") ||
     pathname.includes("/proposals/") ||
-    pathname.includes("/vouchers");
+    pathname.includes("/vouchers") ||
+    pathname.endsWith("/omnichannel");
 
   const isVisualEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 

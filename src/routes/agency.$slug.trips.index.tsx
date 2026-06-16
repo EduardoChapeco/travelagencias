@@ -11,6 +11,7 @@ import {
   Eye,
   Search,
   Filter,
+  Archive,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -74,7 +75,7 @@ function TripsList() {
       let q = supabase
         .from("trips")
         .select(
-          "id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id",
+          "id, number, title, status, destination, travel_start, travel_end, total_sale, currency, created_at, client_id, archived_at" as any,
           { count: "exact" },
         )
         .eq("agency_id", agency!.id)
@@ -83,7 +84,13 @@ function TripsList() {
         .range((page - 1) * pageSize, page * pageSize - 1);
 
       if (search.trim()) q = q.ilike("title", `%${search.trim()}%`);
-      if (statusFilter && statusFilter !== "all") q = q.eq("status", statusFilter as any);
+      
+      if (statusFilter === "archived") {
+        q = q.not("archived_at", "is", null);
+      } else {
+        q = q.is("archived_at", null);
+        if (statusFilter && statusFilter !== "all") q = q.eq("status", statusFilter as any);
+      }
 
       const { data, error, count } = await q;
       if (error) throw error;
@@ -124,6 +131,22 @@ function TripsList() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao excluir"),
   });
 
+  // ─── Arquivar / Desarquivar viagem ──────────────────────────────
+  const archiveMut = useMutation({
+    mutationFn: async ({ tripId, archive }: { tripId: string; archive: boolean }) => {
+      const { error } = await supabase
+        .from("trips")
+        .update({ archived_at: archive ? new Date().toISOString() : null } as any)
+        .eq("id", tripId);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: (_, variables) => {
+      toast.success(variables.archive ? "Viagem arquivada." : "Viagem desarquivada.");
+      qc.invalidateQueries({ queryKey: ["trips", agency?.id] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao alterar arquivamento"),
+  });
+
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "number",
@@ -138,13 +161,20 @@ function TripsList() {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Título" />,
       cell: ({ row }) => (
         <div>
-          <Link
-            to="/agency/$slug/trips/$id"
-            params={{ slug: slug as string, id: row.original.id }}
-            className="font-medium hover:underline text-foreground"
-          >
-            {row.getValue("title")}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/agency/$slug/trips/$id"
+              params={{ slug: slug as string, id: row.original.id }}
+              className="font-medium hover:underline text-foreground"
+            >
+              {row.getValue("title")}
+            </Link>
+            {row.original.archived_at && (
+              <span className="inline-flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                <Archive className="h-3 w-3" /> Arquivada
+              </span>
+            )}
+          </div>
           {row.original.destination && (
             <div className="text-[11px] text-muted-foreground mt-0.5">
               {row.original.destination}
@@ -203,7 +233,7 @@ function TripsList() {
                     params={{ slug: slug as string, id: trip.id }}
                     className="cursor-pointer flex items-center gap-2"
                   >
-                    <Edit2 className="h-4 w-4" /> Abrir / Editar
+                    <Edit2 className="h-4 w-4" /> Editar Completo
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -216,9 +246,17 @@ function TripsList() {
                 <DropdownMenuItem
                   onClick={() => dupMut.mutate(trip.id)}
                   disabled={dupMut.isPending}
-                  className="cursor-pointer"
+                  className="cursor-pointer flex items-center gap-2"
                 >
-                  <Copy className="mr-2 h-4 w-4" /> Duplicar Viagem
+                  <Copy className="h-4 w-4" /> Duplicar Pacote de Viagem
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => archiveMut.mutate({ tripId: trip.id, archive: !trip.archived_at })}
+                  disabled={archiveMut.isPending}
+                  className="cursor-pointer flex items-center gap-2"
+                >
+                  <Archive className="h-4 w-4" />
+                  {trip.archived_at ? "Desarquivar Viagem" : "Arquivar Viagem"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -232,9 +270,9 @@ function TripsList() {
                     });
                   }}
                   disabled={delMut.isPending}
-                  className="cursor-pointer text-rose-600 focus:text-rose-600"
+                  className="cursor-pointer text-rose-600 focus:text-rose-600 flex items-center gap-2"
                 >
-                  <Trash2 className="mr-2 h-4 w-4" /> Excluir
+                  <Trash2 className="h-4 w-4" /> Excluir
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -291,6 +329,7 @@ function TripsList() {
             <option value="in_progress">Em andamento</option>
             <option value="completed">Concluída</option>
             <option value="cancelled">Cancelada</option>
+            <option value="archived">Arquivadas</option>
           </select>
         </div>
       </div>

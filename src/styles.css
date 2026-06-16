@@ -130,7 +130,7 @@
   --sidebar-ring: #d4d4d8;
 
   /* Shell */
-  --sidebar-w-collapsed: 44px;
+  --sidebar-w-collapsed: 40px;
   --sidebar-w-expanded: 190px;
   --ai-w: 320px;
   --header-h: 48px;
@@ -375,5 +375,15 @@
 .animate-scaleIn {
   animation-name: scaleIn;
   animation-fill-mode: both;
+}
+
+/* Layout Normalizations & Kanban Scroll */
+.kanban-column-scroll {
+  height: 100%;
+  max-height: calc(100vh - 10rem);
+}
+
+.thin-collapsible-sidebar {
+  transition: width 0.2s ease-out;
 }
 

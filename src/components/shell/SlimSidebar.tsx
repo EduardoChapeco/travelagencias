@@ -50,7 +50,7 @@ export function SlimSidebar({
       </div>
 
       <nav
-        className="no-scrollbar flex-1 overflow-y-auto px-1.5 py-2"
+        className="no-scrollbar flex-1 overflow-y-auto px-1 py-2"
         aria-label="Navegação principal"
       >
         <ul className="space-y-0.5">
@@ -100,10 +100,10 @@ export function SlimSidebar({
                   {isPending ? (
                     <Loader2
                       className="h-[15px] w-[15px] shrink-0 animate-spin"
-                      strokeWidth={1.5}
+                      strokeWidth={isPinned ? 1.6 : 2.2}
                     />
                   ) : (
-                    <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.5} />
+                    <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={isPinned ? 1.6 : 2.2} />
                   )}
                   <span
                     className={cn(

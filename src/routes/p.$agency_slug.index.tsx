@@ -18,6 +18,7 @@ import {
   Globe,
 } from "lucide-react";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
+import { AILandingAgent } from "@/components/portal/AILandingAgent";
 
 export const Route = createFileRoute("/p/$agency_slug/")({
   loader: async ({ params: { agency_slug } }) => {
@@ -121,14 +122,19 @@ function HomePage() {
 
   // CMS mode — renderiza blocos configurados
   if (homePage?.blocks && Array.isArray(homePage.blocks) && homePage.blocks.length > 0) {
+    const isBiolink = homePage.template === "biolink" || homePage.template?.startsWith("hopp-");
     return (
-      <div className="w-full px-4 sm:px-6">
+      <div className={`w-full relative ${isBiolink ? "max-w-md mx-auto px-4 py-8 flex-1" : "px-4 sm:px-6"}`}>
+        {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
+        {homePage.title && <h1 className="sr-only">{homePage.title}</h1>}
         <BlockRenderer
           blocks={homePage.blocks as PortalBlock[]}
           agencySlug={agency_slug}
           pageId={homePage.id}
           agencyId={agency.id}
         />
+        {/* AI Sales Agent */}
+        {!isBiolink && <AILandingAgent agencySlug={agency_slug} blocks={homePage.blocks || []} />}
       </div>
     );
   }

@@ -102,26 +102,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "TravelOS — Plataforma para Agências de Viagens" },
       {
-        name: "twitter:description",
-        content:
-          "CRM, propostas, contratos digitais, vouchers, embarques, portal do cliente e financeiro para agências de viagens.",
-      },
-      {
-        name: "description",
-        content:
-          "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality.",
-      },
-      {
-        property: "og:description",
-        content:
-          "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality.",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "Pixel Perfect Clone is a web application that replicates UI designs with real data and functionality.",
-      },
-      {
         property: "og:image",
         content:
           "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/80b490db-507f-4163-8392-28db4d59825b/id-preview-1281c9e4--a96da259-7773-4de2-b818-1c99dad3b5a8.lovable.app-1781038752630.png",
