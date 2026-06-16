@@ -205,7 +205,7 @@ export function CardDetailPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 bg-surface z-10">
           <div>
-            <div className="font-mono text-sm font-bold text-foreground">{pnr || "Sem PNR"}</div>
+            <div className="font-mono text-sm font-bold text-foreground">{pnr || "Sem Localizador"}</div>
             <div className="text-xs text-muted-foreground">{airline || "—"}</div>
           </div>
           <div className="flex items-center gap-2">
@@ -334,7 +334,7 @@ export function CardDetailPanel({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] text-muted-foreground font-medium">
-                  PNR / Localizador
+                  Localizador da Reserva
                 </label>
                 <input
                   type="text"

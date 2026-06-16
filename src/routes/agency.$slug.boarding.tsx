@@ -15,7 +15,6 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton } from "@/components/ui/form";
 
 import {
@@ -158,19 +157,21 @@ function BoardingKanbanPage() {
   const activeCard = activeId ? (localCards ?? []).find((c) => c.id === activeId) : null;
 
   return (
-    <div className="flex h-[calc(100vh-4.5rem)] flex-col overflow-hidden">
-      <PageHeader
-        title="Kanban de Embarque"
-        description="Controle operacional: do Check-in ao Desembarque. Arraste as reservas."
-        actions={
-          <PrimaryButton
-            onClick={() => setOpen(true)}
-            className="gap-2 text-[11px] uppercase tracking-widest font-bold"
-          >
-            <Plus className="h-4 w-4" /> Cadastrar PNR
-          </PrimaryButton>
-        }
-      />
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden">
+      {/* Unified Toolbar Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 md:p-6 pb-0 shrink-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground">
+            Embarques & Localizadores
+          </span>
+        </div>
+        <PrimaryButton
+          onClick={() => setOpen(true)}
+          className="gap-2 text-[11px] uppercase tracking-widest font-bold h-8 rounded-lg"
+        >
+          <Plus className="h-4 w-4" /> Cadastrar Localizador
+        </PrimaryButton>
+      </div>
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">

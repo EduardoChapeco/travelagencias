@@ -110,16 +110,18 @@ function DailyTasksRoute() {
   if (!agency) return null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
-      <PageHeader
-        title="Meu Dia"
-        description="Organize seus atendimentos, viagens embarcando hoje e chamados críticos."
-        actions={
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-background p-4 md:p-8 pb-0">
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl shrink-0">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
+          Meu Dia · Tarefas e Embarques
+        </div>
+        <div className="flex items-center gap-2">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <PrimaryButton className="gap-2 h-9 text-xs">
+              <button className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer">
                 <Plus className="w-4 h-4" /> Nova Tarefa
-              </PrimaryButton>
+              </button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -151,10 +153,11 @@ function DailyTasksRoute() {
               </div>
             </DialogContent>
           </Dialog>
-        }
-      />
+        </div>
+      </div>
 
-      <div className="flex-1 overflow-x-auto p-6 scrollbar-thin">
+      <div className="flex-1 overflow-x-auto pt-4 scrollbar-thin">
+
         <div className="flex gap-6 h-full min-w-max">
           {COLUMNS.map((col) => {
             const colTasks = tasks?.filter((t) => t.status === col.id) || [];

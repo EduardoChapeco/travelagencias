@@ -61,22 +61,25 @@ function VouchersPage() {
 
   return (
     <>
-      <PageHeader
-        title="Vouchers de Emissão"
-        description="Gestão de vouchers consolidados por viagem: voos, hotéis, transfers, passeios e seguros."
-      />
-
-      <div className="mt-6 mb-8 flex justify-between items-center gap-4">
-        <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            value={qSearch}
-            onChange={(e) => setQSearch(e.target.value)}
-            className="w-full pl-9 h-10 bg-surface border border-border rounded-lg text-sm"
-            placeholder="Buscar por destino ou localizador..."
-          />
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              value={qSearch}
+              onChange={(e) => setQSearch(e.target.value)}
+              placeholder="Buscar por destino ou localizador..."
+              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+            />
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground font-semibold px-2">
+          {q.data?.count ?? 0} vouchers
         </div>
       </div>
+
 
       {q.isLoading && <div className="text-sm text-muted-foreground p-8">Carregando vouchers…</div>}
 

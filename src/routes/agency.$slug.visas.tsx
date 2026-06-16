@@ -160,29 +160,31 @@ function VisasPage() {
   const activeVisa = activeId ? (localVisas ?? []).find((v) => v.id === activeId) : null;
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col">
-      <div className="p-4 md:p-8 pb-0">
-        <PageHeader
-          title="Vistos e Passaportes"
-          description="Acompanhamento consular e emissão documental."
-          actions={
-            <div className="flex items-center gap-3">
-              <Link
-                to="/agency/$slug/visas-catalog"
-                params={{ slug }}
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
-              >
-                <FileText className="w-3.5 h-3.5" /> Catálogo
-              </Link>
-              <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
-                <Plus className="h-3.5 w-3.5" /> Novo Processo
-              </PrimaryButton>
-            </div>
-          }
-        />
+    <div className="flex h-[calc(100vh-64px)] flex-col p-4 md:p-8">
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
+          Painel de Processos Consulares
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/agency/$slug/visas-catalog"
+            params={{ slug }}
+            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors border border-border px-3 py-1.5 rounded-md bg-surface-alt/50"
+          >
+            <FileText className="w-3.5 h-3.5" /> Catálogo
+          </Link>
+          <button
+            onClick={() => setNewOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo Processo
+          </button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-x-auto p-4 md:p-8 pt-6">
+
+      <div className="flex-1 overflow-x-auto pt-4">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}

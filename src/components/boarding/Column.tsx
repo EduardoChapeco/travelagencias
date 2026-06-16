@@ -19,34 +19,37 @@ export function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[320px] shrink-0 flex-col rounded-xl border bg-surface/40 transition-colors ${
-        isOver ? "border-brand bg-brand/5" : "border-border/50"
+      className={`flex h-full w-[310px] shrink-0 flex-col rounded-xl border bg-surface/50 transition-all duration-300 ${
+        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "border-border/80"
       }`}
+      style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex items-center justify-between border-b border-border/50 bg-surface-alt/20 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <span
-            className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
-            style={{ background: stage.color }}
-          />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-foreground">
-            {stage.name}
-          </span>
-          <span className="flex h-5 items-center justify-center rounded-md bg-surface-alt px-2 text-[10px] font-bold text-muted-foreground ring-1 ring-border/50">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-4 py-3 rounded-t-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
+              style={{ background: stage.color }}
+            />
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-foreground">
+              {stage.name}
+            </span>
+          </div>
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-background px-1.5 text-[10px] font-bold text-muted-foreground ring-1 ring-border">
             {cards.length}
           </span>
         </div>
       </div>
       <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default">
+        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default bg-background/10">
           {cards.map((c) => (
             <SortableCard key={c.id} card={c} slug={slug} onCardClick={onCardClick} />
           ))}
           {cards.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-surface/20 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground text-center px-4">
+            <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
               {stage.id === "pending"
-                ? "Nenhum embarque ativo. Cadastre um PNR para começar."
-                : "Solte um PNR aqui"}
+                ? "Nenhum embarque ativo. Cadastre um Localizador para começar."
+                : "Solte um Localizador aqui"}
             </div>
           )}
         </div>

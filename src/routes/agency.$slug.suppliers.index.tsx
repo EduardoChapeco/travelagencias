@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Building2, Percent, PhoneCall, Mail } from "lucide-react";
+import { Plus, Building2, Percent, PhoneCall, Mail, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -68,40 +68,46 @@ function SuppliersPage() {
 
   return (
     <>
-      <PageHeader
-        title="Painel B2B: Fornecedores e Comissionamentos"
-        description="Gerencie Operadoras, Hotéis e Cias Aéreas. Defina o seu markup e controle seus acordos de SLA (Acordo de Nível de Serviço)."
-        actions={
-          <PrimaryButton
-            onClick={() => setOpen(true)}
-            className="gap-1.5 text-[11px] uppercase tracking-widest font-bold"
-          >
-            <Plus className="h-4 w-4" /> Novo Fornecedor
-          </PrimaryButton>
-        }
-      />
-
-      {/* Filtros */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Input
-            placeholder="Buscar por nome do fornecedor..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por nome do fornecedor..."
+              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+            />
+          </div>
+          <div className="relative w-full sm:w-44">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <select
+              value={kindFilter}
+              onChange={(e) => setKindFilter(e.target.value)}
+              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
+            >
+              <option value="all">Todas as categorias</option>
+              <option value="hotel">Hospedagem</option>
+              <option value="airline">Cia Aérea</option>
+              <option value="tour_operator">Operadora</option>
+              <option value="transfer">Transfer</option>
+              <option value="insurance">Seguro</option>
+              <option value="other">Outros</option>
+            </select>
+          </div>
         </div>
-        <div className="w-full sm:w-48">
-          <Select value={kindFilter} onChange={(e) => setKindFilter(e.target.value)}>
-            <option value="all">Todas as categorias</option>
-            <option value="hotel">Hospedagem</option>
-            <option value="airline">Cia Aérea</option>
-            <option value="tour_operator">Operadora</option>
-            <option value="transfer">Transfer</option>
-            <option value="insurance">Seguro</option>
-            <option value="other">Outros</option>
-          </Select>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo Fornecedor
+          </button>
         </div>
       </div>
+
 
       {q.isLoading && (
         <div className="text-sm text-muted-foreground p-8">Carregando cadeia de suprimentos…</div>

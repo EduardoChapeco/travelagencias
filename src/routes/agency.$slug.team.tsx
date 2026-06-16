@@ -12,7 +12,7 @@ import {
   changeTeamMemberRole,
 } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -58,6 +58,7 @@ function TeamPage() {
   const [open, setOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Member | null>(null);
   const { confirm, ConfirmDialog } = useConfirm();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const members = useQuery({
     enabled: !!agency,
@@ -69,6 +70,16 @@ function TeamPage() {
     enabled: !!agency,
     queryKey: ["team-invites", agency?.id],
     queryFn: () => fetchTeamInvites(agency!.id),
+  });
+
+  const filteredMembers = (members.data ?? []).filter((m) => {
+    const name = ((m as any).profile?.full_name ?? (m as any).full_name ?? "").toLowerCase();
+    const email = (m as any).user_id.toLowerCase();
+    return name.includes(searchQuery.toLowerCase()) || email.includes(searchQuery.toLowerCase());
+  });
+
+  const filteredInvites = (invites.data ?? []).filter((i) => {
+    return i.email.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   async function changeRole(userId: string, role: string) {
@@ -124,24 +135,45 @@ function TeamPage() {
 
   return (
     <>
-      <PageHeader
-        title="Equipe"
-        description="Membros, papéis e convites pendentes."
-        actions={
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
-          >
-            <Plus className="h-3.5 w-3.5" /> Convidar
-          </button>
-        }
-      />
+      {/* Unified Toolbar Header */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
+        <div className="relative flex-1 max-w-xs">
+          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <svg
+              className="h-4 w-4 text-muted-foreground/60"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </span>
+          <input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-8 pl-9 pr-4 rounded-lg border border-border bg-background text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-brand/50 focus:ring-1 focus:ring-brand/50 outline-none transition-colors"
+          />
+        </div>
+        <button
+          onClick={() => setOpen(true)}
+          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" /> Convidar
+        </button>
+      </div>
 
       <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         Membros
       </h3>
-      {members.data?.length === 0 ? (
-        <EmptyState title="Sem membros" description="Convide alguém para começar." />
+      {filteredMembers.length === 0 ? (
+        <EmptyState title="Sem membros" description="Nenhum membro encontrado ou cadastrado." />
       ) : (
         <div className="overflow-hidden rounded-lg border border-border mb-6">
           <table className="w-full text-sm">
@@ -155,7 +187,7 @@ function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {members.data?.map((m) => (
+              {filteredMembers.map((m) => (
                 <tr key={m.user_id} className="border-t border-border">
                   <td className="px-3 py-2.5 font-medium">
                     {(m as any).profile?.full_name ?? (m as any).full_name ?? (
@@ -208,7 +240,7 @@ function TeamPage() {
       <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         Convites
       </h3>
-      {invites.data?.length === 0 ? (
+      {filteredInvites.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Nenhum convite pendente.
         </div>
@@ -225,7 +257,7 @@ function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {invites.data?.map((i) => (
+              {filteredInvites.map((i) => (
                 <tr key={i.id} className="border-t border-border">
                   <td className="px-3 py-2.5 font-medium">{i.email}</td>
                   <td className="px-3 py-2.5 text-xs">{i.role}</td>

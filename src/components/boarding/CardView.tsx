@@ -37,12 +37,12 @@ export function CardView({
 
   return (
     <div
-      className={`group relative rounded-xl border bg-surface transition-all ${
+      className={`group relative cursor-grab rounded-xl border bg-surface transition-all duration-200 active:cursor-grabbing ${
         dragging
-          ? "border-brand scale-105 z-50 rotate-2 opacity-90"
+          ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
           : isUrgent
-            ? "border-danger/60 hover:border-danger"
-            : "border-border/50 hover:border-brand/40"
+            ? "border-danger/40 bg-danger/[0.01] hover:border-danger/60 hover:-translate-y-0.5"
+            : "border-border/80 hover:border-brand/40 hover:-translate-y-0.5 hover:ring-1 hover:ring-brand/10"
       }`}
     >
       {/* Drag handle area */}
@@ -57,7 +57,7 @@ export function CardView({
           <div className="flex items-center gap-2">
             <Plane className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="font-mono text-sm font-bold text-foreground">
-              {card.pnr || "S/ PNR"}
+              {card.pnr || "S/ Localizador"}
             </span>
           </div>
           <div className="text-xs text-muted-foreground mt-0.5">
@@ -97,7 +97,7 @@ export function CardView({
         {hasPax && (
           <span className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            {card.passengers_count} pax
+            {card.passengers_count} passageiros
           </span>
         )}
         {card.departure_date && (

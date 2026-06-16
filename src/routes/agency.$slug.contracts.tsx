@@ -83,46 +83,46 @@ function ContractsPage() {
 
   return (
     <>
-      <PageHeader
-        title="Contratos e Assinaturas"
-        description="Gestão de contratos digitais gerados a partir das viagens, com rastreabilidade e validade jurídica."
-      />
-
-      {q.isLoading && (
-        <div className="text-sm text-muted-foreground p-8">Carregando cadeia de custódia…</div>
-      )}
-
-      {/* Filtros */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por pacote..."
-            className="pl-9"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Buscar por pacote..."
+              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+          <div className="relative w-full sm:w-44">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
+            >
+              <option value="all">Todos os Status</option>
+              <option value="draft">Rascunho</option>
+              <option value="sent">Enviado</option>
+              <option value="viewed">Visualizado</option>
+              <option value="signed">Assinado</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+          </div>
         </div>
-        <div className="w-full sm:w-48">
-          <Select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Todos os Status</option>
-            <option value="draft">Rascunho</option>
-            <option value="sent">Enviado</option>
-            <option value="viewed">Visualizado</option>
-            <option value="signed">Assinado</option>
-            <option value="cancelled">Cancelado</option>
-          </Select>
+        <div className="text-xs text-muted-foreground font-semibold px-2">
+          {q.data?.count ?? 0} contratos
         </div>
       </div>
+
 
       {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
         <EmptyState

@@ -22,7 +22,6 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import { StatusBadge, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
@@ -346,24 +345,6 @@ function PagesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Portal & Site da Agência"
-        description="Gerencie seus sites institucionais, landing pages e links da bio em um único lugar visual."
-        actions={
-          <button
-            onClick={() => {
-              setSelectedTemplateId("empty");
-              setNewPageTitle("");
-              setNewPageSlug("");
-              setCreateModalOpen(true);
-            }}
-            className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95"
-          >
-            <Plus className="h-4 w-4" /> Nova Página
-          </button>
-        }
-      />
-
       {/* Modern Analytics & Highlight Row */}
       {agency && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -409,8 +390,8 @@ function PagesPage() {
         </div>
       )}
 
-      {/* Tabs & Search controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-1">
+      {/* Tabs, Search & Creation controls */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-2">
         <div className="flex flex-wrap gap-1 bg-surface-alt/40 p-1 rounded-xl border border-border/40 shrink-0">
           <button
             onClick={() => setActiveTab("all")}
@@ -454,20 +435,33 @@ function PagesPage() {
           </button>
         </div>
 
-        {activeTab !== "templates" && (
-          <div className="relative w-full sm:max-w-xs">
-            <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-muted-foreground/60" />
-            </span>
-            <input
-              type="text"
-              placeholder="Buscar por título ou slug..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-9 pl-9 pr-4 rounded-lg border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-brand/50 focus:ring-1 focus:ring-brand/50 outline-none transition-colors"
-            />
-          </div>
-        )}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {activeTab !== "templates" && (
+            <div className="relative w-full sm:max-w-xs">
+              <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-muted-foreground/60" />
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar por título ou link..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 pl-9 pr-4 rounded-lg border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-brand/50 focus:ring-1 focus:ring-brand/50 outline-none transition-colors"
+              />
+            </div>
+          )}
+          <button
+            onClick={() => {
+              setSelectedTemplateId("empty");
+              setNewPageTitle("");
+              setNewPageSlug("");
+              setCreateModalOpen(true);
+            }}
+            className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer shrink-0"
+          >
+            <Plus className="h-4 w-4" /> Nova Página
+          </button>
+        </div>
       </div>
 
       {/* Content list representation */}

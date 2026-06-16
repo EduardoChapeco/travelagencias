@@ -70,7 +70,7 @@ export function NewCard({
   }
 
   return (
-    <Sheet onClose={onClose} title="Lançar PNR no Embarque">
+    <Sheet onClose={onClose} title="Lançar Localizador no Embarque">
       <form onSubmit={submit} className="space-y-4">
         <Field label="Viagem Atrelada *">
           <Select required value={tripId} onChange={(e) => setTripId(e.target.value)}>
@@ -84,7 +84,7 @@ export function NewCard({
           </Select>
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Localizador (PNR)">
+          <Field label="Localizador (Código de Reserva)">
             <Input value={pnr} onChange={(e) => setPnr(e.target.value)} placeholder="ABC123" />
           </Field>
           <Field label="Companhia / Operadora">

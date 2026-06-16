@@ -61,51 +61,51 @@ function VisasCatalogPage() {
   const filteredData = q.data?.filter((req) => activeTab === "all" || req.category === activeTab);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col p-4 md:p-8">
       <ConfirmDialog />
-      <div className="p-4 md:p-8">
-        <div className="mb-4">
+      
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex items-center gap-3">
           <Link
             to="/agency/$slug/visas"
             params={{ slug }}
-            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1"
+            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1.5 rounded-md"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Voltar para Vistos
+            <ArrowLeft className="w-3.5 h-3.5" /> Voltar
           </Link>
+          <div className="h-4 w-px bg-border/80" />
+          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs">
+            {[
+              { id: "all", label: "Todos" },
+              { id: "visa", label: "Vistos" },
+              { id: "fee", label: "Taxas" },
+              { id: "health", label: "Saúde" },
+              { id: "insurance", label: "Seguro" },
+              { id: "other", label: "Outros" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`rounded px-2.5 py-1 font-semibold transition-colors ${
+                  activeTab === tab.id
+                    ? "bg-surface-alt text-foreground border border-border/50"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <PageHeader
-          title="Catálogo de Requisitos"
-          description="Consulte e cadastre regras consulares, vacinas de saúde, taxas turísticas e exigências de seguros."
-          actions={
-            <PrimaryButton className="gap-1.5" onClick={() => setOpen(true)}>
-              <Plus className="h-3.5 w-3.5" /> Novo Catálogo
-            </PrimaryButton>
-          }
-        />
+        <button
+          onClick={() => setOpen(true)}
+          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+        >
+          <Plus className="h-3.5 w-3.5" /> Novo Catálogo
+        </button>
+      </div>
 
-        {/* Category Tabs */}
-        <div className="mt-6 flex border-b border-border overflow-x-auto no-scrollbar">
-          {[
-            { id: "all", label: "Todos os Requisitos" },
-            { id: "visa", label: "Vistos Consulares" },
-            { id: "fee", label: "Taxas Locais" },
-            { id: "health", label: "Saúde & Vacinas" },
-            { id: "insurance", label: "Seguros Obrigatórios" },
-            { id: "other", label: "Outros" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`border-b-2 px-4 py-2 text-xs font-bold transition-all shrink-0 ${
-                activeTab === tab.id
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (
@@ -216,7 +216,6 @@ function VisasCatalogPage() {
             </div>
           )}
         </div>
-      </div>
 
       {open && agency && (
         <RequirementFormSheet

@@ -20,7 +20,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -118,19 +118,6 @@ function BlogPage() {
 
   return (
     <>
-      <PageHeader
-        title="Blog"
-        description="Conteúdos para SEO e portal público da agência."
-        actions={
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand hover:text-brand-foreground"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo artigo
-          </button>
-        }
-      />
-
       {/* STATS */}
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
@@ -153,21 +140,29 @@ function BlogPage() {
         ))}
       </div>
 
-      {/* FILTER TABS */}
-      <div className="mb-4 flex gap-1 rounded-lg border border-border bg-surface p-1 w-fit">
-        {["all", "published", "draft", "scheduled"].map((s) => (
-          <button
-            key={s}
-            onClick={() => setFilterStatus(s)}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              filterStatus === s
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
-            }`}
-          >
-            {s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s)}
-          </button>
-        ))}
+      {/* Unified Toolbar Header */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
+        <div className="flex gap-1 rounded-lg border border-border bg-surface p-1 w-fit">
+          {["all", "published", "draft", "scheduled"].map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilterStatus(s)}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                filterStatus === s
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+              }`}
+            >
+              {s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s)}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setNewOpen(true)}
+          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
+        >
+          <Plus className="h-3.5 w-3.5" /> Novo artigo
+        </button>
       </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}

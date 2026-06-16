@@ -18,7 +18,6 @@ import {
 import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -76,11 +75,6 @@ function IntegrationsPage() {
 
   return (
     <>
-      <PageHeader
-        title="Integrações & API"
-        description="Chaves de API por agência, conectores de IA, WhatsApp, Google Calendar e rastreamento."
-      />
-
       <Tabs defaultValue="ai" className="max-w-4xl">
         <TabsList>
           <TabsTrigger value="ai" className="flex items-center gap-1.5">
@@ -93,7 +87,7 @@ function IntegrationsPage() {
             <Zap className="h-3.5 w-3.5" /> WhatsApp
           </TabsTrigger>
           <TabsTrigger value="apikeys" className="flex items-center gap-1.5">
-            <KeyRound className="h-3.5 w-3.5" /> API Keys
+            <KeyRound className="h-3.5 w-3.5" /> Chaves de Acesso
           </TabsTrigger>
         </TabsList>
 
@@ -583,7 +577,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
       <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
-        Gerencie livremente qualquer chave de API para integrações customizadas. Estas chaves ficam
+        Gerencie livremente qualquer chave de integração para conectores customizados. Estas chaves ficam
         associadas exclusivamente a esta agência.
       </div>
 

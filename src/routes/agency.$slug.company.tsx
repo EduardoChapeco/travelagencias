@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { fetchCompanyProfile, saveCompanyProfile } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -393,47 +392,47 @@ function Page() {
 
   return (
     <>
-      <PageHeader
-        title="Minha Empresa"
-        description="Identidade pública, visual e configurações do portal"
-        actions={
-          <div className="flex items-center gap-2">
-            <a
-              href={portalUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt"
+      {/* Unified Toolbar Header */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
+        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                tab === t.id
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+              }`}
             >
-              <Eye className="h-3.5 w-3.5" /> Ver portal
-            </a>
-            <PrimaryButton onClick={() => setPreviewOpen(!previewOpen)} className="gap-1.5">
-              <Globe className="h-3.5 w-3.5" />
-              {previewOpen ? "Fechar prévia" : "Prévia"}
-            </PrimaryButton>
-          </div>
-        }
-      />
+              <t.icon className="h-3.5 w-3.5" />
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={portalUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+          >
+            <Eye className="h-3.5 w-3.5" /> Ver portal
+          </a>
+          <button
+            onClick={() => setPreviewOpen(!previewOpen)}
+            className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            {previewOpen ? "Fechar prévia" : "Prévia"}
+          </button>
+        </div>
+      </div>
 
       <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
         <div className="space-y-0">
-          {/* TABS */}
-          <div className="mb-5 flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                  tab === t.id
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
-                }`}
-              >
-                <t.icon className="h-3.5 w-3.5" />
-                {t.label}
-              </button>
-            ))}
-          </div>
 
           {/* ── COMPANY TABS (wrapped in form) ────────────────── */}
           {isCompanyTab && (

@@ -22,7 +22,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
-import { PageHeader } from "@/components/shell/PageHeader";
 import {
   fetchAgencyMeetings,
   fetchAgencyUsers,
@@ -211,20 +210,8 @@ function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Agenda & Lembretes"
-        description="Controle mensal de reuniões de briefing, follow-ups de cotações e compromissos"
-        actions={
-          <PrimaryButton
-            onClick={() => setNewEventOpen(true)}
-            className="rounded-full gap-1.5 text-xs font-bold h-9"
-          >
-            <Plus className="h-4 w-4" /> Novo Compromisso
-          </PrimaryButton>
-        }
-      />
-
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-alt/45 border border-border/50 p-4 rounded-xl">
+      {/* Unified Toolbar Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5">
             <Filter className="h-3.5 w-3.5 text-muted-foreground" />
@@ -261,6 +248,7 @@ function CalendarPage() {
           )}
         </div>
 
+        {/* Center: Month navigation */}
         <div className="flex items-center gap-2.5 self-center">
           <button
             onClick={handlePrevMonth}
@@ -284,6 +272,14 @@ function CalendarPage() {
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
+
+        {/* Right: Actions */}
+        <PrimaryButton
+          onClick={() => setNewEventOpen(true)}
+          className="gap-1.5 text-xs font-bold h-8 rounded-lg"
+        >
+          <Plus className="h-4 w-4" /> Novo Compromisso
+        </PrimaryButton>
       </div>
 
       <div className="bg-surface border border-border/70 rounded-xl overflow-hidden">

@@ -12,7 +12,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/productivity")({
   head: () => ({ meta: [{ title: "Painel de Produtividade · TravelOS" }] }),
@@ -75,10 +74,6 @@ function ProductivityRoute() {
 
   return (
     <>
-      <PageHeader
-        title="Produtividade Master"
-        description="Monitoramento avançado de equipe baseado em Pontos de Dificuldade da IA."
-      />
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         {isLoading ? (
           <div className="h-40 flex items-center justify-center text-muted-foreground">

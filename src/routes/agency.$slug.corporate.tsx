@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search } from "lucide-react";
+import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
@@ -105,46 +105,51 @@ function CorporatePage() {
 
   return (
     <>
-      <PageHeader
-        title="Corporate B2B"
-        description="Gestão de RFPs (Request for Proposal) e solicitações corporativas."
-        actions={
-          <PrimaryButton className="gap-1.5" onClick={() => setNewOpen(true)}>
-            <Plus className="h-3.5 w-3.5" /> Nova RFP
-          </PrimaryButton>
-        }
-      />
-
-      <div className="mt-6 mb-6 flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setPage(1);
-            }}
-            className="pl-9 w-full"
-            placeholder="Buscar RFP..."
-          />
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Buscar RFP..."
+              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+            />
+          </div>
+          <div className="relative w-full sm:w-44">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
+            >
+              <option value="all">Todos os Status</option>
+              <option value="pending">Pendente</option>
+              <option value="quoting">Em Cotação</option>
+              <option value="sent_for_approval">Aguardando</option>
+              <option value="approved">Aprovado</option>
+              <option value="rejected">Recusado</option>
+            </select>
+          </div>
         </div>
-        <div className="w-full sm:w-48">
-          <Select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setNewOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
-            <option value="all">Todos os Status</option>
-            <option value="pending">Pendente</option>
-            <option value="quoting">Em Cotação</option>
-            <option value="sent_for_approval">Aguardando</option>
-            <option value="approved">Aprovado</option>
-            <option value="rejected">Recusado</option>
-          </Select>
+            <Plus className="h-3.5 w-3.5" /> Nova RFP
+          </button>
         </div>
       </div>
+
 
       {!rfpsQ.isLoading && rfps.length === 0 && (
         <EmptyState

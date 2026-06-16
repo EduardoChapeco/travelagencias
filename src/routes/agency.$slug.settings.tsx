@@ -117,11 +117,6 @@ function Page() {
 
   return (
     <>
-      <PageHeader
-        title="Configurações"
-        description="Dados cadastrais e identificação da agência na plataforma."
-      />
-
       <div className="max-w-2xl space-y-6">
         {/* Header card com identidade */}
         <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4">
@@ -165,8 +160,8 @@ function Page() {
                 />
               </Field>
               <Field
-                label="Slug (URL) *"
-                hint="Identificador único na URL"
+                label="Endereço Web da Agência *"
+                hint="Identificador único para acesso à agência"
                 error={errors.slug?.message}
               >
                 <Input
@@ -215,7 +210,7 @@ function Page() {
             <div className="flex items-start gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-xs text-yellow-700 dark:text-yellow-400">
               <Link2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <span>
-                Atenção: alterar o slug mudará a URL da agência de{" "}
+                Atenção: alterar o endereço web mudará o link de acesso da agência de{" "}
                 <code className="font-mono">/{q.data?.agency?.slug}</code> para{" "}
                 <code className="font-mono">/{watch("slug")}</code>. Links antigos deixarão de
                 funcionar.

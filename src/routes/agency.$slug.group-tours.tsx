@@ -65,53 +65,55 @@ function GroupToursPage() {
 
   return (
     <>
-      <PageHeader
-        title="Excursões em grupo"
-        description="Pacotes recorrentes com vagas, inscrições e itinerário."
-        actions={
-          <PrimaryButton onClick={() => setOpen(true)} className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" /> Nova excursão
-          </PrimaryButton>
-        }
-      />
-
-      {/* Search + Filter bar */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-3 items-center">
-        <div className="relative flex-1 max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={qSearch}
-            onChange={(e) => setQSearch(e.target.value)}
-            placeholder="Buscar excursão ou destino..."
-            className="pl-9 w-full"
-          />
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl items-center">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              value={qSearch}
+              onChange={(e) => setQSearch(e.target.value)}
+              placeholder="Buscar excursão ou destino..."
+              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
+            />
+          </div>
+          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0">
+            {["all", "draft", "open", "confirmed", "completed", "cancelled"].map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`rounded px-2.5 py-1 font-semibold transition-colors capitalize ${
+                  statusFilter === s
+                    ? "bg-surface-alt text-foreground border border-border/50"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {s === "all"
+                  ? "Todos"
+                  : s === "draft"
+                    ? "Rascunho"
+                    : s === "open"
+                      ? "Aberta"
+                      : s === "confirmed"
+                        ? "Confirmada"
+                        : s === "completed"
+                          ? "Concluída"
+                          : "Cancelada"}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0">
-          {["all", "draft", "open", "confirmed", "completed", "cancelled"].map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`rounded px-3 py-1.5 font-medium transition-colors capitalize ${
-                statusFilter === s
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {s === "all"
-                ? "Todos"
-                : s === "draft"
-                  ? "Rascunho"
-                  : s === "open"
-                    ? "Aberta"
-                    : s === "confirmed"
-                      ? "Confirmada"
-                      : s === "completed"
-                        ? "Concluída"
-                        : "Cancelada"}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Nova excursão
+          </button>
         </div>
       </div>
+
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
       {filtered.length === 0 && !q.isLoading && (
