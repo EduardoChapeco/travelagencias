@@ -30,12 +30,15 @@ import {
   Bot,
   Paperclip,
   Mic,
-  Trash2
+  Trash2,
+  AlertTriangle
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { money } from "@/components/ui/form";
 import { generateOmnichannelReply } from "@/lib/api/ai-chat.functions";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
@@ -109,6 +112,11 @@ function OmnichannelPage() {
   const [showDetails, setShowDetails] = useState(true);
   const [ticketSheetOpen, setTicketSheetOpen] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [detailsTab, setDetailsTab] = useState<"profile" | "documents" | "notices" | "ai_templates">("profile");
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [docTypeToUpload, setDocTypeToUpload] = useState("rg");
+  const [contactNotes, setContactNotes] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
 
   // ── Sessions ───────────────────────────────────────────────────
   const { data: sessions = [], isLoading: sessionsLoading } = useQuery({
@@ -196,6 +204,128 @@ function OmnichannelPage() {
       return data;
     }
   });
+
+  // ── Recent Proposals ───────────────────────────────────────────
+  const matchedClientId = matchedClient?.id || matchedLead?.client_id || null;
+  const matchedLeadId = matchedLead?.id || null;
+
+  const { data: recentProposals = [] } = useQuery({
+    enabled: !!agency?.id && (!!matchedClientId || !!matchedLeadId),
+    queryKey: ["omnichannel-recent-proposals", matchedClientId, matchedLeadId],
+    queryFn: async () => {
+      let qb = supabase
+        .from("proposals")
+        .select("id, number, title, status, total, currency, created_at")
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      if (matchedClientId && matchedLeadId) {
+        qb = qb.or(`client_id.eq.${matchedClientId},lead_id.eq.${matchedLeadId}`);
+      } else if (matchedClientId) {
+        qb = qb.eq("client_id", matchedClientId);
+      } else if (matchedLeadId) {
+        qb = qb.eq("lead_id", matchedLeadId);
+      }
+
+      const { data, error } = await qb;
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // ── Client Documents ───────────────────────────────────────────
+  const { data: clientDocs = [], refetch: refetchDocs } = useQuery({
+    enabled: !!matchedClientId && !!agency?.id,
+    queryKey: ["omnichannel-client-documents", matchedClientId],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("client_documents")
+        .select("id, doc_type, doc_number, expires_at, file_url, notes")
+        .eq("client_id", matchedClientId!)
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // ── Document Upload Handler ────────────────────────────────────
+  async function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !matchedClientId || !agency) return;
+    setUploadingDoc(true);
+    const toastId = toast.loading(`Enviando ${file.name}...`);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `clients/documents/${matchedClientId}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("agency-media")
+        .upload(filePath, file);
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("agency-media")
+        .getPublicUrl(filePath);
+
+      const { error } = await (supabase as any).from("client_documents").insert({
+        client_id: matchedClientId,
+        agency_id: agency.id,
+        doc_type: docTypeToUpload as any,
+        file_url: publicUrl,
+        doc_number: `Doc-${Date.now().toString().slice(-4)}`,
+        notes: `Enviado pelo chat Omnichannel - ${file.name}`,
+      });
+      if (error) throw error;
+
+      toast.success("Documento enviado e cadastrado!", { id: toastId });
+      refetchDocs();
+    } catch (err: any) {
+      toast.error("Erro ao enviar documento: " + err.message, { id: toastId });
+    } finally {
+      setUploadingDoc(false);
+    }
+  }
+
+  // ── Notes Editor Sync Effect ───────────────────────────────────
+  useEffect(() => {
+    if (matchedLead) {
+      setContactNotes((matchedLead as any).notes || "");
+    } else if (matchedClient) {
+      setContactNotes((matchedClient as any).notes || "");
+    } else {
+      setContactNotes("");
+    }
+  }, [matchedLead, matchedClient]);
+
+  // ── Notes Editor Save Handler ──────────────────────────────────
+  async function saveContactNotes() {
+    setSavingNotes(true);
+    const toastId = toast.loading("Salvando anotações...");
+    try {
+      if (matchedLead) {
+        const { error } = await supabase
+          .from("leads")
+          .update({ notes: contactNotes } as any)
+          .eq("id", matchedLead.id);
+        if (error) throw error;
+        qc.invalidateQueries({ queryKey: ["omnichannel-matched-lead", selectedSession?.contact_id] });
+      } else if (matchedClient) {
+        const { error } = await supabase
+          .from("clients")
+          .update({ notes: contactNotes } as any)
+          .eq("id", matchedClient.id);
+        if (error) throw error;
+        qc.invalidateQueries({ queryKey: ["omnichannel-matched-client", selectedSession?.contact_id] });
+      }
+      toast.success("Anotações salvas com sucesso!", { id: toastId });
+    } catch (err: any) {
+      toast.error("Erro ao salvar anotações: " + err.message, { id: toastId });
+    } finally {
+      setSavingNotes(false);
+    }
+  }
 
   // ── Messages ───────────────────────────────────────────────────
   const { data: messages = [] } = useQuery({
@@ -787,11 +917,11 @@ function OmnichannelPage() {
 
         {/* ── DETAILS PANEL: Collapsible ── */}
         {selectedId && showDetails && (
-          <aside className="w-80 shrink-0 bg-surface flex flex-col overflow-y-auto no-scrollbar border-r border-border md:border-r-0">
+          <aside className="w-80 shrink-0 bg-surface flex flex-col overflow-y-auto no-scrollbar border-l border-border md:border-l-0">
             {/* Panel Header */}
             <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
               <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
-                Informações do Contato
+                Painel do Lead
               </h3>
               <button
                 onClick={() => setShowDetails(false)}
@@ -801,234 +931,519 @@ function OmnichannelPage() {
               </button>
             </div>
 
-            {/* Profile Info */}
-            <div className="p-4 border-b border-border space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt border border-border">
-                  {selectedSession?.contact_avatar_url ? (
-                    <img
-                      src={selectedSession.contact_avatar_url}
-                      alt=""
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <UserCircle className="h-6 w-6 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h4 className="truncate text-xs font-bold text-foreground">
-                    {selectedSession?.contact_name || "Contato desconhecido"}
-                  </h4>
-                  <span className="text-[10px] text-muted-foreground block truncate">
-                    {selectedSession?.contact_id || ""}
-                  </span>
-                </div>
-              </div>
-
-              {/* CRM Link Sync */}
-              <div className="bg-surface-alt/40 border border-border rounded-xl p-3 space-y-2">
-                {matchedLead ? (
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-extrabold uppercase tracking-wide text-brand">
-                        Lead no CRM
-                      </span>
-                      <Link
-                        to="/agency/$slug/crm/$lead_id"
-                        params={{ slug: agency.slug, lead_id: matchedLead.id }}
-                        className="text-[9px] font-bold text-brand hover:underline flex items-center gap-0.5"
-                      >
-                        Ver Ficha <ExternalLink className="w-2.5 h-2.5" />
-                      </Link>
-                    </div>
-                    <p className="text-xs font-bold text-foreground leading-snug">{matchedLead.name}</p>
-                    {matchedLead.email && <p className="text-[10px] text-muted-foreground">{matchedLead.email}</p>}
-                    {matchedLead.estimated_value && <p className="text-[10px] text-muted-foreground">Budget: R$ {matchedLead.estimated_value.toLocaleString("pt-BR")}</p>}
-                  </div>
-                ) : matchedClient ? (
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-extrabold uppercase tracking-wide text-emerald-600">
-                        Cliente no CRM
-                      </span>
-                      <Link
-                        to="/agency/$slug/clients/$id"
-                        params={{ slug: agency.slug, id: matchedClient.id }}
-                        className="text-[9px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5"
-                      >
-                        Ver Perfil <ExternalLink className="w-2.5 h-2.5" />
-                      </Link>
-                    </div>
-                    <p className="text-xs font-bold text-foreground leading-snug">{matchedClient.full_name}</p>
-                    {matchedClient.email && <p className="text-[10px] text-muted-foreground">{matchedClient.email}</p>}
-                  </div>
-                ) : (
-                  <div className="space-y-2 text-center py-1">
-                    <p className="text-[10px] text-muted-foreground">Não localizado no CRM</p>
-                    <button
-                      onClick={createLeadFromSession}
-                      className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
-                    </button>
-                  </div>
+            {/* Tab Switched Header */}
+            <div className="flex border-b border-border text-xs font-semibold shrink-0 bg-surface-alt/40">
+              <button
+                onClick={() => setDetailsTab("profile")}
+                className={cn(
+                  "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
+                  detailsTab === "profile"
+                    ? "border-brand text-brand font-bold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
-              </div>
+              >
+                Perfil
+              </button>
+              <button
+                onClick={() => setDetailsTab("documents")}
+                className={cn(
+                  "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
+                  detailsTab === "documents"
+                    ? "border-brand text-brand font-bold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Docs
+              </button>
+              <button
+                onClick={() => setDetailsTab("notices")}
+                className={cn(
+                  "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
+                  detailsTab === "notices"
+                    ? "border-brand text-brand font-bold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Avisos
+              </button>
+              <button
+                onClick={() => setDetailsTab("ai_templates")}
+                className={cn(
+                  "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
+                  detailsTab === "ai_templates"
+                    ? "border-brand text-brand font-bold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Modelos/IA
+              </button>
             </div>
 
-            {/* Quick Actions */}
-            <div className="p-4 border-b border-border space-y-2">
-              <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
-                Ações Integradas
-              </h4>
-              <div className="space-y-1.5">
-                <button
-                  onClick={() => setTicketSheetOpen(true)}
-                  className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                >
-                  <FolderOpen className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>Novo Ticket Interno</span>
-                </button>
+            {/* Tab Content Wrapper */}
+            <div className="flex-1 overflow-y-auto no-scrollbar">
+              {detailsTab === "profile" && (
+                <div className="p-4 space-y-4">
+                  {/* Profile Info */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt border border-border">
+                      {selectedSession?.contact_avatar_url ? (
+                        <img
+                          src={selectedSession.contact_avatar_url}
+                          alt=""
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <UserCircle className="h-6 w-6 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="truncate text-xs font-bold text-foreground">
+                        {selectedSession?.contact_name || "Contato desconhecido"}
+                      </h4>
+                      <span className="text-[10px] text-muted-foreground block truncate">
+                        {selectedSession?.contact_id || ""}
+                      </span>
+                    </div>
+                  </div>
 
-                {matchedLead && (
-                  <button
-                    onClick={generateAiProposalForLead}
-                    className="flex items-center gap-2 w-full text-left rounded-lg border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Gerar Cotação com IA</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => {
-                    setReply(prev => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato de prestação de serviços: ${window.location.origin}/m/contract/assinar-aqui`);
-                    toast.success("Link do Contrato carregado!");
-                  }}
-                  className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                >
-                  <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>Enviar Link de Contrato</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setReply(prev => (prev ? prev + "\n" : "") + `Olá! Vamos agendar uma chamada rápida de alinhamento? Agende o melhor horário para você por aqui: ${window.location.origin}/agenda-reuniao`);
-                    toast.success("Link do Agendador carregado!");
-                  }}
-                  className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                >
-                  <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>Enviar Link de Agenda</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setReply(prev => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem, vouchers e pagamentos direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
-                    toast.success("Link do Portal carregado!");
-                  }}
-                  className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span>Enviar MagicLink Portal</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Lead Insights (RAG / AI Hunter) */}
-            {matchedLead && (
-              <div className="p-4 border-b border-border space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                    <Bot className="w-3.5 h-3.5 text-brand" /> Perfil & RAG Insights
-                  </h4>
-                  <button
-                    onClick={triggerAnalysis}
-                    disabled={analyzing}
-                    className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
-                  >
-                    <RefreshCw className={`w-3 h-3 ${analyzing ? 'animate-spin' : ''}`} /> Atualizar
-                  </button>
-                </div>
-
-                {leadInsights ? (
-                  <div className="space-y-2">
-                    {leadInsights.general_profile && (
-                      <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-lg text-foreground leading-relaxed">
-                        <strong>Comportamento:</strong> {leadInsights.general_profile}
+                  {/* CRM Link Sync */}
+                  <div className="bg-surface-alt/40 border border-border rounded-xl p-3 space-y-2">
+                    {matchedLead ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-extrabold uppercase tracking-wide text-brand">
+                            Lead no CRM
+                          </span>
+                          <Link
+                            to="/agency/$slug/crm/$lead_id"
+                            params={{ slug: agency.slug, lead_id: matchedLead.id }}
+                            className="text-[9px] font-bold text-brand hover:underline flex items-center gap-0.5"
+                          >
+                            Ver Ficha <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
+                        <p className="text-xs font-bold text-foreground leading-snug">{matchedLead.name}</p>
+                        {matchedLead.email && <p className="text-[10px] text-muted-foreground">{matchedLead.email}</p>}
+                        {matchedLead.estimated_value && <p className="text-[10px] text-muted-foreground font-medium">Budget: {money(matchedLead.estimated_value, "BRL")}</p>}
+                      </div>
+                    ) : matchedClient ? (
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-extrabold uppercase tracking-wide text-emerald-600">
+                            Cliente no CRM
+                          </span>
+                          <Link
+                            to="/agency/$slug/clients/$id"
+                            params={{ slug: agency.slug, id: matchedClient.id }}
+                            className="text-[9px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5"
+                          >
+                            Ver Perfil <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
+                        <p className="text-xs font-bold text-foreground leading-snug">{matchedClient.full_name}</p>
+                        {matchedClient.email && <p className="text-[10px] text-muted-foreground">{matchedClient.email}</p>}
+                      </div>
+                    ) : (
+                      <div className="space-y-2 text-center py-1">
+                        <p className="text-[10px] text-muted-foreground">Não localizado no CRM</p>
+                        <button
+                          onClick={createLeadFromSession}
+                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
+                        </button>
                       </div>
                     )}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
-                        <span className="text-[9px] font-bold text-success uppercase block">Desejos</span>
-                        <ul className="text-[10px] text-muted-foreground list-disc pl-3">
-                          {((leadInsights.desires as any) ?? []).slice(0, 3).map((d: string, i: number) => (
-                            <li key={i}>{d}</li>
-                          ))}
-                          {(!leadInsights.desires || (leadInsights.desires as any).length === 0) && (
-                            <li className="list-none pl-0">Nenhum</li>
-                          )}
-                        </ul>
+                  </div>
+
+                  {/* Recent Proposals */}
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      Últimas Propostas
+                    </h4>
+                    {recentProposals.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {recentProposals.map((p: any) => (
+                          <div key={p.id} className="p-2 border border-border rounded-lg bg-surface flex items-center justify-between text-[11px]">
+                            <div className="truncate pr-2">
+                              <p className="font-bold text-foreground truncate">{p.title}</p>
+                              <span className="text-[9px] text-muted-foreground">#{p.number}</span>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <span className="font-bold text-foreground">{money(p.total, p.currency)}</span>
+                              <span className="block text-[8px] text-muted-foreground uppercase">{p.status}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
-                        <span className="text-[9px] font-bold text-danger uppercase block">Medos</span>
-                        <ul className="text-[10px] text-muted-foreground list-disc pl-3">
-                          {((leadInsights.fears as any) ?? []).slice(0, 3).map((f: string, i: number) => (
-                            <li key={i}>{f}</li>
-                          ))}
-                          {(!leadInsights.fears || (leadInsights.fears as any).length === 0) && (
-                            <li className="list-none pl-0">Nenhum</li>
-                          )}
-                        </ul>
-                      </div>
-                      <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5 col-span-2">
-                        <span className="text-[9px] font-bold text-warning uppercase block">Objeções</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {((leadInsights.objections as any) ?? []).map((o: string, i: number) => (
-                            <span key={i} className="text-[9px] bg-warning/10 border border-warning/20 text-warning px-1.5 py-0.5 rounded-full font-semibold">
-                              {o}
-                            </span>
-                          ))}
-                          {(!leadInsights.objections || (leadInsights.objections as any).length === 0) && (
-                            <span className="text-[10px] text-muted-foreground">Nenhuma mapeada</span>
-                          )}
-                        </div>
-                      </div>
+                    ) : (
+                      <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/30 border border-dashed border-border rounded-lg">
+                        Nenhuma proposta encontrada.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      Ações Rápidas
+                    </h4>
+                    <div className="space-y-1.5">
+                      <button
+                        onClick={() => setTicketSheetOpen(true)}
+                        className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
+                      >
+                        <FolderOpen className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span>Novo Ticket Interno</span>
+                      </button>
+
+                      {matchedLead && (
+                        <button
+                          onClick={generateAiProposalForLead}
+                          className="flex items-center gap-2 w-full text-left rounded-lg border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Gerar Cotação com IA</span>
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato de prestação de serviços: ${window.location.origin}/m/contract/assinar-aqui`);
+                          toast.success("Link do Contrato carregado!");
+                        }}
+                        className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
+                      >
+                        <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span>Enviar Link de Contrato</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Vamos agendar uma chamada rápida de alinhamento? Agende o melhor horário para você por aqui: ${window.location.origin}/agenda-reuniao`);
+                          toast.success("Link do Agendador carregado!");
+                        }}
+                        className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
+                      >
+                        <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span>Enviar Link de Agenda</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem, vouchers e pagamentos direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
+                          toast.success("Link do Portal carregado!");
+                        }}
+                        className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span>Enviar MagicLink Portal</span>
+                      </button>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/50 border border-dashed border-border rounded-lg">
-                    Nenhum perfil comportamental catalogado. Clique em Atualizar.
-                  </p>
-                )}
-              </div>
-            )}
+                </div>
+              )}
 
-            {/* Canned Templates */}
-            <div className="p-4 space-y-2.5">
-              <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
-                Templates de Respostas
-              </h4>
-              <div className="space-y-1.5">
-                {[
-                  { label: "Boas Vindas (Apresentação)", text: "Olá! Sou do suporte da nossa agência e estou aqui para auxiliar você na sua próxima viagem. Como posso ajudar hoje?" },
-                  { label: "Solicitar Documentos", text: "Olá! Para prosseguirmos com a emissão da sua viagem, poderia nos enviar fotos nítidas do RG ou CNH (frente e verso) e comprovante de residência?" },
-                  { label: "Confirmação de Voo", text: "Olá! Passando para confirmar que a emissão dos seus bilhetes aéreos foi concluída. Os localizadores e vouchers de lançamento estão disponíveis no portal do cliente." },
-                  { label: "Lembrete de Pagamento", text: "Olá! Passando para lembrar que o vencimento do Pix/boleto da sua viagem é amanhã. Caso precise de uma nova via, me avise por aqui!" }
-                ].map((tpl) => (
-                  <button
-                    key={tpl.label}
-                    onClick={() => {
-                      setReply(tpl.text);
-                      toast.success("Template inserido!");
-                    }}
-                    className="w-full text-left rounded-lg border border-border p-2 text-xs hover:bg-surface-alt hover:border-border-strong transition-all cursor-pointer"
-                  >
-                    <div className="font-bold text-foreground text-[10px] mb-0.5">{tpl.label}</div>
-                    <p className="text-muted-foreground text-[10px] truncate">{tpl.text}</p>
-                  </button>
-                ))}
-              </div>
+              {detailsTab === "documents" && (
+                <div className="p-4 space-y-4">
+                  <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                    Documentos Pessoais
+                  </h4>
+
+                  {/* Document Uploader */}
+                  {matchedClientId ? (
+                    <div className="p-3 border border-border rounded-xl bg-surface-alt/40 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
+                        <select
+                          value={docTypeToUpload}
+                          onChange={(e) => setDocTypeToUpload(e.target.value)}
+                          className="h-7 text-[11px] rounded border border-border bg-surface px-1 outline-none text-foreground"
+                        >
+                          <option value="rg">RG</option>
+                          <option value="cpf">CPF</option>
+                          <option value="passport">Passaporte</option>
+                          <option value="birth_cert">Certidão</option>
+                          <option value="cnh">CNH</option>
+                          <option value="visa">Visto</option>
+                          <option value="vaccination_card">Vacinas</option>
+                          <option value="insurance">Seguro</option>
+                          <option value="other">Outro</option>
+                        </select>
+                      </div>
+                      <div className="relative">
+                        <input
+                          type="file"
+                          id="client-doc-file-upload"
+                          onChange={handleDocUpload}
+                          disabled={uploadingDoc}
+                          className="hidden"
+                        />
+                        <button
+                          onClick={() => document.getElementById("client-doc-file-upload")?.click()}
+                          disabled={uploadingDoc}
+                          className="w-full h-16 border-2 border-dashed border-border/80 hover:border-brand/50 rounded-lg flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground bg-surface hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
+                        >
+                          <Plus className="h-4 w-4 mb-1 text-muted-foreground/60" />
+                          {uploadingDoc ? "Enviando..." : "Upload Novo Documento"}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-muted-foreground text-center py-3 bg-surface-alt/30 border border-dashed border-border rounded-lg">
+                      Importe o lead como cliente primeiro para gerenciar seus documentos.
+                    </p>
+                  )}
+
+                  {/* Documents List */}
+                  {matchedClientId && (
+                    <div className="space-y-2">
+                      {clientDocs.length > 0 ? (
+                        clientDocs.map((doc: any) => (
+                          <div key={doc.id} className="p-3 border border-border rounded-xl bg-surface flex flex-col gap-1.5 text-xs">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
+                              {doc.expires_at && (
+                                <span className={cn("text-[9px] font-semibold", 
+                                  new Date(doc.expires_at).getTime() < Date.now()
+                                    ? "text-red-500 font-bold"
+                                    : "text-muted-foreground"
+                                )}>
+                                  Exp: {new Date(doc.expires_at).toLocaleDateString("pt-BR")}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span className="font-mono text-muted-foreground">{doc.doc_number || "Sem nº"}</span>
+                              {doc.file_url && (
+                                <a
+                                  href={doc.file_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-brand font-bold hover:underline flex items-center gap-0.5 text-[10px]"
+                                >
+                                  Ver <ExternalLink className="h-3 w-3" />
+                                </a>
+                              )}
+                            </div>
+                            {doc.notes && <p className="text-[9px] text-muted-foreground leading-normal mt-0.5 border-t border-border/40 pt-1">{doc.notes}</p>}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-[10px] text-muted-foreground text-center py-4">Nenhum documento anexado.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {detailsTab === "notices" && (
+                <div className="p-4 space-y-4">
+                  {/* Warnings Panel */}
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      Avisos e Pendências
+                    </h4>
+                    {matchedClientId ? (
+                      (() => {
+                        const expiringDocs = clientDocs.filter((d: any) => {
+                          if (!d.expires_at) return false;
+                          const diff = new Date(d.expires_at).getTime() - Date.now();
+                          return diff > 0 && diff <= 90 * 24 * 60 * 60 * 1000;
+                        });
+                        const expiredDocs = clientDocs.filter((d: any) => {
+                          if (!d.expires_at) return false;
+                          return new Date(d.expires_at).getTime() < Date.now();
+                        });
+
+                        return (
+                          <div className="space-y-2">
+                            {expiredDocs.map((d: any) => (
+                              <div key={d.id} className="p-2.5 border border-red-500/20 bg-red-500/5 text-red-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5">
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className="uppercase">{d.doc_type} Expirado!</strong>
+                                  <p className="text-[9px] mt-0.5 text-red-500/80">Venceu em {new Date(d.expires_at).toLocaleDateString("pt-BR")}</p>
+                                </div>
+                              </div>
+                            ))}
+                            {expiringDocs.map((d: any) => (
+                              <div key={d.id} className="p-2.5 border border-amber-500/20 bg-amber-500/5 text-amber-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5">
+                                <Clock className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                <div>
+                                  <strong className="uppercase">{d.doc_type} perto do vencimento</strong>
+                                  <p className="text-[9px] mt-0.5 text-amber-500/80">Vence em {new Date(d.expires_at).toLocaleDateString("pt-BR")}</p>
+                                </div>
+                              </div>
+                            ))}
+                            {expiredDocs.length === 0 && expiringDocs.length === 0 && (
+                              <p className="text-[10px] text-emerald-600 font-semibold bg-emerald-500/5 border border-emerald-500/10 p-2 rounded-lg text-center">
+                                ✓ Nenhum documento com alerta de expiração.
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })()
+                    ) : (
+                      <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/30 border border-dashed border-border rounded-lg">
+                        Sem alertas para não clientes.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Notes Editor */}
+                  {(matchedLead || matchedClient) ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                          Observações Internas
+                        </h4>
+                        <button
+                          onClick={saveContactNotes}
+                          disabled={savingNotes}
+                          className="text-[10px] text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer"
+                        >
+                          {savingNotes ? "Salvando..." : "Salvar Notas"}
+                        </button>
+                      </div>
+                      <textarea
+                        value={contactNotes}
+                        onChange={(e) => setContactNotes(e.target.value)}
+                        placeholder="Escreva anotações internas importantes sobre este contato..."
+                        rows={8}
+                        className="w-full text-xs p-2.5 border border-border rounded-xl bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              {detailsTab === "ai_templates" && (
+                <div className="p-4 space-y-4">
+                  {/* Lead Insights (RAG / AI Hunter) */}
+                  {matchedLead && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                          <Bot className="w-3.5 h-3.5 text-brand" /> Perfil & RAG Insights
+                        </h4>
+                        <button
+                          onClick={triggerAnalysis}
+                          disabled={analyzing}
+                          className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                        >
+                          <RefreshCw className={`w-3 h-3 ${analyzing ? 'animate-spin' : ''}`} /> Atualizar
+                        </button>
+                      </div>
+
+                      {leadInsights ? (
+                        <div className="space-y-2">
+                          {leadInsights.general_profile && (
+                            <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-lg text-foreground leading-relaxed">
+                              <strong>Comportamento:</strong> {leadInsights.general_profile}
+                            </div>
+                          )}
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
+                              <span className="text-[9px] font-bold text-success uppercase block">Desejos</span>
+                              <ul className="text-[10px] text-muted-foreground list-disc pl-3">
+                                {((leadInsights.desires as any) ?? []).slice(0, 3).map((d: string, i: number) => (
+                                  <li key={i}>{d}</li>
+                                ))}
+                                {(!leadInsights.desires || (leadInsights.desires as any).length === 0) && (
+                                  <li className="list-none pl-0">Nenhum</li>
+                                )}
+                              </ul>
+                            </div>
+                            <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
+                              <span className="text-[9px] font-bold text-danger uppercase block">Medos</span>
+                              <ul className="text-[10px] text-muted-foreground list-disc pl-3">
+                                {((leadInsights.fears as any) ?? []).slice(0, 3).map((f: string, i: number) => (
+                                  <li key={i}>{f}</li>
+                                ))}
+                                {(!leadInsights.fears || (leadInsights.fears as any).length === 0) && (
+                                  <li className="list-none pl-0">Nenhum</li>
+                                )}
+                              </ul>
+                            </div>
+                            <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5 col-span-2">
+                              <span className="text-[9px] font-bold text-warning uppercase block">Objeções</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {((leadInsights.objections as any) ?? []).map((o: string, i: number) => (
+                                  <span key={i} className="text-[9px] bg-warning/10 border border-warning/20 text-warning px-1.5 py-0.5 rounded-full font-semibold">
+                                    {o}
+                                  </span>
+                                ))}
+                                {(!leadInsights.objections || (leadInsights.objections as any).length === 0) && (
+                                  <span className="text-[10px] text-muted-foreground">Nenhuma mapeada</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/50 border border-dashed border-border rounded-lg">
+                          Nenhum perfil comportamental catalogado. Clique em Atualizar.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* AI suggestion */}
+                  {aiSuggestion && (
+                    <div className="p-3 border border-brand/20 bg-brand/5 rounded-xl space-y-2">
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-brand uppercase">
+                        <Sparkles className="w-3.5 h-3.5" /> Sugestão da IA
+                      </div>
+                      <p className="text-xs text-foreground leading-relaxed">{aiSuggestion}</p>
+                      <div className="flex justify-end gap-1.5">
+                        <button
+                          onClick={() => setAiSuggestion(null)}
+                          className="text-[10px] border border-border px-2 py-1 rounded bg-surface hover:bg-surface-alt text-muted-foreground cursor-pointer"
+                        >
+                          Limpar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setReply(aiSuggestion);
+                            setAiSuggestion(null);
+                          }}
+                          className="text-[10px] bg-brand text-brand-foreground px-2.5 py-1 rounded hover:bg-brand/90 cursor-pointer"
+                        >
+                          Copiar para Caixa
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Canned Templates */}
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      Templates de Respostas
+                    </h4>
+                    <div className="space-y-1.5">
+                      {[
+                        { label: "Boas Vindas (Apresentação)", text: "Olá! Sou do suporte da nossa agência e estou aqui para auxiliar você na sua próxima viagem. Como posso ajudar hoje?" },
+                        { label: "Solicitar Documentos", text: "Olá! Para prosseguirmos com a emissão da sua viagem, poderia nos enviar fotos nítidas do RG ou CNH (frente e verso) e comprovante de residência?" },
+                        { label: "Confirmação de Voo", text: "Olá! Passando para confirmar que a emissão dos seus bilhetes aéreos foi concluída. Os localizadores e vouchers de lançamento estão disponíveis no portal do cliente." },
+                        { label: "Lembrete de Pagamento", text: "Olá! Passando para lembrar que o vencimento do Pix/boleto da sua viagem é amanhã. Caso precise de uma nova via, me avise por aqui!" }
+                      ].map((tpl) => (
+                        <button
+                          key={tpl.label}
+                          onClick={() => {
+                            setReply(tpl.text);
+                            toast.success("Template inserido!");
+                          }}
+                          className="w-full text-left rounded-lg border border-border p-2 text-xs hover:bg-surface-alt hover:border-border-strong transition-all cursor-pointer bg-surface"
+                        >
+                          <div className="font-bold text-foreground text-[10px] mb-0.5">{tpl.label}</div>
+                          <p className="text-muted-foreground text-[10px] truncate">{tpl.text}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </aside>
         )}

@@ -168,10 +168,9 @@ function CRMPage() {
 
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
-      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-2 border-b border-border bg-surface shrink-0">
-        {/* Left Side: Title & Filters */}
+      {/* Unified Module Header Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border bg-surface shrink-0">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-sm font-bold text-foreground mr-2">Negociações</h1>
           {!showArchived && (
             <>
               <div className="relative w-48">

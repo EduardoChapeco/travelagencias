@@ -116,10 +116,10 @@ export function AppSidebar({
       footer={
         <button
           onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-          className="flex h-8 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex h-7 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title="Sair"
         >
-          <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.5} />
+          <LogOut className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
           <span
             className={cn(
               "translate-x-1 truncate transition duration-200",

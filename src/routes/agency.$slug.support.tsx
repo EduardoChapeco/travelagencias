@@ -80,20 +80,57 @@ function SupportRoute() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-background overflow-hidden">
-      <PageHeader
-        title="Central de Atendimento"
-        description="Gestão de chamados, SLAs e comunicação corporativa/B2B."
-        actions={
+      {/* Unified Module Header Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border bg-surface shrink-0">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-2xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por código, assunto ou cliente..."
+              className="pl-9 h-9 text-xs w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="w-full sm:w-44 shrink-0">
+            <Select
+              value={stageFilter}
+              onChange={(e) => setStageFilter(e.target.value)}
+              className="h-9 text-xs w-full"
+            >
+              <option value="all">Todos os Estágios</option>
+              {Object.entries(STAGE_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="w-full sm:w-40 shrink-0">
+            <Select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="h-9 text-xs w-full"
+            >
+              <option value="all">Todas Prioridades</option>
+              <option value="low">Baixa</option>
+              <option value="medium">Média</option>
+              <option value="high">Alta</option>
+              <option value="urgent">Urgente</option>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
           <PrimaryButton
-            className="h-9 text-xs"
+            className="h-9 text-xs cursor-pointer"
             onClick={() => setTicketSheetOpen(true)}
           >
             Novo Ticket Interno
           </PrimaryButton>
-        }
-      />
+        </div>
+      </div>
 
-      <div className="flex-1 overflow-y-auto p-6 flex flex-col space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4">
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
           <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
@@ -142,44 +179,6 @@ function SupportRoute() {
                 CSAT Médio
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* Filters & List */}
-        <div className="flex flex-col space-y-4 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por código, assunto ou cliente..."
-                className="pl-9 h-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Select
-              value={stageFilter}
-              onChange={(e) => setStageFilter(e.target.value)}
-              className="w-48 h-9 text-sm"
-            >
-              <option value="all">Todos os Estágios</option>
-              {Object.entries(STAGE_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-            <Select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-48 h-9 text-sm"
-            >
-              <option value="all">Todas Prioridades</option>
-              <option value="low">Baixa</option>
-              <option value="medium">Média</option>
-              <option value="high">Alta</option>
-              <option value="urgent">Urgente</option>
-            </Select>
           </div>
         </div>
 

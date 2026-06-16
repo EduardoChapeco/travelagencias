@@ -209,22 +209,10 @@ function ClientsPage() {
 
   return (
     <>
-      <PageHeader
-        title="Clientes"
-        description="Base centralizada de clientes da agência."
-        actions={
-          <PrimaryButton
-            onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 px-3"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo cliente
-          </PrimaryButton>
-        }
-      />
-
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 flex-1 max-w-sm">
-          <div className="relative flex-1">
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl items-center">
+          <div className="relative flex-1 w-full">
             <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               value={q}
@@ -233,21 +221,29 @@ function ClientsPage() {
               className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
             />
           </div>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
+          <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
             {list.data?.count ?? 0} clientes
           </span>
         </div>
 
-        <button
-          onClick={() => setShowDeleted(!showDeleted)}
-          className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
-            showDeleted
-              ? "bg-danger text-danger-foreground border-danger"
-              : "bg-surface border-border text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDeleted(!showDeleted)}
+            className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
+              showDeleted
+                ? "bg-danger text-danger-foreground border-danger cursor-pointer"
+                : "bg-surface border-border text-muted-foreground hover:text-foreground cursor-pointer"
+            }`}
+          >
+            {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
+          </button>
+          <PrimaryButton
+            onClick={() => setNewOpen(true)}
+            className="flex h-9 items-center gap-1.5 px-3 cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo cliente
+          </PrimaryButton>
+        </div>
       </div>
 
       {list.isLoading && (

@@ -139,20 +139,52 @@ function ProposalsList() {
 
   return (
     <>
-      <PageHeader
-        title="Cotações"
-        description="Propostas comerciais enviadas a clientes e leads."
-        actions={
+      {/* Unified Module Header Toolbar */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
+        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por título..."
+              className="pl-9 h-9 w-full"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+            />
+          </div>
+          <div className="w-full sm:w-44">
+            <Select
+              className="h-9"
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="all">Todos os Status</option>
+              <option value="draft">Rascunho</option>
+              <option value="sent">Enviada</option>
+              <option value="viewed">Visualizada</option>
+              <option value="accepted">Aceita</option>
+              <option value="converted">Convertida</option>
+              <option value="rejected">Recusada</option>
+              <option value="expired">Expirada</option>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
             className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Nova cotação
           </button>
-        }
-      />
+        </div>
+      </div>
 
-      {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+      {list.isLoading && <div className="text-sm text-muted-foreground px-1">Carregando…</div>}
 
       {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
         <EmptyState
@@ -161,40 +193,6 @@ function ProposalsList() {
         />
       ) : (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por título..."
-                className="pl-9 h-10 w-full"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setPage(1);
-                }}
-              />
-            </div>
-            <div className="w-full sm:w-48">
-              <Select
-                className="h-10"
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">Todos os Status</option>
-                <option value="draft">Rascunho</option>
-                <option value="sent">Enviada</option>
-                <option value="viewed">Visualizada</option>
-                <option value="accepted">Aceita</option>
-                <option value="converted">Convertida</option>
-                <option value="rejected">Recusada</option>
-                <option value="expired">Expirada</option>
-              </Select>
-            </div>
-          </div>
-
           <div className="overflow-hidden rounded-lg border border-border">
             <table className="w-full text-sm">
               <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">

@@ -37,8 +37,8 @@ export function CrmKanbanBoard({
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >
-      <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 no-scrollbar cursor-grab active:cursor-grabbing bg-background/50">
-        <div className="flex h-full min-w-max gap-6">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden p-3 no-scrollbar cursor-grab active:cursor-grabbing bg-background/50">
+        <div className="flex h-full min-w-max gap-3.5">
           {stages.map((stage) => {
             const items = stagesById[stage.id] ?? [];
             return (
@@ -89,19 +89,19 @@ function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[360px] shrink-0 flex-col rounded-2xl border bg-surface/50 transition-all duration-300 ${
+      className={`flex h-full w-[310px] shrink-0 flex-col rounded-xl border bg-surface/50 transition-all duration-300 ${
         isOver ? "border-brand bg-brand/5 scale-[1.01]" : "border-border/80"
       }`}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-5 py-4 rounded-t-xl">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2.5">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-4 py-3 rounded-t-xl">
+        <div className="flex items-center justify-between mb-0.5">
+          <div className="flex items-center gap-2">
             <span
               className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
               style={{ background: stage.color }}
             />
-            <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
           </div>
@@ -110,7 +110,7 @@ function Column({
           </span>
         </div>
         {totalValue > 0 && (
-          <div className="text-[10px] font-medium text-muted-foreground mt-1 ml-5">
+          <div className="text-[10px] font-medium text-muted-foreground mt-0.5 ml-4.5">
             Total:{" "}
             <span className="text-foreground font-bold">
               R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
@@ -119,7 +119,7 @@ function Column({
         )}
       </div>
       <SortableContext items={leads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 space-y-3.5 overflow-y-auto p-4 no-scrollbar cursor-default bg-background/10">
+        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default bg-background/10">
           {leads.map((lead) => (
             <SortableLead
               key={lead.id}
@@ -132,7 +132,7 @@ function Column({
             />
           ))}
           {leads.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
+            <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
               Solte leads aqui
             </div>
           )}

@@ -57,7 +57,15 @@ export function SlimSidebar({
           {items.map((item, idx) => {
             if (item.type === "header") {
               return (
-                <li key={`header-${idx}`} className={cn("px-3 pb-1 pt-3", idx === 0 && "pt-1")}>
+                <li
+                  key={`header-${idx}`}
+                  className={cn(
+                    "px-3 pb-1 pt-3 transition-[height,padding,opacity] duration-150 ease-out",
+                    idx === 0 && "pt-1",
+                    !isPinned &&
+                      "h-0 overflow-hidden py-0 my-0 opacity-0 group-hover/sidebar:h-auto group-hover/sidebar:py-1 group-hover/sidebar:pt-3 group-hover/sidebar:pb-1 group-hover/sidebar:opacity-100 group-focus-within/sidebar:h-auto group-focus-within/sidebar:py-1 group-focus-within/sidebar:pt-3 group-focus-within/sidebar:pb-1 group-focus-within/sidebar:opacity-100"
+                  )}
+                >
                   <div
                     className={cn(
                       "text-[10px] font-bold uppercase tracking-widest text-sidebar-foreground/40 transition-opacity duration-200",
@@ -93,17 +101,17 @@ export function SlimSidebar({
                   to={item.to!}
                   title={item.label}
                   className={cn(
-                    "group/item relative flex h-8 items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                    "group/item relative flex h-7 items-center gap-3 overflow-hidden rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                     active && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
                   )}
                 >
                   {isPending ? (
                     <Loader2
-                      className="h-[15px] w-[15px] shrink-0 animate-spin"
-                      strokeWidth={isPinned ? 1.6 : 2.2}
+                      className="h-[14px] w-[14px] shrink-0 animate-spin"
+                      strokeWidth={1.8}
                     />
                   ) : (
-                    <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={isPinned ? 1.6 : 2.2} />
+                    <ItemIcon className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
                   )}
                   <span
                     className={cn(
@@ -126,13 +134,13 @@ export function SlimSidebar({
       <div className="border-t border-sidebar-border px-1.5 py-2">
         <button
           onClick={onTogglePin}
-          className="flex h-8 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex h-7 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title={isPinned ? "Desafixar menu" : "Fixar menu"}
         >
           {isPinned ? (
-            <PinOff className="h-[15px] w-[15px] shrink-0" />
+            <PinOff className="h-[14px] w-[14px] shrink-0" />
           ) : (
-            <Pin className="h-[15px] w-[15px] shrink-0" />
+            <Pin className="h-[14px] w-[14px] shrink-0" />
           )}
           <span
             className={cn(
