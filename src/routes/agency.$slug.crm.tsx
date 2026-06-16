@@ -171,47 +171,7 @@ function CRMPage() {
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
       <HeaderPortal>
-        <div className="flex flex-wrap items-center gap-2">
-          {!showArchived && (
-            <>
-              <div className="relative w-40">
-                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  placeholder="Buscar lead..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-7.5 h-8 w-full rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
-                />
-              </div>
-              <select
-                value={ownerFilter}
-                onChange={(e) => setOwnerFilter(e.target.value)}
-                className="h-8 w-28 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-              >
-                <option value="">Responsáveis</option>
-                {usersQ.data?.map(
-                  (u: any) =>
-                    u.user_id && (
-                      <option key={u.user_id} value={u.user_id}>
-                        {u.user_name || "Sem nome"}
-                      </option>
-                    ),
-                )}
-              </select>
-              <select
-                value={sourceFilter}
-                onChange={(e) => setSourceFilter(e.target.value)}
-                className="h-8 w-24 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-              >
-                <option value="">Origens</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="instagram">Instagram</option>
-                <option value="website">Site</option>
-                <option value="referral">Indicação</option>
-                <option value="walkin">Presencial</option>
-              </select>
-            </>
-          )}
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowArchived((v) => !v)}
             className={`flex h-8 items-center gap-1 px-2.5 rounded-md border border-border text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors ${
@@ -245,6 +205,49 @@ function CRMPage() {
           )}
         </div>
       </HeaderPortal>
+
+      {!showArchived && (
+        <div className="flex flex-col sm:flex-row gap-2 border-b border-border bg-surface/50 p-2 shrink-0">
+          <div className="relative w-full sm:w-40">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              placeholder="Buscar lead..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-7.5 h-8 w-full rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+            />
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <select
+              value={ownerFilter}
+              onChange={(e) => setOwnerFilter(e.target.value)}
+              className="h-8 w-full sm:w-28 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+            >
+              <option value="">Responsáveis</option>
+              {usersQ.data?.map(
+                (u: any) =>
+                  u.user_id && (
+                    <option key={u.user_id} value={u.user_id}>
+                      {u.user_name || "Sem nome"}
+                    </option>
+                  ),
+              )}
+            </select>
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="h-8 w-full sm:w-24 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+            >
+              <option value="">Origens</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="instagram">Instagram</option>
+              <option value="website">Site</option>
+              <option value="referral">Indicação</option>
+              <option value="walkin">Presencial</option>
+            </select>
+          </div>
+        </div>
+      )}
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
         <div className="flex flex-1 items-center justify-center">

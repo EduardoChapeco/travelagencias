@@ -65,16 +65,27 @@ function VisasCatalogPage() {
       <ConfirmDialog />
       
       <HeaderPortal>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo Catálogo
+          </button>
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <Link
             to="/agency/$slug/visas"
             params={{ slug }}
-            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-md"
+            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-md shrink-0"
           >
             <ArrowLeft className="w-3 h-3" /> Voltar
           </Link>
-          <div className="h-4 w-px bg-border/80" />
-          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs">
+          <div className="h-4 w-px bg-border/80 shrink-0" />
+          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
             {[
               { id: "all", label: "Todos" },
               { id: "visa", label: "Vistos" },
@@ -86,7 +97,7 @@ function VisasCatalogPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`rounded px-2.5 py-1 font-semibold transition-colors cursor-pointer ${
+                className={`rounded px-2.5 py-1 font-semibold transition-colors cursor-pointer shrink-0 ${
                   activeTab === tab.id
                     ? "bg-surface-alt text-foreground border border-border/50"
                     : "text-muted-foreground hover:text-foreground"
@@ -97,13 +108,7 @@ function VisasCatalogPage() {
             ))}
           </div>
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5" /> Novo Catálogo
-        </button>
-      </HeaderPortal>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (

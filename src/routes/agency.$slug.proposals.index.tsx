@@ -145,36 +145,6 @@ function ProposalsList() {
     <>
       <HeaderPortal>
         <div className="flex items-center gap-2">
-          <div className="relative w-40">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Buscar cotação..."
-              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-          <select
-            className="h-8 w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Todos os Status</option>
-            <option value="draft">Rascunho</option>
-            <option value="sent">Enviada</option>
-            <option value="viewed">Visualizada</option>
-            <option value="accepted">Aceita</option>
-            <option value="converted">Convertida</option>
-            <option value="rejected">Recusada</option>
-            <option value="expired">Expirada</option>
-          </select>
           <button
             onClick={() => setNewOpen(true)}
             className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
@@ -192,6 +162,39 @@ function ProposalsList() {
           )}
         </div>
       </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Buscar cotação..."
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <select
+          className="h-8 w-full sm:w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="all">Todos os Status</option>
+          <option value="draft">Rascunho</option>
+          <option value="sent">Enviada</option>
+          <option value="viewed">Visualizada</option>
+          <option value="accepted">Aceita</option>
+          <option value="converted">Convertida</option>
+          <option value="rejected">Recusada</option>
+          <option value="expired">Expirada</option>
+        </select>
+      </div>
 
       {list.isLoading && <div className="text-sm text-muted-foreground px-1">Carregando…</div>}
 

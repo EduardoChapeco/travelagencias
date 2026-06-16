@@ -126,40 +126,6 @@ function KnowledgePage() {
     <>
       <HeaderPortal>
         <div className="flex items-center gap-2">
-          {/* Tab Switcher */}
-          <div className="flex items-center gap-1 rounded bg-surface p-0.5 text-[11px] border border-border/60">
-            <button
-              onClick={() => setTab("articles")}
-              className={`rounded px-2.5 py-1 font-bold transition-all ${
-                tab === "articles" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Guias
-            </button>
-            <button
-              onClick={() => setTab("playbooks")}
-              className={`rounded px-2.5 py-1 font-bold transition-all ${
-                tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Playbooks
-            </button>
-          </div>
-
-          <div className="h-4 w-px bg-border/80" />
-
-          {/* Search */}
-          <div className="relative w-40">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar..."
-              className="h-8 w-full rounded border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
-            />
-          </div>
-
           {/* Actions */}
           {tab === "articles" ? (
             <button
@@ -178,6 +144,40 @@ function KnowledgePage() {
           )}
         </div>
       </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 p-2 shrink-0">
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-1 rounded bg-surface p-0.5 text-[11px] border border-border/60 w-full sm:w-auto justify-center sm:justify-start">
+          <button
+            onClick={() => setTab("articles")}
+            className={`rounded px-2.5 py-1 font-bold transition-all ${
+              tab === "articles" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Guias
+          </button>
+          <button
+            onClick={() => setTab("playbooks")}
+            className={`rounded px-2.5 py-1 font-bold transition-all ${
+              tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Playbooks
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar..."
+            className="h-8 w-full rounded border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
+          />
+        </div>
+      </div>
 
 
       {/* ARTICLES TAB */}

@@ -290,35 +290,6 @@ function TripsList() {
     <>
       <HeaderPortal>
         <div className="flex items-center gap-2">
-          <div className="relative w-40">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Buscar viagem..."
-              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-            />
-          </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-          >
-            <option value="all">Todos os status</option>
-            <option value="planning">Planejamento</option>
-            <option value="confirmed">Confirmada</option>
-            <option value="in_progress">Em andamento</option>
-            <option value="completed">Concluída</option>
-            <option value="cancelled">Cancelada</option>
-            <option value="archived">Arquivadas</option>
-          </select>
           <button
             id="btn-new-trip"
             onClick={() => setNewOpen(true)}
@@ -337,6 +308,38 @@ function TripsList() {
           )}
         </div>
       </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Buscar viagem..."
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
+          className="h-8 w-full sm:w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+        >
+          <option value="all">Todos os status</option>
+          <option value="planning">Planejamento</option>
+          <option value="confirmed">Confirmada</option>
+          <option value="in_progress">Em andamento</option>
+          <option value="completed">Concluída</option>
+          <option value="cancelled">Cancelada</option>
+          <option value="archived">Arquivadas</option>
+        </select>
+      </div>
 
       {list.isLoading && (
         <div className="flex h-32 items-center justify-center">

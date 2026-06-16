@@ -542,46 +542,46 @@ function LeadDetailPage() {
             />
           ) : (
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 mb-6 flex-wrap h-auto gap-x-2 gap-y-1">
+              <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0 mb-6">
                 <TabsTrigger
                   value="general"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   Geral
                 </TabsTrigger>
                 <TabsTrigger
                   value="pax"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   Acompanhantes
                 </TabsTrigger>
                 <TabsTrigger
                   value="meetings"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   Agenda & Lembretes
                 </TabsTrigger>
                 <TabsTrigger
                   value="proposals"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   Cotações
                 </TabsTrigger>
                 <TabsTrigger
                   value="omnichannel"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   <MessageSquare className="h-3.5 w-3.5" /> Mensagens
                 </TabsTrigger>
                 <TabsTrigger
                   value="ai_insights"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 text-brand bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 text-brand bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   <Sparkles className="h-3.5 w-3.5" /> IA Hunter
                 </TabsTrigger>
                 <TabsTrigger
                   value="timeline"
-                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors"
+                  className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
                 >
                   Histórico
                 </TabsTrigger>

@@ -76,17 +76,29 @@ function IntegrationsPage() {
   return (
     <>
       <Tabs defaultValue="ai" className="max-w-4xl">
-        <TabsList>
-          <TabsTrigger value="ai" className="flex items-center gap-1.5">
+        <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex mb-6">
+          <TabsTrigger
+            value="ai"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+          >
             <Cpu className="h-3.5 w-3.5" /> IA
           </TabsTrigger>
-          <TabsTrigger value="comms" className="flex items-center gap-1.5">
+          <TabsTrigger
+            value="comms"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+          >
             <MessageCircle className="h-3.5 w-3.5" /> Comunicação
           </TabsTrigger>
-          <TabsTrigger value="whatsapp" className="flex items-center gap-1.5">
+          <TabsTrigger
+            value="whatsapp"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+          >
             <Zap className="h-3.5 w-3.5" /> WhatsApp
           </TabsTrigger>
-          <TabsTrigger value="apikeys" className="flex items-center gap-1.5">
+          <TabsTrigger
+            value="apikeys"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+          >
             <KeyRound className="h-3.5 w-3.5" /> Chaves de Acesso
           </TabsTrigger>
         </TabsList>

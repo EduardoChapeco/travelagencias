@@ -215,62 +215,7 @@ function CalendarPage() {
   return (
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
       <HeaderPortal>
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Month Navigation */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={handlePrevMonth}
-              className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="h-3 w-3" />
-            </button>
-            <button
-              onClick={handleToday}
-              className="h-7 px-2 border border-border/80 hover:border-brand/40 bg-surface text-[10px] font-bold rounded transition-colors cursor-pointer"
-            >
-              Hoje
-            </button>
-            <span className="text-[11px] font-bold min-w-[90px] text-center text-foreground uppercase tracking-wide px-1">
-              {MONTHS[month].substring(0, 3)} {year}
-            </span>
-            <button
-              onClick={handleNextMonth}
-              className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
-            >
-              <ChevronRight className="h-3 w-3" />
-            </button>
-          </div>
-
-          <div className="h-4 w-px bg-border/80" />
-
-          {/* Filters */}
-          <Select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="h-7 text-[10px] bg-background border-border/80 w-28 rounded"
-          >
-            <option value="all">Tipos</option>
-            <option value="call">📞 Telefone</option>
-            <option value="video">💻 Vídeo</option>
-            <option value="in_person">👤 Presencial</option>
-            <option value="whatsapp">💬 WhatsApp</option>
-          </Select>
-
-          {usersQ.data && (
-            <Select
-              value={filterUser}
-              onChange={(e) => setFilterUser(e.target.value)}
-              className="h-7 text-[10px] bg-background border-border/80 w-32 rounded"
-            >
-              <option value="all">Agentes</option>
-              {usersQ.data.map((u: any) => (
-                <option key={u.user_id} value={u.user_id || ""}>
-                  👤 {u.user_name}
-                </option>
-              ))}
-            </Select>
-          )}
-
+        <div className="flex items-center gap-2">
           {/* Actions */}
           <PrimaryButton
             onClick={() => setNewEventOpen(true)}
@@ -290,6 +235,63 @@ function CalendarPage() {
           )}
         </div>
       </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 p-2 shrink-0">
+        {/* Month Navigation */}
+        <div className="flex items-center justify-between sm:justify-start gap-1 w-full sm:w-auto">
+          <button
+            onClick={handlePrevMonth}
+            className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="h-3 w-3" />
+          </button>
+          <button
+            onClick={handleToday}
+            className="h-7 px-2 border border-border/80 hover:border-brand/40 bg-surface text-[10px] font-bold rounded transition-colors cursor-pointer"
+          >
+            Hoje
+          </button>
+          <span className="text-[11px] font-bold min-w-[90px] text-center text-foreground uppercase tracking-wide px-1">
+            {MONTHS[month].substring(0, 3)} {year}
+          </span>
+          <button
+            onClick={handleNextMonth}
+            className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+          >
+            <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="flex items-center gap-2 justify-end w-full sm:w-auto">
+          <Select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="h-7 text-[10px] bg-background border-border/80 w-full sm:w-28 rounded"
+          >
+            <option value="all">Tipos</option>
+            <option value="call">📞 Telefone</option>
+            <option value="video">💻 Vídeo</option>
+            <option value="in_person">👤 Presencial</option>
+            <option value="whatsapp">💬 WhatsApp</option>
+          </Select>
+
+          {usersQ.data && (
+            <Select
+              value={filterUser}
+              onChange={(e) => setFilterUser(e.target.value)}
+              className="h-7 text-[10px] bg-background border-border/80 w-full sm:w-32 rounded"
+            >
+              <option value="all">Agentes</option>
+              {usersQ.data.map((u: any) => (
+                <option key={u.user_id} value={u.user_id || ""}>
+                  👤 {u.user_name}
+                </option>
+              ))}
+            </Select>
+          )}
+        </div>
+      </div>
 
       <div className="flex-1 overflow-auto bg-background p-2">
         <div className="bg-surface border border-border/70 rounded-xl overflow-hidden h-full flex flex-col">

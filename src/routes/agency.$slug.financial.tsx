@@ -35,7 +35,7 @@ function FinancialLayout() {
         title="Financeiro"
         description="Entradas, saídas, faturas e demonstrativo de resultados."
       />
-      <div className="mb-5 flex items-center gap-1 border-b border-border">
+      <div className="mb-5 flex items-center gap-1 border-b border-border overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
         {tabs.map((t) => {
           const active = pathname.endsWith(t.to.split("/").pop()!);
           return (
@@ -43,7 +43,7 @@ function FinancialLayout() {
               key={t.to}
               to={t.to}
               params={{ slug }}
-              className={`-mb-px border-b-2 px-3 py-2 text-xs font-medium transition ${
+              className={`-mb-px border-b-2 px-3 py-2 text-xs font-medium transition shrink-0 ${
                 active
                   ? "border-foreground text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"

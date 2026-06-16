@@ -73,22 +73,22 @@ function SupplierDetailsPage() {
         {/* Main Content Area */}
         <div className="space-y-6">
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0">
+            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0">
               <TabsTrigger
                 value="geral"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
               >
                 Geral
               </TabsTrigger>
               <TabsTrigger
                 value="contatos"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
               >
                 Contatos & SLA
               </TabsTrigger>
               <TabsTrigger
                 value="contratos"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
               >
                 Contratos & Arquivos
               </TabsTrigger>

@@ -116,13 +116,17 @@ function CashPage() {
         />
       </div>
 
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl shrink-0">
+        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
           {(["all", "income", "expense", "pending"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`rounded px-2.5 py-1 ${filter === f ? "bg-surface-alt text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
+                filter === f
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {f === "all"
                 ? "Tudo"
@@ -136,7 +140,7 @@ function CashPage() {
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer w-full sm:w-auto justify-center shrink-0"
         >
           <Plus className="h-3.5 w-3.5" /> Novo lançamento
         </button>

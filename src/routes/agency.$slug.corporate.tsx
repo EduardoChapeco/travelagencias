@@ -109,39 +109,6 @@ function CorporatePage() {
   return (
     <>
       <HeaderPortal>
-        <div className="flex flex-1 flex-col sm:flex-row gap-2.5 max-w-xl">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              value={q}
-              onChange={(e) => {
-                setQ(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Buscar RFP..."
-              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
-            />
-          </div>
-          <div className="relative w-full sm:w-40">
-            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="pending">Pendente</option>
-              <option value="quoting">Em Cotação</option>
-              <option value="sent_for_approval">Aguardando</option>
-              <option value="approved">Aprovado</option>
-              <option value="rejected">Recusado</option>
-            </select>
-          </div>
-        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
@@ -161,6 +128,40 @@ function CorporatePage() {
           )}
         </div>
       </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            value={q}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Buscar RFP..."
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
+          />
+        </div>
+        <div className="relative w-full sm:w-40">
+          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
+          >
+            <option value="all">Todos os Status</option>
+            <option value="pending">Pendente</option>
+            <option value="quoting">Em Cotação</option>
+            <option value="sent_for_approval">Aguardando</option>
+            <option value="approved">Aprovado</option>
+            <option value="rejected">Recusado</option>
+          </select>
+        </div>
+      </div>
 
       {!rfpsQ.isLoading && rfps.length === 0 && (
         <EmptyState

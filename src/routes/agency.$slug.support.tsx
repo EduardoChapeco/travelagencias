@@ -82,16 +82,27 @@ function SupportRoute() {
   return (
     <div className="flex flex-col h-[calc(100vh-3rem)] bg-background overflow-hidden">
       <HeaderPortal>
-        <div className="flex flex-1 flex-col sm:flex-row gap-2.5 max-w-2xl">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por código, assunto ou cliente..."
-              className="pl-8 h-8 text-xs w-full"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          <PrimaryButton
+            className="h-8 text-[11px] font-bold rounded-lg cursor-pointer"
+            onClick={() => setTicketSheetOpen(true)}
+          >
+            Novo Ticket Interno
+          </PrimaryButton>
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por código, assunto ou cliente..."
+            className="pl-8 h-8 text-xs w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="w-full sm:w-40 shrink-0">
             <Select
               value={stageFilter}
@@ -120,15 +131,7 @@ function SupportRoute() {
             </Select>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            className="h-8 text-[11px] font-bold rounded-lg cursor-pointer"
-            onClick={() => setTicketSheetOpen(true)}
-          >
-            Novo Ticket Interno
-          </PrimaryButton>
-        </div>
-      </HeaderPortal>
+      </div>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col space-y-4">
         {/* KPI Dashboards */}

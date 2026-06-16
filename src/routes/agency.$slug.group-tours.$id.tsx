@@ -121,7 +121,7 @@ function TourDetailPage() {
             <Select
               value={t.status}
               onChange={(e) => updateStatus(e.target.value)}
-              className="h-9 text-xs"
+              className="h-9 text-xs shrink-0"
             >
               <option value="draft">Rascunho</option>
               <option value="open">Aberta / Inscrições</option>
@@ -129,12 +129,12 @@ function TourDetailPage() {
               <option value="completed">Concluída / Encerrada</option>
               <option value="cancelled">Cancelada</option>
             </Select>
-            <GhostButton onClick={togglePublic} type="button">
+            <GhostButton onClick={togglePublic} type="button" className="shrink-0">
               {t.is_public ? "Tornar privada" : "Publicar"}
             </GhostButton>
             <button
               onClick={() => setOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground shrink-0"
             >
               <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
             </button>
@@ -150,11 +150,33 @@ function TourDetailPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="bg-surface border border-border">
-          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="itinerary">Itinerário</TabsTrigger>
-          <TabsTrigger value="passengers">Inscritos ({enrolQ.data?.length || 0})</TabsTrigger>
-          {t.bus_layout_id && <TabsTrigger value="bus_seats">Mapa do Ônibus</TabsTrigger>}
+        <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0">
+          <TabsTrigger
+            value="overview"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Visão Geral
+          </TabsTrigger>
+          <TabsTrigger
+            value="itinerary"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Itinerário
+          </TabsTrigger>
+          <TabsTrigger
+            value="passengers"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Inscritos ({enrolQ.data?.length || 0})
+          </TabsTrigger>
+          {t.bus_layout_id && (
+            <TabsTrigger
+              value="bus_seats"
+              className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            >
+              Mapa do Ônibus
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="overview">
