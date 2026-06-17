@@ -186,7 +186,7 @@ function TourDetailPage() {
         </TabsList>
 
         <TabsContent value="overview">
-          <div className="rounded-lg border border-border bg-surface p-6">
+          <div className="rounded border border-border bg-surface p-6">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-semibold">Configurações Gerais</h3>
               <button
@@ -254,11 +254,11 @@ function TourDetailPage() {
 
         <TabsContent value="passengers">
           {enrolQ.data?.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
               Sem inscrições ainda.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-border">
+            <div className="overflow-hidden rounded border border-border">
               <table className="w-full text-sm">
                 <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
                   <tr>
@@ -344,7 +344,7 @@ function TourDetailPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-3">
+    <div className="rounded border border-border bg-surface p-3">
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-1 text-base font-semibold">{value}</div>
     </div>
@@ -478,7 +478,7 @@ function ItineraryEditor({
     <div className="space-y-4">
       <ConfirmDialog />
       {/* AI WIZARD */}
-      <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 space-y-3 mb-6">
+      <div className="rounded border border-primary/30 bg-primary/5 p-4 space-y-3 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -520,7 +520,7 @@ function ItineraryEditor({
       {days.map((d) => (
         <div
           key={d.day_number}
-          className="rounded-lg border border-border bg-surface p-4 flex items-start gap-4"
+          className="rounded border border-border bg-surface p-4 flex items-start gap-4"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-alt text-xs font-semibold">
             D{d.day_number}
@@ -545,14 +545,14 @@ function ItineraryEditor({
       {!adding ? (
         <button
           onClick={() => setAdding(true)}
-          className="flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-border p-4 text-sm font-medium text-muted-foreground hover:bg-surface-alt"
+          className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border p-4 text-sm font-medium text-muted-foreground hover:bg-surface-alt"
         >
           <Plus className="h-4 w-4" /> Adicionar Dia
         </button>
       ) : (
         <form
           onSubmit={handleAdd}
-          className="rounded-lg border border-border bg-surface p-4 space-y-3"
+          className="rounded border border-border bg-surface p-4 space-y-3"
         >
           <div className="grid grid-cols-[80px_1fr] gap-3">
             <Field label="Dia">
@@ -758,7 +758,7 @@ function BusSeatManager({
 
       <div className="w-full md:w-80 space-y-4">
         {selectedSeat ? (
-          <div className="bg-brand/5 border border-brand/20 rounded-xl p-5">
+          <div className="bg-brand/5 border border-brand/20 rounded p-5">
             <div className="text-[10px] font-bold uppercase tracking-widest text-brand mb-1">
               Poltrona {selectedSeat.label}
             </div>
@@ -784,12 +784,12 @@ function BusSeatManager({
             </div>
           </div>
         ) : (
-          <div className="bg-surface border border-dashed border-border/60 rounded-xl p-6 text-center text-sm text-muted-foreground">
+          <div className="bg-surface border border-dashed border-border/60 rounded p-6 text-center text-sm text-muted-foreground">
             Clique em uma poltrona no mapa ao lado para alocar os passageiros inscritos.
           </div>
         )}
 
-        <div className="bg-surface border border-border rounded-xl p-5">
+        <div className="bg-surface border border-border rounded p-5">
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
             Resumo de Ocupação
           </div>

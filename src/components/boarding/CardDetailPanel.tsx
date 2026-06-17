@@ -10,6 +10,8 @@ import {
   Link as LinkIcon,
   CheckSquare,
   Square,
+  Pencil,
+  Check,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PrimaryButton, GhostButton, fmtDate } from "@/components/ui/form";
@@ -34,6 +36,8 @@ export function CardDetailPanel({
 
   const [checklist, setChecklist] = useState<ChecklistItem[]>(card.checklist ?? []);
   const [newItem, setNewItem] = useState("");
+
+  const [isEditing, setIsEditing] = useState(false);
 
   // Inline edits
   const [pnr, setPnr] = useState(card.pnr ?? "");
@@ -152,6 +156,7 @@ export function CardDetailPanel({
       });
       toast.success("Card atualizado!");
       setEditDirty(false);
+      setIsEditing(false);
       onUpdated();
     } catch (e: any) {
       toast.error(e.message);
@@ -219,6 +224,14 @@ export function CardDetailPanel({
                 {editSaving ? "Salvando…" : "Salvar alterações"}
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              className={`rounded border border-border p-1 hover:bg-surface-alt ${isEditing ? "bg-brand/10 border-brand text-brand" : ""}`}
+              title={isEditing ? "Visualizar Informações" : "Editar Informações"}
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
             <button
               type="button"
               onClick={onClose}
@@ -326,150 +339,244 @@ export function CardDetailPanel({
             </div>
           )}
 
-          {/* Edição inline: PNR, Cia, Data */}
-          <div className="space-y-3">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Dados do Voo
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-[11px] text-muted-foreground font-medium">
-                  Localizador da Reserva
-                </label>
-                <input
-                  type="text"
-                  value={pnr}
-                  onChange={(e) => {
-                    setPnr(e.target.value);
-                    setEditDirty(true);
-                  }}
-                  placeholder="ABC123"
-                  className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-                />
+          {!isEditing ? (
+            <div className="space-y-4">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-brand border-b border-border pb-2">
+                Dados do Voo & Briefing
               </div>
-              <div>
-                <label className="text-[11px] text-muted-foreground font-medium">
-                  Cia / Operadora
-                </label>
-                <input
-                  type="text"
-                  value={airline}
-                  onChange={(e) => {
-                    setAirline(e.target.value);
-                    setEditDirty(true);
-                  }}
-                  placeholder="LATAM, GOL…"
-                  className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-                />
+              <div className="space-y-2.5 text-xs">
+                <div className="flex justify-between items-center py-1 border-b border-border/30">
+                  <span className="text-muted-foreground">Localizador da Reserva</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-foreground">{pnr || "Pendente"}</span>
+                    {tags.includes("auto_dispatch_enabled") && (
+                      <span className="text-[9px] uppercase tracking-wider font-bold bg-success/10 text-success border border-success/20 px-1.5 py-0.5 rounded-full">
+                        Auto-Release
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-border/30">
+                  <span className="text-muted-foreground">Cia / Operadora</span>
+                  <span className="font-semibold text-foreground">{airline || "Pendente"}</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-border/30">
+                  <span className="text-muted-foreground">Data de Embarque</span>
+                  <span className="font-semibold text-foreground">
+                    {departureDate
+                      ? new Date(departureDate + "T00:00:00").toLocaleDateString("pt-BR")
+                      : "Pendente"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-border/30">
+                  <span className="text-muted-foreground">Reunião de Briefing</span>
+                  <span className="font-semibold text-foreground">
+                    {briefingDate ? new Date(briefingDate).toLocaleString("pt-BR") : "Não agendada"}
+                  </span>
+                </div>
+                {briefingUrl && (
+                  <div className="flex justify-between items-center py-1 border-b border-border/30">
+                    <span className="text-muted-foreground">Link da Reunião</span>
+                    <a
+                      href={briefingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-brand hover:underline font-semibold"
+                    >
+                      {briefingUrl}
+                    </a>
+                  </div>
+                )}
               </div>
-            </div>
-            <div>
-              <label className="text-[11px] text-muted-foreground font-medium">
-                Data de Embarque
-              </label>
-              <input
-                type="date"
-                value={departureDate}
-                onChange={(e) => {
-                  setDepartureDate(e.target.value);
-                  setEditDirty(true);
-                }}
-                className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              <div>
-                <label className="text-[11px] text-muted-foreground font-medium">
-                  Reunião de Briefing
-                </label>
-                <input
-                  type="datetime-local"
-                  value={briefingDate ? briefingDate.slice(0, 16) : ""}
-                  onChange={(e) => {
-                    setBriefingDate(e.target.value);
-                    setEditDirty(true);
-                  }}
-                  className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] text-muted-foreground font-medium">
-                  Link da Reunião
-                </label>
-                <input
-                  type="text"
-                  value={briefingUrl}
-                  onChange={(e) => {
-                    setBriefingUrl(e.target.value);
-                    setEditDirty(true);
-                  }}
-                  placeholder="https://meet.google.com/..."
-                  className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Tags */}
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
-              Tags / Alertas
+              {tags.length > 0 && (
+                <div className="pt-2">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                    Tags / Alertas
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
-                >
-                  {tag}
+          ) : (
+            <>
+              {/* Edição inline: PNR, Cia, Data */}
+              <div className="space-y-3">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  Dados do Voo
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">
+                      Localizador da Reserva
+                    </label>
+                    <input
+                      type="text"
+                      value={pnr}
+                      onChange={(e) => {
+                        setPnr(e.target.value);
+                        setEditDirty(true);
+                      }}
+                      placeholder="ABC123"
+                      className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">
+                      Cia / Operadora
+                    </label>
+                    <input
+                      type="text"
+                      value={airline}
+                      onChange={(e) => {
+                        setAirline(e.target.value);
+                        setEditDirty(true);
+                      }}
+                      placeholder="LATAM, GOL…"
+                      className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] text-muted-foreground font-medium">
+                    Data de Embarque
+                  </label>
+                  <input
+                    type="date"
+                    value={departureDate}
+                    onChange={(e) => {
+                      setDepartureDate(e.target.value);
+                      setEditDirty(true);
+                    }}
+                    className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">
+                      Reunião de Briefing
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={briefingDate ? briefingDate.slice(0, 16) : ""}
+                      onChange={(e) => {
+                        setBriefingDate(e.target.value);
+                        setEditDirty(true);
+                      }}
+                      className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">
+                      Link da Reunião
+                    </label>
+                    <input
+                      type="text"
+                      value={briefingUrl}
+                      onChange={(e) => {
+                        setBriefingUrl(e.target.value);
+                        setEditDirty(true);
+                      }}
+                      placeholder="https://meet.google.com/..."
+                      className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-border/50">
+                  <label className="flex items-start gap-2 cursor-pointer text-xs font-semibold text-foreground">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 mt-0.5 rounded border-border text-brand focus:ring-brand"
+                      checked={tags.includes("auto_dispatch_enabled")}
+                      onChange={(e) => {
+                        const newTags = e.target.checked
+                          ? [...tags, "auto_dispatch_enabled"]
+                          : tags.filter(t => t !== "auto_dispatch_enabled");
+                        setTags(newTags);
+                        setEditDirty(true);
+                      }}
+                    />
+                    <div>
+                      <div>Disparo Automático (Liberar embarque automático)</div>
+                      <div className="text-[10px] text-muted-foreground font-medium mt-0.5 leading-tight">
+                        Se ativado, o sistema liberará os vouchers e localizadores automaticamente assim que a IA/OCR conciliar o pagamento. Desative para revisão manual (erros de loc, pendências).
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  Tags / Alertas
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="hover:text-danger"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                {/* Presets rápidos */}
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {PRESET_TAGS.filter((t) => !tags.includes(t))
+                    .slice(0, 5)
+                    .map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => addTag(tag)}
+                        className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTag(newTag);
+                      }
+                    }}
+                    placeholder="Nova tag personalizada…"
+                    className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                  />
                   <button
                     type="button"
-                    onClick={() => removeTag(tag)}
-                    className="hover:text-danger"
+                    onClick={() => addTag(newTag)}
+                    className="h-8 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
                   >
-                    <X className="h-3 w-3" />
+                    + Add
                   </button>
-                </span>
-              ))}
-            </div>
-            {/* Presets rápidos */}
-            <div className="flex flex-wrap gap-1 mb-2">
-              {PRESET_TAGS.filter((t) => !tags.includes(t))
-                .slice(0, 5)
-                .map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => addTag(tag)}
-                    className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
-                  >
-                    + {tag}
-                  </button>
-                ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addTag(newTag);
-                  }
-                }}
-                placeholder="Nova tag personalizada…"
-                className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
-              />
-              <button
-                type="button"
-                onClick={() => addTag(newTag)}
-                className="h-8 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
-              >
-                + Add
-              </button>
-            </div>
-          </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Web Check-in Link */}
           <PrimaryButton
@@ -553,16 +660,22 @@ export function CardDetailPanel({
             <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
               Notas do Operador
             </div>
-            <textarea
-              value={notes}
-              onChange={(e) => {
-                setNotes(e.target.value);
-                setEditDirty(true);
-              }}
-              placeholder="Observações internas sobre este embarque…"
-              rows={3}
-              className="w-full rounded-md border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
-            />
+            {!isEditing ? (
+              <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-lg border border-border/40 whitespace-pre-line">
+                {notes || "Nenhuma observação cadastrada."}
+              </p>
+            ) : (
+              <textarea
+                value={notes}
+                onChange={(e) => {
+                  setNotes(e.target.value);
+                  setEditDirty(true);
+                }}
+                placeholder="Observações internas sobre este embarque…"
+                rows={3}
+                className="w-full rounded-md border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+              />
+            )}
           </div>
 
           {/* Alerts do sistema */}

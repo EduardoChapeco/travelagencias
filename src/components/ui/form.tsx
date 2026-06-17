@@ -29,7 +29,7 @@ export function Field({
 }
 
 const baseInput =
-  "w-full h-9 px-2.5 rounded-md border border-input bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-60";
+  "w-full h-[42px] px-3 rounded-sm border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60";
 
 export const Input = React.forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   (props, ref) => {
@@ -53,7 +53,7 @@ export const Textarea = React.forwardRef<
     <textarea
       ref={ref}
       {...props}
-      className={`w-full min-h-[80px] p-2.5 rounded-md border border-border bg-surface text-sm outline-none focus:border-border-strong ${props.className ?? ""}`}
+      className={`w-full min-h-[85px] p-3 rounded-sm border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60 ${props.className ?? ""}`}
     />
   );
 });
@@ -63,7 +63,7 @@ export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElemen
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-9 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-brand hover:text-brand-foreground disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-sm bg-primary px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
     />
   );
 }
@@ -72,7 +72,7 @@ export function GhostButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-9 rounded-md border border-border px-3 text-sm font-medium transition-colors hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-sm border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
     />
   );
 }
@@ -92,7 +92,7 @@ export function Sheet({
         className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-6 text-lg font-semibold tracking-tight">{title}</h2>
+        <h2 className="mb-6 text-sm font-extrabold uppercase tracking-wider text-foreground border-b border-border pb-3">{title}</h2>
         {children}
       </div>
     </div>
@@ -107,15 +107,15 @@ export function StatusBadge({
   tone?: "neutral" | "success" | "warning" | "danger" | "info";
 }) {
   const tones: Record<string, string> = {
-    neutral: "bg-surface-alt text-muted-foreground",
-    success: "bg-success-bg text-success",
-    warning: "bg-warning-bg text-warning",
-    danger: "bg-danger-bg text-danger",
-    info: "bg-info-bg text-info",
+    neutral: "bg-surface-alt text-muted-foreground border border-border/40",
+    success: "bg-success-bg text-success border border-success/30",
+    warning: "bg-warning-bg text-warning border border-warning/30",
+    danger: "bg-danger-bg text-danger border border-danger/30",
+    info: "bg-info-bg text-info border border-info/30",
   };
   return (
     <span
-      className={`inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${tones[tone]}`}
+      className={`inline-flex items-center rounded-xs px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tones[tone]}`}
     >
       {children}
     </span>

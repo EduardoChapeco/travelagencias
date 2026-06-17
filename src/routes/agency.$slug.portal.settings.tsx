@@ -153,7 +153,7 @@ function PortalSettingsPage() {
             href={portalUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
           >
             <Eye className="h-3.5 w-3.5" /> Ver portal
           </a>
@@ -161,7 +161,7 @@ function PortalSettingsPage() {
             type="submit"
             form="portal-settings-form"
             disabled={busy}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex h-8 items-center gap-1.5 rounded-sm bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" />
             {busy ? "Salvando..." : "Salvar"}
@@ -170,13 +170,13 @@ function PortalSettingsPage() {
       </HeaderPortal>
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
-        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
+        <div className="flex gap-1 overflow-x-auto rounded-sm border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
           {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-sm px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
                 tab === t.id
                   ? "bg-surface-alt text-foreground border border-border/50"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
@@ -194,7 +194,7 @@ function PortalSettingsPage() {
 
       {/* ── SEO GLOBAL ───────────────────────────────────────────── */}
       {tab === "seo" && (
-        <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+        <div className="space-y-5 rounded-md border border-border bg-surface p-5">
           <div>
             <h3 className="text-sm font-semibold mb-0.5">SEO Global do Portal</h3>
             <p className="text-xs text-muted-foreground">
@@ -242,7 +242,7 @@ function PortalSettingsPage() {
               <img
                 src={form.seo_og_image_url}
                 alt="OG Preview"
-                className="mt-2 h-24 rounded-lg border border-border object-cover"
+                className="mt-2 h-24 rounded-sm border border-border object-cover"
               />
             )}
           </Field>
@@ -276,7 +276,7 @@ function PortalSettingsPage() {
           </Field>
 
           {/* Preview card */}
-          <div className="rounded-lg border border-border bg-surface-alt p-4">
+          <div className="rounded-sm border border-border bg-surface-alt p-4">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">
               Preview no Google
             </div>
@@ -297,7 +297,7 @@ function PortalSettingsPage() {
 
       {/* ── HEADER ───────────────────────────────────────────────── */}
       {tab === "header" && (
-        <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+        <div className="space-y-5 rounded-md border border-border bg-surface p-5">
           <h3 className="text-sm font-semibold">Configurações do Cabeçalho</h3>
 
           {/* Header style */}
@@ -327,7 +327,7 @@ function PortalSettingsPage() {
                   key={s.id}
                   type="button"
                   onClick={() => set("header_style", s.id)}
-                  className={`rounded-lg border p-3 text-left transition-colors ${
+                  className={`rounded-sm border p-3 text-left transition-colors ${
                     form.header_style === s.id
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-border-strong"
@@ -403,7 +403,7 @@ function PortalSettingsPage() {
 
       {/* ── FOOTER ───────────────────────────────────────────────── */}
       {tab === "footer" && (
-        <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+        <div className="space-y-5 rounded-md border border-border bg-surface p-5">
           <h3 className="text-sm font-semibold">Configurações do Rodapé</h3>
 
           <Field label="Texto de copyright">
@@ -454,7 +454,7 @@ function PortalSettingsPage() {
           </div>
 
           {/* Footer preview */}
-          <div className="rounded-lg border border-border bg-surface-alt p-4">
+          <div className="rounded-sm border border-border bg-surface-alt p-4">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
               Preview do rodapé
             </div>
@@ -474,7 +474,7 @@ function PortalSettingsPage() {
 
       {/* ── SCRIPTS ──────────────────────────────────────────────── */}
       {tab === "scripts" && (
-        <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+        <div className="space-y-5 rounded-md border border-border bg-surface p-5">
           <div>
             <h3 className="text-sm font-semibold mb-0.5">Scripts e Integrações</h3>
             <p className="text-xs text-muted-foreground">
@@ -528,7 +528,7 @@ function PortalSettingsPage() {
           </Field>
 
           {/* Warning */}
-          <div className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
+          <div className="flex items-start gap-2 rounded-sm border border-warning/30 bg-warning/5 p-3">
             <span className="mt-0.5 text-warning">⚠️</span>
             <p className="text-[11px] text-muted-foreground">
               Scripts personalizados são executados em todas as páginas do portal. Certifique-se de

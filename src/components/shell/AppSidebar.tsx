@@ -64,6 +64,7 @@ const items: SlimSidebarItem[] = [
   { label: "Minha Empresa", to: "company", icon: Building2, adminOnly: true },
   { label: "Equipe", to: "team", icon: Users2, adminOnly: true },
   { label: "Identidade Visual", to: "brand", icon: Palette, adminOnly: true },
+  { label: "Design System", to: "design-system", icon: BookOpen, adminOnly: true },
   { label: "Conexões", to: "integrations", icon: Puzzle, adminOnly: true },
   { label: "Assinatura & Planos", to: "billing", icon: CreditCard, adminOnly: true },
   { label: "Configurações", to: "settings", icon: Settings, adminOnly: true },
@@ -100,39 +101,17 @@ export function AppSidebar({
         to: i.to !== undefined ? `/agency/${slug}${i.to ? `/${i.to}` : ""}` : undefined,
       }))}
       brand={
-        <>
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground">
-            {(agency?.name ?? "T").charAt(0).toUpperCase()}
-          </div>
-          <span
-            className={cn(
-              "ml-3 min-w-0 translate-x-1 truncate text-[12.5px] font-semibold transition duration-200",
-              isPinned
-                ? "translate-x-0 opacity-100"
-                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100",
-            )}
-          >
-            {agency?.name ?? "TravelOS"}
-          </span>
-        </>
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground font-sans">
+          {(agency?.name ?? "T").charAt(0).toUpperCase()}
+        </div>
       }
       footer={
         <button
           onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-          className="flex h-7 w-full items-center gap-3 overflow-hidden rounded-lg px-2 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title="Sair"
         >
-          <LogOut className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
-          <span
-            className={cn(
-              "translate-x-1 truncate transition duration-200",
-              isPinned
-                ? "translate-x-0 opacity-100"
-                : "opacity-0 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100",
-            )}
-          >
-            Sair
-          </span>
+          <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
         </button>
       }
     />

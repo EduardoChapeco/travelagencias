@@ -22,6 +22,7 @@ import {
   FileDown,
   AlertCircle,
   Sparkles,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -522,9 +523,10 @@ function LeadDetailPage() {
               )}
               <GhostButton
                 onClick={() => setEditing((e) => !e)}
-                className="h-9 px-4 text-xs font-bold"
+                className="h-9 w-9 p-0 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                title={editing ? "Fechar edição" : "Editar"}
               >
-                {editing ? "Visualizar" : "Editar Campos"}
+                {editing ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
               </GhostButton>
             </div>
           </div>

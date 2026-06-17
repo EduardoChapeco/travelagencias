@@ -50,8 +50,8 @@ export function LeadInterestCard({ lead }: { lead: any }) {
   const paxBreakdown = parts.length > 0 ? parts.join(", ") : `${totalPax} Pax`;
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-      <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
+    <div className="space-y-4">
+      <h4 className="text-xs font-extrabold uppercase tracking-widest text-brand border-b border-border pb-2 flex items-center gap-1.5">
         <MapPin className="h-4 w-4 text-brand" /> Viagem & Interesse
       </h4>
       <div className="space-y-3 text-sm">

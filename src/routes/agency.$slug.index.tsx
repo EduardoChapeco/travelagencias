@@ -159,7 +159,7 @@ function Dashboard() {
         {/* EMBARQUES IMINENTES (Viagens Sob Medida) */}
         <div className="xl:col-span-2 space-y-6">
           {/* GRÁFICO DE RECEITA */}
-          <div className="rounded-2xl border border-border/50 bg-surface overflow-hidden flex flex-col h-[300px]">
+          <div className="rounded-md border border-border/50 bg-surface overflow-hidden flex flex-col h-[300px]">
             <div className="border-b border-border/50 p-5 bg-surface-alt/20 flex items-center justify-between">
               <div className="flex items-center gap-2 font-bold text-foreground">
                 <BarChart3 className="h-4 w-4 text-brand" /> Receita Confirmada (Últimos 6 meses)
@@ -221,7 +221,7 @@ function Dashboard() {
           </div>
 
           {/* LISTA DE EMBARQUES */}
-          <div className="rounded-2xl border border-border/50 bg-surface overflow-hidden flex flex-col">
+          <div className="rounded-md border border-border/50 bg-surface overflow-hidden flex flex-col">
             <div className="border-b border-border/50 p-5 bg-surface-alt/20 flex items-center justify-between">
               <div className="flex items-center gap-2 font-bold text-foreground">
                 <PlaneTakeoff className="h-4 w-4 text-brand" /> Próximos Embarques (VIP)
@@ -249,10 +249,10 @@ function Dashboard() {
                       key={t.id}
                       to="/agency/$slug/trips/$id"
                       params={{ slug, id: t.id }}
-                      className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-brand/30 hover:bg-surface-alt/30 transition-all group"
+                      className="flex items-center justify-between p-4 rounded-sm border border-border/50 hover:border-brand/30 hover:bg-surface-alt/30 transition-all group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-lg bg-brand/5 border border-brand/20 flex items-center justify-center text-brand font-bold text-xs">
+                        <div className="h-10 w-10 rounded-sm bg-brand/5 border border-brand/20 flex items-center justify-center text-brand font-bold text-xs">
                           {t.travel_start
                             ? new Date(t.travel_start).getDate().toString().padStart(2, "0")
                             : "--"}
@@ -282,7 +282,7 @@ function Dashboard() {
 
         {/* EXCURSÕES E ATALHOS */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border/50 bg-surface  overflow-hidden">
+          <div className="rounded-md border border-border/50 bg-surface  overflow-hidden">
             <div className="border-b border-border/50 p-4 bg-surface-alt/20 flex items-center gap-2 font-bold text-foreground text-sm">
               <Bus className="h-4 w-4 text-brand" /> Próximas Excursões
             </div>
@@ -298,12 +298,12 @@ function Dashboard() {
                       key={g.id}
                       to="/agency/$slug/group-tours/$id"
                       params={{ slug, id: g.id }}
-                      className="block p-3 rounded-lg border border-border/50 hover:border-brand/30 transition-all"
+                      className="block p-3 rounded-sm border border-border/50 hover:border-brand/30 transition-all"
                     >
                       <div className="font-semibold text-sm mb-1">{g.title}</div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">{fmtDate(g.departure_date)}</span>
-                        <span className="font-mono bg-surface-alt px-1.5 py-0.5 rounded">
+                        <span className="font-mono bg-surface-alt px-1.5 py-0.5 rounded-xs">
                           {g.reserved_seats}/{g.total_seats} pax
                         </span>
                       </div>
@@ -314,7 +314,7 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-brand/20 bg-brand/5 p-5 ">
+          <div className="rounded-md border border-brand/20 bg-brand/5 p-5 ">
             <h3 className="text-xs font-bold uppercase tracking-widest text-brand mb-3">
               Ações Rápidas
             </h3>
@@ -347,10 +347,10 @@ function StatCard({
   bg: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-surface p-6  transition-all hover: hover:border-border-strong group">
+    <div className="relative overflow-hidden rounded-md border border-border/50 bg-surface p-6  transition-all hover: hover:border-border-strong group">
       <div className="absolute right-0 top-0 h-24 w-24 -translate-y-8 translate-x-8 rounded-full bg-surface-alt opacity-20 transition-transform group-hover:scale-150" />
       <div className="flex items-center justify-between mb-4">
-        <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", bg, color)}>
+        <div className={cn("flex h-10 w-10 items-center justify-center rounded-sm", bg, color)}>
           <Icon className="h-5 w-5" />
         </div>
       </div>
@@ -369,7 +369,7 @@ function QuickLink({ to, label }: { to: string; label: string }) {
   return (
     <Link
       to={to}
-      className="flex items-center justify-between p-3 rounded-lg bg-surface border border-border/50 hover:border-brand hover:text-brand transition-all  group"
+      className="flex items-center justify-between p-3 rounded-sm bg-surface border border-border/50 hover:border-brand hover:text-brand transition-all  group"
     >
       <span className="text-sm font-semibold">{label}</span>
       <ChevronRight className="h-4 w-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />

@@ -165,14 +165,14 @@ function BoardingKanbanPage() {
         <div className="flex items-center gap-2">
           <PrimaryButton
             onClick={() => setOpen(true)}
-            className="gap-1.5 text-xs font-semibold h-8 rounded-md"
+            className="gap-1.5 text-xs font-semibold h-8 rounded-sm"
           >
             <Plus className="h-3.5 w-3.5" /> Cadastrar Localizador
           </PrimaryButton>
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Embarques"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -192,7 +192,7 @@ function BoardingKanbanPage() {
 
       {q.isError && (
         <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-2xl border border-danger/20">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-md border border-danger/20">
             <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
               <X className="h-6 w-6" />
             </div>
@@ -201,7 +201,7 @@ function BoardingKanbanPage() {
               Não foi possível carregar as informações do Kanban. O banco de dados pode estar
               desatualizado.
             </p>
-            <div className="w-full text-left bg-background p-3 rounded text-xs font-mono text-danger/80 break-words mt-4">
+            <div className="w-full text-left bg-background p-3 rounded-sm text-xs font-mono text-danger/80 break-words mt-4">
               <strong>Query Error:</strong> {(q.error as Error).message}
             </div>
           </div>

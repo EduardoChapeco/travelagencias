@@ -201,7 +201,7 @@ function BrandPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+          className="flex h-8 items-center gap-1.5 rounded-sm bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
         >
           {saving ? "Salvando..." : "Salvar alterações"}
         </button>
@@ -211,14 +211,14 @@ function BrandPage() {
         {/* Left Side settings form - using div wrapper instead of form */}
         <div className="space-y-6">
           {/* Card: Logo & Assets */}
-          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-md border border-border bg-surface p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-brand" /> Ativos Visuais
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Logo Principal Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-xl border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">Logo Principal</span>
                 {form.logo_url ? (
                   <div className="my-2 relative w-full h-14 flex items-center justify-center">
@@ -247,7 +247,7 @@ function BrandPage() {
               </div>
 
               {/* Logo Branco Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-xl border border-dashed border-border bg-slate-950 text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-slate-950 text-center relative group min-h-[140px]">
                 <span className="text-[10px] font-bold text-slate-400 uppercase">Logo p/ Fundo Escuro</span>
                 {form.logo_white_url ? (
                   <div className="my-2 relative w-full h-14 flex items-center justify-center">
@@ -276,7 +276,7 @@ function BrandPage() {
               </div>
 
               {/* Favicon Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-xl border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">Favicon</span>
                 {form.favicon_url ? (
                   <div className="my-2 relative w-8 h-8 flex items-center justify-center">
@@ -307,7 +307,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Colors */}
-          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-md border border-border bg-surface p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Palette className="w-4 h-4 text-brand" /> Cores da Identidade
             </h3>
@@ -322,7 +322,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Typography */}
-          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-md border border-border bg-surface p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Type className="w-4 h-4 text-brand" /> Tipografia
             </h3>
@@ -347,7 +347,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Links & Channels */}
-          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-md border border-border bg-surface p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ExternalLink className="w-4 h-4 text-brand" /> Links & Canais de Atendimento
             </h3>
@@ -370,13 +370,13 @@ function BrandPage() {
 
         {/* Right Side: Interactive Mockup Live Preview */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-border bg-surface p-5 flex flex-col h-full space-y-4 shadow-sm">
+          <div className="rounded-md border border-border bg-surface p-5 flex flex-col h-full space-y-4 shadow-sm">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
             
             {/* Live styles provider wrapper */}
-            <div style={mockStyles} className="flex-1 border border-border rounded-2xl overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]">
+            <div style={mockStyles} className="flex-1 border border-border rounded-md overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]">
               
               {/* Mock Navbar */}
               <div 
@@ -397,7 +397,7 @@ function BrandPage() {
                   <span>Sobre</span>
                   <span>Blog</span>
                   <button 
-                    className="px-3 py-1 rounded-md text-[10px] font-bold text-white transition-colors"
+                    className="px-3 py-1 rounded-xs text-[10px] font-bold text-white transition-colors"
                     style={{ backgroundColor: "var(--brand-primary)" }}
                   >
                     Contato
@@ -430,13 +430,13 @@ function BrandPage() {
                 </p>
                 <div className="flex gap-2.5">
                   <button 
-                    className="px-4 py-2 rounded-lg text-[10px] font-bold transition-all shadow-sm"
+                    className="px-4 py-2 rounded-sm text-[10px] font-bold transition-all shadow-sm"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
                     Falar no WhatsApp
                   </button>
                   <button 
-                    className="px-4 py-2 rounded-lg border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white"
+                    className="px-4 py-2 rounded-sm border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white"
                   >
                     Explorar Viagens
                   </button>
@@ -446,7 +446,7 @@ function BrandPage() {
               {/* Mock Content & Cards Grid */}
               <div className="p-6 grid grid-cols-2 gap-4 shrink-0 bg-white border-t border-border">
                 <div 
-                  className="p-4 rounded-xl border border-border shadow-sm space-y-2"
+                  className="p-4 rounded-sm border border-border shadow-sm space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4 className="text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--brand-heading-font)", color: "var(--brand-accent)" }}>
@@ -458,7 +458,7 @@ function BrandPage() {
                 </div>
 
                 <div 
-                  className="p-4 rounded-xl border border-border shadow-sm space-y-2"
+                  className="p-4 rounded-sm border border-border shadow-sm space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4 className="text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--brand-heading-font)", color: "var(--brand-primary)" }}>
@@ -487,21 +487,21 @@ interface ColorPickerProps {
 
 function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   return (
-    <div className="flex flex-col items-center p-2.5 rounded-xl border border-border bg-surface-alt/10 hover:bg-surface-alt/25 transition-all text-center">
+    <div className="flex flex-col items-center p-2.5 rounded-sm border border-border bg-surface-alt/10 hover:bg-surface-alt/25 transition-all text-center">
       <span className="text-[10px] font-bold text-muted-foreground uppercase mb-2 block truncate w-full">{label}</span>
       <div className="relative flex items-center justify-center">
         <input
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-transparent shrink-0 shadow-sm"
+          className="h-10 w-10 cursor-pointer rounded-sm border border-border bg-transparent shrink-0 shadow-sm"
         />
       </div>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 h-7 w-full rounded border border-border bg-surface px-1 text-center font-mono text-[10px] uppercase outline-none focus:border-brand shrink-0"
+        className="mt-2 h-7 w-full rounded-xs border border-border bg-surface px-1 text-center font-mono text-[10px] uppercase outline-none focus:border-brand shrink-0"
       />
     </div>
   );

@@ -37,7 +37,7 @@ export function CardView({
 
   return (
     <div
-      className={`group relative cursor-grab rounded-xl border bg-surface transition-all duration-200 active:cursor-grabbing ${
+      className={`group relative cursor-grab rounded-sm border bg-surface transition-all duration-200 active:cursor-grabbing ${
         dragging
           ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
           : isUrgent
@@ -75,7 +75,7 @@ export function CardView({
       {((card.tags && card.tags.length > 0) || card.briefing_date) && (
         <div className="flex flex-wrap gap-1 px-4 pb-2">
           {card.briefing_date && (
-            <span className="rounded bg-info/15 border border-info/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-info flex items-center gap-1">
+            <span className="rounded-xs bg-info/15 border border-info/30 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-info flex items-center gap-1">
               <Clock className="h-2.5 w-2.5" /> Briefing:{" "}
               {new Date(card.briefing_date).toLocaleDateString("pt-BR")}
             </span>
@@ -84,9 +84,13 @@ export function CardView({
             card.tags.map((t) => (
               <span
                 key={t}
-                className="rounded bg-brand/10 border border-brand/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand"
+                className={`rounded-xs border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                  t === "auto_dispatch_enabled"
+                    ? "bg-success/15 border-success/30 text-success"
+                    : "bg-brand/10 border-brand/20 text-brand"
+                }`}
               >
-                {t}
+                {t === "auto_dispatch_enabled" ? "Auto-Release" : t}
               </span>
             ))}
         </div>
@@ -125,7 +129,7 @@ export function CardView({
       {/* Alerts */}
       {(isUrgent || (card.alerts && card.alerts.length > 0)) && (
         <div
-          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-md border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
+          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-sm border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
         >
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           <div className="flex flex-col">

@@ -253,7 +253,7 @@ function ProposalEditor() {
             className="flex h-9 items-center gap-1.5 rounded-md bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-60 transition-all"
           >
             <PlaneTakeoff className="h-3.5 w-3.5" />
-            {convertToTrip.isPending ? "Convertendo…" : "Converter em Viagem"}
+            {convertToTrip.isPending ? "Reservando…" : "Reservar"}
           </button>
         )}
 

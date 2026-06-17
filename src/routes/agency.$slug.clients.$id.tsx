@@ -153,13 +153,13 @@ function ClientDetail() {
             <>
               <button
                 onClick={() => setIsMerging(true)}
-                className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="flex h-8 items-gap gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
                 <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
               </button>
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-sm bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
               >
                 <Edit3 className="h-3.5 w-3.5" /> Editar Perfil
               </button>
@@ -167,7 +167,7 @@ function ClientDetail() {
           ) : (
             <button
               onClick={() => setIsEditing(false)}
-              className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 items-center gap-1.5 rounded-sm border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" /> Cancelar
             </button>
@@ -230,7 +230,7 @@ function ClientDetail() {
       </header>
 
       {isMerging && (
-        <div className="p-6 rounded-3xl border border-warning/50 bg-warning/5 mb-6 space-y-4">
+        <div className="p-6 rounded-md border border-warning/50 bg-warning/5 mb-6 space-y-4">
           <div className="flex items-center gap-2 text-warning font-bold">
             <Merge className="w-5 h-5" /> Unificar Cadastros
           </div>
@@ -279,13 +279,13 @@ function ClientDetail() {
                 });
               }}
               disabled={!mergeTargetId || mergeClientsMutation.isPending}
-              className="h-12 px-6 rounded-full bg-warning text-warning-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+              className="h-12 px-6 rounded-sm bg-warning text-warning-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
             >
               {mergeClientsMutation.isPending ? "Unificando..." : "Confirmar Unificação"}
             </button>
             <button
               onClick={() => setIsMerging(false)}
-              className="h-12 px-4 rounded-full border border-border text-sm font-bold cursor-pointer text-foreground bg-background"
+              className="h-12 px-4 rounded-sm border border-border text-sm font-bold cursor-pointer text-foreground bg-background"
             >
               Cancelar
             </button>
@@ -344,7 +344,7 @@ function ClientDetail() {
                 />
               </div>
 
-              <div className="rounded-3xl border border-border bg-surface p-6">
+              <div className="rounded-md border border-border bg-surface p-6">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
                   Preferências e Observações
                 </h3>
@@ -401,7 +401,7 @@ function ClientDetail() {
 
 function InfoBlock({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-surface p-5 rounded-3xl border border-border">
+    <div className="bg-surface p-5 rounded-sm border border-border">
       <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
         {label}
       </div>
