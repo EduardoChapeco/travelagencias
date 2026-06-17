@@ -351,7 +351,7 @@ function TripFinancial() {
       {/* ── OCR Boleto Modal ──────────────────────────────────────────────────── */}
       {showOcrModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden">
+          <div className="w-full max-w-md bg-surface border border-border rounded-2xl overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div className="flex items-center gap-2">
@@ -369,7 +369,7 @@ function TripFinancial() {
             <div className="p-5 space-y-4">
               {/* File Upload */}
               {!ocrResult && (
-                <label className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors ${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}>
+                <label className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}>
                   {ocrLoading ? (
                     <>
                       <Loader2 className="h-8 w-8 text-brand animate-spin" />

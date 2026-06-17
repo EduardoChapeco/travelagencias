@@ -187,7 +187,7 @@ function SupportRoute() {
           </div>
         </div>
 
-        <div className="bg-surface border border-border rounded-xl flex-1 overflow-hidden flex flex-col shadow-sm">
+        <div className="bg-surface border border-border rounded-xl flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-surface-alt/50 sticky top-0 z-10 border-b border-border">

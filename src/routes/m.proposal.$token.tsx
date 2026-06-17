@@ -328,7 +328,7 @@ function PublicProposalView() {
       <main className="mx-auto max-w-7xl px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Template Canvas with responsive wrapper */}
         <div className="lg:col-span-8 flex flex-col items-center w-full min-w-0">
-          <div className="w-full overflow-hidden border border-border rounded-2xl bg-surface shadow-sm">
+          <div className="w-full overflow-hidden border border-border rounded-2xl bg-surface">
             <ClientCanvasFrame format={currentFormat}>
               <TemplateComponent proposal={p as any} agency={p.agency} />
             </ClientCanvasFrame>

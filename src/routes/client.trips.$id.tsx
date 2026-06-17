@@ -280,7 +280,7 @@ function ClientTripDetail() {
               {TRIP_STATUS[trip.status] ?? trip.status}
             </StatusBadge>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight ">
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
             {trip.title}
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-semibold text-white/90">
@@ -340,7 +340,7 @@ function ClientTripDetail() {
         {activeTab === "resumo" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {daysToTrip !== null && daysToTrip > 0 && (
-              <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between ">
+              <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest opacity-80">
                     Contagem Regressiva
@@ -515,7 +515,7 @@ function ClientTripDetail() {
                                 type="button"
                                 onClick={() => handleToggleChecklist(idx)}
                                 disabled={toggleBoardingItem.isPending}
-                                className={`w-full flex items-center gap-3 p-3.5 text-left transition-colors hover:bg-surface-alt/40 active:bg-surface-alt ${it.done ? "bg-surface-alt/10" : ""}`}
+                                className={`w-full flex items-center gap-3 p-3.5 text-left transition-colors hover:bg-surface-alt/40 active:bg-surface-alt${it.done ? "bg-surface-alt/10" : ""}`}
                               >
                                 {it.done ? (
                                   <CheckSquare className="w-4 h-4 text-success shrink-0" />
@@ -523,7 +523,7 @@ function ClientTripDetail() {
                                   <Square className="w-4 h-4 text-muted-foreground shrink-0" />
                                 )}
                                 <span
-                                  className={`text-xs font-semibold ${it.done ? "line-through text-muted-foreground" : "text-foreground"}`}
+                                  className={`text-xs font-semibold${it.done ? "line-through text-muted-foreground" : "text-foreground"}`}
                                 >
                                   {it.label}
                                 </span>
@@ -731,7 +731,7 @@ function ClientTripDetail() {
                     const originCode = f.origin?.trim().length === 3 ? f.origin.toUpperCase() : (f.origin?.substring(0, 3).toUpperCase() || "SDU");
                     const destCode = f.destination?.trim().length === 3 ? f.destination.toUpperCase() : (f.destination?.substring(0, 3).toUpperCase() || "GRU");
                     return (
-                      <div key={f.id || idx} className="bg-surface border border-border/60 rounded-3xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col relative">
+                      <div key={f.id || idx} className="bg-surface border border-border/60 rounded-3xl transition-shadow overflow-hidden flex flex-col relative">
                         {/* Top banner / Airline info */}
                         <div className="bg-surface-alt/30 px-6 py-4 flex items-center justify-between border-b border-border/40">
                           <div className="flex items-center gap-2">
@@ -904,7 +904,7 @@ function ClientTripDetail() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1">
-                <div className="bg-foreground rounded-3xl p-6 text-background ">
+                <div className="bg-foreground rounded-3xl p-6 text-background">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-background/50 mb-2">
                     Valor do Pacote
                   </h3>
@@ -947,7 +947,7 @@ function ClientTripDetail() {
                         >
                           <div className="flex items-center gap-4">
                             <div
-                              className={`flex h-12 w-12 items-center justify-center rounded-full ${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}
+                              className={`flex h-12 w-12 items-center justify-center rounded-full${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}
                             >
                               {inst.status === "paid" ? (
                                 <CheckCircle className="h-6 w-6" />
@@ -974,7 +974,7 @@ function ClientTripDetail() {
                                   {money(inst.amount, trip.currency)}
                                 </div>
                                 <div
-                                  className={`text-[10px] uppercase font-bold tracking-wider ${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
+                                  className={`text-[10px] uppercase font-bold tracking-wider${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
                                 >
                                   {INST_STATUS[inst.status] ?? inst.status}
                                 </div>
@@ -1342,7 +1342,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 py-4 border-b-2 font-bold text-sm whitespace-nowrap transition-colors ${active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+      className={`flex items-center gap-2 py-4 border-b-2 font-bold text-sm whitespace-nowrap transition-colors${active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
     >
       {icon} {label}
     </button>
@@ -1359,7 +1359,7 @@ function AppWidget({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-3xl bg-surface p-6 border border-border ">
+    <div className="rounded-3xl bg-surface p-6 border border-border">
       <div className="mb-5 flex items-center gap-3">
         {icon}
         <h3 className="text-sm font-black text-foreground tracking-tight">{title}</h3>

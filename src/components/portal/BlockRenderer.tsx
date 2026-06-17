@@ -196,7 +196,7 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
   return (
     <div
       style={inlineStyles}
-      className={`w-full transition-all overflow-hidden ${paddingClass} ${radiusClass} ${borderClass} ${shadowClass} ${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
+      className={`w-full transition-all overflow-hidden${paddingClass}${radiusClass}${borderClass}${shadowClass}${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
     >
       <div className={bg_type === "image" ? "relative z-10 w-full" : "w-full"}>
         {children}
@@ -280,20 +280,17 @@ export function BlockRenderer({
           <Wrapper
             key={b.id}
             onClick={onSelectBlock ? () => onSelectBlock(b.id) : undefined}
-            className={`w-full text-left relative outline-none transition-all duration-200 group block-wrapper-preview
-              ${onSelectBlock ? "cursor-pointer hover:ring-2 hover:ring-brand/50 hover:ring-offset-4 rounded-3xl" : ""}
-              ${isSelected ? "ring-2 ring-brand ring-offset-4 scale-[1.01]" : ""}
-            `}
+            className={`w-full text-left relative outline-none transition-all duration-200 group block-wrapper-preview${onSelectBlock ? "cursor-pointer hover:ring-2 hover:ring-brand/50 hover:ring-offset-4 rounded-3xl" : ""}${isSelected ? "ring-2 ring-brand ring-offset-4 scale-[1.01]" : ""}`}
           >
             {onSelectBlock && (
               <div
-                className={`absolute -top-3 -right-3 z-50 rounded-full bg-brand text-white px-2 py-0.5 text-[10px] font-bold transition-opacity duration-200 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                className={`absolute -top-3 -right-3 z-50 rounded-full bg-brand text-white px-2 py-0.5 text-[10px] font-bold transition-opacity duration-200${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
               >
                 {b.type.toUpperCase()}
               </div>
             )}
             <div
-              className={`pointer-events-none transition-opacity ${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
+              className={`pointer-events-none transition-opacity${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
             >
               <BlockStyleWrapper block={b}>
                 {renderBlock(b, agencySlug, handleLinkClick, agencyId, pageId)}
@@ -332,7 +329,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                       target={b.cta_link.startsWith("http") ? "_blank" : undefined}
                       rel="noreferrer"
                       onClick={() => handleLinkClick(b.cta_link)}
-                      className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105 shadow hover:shadow-lg active:scale-95"
+                      className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
                     >
                       {b.cta_label}
                     </a>
@@ -344,7 +341,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                   <img
                     src={b.bg_image_url}
                     alt="Hero Split"
-                    className="rounded-2xl object-cover aspect-video lg:aspect-[4/3] w-full shadow-lg border border-border/40"
+                    className="rounded-2xl object-cover aspect-video lg:aspect-[4/3] w-full border border-border/40"
                   />
                 ) : (
                   <div className="rounded-2xl bg-surface-alt aspect-video w-full flex items-center justify-center border border-dashed border-border text-muted-foreground text-xs">
@@ -426,7 +423,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
     case "text":
       return (
         <section
-          className={`mx-auto max-w-5xl flex flex-col gap-8 lg:flex-row ${b.align === "right" ? "lg:flex-row-reverse" : ""} ${b.align === "center" ? "text-center items-center justify-center" : "items-center"}`}
+          className={`mx-auto max-w-5xl flex flex-col gap-8 lg:flex-row${b.align === "right" ? "lg:flex-row-reverse" : ""}${b.align === "center" ? "text-center items-center justify-center" : "items-center"}`}
         >
           <div className="flex-1 space-y-4">
             <div
@@ -488,7 +485,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
               {b.items?.map((item, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-start bg-gradient-to-br from-surface to-surface-alt/30 p-7 rounded-3xl border border-border/80 shadow transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:border-brand/40 group"
+                  className="flex flex-col items-start bg-gradient-to-br from-surface to-surface-alt/30 p-7 rounded-3xl border border-border/80 transition-all duration-300 hover:-translate-y-1.5 hover:border-brand/40 group"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-5 group-hover:scale-110 transition-transform">
                     {renderIconByName(item.icon, "h-6 w-6")}
@@ -597,7 +594,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
               {b.items?.map((item, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl border border-border bg-surface-alt/20 p-6 shadow-sm hover:border-brand/20 transition-colors"
+                  className="rounded-2xl border border-border bg-surface-alt/20 p-6 hover:border-brand/20 transition-colors"
                 >
                   <h3 className="font-bold text-base text-foreground mb-2">{item.question}</h3>
                   <div
@@ -653,7 +650,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {b.items?.map((item, i) => (
                 <div key={i} className="flex flex-col gap-4">
-                  <div className="relative bg-surface-alt/45 border border-border/60 p-6 rounded-2xl shadow-sm hover:border-brand/20 transition-all duration-300">
+                  <div className="relative bg-surface-alt/45 border border-border/60 p-6 rounded-2xl hover:border-brand/20 transition-all duration-300">
                     <Quote className="h-6 w-6 text-brand/20 mb-3" />
                     <p className="text-muted-foreground text-xs leading-relaxed italic">
                       "{item.text}"
@@ -669,7 +666,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                       <img
                         src={item.avatar_url}
                         alt={item.author}
-                        className="h-9 w-9 rounded-full object-cover shadow-sm border border-border"
+                        className="h-9 w-9 rounded-full object-cover border border-border"
                       />
                     ) : (
                       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-xs">
@@ -867,22 +864,22 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
             const style = b.button_style || "solid";
             const rounded = b.button_rounded || "full";
             
-            let baseClasses = "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border ";
+            let baseClasses = "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border";
             
-            if (rounded === "none") baseClasses += "rounded-none ";
-            else if (rounded === "md") baseClasses += "rounded-xl ";
-            else baseClasses += "rounded-full ";
+            if (rounded === "none") baseClasses += "rounded-none";
+            else if (rounded === "md") baseClasses += "rounded-xl";
+            else baseClasses += "rounded-full";
 
             if (item.highlight) {
-              baseClasses += "bg-brand text-brand-foreground border-brand font-bold shadow-lg shadow-brand/20 ";
+              baseClasses += "bg-brand text-brand-foreground border-brand font-bold";
             } else {
               if (style === "solid") {
-                 baseClasses += "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40 shadow-sm ";
+                 baseClasses += "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40";
               } else if (style === "outline") {
-                 baseClasses += "bg-transparent text-foreground border-border font-medium hover:border-foreground ";
+                 baseClasses += "bg-transparent text-foreground border-border font-medium hover:border-foreground";
               } else {
                  // soft
-                 baseClasses += "bg-surface-alt/50 text-foreground border-transparent font-medium hover:bg-surface-alt ";
+                 baseClasses += "bg-surface-alt/50 text-foreground border-transparent font-medium hover:bg-surface-alt";
               }
             }
 
@@ -916,7 +913,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
     // ── CLIENT PORTAL ACCESS ──────────────────────────────────────
     case "client_portal_access":
       return (
-        <section className="mx-auto max-w-lg bg-surface border border-border/80 rounded-3xl p-8 shadow-lg text-center flex flex-col items-center gap-4">
+        <section className="mx-auto max-w-lg bg-surface border border-border/80 rounded-3xl p-8 text-center flex flex-col items-center gap-4">
           <div className="h-14 w-14 rounded-full bg-brand/10 text-brand flex items-center justify-center">
             <Plane className="h-6 w-6" />
           </div>
@@ -954,7 +951,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 key={i}
                 href={item.link || "#"}
                 onClick={() => item.link && handleLinkClick(item.link)}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-brand/40"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand/40"
               >
                 <div className="relative aspect-video overflow-hidden">
                   {item.image_url ? (
@@ -967,7 +964,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                     <div className="h-full w-full bg-surface-alt" />
                   )}
                   {item.price && (
-                    <div className="absolute top-3 right-3 rounded-md bg-brand px-2.5 py-1 text-xs font-bold text-brand-foreground shadow">
+                    <div className="absolute top-3 right-3 rounded-md bg-brand px-2.5 py-1 text-xs font-bold text-brand-foreground">
                       {item.price}
                     </div>
                   )}
@@ -1007,7 +1004,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.instagram!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110"
                 title="Instagram"
               >
                 <Instagram className="h-4.5 w-4.5" />
@@ -1019,7 +1016,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.facebook!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110"
                 title="Facebook"
               >
                 <Facebook className="h-4.5 w-4.5" />
@@ -1031,7 +1028,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.youtube!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110"
                 title="YouTube"
               >
                 <Youtube className="h-4.5 w-4.5" />
@@ -1043,7 +1040,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.linkedin!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110 shadow-sm"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-brand/10 hover:text-brand transition-all hover:scale-110"
                 title="LinkedIn"
               >
                 <Linkedin className="h-4.5 w-4.5" />
@@ -1055,7 +1052,7 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.whatsapp!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-emerald-50 hover:text-emerald-600 transition-all hover:scale-110 shadow-sm"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-emerald-50 hover:text-emerald-600 transition-all hover:scale-110"
                 title="WhatsApp"
               >
                 <Phone className="h-4.5 w-4.5" />
@@ -1270,7 +1267,7 @@ function NewsletterBlock({
             <button
               type="submit"
               disabled={loading}
-              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer disabled:opacity-50"
+              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
             >
               {loading ? "Cadastrando..." : (block.button_label || "Cadastrar")}
             </button>
@@ -1496,7 +1493,7 @@ function GroupTourDetailsBlock({ block, agencySlug }: { block: any; agencySlug: 
             <img
               src={tour.cover_image_url}
               alt={tour.title}
-              className="w-full rounded-3xl object-cover aspect-[4/3] shadow-lg"
+              className="w-full rounded-3xl object-cover aspect-[4/3]"
             />
           ) : (
             <div className="w-full rounded-3xl aspect-[4/3] bg-surface-alt flex items-center justify-center border border-border" />
@@ -1569,7 +1566,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
   }
 
   return (
-    <section className="mx-auto max-w-3xl bg-surface border border-border rounded-3xl p-8 shadow-sm">
+    <section className="mx-auto max-w-3xl bg-surface border border-border rounded-3xl p-8">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold tracking-tight mb-2">{block.title}</h2>
         <p className="text-muted-foreground">{block.subtitle}</p>
@@ -1675,20 +1672,20 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
           {block.subtitle && <p className="mt-2 text-muted-foreground">{block.subtitle}</p>}
         </div>
       )}
-      <div className={`mt-8 ${block.layout === "list" ? "flex flex-col gap-4" : "grid gap-6 sm:grid-cols-2 md:grid-cols-3"}`}>
+      <div className={`mt-8${block.layout === "list" ? "flex flex-col gap-4" : "grid gap-6 sm:grid-cols-2 md:grid-cols-3"}`}>
         {tours.map((t) => (
           <Link
             key={t.id}
             to="/p/$agency_slug/tour/$id"
             params={{ agency_slug: agencySlug, id: t.id }}
             onClick={() => handleLinkClick(`/p/${agencySlug}/tour/${t.id}`)}
-            className={`group overflow-hidden border-2 border-border/50 bg-surface transition-all hover:border-brand/40 ${
+            className={`group overflow-hidden border-2 border-border/50 bg-surface transition-all hover:border-brand/40${
               block.layout === "list"
                 ? "flex flex-col sm:flex-row rounded-2xl items-stretch min-h-[140px] hover:-translate-y-0.5"
                 : "flex flex-col rounded-2xl hover:-translate-y-1"
             }`}
           >
-            <div className={`relative overflow-hidden shrink-0 ${block.layout === "list" ? "aspect-video sm:w-60 sm:aspect-[4/3]" : "aspect-video w-full"}`}>
+            <div className={`relative overflow-hidden shrink-0${block.layout === "list" ? "aspect-video sm:w-60 sm:aspect-[4/3]" : "aspect-video w-full"}`}>
               {t.cover_image_url ? (
                 <img
                   src={t.cover_image_url}
@@ -1713,7 +1710,7 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
                   {t.title}
                 </h3>
               </div>
-              <div className={`mt-4 pt-3 border-t border-border/50 flex ${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}>
+              <div className={`mt-4 pt-3 border-t border-border/50 flex${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}>
                 <div>
                   <span className="text-[10px] uppercase text-muted-foreground font-bold block">
                     A partir de
@@ -2059,7 +2056,7 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
         <button
           type="button"
           onClick={() => setSelected("all")}
-          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${selected === "all" ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
+          className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border${selected === "all" ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
         >
           Todos
         </button>
@@ -2068,7 +2065,7 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
             key={dest}
             type="button"
             onClick={() => setSelected(dest)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${selected === dest ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border${selected === dest ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
           >
             {dest}
           </button>
@@ -2212,7 +2209,7 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
         )}
         <div className="grid gap-6 md:grid-cols-2">
           {mockReviews.map((r, i) => (
-            <div key={i} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 shadow-sm relative">
+            <div key={i} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative">
               <Quote className="absolute top-4 right-4 w-8 h-8 opacity-5 text-muted-foreground" />
               <div className="flex gap-1 mb-3">
                 {Array.from({ length: r.stars }).map((_, idx) => (
@@ -2241,7 +2238,7 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
       )}
       <div className="grid gap-6 md:grid-cols-2">
         {reviews.map((r) => (
-          <div key={r.id} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 shadow-sm relative">
+          <div key={r.id} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative">
             <Quote className="absolute top-4 right-4 w-8 h-8 opacity-5 text-muted-foreground" />
             <div className="flex gap-1 mb-3">
               {Array.from({ length: r.stars }).map((_, idx) => (
@@ -2285,7 +2282,7 @@ function WhatsappDepartmentsBlock({ block, handleLinkClick }: { block: any; hand
             target="_blank"
             rel="noreferrer"
             onClick={() => handleLinkClick(whatsappUrl)}
-            className="flex items-center gap-4 p-4 rounded-2xl bg-surface border border-border/80 shadow-sm transition-transform hover:scale-[1.02] active:scale-95 group hover:border-brand/40"
+            className="flex items-center gap-4 p-4 rounded-2xl bg-surface border border-border/80 transition-transform hover:scale-[1.02] active:scale-95 group hover:border-brand/40"
           >
             <div className="h-10 w-10 rounded-full bg-brand/5 text-brand flex items-center justify-center shrink-0">
               {renderIconByName(dept.icon || "chat", "h-5 w-5")}
@@ -2352,7 +2349,7 @@ function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any
 
   return (
     <section className="mx-auto max-w-lg w-full px-4">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-surface shadow-xl p-6 md:p-8 flex flex-col items-center text-center gap-5">
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-surface p-6 md:p-8 flex flex-col items-center text-center gap-5">
         <div className="space-y-1">
           <span className="text-[10px] font-bold uppercase tracking-wider text-brand">{block.title || "Últimas Vagas!"}</span>
           <h3 className="font-bold text-lg text-foreground">{tour.title}</h3>
@@ -2377,7 +2374,7 @@ function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any
           to="/p/$agency_slug/tour/$id"
           params={{ agency_slug: agencySlug, id: tour.id }}
           onClick={() => handleLinkClick(`/p/${agencySlug}/tour/${tour.id}`)}
-          className="w-full flex h-11 items-center justify-center rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-brand/10"
+          className="w-full flex h-11 items-center justify-center rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:scale-[1.02] active:scale-95 transition-all"
         >
           {block.button_label || "Quero Garantir Minha Vaga"}
         </Link>
@@ -2410,7 +2407,7 @@ function SocialLinksRowBlock({ block, handleLinkClick }: { block: any; handleLin
             rel="noreferrer"
             onClick={() => handleLinkClick(item.url || "")}
             title={item.label}
-            className="h-10 w-10 rounded-full border border-border/80 bg-surface flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand/40 shadow-sm transition-all hover:scale-110 active:scale-90"
+            className="h-10 w-10 rounded-full border border-border/80 bg-surface flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand/40 transition-all hover:scale-110 active:scale-90"
           >
             <Icon className="w-4.5 h-4.5" />
           </a>
@@ -2432,7 +2429,7 @@ function ExchangeRatesBlock({ block }: { block: any }) {
 
   return (
     <section className="mx-auto max-w-md w-full px-4">
-      <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm">
+      <div className="p-5 rounded-2xl border border-border bg-surface">
         <h3 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">{block.title || "Cotação Turismo Sugerida"}</h3>
         <div className="divide-y divide-border/50">
           {currencies.map((cur: string) => (
@@ -2482,7 +2479,7 @@ function DynamicMapRouteBlock({ block, agencySlug }: { block: any; agencySlug: s
       {block.title && (
         <h2 className="text-2xl font-bold tracking-tight text-center mb-6">{block.title}</h2>
       )}
-      <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface-alt shadow-md">
+      <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface-alt">
         <iframe
           src={embedUrl}
           className="absolute inset-0 h-full w-full border-0"
@@ -2536,7 +2533,7 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
 
   return (
     <div className="mx-auto max-w-md w-full px-4 py-4">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h3 className="text-sm font-bold text-foreground mb-1 uppercase tracking-wider text-center">{block.title || "Vouchers de Viagem"}</h3>
         <p className="text-xs text-muted-foreground text-center mb-4">Consulte seus bilhetes e vouchers emitidos em tempo real.</p>
         
@@ -2629,7 +2626,7 @@ function WeatherForecastBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4">
-      <div className="p-5 rounded-2xl border border-border bg-gradient-to-br from-surface to-surface-alt/30 shadow-sm flex items-center justify-between">
+      <div className="p-5 rounded-2xl border border-border bg-gradient-to-br from-surface to-surface-alt/30 flex items-center justify-between">
         <div className="text-left">
           <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Previsão Climática</span>
           <h4 className="font-bold text-base text-foreground mt-0.5">{city}</h4>
@@ -2686,7 +2683,7 @@ function ItineraryTimelineBlock({ block }: { block: any }) {
       <div className="relative pl-6 border-l border-border/80 space-y-6">
         {itinerary.map((day: any, idx: number) => (
           <div key={idx} className="relative">
-            <div className="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand border-4 border-background flex items-center justify-center shadow-sm" />
+            <div className="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand border-4 border-background flex items-center justify-center" />
             <div>
               <span className="text-[10px] font-bold text-brand uppercase tracking-wider">Dia {day.day || idx + 1}</span>
               <h4 className="font-bold text-sm text-foreground mt-0.5">{day.title || `Atividades do dia`}</h4>
@@ -2799,7 +2796,7 @@ function PromotionalBannerBlock({ block }: { block: any }) {
         
         <div
           onClick={handleCopy}
-          className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-surface border border-dashed border-brand cursor-pointer hover:bg-brand/5 active:scale-95 transition-all shadow-sm"
+          className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-surface border border-dashed border-brand cursor-pointer hover:bg-brand/5 active:scale-95 transition-all"
         >
           <span className="font-mono font-black text-sm tracking-widest text-brand">{block.discount_code || "BEMVINDO10"}</span>
           <span className="text-[10px] font-bold text-muted-foreground uppercase border-l border-border pl-3">
@@ -2819,7 +2816,7 @@ function PromotionalBannerBlock({ block }: { block: any }) {
 function PaymentGatewaysDisplayBlock({ block, agencyId }: { block: any; agencyId?: string }) {
   return (
     <div className="mx-auto max-w-md w-full px-4">
-      <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm text-center">
+      <div className="p-5 rounded-2xl border border-border bg-surface text-center">
         <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">{block.title || "Formas de Pagamento Aceitas"}</h4>
         
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-muted-foreground">
@@ -2868,7 +2865,7 @@ function AgentProfileCardBlock({ block, agencyId }: { block: any; agencyId?: str
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-4 rounded-3xl border border-border bg-surface flex items-center gap-4 shadow-sm">
+      <div className="p-4 rounded-3xl border border-border bg-surface flex items-center gap-4">
         {agent.avatar_url ? (
           <img src={agent.avatar_url} alt={agent.full_name} className="w-16 h-16 rounded-full object-cover border-2 border-border shrink-0" />
         ) : (
@@ -2980,7 +2977,7 @@ function LiveToursMapBlock({ block, agencySlug }: { block: any; agencySlug: stri
   return (
     <div className="mx-auto max-w-xl w-full px-4 text-center">
       <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider">Grupos Confirmados em Trânsito</h4>
-      <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface-alt shadow-sm">
+      <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface-alt">
         <iframe
           src={embedUrl}
           className="absolute inset-0 h-full w-full border-0"
@@ -3010,7 +3007,7 @@ function GiftCardsStoreBlock({ block, agencySlug }: { block: any; agencySlug: st
         <p className="text-xs text-muted-foreground max-w-xs">{block.subtitle || "Presenteie quem você ama com experiências e memórias incríveis."}</p>
         <button
           onClick={handleGiftClick}
-          className="mt-2 h-10 px-5 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+          className="mt-2 h-10 px-5 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
         >
           Presentear Agora
         </button>
@@ -3058,7 +3055,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Solicitação de RFP Corporativa"}</h4>
         <p className="text-xs text-muted-foreground text-center mb-5">{block.subtitle || "Preencha a demanda da sua empresa e entraremos em contato."}</p>
         
@@ -3185,7 +3182,7 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md space-y-4">
+      <div className="p-6 rounded-3xl border border-border bg-surface space-y-4">
         <div>
           <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Envio de Documento de Embarque"}</h4>
           <p className="text-[11px] text-muted-foreground text-center leading-normal">{block.instructions || "Envie seus dados para a emissão dos vouchers."}</p>
@@ -3379,7 +3376,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Consultor de Vistos de Entrada"}</h4>
         <p className="text-[11px] text-muted-foreground text-center mb-4">Verifique a necessidade de visto e documentos para sua viagem.</p>
         
@@ -3423,7 +3420,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
               <>
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">Exigência de Visto</span>
-                  <span className={`text-xs font-black px-2 py-0.5 rounded uppercase ${result.visa_required ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"}`}>
+                  <span className={`text-xs font-black px-2 py-0.5 rounded uppercase${result.visa_required ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"}`}>
                     {result.visa_required ? "Obrigatório" : "Isento"}
                   </span>
                 </div>
@@ -3553,7 +3550,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Simulador de Seguro Viagem"}</h4>
         <p className="text-[11px] text-muted-foreground text-center mb-5">{block.description || "Simule planos de cobertura médica internacional em segundos."}</p>
 
@@ -3609,7 +3606,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                     key={age.key}
                     type="button"
                     onClick={() => setAgeRange(age.key)}
-                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors ${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {age.label}
                   </button>
@@ -3749,7 +3746,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Deixe seu Depoimento"}</h4>
         <p className="text-[11px] text-muted-foreground text-center mb-4">{block.subtitle || "Sua opinião nos ajuda a crescer e aprimorar nossas rotas."}</p>
         
@@ -3771,7 +3768,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
                   onClick={() => setStars(star)}
                   className="p-1 transition-transform hover:scale-110 active:scale-90"
                 >
-                  <Star className={`h-6 w-6 ${star <= stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`} />
+                  <Star className={`h-6 w-6${star <= stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`} />
                 </button>
               ))}
             </div>
@@ -3848,18 +3845,18 @@ function WhatsappFloatingBubbleBlock({ block }: { block: any }) {
 
   return (
     <div
-      className={`fixed bottom-6 z-50 flex items-center gap-3 max-w-sm ${
+      className={`fixed bottom-6 z-50 flex items-center gap-3 max-w-sm${
         block.position === "left" ? "left-6 flex-row-reverse" : "right-6"
       }`}
     >
-      <div className="bg-surface text-foreground px-3.5 py-2 rounded-2xl shadow-xl border border-border text-[11px] font-bold max-w-[200px] leading-tight">
+      <div className="bg-surface text-foreground px-3.5 py-2 rounded-2xl border border-border text-[11px] font-bold max-w-[200px] leading-tight">
         {agent ? `Fale com ${agent.full_name.split(" ")[0]}` : "Fale Conosco!"}
       </div>
       <a
         href={waUrl}
         target="_blank"
         rel="noreferrer"
-        className="h-14 w-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95 shrink-0 border border-emerald-400"
+        className="h-14 w-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shrink-0 border border-emerald-400"
       >
         {agent && agent.avatar_url ? (
           <img src={agent.avatar_url} alt="Agent" className="h-full w-full rounded-full object-cover" />
@@ -3922,7 +3919,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Planeje seu Roteiro Sob Medida"}</h4>
         <p className="text-[11px] text-muted-foreground text-center mb-5">{block.subtitle || "Diga o que você sonha e desenharemos nos mínimos detalhes."}</p>
 
@@ -3931,7 +3928,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             {[1, 2, 3].map((s) => (
               <div
                 key={s}
-                className={`h-1 flex-1 rounded-full transition-all duration-300 ${s <= step ? "bg-brand" : "bg-muted-foreground/25"}`}
+                className={`h-1 flex-1 rounded-full transition-all duration-300${s <= step ? "bg-brand" : "bg-muted-foreground/25"}`}
               />
             ))}
           </div>
@@ -4021,7 +4018,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                     key={b.key}
                     type="button"
                     onClick={() => setBudget(b.key)}
-                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors ${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {b.label}
                   </button>
@@ -4297,7 +4294,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm">
+      <div className="p-5 rounded-2xl border border-border bg-surface">
         <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">{block.title || "Calculadora de Câmbio"}</h4>
         
         <div className="space-y-3">
@@ -4401,7 +4398,7 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Status de Voos em Tempo Real"}</h4>
         <p className="text-[11px] text-muted-foreground text-center mb-4">Insira o código do seu voo para obter portão de embarque e status.</p>
         
@@ -4430,7 +4427,7 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">Voo</span>
                 <h5 className="text-base font-black text-foreground leading-none mt-0.5">{flight.code}</h5>
               </div>
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}>
                 {flight.status}
               </span>
             </div>
@@ -4494,16 +4491,16 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-center">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md flex flex-col items-center gap-4">
+      <div className="p-6 rounded-3xl border border-border bg-surface flex flex-col items-center gap-4">
         <h4 className="font-bold text-sm text-foreground">{block.title || "Compartilhe meu Contato"}</h4>
         
-        <div className="p-2 bg-white rounded-2xl border border-border/50 shadow-sm shrink-0">
+        <div className="p-2 bg-white rounded-2xl border border-border/50 shrink-0">
           <img src={qrCodeUrl} alt="Biolink QR Code" className="w-32 h-32 object-contain" />
         </div>
         
         <button
           onClick={handleShare}
-          className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all shadow-md shadow-brand/10 cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer"
         >
           <Share2 className="w-4 h-4" />
           {copied ? "Link Copiado!" : "Compartilhar Link"}
@@ -4525,18 +4522,18 @@ function ClientBoardingTimelineBlock({ block, agencyId }: { block: any; agencyId
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <div className="p-6 rounded-3xl border border-border bg-surface shadow-md">
+      <div className="p-6 rounded-3xl border border-border bg-surface">
         <h4 className="text-xs font-bold text-foreground mb-6 uppercase tracking-wider text-center">{block.title || "Fluxo de Embarque Operacional"}</h4>
         
         <div className="relative pl-6 border-l border-border space-y-6">
           {timelineSteps.map((step, idx) => (
             <div key={idx} className="relative">
-              <div className={`absolute -left-[30px] top-0.5 w-4.5 h-4.5 rounded-full border-4 border-background flex items-center justify-center shadow-sm ${
+              <div className={`absolute -left-[30px] top-0.5 w-4.5 h-4.5 rounded-full border-4 border-background flex items-center justify-center${
                 step.status === "done" ? "bg-emerald-500" : step.status === "active" ? "bg-brand animate-pulse" : "bg-muted-foreground/30"
               }`} />
               <div className="flex justify-between items-start">
                 <div>
-                  <h5 className={`font-bold text-xs ${step.status === "done" ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</h5>
+                  <h5 className={`font-bold text-xs${step.status === "done" ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</h5>
                   <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{step.desc}</p>
                 </div>
                 <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-md font-bold">{step.time}</span>

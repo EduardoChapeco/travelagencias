@@ -65,7 +65,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center bg-zinc-950 p-6 text-center text-white">
         <div className="max-w-md space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 shadow-lg shadow-rose-500/5">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
             <AlertOctagon className="h-8 w-8" />
           </div>
           

@@ -118,11 +118,11 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded-lg border overflow-hidden transition-all ${
+      className={`rounded-lg border overflow-hidden transition-all${
         selectedBlockId === block.id
-          ? "border-brand bg-surface shadow-md"
+          ? "border-brand bg-surface"
           : "border-border bg-surface-alt/30 hover:border-brand/40"
-      } ${isDragging ? "opacity-50 ring-2 ring-brand" : ""}`}
+      }${isDragging ? "opacity-50 ring-2 ring-brand" : ""}`}
     >
       <div
         className="flex items-center justify-between px-3 py-2 cursor-pointer select-none"
@@ -138,7 +138,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
             <GripVertical className="h-4 w-4" />
           </div>
           <span
-            className={`text-xs font-semibold uppercase tracking-wider ${
+            className={`text-xs font-semibold uppercase tracking-wider${
               selectedBlockId === block.id ? "text-brand" : "text-muted-foreground"
             }`}
           >
@@ -588,7 +588,7 @@ function PageEditorRoute() {
                 return (
                   <DropdownMenuItem
                     key={p.id}
-                    className={`flex items-center justify-between gap-2 cursor-pointer ${isActive ? "bg-brand/10 text-brand font-medium" : ""}`}
+                    className={`flex items-center justify-between gap-2 cursor-pointer${isActive ? "bg-brand/10 text-brand font-medium" : ""}`}
                     onClick={() => {
                       if (!isActive) {
                         navigate({
@@ -687,25 +687,25 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls inside header */}
-        <div className="flex items-center bg-surface-alt/45 border border-border p-0.5 rounded-lg gap-0.5 shadow-sm">
+        <div className="flex items-center bg-surface-alt/45 border border-border p-0.5 rounded-lg gap-0.5">
           <button
             onClick={() => setViewport("desktop")}
             title="Modo Desktop"
-            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "desktop" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer${viewport === "desktop" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => setViewport("tablet")}
             title="Modo Tablet"
-            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "tablet" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer${viewport === "tablet" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Tablet className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => setViewport("mobile")}
             title="Modo Celular"
-            className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewport === "mobile" ? "bg-surface text-foreground shadow-sm font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer${viewport === "mobile" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Smartphone className="h-3.5 w-3.5" />
           </button>
@@ -721,7 +721,7 @@ function PageEditorRoute() {
             <button
               onClick={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
               title={isLeftSidebarOpen ? "Recolher Biblioteca" : "Expandir Biblioteca"}
-              className={`p-1.5 rounded-md border border-border transition-colors hover:bg-surface-alt cursor-pointer ${isLeftSidebarOpen ? "bg-surface-alt/70 text-foreground" : "bg-surface text-muted-foreground"}`}
+              className={`p-1.5 rounded-md border border-border transition-colors hover:bg-surface-alt cursor-pointer${isLeftSidebarOpen ? "bg-surface-alt/70 text-foreground" : "bg-surface text-muted-foreground"}`}
             >
               <PanelLeft className="h-4 w-4" />
             </button>
@@ -785,9 +785,9 @@ function PageEditorRoute() {
             <button
               type="button"
               onClick={() => setLeftTab("sections")}
-              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all${
                 leftTab === "sections"
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-background text-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
               }`}
             >
@@ -796,9 +796,9 @@ function PageEditorRoute() {
             <button
               type="button"
               onClick={() => setLeftTab("templates")}
-              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all${
                 leftTab === "templates"
-                  ? "bg-background text-brand shadow-sm border border-brand/5"
+                  ? "bg-background text-brand border border-brand/5"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
               }`}
             >
@@ -807,9 +807,9 @@ function PageEditorRoute() {
             <button
               type="button"
               onClick={() => setLeftTab("layers")}
-              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+              className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all${
                 leftTab === "layers"
-                  ? "bg-background text-foreground shadow-sm"
+                  ? "bg-background text-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
               }`}
             >
@@ -870,10 +870,9 @@ function PageEditorRoute() {
                       key={type}
                       type="button"
                       onClick={() => addBlock(type)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5
-                        ${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
+                      className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
                     >
-                      <IconComponent className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand ${isBiolinkType ? "text-brand" : "text-muted-foreground"}`} />
+                      <IconComponent className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand${isBiolinkType ? "text-brand" : "text-muted-foreground"}`} />
                       <span className="text-[10px] font-bold leading-tight">
                         {BLOCK_LABELS[type].split(" ")[0]}
                       </span>
@@ -908,11 +907,10 @@ function PageEditorRoute() {
                     key={tpl.id}
                     type="button"
                     onClick={() => handleApplyTemplate(tpl.id)}
-                    className={`w-full text-left p-3 rounded-xl border hover:border-brand/40 transition-all flex flex-col gap-1.5 group
-                      ${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
+                    className={`w-full text-left p-3 rounded-xl border hover:border-brand/40 transition-all flex flex-col gap-1.5 group${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
                   >
                     <div className="flex justify-between items-center w-full">
-                      <span className={`text-xs font-bold transition-colors group-hover:text-brand ${template === tpl.id ? "text-brand" : "text-foreground"}`}>
+                      <span className={`text-xs font-bold transition-colors group-hover:text-brand${template === tpl.id ? "text-brand" : "text-foreground"}`}>
                         {tpl.name}
                       </span>
                       <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
@@ -981,7 +979,7 @@ function PageEditorRoute() {
         <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start pt-4 px-4 pb-4 min-h-0 h-full">
           {/* Browser / Device Mockup Frame */}
           <div
-            className={`flex-1 min-h-0 bg-surface border border-border rounded-2xl shadow-2xl overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
+            className={`flex-1 min-h-0 bg-surface border border-border rounded-2xl overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]${
               viewport === "desktop"
                 ? "w-full max-w-5xl"
                 : viewport === "tablet"
@@ -1331,7 +1329,7 @@ function PageEditorRoute() {
 
       {showNewPageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-xl shadow-2xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-surface border border-border rounded-xl p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Criar Nova Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1374,7 +1372,7 @@ function PageEditorRoute() {
 
       {showRenameModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-xl shadow-2xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-surface border border-border rounded-xl p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">

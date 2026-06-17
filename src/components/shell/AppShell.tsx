@@ -150,7 +150,7 @@ export function AppShell({
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
             {isPastDue && (
-              <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shadow-md shrink-0">
+              <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   <span>Atenção: A assinatura da sua agência está atrasada. Regularize o pagamento para evitar o bloqueio total do acesso.</span>

@@ -49,7 +49,7 @@ export function NewSectionsRenderer({
       return (
         <section 
           ref={animRef as any}
-          className={`relative min-h-[90vh] flex items-center justify-center overflow-hidden w-full ${
+          className={`relative min-h-[90vh] flex items-center justify-center overflow-hidden w-full${
             config.alignment === "left" ? "text-left justify-start px-6 md:px-16" : "text-center px-4"
           }`}
         >
@@ -75,22 +75,22 @@ export function NewSectionsRenderer({
             )}
             <h1 
               style={headingStyle}
-              className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-md"
+              className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight"
             >
               {config.headline}
             </h1>
             <p 
               style={bodyStyle}
-              className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto md:mx-0 drop-shadow"
+              className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto md:mx-0"
             >
               {config.subtitle}
             </p>
-            <div className={`flex flex-wrap gap-4 pt-4 ${config.alignment === 'center' ? 'justify-center' : 'justify-start'}`}>
+            <div className={`flex flex-wrap gap-4 pt-4${config.alignment === 'center' ? 'justify-center' : 'justify-start'}`}>
               {config.cta1_text && config.cta1_url && (
                 <a 
                   href={config.cta1_url}
                   onClick={() => handleLinkClick(config.cta1_url)}
-                  className="px-8 py-3 rounded-full text-sm font-bold transition-all transform hover:scale-105 shadow-md"
+                  className="px-8 py-3 rounded-full text-sm font-bold transition-all transform hover:scale-105"
                   style={{ backgroundColor: "var(--brand-primary, #1E3A5F)", color: "var(--brand-foreground, #FFFFFF)" }}
                 >
                   {config.cta1_text}
@@ -117,11 +117,11 @@ export function NewSectionsRenderer({
           ref={animRef as any}
           className="py-12 md:py-24 px-4 max-w-7xl mx-auto w-full"
         >
-          <div className={`flex flex-col lg:flex-row items-center gap-12 ${
+          <div className={`flex flex-col lg:flex-row items-center gap-12${
             config.layout === 'text-right' ? 'lg:flex-row-reverse' : ''
           }`}>
             {/* Text column */}
-            <div className={`w-full lg:w-1/2 space-y-6 ${config.ratio === '60/40' ? 'lg:pr-12' : ''}`}>
+            <div className={`w-full lg:w-1/2 space-y-6${config.ratio === '60/40' ? 'lg:pr-12' : ''}`}>
               {config.badgeText && (
                 <span 
                   className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white"
@@ -167,19 +167,19 @@ export function NewSectionsRenderer({
 
             {/* Image column */}
             <div className="w-full lg:w-1/2 relative">
-              <div className="relative z-10 w-full overflow-hidden shadow-2xl">
+              <div className="relative z-10 w-full overflow-hidden">
                 <img 
                   src={config.imageMain} 
                   alt="Destination Preview" 
-                  className={`w-full h-auto object-cover ${config.imageBorderRadius || 'rounded-2xl'}`}
+                  className={`w-full h-auto object-cover${config.imageBorderRadius || 'rounded-2xl'}`}
                 />
               </div>
               {config.imageSecondary && (
-                <div className="absolute -bottom-6 -left-6 z-20 w-1/2 overflow-hidden shadow-2xl hidden md:block">
+                <div className="absolute -bottom-6 -left-6 z-20 w-1/2 overflow-hidden hidden md:block">
                   <img 
                     src={config.imageSecondary} 
                     alt="Secondary Preview" 
-                    className={`w-full h-auto object-cover border-4 border-surface ${config.imageBorderRadius || 'rounded-2xl'}`}
+                    className={`w-full h-auto object-cover border-4 border-surface${config.imageBorderRadius || 'rounded-2xl'}`}
                   />
                 </div>
               )}
@@ -219,7 +219,7 @@ export function NewSectionsRenderer({
                   <a 
                     href={config.cta1_url}
                     onClick={() => handleLinkClick(config.cta1_url)}
-                    className="px-8 py-3 rounded-full text-sm font-bold bg-white text-black hover:bg-white/90 transition-all transform hover:scale-105 shadow-lg"
+                    className="px-8 py-3 rounded-full text-sm font-bold bg-white text-black hover:bg-white/90 transition-all transform hover:scale-105"
                   >
                     {config.cta1_text}
                   </a>
@@ -229,7 +229,7 @@ export function NewSectionsRenderer({
 
             {config.deviceType !== 'none' && config.deviceImage && (
               <div className="w-full lg:w-1/2 flex justify-center">
-                <div className={`relative shadow-2xl overflow-hidden border-8 border-white/20 bg-black ${
+                <div className={`relative overflow-hidden border-8 border-white/20 bg-black${
                   config.deviceType === 'phone' ? 'w-[280px] h-[560px] rounded-[40px]' : 
                   config.deviceType === 'tablet' ? 'w-[450px] h-[600px] rounded-3xl' : 'w-full aspect-video rounded-xl'
                 }`}>
@@ -297,7 +297,7 @@ export function NewSectionsRenderer({
             </div>
 
             <div className="w-full lg:w-1/2 relative flex justify-center">
-              <div className="relative max-w-md w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-neutral-800">
+              <div className="relative max-w-md w-full aspect-[4/3] rounded-3xl overflow-hidden border-4 border-neutral-800">
                 <img 
                   src={config.centralImage} 
                   alt="Exclusive Travel" 
@@ -332,20 +332,20 @@ export function NewSectionsRenderer({
             <div className="space-y-4">
               <h1 
                 style={headingStyle}
-                className="text-4xl md:text-6xl font-black leading-tight tracking-tight drop-shadow-md"
+                className="text-4xl md:text-6xl font-black leading-tight tracking-tight"
               >
                 {config.headline}
               </h1>
               <p 
                 style={bodyStyle}
-                className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow-sm"
+                className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto"
               >
                 {config.subtitle}
               </p>
             </div>
 
             {config.searchBarVisible && (
-              <div className="bg-surface p-6 rounded-3xl shadow-2xl max-w-3xl mx-auto text-foreground">
+              <div className="bg-surface p-6 rounded-3xl max-w-3xl mx-auto text-foreground">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">DESTINO</label>
@@ -454,7 +454,7 @@ export function NewSectionsRenderer({
                     );
                   }
                   return (
-                    <div key={i} className="rounded-2xl overflow-hidden aspect-square shadow-md">
+                    <div key={i} className="rounded-2xl overflow-hidden aspect-square">
                       <img 
                         src={cell.value} 
                         alt="Bento Cell" 
@@ -544,11 +544,11 @@ export function NewSectionsRenderer({
             )}
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${showCols} gap-8`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2${showCols}gap-8`}>
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
               <div 
                 key={i}
-                className="group relative flex flex-col bg-surface rounded-2xl overflow-hidden border border-border/60 hover:shadow-2xl transition-all duration-300"
+                className="group relative flex flex-col bg-surface rounded-2xl overflow-hidden border border-border/60 transition-all duration-300"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-alt">
                   <img 
@@ -716,7 +716,7 @@ export function NewSectionsRenderer({
                 return (
                   <div 
                     key={i}
-                    className="w-[200px] sm:w-[240px] shrink-0 relative aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform transition-transform hover:scale-105"
+                    className="w-[200px] sm:w-[240px] shrink-0 relative aspect-[2/3] rounded-3xl overflow-hidden border-4 border-white transform transition-transform hover:scale-105"
                     style={{ transform: `rotate(${rotation}) translateY(${translation})`, transition: 'all 0.3s ease-in-out' }}
                   >
                     <img src={item.image} alt={item.city} className="w-full h-full object-cover" />
@@ -751,7 +751,7 @@ export function NewSectionsRenderer({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Column 1: Featured (60%) */}
             {items[0] && (
-              <div className="lg:col-span-2 relative aspect-[16/10] lg:aspect-auto rounded-3xl overflow-hidden group shadow-lg">
+              <div className="lg:col-span-2 relative aspect-[16/10] lg:aspect-auto rounded-3xl overflow-hidden group">
                 <img src={items[0].image} alt={items[0].name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent flex flex-col justify-end p-8 text-white space-y-3">
                   <h3 style={headingStyle} className="text-2xl md:text-3xl font-black">{items[0].name}</h3>
@@ -771,7 +771,7 @@ export function NewSectionsRenderer({
             {/* Column 2: 2x2 Smaller Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:flex lg:flex-col lg:gap-6">
               {items.slice(1, 3).map((item: any, i: number) => (
-                <div key={i} className="relative aspect-[16/10] lg:flex-1 rounded-3xl overflow-hidden group shadow-md">
+                <div key={i} className="relative aspect-[16/10] lg:flex-1 rounded-3xl overflow-hidden group">
                   <img src={item.image} alt={item.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
                     <h4 style={headingStyle} className="text-lg font-bold mb-1">{item.name}</h4>
@@ -803,11 +803,11 @@ export function NewSectionsRenderer({
             )}
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${showCols} gap-8`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2${showCols}gap-8`}>
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
               <div 
                 key={i}
-                className="group flex flex-col bg-surface rounded-3xl overflow-hidden border border-border hover:shadow-2xl transition-all duration-300"
+                className="group flex flex-col bg-surface rounded-3xl overflow-hidden border border-border transition-all duration-300"
               >
                 <div className="relative aspect-video overflow-hidden bg-surface-alt">
                   <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -865,7 +865,7 @@ export function NewSectionsRenderer({
         <section ref={animRef as any} className="py-16 px-4 max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Cell 1: Large Promo */}
-            <div className="md:col-span-2 relative aspect-[16/10] md:aspect-auto rounded-3xl overflow-hidden group shadow-lg">
+            <div className="md:col-span-2 relative aspect-[16/10] md:aspect-auto rounded-3xl overflow-hidden group">
               <img src={config.promoImage} alt="Promo" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 text-white space-y-2">
                 <div className="text-brand font-bold text-sm" style={{ color: "var(--brand-secondary, #D4AF37)" }}>{config.discountText}</div>
@@ -919,11 +919,11 @@ export function NewSectionsRenderer({
             )}
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${showCols} gap-8`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2${showCols}gap-8`}>
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
               <div 
                 key={i} 
-                className={`flex flex-col items-start p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 group ${cardStyles}`}
+                className={`flex flex-col items-start p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 group${cardStyles}`}
               >
                 <div 
                   className="flex h-12 w-12 items-center justify-center rounded-2xl mb-6 bg-brand/10 text-brand"
@@ -954,7 +954,7 @@ export function NewSectionsRenderer({
               return (
                 <div 
                   key={i} 
-                  className={`p-8 rounded-3xl border shadow-sm flex flex-col justify-between ${span} ${bg}`}
+                  className={`p-8 rounded-3xl border flex flex-col justify-between${span}${bg}`}
                   style={i === 0 ? { backgroundColor: "var(--brand-primary, #1E3A5F)" } : {}}
                 >
                   <div 
@@ -965,7 +965,7 @@ export function NewSectionsRenderer({
                   </div>
                   <div>
                     <h3 style={headingStyle} className="text-lg font-bold mb-2">{item.title}</h3>
-                    <p style={bodyStyle} className={`text-xs leading-relaxed ${textMuted}`}>{item.description}</p>
+                    <p style={bodyStyle} className={`text-xs leading-relaxed${textMuted}`}>{item.description}</p>
                   </div>
                 </div>
               );
@@ -987,7 +987,7 @@ export function NewSectionsRenderer({
               const isEven = i % 2 === 1;
               const flexDir = isEven && config.zebraLayout ? 'md:flex-row-reverse' : 'md:flex-row';
               return (
-                <div key={i} className={`flex flex-col ${flexDir} items-center gap-8 md:gap-16`}>
+                <div key={i} className={`flex flex-col${flexDir}items-center gap-8 md:gap-16`}>
                   <div className="w-full md:w-1/2 space-y-4">
                     <div className="flex items-center gap-4">
                       <span className="text-3xl font-black text-brand/35">
@@ -998,7 +998,7 @@ export function NewSectionsRenderer({
                     <p style={bodyStyle} className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
                   </div>
 
-                  <div className="w-full md:w-1/2 rounded-3xl overflow-hidden shadow-md aspect-[4/3] bg-surface-alt">
+                  <div className="w-full md:w-1/2 rounded-3xl overflow-hidden aspect-[4/3] bg-surface-alt">
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -1028,7 +1028,7 @@ export function NewSectionsRenderer({
       return (
         <section 
           ref={animRef as any}
-          className={`py-8 md:py-12 border w-full ${bgStyle}`}
+          className={`py-8 md:py-12 border w-full${bgStyle}`}
           style={config.backgroundStyle === 'brand' ? { backgroundColor: "var(--brand-primary, #1E3A5F)" } : {}}
         >
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
@@ -1037,10 +1037,10 @@ export function NewSectionsRenderer({
               const countRef = useCountUp(item.value, animation.type === 'countUp');
               return (
                 <div key={i} className="text-center space-y-1">
-                  <div style={headingStyle} className={`text-3xl md:text-5xl font-black tracking-tight ${textColor}`}>
+                  <div style={headingStyle} className={`text-3xl md:text-5xl font-black tracking-tight${textColor}`}>
                     <span ref={countRef as any}>{item.value}</span>{item.suffix}
                   </div>
-                  <div style={bodyStyle} className={`text-xs font-semibold uppercase ${labelColor}`}>{item.label}</div>
+                  <div style={bodyStyle} className={`text-xs font-semibold uppercase${labelColor}`}>{item.label}</div>
                 </div>
               );
             })}
@@ -1075,7 +1075,7 @@ export function NewSectionsRenderer({
               </div>
             </div>
           ) : (
-            <div className={`max-w-6xl mx-auto px-4 grid ${colClass} gap-8 items-center justify-items-center`}>
+            <div className={`max-w-6xl mx-auto px-4 grid${colClass}gap-8 items-center justify-items-center`}>
               {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
                 <img key={i} src={item.logoUrl} alt={item.altText} className="h-8 md:h-10 object-contain opacity-45 grayscale hover:grayscale-0 hover:opacity-90 transition-all" />
               ))}
@@ -1088,10 +1088,10 @@ export function NewSectionsRenderer({
     case "about-split": {
       return (
         <section ref={animRef as any} className="py-16 px-4 max-w-7xl mx-auto w-full">
-          <div className={`flex flex-col lg:flex-row items-center gap-12 ${config.layout === 'text-left' ? 'lg:flex-row-reverse' : ''}`}>
+          <div className={`flex flex-col lg:flex-row items-center gap-12${config.layout === 'text-left' ? 'lg:flex-row-reverse' : ''}`}>
             {/* Image side */}
             <div className="w-full lg:w-1/2 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl aspect-[4/3] z-10">
+              <div className="relative rounded-3xl overflow-hidden aspect-[4/3] z-10">
                 <img src={config.image} alt="About Agency" className="w-full h-full object-cover" />
               </div>
               <div 
@@ -1131,7 +1131,7 @@ export function NewSectionsRenderer({
                   <a 
                     href={config.ctaUrl}
                     onClick={() => handleLinkClick(config.ctaUrl)}
-                    className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-xs font-bold text-white shadow-md hover:opacity-95"
+                    className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-xs font-bold text-white hover:opacity-95"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.ctaText}
@@ -1167,9 +1167,9 @@ export function NewSectionsRenderer({
                       </div>
                       <h3 style={headingStyle} className="text-base font-bold text-foreground">{item.title}</h3>
                     </div>
-                    <span className={`text-xl font-bold text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}>+</span>
+                    <span className={`text-xl font-bold text-muted-foreground transition-transform duration-300${isOpen ? 'rotate-45' : ''}`}>+</span>
                   </div>
-                  <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <div className={`overflow-hidden transition-all duration-300${isOpen ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
                     <p style={bodyStyle} className="text-xs text-muted-foreground leading-relaxed pl-9 mb-3">
                       {item.description}
                     </p>
@@ -1220,7 +1220,7 @@ export function NewSectionsRenderer({
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
               <div 
                 key={i} 
-                className={`p-8 rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-lg ${bgClass}`}
+                className={`p-8 rounded-3xl border transition-all duration-300${bgClass}`}
                 style={isBrand ? { backgroundColor: "var(--brand-primary, #1E3A5F)" } : {}}
               >
                 <div 
@@ -1229,8 +1229,8 @@ export function NewSectionsRenderer({
                 >
                   {renderIconByName(item.icon, "h-6 w-6")}
                 </div>
-                <h3 style={headingStyle} className={`text-lg font-bold mb-3 ${textClass}`}>{item.title}</h3>
-                <p style={bodyStyle} className={`text-xs leading-relaxed ${descClass}`}>{item.description}</p>
+                <h3 style={headingStyle} className={`text-lg font-bold mb-3${textClass}`}>{item.title}</h3>
+                <p style={bodyStyle} className={`text-xs leading-relaxed${descClass}`}>{item.description}</p>
               </div>
             ))}
           </div>
@@ -1246,7 +1246,7 @@ export function NewSectionsRenderer({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {config.items && Array.isArray(config.items) && config.items.slice(0, config.limit || 3).map((post: any, i: number) => (
-              <div key={i} className="group bg-surface border border-border/60 rounded-2xl overflow-hidden hover:shadow-lg transition-all flex flex-col justify-between">
+              <div key={i} className="group bg-surface border border-border/60 rounded-2xl overflow-hidden transition-all flex flex-col justify-between">
                 <div className="aspect-[16/10] overflow-hidden bg-surface-alt">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
@@ -1283,8 +1283,8 @@ export function NewSectionsRenderer({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
-              <div key={i} className="bg-surface border border-border/60 p-6 rounded-3xl text-center space-y-4 hover:shadow-md transition-shadow">
-                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto shadow-md border-2 border-border">
+              <div key={i} className="bg-surface border border-border/60 p-6 rounded-3xl text-center space-y-4 transition-shadow">
+                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto border-2 border-border">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="space-y-1">
@@ -1358,7 +1358,7 @@ export function NewSectionsRenderer({
           </div>
           <div className="flex items-center justify-center gap-3">
             {config.avatar && (
-              <img src={config.avatar} alt={config.author} className="w-12 h-12 rounded-full object-cover shadow-sm border border-border" />
+              <img src={config.avatar} alt={config.author} className="w-12 h-12 rounded-full object-cover border border-border" />
             )}
             <div className="text-left">
               <div className="font-bold text-sm text-foreground">{config.author}</div>
@@ -1400,7 +1400,7 @@ export function NewSectionsRenderer({
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'w-6 bg-brand' : 'w-2.5 bg-border'}`}
+                className={`h-2.5 rounded-full transition-all duration-300${activeIndex === idx ? 'w-6 bg-brand' : 'w-2.5 bg-border'}`}
                 style={activeIndex === idx ? { backgroundColor: "var(--brand-primary, #1E3A5F)" } : {}}
               />
             ))}
@@ -1417,7 +1417,7 @@ export function NewSectionsRenderer({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {config.items && Array.isArray(config.items) && config.items.map((item: any, i: number) => (
-              <div key={i} className="bg-surface border border-border p-6 rounded-3xl flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+              <div key={i} className="bg-surface border border-border p-6 rounded-3xl flex flex-col justify-between transition-shadow">
                 <div>
                   <Quote className="h-6 w-6 text-brand/20 mb-4" />
                   <p style={bodyStyle} className="text-xs text-muted-foreground leading-relaxed italic mb-6">"{item.text}"</p>
@@ -1477,7 +1477,7 @@ export function NewSectionsRenderer({
       return (
         <section ref={animRef as any} className="py-16 px-4 max-w-6xl mx-auto w-full">
           <div className="bg-surface-alt/45 p-8 md:p-12 rounded-3xl border border-border flex flex-col md:flex-row gap-8 md:gap-12 items-center">
-            <div className="w-full md:w-2/5 aspect-square md:aspect-auto md:h-64 rounded-2xl overflow-hidden shadow">
+            <div className="w-full md:w-2/5 aspect-square md:aspect-auto md:h-64 rounded-2xl overflow-hidden">
               <img src={config.image} alt={config.author} className="w-full h-full object-cover" />
             </div>
             <div className="w-full md:w-3/5 space-y-4">
@@ -1503,7 +1503,7 @@ export function NewSectionsRenderer({
     case "testimonial-speech-bubble": {
       return (
         <section ref={animRef as any} className="py-16 px-4 max-w-md mx-auto text-center space-y-6">
-          <div className="relative bg-surface border border-border p-6 rounded-3xl shadow-sm">
+          <div className="relative bg-surface border border-border p-6 rounded-3xl">
             <p style={bodyStyle} className="text-xs text-muted-foreground leading-relaxed italic">"{config.text}"</p>
             {/* Seta do balão */}
             <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-surface border-r border-b border-border rotate-45" />
@@ -1533,7 +1533,7 @@ export function NewSectionsRenderer({
           )}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {items.map((item: any, i: number) => (
-              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden group shadow-sm bg-surface-alt cursor-pointer">
+              <div key={i} className="relative aspect-square rounded-2xl overflow-hidden group bg-surface-alt cursor-pointer">
                 <img src={item.url} alt={`Gallery ${i}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-xs font-bold bg-white/20 backdrop-blur-md px-4 py-2 rounded-full">Zoom</span>
@@ -1554,7 +1554,7 @@ export function NewSectionsRenderer({
           )}
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
             {items.map((item: any, i: number) => (
-              <div key={i} className="break-inside-avoid relative rounded-3xl overflow-hidden group shadow-md bg-surface-alt cursor-pointer">
+              <div key={i} className="break-inside-avoid relative rounded-3xl overflow-hidden group bg-surface-alt cursor-pointer">
                 <img src={item.url} alt={`Gallery Masonry ${i}`} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
             ))}
@@ -1569,7 +1569,7 @@ export function NewSectionsRenderer({
           {config.sectionTitle && (
             <h2 style={headingStyle} className="text-2xl font-extrabold text-foreground">{config.sectionTitle}</h2>
           )}
-          <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border border-border">
+          <div className="relative aspect-video rounded-3xl overflow-hidden bg-black border border-border">
             <iframe 
               src={config.videoUrl} 
               className="absolute inset-0 w-full h-full"
@@ -1591,8 +1591,8 @@ export function NewSectionsRenderer({
             {config.blocks && Array.isArray(config.blocks) && config.blocks.map((item: any, i: number) => {
               const isEven = i % 2 === 1;
               return (
-                <div key={i} className={`flex flex-col ${isEven ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12`}>
-                  <div className="w-full md:w-1/2 rounded-3xl overflow-hidden shadow-md aspect-[4/3] bg-surface-alt">
+                <div key={i} className={`flex flex-col${isEven ? 'md:flex-row-reverse' : 'md:flex-row'}items-center gap-12`}>
+                  <div className="w-full md:w-1/2 rounded-3xl overflow-hidden aspect-[4/3] bg-surface-alt">
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                   </div>
                   <div className="w-full md:w-1/2 space-y-4">
@@ -1665,7 +1665,7 @@ export function NewSectionsRenderer({
       return (
         <section 
           ref={animRef as any}
-          className={`py-12 md:py-16 px-6 max-w-6xl mx-auto rounded-3xl w-full text-center space-y-6 ${bgStyle}`}
+          className={`py-12 md:py-16 px-6 max-w-6xl mx-auto rounded-3xl w-full text-center space-y-6${bgStyle}`}
           style={isBrand ? { backgroundColor: "var(--brand-primary, #1E3A5F)" } : isGrad ? { background: "linear-gradient(135deg, var(--brand-primary, #1E3A5F), var(--brand-secondary, #D4AF37))" } : {}}
         >
           <h2 style={headingStyle} className="text-3xl md:text-4xl font-extrabold leading-tight">{config.title}</h2>
@@ -1676,7 +1676,7 @@ export function NewSectionsRenderer({
             <a 
               href={config.ctaUrl}
               onClick={() => handleLinkClick(config.ctaUrl)}
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-white text-black px-6 text-xs font-bold transition-all transform hover:scale-105 shadow-md"
+              className="inline-flex h-11 items-center justify-center rounded-xl bg-white text-black px-6 text-xs font-bold transition-all transform hover:scale-105"
             >
               {config.ctaText}
             </a>
@@ -1865,7 +1865,7 @@ export function NewSectionsRenderer({
       return (
         <div className="fixed bottom-6 right-6 z-[9999] group flex flex-col items-end pointer-events-auto">
           {config.tooltip && (
-            <div className="bg-surface border border-border text-foreground text-xs font-bold px-3 py-1.5 rounded-xl mb-2 shadow-lg scale-90 origin-bottom-right opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
+            <div className="bg-surface border border-border text-foreground text-xs font-bold px-3 py-1.5 rounded-xl mb-2 scale-90 origin-bottom-right opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
               {config.tooltip}
             </div>
           )}
@@ -1874,7 +1874,7 @@ export function NewSectionsRenderer({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleLinkClick(`wa.me/${cleanNum}`)}
-            className="h-14 w-14 rounded-full bg-green-500 text-white flex items-center justify-center shadow-2xl hover:bg-green-600 transition-all transform hover:scale-115 animate-[pulse_2s_infinite] select-none"
+            className="h-14 w-14 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-all transform hover:scale-115 animate-[pulse_2s_infinite] select-none"
           >
             <Phone className="h-6 w-6 fill-current" />
           </a>
@@ -1892,7 +1892,7 @@ export function NewSectionsRenderer({
       const linkHover = isDark ? 'hover:text-brand' : 'hover:text-brand';
       
       return (
-        <nav className={`w-full py-4 px-6 flex items-center justify-between ${bgStyle}`}>
+        <nav className={`w-full py-4 px-6 flex items-center justify-between${bgStyle}`}>
           {/* Logo mockup inside section */}
           <div className="flex items-center gap-3 select-none">
             <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center text-white font-bold" style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}>T</div>
@@ -1901,7 +1901,7 @@ export function NewSectionsRenderer({
 
           <div className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
             {config.links && Array.isArray(config.links) && config.links.map((link: any, i: number) => (
-              <a key={i} href={link.url} className={`${linkHover} transition-colors`}>{link.label}</a>
+              <a key={i} href={link.url} className={`${linkHover}transition-colors`}>{link.label}</a>
             ))}
           </div>
 
@@ -1909,7 +1909,7 @@ export function NewSectionsRenderer({
             <a 
               href={config.ctaUrl}
               onClick={() => handleLinkClick(config.ctaUrl)}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-sm"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-white"
               style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
             >
               {config.ctaText}
@@ -1937,15 +1937,15 @@ export function NewSectionsRenderer({
       const mutedText = isDark ? 'text-neutral-400' : 'text-muted-foreground';
       
       return (
-        <footer ref={animRef as any} className={`py-12 px-6 ${bg}`}>
+        <footer ref={animRef as any} className={`py-12 px-6${bg}`}>
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-3">
               <h3 style={headingStyle} className="font-bold text-sm">Nossa Agência</h3>
-              <p style={bodyStyle} className={`text-xs leading-relaxed ${mutedText}`}>{config.description}</p>
+              <p style={bodyStyle} className={`text-xs leading-relaxed${mutedText}`}>{config.description}</p>
             </div>
             <div className="space-y-3">
               <h3 style={headingStyle} className="font-bold text-sm">Fale Conosco</h3>
-              <div className={`text-xs space-y-2 ${mutedText}`}>
+              <div className={`text-xs space-y-2${mutedText}`}>
                 {config.phone && <div className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> {config.phone}</div>}
                 {config.email && <div className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> {config.email}</div>}
                 {config.address && <div className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {config.address}</div>}
@@ -1953,14 +1953,14 @@ export function NewSectionsRenderer({
             </div>
             <div className="space-y-3">
               <h3 style={headingStyle} className="font-bold text-sm">Links Rápidos</h3>
-              <div className={`text-xs flex flex-col gap-2 ${mutedText}`}>
+              <div className={`text-xs flex flex-col gap-2${mutedText}`}>
                 <a href="#destinos">Nossos Destinos</a>
                 <a href="#sobre">Quem Somos</a>
                 <a href="#contato">Solicitar Proposta</a>
               </div>
             </div>
           </div>
-          <div className={`border-t border-border/40 mt-8 pt-6 text-center text-[10px] ${mutedText}`}>
+          <div className={`border-t border-border/40 mt-8 pt-6 text-center text-[10px]${mutedText}`}>
             © {new Date().getFullYear()} Agência de Viagens. Todos os direitos reservados.
           </div>
         </footer>
@@ -1995,7 +1995,7 @@ export function NewSectionsRenderer({
       return (
         <footer ref={animRef as any} className="py-12 px-6 bg-surface border-t border-border/40">
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 items-center">
-            <div className="w-full lg:w-1/2 aspect-video rounded-3xl overflow-hidden shadow border border-border">
+            <div className="w-full lg:w-1/2 aspect-video rounded-3xl overflow-hidden border border-border">
               <iframe src={config.mapEmbedUrl} className="w-full h-full border-none" allowFullScreen loading="lazy" />
             </div>
             <div className="w-full lg:w-1/2 space-y-4 text-center lg:text-left">

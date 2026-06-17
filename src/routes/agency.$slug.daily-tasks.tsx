@@ -178,7 +178,7 @@ function DailyTasksRoute() {
             return (
               <div
                 key={col.id}
-                className="flex flex-col w-[320px] max-h-full bg-surface border border-border rounded-xl shrink-0 overflow-hidden shadow-sm"
+                className="flex flex-col w-[320px] max-h-full bg-surface border border-border rounded-xl shrink-0 overflow-hidden"
               >
                 <div className="p-3 border-b border-border flex justify-between items-center bg-surface-alt/50">
                   <div className="flex items-center gap-2 font-semibold text-sm">
@@ -207,7 +207,7 @@ function DailyTasksRoute() {
                   {colTasks.map((t) => (
                     <div
                       key={t.id}
-                      className="bg-background border border-border rounded-lg p-3 hover:border-primary/40 transition-colors shadow-sm group"
+                      className="bg-background border border-border rounded-lg p-3 hover:border-primary/40 transition-colors group"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <StatusBadge

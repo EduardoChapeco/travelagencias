@@ -66,7 +66,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
     return (
       <div
-        className={`w-full h-28 rounded-xl flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border border-border/40 relative group-hover:scale-[1.02] shadow-sm select-none ${
+        className={`w-full h-28 rounded-xl flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border border-border/40 relative group-hover:scale-[1.02] select-none${
           isDark
             ? "bg-slate-900 border-slate-800"
             : isVibrant
@@ -75,7 +75,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
         }`}
       >
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border ${
+          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border${
             isDark
               ? "bg-slate-800 border-slate-700 text-slate-200"
               : isVibrant
@@ -86,12 +86,12 @@ function PageMiniPreview({ template }: { template: string | null }) {
           P
         </div>
         <div
-          className={`w-14 h-1.5 rounded-full ${
+          className={`w-14 h-1.5 rounded-full${
             isDark ? "bg-slate-700" : isVibrant ? "bg-white/30" : "bg-slate-300"
           }`}
         ></div>
         <div
-          className={`w-4/5 h-3 rounded-md border ${
+          className={`w-4/5 h-3 rounded-md border${
             isDark
               ? "bg-slate-800 border-slate-700"
               : isVibrant
@@ -100,7 +100,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
           }`}
         ></div>
         <div
-          className={`w-4/5 h-3 rounded-md border ${
+          className={`w-4/5 h-3 rounded-md border${
             isDark
               ? "bg-slate-800 border-slate-700"
               : isVibrant
@@ -114,7 +114,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
   // Render standard site mini view
   return (
-    <div className="w-full h-28 rounded-xl bg-gradient-to-b from-slate-50 to-slate-100/50 border border-slate-200 flex flex-col p-2.5 gap-2 overflow-hidden transition-all duration-300 group-hover:scale-[1.02] shadow-sm select-none">
+    <div className="w-full h-28 rounded-xl bg-gradient-to-b from-slate-50 to-slate-100/50 border border-slate-200 flex flex-col p-2.5 gap-2 overflow-hidden transition-all duration-300 group-hover:scale-[1.02] select-none">
       {/* Mock Header */}
       <div className="flex justify-between items-center w-full border-b border-slate-200/60 pb-1.5 shrink-0">
         <div className="w-6 h-2 bg-indigo-500/20 rounded-full"></div>
@@ -375,7 +375,7 @@ function PagesPage() {
               <button
                 key={tabId}
                 onClick={() => setActiveTab(tabId)}
-                className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
+                className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer${
                   activeTab === tabId
                     ? "bg-surface-alt text-foreground border border-border/50"
                     : "text-muted-foreground hover:text-foreground"
@@ -407,7 +407,7 @@ function PagesPage() {
         {/* Modern Analytics & Highlight Row */}
         {agency && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+            <div className="rounded-xl border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Páginas Criadas</span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalPages}</h3>
@@ -417,7 +417,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+            <div className="rounded-xl border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Visualizações</span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
@@ -427,7 +427,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+            <div className="rounded-xl border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Cliques em Links</span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalClicks}</h3>
@@ -437,7 +437,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+            <div className="rounded-xl border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CTR Geral</span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{globalCtr}%</h3>
@@ -468,13 +468,13 @@ function PagesPage() {
               return (
                 <div
                   key={tpl.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:shadow-md hover:-translate-y-0.5"
+                  className="group relative flex flex-col justify-between rounded-2xl border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
                 >
                   <div className="space-y-4">
                     {/* Visual Preview Block */}
                     <div className="relative overflow-hidden rounded-xl">
                       <PageMiniPreview template={tpl.id} />
-                      <div className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] uppercase font-black font-mono tracking-wider shadow bg-background border text-foreground">
+                      <div className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] uppercase font-black font-mono tracking-wider bg-background border text-foreground">
                         {isBiolink ? "Biolink" : "Website"}
                       </div>
                     </div>
@@ -520,7 +520,7 @@ function PagesPage() {
                 <div className="flex gap-2 mt-5">
                   <button
                     onClick={() => setActiveTab("templates")}
-                    className="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-all shadow-sm"
+                    className="flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-all"
                   >
                     <LayoutTemplate className="h-3.5 w-3.5" /> Escolher Template
                   </button>
@@ -531,7 +531,7 @@ function PagesPage() {
                       setNewPageSlug("");
                       setCreateModalOpen(true);
                     }}
-                    className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all shadow-sm"
+                    className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all"
                   >
                     <Plus className="h-4 w-4" /> Página em Branco
                   </button>
@@ -555,7 +555,7 @@ function PagesPage() {
                 return (
                   <div
                     key={p.id}
-                    className="group relative flex flex-col justify-between rounded-2xl border border-border/60 bg-surface p-5 shadow-sm transition-all duration-300 hover:border-brand/40 hover:shadow"
+                    className="group relative flex flex-col justify-between rounded-2xl border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40"
                   >
                     <div className="space-y-4">
                       {/* Interactive Visual Preview representation */}
@@ -571,7 +571,7 @@ function PagesPage() {
                           }
                           className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-200"
                         >
-                          <span className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-900 shadow-lg flex items-center gap-1">
+                          <span className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-900 flex items-center gap-1">
                             Abrir Construtor <ChevronRight className="h-3 w-3" />
                           </span>
                         </div>
@@ -647,7 +647,7 @@ function PagesPage() {
 
                       <button
                         onClick={() => togglePublish(p)}
-                        className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${
+                        className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors${
                           p.is_published
                             ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
                             : "bg-brand/10 hover:bg-brand/20 text-brand"

@@ -134,9 +134,9 @@ function Page() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
-          <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4 shadow-sm">
+          <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4">
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white shadow-sm"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white"
               style={{ background: agency.brand_color || "#334155" }}
             >
               {agency.name.charAt(0).toUpperCase()}

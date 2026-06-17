@@ -305,14 +305,14 @@ function AISiteBuilder() {
                 {m.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
               </div>
               <div className="space-y-2">
-                <div className={`p-4 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                <div className={`p-4 rounded-2xl text-xs leading-relaxed ${
                   m.role === "user" ? "bg-brand text-white" : "bg-surface-alt/55 text-foreground border border-border/60"
                 }`}>
                   {m.content}
                 </div>
 
                 {m.siteLink && (
-                  <div className="bg-surface border border-border rounded-xl p-4 shadow-md max-w-sm space-y-3">
+                  <div className="bg-surface border border-border rounded-xl p-4 max-w-sm space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600">
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
@@ -349,7 +349,7 @@ function AISiteBuilder() {
               <div className="w-8 h-8 rounded-full bg-surface-alt border border-border flex items-center justify-center shrink-0 text-muted-foreground">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="space-y-2 bg-surface-alt/45 border border-border/50 p-4 rounded-2xl shadow-sm text-xs max-w-sm">
+              <div className="space-y-2 bg-surface-alt/45 border border-border/50 p-4 rounded-2xl text-xs max-w-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex space-x-1">
                     <div className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>

@@ -765,7 +765,7 @@ function Page() {
       {signed && c.certificate ? (
         <div className="space-y-6 animate-in fade-in duration-500">
           <section
-            className="overflow-hidden rounded-2xl border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8 shadow-md"
+            className="overflow-hidden rounded-2xl border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8"
             id="signature-chancery"
           >
             {/* Header: Certificate Title & Seal */}
@@ -843,7 +843,7 @@ function Page() {
               </div>
 
               {/* QR Verification */}
-              <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-xl p-4 shadow-sm hover:border-success/20 transition-colors">
+              <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-xl p-4 hover:border-success/20 transition-colors">
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(`${window.location.origin}/verify/${c.certificate.serial}`)}`}
                   alt="QR Code de Verificação"
@@ -928,7 +928,7 @@ function Page() {
                   download
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-xl hover:bg-success/90 transition-all active:scale-[0.98] shadow-sm cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-xl hover:bg-success/90 transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <FileCheck className="h-4.5 w-4.5" /> Baixar Contrato Assinado (.PDF)
                 </a>
@@ -936,7 +936,7 @@ function Page() {
               <button
                 type="button"
                 onClick={downloadLegalZip}
-                className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-xl hover:bg-brand/90 transition-all active:scale-[0.98] shadow-sm cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-xl hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
               >
                 <FileArchive className="h-4.5 w-4.5" /> Baixar Pacote Jurídico (.ZIP)
               </button>
@@ -945,7 +945,7 @@ function Page() {
 
           {/* Aditivos e Retificações de Contrato para Cliente */}
           {addendums.length > 0 && (
-            <section className="overflow-hidden rounded-xl bg-surface ring-1 ring-border/50 shadow-sm">
+            <section className="overflow-hidden rounded-xl bg-surface ring-1 ring-border/50">
               <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   Aditivos e Retificações de Contrato
@@ -1005,7 +1005,7 @@ function Page() {
         </div>
       ) : (
         <section
-          className="overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50 shadow-sm"
+          className="overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50"
           id="interactive-signature-form"
         >
           <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
@@ -1153,7 +1153,7 @@ function Page() {
                       <img
                         src={selfie}
                         alt="selfie de verificação"
-                        className="h-24 w-24 rounded-full border-4 border-surface object-cover shadow-sm"
+                        className="h-24 w-24 rounded-full border-4 border-surface object-cover"
                       />
                       <button
                         type="button"
@@ -1375,7 +1375,7 @@ function Page() {
                   <button
                     type="button"
                     onClick={clearSig}
-                    className="absolute bottom-2 right-2 rounded-md bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border border-border/40 font-sans shadow-sm"
+                    className="absolute bottom-2 right-2 rounded-md bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border border-border/40 font-sans"
                   >
                     Limpar Canvas
                   </button>

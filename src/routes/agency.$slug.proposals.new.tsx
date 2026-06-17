@@ -281,7 +281,7 @@ function NewProposal() {
         className={cn(
           "mb-6 max-w-2xl rounded-2xl border border-dashed p-6 text-center transition-all duration-200",
           isDragging
-            ? "border-brand bg-brand/5 scale-[1.01] shadow-sm"
+            ? "border-brand bg-brand/5 scale-[1.01]"
             : "border-border bg-surface hover:border-brand/40"
         )}
         onDragOver={(e) => {
