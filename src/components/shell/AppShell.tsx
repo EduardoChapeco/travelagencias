@@ -56,7 +56,9 @@ export function AppShell({
   const isFullPage =
     pathname.endsWith("/crm") ||
     pathname.includes("/crm/") ||
-    pathname.includes("/proposals/") ||
+    pathname.includes("/proposals") ||
+    pathname.includes("/trips") ||
+    pathname.includes("/corporate") ||
     pathname.includes("/vouchers") ||
     pathname.endsWith("/omnichannel") ||
     pathname.includes("/boarding") ||
