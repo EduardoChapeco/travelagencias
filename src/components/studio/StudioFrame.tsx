@@ -23,7 +23,9 @@ interface StudioFrameProps {
 
 export function StudioFrame({ format, children, zoomMode = "auto" }: StudioFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [height, setHeight] = useState(1080);
   const dims = CANVAS_DIMENSIONS[format] ?? CANVAS_DIMENSIONS["a4-portrait"];
 
   useEffect(() => {
@@ -60,31 +62,57 @@ export function StudioFrame({ format, children, zoomMode = "auto" }: StudioFrame
     return () => observer.disconnect();
   }, [zoomMode, dims.width]);
 
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const handleHeight = () => {
+      if (!canvasRef.current) return;
+      const layoutHeight = canvasRef.current.scrollHeight || canvasRef.current.offsetHeight || 1080;
+      setHeight(layoutHeight);
+    };
+
+    const observer = new ResizeObserver(handleHeight);
+    observer.observe(canvasRef.current);
+    handleHeight();
+    return () => observer.disconnect();
+  }, [scale, format]);
+
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-auto bg-slate-200 flex justify-center items-start relative pb-20"
+      className="flex-1 overflow-auto bg-slate-200 flex flex-col items-center justify-start relative pb-20"
       style={{ padding: "32px 16px" }}
     >
       <div
-        id="proposal-canvas"
         style={{
-          width: dims.width,
-          minHeight: dims.minHeight,
-          transform: `scale(${scale})`,
-          transformOrigin: "top center",
-          transition: "transform 0.15s ease-out",
+          width: `calc(${dims.width} * ${scale})`,
+          height: height * scale,
           position: "relative",
-          zIndex: 1,
-          backgroundColor: "#ffffff",
+          transition: "width 0.15s ease-out, height 0.15s ease-out",
         }}
-        className="canvas-page select-text flex flex-col overflow-hidden print:overflow-visible"
       >
-        {/*
-          IMPORTANT: Do not use overflow-hidden on internal blocks if you want html2pdf to split them.
-          Use 'break-inside-avoid' on cards/blocks to prevent bad page breaks.
-        */}
-        {children}
+        <div
+          id="proposal-canvas"
+          ref={canvasRef}
+          style={{
+            width: dims.width,
+            minHeight: dims.minHeight,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            transition: "transform 0.15s ease-out",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 1,
+            backgroundColor: "#ffffff",
+          }}
+          className="canvas-page select-text flex flex-col overflow-hidden print:overflow-visible"
+        >
+          {/*
+            IMPORTANT: Do not use overflow-hidden on internal blocks if you want html2pdf to split them.
+            Use 'break-inside-avoid' on cards/blocks to prevent bad page breaks.
+          */}
+          {children}
+        </div>
       </div>
     </div>
   );
