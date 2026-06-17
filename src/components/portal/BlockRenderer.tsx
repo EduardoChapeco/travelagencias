@@ -2747,14 +2747,14 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
             Tudo pronto! Entraremos em contato em breve.
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex gap-2 w-full mt-2">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 w-full mt-2">
             <input
               type="text"
               required
               placeholder="Seu nome"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <input
               type="tel"
@@ -2762,12 +2762,12 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
               placeholder="(00) 00000-0000"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <button
               type="submit"
               disabled={loading}
-              className="h-10 px-4 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto shrink-0 h-10 px-4 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50"
             >
               Ligar
             </button>
@@ -3571,7 +3571,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">Dias de Viagem</label>
                 <input
@@ -3596,7 +3596,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
 
             <div>
               <label className="text-[10px] uppercase font-bold text-muted-foreground">Faixa Etária do Viajante Mais Velho</label>
-              <div className="grid grid-cols-3 gap-1.5 mt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
                 {[
                   { key: "under60", label: "Até 60 anos" },
                   { key: "mid", label: "61 a 75 anos" },
@@ -3981,7 +3981,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
 
         {step === 2 && (
           <div className="space-y-3.5">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">Nº Passageiros</label>
                 <input
@@ -4008,7 +4008,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
 
             <div>
               <label className="text-[10px] uppercase font-bold text-muted-foreground">Perfil de Investimento</label>
-              <div className="grid grid-cols-3 gap-1.5 mt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
                 {[
                   { key: "low", label: "Econômico" },
                   { key: "medium", label: "Moderado" },
