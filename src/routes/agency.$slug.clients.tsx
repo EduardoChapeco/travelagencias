@@ -223,7 +223,11 @@ function ClientsPage() {
             }`}
             title={showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
           >
-            {showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Trash2 className="h-3.5 w-3.5" />}
+            {showDeleted ? (
+              <ArrowLeft className="h-3.5 w-3.5" />
+            ) : (
+              <Trash2 className="h-3.5 w-3.5" />
+            )}
             <span className="hidden sm:inline">
               {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
             </span>

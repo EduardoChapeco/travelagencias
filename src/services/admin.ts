@@ -102,14 +102,16 @@ export async function forceChangeAgencyStatus(agencyId: string, status: string):
   if (error) throw new Error(error.message);
 }
 
-export async function forceChangeAgencyBlockedStatus(agencyId: string, status: "active" | "blocked"): Promise<void> {
+export async function forceChangeAgencyBlockedStatus(
+  agencyId: string,
+  status: "active" | "blocked",
+): Promise<void> {
   const { error } = await supabase
     .from("agencies")
     .update({ status } as any)
     .eq("id", agencyId);
   if (error) throw new Error(error.message);
 }
-
 
 export async function sendOwnerPasswordReset(email: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email);

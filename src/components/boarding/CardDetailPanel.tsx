@@ -210,7 +210,9 @@ export function CardDetailPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 bg-surface z-10">
           <div>
-            <div className="font-mono text-sm font-bold text-foreground">{pnr || "Sem Localizador"}</div>
+            <div className="font-mono text-sm font-bold text-foreground">
+              {pnr || "Sem Localizador"}
+            </div>
             <div className="text-xs text-muted-foreground">{airline || "—"}</div>
           </div>
           <div className="flex items-center gap-2">
@@ -500,7 +502,7 @@ export function CardDetailPanel({
                       onChange={(e) => {
                         const newTags = e.target.checked
                           ? [...tags, "auto_dispatch_enabled"]
-                          : tags.filter(t => t !== "auto_dispatch_enabled");
+                          : tags.filter((t) => t !== "auto_dispatch_enabled");
                         setTags(newTags);
                         setEditDirty(true);
                       }}
@@ -508,7 +510,9 @@ export function CardDetailPanel({
                     <div>
                       <div>Disparo Automático (Liberar embarque automático)</div>
                       <div className="text-[10px] text-muted-foreground font-medium mt-0.5 leading-tight">
-                        Se ativado, o sistema liberará os vouchers e localizadores automaticamente assim que a IA/OCR conciliar o pagamento. Desative para revisão manual (erros de loc, pendências).
+                        Se ativado, o sistema liberará os vouchers e localizadores automaticamente
+                        assim que a IA/OCR conciliar o pagamento. Desative para revisão manual
+                        (erros de loc, pendências).
                       </div>
                     </div>
                   </label>

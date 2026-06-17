@@ -215,12 +215,12 @@ function PageEditorRoute() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
-  
+
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [pageSettingsOpen, setPageSettingsOpen] = useState(false);
   const [seoSettingsOpen, setSeoSettingsOpen] = useState(false);
   const [historySettingsOpen, setHistorySettingsOpen] = useState(false);
-  
+
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [showNewPageModal, setShowNewPageModal] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState("");
@@ -249,7 +249,7 @@ function PageEditorRoute() {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   function handleDragEnd(event: DragEndEvent) {
@@ -312,7 +312,7 @@ function PageEditorRoute() {
       setShowNewPageModal(false);
       setNewPageTitle("");
       setNewPageSlug("");
-      
+
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
       navigate({
         to: "/agency/$slug/portal/pages/$page_id",
@@ -428,10 +428,7 @@ function PageEditorRoute() {
       return;
     }
     try {
-      const { error } = await supabase
-        .from("portal_pages")
-        .delete()
-        .eq("id", p.id);
+      const { error } = await supabase.from("portal_pages").delete().eq("id", p.id);
       if (error) throw error;
       toast.success("Página excluída");
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
@@ -446,7 +443,7 @@ function PageEditorRoute() {
   useEffect(() => {
     if (!hasInitialized || isNew || isLoading || !agency || !initialData) return;
 
-    const hasChanged = 
+    const hasChanged =
       title !== (initialData?.title || "") ||
       pageSlug !== (initialData?.slug || "") ||
       template !== (initialData?.template || "default") ||
@@ -510,7 +507,7 @@ function PageEditorRoute() {
     try {
       const newPageId = await saveDraftInternal();
       toast.success("Rascunho salvo");
-      
+
       const targetPageId = isNew ? newPageId : page_id;
       qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });
       qc.invalidateQueries({ queryKey: ["portal-page", targetPageId] });
@@ -571,7 +568,7 @@ function PageEditorRoute() {
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
-          
+
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -599,7 +596,11 @@ function PageEditorRoute() {
                     }}
                   >
                     <span className="truncate flex-1">{p.title}</span>
-                    {p.slug === "home" && <span className="text-[9px] bg-brand text-brand-foreground font-semibold px-1 rounded shrink-0">Home</span>}
+                    {p.slug === "home" && (
+                      <span className="text-[9px] bg-brand text-brand-foreground font-semibold px-1 rounded shrink-0">
+                        Home
+                      </span>
+                    )}
                   </DropdownMenuItem>
                 );
               })}
@@ -712,10 +713,16 @@ function PageEditorRoute() {
         </div>
 
         <div className="flex items-center gap-3">
-          {saveStatus === "saving" && <span className="text-xs text-muted-foreground animate-pulse mr-2">Salvando...</span>}
-          {saveStatus === "saved" && <span className="text-xs text-green-500 font-medium mr-2">✓ Salvo</span>}
-          {saveStatus === "error" && <span className="text-xs text-destructive font-medium mr-2">✗ Erro ao salvar</span>}
-          
+          {saveStatus === "saving" && (
+            <span className="text-xs text-muted-foreground animate-pulse mr-2">Salvando...</span>
+          )}
+          {saveStatus === "saved" && (
+            <span className="text-xs text-green-500 font-medium mr-2">✓ Salvo</span>
+          )}
+          {saveStatus === "error" && (
+            <span className="text-xs text-destructive font-medium mr-2">✗ Erro ao salvar</span>
+          )}
+
           <div className="flex items-center gap-1 border-r border-border pr-3">
             {/* Left Sidebar Toggle Button */}
             <button
@@ -734,7 +741,7 @@ function PageEditorRoute() {
             >
               <Settings className="h-4 w-4" />
             </button>
-            
+
             <button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
@@ -742,7 +749,7 @@ function PageEditorRoute() {
             >
               <Globe className="h-4 w-4" />
             </button>
-            
+
             {!isNew && (
               <button
                 onClick={() => setHistorySettingsOpen(true)}
@@ -752,7 +759,7 @@ function PageEditorRoute() {
                 <History className="h-4 w-4" />
               </button>
             )}
-            
+
             {!isNew && (
               <a
                 href={`https://${agency.slug}.travelos.com/${pageSlug || slugify(title)}`}
@@ -780,199 +787,231 @@ function PageEditorRoute() {
         {/* ── 1. LEFT SIDEBAR: Biblioteca de Seções & Camadas (width 320px) ── */}
         {isLeftSidebarOpen && (
           <div className="w-[320px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
-          {/* Seletor de Abas Esquerdo */}
-          <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
-            <button
-              type="button"
-              onClick={() => setLeftTab("sections")}
-              className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
-                leftTab === "sections"
-                  ? "bg-background text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-              }`}
-            >
-              Seções
-            </button>
-            <button
-              type="button"
-              onClick={() => setLeftTab("templates")}
-              className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
-                leftTab === "templates"
-                  ? "bg-background text-brand border border-brand/5"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-              }`}
-            >
-              Templates
-            </button>
-            <button
-              type="button"
-              onClick={() => setLeftTab("layers")}
-              className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
-                leftTab === "layers"
-                  ? "bg-background text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-              }`}
-            >
-              Camadas ({blocks.length})
-            </button>
-          </div>
-
-          {/* ABA 1: SEÇÕES */}
-          {leftTab === "sections" && (
-            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
-              <div>
-                <h4 className="text-xs font-bold text-foreground">Biblioteca de Seções</h4>
-                <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
-                  Adicione novos blocos visuais arrastáveis ao layout de sua página.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                {(Object.keys(BLOCK_LABELS) as PortalBlockType[]).map((type) => {
-                  let IconComponent = LayoutTemplate;
-                  if (type === "text") IconComponent = Type;
-                  else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
-                  else if (type === "contact") IconComponent = PhoneCall;
-                  else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
-                  else if (type === "cta" || type === "promotional_banner" || type === "news_announcements_ticker") IconComponent = Megaphone;
-                  else if (type === "faq" || type === "support_ticket_form" || type === "travel_tips_faq" || type === "faq_category_accordion") IconComponent = HelpCircle;
-                  else if (type === "testimonials" || type === "live_reviews" || type === "reviews_submission_form") IconComponent = Quote;
-                  else if (type === "tours_grid" || type === "tours_carousel") IconComponent = Bus;
-                  else if (type === "stats") IconComponent = BarChart2;
-                  else if (type === "video") IconComponent = Play;
-                  else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
-                  else if (type === "blog_feed") IconComponent = Rss;
-                  else if (type === "featured_destination_filter") IconComponent = Globe;
-                  else if (type === "team_widget" || type === "agent_profile_card") IconComponent = Users;
-                  else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble") IconComponent = MessageSquare;
-                  else if (type === "countdown_tour" || type === "live_sales_counter" || type === "client_boarding_timeline") IconComponent = Clock;
-                  else if (type === "exchange_rates" || type === "currency_calculator") IconComponent = Coins;
-                  else if (type === "agency_vouchers") IconComponent = Ticket;
-                  else if (type === "weather_forecast") IconComponent = CloudSun;
-                  else if (type === "itinerary_timeline") IconComponent = Calendar;
-                  else if (type === "lead_capture_callback") IconComponent = PhoneCall;
-                  else if (type === "payment_gateways_display") IconComponent = CreditCard;
-                  else if (type === "live_tours_map" || type === "custom_package_lead_builder") IconComponent = Compass;
-                  else if (type === "gift_cards_store") IconComponent = Gift;
-                  else if (type === "corporate_rfp_form") IconComponent = Building;
-                  else if (type === "client_document_upload") IconComponent = Upload;
-                  else if (type === "biolink_newsletter_box") IconComponent = Mail;
-                  else if (type === "visa_checker") IconComponent = FileText;
-                  else if (type === "insurance_simulator") IconComponent = Activity;
-                  else if (type === "agency_badges_trust") IconComponent = Check;
-                  else if (type === "interactive_flight_tracker") IconComponent = Plane;
-                  else if (type === "biolink_qr_code_share") IconComponent = QrCode;
-
-                  const isBiolinkType = type.startsWith("biolink_");
-
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => addBlock(type)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-sm border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
-                    >
-                      <IconComponent className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand${isBiolinkType ? "text-brand" : "text-muted-foreground"}`} />
-                      <span className="text-[10px] font-bold leading-tight">
-                        {BLOCK_LABELS[type].split(" ")[0]}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
+            {/* Seletor de Abas Esquerdo */}
+            <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
               <button
                 type="button"
-                onClick={() => setAiModalOpen(true)}
-                className="w-full flex items-center justify-center gap-1.5 rounded-sm border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+                onClick={() => setLeftTab("sections")}
+                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                  leftTab === "sections"
+                    ? "bg-background text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                }`}
               >
-                <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
+                Seções
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeftTab("templates")}
+                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                  leftTab === "templates"
+                    ? "bg-background text-brand border border-brand/5"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                }`}
+              >
+                Templates
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeftTab("layers")}
+                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                  leftTab === "layers"
+                    ? "bg-background text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                }`}
+              >
+                Camadas ({blocks.length})
               </button>
             </div>
-          )}
 
-          {/* ABA 2: TEMPLATES */}
-          {leftTab === "templates" && (
-            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
-              <div>
-                <h4 className="text-xs font-bold text-foreground">Designs Prontos</h4>
-                <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
-                  Substitua a estrutura atual por um template profissional em um clique.
-                </p>
-              </div>
+            {/* ABA 1: SEÇÕES */}
+            {leftTab === "sections" && (
+              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Biblioteca de Seções</h4>
+                  <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                    Adicione novos blocos visuais arrastáveis ao layout de sua página.
+                  </p>
+                </div>
 
-              <div className="space-y-2">
-                {CMS_TEMPLATES.map((tpl) => (
-                  <button
-                    key={tpl.id}
-                    type="button"
-                    onClick={() => handleApplyTemplate(tpl.id)}
-                    className={`w-full text-left p-3 rounded-sm border hover:border-brand/40 transition-all flex flex-col gap-1.5 group${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
-                  >
-                    <div className="flex justify-between items-center w-full">
-                      <span className={`text-xs font-bold transition-colors group-hover:text-brand${template === tpl.id ? "text-brand" : "text-foreground"}`}>
-                        {tpl.name}
-                      </span>
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
-                        {tpl.category}
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground leading-normal">
-                      {tpl.description}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+                <div className="grid grid-cols-2 gap-2">
+                  {(Object.keys(BLOCK_LABELS) as PortalBlockType[]).map((type) => {
+                    let IconComponent = LayoutTemplate;
+                    if (type === "text") IconComponent = Type;
+                    else if (type === "gallery" || type === "biolink_header")
+                      IconComponent = ImageIcon;
+                    else if (type === "contact") IconComponent = PhoneCall;
+                    else if (type === "features" || type === "biolink_links")
+                      IconComponent = ListPlus;
+                    else if (
+                      type === "cta" ||
+                      type === "promotional_banner" ||
+                      type === "news_announcements_ticker"
+                    )
+                      IconComponent = Megaphone;
+                    else if (
+                      type === "faq" ||
+                      type === "support_ticket_form" ||
+                      type === "travel_tips_faq" ||
+                      type === "faq_category_accordion"
+                    )
+                      IconComponent = HelpCircle;
+                    else if (
+                      type === "testimonials" ||
+                      type === "live_reviews" ||
+                      type === "reviews_submission_form"
+                    )
+                      IconComponent = Quote;
+                    else if (type === "tours_grid" || type === "tours_carousel")
+                      IconComponent = Bus;
+                    else if (type === "stats") IconComponent = BarChart2;
+                    else if (type === "video") IconComponent = Play;
+                    else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
+                    else if (type === "blog_feed") IconComponent = Rss;
+                    else if (type === "featured_destination_filter") IconComponent = Globe;
+                    else if (type === "team_widget" || type === "agent_profile_card")
+                      IconComponent = Users;
+                    else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble")
+                      IconComponent = MessageSquare;
+                    else if (
+                      type === "countdown_tour" ||
+                      type === "live_sales_counter" ||
+                      type === "client_boarding_timeline"
+                    )
+                      IconComponent = Clock;
+                    else if (type === "exchange_rates" || type === "currency_calculator")
+                      IconComponent = Coins;
+                    else if (type === "agency_vouchers") IconComponent = Ticket;
+                    else if (type === "weather_forecast") IconComponent = CloudSun;
+                    else if (type === "itinerary_timeline") IconComponent = Calendar;
+                    else if (type === "lead_capture_callback") IconComponent = PhoneCall;
+                    else if (type === "payment_gateways_display") IconComponent = CreditCard;
+                    else if (type === "live_tours_map" || type === "custom_package_lead_builder")
+                      IconComponent = Compass;
+                    else if (type === "gift_cards_store") IconComponent = Gift;
+                    else if (type === "corporate_rfp_form") IconComponent = Building;
+                    else if (type === "client_document_upload") IconComponent = Upload;
+                    else if (type === "biolink_newsletter_box") IconComponent = Mail;
+                    else if (type === "visa_checker") IconComponent = FileText;
+                    else if (type === "insurance_simulator") IconComponent = Activity;
+                    else if (type === "agency_badges_trust") IconComponent = Check;
+                    else if (type === "interactive_flight_tracker") IconComponent = Plane;
+                    else if (type === "biolink_qr_code_share") IconComponent = QrCode;
 
-          {/* ABA 3: CAMADAS */}
-          {leftTab === "layers" && (
-            <div className="flex-1 flex flex-col min-h-0">
-              <div className="px-4 py-3 border-b border-border bg-surface-alt/10 flex justify-between items-center shrink-0">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5" /> Ordenar Seções
-                </h3>
-                <span className="text-[10px] bg-border px-1.5 py-0.5 rounded font-bold text-muted-foreground">
-                  {blocks.length}
-                </span>
+                    const isBiolinkType = type.startsWith("biolink_");
+
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => addBlock(type)}
+                        className={`flex flex-col items-center justify-center p-3 rounded-sm border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
+                      >
+                        <IconComponent
+                          className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand${isBiolinkType ? "text-brand" : "text-muted-foreground"}`}
+                        />
+                        <span className="text-[10px] font-bold leading-tight">
+                          {BLOCK_LABELS[type].split(" ")[0]}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setAiModalOpen(true)}
+                  className="w-full flex items-center justify-center gap-1.5 rounded-sm border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
+                </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
-                {blocks.length === 0 ? (
-                  <div className="rounded-sm border border-dashed border-border p-8 text-center bg-surface-alt/10">
-                    <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
-                    <p className="text-[10px] text-muted-foreground/70 mt-1">
-                      Adicione seções pela aba "Seções" ou selecione um template em "Templates".
-                    </p>
-                  </div>
-                ) : (
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={blocks.map((b) => b.id)}
-                      strategy={verticalListSortingStrategy}
+            )}
+
+            {/* ABA 2: TEMPLATES */}
+            {leftTab === "templates" && (
+              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Designs Prontos</h4>
+                  <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                    Substitua a estrutura atual por um template profissional em um clique.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  {CMS_TEMPLATES.map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleApplyTemplate(tpl.id)}
+                      className={`w-full text-left p-3 rounded-sm border hover:border-brand/40 transition-all flex flex-col gap-1.5 group${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
                     >
-                      <div className="space-y-2">
-                        {blocks.map((block) => (
-                          <SortableBlock
-                            key={block.id}
-                            block={block}
-                            selectedBlockId={selectedBlockId}
-                            setSelectedBlockId={setSelectedBlockId}
-                            removeBlock={removeBlock}
-                          />
-                        ))}
+                      <div className="flex justify-between items-center w-full">
+                        <span
+                          className={`text-xs font-bold transition-colors group-hover:text-brand${template === tpl.id ? "text-brand" : "text-foreground"}`}
+                        >
+                          {tpl.name}
+                        </span>
+                        <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
+                          {tpl.category}
+                        </span>
                       </div>
-                    </SortableContext>
-                  </DndContext>
-                )}
+                      <span className="text-[10px] text-muted-foreground leading-normal">
+                        {tpl.description}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+
+            {/* ABA 3: CAMADAS */}
+            {leftTab === "layers" && (
+              <div className="flex-1 flex flex-col min-h-0">
+                <div className="px-4 py-3 border-b border-border bg-surface-alt/10 flex justify-between items-center shrink-0">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5" /> Ordenar Seções
+                  </h3>
+                  <span className="text-[10px] bg-border px-1.5 py-0.5 rounded font-bold text-muted-foreground">
+                    {blocks.length}
+                  </span>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+                  {blocks.length === 0 ? (
+                    <div className="rounded-sm border border-dashed border-border p-8 text-center bg-surface-alt/10">
+                      <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
+                      <p className="text-[10px] text-muted-foreground/70 mt-1">
+                        Adicione seções pela aba "Seções" ou selecione um template em "Templates".
+                      </p>
+                    </div>
+                  ) : (
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={blocks.map((b) => b.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-2">
+                          {blocks.map((block) => (
+                            <SortableBlock
+                              key={block.id}
+                              block={block}
+                              selectedBlockId={selectedBlockId}
+                              setSelectedBlockId={setSelectedBlockId}
+                              removeBlock={removeBlock}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
@@ -994,7 +1033,8 @@ function PageEditorRoute() {
                   <LayoutTemplate className="w-14 h-14 mb-4 opacity-25 text-muted-foreground" />
                   <h4 className="text-sm font-bold text-foreground">Sua página está vazia</h4>
                   <p className="text-xs text-muted-foreground max-w-sm mt-1">
-                    Adicione seções prontas pela biblioteca na barra esquerda ou aplique um template pronto na barra direita.
+                    Adicione seções prontas pela biblioteca na barra esquerda ou aplique um template
+                    pronto na barra direita.
                   </p>
                 </div>
               ) : (
@@ -1020,9 +1060,14 @@ function PageEditorRoute() {
             <div className="flex-1 flex flex-col overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-border bg-surface-alt/30 shrink-0">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand">Propriedades</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+                    Propriedades
+                  </span>
                   <h3 className="font-bold text-sm text-foreground">
-                    {BLOCK_LABELS[blocks.find((b) => b.id === selectedBlockId)?.type as keyof typeof BLOCK_LABELS] || "Editar Seção"}
+                    {BLOCK_LABELS[
+                      blocks.find((b) => b.id === selectedBlockId)
+                        ?.type as keyof typeof BLOCK_LABELS
+                    ] || "Editar Seção"}
                   </h3>
                 </div>
                 <button
@@ -1081,13 +1126,11 @@ function PageEditorRoute() {
             Tem certeza que deseja aplicar o template <strong>{applyConfirmTemplate?.name}</strong>?
           </p>
           <p className="text-xs text-muted-foreground">
-            Todos os blocos de seções atuais no canvas serão substituídos pela estrutura desse template.
+            Todos os blocos de seções atuais no canvas serão substituídos pela estrutura desse
+            template.
           </p>
           <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-            <GhostButton
-              type="button"
-              onClick={() => setApplyConfirmTemplate(null)}
-            >
+            <GhostButton type="button" onClick={() => setApplyConfirmTemplate(null)}>
               Cancelar
             </GhostButton>
             <PrimaryButton
@@ -1126,16 +1169,16 @@ function PageEditorRoute() {
         <div className="space-y-4 py-2">
           <p className="text-xs text-muted-foreground leading-relaxed">
             Tem certeza que deseja reverter a página para a versão salva em{" "}
-            <strong>{revertConfirmVersion && new Date(revertConfirmVersion.created_at).toLocaleString()}</strong>?
+            <strong>
+              {revertConfirmVersion && new Date(revertConfirmVersion.created_at).toLocaleString()}
+            </strong>
+            ?
           </p>
           <p className="text-xs text-muted-foreground">
             Todo o conteúdo atual no editor será substituído pelo conteúdo desta versão.
           </p>
           <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-            <GhostButton
-              type="button"
-              onClick={() => setRevertConfirmVersion(null)}
-            >
+            <GhostButton type="button" onClick={() => setRevertConfirmVersion(null)}>
               Cancelar
             </GhostButton>
             <PrimaryButton
@@ -1147,14 +1190,14 @@ function PageEditorRoute() {
                 try {
                   await revertPortalPageVersion(page_id, revertConfirmVersion.id);
                   toast.success("Página revertida para a versão selecionada!");
-                  
+
                   // Invalidate cache immediately
                   await qc.invalidateQueries({ queryKey: ["portal-page", page_id] });
                   await qc.invalidateQueries({ queryKey: ["portal-page-versions", page_id] });
-                  
+
                   // Reset initialization flag to force reload of fresh values
                   setHasInitialized(false);
-                  
+
                   setTab("content");
                   setRevertConfirmVersion(null);
                 } catch (err: any) {
@@ -1240,7 +1283,10 @@ function PageEditorRoute() {
                 placeholder={title || "Ex: Viagens Incríveis"}
               />
             </Field>
-            <Field label="Descrição SEO" hint="Aparece no Google e compartilhamentos de redes sociais">
+            <Field
+              label="Descrição SEO"
+              hint="Aparece no Google e compartilhamentos de redes sociais"
+            >
               <Textarea
                 value={metaDesc}
                 onChange={(e) => setMetaDesc(e.target.value)}
@@ -1266,7 +1312,8 @@ function PageEditorRoute() {
       >
         <div className="space-y-4 py-2">
           <div className="text-xs text-muted-foreground">
-            Selecione uma das versões anteriores salvas automaticamente ou publicadas para restaurar seu conteúdo.
+            Selecione uma das versões anteriores salvas automaticamente ou publicadas para restaurar
+            seu conteúdo.
           </div>
           {versionsQuery.isLoading && (
             <div className="text-xs text-muted-foreground">Carregando histórico...</div>
@@ -1350,7 +1397,10 @@ function PageEditorRoute() {
                 />
               </Field>
               <Field label="Template / Layout Inicial">
-                <Select value={newPageTemplate} onChange={(e) => setNewPageTemplate(e.target.value)}>
+                <Select
+                  value={newPageTemplate}
+                  onChange={(e) => setNewPageTemplate(e.target.value)}
+                >
                   <option value="default">Padrão / Em branco</option>
                   <option value="about">Sobre nós</option>
                   <option value="contact">Contato & Suporte</option>
@@ -1376,10 +1426,7 @@ function PageEditorRoute() {
             <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
-                <Input
-                  value={renameTitle}
-                  onChange={(e) => setRenameTitle(e.target.value)}
-                />
+                <Input value={renameTitle} onChange={(e) => setRenameTitle(e.target.value)} />
               </Field>
               <Field label="URL (Slug)">
                 <Input

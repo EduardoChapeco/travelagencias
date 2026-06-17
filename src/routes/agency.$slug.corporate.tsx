@@ -1,7 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter, Settings2, ChevronDown } from "lucide-react";
+import {
+  Plus,
+  Briefcase,
+  Building2,
+  Send,
+  CheckCircle,
+  XCircle,
+  Search,
+  Filter,
+  Settings2,
+  ChevronDown,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";

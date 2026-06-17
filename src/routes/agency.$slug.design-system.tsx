@@ -42,18 +42,38 @@ export const Route = createFileRoute("/agency/$slug/design-system")({
 // Color tokens from styles.css
 const COLOR_TOKENS = [
   { name: "--background", desc: "Cor principal do fundo da aplicação", category: "Core" },
-  { name: "--foreground", desc: "Cor principal do texto em contraste com background", category: "Core" },
+  {
+    name: "--foreground",
+    desc: "Cor principal do texto em contraste com background",
+    category: "Core",
+  },
   { name: "--surface", desc: "Fundo de cartões, painéis e elementos elevados", category: "Core" },
-  { name: "--surface-alt", desc: "Fundo alternativo ou secundário para tabelas/linhas", category: "Core" },
+  {
+    name: "--surface-alt",
+    desc: "Fundo alternativo ou secundário para tabelas/linhas",
+    category: "Core",
+  },
   { name: "--border", desc: "Borda padrão fina de separação e inputs", category: "Borders" },
   { name: "--border-strong", desc: "Borda mais forte para realce ou foco", category: "Borders" },
-  { name: "--brand", desc: "Cor primária da marca (sobrescrevível pelo cliente)", category: "Brand" },
+  {
+    name: "--brand",
+    desc: "Cor primária da marca (sobrescrevível pelo cliente)",
+    category: "Brand",
+  },
   { name: "--brand-light", desc: "Cor brand suavizada de fundo", category: "Brand" },
   { name: "--brand-foreground", desc: "Texto contrastante sobre a cor brand", category: "Brand" },
   { name: "--primary", desc: "Cor do texto principal e botões cheios", category: "Interactive" },
-  { name: "--primary-foreground", desc: "Texto sobre botões de cor primária", category: "Interactive" },
+  {
+    name: "--primary-foreground",
+    desc: "Texto sobre botões de cor primária",
+    category: "Interactive",
+  },
   { name: "--secondary", desc: "Cor secundária de botões e seleções", category: "Interactive" },
-  { name: "--secondary-foreground", desc: "Texto sobre botões secundários", category: "Interactive" },
+  {
+    name: "--secondary-foreground",
+    desc: "Texto sobre botões secundários",
+    category: "Interactive",
+  },
   { name: "--muted", desc: "Fundo desativado ou desbotado", category: "Interactive" },
   { name: "--muted-foreground", desc: "Texto desbotado de legendas e hints", category: "Core" },
   { name: "--success", desc: "Verde indicador de operações bem-sucedidas", category: "States" },
@@ -68,30 +88,84 @@ const COLOR_TOKENS = [
 
 // Typography scale details
 const TYPO_TOKENS = [
-  { class: "text-[10px]", size: "10px", weight: "Medium/Bold", desc: "Usada para legendas pequenas, badges e status." },
-  { class: "text-xs", size: "12px", weight: "Medium/SemiBold", desc: "Usada para labels de formulário, inputs e tabelas secundárias." },
-  { class: "text-sm", size: "14px", weight: "Regular/Medium", desc: "Tamanho padrão do texto corrido do sistema." },
-  { class: "text-base", size: "16px", weight: "Medium/Bold", desc: "Subtítulos, destaques médios e botões destacados." },
-  { class: "text-lg", size: "18px", weight: "SemiBold/Bold", desc: "Títulos de seções pequenas, modais e resumos." },
-  { class: "text-xl", size: "20px", weight: "Bold/Black", desc: "Títulos de cabeçalho principal e estatísticas." },
-  { class: "text-2xl", size: "24px", weight: "Bold/Black", desc: "Destaques numéricos, heroes e banners promocionais." },
-  { class: "text-3xl", size: "30px", weight: "Black", desc: "Grandes banners de marketing e landing pages." },
-  { class: "text-4xl", size: "36px", weight: "Black", desc: "Hero title principal da landing page de vendas." },
+  {
+    class: "text-[10px]",
+    size: "10px",
+    weight: "Medium/Bold",
+    desc: "Usada para legendas pequenas, badges e status.",
+  },
+  {
+    class: "text-xs",
+    size: "12px",
+    weight: "Medium/SemiBold",
+    desc: "Usada para labels de formulário, inputs e tabelas secundárias.",
+  },
+  {
+    class: "text-sm",
+    size: "14px",
+    weight: "Regular/Medium",
+    desc: "Tamanho padrão do texto corrido do sistema.",
+  },
+  {
+    class: "text-base",
+    size: "16px",
+    weight: "Medium/Bold",
+    desc: "Subtítulos, destaques médios e botões destacados.",
+  },
+  {
+    class: "text-lg",
+    size: "18px",
+    weight: "SemiBold/Bold",
+    desc: "Títulos de seções pequenas, modais e resumos.",
+  },
+  {
+    class: "text-xl",
+    size: "20px",
+    weight: "Bold/Black",
+    desc: "Títulos de cabeçalho principal e estatísticas.",
+  },
+  {
+    class: "text-2xl",
+    size: "24px",
+    weight: "Bold/Black",
+    desc: "Destaques numéricos, heroes e banners promocionais.",
+  },
+  {
+    class: "text-3xl",
+    size: "30px",
+    weight: "Black",
+    desc: "Grandes banners de marketing e landing pages.",
+  },
+  {
+    class: "text-4xl",
+    size: "36px",
+    weight: "Black",
+    desc: "Hero title principal da landing page de vendas.",
+  },
 ];
 
 // Presets do Page Builder (Dynamic Blocks)
 const BLOCK_PRESETS = {
   gradients: [
     { name: "Sunset Glow", css: "bg-gradient-to-r from-orange-500 to-rose-500 text-white" },
-    { name: "Violet Dreams", css: "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white" },
+    {
+      name: "Violet Dreams",
+      css: "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white",
+    },
     { name: "Ocean Breeze", css: "bg-gradient-to-r from-cyan-500 to-blue-600 text-white" },
     { name: "Neon Mint", css: "bg-gradient-to-r from-emerald-400 to-cyan-500 text-white" },
-    { name: "Midnight Premium", css: "bg-gradient-to-b from-zinc-900 to-black text-white border border-zinc-800" },
+    {
+      name: "Midnight Premium",
+      css: "bg-gradient-to-b from-zinc-900 to-black text-white border border-zinc-800",
+    },
   ],
   borders: [
     { name: "Fina Padrão", class: "border border-border" },
     { name: "Vidro (Glassmorphic)", class: "border border-white/20 bg-white/5 backdrop-blur-md" },
-    { name: "Glow Iluminada", class: "border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20" },
+    {
+      name: "Glow Iluminada",
+      class: "border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20",
+    },
   ],
 };
 
@@ -132,7 +206,12 @@ function DesignSystemPage() {
   const [sandboxAlign, setSandboxAlign] = useState<string>("text-left");
   const [sandboxElements, setSandboxElements] = useState<SandboxElement[]>([
     { id: "1", type: "header", title: "Crie Propostas Convincentes" },
-    { id: "2", type: "paragraph", content: "Nosso motor integrado permite criar propostas comerciais em menos de 5 minutos, sem usar planilhas." },
+    {
+      id: "2",
+      type: "paragraph",
+      content:
+        "Nosso motor integrado permite criar propostas comerciais em menos de 5 minutos, sem usar planilhas.",
+    },
     { id: "3", type: "button", buttonText: "Começar Agora" },
   ]);
 
@@ -144,8 +223,11 @@ function DesignSystemPage() {
     if (type === "header") newEl.title = "Título da Seção";
     if (type === "paragraph") newEl.content = "Texto complementar da seção descritiva.";
     if (type === "button") newEl.buttonText = "Botão de Ação";
-    if (type === "image") newEl.imageUrl = "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?w=600&auto=format&fit=crop&q=60";
-    if (type === "features") newEl.featuresList = ["Item do recurso A", "Item do recurso B", "Item do recurso C"];
+    if (type === "image")
+      newEl.imageUrl =
+        "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?w=600&auto=format&fit=crop&q=60";
+    if (type === "features")
+      newEl.featuresList = ["Item do recurso A", "Item do recurso B", "Item do recurso C"];
 
     setSandboxElements([...sandboxElements, newEl]);
   };
@@ -161,7 +243,7 @@ function DesignSystemPage() {
           return { ...el, [field]: value };
         }
         return el;
-      })
+      }),
     );
   };
 
@@ -183,7 +265,12 @@ function DesignSystemPage() {
       } else if (el.type === "image") {
         elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-xl border border-border w-full object-cover max-h-48" />`;
       } else if (el.type === "features") {
-        const listItems = (el.featuresList || []).map((f) => `\n      <li className="flex items-center gap-2 text-xs text-foreground/80"><Check className="h-3.5 w-3.5 text-brand shrink-0" /> ${f}</li>`).join("");
+        const listItems = (el.featuresList || [])
+          .map(
+            (f) =>
+              `\n      <li className="flex items-center gap-2 text-xs text-foreground/80"><Check className="h-3.5 w-3.5 text-brand shrink-0" /> ${f}</li>`,
+          )
+          .join("");
         elementsMarkup += `\n    <ul className="space-y-2 text-left">${listItems}\n    </ul>`;
       }
     });
@@ -225,7 +312,7 @@ function DesignSystemPage() {
                 "w-full flex items-center justify-between text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer",
                 activeTab === tab.id
                   ? "bg-brand/10 text-brand font-bold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/55"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/55",
               )}
             >
               <span>{tab.label}</span>
@@ -235,52 +322,68 @@ function DesignSystemPage() {
         </nav>
 
         <div className="p-3 border-t border-border bg-surface-alt/10 text-[10px] text-muted-foreground leading-relaxed font-mono">
-          TravelOS UI v1.2.0<br />
+          TravelOS UI v1.2.0
+          <br />
           No Shadows Mode
         </div>
       </aside>
 
       {/* Scrollable Contents */}
       <main className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-thin bg-background/50 space-y-8">
-        
         {/* TAB 1: PRINCIPLES */}
         {activeTab === "principles" && (
           <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">💡 Princípios Visuais Pétreos</h3>
-              <p className="text-xs text-muted-foreground mt-1">Diretrizes conceituais que orientam a engenharia e design do TravelOS.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                💡 Princípios Visuais Pétreos
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Diretrizes conceituais que orientam a engenharia e design do TravelOS.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-5 bg-surface border border-border rounded-xl space-y-2">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">1. Design Utilitário e Profissional</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  1. Design Utilitário e Profissional
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  O TravelOS é um workspace operacional para agências de viagens gerirem dados críticos. 
-                  A interface prioriza densidade de informação, facilidade de leitura e agilidade. Evitamos decorações dispensáveis.
+                  O TravelOS é um workspace operacional para agências de viagens gerirem dados
+                  críticos. A interface prioriza densidade de informação, facilidade de leitura e
+                  agilidade. Evitamos decorações dispensáveis.
                 </p>
               </div>
 
               <div className="p-5 bg-surface border border-border rounded-xl space-y-2">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">2. Sem Sombras Estáticas (Flat Design)</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  2. Sem Sombras Estáticas (Flat Design)
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Para conferir uma estética limpa, lisa e premium, removemos todas as sombras de cards e tabelas. 
-                  Usamos bordas finas e realces de cores de fundo (`bg-surface-alt`) para criar relevo visual.
+                  Para conferir uma estética limpa, lisa e premium, removemos todas as sombras de
+                  cards e tabelas. Usamos bordas finas e realces de cores de fundo
+                  (`bg-surface-alt`) para criar relevo visual.
                 </p>
               </div>
 
               <div className="p-5 bg-surface border border-border rounded-xl space-y-2">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">3. Acessibilidade e Contraste</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  3. Acessibilidade e Contraste
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Cores de texto (`text-foreground` e `text-muted-foreground`) foram calculadas para dar contraste perfeito
-                  com os fundos de superfície em ambos os modos Claro e Escuro.
+                  Cores de texto (`text-foreground` e `text-muted-foreground`) foram calculadas para
+                  dar contraste perfeito com os fundos de superfície em ambos os modos Claro e
+                  Escuro.
                 </p>
               </div>
 
               <div className="p-5 bg-surface border border-border rounded-xl space-y-2">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">4. Coesão Sincronizada</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  4. Coesão Sincronizada
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Variáveis de cores e fontes são centralizadas. Alterar a marca da agência no painel de identidade visual
-                  propaga automaticamente o visual por toda a plataforma operacional e portais públicos.
+                  Variáveis de cores e fontes são centralizadas. Alterar a marca da agência no
+                  painel de identidade visual propaga automaticamente o visual por toda a plataforma
+                  operacional e portais públicos.
                 </p>
               </div>
             </div>
@@ -288,7 +391,10 @@ function DesignSystemPage() {
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex gap-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <div>
-                <strong>Atenção Desenvolvedor:</strong> Ao criar novas seções ou módulos, NUNCA utilize classes utilitárias de sombras como `shadow-sm`, `shadow-md`, `shadow-lg` de forma estática. Caso precise de relevo, prefira bordas finas (`border border-border`) ou cores de superfície diferenciadas.
+                <strong>Atenção Desenvolvedor:</strong> Ao criar novas seções ou módulos, NUNCA
+                utilize classes utilitárias de sombras como `shadow-sm`, `shadow-md`, `shadow-lg` de
+                forma estática. Caso precise de relevo, prefira bordas finas (`border
+                border-border`) ou cores de superfície diferenciadas.
               </div>
             </div>
           </div>
@@ -299,32 +405,46 @@ function DesignSystemPage() {
           <div className="space-y-6 max-w-5xl animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-black tracking-tight text-foreground uppercase">🎨 Paleta de Cores Dinâmicas</h3>
-                <p className="text-xs text-muted-foreground mt-1">Variáveis CSS centralizadas que sustentam os temas Light e Dark.</p>
+                <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                  🎨 Paleta de Cores Dinâmicas
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Variáveis CSS centralizadas que sustentam os temas Light e Dark.
+                </p>
               </div>
-              <GhostButton onClick={() => copyToClipboard(COLOR_TOKENS.map(t => `${t.name}: var(${t.name});`).join("\n"))} className="text-xs gap-1.5 h-8">
+              <GhostButton
+                onClick={() =>
+                  copyToClipboard(COLOR_TOKENS.map((t) => `${t.name}: var(${t.name});`).join("\n"))
+                }
+                className="text-xs gap-1.5 h-8"
+              >
                 <Copy className="h-3 w-3" /> Copiar Todas as Variáveis
               </GhostButton>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {COLOR_TOKENS.map((token) => (
-                <div key={token.name} className="p-3 bg-surface border border-border rounded-xl flex flex-col justify-between gap-3">
+                <div
+                  key={token.name}
+                  className="p-3 bg-surface border border-border rounded-xl flex flex-col justify-between gap-3"
+                >
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-foreground">{token.name}</span>
+                      <span className="font-mono text-xs font-bold text-foreground">
+                        {token.name}
+                      </span>
                       <StatusBadge tone="neutral">{token.category}</StatusBadge>
                     </div>
                     <p className="text-[11px] text-muted-foreground leading-snug">{token.desc}</p>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     {/* Visual color swatch representing current live style */}
-                    <div 
-                      className="w-10 h-6 rounded border border-border/60 shrink-0" 
-                      style={{ backgroundColor: `var(${token.name})` }} 
+                    <div
+                      className="w-10 h-6 rounded border border-border/60 shrink-0"
+                      style={{ backgroundColor: `var(${token.name})` }}
                     />
-                    <button 
+                    <button
                       onClick={() => copyToClipboard(`var(${token.name})`)}
                       className="text-[10px] text-brand hover:underline flex items-center gap-1 cursor-pointer font-semibold"
                     >
@@ -341,8 +461,12 @@ function DesignSystemPage() {
         {activeTab === "typography" && (
           <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">✍️ Tipografia e Escala de Texto</h3>
-              <p className="text-xs text-muted-foreground mt-1">Escalonamento de fontes padronizado na plataforma.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                ✍️ Tipografia e Escala de Texto
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Escalonamento de fontes padronizado na plataforma.
+              </p>
             </div>
 
             <div className="bg-surface border border-border rounded-xl overflow-hidden">
@@ -371,16 +495,22 @@ function DesignSystemPage() {
             </div>
 
             <div className="p-5 bg-surface border border-border rounded-xl space-y-3">
-              <h4 className="text-xs font-bold text-foreground uppercase">Especificação de Fontes</h4>
+              <h4 className="text-xs font-bold text-foreground uppercase">
+                Especificação de Fontes
+              </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
-                  <span className="font-semibold block text-muted-foreground">Fonte Sans-Serif (Textos e Inputs)</span>
+                  <span className="font-semibold block text-muted-foreground">
+                    Fonte Sans-Serif (Textos e Inputs)
+                  </span>
                   <code className="block bg-surface-alt p-2 rounded border border-border/80 font-mono text-[11px]">
                     font-family: var(--font-sans) ("Inter", -apple-system, sans-serif)
                   </code>
                 </div>
                 <div className="space-y-1">
-                  <span className="font-semibold block text-muted-foreground">Fonte Monoespaçada (Códigos e Logs)</span>
+                  <span className="font-semibold block text-muted-foreground">
+                    Fonte Monoespaçada (Códigos e Logs)
+                  </span>
                   <code className="block bg-surface-alt p-2 rounded border border-border/80 font-mono text-[11px]">
                     font-family: var(--font-mono) ("JetBrains Mono", monospace)
                   </code>
@@ -394,15 +524,22 @@ function DesignSystemPage() {
         {activeTab === "layouts" && (
           <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">📐 Layout, Grids e Alinhamentos</h3>
-              <p className="text-xs text-muted-foreground mt-1">Diretrizes estruturais para criação de dashboards e bento grids responsivos.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                📐 Layout, Grids e Alinhamentos
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Diretrizes estruturais para criação de dashboards e bento grids responsivos.
+              </p>
             </div>
 
             <div className="space-y-4">
               <div className="p-5 bg-surface border border-border rounded-xl space-y-3">
-                <h4 className="text-xs font-bold text-foreground uppercase">1. Margens e Paddings de Página</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase">
+                  1. Margens e Paddings de Página
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Páginas administrativas comuns de formulário ou listagem utilizam paddings de container responsivos para manter a harmonia em todas as telas:
+                  Páginas administrativas comuns de formulário ou listagem utilizam paddings de
+                  container responsivos para manter a harmonia em todas as telas:
                 </p>
                 <code className="block bg-surface-alt p-2.5 rounded border border-border/80 font-mono text-[11px] text-brand">
                   &lt;div className="px-4 md:px-6 py-4 md:py-6"&gt; ... &lt;/div&gt;
@@ -410,12 +547,15 @@ function DesignSystemPage() {
               </div>
 
               <div className="p-5 bg-surface border border-border rounded-xl space-y-3">
-                <h4 className="text-xs font-bold text-foreground uppercase">2. Estrutura Bento Grid de 3 Colunas</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase">
+                  2. Estrutura Bento Grid de 3 Colunas
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Para painéis descritivos e cards de recursos, utilizamos o grid de 3 colunas padrão com spans definidos no Tailwind:
+                  Para painéis descritivos e cards de recursos, utilizamos o grid de 3 colunas
+                  padrão com spans definidos no Tailwind:
                 </p>
                 <pre className="bg-surface-alt p-3 rounded border border-border/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
-{`<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {`<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {/* Card Comum */}
   <div className="bg-surface border border-border rounded-2xl p-5">...</div>
   {/* Card Estendido (Largura Dupla no Desktop) */}
@@ -425,12 +565,15 @@ function DesignSystemPage() {
               </div>
 
               <div className="p-5 bg-surface border border-border rounded-xl space-y-3">
-                <h4 className="text-xs font-bold text-foreground uppercase">3. Cabeçalho de Página (HeaderPortal)</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase">
+                  3. Cabeçalho de Página (HeaderPortal)
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Para manter os botões de ação e status no topo da barra de navegação global, utilize o portal nativo:
+                  Para manter os botões de ação e status no topo da barra de navegação global,
+                  utilize o portal nativo:
                 </p>
                 <pre className="bg-surface-alt p-3 rounded border border-border/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
-{`<HeaderPortal>
+                  {`<HeaderPortal>
   <div className="flex items-center gap-2">
     <GhostButton>Voltar</GhostButton>
     <PrimaryButton>Salvar Dados</PrimaryButton>
@@ -446,16 +589,27 @@ function DesignSystemPage() {
         {activeTab === "components" && (
           <div className="space-y-8 max-w-4xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">🧱 Catálogo de Componentes Vivos</h3>
-              <p className="text-xs text-muted-foreground mt-1">Componentes reais importados de `@/components/ui/form` prontos para renderização e uso.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                🧱 Catálogo de Componentes Vivos
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Componentes reais importados de `@/components/ui/form` prontos para renderização e
+                uso.
+              </p>
             </div>
 
             {/* Sub-component: Buttons */}
             <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Botões Interativos</h4>
-                <GhostButton onClick={() => toggleCode("buttons")} className="h-7 text-[11px] gap-1">
-                  <Code className="h-3 w-3" /> {showCode["buttons"] ? "Ocultar Código" : "Ver Código"}
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Botões Interativos
+                </h4>
+                <GhostButton
+                  onClick={() => toggleCode("buttons")}
+                  className="h-7 text-[11px] gap-1"
+                >
+                  <Code className="h-3 w-3" />{" "}
+                  {showCode["buttons"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
               </div>
 
@@ -468,7 +622,7 @@ function DesignSystemPage() {
 
               {showCode["buttons"] && (
                 <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
-{`import { PrimaryButton, GhostButton } from "@/components/ui/form";
+                  {`import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 // Uso dos botões padrão:
 <PrimaryButton onClick={handleSave}>Salvar Alterações</PrimaryButton>
@@ -483,7 +637,9 @@ function DesignSystemPage() {
             {/* Sub-component: Form Fields */}
             <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Campos de Formulário e Validação</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Campos de Formulário e Validação
+                </h4>
                 <GhostButton onClick={() => toggleCode("forms")} className="h-7 text-[11px] gap-1">
                   <Code className="h-3 w-3" /> {showCode["forms"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
@@ -505,7 +661,7 @@ function DesignSystemPage() {
 
               {showCode["forms"] && (
                 <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
-{`import { Field, Input, Select } from "@/components/ui/form";
+                  {`import { Field, Input, Select } from "@/components/ui/form";
 
 <Field label="Nome Completo" hint="Insira seu nome igual ao do passaporte.">
   <Input placeholder="Ex: Eduardo Silveira" />
@@ -523,9 +679,12 @@ function DesignSystemPage() {
             {/* Sub-component: Status Badges */}
             <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Status Badges</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Status Badges
+                </h4>
                 <GhostButton onClick={() => toggleCode("badges")} className="h-7 text-[11px] gap-1">
-                  <Code className="h-3 w-3" /> {showCode["badges"] ? "Ocultar Código" : "Ver Código"}
+                  <Code className="h-3 w-3" />{" "}
+                  {showCode["badges"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
               </div>
 
@@ -539,7 +698,7 @@ function DesignSystemPage() {
 
               {showCode["badges"] && (
                 <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
-{`import { StatusBadge } from "@/components/ui/form";
+                  {`import { StatusBadge } from "@/components/ui/form";
 
 <StatusBadge tone="neutral">Rascunho</StatusBadge>
 <StatusBadge tone="success">Pago / Ativo</StatusBadge>
@@ -553,9 +712,12 @@ function DesignSystemPage() {
             {/* Sub-component: Alerts */}
             <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Alertas Planos (Sem Sombras)</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Alertas Planos (Sem Sombras)
+                </h4>
                 <GhostButton onClick={() => toggleCode("alerts")} className="h-7 text-[11px] gap-1">
-                  <Code className="h-3 w-3" /> {showCode["alerts"] ? "Ocultar Código" : "Ver Código"}
+                  <Code className="h-3 w-3" />{" "}
+                  {showCode["alerts"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
               </div>
 
@@ -563,21 +725,23 @@ function DesignSystemPage() {
                 <div className="bg-info-bg text-info border border-info/30 rounded-xl p-4 flex gap-3">
                   <Info className="h-4.5 w-4.5 shrink-0" />
                   <div>
-                    <strong>Informativo:</strong> O sistema de checkout suporta parcelamento em até 12 vezes via cartão de crédito.
+                    <strong>Informativo:</strong> O sistema de checkout suporta parcelamento em até
+                    12 vezes via cartão de crédito.
                   </div>
                 </div>
 
                 <div className="bg-success-bg text-success border border-success/30 rounded-xl p-4 flex gap-3">
                   <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
                   <div>
-                    <strong>Sucesso:</strong> Assinatura eletrônica concluída. O documento foi emitido e arquivado.
+                    <strong>Sucesso:</strong> Assinatura eletrônica concluída. O documento foi
+                    emitido e arquivado.
                   </div>
                 </div>
               </div>
 
               {showCode["alerts"] && (
                 <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
-{`// Alerta Azul (Info)
+                  {`// Alerta Azul (Info)
 <div className="bg-info-bg text-info border border-info/30 rounded-xl p-4 flex gap-3 text-xs leading-relaxed">
   <Info className="h-4.5 w-4.5 shrink-0" />
   <div>
@@ -595,7 +759,6 @@ function DesignSystemPage() {
                 </pre>
               )}
             </div>
-
           </div>
         )}
 
@@ -603,16 +766,28 @@ function DesignSystemPage() {
         {activeTab === "presets" && (
           <div className="space-y-6 max-w-4xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">⚙️ Presets do Page Builder</h3>
-              <p className="text-xs text-muted-foreground mt-1">Efeitos visuais padronizados que o administrador pode aplicar nas seções dinâmicas.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                ⚙️ Presets do Page Builder
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Efeitos visuais padronizados que o administrador pode aplicar nas seções dinâmicas.
+              </p>
             </div>
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-foreground uppercase">Gradientes Autorizados (Cores do Hub)</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase">
+                  Gradientes Autorizados (Cores do Hub)
+                </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {BLOCK_PRESETS.gradients.map((grad) => (
-                    <div key={grad.name} className={cn("p-4 rounded-xl flex flex-col justify-end h-20 shadow-none font-bold text-xs", grad.css)}>
+                    <div
+                      key={grad.name}
+                      className={cn(
+                        "p-4 rounded-xl flex flex-col justify-end h-20 shadow-none font-bold text-xs",
+                        grad.css,
+                      )}
+                    >
                       {grad.name}
                     </div>
                   ))}
@@ -620,10 +795,18 @@ function DesignSystemPage() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-foreground uppercase font-sans">Efeitos de Borda (Elevations)</h4>
+                <h4 className="text-xs font-bold text-foreground uppercase font-sans">
+                  Efeitos de Borda (Elevations)
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {BLOCK_PRESETS.borders.map((bor) => (
-                    <div key={bor.name} className={cn("bg-surface p-5 rounded-2xl flex flex-col justify-center text-center text-xs h-24 font-semibold text-foreground", bor.class)}>
+                    <div
+                      key={bor.name}
+                      className={cn(
+                        "bg-surface p-5 rounded-2xl flex flex-col justify-center text-center text-xs h-24 font-semibold text-foreground",
+                        bor.class,
+                      )}
+                    >
                       {bor.name}
                     </div>
                   ))}
@@ -637,12 +820,15 @@ function DesignSystemPage() {
         {activeTab === "sandbox" && (
           <div className="space-y-6 max-w-6xl animate-in fade-in duration-300">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">🔬 Sandbox do Criador de Elementos</h3>
-              <p className="text-xs text-muted-foreground mt-1">Construa e refine layouts combinando classes e veja o código resultante na hora.</p>
+              <h3 className="text-lg font-black tracking-tight text-foreground uppercase">
+                🔬 Sandbox do Criador de Elementos
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Construa e refine layouts combinando classes e veja o código resultante na hora.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              
               {/* Left Sandbox Control Panel */}
               <div className="lg:col-span-5 bg-surface border border-border rounded-2xl p-5 space-y-5">
                 <h4 className="text-xs font-extrabold text-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -654,27 +840,51 @@ function DesignSystemPage() {
                     <Select value={sandboxBg} onChange={(e) => setSandboxBg(e.target.value)}>
                       <option value="bg-surface">Sólida: Surface (Branco/Cinza Escuro)</option>
                       <option value="bg-surface-alt/45">Sólida: Surface Alt (Cinza Suave)</option>
-                      <option value="bg-brand text-brand-foreground">Sólida: Brand Primary (Cor da Agência)</option>
-                      <option value="bg-gradient-to-r from-orange-500 to-rose-500 text-white">Sunset Glow (Gradiente)</option>
-                      <option value="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">Violet Dreams (Gradiente)</option>
-                      <option value="bg-gradient-to-r from-cyan-500 to-blue-600 text-white">Ocean Breeze (Gradiente)</option>
-                      <option value="bg-gradient-to-r from-emerald-400 to-cyan-500 text-white">Neon Mint (Gradiente)</option>
-                      <option value="bg-gradient-to-b from-zinc-900 to-black text-white">Midnight Premium</option>
+                      <option value="bg-brand text-brand-foreground">
+                        Sólida: Brand Primary (Cor da Agência)
+                      </option>
+                      <option value="bg-gradient-to-r from-orange-500 to-rose-500 text-white">
+                        Sunset Glow (Gradiente)
+                      </option>
+                      <option value="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">
+                        Violet Dreams (Gradiente)
+                      </option>
+                      <option value="bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+                        Ocean Breeze (Gradiente)
+                      </option>
+                      <option value="bg-gradient-to-r from-emerald-400 to-cyan-500 text-white">
+                        Neon Mint (Gradiente)
+                      </option>
+                      <option value="bg-gradient-to-b from-zinc-900 to-black text-white">
+                        Midnight Premium
+                      </option>
                     </Select>
                   </Field>
 
                   <Field label="Efeito de Borda">
-                    <Select value={sandboxBorder} onChange={(e) => setSandboxBorder(e.target.value)}>
-                      <option value="border border-border">Fina Padrão (border border-border)</option>
-                      <option value="border border-white/20 bg-white/5 backdrop-blur-md">Vidro (Glassmorphic)</option>
-                      <option value="border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20">Glow Iluminada</option>
+                    <Select
+                      value={sandboxBorder}
+                      onChange={(e) => setSandboxBorder(e.target.value)}
+                    >
+                      <option value="border border-border">
+                        Fina Padrão (border border-border)
+                      </option>
+                      <option value="border border-white/20 bg-white/5 backdrop-blur-md">
+                        Vidro (Glassmorphic)
+                      </option>
+                      <option value="border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20">
+                        Glow Iluminada
+                      </option>
                       <option value="border-0">Nenhuma</option>
                     </Select>
                   </Field>
 
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Espaçamento (Padding)">
-                      <Select value={sandboxPadding} onChange={(e) => setSandboxPadding(e.target.value)}>
+                      <Select
+                        value={sandboxPadding}
+                        onChange={(e) => setSandboxPadding(e.target.value)}
+                      >
                         <option value="p-4">Compacto (p-4)</option>
                         <option value="p-6">Médio (p-6)</option>
                         <option value="p-8">Largo (p-8)</option>
@@ -683,7 +893,10 @@ function DesignSystemPage() {
                     </Field>
 
                     <Field label="Alinhamento">
-                      <Select value={sandboxAlign} onChange={(e) => setSandboxAlign(e.target.value)}>
+                      <Select
+                        value={sandboxAlign}
+                        onChange={(e) => setSandboxAlign(e.target.value)}
+                      >
                         <option value="text-left">Esquerda (text-left)</option>
                         <option value="text-center">Centralizado (text-center)</option>
                       </Select>
@@ -693,21 +906,38 @@ function DesignSystemPage() {
 
                 {/* Elements Adder */}
                 <div className="border-t border-border/60 pt-4 space-y-3">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">Incluir Elementos</span>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">
+                    Incluir Elementos
+                  </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <button onClick={() => addSandboxElement("header")} className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer">
+                    <button
+                      onClick={() => addSandboxElement("header")}
+                      className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                    >
                       <Plus className="w-3 h-3" /> Título
                     </button>
-                    <button onClick={() => addSandboxElement("paragraph")} className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer">
+                    <button
+                      onClick={() => addSandboxElement("paragraph")}
+                      className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                    >
                       <Plus className="w-3 h-3" /> Parágrafo
                     </button>
-                    <button onClick={() => addSandboxElement("button")} className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer">
+                    <button
+                      onClick={() => addSandboxElement("button")}
+                      className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                    >
                       <Plus className="w-3 h-3" /> Botão CTA
                     </button>
-                    <button onClick={() => addSandboxElement("image")} className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer">
+                    <button
+                      onClick={() => addSandboxElement("image")}
+                      className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                    >
                       <Plus className="w-3 h-3" /> Imagem
                     </button>
-                    <button onClick={() => addSandboxElement("features")} className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer">
+                    <button
+                      onClick={() => addSandboxElement("features")}
+                      className="h-8 rounded-lg bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                    >
                       <Plus className="w-3 h-3" /> Recursos
                     </button>
                   </div>
@@ -716,48 +946,64 @@ function DesignSystemPage() {
                 {/* Elements Editor list */}
                 {sandboxElements.length > 0 && (
                   <div className="border-t border-border/60 pt-4 space-y-3">
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">Configurar Elementos ({sandboxElements.length})</span>
+                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">
+                      Configurar Elementos ({sandboxElements.length})
+                    </span>
                     <div className="space-y-3 max-h-56 overflow-y-auto pr-1.5 scrollbar-thin">
                       {sandboxElements.map((el, i) => (
-                        <div key={el.id} className="p-3 bg-surface-alt/40 border border-border/50 rounded-xl space-y-2 relative group/item">
+                        <div
+                          key={el.id}
+                          className="p-3 bg-surface-alt/40 border border-border/50 rounded-xl space-y-2 relative group/item"
+                        >
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-brand">#{i + 1} {el.type}</span>
-                            <button onClick={() => removeSandboxElement(el.id)} className="text-muted-foreground hover:text-danger cursor-pointer">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+                              #{i + 1} {el.type}
+                            </span>
+                            <button
+                              onClick={() => removeSandboxElement(el.id)}
+                              className="text-muted-foreground hover:text-danger cursor-pointer"
+                            >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
 
                           {el.type === "header" && (
-                            <Input 
-                              value={el.title} 
-                              onChange={(e) => updateSandboxElement(el.id, "title", e.target.value)} 
+                            <Input
+                              value={el.title}
+                              onChange={(e) => updateSandboxElement(el.id, "title", e.target.value)}
                               placeholder="Título"
                               className="h-8 text-xs"
                             />
                           )}
 
                           {el.type === "paragraph" && (
-                            <Textarea 
-                              value={el.content} 
-                              onChange={(e) => updateSandboxElement(el.id, "content", e.target.value)} 
+                            <Textarea
+                              value={el.content}
+                              onChange={(e) =>
+                                updateSandboxElement(el.id, "content", e.target.value)
+                              }
                               placeholder="Conteúdo descritivo"
                               className="min-h-[50px] text-xs p-2"
                             />
                           )}
 
                           {el.type === "button" && (
-                            <Input 
-                              value={el.buttonText} 
-                              onChange={(e) => updateSandboxElement(el.id, "buttonText", e.target.value)} 
+                            <Input
+                              value={el.buttonText}
+                              onChange={(e) =>
+                                updateSandboxElement(el.id, "buttonText", e.target.value)
+                              }
                               placeholder="Texto do botão"
                               className="h-8 text-xs"
                             />
                           )}
 
                           {el.type === "image" && (
-                            <Input 
-                              value={el.imageUrl} 
-                              onChange={(e) => updateSandboxElement(el.id, "imageUrl", e.target.value)} 
+                            <Input
+                              value={el.imageUrl}
+                              onChange={(e) =>
+                                updateSandboxElement(el.id, "imageUrl", e.target.value)
+                              }
                               placeholder="URL da Imagem"
                               className="h-8 text-xs font-mono"
                             />
@@ -788,34 +1034,39 @@ function DesignSystemPage() {
 
               {/* Right Sandbox Render Preview & Code Export */}
               <div className="lg:col-span-7 space-y-6">
-                
                 {/* Live Preview Frame */}
                 <div className="space-y-2">
                   <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                     <Eye className="w-3.5 h-3.5 text-brand" /> Preview em Tempo Real
                   </span>
-                  
+
                   <div className="rounded-2xl border border-dashed border-border p-6 bg-surface-alt/30 flex items-center justify-center min-h-[300px]">
-                    <div 
+                    <div
                       className={cn(
                         "w-full rounded-2xl flex flex-col gap-4 transition-all duration-300",
                         sandboxBg,
                         sandboxBorder,
                         sandboxPadding,
-                        sandboxAlign
+                        sandboxAlign,
                       )}
                     >
                       {sandboxElements.map((el) => {
                         if (el.type === "header") {
                           return (
-                            <h2 key={el.id} className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground">
+                            <h2
+                              key={el.id}
+                              className="text-xl md:text-2xl font-extrabold tracking-tight text-foreground"
+                            >
                               {el.title}
                             </h2>
                           );
                         }
                         if (el.type === "paragraph") {
                           return (
-                            <p key={el.id} className="text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+                            <p
+                              key={el.id}
+                              className="text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto"
+                            >
                               {el.content}
                             </p>
                           );
@@ -831,10 +1082,10 @@ function DesignSystemPage() {
                         }
                         if (el.type === "image") {
                           return (
-                            <img 
-                              key={el.id} 
-                              src={el.imageUrl} 
-                              alt="Render Preview" 
+                            <img
+                              key={el.id}
+                              src={el.imageUrl}
+                              alt="Render Preview"
                               className="rounded-xl border border-border w-full object-cover max-h-48"
                             />
                           );
@@ -843,7 +1094,10 @@ function DesignSystemPage() {
                           return (
                             <ul key={el.id} className="space-y-2 inline-block text-left">
                               {(el.featuresList || []).map((feat, idx) => (
-                                <li key={idx} className="flex items-center gap-2 text-xs text-foreground/80">
+                                <li
+                                  key={idx}
+                                  className="flex items-center gap-2 text-xs text-foreground/80"
+                                >
                                   <Check className="h-3.5 w-3.5 text-brand shrink-0" /> {feat}
                                 </li>
                               ))}
@@ -852,7 +1106,7 @@ function DesignSystemPage() {
                         }
                         return null;
                       })}
-                      
+
                       {sandboxElements.length === 0 && (
                         <div className="text-center py-12 text-muted-foreground text-xs font-medium">
                           Adicione elementos no painel esquerdo para visualizar a seção.
@@ -868,7 +1122,7 @@ function DesignSystemPage() {
                     <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Code className="w-3.5 h-3.5 text-brand" /> Código JSX (Tailwind v4)
                     </span>
-                    <button 
+                    <button
                       onClick={() => copyToClipboard(generateSandboxCode())}
                       className="text-xs font-bold text-brand hover:underline flex items-center gap-1.5 cursor-pointer"
                     >
@@ -880,13 +1134,10 @@ function DesignSystemPage() {
                     {generateSandboxCode()}
                   </pre>
                 </div>
-
               </div>
-
             </div>
           </div>
         )}
-
       </main>
     </div>
   );

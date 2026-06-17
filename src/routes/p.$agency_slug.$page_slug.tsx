@@ -59,8 +59,7 @@ function DynamicPage() {
 
   if (q.isLoading)
     return <div className="p-10 text-center text-sm text-muted-foreground">Carregando página…</div>;
-  if (!agency)
-    return <div className="p-10 text-center text-sm">Agência não encontrada</div>;
+  if (!agency) return <div className="p-10 text-center text-sm">Agência não encontrada</div>;
   if (!page) {
     return (
       <div className="p-20 text-center flex flex-col items-center gap-4">
@@ -78,7 +77,9 @@ function DynamicPage() {
   const isBiolink = page.template === "biolink" || page.template?.startsWith("hopp-");
 
   return (
-    <div className={`w-full relative ${isBiolink ? "max-w-md mx-auto px-4 py-8 flex-1" : "px-4 sm:px-6"}`}>
+    <div
+      className={`w-full relative ${isBiolink ? "max-w-md mx-auto px-4 py-8 flex-1" : "px-4 sm:px-6"}`}
+    >
       {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
       {page.title && <h1 className="sr-only">{page.title}</h1>}
       <BlockRenderer

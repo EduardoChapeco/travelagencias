@@ -130,9 +130,10 @@ function PassengersPage() {
   // 6. Mutação para confirmar todos os passageiros importados
   const confirmAllImported = useMutation({
     mutationFn: async () => {
-      const importedPids = list.data
-        ?.filter((p: any) => p.notes?.includes("Importado automaticamente"))
-        .map((p: any) => p.id) ?? [];
+      const importedPids =
+        list.data
+          ?.filter((p: any) => p.notes?.includes("Importado automaticamente"))
+          .map((p: any) => p.id) ?? [];
 
       if (importedPids.length === 0) return;
 
@@ -275,7 +276,8 @@ function PassengersPage() {
         params={{ slug, id }}
         className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para detalhes de {getModuleName("trips", agency)}
+        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para detalhes de{" "}
+        {getModuleName("trips", agency)}
       </Link>
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
@@ -293,14 +295,18 @@ function PassengersPage() {
       </div>
 
       {/* ── Banner: Passageiros importados da cotação (aguardando revisão) ─── */}
-      {list.data && list.data.some((p: any) => p.notes?.includes('Importado automaticamente')) && (
+      {list.data && list.data.some((p: any) => p.notes?.includes("Importado automaticamente")) && (
         <div className="mb-6 rounded-2xl bg-warning/10 border border-warning/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
             <div>
               <h4 className="text-sm font-bold text-warning">Passageiros importados da cotação</h4>
               <p className="text-xs text-warning/80 mt-0.5 leading-relaxed">
-                {list.data.filter((p: any) => p.notes?.includes('Importado automaticamente')).length} passageiro(s) foram importados automaticamente a partir do formulário do lead.
+                {
+                  list.data.filter((p: any) => p.notes?.includes("Importado automaticamente"))
+                    .length
+                }{" "}
+                passageiro(s) foram importados automaticamente a partir do formulário do lead.
                 Revise os dados, corrija se necessário, e confirme antes do embarque.
               </p>
             </div>

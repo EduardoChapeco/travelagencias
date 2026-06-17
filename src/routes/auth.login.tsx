@@ -148,13 +148,15 @@ function LoginPage() {
         {/* Glow backgrounds */}
         <div className="absolute top-[-10%] right-[-10%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[90px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-violet-600/10 rounded-full blur-[90px]" />
-        
+
         {/* Header */}
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white text-sm font-black">
             T
           </div>
-          <span className="text-lg font-black tracking-tight bg-gradient-to-r from-zinc-50 to-zinc-400 bg-clip-text text-transparent">TravelOS</span>
+          <span className="text-lg font-black tracking-tight bg-gradient-to-r from-zinc-50 to-zinc-400 bg-clip-text text-transparent">
+            TravelOS
+          </span>
         </Link>
 
         {/* Center content: Floating Glassmorphism Cards */}
@@ -168,7 +170,8 @@ function LoginPage() {
               Aumente seus lucros.
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed font-medium">
-              Elimine o retrabalho de planilhas e a demora de PDFs. Surpreenda seus clientes com propostas interativas de alta conversão e controle faturas em tempo real.
+              Elimine o retrabalho de planilhas e a demora de PDFs. Surpreenda seus clientes com
+              propostas interativas de alta conversão e controle faturas em tempo real.
             </p>
           </div>
 
@@ -208,7 +211,7 @@ function LoginPage() {
       <div className="flex items-center justify-center bg-zinc-950 p-8 sm:p-12 relative overflow-hidden">
         {/* Glow backdrop behind form on mobile */}
         <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-indigo-500/5 rounded-full blur-[80px] md:hidden" />
-        
+
         <div className="w-full max-w-sm relative z-10 space-y-8">
           {/* Logo on Mobile */}
           <div className="flex items-center gap-2 md:hidden">
@@ -245,10 +248,12 @@ function LoginPage() {
                 className="h-11 text-xs rounded-xl bg-zinc-900 border-zinc-800 focus:border-indigo-500 focus:ring-indigo-500 text-zinc-100 placeholder:text-zinc-600 transition-all"
               />
             </Field>
-            
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Senha</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                  Senha
+                </label>
                 <Link
                   to="/auth/forgot-password"
                   className="text-xs font-bold text-zinc-400 hover:text-indigo-400 transition-colors"
@@ -281,7 +286,10 @@ function LoginPage() {
 
           <p className="text-center text-xs text-zinc-500 font-semibold pt-4">
             Sua agência ainda não usa o TravelOS?{" "}
-            <Link to="/auth/register" className="font-black text-indigo-400 hover:underline transition-colors">
+            <Link
+              to="/auth/register"
+              className="font-black text-indigo-400 hover:underline transition-colors"
+            >
               Cadastrar agência grátis
             </Link>
           </p>

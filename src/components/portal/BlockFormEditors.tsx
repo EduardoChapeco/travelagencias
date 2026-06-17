@@ -1,6 +1,33 @@
 import { useState, useEffect } from "react";
 import { SECTION_REGISTRY } from "@/lib/sections/registry";
-import { Trash2, Plane, ShieldCheck, Hotel, Users, Leaf, Award, Heart, Globe, MessageSquare, Briefcase, Crown, Key, Star, MapPin, Compass, Ticket, Gift, Phone, Mail, CreditCard, Clock, DollarSign, HelpCircle, Sparkles, ChevronDown } from "lucide-react";
+import {
+  Trash2,
+  Plane,
+  ShieldCheck,
+  Hotel,
+  Users,
+  Leaf,
+  Award,
+  Heart,
+  Globe,
+  MessageSquare,
+  Briefcase,
+  Crown,
+  Key,
+  Star,
+  MapPin,
+  Compass,
+  Ticket,
+  Gift,
+  Phone,
+  Mail,
+  CreditCard,
+  Clock,
+  DollarSign,
+  HelpCircle,
+  Sparkles,
+  ChevronDown,
+} from "lucide-react";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
@@ -55,8 +82,14 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
         onClick={() => setOpen((p) => !p)}
         className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-alt text-xs font-medium hover:border-brand/60 transition-colors w-full"
       >
-        {CurrentIcon ? <CurrentIcon className="w-4 h-4 text-brand shrink-0" /> : <span className="w-4 h-4" />}
-        <span className="flex-1 text-left truncate">{current?.label || value || "Selecionar ícone"}</span>
+        {CurrentIcon ? (
+          <CurrentIcon className="w-4 h-4 text-brand shrink-0" />
+        ) : (
+          <span className="w-4 h-4" />
+        )}
+        <span className="flex-1 text-left truncate">
+          {current?.label || value || "Selecionar ícone"}
+        </span>
         <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
       </button>
       {open && (
@@ -67,9 +100,14 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
                 key={opt.key}
                 type="button"
                 title={opt.label}
-                onClick={() => { onChange(opt.key); setOpen(false); }}
+                onClick={() => {
+                  onChange(opt.key);
+                  setOpen(false);
+                }}
                 className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg border text-[9px] font-medium transition-all hover:border-brand hover:bg-brand/10 ${
-                  value === opt.key ? "border-brand bg-brand/10 text-brand" : "border-transparent bg-surface-alt text-muted-foreground"
+                  value === opt.key
+                    ? "border-brand bg-brand/10 text-brand"
+                    : "border-transparent bg-surface-alt text-muted-foreground"
                 }`}
               >
                 <opt.Component className="w-4 h-4" />
@@ -85,7 +123,9 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
 
 export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Props) {
   const block = blockItem as LegacyPortalBlock;
-  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive">("content");
+  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive">(
+    "content",
+  );
   const [brandColors, setBrandColors] = useState<{
     primary?: string;
     secondary?: string;
@@ -106,13 +146,13 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           .select("brand_color, brand_color_light, brand_color_fg")
           .eq("id", agencyId)
           .maybeSingle();
-        
+
         const { data: brandKitData } = await supabase
           .from("brand_kit")
           .select("primary_color, secondary_color, accent_color, background_color, text_color")
           .eq("agency_id", agencyId)
           .maybeSingle();
-        
+
         setBrandColors({
           primary: brandKitData?.primary_color || undefined,
           secondary: brandKitData?.secondary_color || undefined,
@@ -288,8 +328,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               />
             </div>
             <p className="text-[10px] text-muted-foreground mt-1">
-              Este bloco puxará automaticamente as redes sociais e o formulário de lead da agência no
-              portal público.
+              Este bloco puxará automaticamente as redes sociais e o formulário de lead da agência
+              no portal público.
             </p>
           </>
         );
@@ -324,7 +364,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   className="border border-border rounded-xl p-4 space-y-3 bg-surface shadow-sm"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Item #{itemIdx + 1}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                      Item #{itemIdx + 1}
+                    </span>
                     <button
                       type="button"
                       onClick={() => {
@@ -824,7 +866,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               </Select>
             </Field>
             <p className="text-[10px] text-muted-foreground">
-              Os posts são buscados automaticamente. Gerencie-os em <strong>Portal &gt; Blog</strong>.
+              Os posts são buscados automaticamente. Gerencie-os em{" "}
+              <strong>Portal &gt; Blog</strong>.
             </p>
           </div>
         );
@@ -993,7 +1036,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         );
 
       case "group_tour_details":
-        return <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />;
+        return (
+          <GroupTourDetailsEditor block={block} updateBlock={updateBlock} agencyId={agencyId} />
+        );
 
       case "support_ticket_form":
         return (
@@ -1086,9 +1131,14 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 Lista de Destinos
               </label>
               {(block.items || []).map((item, idx) => (
-                <div key={idx} className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-sm">
+                <div
+                  key={idx}
+                  className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-sm"
+                >
                   <div className="flex justify-between items-center pb-2 border-b border-border/40">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Destino #{idx + 1}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                      Destino #{idx + 1}
+                    </span>
                     <button
                       type="button"
                       onClick={() =>
@@ -1289,7 +1339,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Input
                 type="number"
                 value={block.max_items || 8}
-                onChange={(e) => updateBlock(block.id, { max_items: parseInt(e.target.value) || 8 })}
+                onChange={(e) =>
+                  updateBlock(block.id, { max_items: parseInt(e.target.value) || 8 })
+                }
               />
             </Field>
           </div>
@@ -1448,11 +1500,16 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 Canais de Atendimento
               </label>
               {((block as any).departments || []).map((dept: any, idx: number) => (
-                <div key={idx} className="border border-border p-3 rounded-lg bg-surface space-y-2 relative">
+                <div
+                  key={idx}
+                  className="border border-border p-3 rounded-lg bg-surface space-y-2 relative"
+                >
                   <button
                     type="button"
                     onClick={() => {
-                      const newDepts = ((block as any).departments || []).filter((_: any, i: number) => i !== idx);
+                      const newDepts = ((block as any).departments || []).filter(
+                        (_: any, i: number) => i !== idx,
+                      );
                       updateBlock(block.id, { departments: newDepts });
                     }}
                     className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive"
@@ -1514,7 +1571,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 onClick={() => {
                   const newDepts = [
                     ...((block as any).departments || []),
-                    { name: "Novo Setor", phone: "5549999999999", icon: "chat", message: "" }
+                    { name: "Novo Setor", phone: "5549999999999", icon: "chat", message: "" },
                   ];
                   updateBlock(block.id, { departments: newDepts });
                 }}
@@ -1549,7 +1606,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 placeholder="Ex: Previsão do Tempo"
               />
             </Field>
-            <Field label="Cidade Alternativa (opcional)" hint="Se vazio, usará o destino da excursão">
+            <Field
+              label="Cidade Alternativa (opcional)"
+              hint="Se vazio, usará o destino da excursão"
+            >
               <Input
                 value={(block as any).city || ""}
                 onChange={(e) => updateBlock(block.id, { city: e.target.value })}
@@ -1668,7 +1728,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Input
                 type="number"
                 value={block.max_items || 4}
-                onChange={(e) => updateBlock(block.id, { max_items: parseInt(e.target.value) || 4 })}
+                onChange={(e) =>
+                  updateBlock(block.id, { max_items: parseInt(e.target.value) || 4 })
+                }
               />
             </Field>
           </div>
@@ -1772,7 +1834,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Input
                 type="number"
                 value={(block as any).duration_sec || 10}
-                onChange={(e) => updateBlock(block.id, { duration_sec: parseInt(e.target.value) || 10 })}
+                onChange={(e) =>
+                  updateBlock(block.id, { duration_sec: parseInt(e.target.value) || 10 })
+                }
               />
             </Field>
           </div>
@@ -1845,7 +1909,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
             <Field label="Posição da Bolha">
               <Select
                 value={(block as any).position || "right"}
-                onChange={(e) => updateBlock(block.id, { position: e.target.value as "right" | "left" })}
+                onChange={(e) =>
+                  updateBlock(block.id, { position: e.target.value as "right" | "left" })
+                }
               >
                 <option value="right">Canto Inferior Direito</option>
                 <option value="left">Canto Inferior Esquerdo</option>
@@ -2016,7 +2082,16 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         if (def) {
           return (
             <RegistryBlockFormEditor
-              block={blockItem as { id: string; type: string; config: Record<string, any>; styles?: any; animation?: any; responsive?: any; }}
+              block={
+                blockItem as {
+                  id: string;
+                  type: string;
+                  config: Record<string, any>;
+                  styles?: any;
+                  animation?: any;
+                  responsive?: any;
+                }
+              }
               updateBlock={updateBlock}
               definition={def}
               agencyId={agencyId}
@@ -2103,17 +2178,23 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     type="color"
                     className="w-8 h-8 rounded cursor-pointer border border-border"
                     value={blockStyles.bg_color || blockStyles.backgroundColor || "#ffffff"}
-                    onChange={(e) => updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })}
+                    onChange={(e) =>
+                      updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })
+                    }
                   />
                   <Input
                     value={blockStyles.bg_color || blockStyles.backgroundColor || ""}
-                    onChange={(e) => updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })}
+                    onChange={(e) =>
+                      updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })
+                    }
                     placeholder="#ffffff"
                   />
                 </div>
                 {/* Agency Colors Swatches */}
                 <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">Cores da Agência:</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">
+                    Cores da Agência:
+                  </span>
                   {Object.entries(brandColors).map(([key, val]) => {
                     if (!val) return null;
                     return (
@@ -2142,15 +2223,35 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 </Field>
                 {/* Gradient Presets */}
                 <div className="bg-surface-alt/45 p-2.5 rounded-xl border border-border/40 space-y-2">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Presets Vibrantes:</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    Presets Vibrantes:
+                  </span>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { name: "Indigo Dreams", value: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)" },
-                      { name: "Sunset Glow", value: "linear-gradient(135deg, #f43f5e 0%, #f97316 100%)" },
-                      { name: "Ocean Breeze", value: "linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)" },
-                      { name: "Emerald Mint", value: "linear-gradient(135deg, #10b981 0%, #059669 100%)" },
-                      { name: "Vibrant Dark", value: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)" },
-                      { name: "Neon Purple", value: "linear-gradient(135deg, #d946ef 0%, #4f46e5 100%)" }
+                      {
+                        name: "Indigo Dreams",
+                        value: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+                      },
+                      {
+                        name: "Sunset Glow",
+                        value: "linear-gradient(135deg, #f43f5e 0%, #f97316 100%)",
+                      },
+                      {
+                        name: "Ocean Breeze",
+                        value: "linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)",
+                      },
+                      {
+                        name: "Emerald Mint",
+                        value: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                      },
+                      {
+                        name: "Vibrant Dark",
+                        value: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)",
+                      },
+                      {
+                        name: "Neon Purple",
+                        value: "linear-gradient(135deg, #d946ef 0%, #4f46e5 100%)",
+                      },
                     ].map((p) => (
                       <button
                         key={p.name}
@@ -2158,7 +2259,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         onClick={() => updateStyle({ bg_gradient: p.value })}
                         className="flex items-center gap-1.5 p-1 rounded-lg border border-border text-[9px] font-bold text-left hover:border-brand/40 bg-surface transition-all active:scale-[0.97]"
                       >
-                        <span className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10" style={{ background: p.value }} />
+                        <span
+                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10"
+                          style={{ background: p.value }}
+                        />
                         <span className="truncate">{p.name}</span>
                       </button>
                     ))}
@@ -2169,10 +2273,14 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
             {blockStyles.bg_type === "image" && (
               <div className="space-y-4">
-                <label className="text-xs font-semibold text-muted-foreground">Imagem de Fundo</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  Imagem de Fundo
+                </label>
                 <Input
                   value={blockStyles.bg_image_url || blockStyles.backgroundImage || ""}
-                  onChange={(e) => updateStyle({ bg_image_url: e.target.value, backgroundImage: e.target.value })}
+                  onChange={(e) =>
+                    updateStyle({ bg_image_url: e.target.value, backgroundImage: e.target.value })
+                  }
                   placeholder="URL da imagem..."
                 />
                 <div className="flex items-center gap-2 pt-1">
@@ -2180,7 +2288,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     bucket="agency-media"
                     folder={`${agencyId}/media`}
                     value={blockStyles.bg_image_url || blockStyles.backgroundImage || ""}
-                    onChange={(url) => updateStyle({ bg_image_url: url || "", backgroundImage: url || "" })}
+                    onChange={(url) =>
+                      updateStyle({ bg_image_url: url || "", backgroundImage: url || "" })
+                    }
                   />
                   <span className="text-xs text-muted-foreground font-semibold">ou</span>
                   <UnsplashPicker
@@ -2194,8 +2304,14 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     min={0}
                     max={1}
                     step={0.1}
-                    value={blockStyles.backgroundOverlayOpacity !== undefined ? blockStyles.backgroundOverlayOpacity : 0.5}
-                    onChange={(e) => updateStyle({ backgroundOverlayOpacity: parseFloat(e.target.value) || 0 })}
+                    value={
+                      blockStyles.backgroundOverlayOpacity !== undefined
+                        ? blockStyles.backgroundOverlayOpacity
+                        : 0.5
+                    }
+                    onChange={(e) =>
+                      updateStyle({ backgroundOverlayOpacity: parseFloat(e.target.value) || 0 })
+                    }
                   />
                 </Field>
               </div>
@@ -2205,7 +2321,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Field label="Espaçamento Sup. (Padding Top)">
                 <Select
                   value={blockStyles.paddingTop || blockStyles.padding_y || "md"}
-                  onChange={(e) => updateStyle({ paddingTop: e.target.value, padding_y: e.target.value })}
+                  onChange={(e) =>
+                    updateStyle({ paddingTop: e.target.value, padding_y: e.target.value })
+                  }
                 >
                   <option value="none">Nenhum</option>
                   <option value="sm">Pequeno (sm)</option>
@@ -2217,7 +2335,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Field label="Espaçamento Inf. (Padding Bottom)">
                 <Select
                   value={blockStyles.paddingBottom || blockStyles.padding_y || "md"}
-                  onChange={(e) => updateStyle({ paddingBottom: e.target.value, padding_y: e.target.value })}
+                  onChange={(e) =>
+                    updateStyle({ paddingBottom: e.target.value, padding_y: e.target.value })
+                  }
                 >
                   <option value="none">Nenhum</option>
                   <option value="sm">Pequeno (sm)</option>
@@ -2271,16 +2391,22 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   type="color"
                   className="w-8 h-8 rounded cursor-pointer border border-border"
                   value={blockStyles.text_color || "#000000"}
-                  onChange={(e) => updateStyle({ text_color: e.target.value, textColor: e.target.value })}
+                  onChange={(e) =>
+                    updateStyle({ text_color: e.target.value, textColor: e.target.value })
+                  }
                 />
                 <Input
                   value={blockStyles.text_color || blockStyles.textColor || ""}
-                  onChange={(e) => updateStyle({ text_color: e.target.value, textColor: e.target.value })}
+                  onChange={(e) =>
+                    updateStyle({ text_color: e.target.value, textColor: e.target.value })
+                  }
                   placeholder="#000000"
                 />
               </div>
               <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
-                <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">Presets de Contraste:</span>
+                <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">
+                  Presets de Contraste:
+                </span>
                 <button
                   type="button"
                   onClick={() => updateStyle({ text_color: "#ffffff", textColor: "light" })}
@@ -2320,7 +2446,13 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   checked={!!blockAnimation.enabled}
                   onChange={(e) => {
                     updateAnimation({ enabled: e.target.checked });
-                    updateStyle({ animation: e.target.checked ? (blockAnimation.type === "none" ? "fade" : blockAnimation.type) : "none" });
+                    updateStyle({
+                      animation: e.target.checked
+                        ? blockAnimation.type === "none"
+                          ? "fade"
+                          : blockAnimation.type
+                        : "none",
+                    });
                   }}
                   className="rounded border-border text-brand focus:ring-brand h-4 w-4"
                 />
@@ -2364,7 +2496,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       }}
                       className="flex-1"
                     />
-                    <span className="text-xs font-semibold w-12 text-right">{blockAnimation.delay || 0}ms</span>
+                    <span className="text-xs font-semibold w-12 text-right">
+                      {blockAnimation.delay || 0}ms
+                    </span>
                   </div>
                 </Field>
 
@@ -2383,7 +2517,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       }}
                       className="flex-1"
                     />
-                    <span className="text-xs font-semibold w-12 text-right">{blockAnimation.duration || 600}ms</span>
+                    <span className="text-xs font-semibold w-12 text-right">
+                      {blockAnimation.duration || 600}ms
+                    </span>
                   </div>
                 </Field>
 
@@ -2411,7 +2547,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   onChange={(e) => updateResponsive({ hideOnMobile: e.target.checked })}
                   className="rounded border-border text-brand focus:ring-brand h-4 w-4"
                 />
-                <span className="text-xs text-muted-foreground">Ocultar quando visualizado em celulares</span>
+                <span className="text-xs text-muted-foreground">
+                  Ocultar quando visualizado em celulares
+                </span>
               </div>
             </Field>
 
@@ -2423,7 +2561,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   onChange={(e) => updateResponsive({ hideOnTablet: e.target.checked })}
                   className="rounded border-border text-brand focus:ring-brand h-4 w-4"
                 />
-                <span className="text-xs text-muted-foreground">Ocultar quando visualizado em tablets</span>
+                <span className="text-xs text-muted-foreground">
+                  Ocultar quando visualizado em tablets
+                </span>
               </div>
             </Field>
 
@@ -2431,7 +2571,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Field label="Colunas no Mobile">
                 <Select
                   value={String(blockResponsive.mobileColumns || 1)}
-                  onChange={(e) => updateResponsive({ mobileColumns: parseInt(e.target.value) || 1 })}
+                  onChange={(e) =>
+                    updateResponsive({ mobileColumns: parseInt(e.target.value) || 1 })
+                  }
                 >
                   <option value="1">1 Coluna</option>
                   <option value="2">2 Colunas</option>
@@ -2441,7 +2583,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               <Field label="Colunas no Tablet">
                 <Select
                   value={String(blockResponsive.tabletColumns || 2)}
-                  onChange={(e) => updateResponsive({ tabletColumns: parseInt(e.target.value) || 2 })}
+                  onChange={(e) =>
+                    updateResponsive({ tabletColumns: parseInt(e.target.value) || 2 })
+                  }
                 >
                   <option value="1">1 Coluna</option>
                   <option value="2">2 Colunas</option>
@@ -2485,7 +2629,8 @@ function GroupTourDetailsEditor({ block, updateBlock, agencyId }: Props) {
           <div className="text-xs text-muted-foreground">Carregando viagens...</div>
         ) : tours.length === 0 ? (
           <div className="text-xs text-destructive font-medium">
-            Nenhuma viagem em grupo aberta ou confirmada encontrada. Torne uma excursão como Aberta ou Confirmada no painel administrativo para poder selecioná-la.
+            Nenhuma viagem em grupo aberta ou confirmada encontrada. Torne uma excursão como Aberta
+            ou Confirmada no painel administrativo para poder selecioná-la.
           </div>
         ) : (
           <Select
@@ -2551,7 +2696,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
       <label className="text-xs font-semibold text-muted-foreground uppercase">
         Estilo da Seção (Visual)
       </label>
-      
+
       <div className="grid grid-cols-2 gap-3">
         <Field label="Espaçamento (Vertical)">
           <Select
@@ -2564,7 +2709,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
             <option value="lg">Grande (lg)</option>
           </Select>
         </Field>
-        
+
         <Field label="Cantos Arredondados">
           <Select
             value={styles.border_radius || "none"}
@@ -2607,7 +2752,9 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
           </div>
           {(brandColor || brandColorLight) && (
             <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Cores da Agência:</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                Cores da Agência:
+              </span>
               {brandColor && (
                 <button
                   type="button"
@@ -2670,7 +2817,9 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
           </div>
           {(brandColor || brandOriginalFg) && (
             <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Presets de Contraste:</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                Presets de Contraste:
+              </span>
               {brandOriginalFg && (
                 <button
                   type="button"
@@ -2708,7 +2857,9 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
 
       {/* ─── Animation Controls ───────────────────────────────────────── */}
       <div className="pt-4 border-t border-border/60 space-y-3">
-        <label className="text-xs font-semibold text-muted-foreground uppercase">Animacao de Entrada</label>
+        <label className="text-xs font-semibold text-muted-foreground uppercase">
+          Animacao de Entrada
+        </label>
         <Field label="Tipo de Animacao">
           <Select
             value={styles.animation || "none"}
@@ -2763,7 +2914,7 @@ function AgentSelectEditor({ block, updateBlock, agencyId }: Props) {
         .from("user_roles")
         .select("user_id")
         .eq("agency_id", agencyId);
-      
+
       if (roles && roles.length > 0) {
         const userIds = roles.map((r) => r.user_id);
         const { data: profiles } = await supabase
@@ -2782,7 +2933,9 @@ function AgentSelectEditor({ block, updateBlock, agencyId }: Props) {
       {loading ? (
         <div className="text-xs text-muted-foreground">Carregando consultores...</div>
       ) : agents.length === 0 ? (
-        <div className="text-xs text-destructive font-medium">Nenhum consultor cadastrado para esta agência.</div>
+        <div className="text-xs text-destructive font-medium">
+          Nenhum consultor cadastrado para esta agência.
+        </div>
       ) : (
         <Select
           value={(block as any).agent_id || ""}
@@ -2809,7 +2962,12 @@ interface RegistryBlockFormEditorProps {
   agencyId: string;
 }
 
-export function RegistryBlockFormEditor({ block, updateBlock, definition, agencyId }: RegistryBlockFormEditorProps) {
+export function RegistryBlockFormEditor({
+  block,
+  updateBlock,
+  definition,
+  agencyId,
+}: RegistryBlockFormEditorProps) {
   const config = block.config || {};
   const fields = definition.fields || [];
 
@@ -2828,7 +2986,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
             return (
               <Field key={field.key} label={field.label}>
                 <Input
-                  value={value as string || ""}
+                  value={(value as string) || ""}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder={field.placeholder}
                 />
@@ -2838,7 +2996,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
             return (
               <Field key={field.key} label={field.label}>
                 <Textarea
-                  value={value as string || ""}
+                  value={(value as string) || ""}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder={field.placeholder}
                   rows={4}
@@ -2862,7 +3020,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
               <Field key={field.key} label={field.label}>
                 <Input
                   type="url"
-                  value={value as string || ""}
+                  value={(value as string) || ""}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder="https://..."
                 />
@@ -2874,12 +3032,12 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={value as string || "#ffffff"}
+                    value={(value as string) || "#ffffff"}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
                     className="w-10 h-10 rounded-lg border border-border cursor-pointer"
                   />
                   <Input
-                    value={value as string || ""}
+                    value={(value as string) || ""}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
                     className="flex-1"
                     placeholder="#HEX"
@@ -2891,7 +3049,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
             return (
               <Field key={field.key} label={field.label}>
                 <Select
-                  value={value as string || ""}
+                  value={(value as string) || ""}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                 >
                   {field.options?.map((opt: any) => (
@@ -2922,7 +3080,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
               <Field key={field.key} label={field.label}>
                 <div className="space-y-2">
                   <Input
-                    value={value as string || ""}
+                    value={(value as string) || ""}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
                     placeholder="URL da imagem..."
                   />
@@ -2930,12 +3088,12 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
                     <FileUploader
                       bucket="agency-media"
                       folder={`${agencyId}/media`}
-                      value={value as string || ""}
+                      value={(value as string) || ""}
                       onChange={(url) => handleFieldChange(field.key, url || "")}
                     />
                     <span className="text-xs text-muted-foreground font-semibold">ou</span>
                     <UnsplashPicker
-                      value={value as string || ""}
+                      value={(value as string) || ""}
                       onChange={(url) => handleFieldChange(field.key, url)}
                     />
                   </div>
@@ -2946,7 +3104,7 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
             return (
               <Field key={field.key} label={field.label}>
                 <IconPicker
-                  value={value as string || ""}
+                  value={(value as string) || ""}
                   onChange={(key) => handleFieldChange(field.key, key)}
                 />
               </Field>
@@ -2955,7 +3113,9 @@ export function RegistryBlockFormEditor({ block, updateBlock, definition, agency
             return (
               <div key={field.key} className="border-t border-border pt-4 mt-4 space-y-2">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{field.label}</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    {field.label}
+                  </span>
                 </div>
                 <ListFieldEditor
                   items={Array.isArray(value) ? value : []}
@@ -2985,13 +3145,20 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
     if (!keyword.trim()) return;
     setLoading(true);
     try {
-      const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY || import.meta.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY || "";
-      const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(keyword)}&orientation=landscape&per_page=9&client_id=${accessKey}`);
+      const accessKey =
+        import.meta.env.VITE_UNSPLASH_ACCESS_KEY ||
+        import.meta.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY ||
+        "";
+      const res = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(keyword)}&orientation=landscape&per_page=9&client_id=${accessKey}`,
+      );
       if (res.ok) {
         const data = await res.json();
         setPhotos(data.results || []);
       } else {
-        toast.error("Erro ao buscar no Unsplash. Verifique se a chave de acesso VITE_UNSPLASH_ACCESS_KEY está configurada.");
+        toast.error(
+          "Erro ao buscar no Unsplash. Verifique se a chave de acesso VITE_UNSPLASH_ACCESS_KEY está configurada.",
+        );
       }
     } catch {
       toast.error("Erro na requisição ao Unsplash.");
@@ -3002,26 +3169,26 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
 
   return (
     <div className="inline-block">
-      <button 
+      <button
         type="button"
         onClick={() => setOpen(!open)}
         className="px-3 h-9 rounded-lg border border-border bg-surface-alt text-xs font-semibold hover:border-brand/60 transition-colors"
       >
         {value ? "Buscar no Unsplash" : "Buscar no Unsplash"}
       </button>
-      
+
       {open && (
         <div className="absolute z-50 right-4 w-72 p-4 rounded-xl border border-border bg-surface shadow-2xl space-y-3 mt-2">
           <div className="flex gap-2">
-            <input 
+            <input
               type="text"
               placeholder="Ex: travel paradise, hotel, beach..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-border outline-none bg-surface"
-              onKeyDown={(e) => e.key === 'Enter' && search()}
+              onKeyDown={(e) => e.key === "Enter" && search()}
             />
-            <button 
+            <button
               type="button"
               onClick={search}
               disabled={loading}
@@ -3033,17 +3200,26 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
           {photos.length > 0 ? (
             <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
               {photos.map((p) => (
-                <div 
+                <div
                   key={p.id}
-                  onClick={() => { onChange(p.urls.regular); setOpen(false); }}
+                  onClick={() => {
+                    onChange(p.urls.regular);
+                    setOpen(false);
+                  }}
                   className="aspect-video cursor-pointer overflow-hidden rounded-lg hover:ring-2 hover:ring-brand"
                 >
-                  <img src={p.urls.thumb} alt={p.alt_description} className="w-full h-full object-cover" />
+                  <img
+                    src={p.urls.thumb}
+                    alt={p.alt_description}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-[10px] text-muted-foreground text-center py-4">Sem resultados. Busque termos em inglês.</div>
+            <div className="text-[10px] text-muted-foreground text-center py-4">
+              Sem resultados. Busque termos em inglês.
+            </div>
           )}
         </div>
       )}
@@ -3067,11 +3243,11 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
     // Determine the template item
     const templateItem = (defaultValue && Array.isArray(defaultValue) && defaultValue[0]) || {};
     const newItem = JSON.parse(JSON.stringify(templateItem));
-    
+
     // Clear typical text fields in the duplicate
     Object.keys(newItem).forEach((k) => {
-      if (typeof newItem[k] === 'string' && k !== 'image' && !newItem[k].startsWith('http')) {
-        newItem[k] = '';
+      if (typeof newItem[k] === "string" && k !== "image" && !newItem[k].startsWith("http")) {
+        newItem[k] = "";
       }
     });
 
@@ -3112,38 +3288,51 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
       <div className="space-y-2">
         {items.map((item, idx) => {
           const isExpanded = expandedIndex === idx;
-          const displayLabel = item.name || item.title || item.city || item.label || `Item #${idx + 1}`;
-          
+          const displayLabel =
+            item.name || item.title || item.city || item.label || `Item #${idx + 1}`;
+
           return (
-            <div key={idx} className="border border-border rounded-xl bg-surface-alt/20 overflow-hidden">
-              <div 
+            <div
+              key={idx}
+              className="border border-border rounded-xl bg-surface-alt/20 overflow-hidden"
+            >
+              <div
                 className="flex items-center justify-between px-3 py-2 cursor-pointer bg-surface-alt/45 select-none"
                 onClick={() => setExpandedIndex(isExpanded ? null : idx)}
               >
                 <span className="text-xs font-semibold text-foreground truncate max-w-[140px]">
                   {displayLabel}
                 </span>
-                
+
                 <div className="flex items-center gap-1.5">
-                  <button 
+                  <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); moveItem(idx, -1); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      moveItem(idx, -1);
+                    }}
                     disabled={idx === 0}
                     className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
                   >
                     ▲
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); moveItem(idx, 1); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      moveItem(idx, 1);
+                    }}
                     disabled={idx === items.length - 1}
                     className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
                   >
                     ▼
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); removeItem(idx); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeItem(idx);
+                    }}
                     className="p-1 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -3155,19 +3344,26 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                 <div className="p-4 border-t border-border bg-surface space-y-3">
                   {Object.keys(item).map((k) => {
                     const val = item[k];
-                    
+
                     // Simple heuristic for field types
-                    const isImage = k.toLowerCase().includes('image') || k.toLowerCase().includes('avatar') || k.toLowerCase().includes('logo');
-                    const isIcon = k.toLowerCase() === 'icon';
-                    const isRating = k.toLowerCase() === 'rating' || k.toLowerCase() === 'stars';
-                    const isTextarea = k.toLowerCase() === 'description' || k.toLowerCase() === 'text' || k.toLowerCase() === 'bio' || k.toLowerCase() === 'snippet';
+                    const isImage =
+                      k.toLowerCase().includes("image") ||
+                      k.toLowerCase().includes("avatar") ||
+                      k.toLowerCase().includes("logo");
+                    const isIcon = k.toLowerCase() === "icon";
+                    const isRating = k.toLowerCase() === "rating" || k.toLowerCase() === "stars";
+                    const isTextarea =
+                      k.toLowerCase() === "description" ||
+                      k.toLowerCase() === "text" ||
+                      k.toLowerCase() === "bio" ||
+                      k.toLowerCase() === "snippet";
 
                     if (isImage) {
                       return (
                         <Field key={k} label={`${k.toUpperCase()}`}>
                           <div className="space-y-1">
                             <Input
-                              value={val as string || ""}
+                              value={(val as string) || ""}
                               onChange={(e) => updateItemField(idx, k, e.target.value)}
                               placeholder="URL..."
                             />
@@ -3175,11 +3371,11 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                               <FileUploader
                                 bucket="agency-media"
                                 folder={`${agencyId}/media`}
-                                value={val as string || ""}
+                                value={(val as string) || ""}
                                 onChange={(url) => updateItemField(idx, k, url || "")}
                               />
                               <UnsplashPicker
-                                value={val as string || ""}
+                                value={(val as string) || ""}
                                 onChange={(url) => updateItemField(idx, k, url)}
                               />
                             </div>
@@ -3192,7 +3388,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                       return (
                         <Field key={k} label={`${k.toUpperCase()}`}>
                           <IconPicker
-                            value={val as string || ""}
+                            value={(val as string) || ""}
                             onChange={(key) => updateItemField(idx, k, key)}
                           />
                         </Field>
@@ -3218,7 +3414,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                         <Field key={k} label={`${k.toUpperCase()}`}>
                           <Textarea
                             rows={3}
-                            value={val as string || ""}
+                            value={(val as string) || ""}
                             onChange={(e) => updateItemField(idx, k, e.target.value)}
                             placeholder="Descreva..."
                           />
@@ -3229,7 +3425,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                     return (
                       <Field key={k} label={`${k.toUpperCase()}`}>
                         <Input
-                          value={val as string || ""}
+                          value={(val as string) || ""}
                           onChange={(e) => updateItemField(idx, k, e.target.value)}
                           placeholder="..."
                         />
@@ -3253,4 +3449,3 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
     </div>
   );
 }
-

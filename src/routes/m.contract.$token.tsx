@@ -169,12 +169,12 @@ function Page() {
         return;
       }
       setC(row);
-      
+
       let matchedClient = null;
       const cData = row.client_data;
       if (Array.isArray(cData)) {
         if (targetDoc) {
-          matchedClient = cData.find(c => c.cpf === targetDoc || c.document === targetDoc);
+          matchedClient = cData.find((c) => c.cpf === targetDoc || c.document === targetDoc);
         }
         if (!matchedClient && cData.length > 0) {
           matchedClient = cData[0];
@@ -182,7 +182,7 @@ function Page() {
       } else if (cData && typeof cData === "object") {
         matchedClient = cData;
       }
-      
+
       if (matchedClient) {
         setName(matchedClient.name ?? "");
         setDoc(matchedClient.cpf ?? matchedClient.document ?? "");
@@ -688,7 +688,9 @@ function Page() {
             c.client_data.map((client: any, i: number) => (
               <div key={i} className="text-sm">
                 <span className="font-semibold text-foreground">{client.name}</span>
-                {client.cpf && <span className="text-muted-foreground ml-2">Doc: {client.cpf}</span>}
+                {client.cpf && (
+                  <span className="text-muted-foreground ml-2">Doc: {client.cpf}</span>
+                )}
               </div>
             ))
           ) : (
@@ -699,7 +701,7 @@ function Page() {
             </div>
           )}
         </div>
-        
+
         <div className="border-b border-t border-border/50 bg-surface-alt/30 px-5 py-3">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Resumo Executivo
@@ -800,7 +802,12 @@ function Page() {
                 </div>
                 <div className="space-y-1 text-muted-foreground text-[11px]">
                   <div>Doc: {c.signatures?.[0]?.signer_document}</div>
-                  <div>IP: <span className="font-mono text-foreground font-medium">{c.signatures?.[0]?.ip}</span></div>
+                  <div>
+                    IP:{" "}
+                    <span className="font-mono text-foreground font-medium">
+                      {c.signatures?.[0]?.ip}
+                    </span>
+                  </div>
                   <div>Data: {new Date(c.signed_at!).toLocaleString("pt-BR")}</div>
                 </div>
               </div>
@@ -902,7 +909,8 @@ function Page() {
                                   : log.action}
                           </div>
                           <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                            IP: {log.metadata?.ip || "0.0.0.0"} • {log.metadata?.user_agent?.slice(0, 60)}...
+                            IP: {log.metadata?.ip || "0.0.0.0"} •{" "}
+                            {log.metadata?.user_agent?.slice(0, 60)}...
                           </div>
                         </div>
                       </div>

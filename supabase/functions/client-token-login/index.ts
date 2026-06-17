@@ -44,7 +44,10 @@ serve(async (req) => {
 
     if (user_id) {
       // Se já temos o user_id vinculado, buscamos o usuário diretamente
-      const { data: { user }, error: getErr } = await supabaseAdmin.auth.admin.getUserById(user_id);
+      const {
+        data: { user },
+        error: getErr,
+      } = await supabaseAdmin.auth.admin.getUserById(user_id);
       if (!getErr && user) {
         authUser = user;
       }
@@ -52,12 +55,18 @@ serve(async (req) => {
 
     if (!authUser) {
       // Se não temos ou não achamos por ID, verificamos por e-mail via RPC seguro
-      const { data: existingUserId, error: rpcErr } = await supabaseAdmin.rpc("get_auth_user_id_by_email", {
-        p_email: client.email,
-      });
+      const { data: existingUserId, error: rpcErr } = await supabaseAdmin.rpc(
+        "get_auth_user_id_by_email",
+        {
+          p_email: client.email,
+        },
+      );
 
       if (!rpcErr && existingUserId) {
-        const { data: { user }, error: getErr } = await supabaseAdmin.auth.admin.getUserById(existingUserId);
+        const {
+          data: { user },
+          error: getErr,
+        } = await supabaseAdmin.auth.admin.getUserById(existingUserId);
         if (!getErr && user) {
           authUser = user;
         }

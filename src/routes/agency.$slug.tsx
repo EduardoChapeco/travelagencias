@@ -68,16 +68,20 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
             <AlertOctagon className="h-8 w-8" />
           </div>
-          
+
           <div className="space-y-2">
-            <h1 className="text-2xl font-black tracking-tight text-white uppercase">Acesso Suspenso</h1>
+            <h1 className="text-2xl font-black tracking-tight text-white uppercase">
+              Acesso Suspenso
+            </h1>
             <p className="text-sm text-zinc-400 leading-relaxed font-medium">
-              O acesso da sua agência <strong className="text-white">"{agency.name}"</strong> foi temporariamente suspenso por pendências administrativas ou financeiras.
+              O acesso da sua agência <strong className="text-white">"{agency.name}"</strong> foi
+              temporariamente suspenso por pendências administrativas ou financeiras.
             </p>
           </div>
-          
+
           <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
-            Se você é o proprietário desta agência, acesse a central de pagamentos ou entre em contato com o suporte financeiro do TravelOS para regularizar sua assinatura.
+            Se você é o proprietário desta agência, acesse a central de pagamentos ou entre em
+            contato com o suporte financeiro do TravelOS para regularizar sua assinatura.
           </div>
 
           <div className="flex justify-center gap-3">

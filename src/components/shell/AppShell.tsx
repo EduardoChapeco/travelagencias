@@ -79,7 +79,7 @@ export function AppShell({
     pathname.includes("/support") ||
     pathname.includes("/knowledge");
 
-  const isVisualEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+  const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 
   if (isVisualEditor) {
     return (
@@ -102,14 +102,19 @@ export function AppShell({
             {crumbs
               .filter((c) => c !== "agency" && c !== agency?.slug)
               .map((c, i, arr) => {
-                const label = DEFAULT_MODULE_NAMES[c] !== undefined
-                  ? getModuleName(c, agency)
-                  : decodeURIComponent(c);
+                const label =
+                  DEFAULT_MODULE_NAMES[c] !== undefined
+                    ? getModuleName(c, agency)
+                    : decodeURIComponent(c);
                 const isLast = i === arr.length - 1;
                 return (
                   <span key={i} className="flex items-center gap-1">
                     {i > 0 && <span className="opacity-30">/</span>}
-                    <span className={isLast ? "text-foreground font-medium truncate" : "truncate opacity-60"}>
+                    <span
+                      className={
+                        isLast ? "text-foreground font-medium truncate" : "truncate opacity-60"
+                      }
+                    >
                       {label}
                     </span>
                   </span>
@@ -121,7 +126,10 @@ export function AppShell({
             {title && <h1 className="ds-h3 text-foreground whitespace-nowrap">{title}</h1>}
           </div>
 
-          <div id="app-header-portal" className="flex-1 flex items-center justify-end gap-2.5 min-w-0 px-2" />
+          <div
+            id="app-header-portal"
+            className="flex-1 flex items-center justify-end gap-2.5 min-w-0 px-2"
+          />
 
           <div className="flex items-center gap-2 shrink-0">
             <div
@@ -160,7 +168,10 @@ export function AppShell({
               <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
-                  <span>Atenção: A assinatura da sua agência está atrasada. Regularize o pagamento para evitar o bloqueio total do acesso.</span>
+                  <span>
+                    Atenção: A assinatura da sua agência está atrasada. Regularize o pagamento para
+                    evitar o bloqueio total do acesso.
+                  </span>
                 </div>
                 <a
                   href={`/agency/${agency!.slug}/billing`}

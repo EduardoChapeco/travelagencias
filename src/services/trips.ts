@@ -79,9 +79,9 @@ export async function fetchFinancialRecords(tripId: string): Promise<FinancialRe
 }
 
 export async function fetchPaymentPlan(tripId: string): Promise<PaymentPlan[]> {
-  const { data, error } = await (supabase
-    .from("payment_plans")
-    .select("*, payment_installments(*)") as any)
+  const { data, error } = await (
+    supabase.from("payment_plans").select("*, payment_installments(*)") as any
+  )
     .eq("trip_id", tripId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -89,15 +89,14 @@ export async function fetchPaymentPlan(tripId: string): Promise<PaymentPlan[]> {
 }
 
 export async function fetchAllPaymentPlans(tripId: string): Promise<PaymentPlan[]> {
-  const { data, error } = await (supabase
-    .from("payment_plans")
-    .select("*, payment_installments(*)") as any)
+  const { data, error } = await (
+    supabase.from("payment_plans").select("*, payment_installments(*)") as any
+  )
     .eq("trip_id", tripId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as PaymentPlan[];
 }
-
 
 // ─── Mutations ─────────────────────────────────────────────────────────────────
 
@@ -150,7 +149,15 @@ export type CreatePlanPayload = {
 };
 
 export async function createPaymentPlan(payload: CreatePlanPayload): Promise<void> {
-  const { agencyId, tripId, totalAmount, installmentsCount: n, method, firstDueDate, isThirdParty } = payload;
+  const {
+    agencyId,
+    tripId,
+    totalAmount,
+    installmentsCount: n,
+    method,
+    firstDueDate,
+    isThirdParty,
+  } = payload;
   const per = Math.round((totalAmount / n) * 100) / 100;
   const firstDue = new Date(firstDueDate);
 

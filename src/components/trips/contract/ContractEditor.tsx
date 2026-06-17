@@ -81,7 +81,10 @@ export function ContractEditor({
             <p className="text-xs text-muted-foreground">Nenhum contratante adicionado.</p>
           )}
           {clientData.map((c, i) => (
-            <div key={i} className="flex flex-col gap-2 rounded-md border border-border p-3 bg-surface-alt/10 relative">
+            <div
+              key={i}
+              className="flex flex-col gap-2 rounded-md border border-border p-3 bg-surface-alt/10 relative"
+            >
               {isEditable && (
                 <button
                   onClick={() => setClientData(clientData.filter((_, x) => x !== i))}

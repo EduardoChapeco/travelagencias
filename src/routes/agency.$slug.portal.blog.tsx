@@ -171,103 +171,103 @@ function BlogPage() {
           ))}
         </div>
 
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+        {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
-      {!q.isLoading && filtered.length === 0 && (
-        <EmptyState
-          title="Nenhum artigo"
-          description={
-            filterStatus === "all"
-              ? "Crie seu primeiro artigo para atrair tráfego orgânico."
-              : `Sem artigos com status "${filterStatus}".`
-          }
-        />
-      )}
+        {!q.isLoading && filtered.length === 0 && (
+          <EmptyState
+            title="Nenhum artigo"
+            description={
+              filterStatus === "all"
+                ? "Crie seu primeiro artigo para atrair tráfego orgânico."
+                : `Sem artigos com status "${filterStatus}".`
+            }
+          />
+        )}
 
-      {/* POST GRID */}
-      {filtered.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setEditing(p)}
-              className="group rounded-xl border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
-            >
-              {/* Cover */}
-              <div className="relative aspect-video overflow-hidden bg-surface-alt">
-                {p.cover_image_url ? (
-                  <img
-                    src={p.cover_image_url}
-                    alt=""
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-muted-foreground/40">
-                    <BookOpen className="h-8 w-8" />
-                  </div>
-                )}
-                <div className="absolute top-2 right-2">
-                  <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
-                    {STATUS_LABEL[p.status] ?? p.status}
-                  </StatusBadge>
-                </div>
-              </div>
-              {/* Body */}
-              <div className="p-4">
-                <div className="font-semibold text-sm leading-snug group-hover:text-brand transition-colors line-clamp-2">
-                  {p.title}
-                </div>
-                {p.excerpt && (
-                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{p.excerpt}</p>
-                )}
-                <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    {p.category && (
-                      <span className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
-                        {p.category}
-                      </span>
-                    )}
-                    {p.tags?.slice(0, 2).map((t) => (
-                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Eye className="h-3 w-3" />
-                    {p.views ?? 0}
+        {/* POST GRID */}
+        {filtered.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setEditing(p)}
+                className="group rounded-xl border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
+              >
+                {/* Cover */}
+                <div className="relative aspect-video overflow-hidden bg-surface-alt">
+                  {p.cover_image_url ? (
+                    <img
+                      src={p.cover_image_url}
+                      alt=""
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-muted-foreground/40">
+                      <BookOpen className="h-8 w-8" />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
+                      {STATUS_LABEL[p.status] ?? p.status}
+                    </StatusBadge>
                   </div>
                 </div>
-                {p.published_at && (
-                  <div className="mt-1.5 text-[10px] text-muted-foreground uppercase tracking-wide">
-                    {fmtDate(p.published_at)}
+                {/* Body */}
+                <div className="p-4">
+                  <div className="font-semibold text-sm leading-snug group-hover:text-brand transition-colors line-clamp-2">
+                    {p.title}
                   </div>
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
+                  {p.excerpt && (
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{p.excerpt}</p>
+                  )}
+                  <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      {p.category && (
+                        <span className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
+                          {p.category}
+                        </span>
+                      )}
+                      {p.tags?.slice(0, 2).map((t) => (
+                        <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-3 w-3" />
+                      {p.views ?? 0}
+                    </div>
+                  </div>
+                  {p.published_at && (
+                    <div className="mt-1.5 text-[10px] text-muted-foreground uppercase tracking-wide">
+                      {fmtDate(p.published_at)}
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
 
-      {(newOpen || editing) && agency && (
-        <BlogSheet
-          agencyId={agency.id}
-          agencySlug={slug}
-          post={editing}
-          onClose={() => {
-            setNewOpen(false);
-            setEditing(null);
-          }}
-          onSaved={() => {
-            setNewOpen(false);
-            setEditing(null);
-            qc.invalidateQueries({ queryKey: ["blog", agency.id] });
-          }}
-        />
-      )}
+        {(newOpen || editing) && agency && (
+          <BlogSheet
+            agencyId={agency.id}
+            agencySlug={slug}
+            post={editing}
+            onClose={() => {
+              setNewOpen(false);
+              setEditing(null);
+            }}
+            onSaved={() => {
+              setNewOpen(false);
+              setEditing(null);
+              qc.invalidateQueries({ queryKey: ["blog", agency.id] });
+            }}
+          />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 function BlogSheet({

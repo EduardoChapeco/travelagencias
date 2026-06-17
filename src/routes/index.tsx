@@ -19,7 +19,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BlockRenderer } from "@/components/portal/BlockRenderer";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -104,24 +103,25 @@ function Landing() {
           .eq("slug", "home")
           .eq("is_published", true)
           .maybeSingle();
-        
+
         return page || null;
       } catch (err) {
         console.warn("Failed to load dynamic system landing page:", err);
         return null;
       }
-    }
+    },
   });
 
   const homePage = systemPageQ.data;
 
-  if (homePage?.published_blocks && Array.isArray(homePage.published_blocks) && homePage.published_blocks.length > 0) {
+  if (
+    homePage?.published_blocks &&
+    Array.isArray(homePage.published_blocks) &&
+    homePage.published_blocks.length > 0
+  ) {
     return (
       <div className="w-full min-h-screen bg-background text-foreground">
-        <BlockRenderer
-          blocks={homePage.published_blocks as any[]}
-          agencySlug="system"
-        />
+        <BlockRenderer blocks={homePage.published_blocks as any[]} agencySlug="system" />
       </div>
     );
   }
@@ -189,13 +189,13 @@ function Landing() {
 
         <h1 className="mx-auto max-w-4xl ds-display text-foreground leading-[1.05] mb-6">
           A sua Agência de Viagens operando no{" "}
-          <span className="italic font-serif text-accent">
-            máximo lucro
-          </span>.
+          <span className="italic font-serif text-accent">máximo lucro</span>.
         </h1>
 
         <p className="mx-auto mt-6 max-w-3xl ds-body-large text-muted-foreground">
-          Diga adeus às planilhas soltas e PDFs pesados. Centralize propostas interativas que avisam quando são abertas, contratos automatizados com assinatura eletrônica na tela, controle de vistos/passaportes e fluxo de caixa real por viagem.
+          Diga adeus às planilhas soltas e PDFs pesados. Centralize propostas interativas que avisam
+          quando são abertas, contratos automatizados com assinatura eletrônica na tela, controle de
+          vistos/passaportes e fluxo de caixa real por viagem.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -247,7 +247,10 @@ function Landing() {
       </section>
 
       {/* ── Antes vs Depois (Neuromarketing Contrast) ─────────────────────────────────── */}
-      <section id="comparison" className="relative z-10 border-y border-border bg-surface-alt py-24">
+      <section
+        id="comparison"
+        className="relative z-10 border-y border-border bg-surface-alt py-24"
+      >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-3xl mx-auto">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
@@ -257,7 +260,8 @@ function Landing() {
               Como sua agência opera hoje vs. no <span className="text-accent">TravelOS</span>
             </h2>
             <p className="text-muted-foreground text-sm mt-3 font-medium leading-relaxed max-w-2xl mx-auto">
-              O amadorismo e o atraso processual cobram um preço alto na conversão. Compare a realidade operacional.
+              O amadorismo e o atraso processual cobram um preço alto na conversão. Compare a
+              realidade operacional.
             </p>
           </div>
 
@@ -265,29 +269,44 @@ function Landing() {
             {/* O Jeito Doloroso */}
             <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
               <h3 className="text-base font-bold text-danger flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 shrink-0" />
-                O Jeito Lento (Word, PDFs e WhatsApp Solto)
+                <AlertTriangle className="h-5 w-5 shrink-0" />O Jeito Lento (Word, PDFs e WhatsApp
+                Solto)
               </h3>
               <ul className="space-y-4 text-xs text-muted-foreground font-medium">
                 <li className="flex gap-2.5 items-start">
                   <span className="text-danger font-bold shrink-0">✕</span>
-                  <span>Gastar 45 minutos montando uma proposta estática que vira um PDF pesado de 15MB, que o cliente mal consegue abrir no 4G.</span>
+                  <span>
+                    Gastar 45 minutos montando uma proposta estática que vira um PDF pesado de 15MB,
+                    que o cliente mal consegue abrir no 4G.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-danger font-bold shrink-0">✕</span>
-                  <span>Não ter ideia se o cliente abriu o link ou se simplesmente ignorou seu orçamento, perdendo o momento ideal de follow-up.</span>
+                  <span>
+                    Não ter ideia se o cliente abriu o link ou se simplesmente ignorou seu
+                    orçamento, perdendo o momento ideal de follow-up.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-danger font-bold shrink-0">✕</span>
-                  <span>Contratos impressos ou enviados por e-mail que exigem scanner, assinatura manual e demoram dias para retornar.</span>
+                  <span>
+                    Contratos impressos ou enviados por e-mail que exigem scanner, assinatura manual
+                    e demoram dias para retornar.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-danger font-bold shrink-0">✕</span>
-                  <span>Esquecer de conferir a data de validade de passaporte ou vistos do passageiro, gerando cancelamentos catastróficos no check-in.</span>
+                  <span>
+                    Esquecer de conferir a data de validade de passaporte ou vistos do passageiro,
+                    gerando cancelamentos catastróficos no check-in.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-danger font-bold shrink-0">✕</span>
-                  <span>Financeiro confuso, sem controle exato do DRE real por saída, comissões de consultores ou parcelamentos pendentes.</span>
+                  <span>
+                    Financeiro confuso, sem controle exato do DRE real por saída, comissões de
+                    consultores ou parcelamentos pendentes.
+                  </span>
                 </li>
               </ul>
             </div>
@@ -298,29 +317,43 @@ function Landing() {
                 Fórmula de Alto Lucro
               </div>
               <h3 className="text-base font-bold text-primary flex items-center gap-3">
-                <Sparkles className="h-5 w-5 shrink-0 text-accent" />
-                O Jeito Inteligente TravelOS
+                <Sparkles className="h-5 w-5 shrink-0 text-accent" />O Jeito Inteligente TravelOS
               </h3>
               <ul className="space-y-4 text-xs text-foreground font-semibold">
                 <li className="flex gap-2.5 items-start">
                   <span className="text-success font-bold shrink-0">✓</span>
-                  <span><strong>Roteiros em 5 Minutos</strong>: crie propostas web interativas ultra-rápidas com fotos de alta qualidade e tabelas de preços claras.</span>
+                  <span>
+                    <strong>Roteiros em 5 Minutos</strong>: crie propostas web interativas
+                    ultra-rápidas com fotos de alta qualidade e tabelas de preços claras.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-success font-bold shrink-0">✓</span>
-                  <span><strong>Alertas de Leitura em Tempo Real</strong>: seja notificado no WhatsApp/sistema no exato instante em que o cliente abre a proposta.</span>
+                  <span>
+                    <strong>Alertas de Leitura em Tempo Real</strong>: seja notificado no
+                    WhatsApp/sistema no exato instante em que o cliente abre a proposta.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-success font-bold shrink-0">✓</span>
-                  <span><strong>Assinatura Digital em 1 Clique</strong>: contratos gerados automaticamente baseados na proposta e assinados via celular em segundos.</span>
+                  <span>
+                    <strong>Assinatura Digital em 1 Clique</strong>: contratos gerados
+                    automaticamente baseados na proposta e assinados via celular em segundos.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-success font-bold shrink-0">✓</span>
-                  <span><strong>Alarme Inteligente de Documentação</strong>: avisos automáticos e recorrentes de vistos, passaportes ou certificados de vacina expirando.</span>
+                  <span>
+                    <strong>Alarme Inteligente de Documentação</strong>: avisos automáticos e
+                    recorrentes de vistos, passaportes ou certificados de vacina expirando.
+                  </span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-success font-bold shrink-0">✓</span>
-                  <span><strong>DRE & Margem por Viagem</strong>: acompanhe centavo por centavo do lucro líquido, custos operacionais e comissões dos consultores.</span>
+                  <span>
+                    <strong>DRE & Margem por Viagem</strong>: acompanhe centavo por centavo do lucro
+                    líquido, custos operacionais e comissões dos consultores.
+                  </span>
                 </li>
               </ul>
             </div>
@@ -339,7 +372,8 @@ function Landing() {
               Tudo o que sua agência precisa em uma única plataforma.
             </h2>
             <p className="text-muted-foreground text-sm mt-3 font-medium leading-relaxed">
-              Módulos construídos de forma integrada para evitar redigitação de informações e centralizar sua gestão.
+              Módulos construídos de forma integrada para evitar redigitação de informações e
+              centralizar sua gestão.
             </p>
           </div>
 
@@ -351,16 +385,19 @@ function Landing() {
                   key={f.title}
                   className={cn(
                     "group relative overflow-hidden rounded-md border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
-                    (i === 0 || i === 3) && "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
+                    (i === 0 || i === 3) &&
+                      "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
                   )}
                 >
                   <div className="relative z-10 flex flex-col h-full">
                     <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-sm bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Icon className="h-5 w-5" strokeWidth={2} />
                     </div>
-                    
+
                     <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-base font-bold text-foreground tracking-tight">{f.title}</h3>
+                      <h3 className="text-base font-bold text-foreground tracking-tight">
+                        {f.title}
+                      </h3>
                       {f.badge && (
                         <span className="rounded-full bg-surface-muted border border-border px-2.5 py-0.5 text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
                           {f.badge}
@@ -380,7 +417,10 @@ function Landing() {
       </section>
 
       {/* ── Testimonials Section ────────────────────────────────────────── */}
-      <section id="testimonials" className="relative z-10 border-t border-border bg-surface-alt py-24">
+      <section
+        id="testimonials"
+        className="relative z-10 border-t border-border bg-surface-alt py-24"
+      >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-2xl mx-auto">
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
@@ -394,10 +434,17 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
-                {[1,2,3,4,5].map(n => <span key={n} className="text-amber-500 text-sm">★</span>)}
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n} className="text-amber-500 text-sm">
+                    ★
+                  </span>
+                ))}
               </div>
               <p className="text-muted-foreground italic text-xs leading-relaxed font-semibold">
-                "O fechamento das minhas propostas subiu mais de 30% desde que comecei a usar o TravelOS. O cliente abre a proposta interativa no celular, assina ali mesmo em 1 minuto e eu recebo o aviso imediato no WhatsApp. Reduziu meu ciclo de venda de dias para minutos."
+                "O fechamento das minhas propostas subiu mais de 30% desde que comecei a usar o
+                TravelOS. O cliente abre a proposta interativa no celular, assina ali mesmo em 1
+                minuto e eu recebo o aviso imediato no WhatsApp. Reduziu meu ciclo de venda de dias
+                para minutos."
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-border">
                 <div className="h-8 w-8 rounded-full bg-surface-muted border border-border flex items-center justify-center font-bold text-foreground text-xs">
@@ -405,17 +452,26 @@ function Landing() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-foreground">Ana Paula Castilho</h4>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Diretora · Castilho Operadora B2B</p>
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">
+                    Diretora · Castilho Operadora B2B
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
-                {[1,2,3,4,5].map(n => <span key={n} className="text-amber-500 text-sm">★</span>)}
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n} className="text-amber-500 text-sm">
+                    ★
+                  </span>
+                ))}
               </div>
               <p className="text-muted-foreground italic text-xs leading-relaxed font-semibold">
-                "Antes vivíamos correndo o risco de embarcar cliente com passaporte vencido ou sem vistos. O robô de alertas automáticos do TravelOS salvou nossa agência de um baita prejuízo no mês passado. O financeiro integrado com a margem líquida por viagem também é fantástico."
+                "Antes vivíamos correndo o risco de embarcar cliente com passaporte vencido ou sem
+                vistos. O robô de alertas automáticos do TravelOS salvou nossa agência de um baita
+                prejuízo no mês passado. O financeiro integrado com a margem líquida por viagem
+                também é fantástico."
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-border">
                 <div className="h-8 w-8 rounded-full bg-surface-muted border border-border flex items-center justify-center font-bold text-foreground text-xs">
@@ -423,7 +479,9 @@ function Landing() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-foreground">Ricardo Camargo</h4>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">CEO · Camargo Viagens de Luxo</p>
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">
+                    CEO · Camargo Viagens de Luxo
+                  </p>
                 </div>
               </div>
             </div>
@@ -438,7 +496,8 @@ function Landing() {
             Chega de planilhas. Comece a lucrar mais com sua agência.
           </h2>
           <p className="mt-3 text-sm font-semibold text-primary-foreground/80 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Elimine erros operacionais de passageiros, encante com orçamentos digitais modernos e tenha controle total do DRE financeiro em tempo real.
+            Elimine erros operacionais de passageiros, encante com orçamentos digitais modernos e
+            tenha controle total do DRE financeiro em tempo real.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -466,10 +525,13 @@ function Landing() {
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-primary-foreground text-[10px] font-bold">
               T
             </div>
-            <span className="text-xs font-bold text-foreground tracking-tight uppercase">TravelOS</span>
+            <span className="text-xs font-bold text-foreground tracking-tight uppercase">
+              TravelOS
+            </span>
           </div>
           <p className="text-[10px] text-muted-foreground font-semibold">
-            © {new Date().getFullYear()} TravelOS. Desenvolvido exclusivamente para profissionais de turismo.
+            © {new Date().getFullYear()} TravelOS. Desenvolvido exclusivamente para profissionais de
+            turismo.
           </p>
           <div className="flex items-center gap-6 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
             <Link to="/auth/login" className="hover:text-foreground transition-colors">
@@ -484,4 +546,3 @@ function Landing() {
     </div>
   );
 }
-

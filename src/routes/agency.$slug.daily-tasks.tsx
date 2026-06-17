@@ -4,7 +4,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Check, Clock, AlertCircle, ArrowRight, BrainCircuit, ListTodo, Settings2 } from "lucide-react";
+import {
+  Plus,
+  Check,
+  Clock,
+  AlertCircle,
+  ArrowRight,
+  BrainCircuit,
+  ListTodo,
+  Settings2,
+} from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {

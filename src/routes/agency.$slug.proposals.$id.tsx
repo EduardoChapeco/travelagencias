@@ -126,16 +126,20 @@ function ProposalEditor() {
           .eq("id", draft.client_id)
           .maybeSingle();
         if (clientRow) {
-          clientDataArray = [{
-            name: clientRow.full_name ?? "",
-            email: clientRow.email ?? "",
-            phone: clientRow.phone ?? "",
-            cpf: clientRow.cpf ?? "",
-            passport_number: clientRow.passport_number ?? "",
-            address: clientRow.address
-              ? Object.values(clientRow.address as Record<string, string>).filter(Boolean).join(", ")
-              : "",
-          }];
+          clientDataArray = [
+            {
+              name: clientRow.full_name ?? "",
+              email: clientRow.email ?? "",
+              phone: clientRow.phone ?? "",
+              cpf: clientRow.cpf ?? "",
+              passport_number: clientRow.passport_number ?? "",
+              address: clientRow.address
+                ? Object.values(clientRow.address as Record<string, string>)
+                    .filter(Boolean)
+                    .join(", ")
+                : "",
+            },
+          ];
         }
       }
 
@@ -169,7 +173,9 @@ function ProposalEditor() {
           draft.travel_start ? `Partida: ${draft.travel_start}` : null,
           draft.travel_end ? `Retorno: ${draft.travel_end}` : null,
           `Pax: ${(draft.pax_adults ?? 0) + (draft.pax_children ?? 0) + (draft.pax_infants ?? 0)} viajante(s)`,
-        ].filter(Boolean).join(" · "),
+        ]
+          .filter(Boolean)
+          .join(" · "),
         payment_terms: `Condições de pagamento conforme cotação #${draft.number}.`,
         // ✅ CORRETO: array de contratantes com dados reais
         client_data: clientDataArray,
@@ -192,7 +198,6 @@ function ProposalEditor() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao converter"),
   });
-
 
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;

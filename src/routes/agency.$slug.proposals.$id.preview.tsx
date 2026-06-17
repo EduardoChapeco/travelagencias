@@ -172,7 +172,10 @@ function ProposalPreview() {
             <span className="hidden sm:inline">Voltar ao editor</span>
           </Link>
           <span className="text-xs text-muted-foreground">·</span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground" title="Pré-visualização do cliente">
+          <span
+            className="flex items-center gap-1 text-xs text-muted-foreground"
+            title="Pré-visualização do cliente"
+          >
             <Eye className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Pré-visualização do cliente</span>
           </span>

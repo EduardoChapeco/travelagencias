@@ -123,7 +123,8 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
     <SheetPage isOpen={isOpen} onClose={onClose} title="Novo Ticket Interno" width="500px">
       <div className="space-y-5 py-2">
         <div className="text-xs text-muted-foreground">
-          Abra um novo chamado de atendimento direto para suporte operacional ou crie um ticket avulso para controle interno (ex. viagens terrestres, pendências ou cotações).
+          Abra um novo chamado de atendimento direto para suporte operacional ou crie um ticket
+          avulso para controle interno (ex. viagens terrestres, pendências ou cotações).
         </div>
 
         <div className="space-y-4">
@@ -146,7 +147,11 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
 
           <Field
             label={clientId ? "Viagem do Cliente (Opcional)" : "Viagem (Opcional)"}
-            hint={clientId ? "Filtrado apenas para viagens deste cliente" : "Selecione uma viagem ativa da agência"}
+            hint={
+              clientId
+                ? "Filtrado apenas para viagens deste cliente"
+                : "Selecione uma viagem ativa da agência"
+            }
           >
             {loadingTrips ? (
               <div className="flex items-center gap-2 text-xs text-muted-foreground h-9">

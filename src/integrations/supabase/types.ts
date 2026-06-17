@@ -3669,20 +3669,20 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "proposal_history_proposal_id_fkey",
-            columns: ["proposal_id"],
-            isOneToOne: false,
-            referencedRelation: "proposals",
-            referencedColumns: ["id"],
+            foreignKeyName: "proposal_history_proposal_id_fkey";
+            columns: ["proposal_id"];
+            isOneToOne: false;
+            referencedRelation: "proposals";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "proposal_history_agency_id_fkey",
-            columns: ["agency_id"],
-            isOneToOne: false,
-            referencedRelation: "agencies",
-            referencedColumns: ["id"],
+            foreignKeyName: "proposal_history_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
           },
-        ],
+        ];
       };
       public_leads: {
         Row: {
@@ -3720,18 +3720,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "public_leads_agency_id_fkey",
-            columns: ["agency_id"],
-            isOneToOne: false,
-            referencedRelation: "agencies",
-            referencedColumns: ["id"],
+            foreignKeyName: "public_leads_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "public_leads_site_id_fkey",
-            columns: ["site_id"],
-            isOneToOne: false,
-            referencedRelation: "portal_pages",
-            referencedColumns: ["id"],
+            foreignKeyName: "public_leads_site_id_fkey";
+            columns: ["site_id"];
+            isOneToOne: false;
+            referencedRelation: "portal_pages";
+            referencedColumns: ["id"];
           },
         ];
       };

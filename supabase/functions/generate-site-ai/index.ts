@@ -138,7 +138,6 @@ Regras:
 - Retorne apenas o array JSON, pronto para JSON.parse()
 - Gere pelo menos 5 blocos para uma boa página`;
 
-
     const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {

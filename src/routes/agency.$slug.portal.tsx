@@ -6,7 +6,6 @@ import {
   useParams,
 } from "@tanstack/react-router";
 
-
 export const Route = createFileRoute("/agency/$slug/portal")({
   head: () => ({
     meta: [
@@ -28,7 +27,7 @@ function Page() {
     { path: `/agency/${slug}/portal/settings`, label: "Configurações" },
   ];
 
-  const isEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+  const isEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 
   if (isEditor) {
     return <Outlet />;
@@ -38,7 +37,9 @@ function Page() {
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <div className="flex items-center gap-1 border-b border-border bg-surface/50 px-4 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
         {tabs.map((tab) => {
-          const active = pathname === tab.path || (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
+          const active =
+            pathname === tab.path ||
+            (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
           return (
             <button
               key={tab.path}

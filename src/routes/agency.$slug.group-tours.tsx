@@ -131,7 +131,10 @@ function GroupToursPage() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {filtered.length === 0 && !q.isLoading && (
-          <EmptyState title="Sem excursões" description="Crie uma excursão para abrir inscrições." />
+          <EmptyState
+            title="Sem excursões"
+            description="Crie uma excursão para abrir inscrições."
+          />
         )}
 
         {filtered.length > 0 && (

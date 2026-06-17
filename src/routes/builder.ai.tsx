@@ -3,7 +3,16 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Sparkles, Send, Bot, User, CheckCircle2, ChevronRight, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Sparkles,
+  Send,
+  Bot,
+  User,
+  CheckCircle2,
+  ChevronRight,
+  AlertCircle,
+} from "lucide-react";
 import { searchUnsplashPhoto } from "@/lib/unsplash";
 
 export const Route = createFileRoute("/builder/ai")({
@@ -31,7 +40,8 @@ function AISiteBuilder() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Olá! Sou o assistente de inteligência artificial da TravelOS. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
+      content:
+        "Olá! Sou o assistente de inteligência artificial da TravelOS. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
     },
   ]);
   const [input, setInput] = useState("");
@@ -46,12 +56,14 @@ function AISiteBuilder() {
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Não autenticado");
-      
+
       const { data: roles, error } = await supabase
         .from("user_roles")
-        .select("agency_id, agencies(id, slug, name, brand_color, brand_color_light, brand_color_fg)")
+        .select(
+          "agency_id, agencies(id, slug, name, brand_color, brand_color_light, brand_color_fg)",
+        )
         .eq("user_id", userData.user.id);
-      
+
       if (error) throw error;
       return roles || [];
     },
@@ -93,7 +105,7 @@ function AISiteBuilder() {
       "Gerando layout de blocos estruturais...",
       "Buscando fotos de alta definição no Unsplash...",
       "Salvando seu site no banco de dados...",
-      "Publicando site e gerando link..."
+      "Publicando site e gerando link...",
     ];
 
     setCurrentStep(0);
@@ -103,10 +115,13 @@ function AISiteBuilder() {
       // 1. Calling the generate-site-ai Edge Function
       setCurrentStep(1);
       setCurrentProgress(progressSteps[1]);
-      
-      const { data: aiResponse, error: aiError } = await supabase.functions.invoke("generate-site-ai", {
-        body: { prompt: userPrompt }
-      });
+
+      const { data: aiResponse, error: aiError } = await supabase.functions.invoke(
+        "generate-site-ai",
+        {
+          body: { prompt: userPrompt },
+        },
+      );
 
       if (aiError || !aiResponse || !aiResponse.blocks) {
         throw new Error(aiError?.message || "Falha na geração do layout pela IA.");
@@ -137,7 +152,14 @@ function AISiteBuilder() {
         if (blockCopy.config) {
           for (const key of Object.keys(blockCopy.config)) {
             const val = blockCopy.config[key];
-            if (typeof val === "string" && !val.startsWith("http") && (key.includes("image") || key.includes("photo") || key.includes("avatar") || key.includes("background"))) {
+            if (
+              typeof val === "string" &&
+              !val.startsWith("http") &&
+              (key.includes("image") ||
+                key.includes("photo") ||
+                key.includes("avatar") ||
+                key.includes("background"))
+            ) {
               const url = await searchUnsplashPhoto(val);
               if (url) blockCopy.config[key] = url;
             }
@@ -148,7 +170,11 @@ function AISiteBuilder() {
           for (const item of blockCopy.items) {
             for (const key of Object.keys(item)) {
               const val = item[key];
-              if (typeof val === "string" && !val.startsWith("http") && (key.includes("image") || key.includes("photo") || key.includes("avatar"))) {
+              if (
+                typeof val === "string" &&
+                !val.startsWith("http") &&
+                (key.includes("image") || key.includes("photo") || key.includes("avatar"))
+              ) {
                 const url = await searchUnsplashPhoto(val);
                 if (url) item[key] = url;
               }
@@ -164,7 +190,7 @@ function AISiteBuilder() {
       // 3. Save to database (portal_pages)
       const pageTitle = `Site Gerado IA - ${new Date().toLocaleDateString()}`;
       const slugValue = `ia-site-${Math.random().toString(36).substring(2, 7)}`;
-      
+
       const { data: newPage, error: saveError } = await supabase
         .from("portal_pages")
         .insert({
@@ -177,8 +203,8 @@ function AISiteBuilder() {
           published_at: new Date().toISOString(),
           seo: {
             meta_title: pageTitle,
-            meta_description: "Site completo de turismo criado por Inteligência Artificial."
-          }
+            meta_description: "Site completo de turismo criado por Inteligência Artificial.",
+          },
         })
         .select("id, slug")
         .single();
@@ -189,15 +215,13 @@ function AISiteBuilder() {
       setCurrentProgress(progressSteps[5]);
 
       // 4. Log the generation event
-      await supabase
-        .from("ai_generation_logs")
-        .insert({
-          agency_id: selectedAgencyId,
-          site_id: newPage.id,
-          user_prompt: userPrompt,
-          sections_generated: resolvedBlocks.map((b) => b.type),
-          status: "success"
-        });
+      await supabase.from("ai_generation_logs").insert({
+        agency_id: selectedAgencyId,
+        site_id: newPage.id,
+        user_prompt: userPrompt,
+        sections_generated: resolvedBlocks.map((b) => b.type),
+        status: "success",
+      });
 
       // Construct public link
       const publicLink = `/p/${activeAgency.slug}/${newPage.slug}`;
@@ -206,7 +230,8 @@ function AISiteBuilder() {
         ...prev,
         {
           role: "assistant",
-          content: "Prontinho! Gerei um site totalmente estruturado com os diferenciais, fotos adequadas do Unsplash e CTAs de alta conversão conectados diretamente à sua agência.",
+          content:
+            "Prontinho! Gerei um site totalmente estruturado com os diferenciais, fotos adequadas do Unsplash e CTAs de alta conversão conectados diretamente à sua agência.",
           siteLink: publicLink,
           siteId: newPage.id,
           agencySlug: activeAgency.slug,
@@ -260,7 +285,9 @@ function AISiteBuilder() {
             <div className="text-xs text-muted-foreground">Carregando agências...</div>
           ) : userAgencies && userAgencies.length > 0 ? (
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground">Agência de Destino</label>
+              <label className="text-xs font-semibold text-muted-foreground">
+                Agência de Destino
+              </label>
               <select
                 value={selectedAgencyId}
                 onChange={(e) => setSelectedAgencyId(e.target.value)}
@@ -287,7 +314,9 @@ function AISiteBuilder() {
             <ul className="space-y-1.5 text-[10px] text-muted-foreground list-disc pl-4 leading-normal">
               <li>"Site de cruzeiros de luxo no Caribe com grid de destinos e depoimentos."</li>
               <li>"Landing page para venda de pacotes promocionais da Disney com cronograma."</li>
-              <li>"Biolink minimalista azul com links para WhatsApp de cotação e roteiros do mês."</li>
+              <li>
+                "Biolink minimalista azul com links para WhatsApp de cotação e roteiros do mês."
+              </li>
             </ul>
           </div>
         </div>
@@ -298,16 +327,27 @@ function AISiteBuilder() {
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
           {messages.map((m, idx) => (
-            <div key={idx} className={`flex gap-3 max-w-2xl ${m.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
-                m.role === "user" ? "bg-brand/10 border-brand text-brand" : "bg-surface-alt border-border text-muted-foreground"
-              }`}>
+            <div
+              key={idx}
+              className={`flex gap-3 max-w-2xl ${m.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
+                  m.role === "user"
+                    ? "bg-brand/10 border-brand text-brand"
+                    : "bg-surface-alt border-border text-muted-foreground"
+                }`}
+              >
                 {m.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
               </div>
               <div className="space-y-2">
-                <div className={`p-4 rounded-2xl text-xs leading-relaxed ${
-                  m.role === "user" ? "bg-brand text-white" : "bg-surface-alt/55 text-foreground border border-border/60"
-                }`}>
+                <div
+                  className={`p-4 rounded-2xl text-xs leading-relaxed ${
+                    m.role === "user"
+                      ? "bg-brand text-white"
+                      : "bg-surface-alt/55 text-foreground border border-border/60"
+                  }`}
+                >
                   {m.content}
                 </div>
 
@@ -317,7 +357,8 @@ function AISiteBuilder() {
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
                     <p className="text-[10px] text-muted-foreground leading-normal">
-                      A landing page foi salva no banco de dados e está com o link ativo para compartilhamento público instantâneo.
+                      A landing page foi salva no banco de dados e está com o link ativo para
+                      compartilhamento público instantâneo.
                     </p>
                     <div className="flex gap-2">
                       <a
@@ -329,10 +370,12 @@ function AISiteBuilder() {
                         Visualizar Site
                       </a>
                       <button
-                        onClick={() => navigate({
-                          to: "/agency/$slug/portal/pages/$page_id",
-                          params: { slug: m.agencySlug!, page_id: m.siteId! }
-                        })}
+                        onClick={() =>
+                          navigate({
+                            to: "/agency/$slug/portal/pages/$page_id",
+                            params: { slug: m.agencySlug!, page_id: m.siteId! },
+                          })
+                        }
                         className="flex-1 h-8 rounded-lg bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
                       >
                         Editar Seções
@@ -352,11 +395,22 @@ function AISiteBuilder() {
               <div className="space-y-2 bg-surface-alt/45 border border-border/50 p-4 rounded-2xl text-xs max-w-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex space-x-1">
-                    <div className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                    <div className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                    <div className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div
+                      className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-2.5 h-2.5 bg-brand rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
                   </div>
-                  <span className="text-[11px] font-semibold text-brand animate-pulse">{currentProgress}</span>
+                  <span className="text-[11px] font-semibold text-brand animate-pulse">
+                    {currentProgress}
+                  </span>
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-1">
                   Etapa {currentStep + 1} de 6

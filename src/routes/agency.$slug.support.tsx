@@ -285,10 +285,7 @@ function SupportRoute() {
         </div>
       </div>
 
-      <NewTicketSheet
-        isOpen={ticketSheetOpen}
-        onClose={() => setTicketSheetOpen(false)}
-      />
+      <NewTicketSheet isOpen={ticketSheetOpen} onClose={() => setTicketSheetOpen(false)} />
     </div>
   );
 }

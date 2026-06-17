@@ -122,7 +122,8 @@ function ClientCanvasFrame({
     if (!canvasRef.current) return;
     const handleHeight = () => {
       if (!canvasRef.current) return;
-      const unscaledHeight = canvasRef.current.scrollHeight || canvasRef.current.offsetHeight || 1080;
+      const unscaledHeight =
+        canvasRef.current.scrollHeight || canvasRef.current.offsetHeight || 1080;
       setHeight(unscaledHeight * scale);
     };
     const observer = new ResizeObserver(handleHeight);

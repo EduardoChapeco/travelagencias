@@ -92,16 +92,6 @@ function HomePage() {
   const { agency_slug } = Route.useParams();
   const { agency, company, tours, posts, homePage } = Route.useLoaderData();
 
-  if (!agency)
-    return (
-      <div className="flex min-h-screen items-center justify-center p-10">
-        <div className="text-center">
-          <Globe className="mx-auto h-12 w-12 text-muted-foreground/30 mb-4" />
-          <p className="text-sm font-medium text-muted-foreground">Agência não encontrada</p>
-        </div>
-      </div>
-    );
-
   // Track page view event
   useEffect(() => {
     if (homePage && agency) {
@@ -120,11 +110,23 @@ function HomePage() {
     }
   }, [homePage?.id, agency?.id]);
 
+  if (!agency)
+    return (
+      <div className="flex min-h-screen items-center justify-center p-10">
+        <div className="text-center">
+          <Globe className="mx-auto h-12 w-12 text-muted-foreground/30 mb-4" />
+          <p className="text-sm font-medium text-muted-foreground">Agência não encontrada</p>
+        </div>
+      </div>
+    );
+
   // CMS mode — renderiza blocos configurados
   if (homePage?.blocks && Array.isArray(homePage.blocks) && homePage.blocks.length > 0) {
     const isBiolink = homePage.template === "biolink" || homePage.template?.startsWith("hopp-");
     return (
-      <div className={`w-full relative ${isBiolink ? "max-w-md mx-auto px-4 py-8 flex-1" : "px-4 sm:px-6"}`}>
+      <div
+        className={`w-full relative ${isBiolink ? "max-w-md mx-auto px-4 py-8 flex-1" : "px-4 sm:px-6"}`}
+      >
         {/* Page title from CMS (published_title), rendered for screen readers & SEO */}
         {homePage.title && <h1 className="sr-only">{homePage.title}</h1>}
         <BlockRenderer
@@ -150,7 +152,11 @@ function HomePage() {
         <div className="mx-auto max-w-[1240px] px-6 h-[58px] flex items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {agency.logo_url ? (
-              <img src={agency.logo_url} alt={agency.name} className="h-7 w-7 rounded object-contain" />
+              <img
+                src={agency.logo_url}
+                alt={agency.name}
+                className="h-7 w-7 rounded object-contain"
+              />
             ) : (
               <div
                 className="flex h-7 w-7 items-center justify-center rounded text-xs font-bold text-white"

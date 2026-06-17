@@ -185,9 +185,7 @@ function ClientDetail() {
         </Link>
 
         <div className="flex items-center gap-3 mt-2">
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-            {c.full_name}
-          </h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{c.full_name}</h1>
           <StatusBadge tone={c.kind === "company" ? "info" : "neutral"}>
             {c.kind === "company" ? "B2B" : "B2C"}
           </StatusBadge>

@@ -30,7 +30,11 @@ export function ProposalHistorySheet({
   proposalId,
   proposalTitle,
 }: ProposalHistorySheetProps) {
-  const { data: history = [], isLoading, error } = useQuery({
+  const {
+    data: history = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["proposal-history", proposalId],
     queryFn: () => fetchProposalHistory(proposalId),
     enabled: isOpen && !!proposalId,
@@ -107,12 +111,7 @@ export function ProposalHistorySheet({
   };
 
   return (
-    <SheetPage
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Histórico da Cotação"
-      width="540px"
-    >
+    <SheetPage isOpen={isOpen} onClose={onClose} title="Histórico da Cotação" width="540px">
       <div className="mb-6">
         <span className="block text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
           Cotação Selecionada
@@ -159,7 +158,7 @@ export function ProposalHistorySheet({
 
             // Extract extra details
             const extraDetails = Object.entries(entry.details || {}).filter(
-              ([key]) => !["agent_name", "agent_id"].includes(key)
+              ([key]) => !["agent_name", "agent_id"].includes(key),
             );
 
             // Determine who performed the action
@@ -204,11 +203,17 @@ export function ProposalHistorySheet({
                     </span>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-muted-foreground font-mono">
                       {extraDetails.map(([key, val]) => (
-                        <div key={key} className="flex justify-between items-center py-0.5 border-b border-border/20 last:border-0">
+                        <div
+                          key={key}
+                          className="flex justify-between items-center py-0.5 border-b border-border/20 last:border-0"
+                        >
                           <span className="text-[9px] font-sans font-medium text-muted-foreground/90">
                             {formatDetailKey(key)}:
                           </span>
-                          <span className="text-foreground font-semibold truncate max-w-[140px]" title={String(val)}>
+                          <span
+                            className="text-foreground font-semibold truncate max-w-[140px]"
+                            title={String(val)}
+                          >
                             {typeof val === "object" ? JSON.stringify(val) : String(val)}
                           </span>
                         </div>

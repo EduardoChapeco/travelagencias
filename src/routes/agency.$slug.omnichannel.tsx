@@ -31,7 +31,7 @@ import {
   Paperclip,
   Mic,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,7 +112,9 @@ function OmnichannelPage() {
   const [showDetails, setShowDetails] = useState(true);
   const [ticketSheetOpen, setTicketSheetOpen] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const [detailsTab, setDetailsTab] = useState<"profile" | "documents" | "notices" | "ai_templates">("profile");
+  const [detailsTab, setDetailsTab] = useState<
+    "profile" | "documents" | "notices" | "ai_templates"
+  >("profile");
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [docTypeToUpload, setDocTypeToUpload] = useState("rg");
   const [contactNotes, setContactNotes] = useState("");
@@ -145,23 +147,25 @@ function OmnichannelPage() {
     queryFn: async () => {
       const contactId = selectedSession!.contact_id!;
       const cleanContactId = contactId.replace(/\D/g, "");
-      
+
       const { data: leads, error } = await supabase
         .from("leads")
         .select("*")
         .eq("agency_id", agency!.id)
         .is("deleted_at", null);
-        
+
       if (error) throw error;
-      
-      const found = leads.find(l => {
+
+      const found = leads.find((l) => {
         const cleanPhone = l.phone?.replace(/\D/g, "");
-        return (cleanPhone && cleanPhone === cleanContactId) || 
-               (l.email && l.email.toLowerCase() === contactId.toLowerCase()) ||
-               l.id === contactId;
+        return (
+          (cleanPhone && cleanPhone === cleanContactId) ||
+          (l.email && l.email.toLowerCase() === contactId.toLowerCase()) ||
+          l.id === contactId
+        );
       });
       return found || null;
-    }
+    },
   });
 
   // ── Matched Client ─────────────────────────────────────────────
@@ -171,23 +175,25 @@ function OmnichannelPage() {
     queryFn: async () => {
       const contactId = selectedSession!.contact_id!;
       const cleanContactId = contactId.replace(/\D/g, "");
-      
+
       const { data: clients, error } = await supabase
         .from("clients")
         .select("*")
         .eq("agency_id", agency!.id)
         .is("deleted_at", null);
-        
+
       if (error) throw error;
-      
-      const found = clients.find(c => {
+
+      const found = clients.find((c) => {
         const cleanPhone = c.phone?.replace(/\D/g, "");
-        return (cleanPhone && cleanPhone === cleanContactId) || 
-               (c.email && c.email.toLowerCase() === contactId.toLowerCase()) ||
-               c.id === contactId;
+        return (
+          (cleanPhone && cleanPhone === cleanContactId) ||
+          (c.email && c.email.toLowerCase() === contactId.toLowerCase()) ||
+          c.id === contactId
+        );
       });
       return found || null;
-    }
+    },
   });
 
   // ── Lead Insights (AI Hunter) ──────────────────────────────────
@@ -202,7 +208,7 @@ function OmnichannelPage() {
         .maybeSingle();
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   // ── Recent Proposals ───────────────────────────────────────────
@@ -265,9 +271,9 @@ function OmnichannelPage() {
         .upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("agency-media")
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("agency-media").getPublicUrl(filePath);
 
       const { error } = await (supabase as any).from("client_documents").insert({
         client_id: matchedClientId,
@@ -310,14 +316,18 @@ function OmnichannelPage() {
           .update({ notes: contactNotes } as any)
           .eq("id", matchedLead.id);
         if (error) throw error;
-        qc.invalidateQueries({ queryKey: ["omnichannel-matched-lead", selectedSession?.contact_id] });
+        qc.invalidateQueries({
+          queryKey: ["omnichannel-matched-lead", selectedSession?.contact_id],
+        });
       } else if (matchedClient) {
         const { error } = await supabase
           .from("clients")
           .update({ notes: contactNotes } as any)
           .eq("id", matchedClient.id);
         if (error) throw error;
-        qc.invalidateQueries({ queryKey: ["omnichannel-matched-client", selectedSession?.contact_id] });
+        qc.invalidateQueries({
+          queryKey: ["omnichannel-matched-client", selectedSession?.contact_id],
+        });
       }
       toast.success("Anotações salvas com sucesso!", { id: toastId });
     } catch (err: any) {
@@ -384,7 +394,7 @@ function OmnichannelPage() {
       content: reply.trim(),
       status: "sent",
       agency_id: agency!.id,
-      lead_id: matchedLead?.id || null
+      lead_id: matchedLead?.id || null,
     });
     if (error) toast.error("Erro ao enviar mensagem: " + error.message);
     else {
@@ -423,7 +433,7 @@ function OmnichannelPage() {
       recorder.onstop = async () => {
         const blob = new Blob(chunks, { type: "audio/webm" });
         const file = new File([blob], "audio_recording.webm", { type: "audio/webm" });
-        
+
         const toastId = toast.loading("Enviando áudio gravado...");
         try {
           const filePath = `omnichannel/attachments/${selectedId}/${Date.now()}.webm`;
@@ -431,11 +441,11 @@ function OmnichannelPage() {
             .from("agency-media")
             .upload(filePath, file);
           if (uploadError) throw uploadError;
-          
-          const { data: { publicUrl } } = supabase.storage
-            .from("agency-media")
-            .getPublicUrl(filePath);
-            
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+
           const { error } = await supabase.from("omnichannel_messages").insert({
             session_id: selectedId,
             channel: selectedSession?.channel ?? "whatsapp",
@@ -445,7 +455,7 @@ function OmnichannelPage() {
             media_type: "audio",
             status: "sent",
             agency_id: agency!.id,
-            lead_id: matchedLead?.id || null
+            lead_id: matchedLead?.id || null,
           });
           if (error) throw error;
           toast.success("Áudio enviado com sucesso!", { id: toastId });
@@ -477,29 +487,33 @@ function OmnichannelPage() {
     try {
       const fileExt = file.name.split(".").pop();
       const filePath = `omnichannel/attachments/${selectedId}/${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from("agency-media")
         .upload(filePath, file);
       if (uploadError) throw uploadError;
-      
-      const { data: { publicUrl } } = supabase.storage
-        .from("agency-media")
-        .getPublicUrl(filePath);
-        
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+
       const { error } = await supabase.from("omnichannel_messages").insert({
         session_id: selectedId,
         channel: selectedSession?.channel ?? "whatsapp",
         direction: "outbound",
         content: `Arquivo anexo: ${file.name}`,
         media_url: publicUrl,
-        media_type: file.type.startsWith("image/") ? "image" : file.type.startsWith("audio/") ? "audio" : "document",
+        media_type: file.type.startsWith("image/")
+          ? "image"
+          : file.type.startsWith("audio/")
+            ? "audio"
+            : "document",
         status: "sent",
         agency_id: agency.id,
-        lead_id: matchedLead?.id || null
+        lead_id: matchedLead?.id || null,
       });
       if (error) throw error;
-      
+
       toast.success("Arquivo enviado com sucesso!", { id: toastId });
       qc.invalidateQueries({ queryKey: ["omnichannel-messages", selectedId] });
       qc.invalidateQueries({ queryKey: ["omnichannel-sessions", agency?.id] });
@@ -518,21 +532,25 @@ function OmnichannelPage() {
         .eq("agency_id", agency.id)
         .order("position", { ascending: true })
         .limit(1);
-      
+
       if (stagesErr) throw stagesErr;
       if (!stages || stages.length === 0) {
         throw new Error("Nenhuma etapa do funil configurada. Crie as etapas no CRM primeiro.");
       }
-      
+
       const phoneClean = selectedSession.contact_id?.replace(/\D/g, "") || "";
-      const { data: newLead, error } = await supabase.from("leads").insert({
-        agency_id: agency.id,
-        name: selectedSession.contact_name || "Lead via Chat",
-        phone: phoneClean,
-        source: "whatsapp",
-        stage_id: stages[0].id,
-        staleness_status: "active"
-      } as any).select("id").single();
+      const { data: newLead, error } = await supabase
+        .from("leads")
+        .insert({
+          agency_id: agency.id,
+          name: selectedSession.contact_name || "Lead via Chat",
+          phone: phoneClean,
+          source: "whatsapp",
+          stage_id: stages[0].id,
+          staleness_status: "active",
+        } as any)
+        .select("id")
+        .single();
       if (error) throw error;
       toast.success("Lead criado com sucesso!", { id: toastId });
       qc.invalidateQueries({ queryKey: ["omnichannel-matched-lead", selectedSession.contact_id] });
@@ -550,7 +568,11 @@ function OmnichannelPage() {
       });
       if (error) throw error;
       const url = `${window.location.origin}/m/proposal/${data.public_token}`;
-      setReply(prev => (prev ? prev + "\n" : "") + `Olá! Preparamos uma proposta personalizada para você. Veja os detalhes e confirme neste link: ${url}`);
+      setReply(
+        (prev) =>
+          (prev ? prev + "\n" : "") +
+          `Olá! Preparamos uma proposta personalizada para você. Veja os detalhes e confirme neste link: ${url}`,
+      );
       toast.success("Cotação gerada e link adicionado à mensagem!", { id: toastId });
     } catch (err: any) {
       toast.error("Erro ao gerar cotação por IA: " + err.message, { id: toastId });
@@ -562,7 +584,9 @@ function OmnichannelPage() {
     setAnalyzing(true);
     const toastId = toast.loading("Analisando perfil comportamental...");
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const res = await fetch(`${supabaseUrl}/functions/v1/ai-message-processor`, {
         method: "POST",
@@ -830,14 +854,20 @@ function OmnichannelPage() {
                         {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
                           <audio src={m.media_url} controls className="max-w-full h-10" />
                         ) : (
-                          <img src={m.media_url} alt="Media" className="rounded-lg max-w-full object-contain max-h-48" />
+                          <img
+                            src={m.media_url}
+                            alt="Media"
+                            className="rounded-lg max-w-full object-contain max-h-48"
+                          />
                         )}
                       </div>
                     )}
                     <p className="whitespace-pre-wrap">{m.content}</p>
                     <div
                       className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                        m.direction === "outbound" ? "text-brand-foreground/70" : "text-muted-foreground"
+                        m.direction === "outbound"
+                          ? "text-brand-foreground/70"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {formatTime(m.created_at)}
@@ -887,7 +917,9 @@ function OmnichannelPage() {
                       sendMessage();
                     }
                   }}
-                  placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem… (Enter para enviar)"}
+                  placeholder={
+                    recording ? "Gravando áudio..." : "Digite uma mensagem… (Enter para enviar)"
+                  }
                   rows={2}
                   disabled={recording}
                   className="flex-1 resize-none rounded-xl border border-border bg-surface-alt px-3 py-2 text-sm outline-none focus:border-brand"
@@ -939,7 +971,7 @@ function OmnichannelPage() {
                   "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
                   detailsTab === "profile"
                     ? "border-brand text-brand font-bold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 Perfil
@@ -950,7 +982,7 @@ function OmnichannelPage() {
                   "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
                   detailsTab === "documents"
                     ? "border-brand text-brand font-bold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 Docs
@@ -961,7 +993,7 @@ function OmnichannelPage() {
                   "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
                   detailsTab === "notices"
                     ? "border-brand text-brand font-bold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 Avisos
@@ -972,7 +1004,7 @@ function OmnichannelPage() {
                   "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
                   detailsTab === "ai_templates"
                     ? "border-brand text-brand font-bold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground",
                 )}
               >
                 Modelos/IA
@@ -1022,9 +1054,17 @@ function OmnichannelPage() {
                             Ver Ficha <ExternalLink className="w-2.5 h-2.5" />
                           </Link>
                         </div>
-                        <p className="text-xs font-bold text-foreground leading-snug">{matchedLead.name}</p>
-                        {matchedLead.email && <p className="text-[10px] text-muted-foreground">{matchedLead.email}</p>}
-                        {matchedLead.estimated_value && <p className="text-[10px] text-muted-foreground font-medium">Budget: {money(matchedLead.estimated_value, "BRL")}</p>}
+                        <p className="text-xs font-bold text-foreground leading-snug">
+                          {matchedLead.name}
+                        </p>
+                        {matchedLead.email && (
+                          <p className="text-[10px] text-muted-foreground">{matchedLead.email}</p>
+                        )}
+                        {matchedLead.estimated_value && (
+                          <p className="text-[10px] text-muted-foreground font-medium">
+                            Budget: {money(matchedLead.estimated_value, "BRL")}
+                          </p>
+                        )}
                       </div>
                     ) : matchedClient ? (
                       <div className="space-y-1">
@@ -1040,8 +1080,12 @@ function OmnichannelPage() {
                             Ver Perfil <ExternalLink className="w-2.5 h-2.5" />
                           </Link>
                         </div>
-                        <p className="text-xs font-bold text-foreground leading-snug">{matchedClient.full_name}</p>
-                        {matchedClient.email && <p className="text-[10px] text-muted-foreground">{matchedClient.email}</p>}
+                        <p className="text-xs font-bold text-foreground leading-snug">
+                          {matchedClient.full_name}
+                        </p>
+                        {matchedClient.email && (
+                          <p className="text-[10px] text-muted-foreground">{matchedClient.email}</p>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-2 text-center py-1">
@@ -1064,14 +1108,21 @@ function OmnichannelPage() {
                     {recentProposals.length > 0 ? (
                       <div className="space-y-1.5">
                         {recentProposals.map((p: any) => (
-                          <div key={p.id} className="p-2 border border-border rounded-lg bg-surface flex items-center justify-between text-[11px]">
+                          <div
+                            key={p.id}
+                            className="p-2 border border-border rounded-lg bg-surface flex items-center justify-between text-[11px]"
+                          >
                             <div className="truncate pr-2">
                               <p className="font-bold text-foreground truncate">{p.title}</p>
                               <span className="text-[9px] text-muted-foreground">#{p.number}</span>
                             </div>
                             <div className="text-right shrink-0">
-                              <span className="font-bold text-foreground">{money(p.total, p.currency)}</span>
-                              <span className="block text-[8px] text-muted-foreground uppercase">{p.status}</span>
+                              <span className="font-bold text-foreground">
+                                {money(p.total, p.currency)}
+                              </span>
+                              <span className="block text-[8px] text-muted-foreground uppercase">
+                                {p.status}
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -1109,7 +1160,11 @@ function OmnichannelPage() {
 
                       <button
                         onClick={() => {
-                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato de prestação de serviços: ${window.location.origin}/m/contract/assinar-aqui`);
+                          setReply(
+                            (prev) =>
+                              (prev ? prev + "\n" : "") +
+                              `Olá! Segue o link para assinatura do seu contrato de prestação de serviços: ${window.location.origin}/m/contract/assinar-aqui`,
+                          );
                           toast.success("Link do Contrato carregado!");
                         }}
                         className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
@@ -1120,7 +1175,11 @@ function OmnichannelPage() {
 
                       <button
                         onClick={() => {
-                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Vamos agendar uma chamada rápida de alinhamento? Agende o melhor horário para você por aqui: ${window.location.origin}/agenda-reuniao`);
+                          setReply(
+                            (prev) =>
+                              (prev ? prev + "\n" : "") +
+                              `Olá! Vamos agendar uma chamada rápida de alinhamento? Agende o melhor horário para você por aqui: ${window.location.origin}/agenda-reuniao`,
+                          );
                           toast.success("Link do Agendador carregado!");
                         }}
                         className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
@@ -1131,7 +1190,11 @@ function OmnichannelPage() {
 
                       <button
                         onClick={() => {
-                          setReply(prev => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem, vouchers e pagamentos direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
+                          setReply(
+                            (prev) =>
+                              (prev ? prev + "\n" : "") +
+                              `Olá! Você pode acompanhar sua viagem, vouchers e pagamentos direto pelo nosso Portal do Cliente: ${window.location.origin}/client`,
+                          );
                           toast.success("Link do Portal carregado!");
                         }}
                         className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer bg-surface"
@@ -1200,21 +1263,31 @@ function OmnichannelPage() {
                     <div className="space-y-2">
                       {clientDocs.length > 0 ? (
                         clientDocs.map((doc: any) => (
-                          <div key={doc.id} className="p-3 border border-border rounded-xl bg-surface flex flex-col gap-1.5 text-xs">
+                          <div
+                            key={doc.id}
+                            className="p-3 border border-border rounded-xl bg-surface flex flex-col gap-1.5 text-xs"
+                          >
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
+                              <span className="font-bold text-brand uppercase text-[10px]">
+                                {doc.doc_type}
+                              </span>
                               {doc.expires_at && (
-                                <span className={cn("text-[9px] font-semibold", 
-                                  new Date(doc.expires_at).getTime() < Date.now()
-                                    ? "text-red-500 font-bold"
-                                    : "text-muted-foreground"
-                                )}>
+                                <span
+                                  className={cn(
+                                    "text-[9px] font-semibold",
+                                    new Date(doc.expires_at).getTime() < Date.now()
+                                      ? "text-red-500 font-bold"
+                                      : "text-muted-foreground",
+                                  )}
+                                >
                                   Exp: {new Date(doc.expires_at).toLocaleDateString("pt-BR")}
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center justify-between text-[11px]">
-                              <span className="font-mono text-muted-foreground">{doc.doc_number || "Sem nº"}</span>
+                              <span className="font-mono text-muted-foreground">
+                                {doc.doc_number || "Sem nº"}
+                              </span>
                               {doc.file_url && (
                                 <a
                                   href={doc.file_url}
@@ -1226,11 +1299,17 @@ function OmnichannelPage() {
                                 </a>
                               )}
                             </div>
-                            {doc.notes && <p className="text-[9px] text-muted-foreground leading-normal mt-0.5 border-t border-border/40 pt-1">{doc.notes}</p>}
+                            {doc.notes && (
+                              <p className="text-[9px] text-muted-foreground leading-normal mt-0.5 border-t border-border/40 pt-1">
+                                {doc.notes}
+                              </p>
+                            )}
                           </div>
                         ))
                       ) : (
-                        <p className="text-[10px] text-muted-foreground text-center py-4">Nenhum documento anexado.</p>
+                        <p className="text-[10px] text-muted-foreground text-center py-4">
+                          Nenhum documento anexado.
+                        </p>
                       )}
                     </div>
                   )}
@@ -1259,20 +1338,32 @@ function OmnichannelPage() {
                         return (
                           <div className="space-y-2">
                             {expiredDocs.map((d: any) => (
-                              <div key={d.id} className="p-2.5 border border-red-500/20 bg-red-500/5 text-red-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5">
+                              <div
+                                key={d.id}
+                                className="p-2.5 border border-red-500/20 bg-red-500/5 text-red-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5"
+                              >
                                 <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                                 <div>
                                   <strong className="uppercase">{d.doc_type} Expirado!</strong>
-                                  <p className="text-[9px] mt-0.5 text-red-500/80">Venceu em {new Date(d.expires_at).toLocaleDateString("pt-BR")}</p>
+                                  <p className="text-[9px] mt-0.5 text-red-500/80">
+                                    Venceu em {new Date(d.expires_at).toLocaleDateString("pt-BR")}
+                                  </p>
                                 </div>
                               </div>
                             ))}
                             {expiringDocs.map((d: any) => (
-                              <div key={d.id} className="p-2.5 border border-amber-500/20 bg-amber-500/5 text-amber-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5">
+                              <div
+                                key={d.id}
+                                className="p-2.5 border border-amber-500/20 bg-amber-500/5 text-amber-600 rounded-lg text-[10px] font-medium flex items-start gap-1.5"
+                              >
                                 <Clock className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                                 <div>
-                                  <strong className="uppercase">{d.doc_type} perto do vencimento</strong>
-                                  <p className="text-[9px] mt-0.5 text-amber-500/80">Vence em {new Date(d.expires_at).toLocaleDateString("pt-BR")}</p>
+                                  <strong className="uppercase">
+                                    {d.doc_type} perto do vencimento
+                                  </strong>
+                                  <p className="text-[9px] mt-0.5 text-amber-500/80">
+                                    Vence em {new Date(d.expires_at).toLocaleDateString("pt-BR")}
+                                  </p>
                                 </div>
                               </div>
                             ))}
@@ -1292,7 +1383,7 @@ function OmnichannelPage() {
                   </div>
 
                   {/* Notes Editor */}
-                  {(matchedLead || matchedClient) ? (
+                  {matchedLead || matchedClient ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
@@ -1332,7 +1423,8 @@ function OmnichannelPage() {
                           disabled={analyzing}
                           className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
                         >
-                          <RefreshCw className={`w-3 h-3 ${analyzing ? 'animate-spin' : ''}`} /> Atualizar
+                          <RefreshCw className={`w-3 h-3 ${analyzing ? "animate-spin" : ""}`} />{" "}
+                          Atualizar
                         </button>
                       </div>
 
@@ -1345,37 +1437,57 @@ function OmnichannelPage() {
                           )}
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
-                              <span className="text-[9px] font-bold text-success uppercase block">Desejos</span>
+                              <span className="text-[9px] font-bold text-success uppercase block">
+                                Desejos
+                              </span>
                               <ul className="text-[10px] text-muted-foreground list-disc pl-3">
-                                {((leadInsights.desires as any) ?? []).slice(0, 3).map((d: string, i: number) => (
-                                  <li key={i}>{d}</li>
-                                ))}
-                                {(!leadInsights.desires || (leadInsights.desires as any).length === 0) && (
+                                {((leadInsights.desires as any) ?? [])
+                                  .slice(0, 3)
+                                  .map((d: string, i: number) => (
+                                    <li key={i}>{d}</li>
+                                  ))}
+                                {(!leadInsights.desires ||
+                                  (leadInsights.desires as any).length === 0) && (
                                   <li className="list-none pl-0">Nenhum</li>
                                 )}
                               </ul>
                             </div>
                             <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5">
-                              <span className="text-[9px] font-bold text-danger uppercase block">Medos</span>
+                              <span className="text-[9px] font-bold text-danger uppercase block">
+                                Medos
+                              </span>
                               <ul className="text-[10px] text-muted-foreground list-disc pl-3">
-                                {((leadInsights.fears as any) ?? []).slice(0, 3).map((f: string, i: number) => (
-                                  <li key={i}>{f}</li>
-                                ))}
-                                {(!leadInsights.fears || (leadInsights.fears as any).length === 0) && (
+                                {((leadInsights.fears as any) ?? [])
+                                  .slice(0, 3)
+                                  .map((f: string, i: number) => (
+                                    <li key={i}>{f}</li>
+                                  ))}
+                                {(!leadInsights.fears ||
+                                  (leadInsights.fears as any).length === 0) && (
                                   <li className="list-none pl-0">Nenhum</li>
                                 )}
                               </ul>
                             </div>
                             <div className="bg-surface-alt border border-border p-2 rounded-lg space-y-0.5 col-span-2">
-                              <span className="text-[9px] font-bold text-warning uppercase block">Objeções</span>
+                              <span className="text-[9px] font-bold text-warning uppercase block">
+                                Objeções
+                              </span>
                               <div className="flex flex-wrap gap-1 mt-1">
-                                {((leadInsights.objections as any) ?? []).map((o: string, i: number) => (
-                                  <span key={i} className="text-[9px] bg-warning/10 border border-warning/20 text-warning px-1.5 py-0.5 rounded-full font-semibold">
-                                    {o}
+                                {((leadInsights.objections as any) ?? []).map(
+                                  (o: string, i: number) => (
+                                    <span
+                                      key={i}
+                                      className="text-[9px] bg-warning/10 border border-warning/20 text-warning px-1.5 py-0.5 rounded-full font-semibold"
+                                    >
+                                      {o}
+                                    </span>
+                                  ),
+                                )}
+                                {(!leadInsights.objections ||
+                                  (leadInsights.objections as any).length === 0) && (
+                                  <span className="text-[10px] text-muted-foreground">
+                                    Nenhuma mapeada
                                   </span>
-                                ))}
-                                {(!leadInsights.objections || (leadInsights.objections as any).length === 0) && (
-                                  <span className="text-[10px] text-muted-foreground">Nenhuma mapeada</span>
                                 )}
                               </div>
                             </div>
@@ -1423,10 +1535,22 @@ function OmnichannelPage() {
                     </h4>
                     <div className="space-y-1.5">
                       {[
-                        { label: "Boas Vindas (Apresentação)", text: "Olá! Sou do suporte da nossa agência e estou aqui para auxiliar você na sua próxima viagem. Como posso ajudar hoje?" },
-                        { label: "Solicitar Documentos", text: "Olá! Para prosseguirmos com a emissão da sua viagem, poderia nos enviar fotos nítidas do RG ou CNH (frente e verso) e comprovante de residência?" },
-                        { label: "Confirmação de Voo", text: "Olá! Passando para confirmar que a emissão dos seus bilhetes aéreos foi concluída. Os localizadores e vouchers de lançamento estão disponíveis no portal do cliente." },
-                        { label: "Lembrete de Pagamento", text: "Olá! Passando para lembrar que o vencimento do Pix/boleto da sua viagem é amanhã. Caso precise de uma nova via, me avise por aqui!" }
+                        {
+                          label: "Boas Vindas (Apresentação)",
+                          text: "Olá! Sou do suporte da nossa agência e estou aqui para auxiliar você na sua próxima viagem. Como posso ajudar hoje?",
+                        },
+                        {
+                          label: "Solicitar Documentos",
+                          text: "Olá! Para prosseguirmos com a emissão da sua viagem, poderia nos enviar fotos nítidas do RG ou CNH (frente e verso) e comprovante de residência?",
+                        },
+                        {
+                          label: "Confirmação de Voo",
+                          text: "Olá! Passando para confirmar que a emissão dos seus bilhetes aéreos foi concluída. Os localizadores e vouchers de lançamento estão disponíveis no portal do cliente.",
+                        },
+                        {
+                          label: "Lembrete de Pagamento",
+                          text: "Olá! Passando para lembrar que o vencimento do Pix/boleto da sua viagem é amanhã. Caso precise de uma nova via, me avise por aqui!",
+                        },
                       ].map((tpl) => (
                         <button
                           key={tpl.label}
@@ -1436,7 +1560,9 @@ function OmnichannelPage() {
                           }}
                           className="w-full text-left rounded-lg border border-border p-2 text-xs hover:bg-surface-alt hover:border-border-strong transition-all cursor-pointer bg-surface"
                         >
-                          <div className="font-bold text-foreground text-[10px] mb-0.5">{tpl.label}</div>
+                          <div className="font-bold text-foreground text-[10px] mb-0.5">
+                            {tpl.label}
+                          </div>
                           <p className="text-muted-foreground text-[10px] truncate">{tpl.text}</p>
                         </button>
                       ))}
@@ -1457,4 +1583,3 @@ function OmnichannelPage() {
     </>
   );
 }
-

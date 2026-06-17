@@ -2,12 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Upload, X, Palette, Type, Image as ImageIcon, CheckCircle, ExternalLink } from "lucide-react";
+import {
+  Upload,
+  X,
+  Palette,
+  Type,
+  Image as ImageIcon,
+  CheckCircle,
+  ExternalLink,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
-
 
 export const Route = createFileRoute("/agency/$slug/brand")({
   head: () => ({ meta: [{ title: "Identidade visual · TravelOS" }] }),
@@ -30,7 +37,7 @@ const GOOGLE_FONTS = [
 function BrandPage() {
   const { agency, refresh } = useAgency();
   const qc = useQueryClient();
-  
+
   const [form, setForm] = useState({
     primary_color: "#1E3A5F",
     secondary_color: "#D4AF37",
@@ -122,7 +129,11 @@ function BrandPage() {
       if (pub?.publicUrl) {
         setForm((f) => ({
           ...f,
-          [target === "logo" ? "logo_url" : target === "logo_white" ? "logo_white_url" : "favicon_url"]: pub.publicUrl,
+          [target === "logo"
+            ? "logo_url"
+            : target === "logo_white"
+              ? "logo_white_url"
+              : "favicon_url"]: pub.publicUrl,
         }));
         toast.success("Arquivo enviado com sucesso!");
       }
@@ -215,14 +226,20 @@ function BrandPage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-brand" /> Ativos Visuais
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Logo Principal Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">Logo Principal</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Logo Principal
+                </span>
                 {form.logo_url ? (
                   <div className="my-2 relative w-full h-14 flex items-center justify-center">
-                    <img src={form.logo_url} alt="Logo" className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={form.logo_url}
+                      alt="Logo"
+                      className="max-h-full max-w-full object-contain"
+                    />
                     <button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, logo_url: "" }))}
@@ -239,19 +256,29 @@ function BrandPage() {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], "logo")}
+                      onChange={(e) =>
+                        e.target.files?.[0] && handleFileUpload(e.target.files[0], "logo")
+                      }
                     />
                   </label>
                 )}
-                <span className="text-[9px] text-muted-foreground/60">{uploadTarget === "logo" ? "Enviando..." : "PNG / SVG"}</span>
+                <span className="text-[9px] text-muted-foreground/60">
+                  {uploadTarget === "logo" ? "Enviando..." : "PNG / SVG"}
+                </span>
               </div>
 
               {/* Logo Branco Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-slate-950 text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Logo p/ Fundo Escuro</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">
+                  Logo p/ Fundo Escuro
+                </span>
                 {form.logo_white_url ? (
                   <div className="my-2 relative w-full h-14 flex items-center justify-center">
-                    <img src={form.logo_white_url} alt="Logo Branco" className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={form.logo_white_url}
+                      alt="Logo Branco"
+                      className="max-h-full max-w-full object-contain"
+                    />
                     <button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, logo_white_url: "" }))}
@@ -268,19 +295,29 @@ function BrandPage() {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], "logo_white")}
+                      onChange={(e) =>
+                        e.target.files?.[0] && handleFileUpload(e.target.files[0], "logo_white")
+                      }
                     />
                   </label>
                 )}
-                <span className="text-[9px] text-slate-500">{uploadTarget === "logo_white" ? "Enviando..." : "PNG / SVG"}</span>
+                <span className="text-[9px] text-slate-500">
+                  {uploadTarget === "logo_white" ? "Enviando..." : "PNG / SVG"}
+                </span>
               </div>
 
               {/* Favicon Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-sm border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">Favicon</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Favicon
+                </span>
                 {form.favicon_url ? (
                   <div className="my-2 relative w-8 h-8 flex items-center justify-center">
-                    <img src={form.favicon_url} alt="Favicon" className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={form.favicon_url}
+                      alt="Favicon"
+                      className="max-h-full max-w-full object-contain"
+                    />
                     <button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, favicon_url: "" }))}
@@ -297,11 +334,15 @@ function BrandPage() {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], "favicon")}
+                      onChange={(e) =>
+                        e.target.files?.[0] && handleFileUpload(e.target.files[0], "favicon")
+                      }
                     />
                   </label>
                 )}
-                <span className="text-[9px] text-muted-foreground/60">{uploadTarget === "favicon" ? "Enviando..." : "ICO / PNG"}</span>
+                <span className="text-[9px] text-muted-foreground/60">
+                  {uploadTarget === "favicon" ? "Enviando..." : "ICO / PNG"}
+                </span>
               </div>
             </div>
           </div>
@@ -311,13 +352,38 @@ function BrandPage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Palette className="w-4 h-4 text-brand" /> Cores da Identidade
             </h3>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <ColorPicker swatchKey="primary_color" label="Principal" value={form.primary_color} onChange={(v) => setForm((f) => ({ ...f, primary_color: v }))} />
-              <ColorPicker swatchKey="secondary_color" label="Secundária" value={form.secondary_color} onChange={(v) => setForm((f) => ({ ...f, secondary_color: v }))} />
-              <ColorPicker swatchKey="accent_color" label="Acento" value={form.accent_color} onChange={(v) => setForm((f) => ({ ...f, accent_color: v }))} />
-              <ColorPicker swatchKey="background_color" label="Fundo" value={form.background_color} onChange={(v) => setForm((f) => ({ ...f, background_color: v }))} />
-              <ColorPicker swatchKey="text_color" label="Texto" value={form.text_color} onChange={(v) => setForm((f) => ({ ...f, text_color: v }))} />
+              <ColorPicker
+                swatchKey="primary_color"
+                label="Principal"
+                value={form.primary_color}
+                onChange={(v) => setForm((f) => ({ ...f, primary_color: v }))}
+              />
+              <ColorPicker
+                swatchKey="secondary_color"
+                label="Secundária"
+                value={form.secondary_color}
+                onChange={(v) => setForm((f) => ({ ...f, secondary_color: v }))}
+              />
+              <ColorPicker
+                swatchKey="accent_color"
+                label="Acento"
+                value={form.accent_color}
+                onChange={(v) => setForm((f) => ({ ...f, accent_color: v }))}
+              />
+              <ColorPicker
+                swatchKey="background_color"
+                label="Fundo"
+                value={form.background_color}
+                onChange={(v) => setForm((f) => ({ ...f, background_color: v }))}
+              />
+              <ColorPicker
+                swatchKey="text_color"
+                label="Texto"
+                value={form.text_color}
+                onChange={(v) => setForm((f) => ({ ...f, text_color: v }))}
+              />
             </div>
           </div>
 
@@ -326,20 +392,30 @@ function BrandPage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Type className="w-4 h-4 text-brand" /> Tipografia
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field label="Fonte de Títulos (Heading)">
-                <Select value={form.font_heading} onChange={(e) => setForm((f) => ({ ...f, font_heading: e.target.value }))}>
+                <Select
+                  value={form.font_heading}
+                  onChange={(e) => setForm((f) => ({ ...f, font_heading: e.target.value }))}
+                >
                   {GOOGLE_FONTS.map((font) => (
-                    <option key={font} value={font}>{font}</option>
+                    <option key={font} value={font}>
+                      {font}
+                    </option>
                   ))}
                 </Select>
               </Field>
 
               <Field label="Fonte de Corpo (Body)">
-                <Select value={form.font_body} onChange={(e) => setForm((f) => ({ ...f, font_body: e.target.value }))}>
+                <Select
+                  value={form.font_body}
+                  onChange={(e) => setForm((f) => ({ ...f, font_body: e.target.value }))}
+                >
                   {GOOGLE_FONTS.map((font) => (
-                    <option key={font} value={font}>{font}</option>
+                    <option key={font} value={font}>
+                      {font}
+                    </option>
                   ))}
                 </Select>
               </Field>
@@ -351,21 +427,31 @@ function BrandPage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ExternalLink className="w-4 h-4 text-brand" /> Links & Canais de Atendimento
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Website">
-                <Input value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} placeholder="https://..." />
+                <Input
+                  value={form.website}
+                  onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
+                  placeholder="https://..."
+                />
               </Field>
               <Field label="Instagram">
-                <Input value={form.instagram} onChange={(e) => setForm((f) => ({ ...f, instagram: e.target.value }))} placeholder="@agencia" />
+                <Input
+                  value={form.instagram}
+                  onChange={(e) => setForm((f) => ({ ...f, instagram: e.target.value }))}
+                  placeholder="@agencia"
+                />
               </Field>
               <Field label="WhatsApp">
-                <Input value={form.whatsapp} onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))} placeholder="5549999999999" />
+                <Input
+                  value={form.whatsapp}
+                  onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
+                  placeholder="5549999999999"
+                />
               </Field>
             </div>
           </div>
-
-
         </div>
 
         {/* Right Side: Interactive Mockup Live Preview */}
@@ -374,29 +460,44 @@ function BrandPage() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
-            
+
             {/* Live styles provider wrapper */}
-            <div style={mockStyles} className="flex-1 border border-border rounded-md overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]">
-              
+            <div
+              style={mockStyles}
+              className="flex-1 border border-border rounded-md overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]"
+            >
               {/* Mock Navbar */}
-              <div 
+              <div
                 className="h-14 px-6 border-b border-border/80 flex items-center justify-between shrink-0 shadow-sm transition-all"
                 style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
               >
                 <div className="flex items-center gap-2.5">
                   {form.logo_url ? (
-                    <img src={form.logo_url} alt="Preview logo" className="h-8 max-w-[120px] object-contain" />
+                    <img
+                      src={form.logo_url}
+                      alt="Preview logo"
+                      className="h-8 max-w-[120px] object-contain"
+                    />
                   ) : (
-                    <span className="font-bold text-sm" style={{ fontFamily: "var(--brand-heading-font)", color: "var(--brand-primary)" }}>
+                    <span
+                      className="font-bold text-sm"
+                      style={{
+                        fontFamily: "var(--brand-heading-font)",
+                        color: "var(--brand-primary)",
+                      }}
+                    >
                       {agency?.name || "Minha Agência"}
                     </span>
                   )}
                 </div>
-                <nav className="flex items-center gap-4 text-xs font-semibold" style={{ fontFamily: "var(--brand-body-font)" }}>
+                <nav
+                  className="flex items-center gap-4 text-xs font-semibold"
+                  style={{ fontFamily: "var(--brand-body-font)" }}
+                >
                   <span>Destinos</span>
                   <span>Sobre</span>
                   <span>Blog</span>
-                  <button 
+                  <button
                     className="px-3 py-1 rounded-xs text-[10px] font-bold text-white transition-colors"
                     style={{ backgroundColor: "var(--brand-primary)" }}
                   >
@@ -406,38 +507,37 @@ function BrandPage() {
               </div>
 
               {/* Mock Hero Area */}
-              <div 
+              <div
                 className="p-8 flex flex-col items-center justify-center text-center space-y-4 flex-1 transition-all"
                 style={{ backgroundColor: "var(--brand-primary)", color: "var(--brand-bg)" }}
               >
-                <span 
+                <span
                   className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full"
                   style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                 >
                   Agência Premium
                 </span>
-                <h1 
+                <h1
                   className="text-xl md:text-2xl font-extrabold max-w-md leading-tight"
                   style={{ fontFamily: "var(--brand-heading-font)" }}
                 >
                   Explore Destinos que Você Nunca Imaginou Existir
                 </h1>
-                <p 
+                <p
                   className="text-xs opacity-90 max-w-sm"
                   style={{ fontFamily: "var(--brand-body-font)" }}
                 >
-                  Montamos roteiros 100% personalizados com suporte local 24h e as melhores parcerias globais de turismo.
+                  Montamos roteiros 100% personalizados com suporte local 24h e as melhores
+                  parcerias globais de turismo.
                 </p>
                 <div className="flex gap-2.5">
-                  <button 
+                  <button
                     className="px-4 py-2 rounded-sm text-[10px] font-bold transition-all shadow-sm"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
                     Falar no WhatsApp
                   </button>
-                  <button 
-                    className="px-4 py-2 rounded-sm border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white"
-                  >
+                  <button className="px-4 py-2 rounded-sm border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
                     Explorar Viagens
                   </button>
                 </div>
@@ -445,31 +545,48 @@ function BrandPage() {
 
               {/* Mock Content & Cards Grid */}
               <div className="p-6 grid grid-cols-2 gap-4 shrink-0 bg-white border-t border-border">
-                <div 
+                <div
                   className="p-4 rounded-sm border border-border shadow-sm space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
-                  <h4 className="text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--brand-heading-font)", color: "var(--brand-accent)" }}>
+                  <h4
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{
+                      fontFamily: "var(--brand-heading-font)",
+                      color: "var(--brand-accent)",
+                    }}
+                  >
                     Ecoturismo
                   </h4>
-                  <p className="text-[10px] text-muted-foreground" style={{ fontFamily: "var(--brand-body-font)" }}>
+                  <p
+                    className="text-[10px] text-muted-foreground"
+                    style={{ fontFamily: "var(--brand-body-font)" }}
+                  >
                     Trilhas, rios preservados e imersão total na natureza intocada brasileira.
                   </p>
                 </div>
 
-                <div 
+                <div
                   className="p-4 rounded-sm border border-border shadow-sm space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
-                  <h4 className="text-xs font-bold uppercase tracking-wider" style={{ fontFamily: "var(--brand-heading-font)", color: "var(--brand-primary)" }}>
+                  <h4
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{
+                      fontFamily: "var(--brand-heading-font)",
+                      color: "var(--brand-primary)",
+                    }}
+                  >
                     Resorts VIP
                   </h4>
-                  <p className="text-[10px] text-muted-foreground" style={{ fontFamily: "var(--brand-body-font)" }}>
+                  <p
+                    className="text-[10px] text-muted-foreground"
+                    style={{ fontFamily: "var(--brand-body-font)" }}
+                  >
                     Conforto supremo à beira mar com tudo incluso para você e sua família.
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -488,7 +605,9 @@ interface ColorPickerProps {
 function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   return (
     <div className="flex flex-col items-center p-2.5 rounded-sm border border-border bg-surface-alt/10 hover:bg-surface-alt/25 transition-all text-center">
-      <span className="text-[10px] font-bold text-muted-foreground uppercase mb-2 block truncate w-full">{label}</span>
+      <span className="text-[10px] font-bold text-muted-foreground uppercase mb-2 block truncate w-full">
+        {label}
+      </span>
       <div className="relative flex items-center justify-center">
         <input
           type="color"

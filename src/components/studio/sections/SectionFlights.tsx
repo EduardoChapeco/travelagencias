@@ -203,7 +203,10 @@ export function SectionFlights({ draft, save }: Props) {
 
       {infotravelOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Voo no Infotravel
@@ -216,14 +219,16 @@ export function SectionFlights({ draft, save }: Props) {
                 Fechar
               </button>
             </div>
-            
+
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
               <div className="grid grid-cols-2 gap-2">
                 <L label="Origem (IATA)">
                   <input
                     className={SMALL_INPUT}
                     value={searchParams.origin}
-                    onChange={(e) => setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })
+                    }
                     placeholder="Ex: GRU"
                   />
                 </L>
@@ -231,7 +236,12 @@ export function SectionFlights({ draft, save }: Props) {
                   <input
                     className={SMALL_INPUT}
                     value={searchParams.destination}
-                    onChange={(e) => setSearchParams({ ...searchParams, destination: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setSearchParams({
+                        ...searchParams,
+                        destination: e.target.value.toUpperCase(),
+                      })
+                    }
                     placeholder="Ex: JFK"
                   />
                 </L>
@@ -250,7 +260,12 @@ export function SectionFlights({ draft, save }: Props) {
               <PrimaryButton
                 type="button"
                 className="w-full"
-                disabled={searching || !searchParams.origin || !searchParams.destination || !searchParams.date}
+                disabled={
+                  searching ||
+                  !searchParams.origin ||
+                  !searchParams.destination ||
+                  !searchParams.date
+                }
                 onClick={handleSearch}
               >
                 {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
@@ -278,7 +293,8 @@ export function SectionFlights({ draft, save }: Props) {
                           </span>
                         </div>
                         <p className="text-[10px] text-muted-foreground font-sans truncate">
-                          {flight.origin} {flight.departure_time} → {flight.destination} {flight.arrival_time}
+                          {flight.origin} {flight.departure_time} → {flight.destination}{" "}
+                          {flight.arrival_time}
                         </p>
                         <p className="text-[9px] text-muted-foreground/85 font-sans mt-0.5">
                           {flight.baggage_rules}
@@ -286,7 +302,10 @@ export function SectionFlights({ draft, save }: Props) {
                       </div>
                       <div className="flex items-center justify-between mt-2 pt-1 border-t border-border/10">
                         <span className="text-xs font-bold text-foreground font-mono">
-                          {flight.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {flight.price.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
                         </span>
                         <button
                           type="button"

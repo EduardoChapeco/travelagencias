@@ -279,7 +279,10 @@ export function SectionHotels({ draft, save }: Props) {
 
       {infotravelOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Hotel no Infotravel
@@ -292,7 +295,7 @@ export function SectionHotels({ draft, save }: Props) {
                 Fechar
               </button>
             </div>
-            
+
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
               <div className="grid grid-cols-2 gap-2">
                 <L label="Cidade de Destino">
@@ -309,7 +312,9 @@ export function SectionHotels({ draft, save }: Props) {
                     min={1}
                     className={SMALL_INPUT}
                     value={searchParams.rooms}
-                    onChange={(e) => setSearchParams({ ...searchParams, rooms: parseInt(e.target.value) || 1 })}
+                    onChange={(e) =>
+                      setSearchParams({ ...searchParams, rooms: parseInt(e.target.value) || 1 })
+                    }
                   />
                 </L>
                 <L label="Check-in">
@@ -333,7 +338,9 @@ export function SectionHotels({ draft, save }: Props) {
               <PrimaryButton
                 type="button"
                 className="w-full"
-                disabled={searching || !searchParams.city || !searchParams.checkin || !searchParams.checkout}
+                disabled={
+                  searching || !searchParams.city || !searchParams.checkin || !searchParams.checkout
+                }
                 onClick={handleSearch}
               >
                 {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
@@ -362,11 +369,16 @@ export function SectionHotels({ draft, save }: Props) {
                         <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
                           {hotel.name}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground font-sans truncate">{hotel.meal_plan} • {hotel.rooms?.[0]?.type}</p>
+                        <p className="text-[10px] text-muted-foreground font-sans truncate">
+                          {hotel.meal_plan} • {hotel.rooms?.[0]?.type}
+                        </p>
                       </div>
                       <div className="flex items-center justify-between mt-1">
                         <span className="text-xs font-bold text-foreground font-mono">
-                          {hotel.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {hotel.price.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
                         </span>
                         <button
                           type="button"

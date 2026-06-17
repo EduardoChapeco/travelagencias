@@ -41,9 +41,7 @@ export function EmptyState({
       </div>
       <h3 className="ds-card-title text-foreground">{title}</h3>
       {description && (
-        <p className="mx-auto mt-2 max-w-sm ds-body text-muted-foreground">
-          {description}
-        </p>
+        <p className="mx-auto mt-2 max-w-sm ds-body text-muted-foreground">{description}</p>
       )}
       {action && <div className="mt-6">{action}</div>}
     </div>

@@ -175,154 +175,153 @@ function TeamPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
-
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Membros
-      </h3>
-      {filteredMembers.length === 0 ? (
-        <EmptyState title="Sem membros" description="Nenhum membro encontrado ou cadastrado." />
-      ) : (
-        <div className="overflow-hidden rounded-lg border border-border mb-6">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2">Nome</th>
-                <th className="px-3 py-2">Papel</th>
-                <th className="px-3 py-2">Comissão</th>
-                <th className="px-3 py-2">Entrou</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMembers.map((m) => (
-                <tr key={m.user_id} className="border-t border-border">
-                  <td className="px-3 py-2.5 font-medium">
-                    {(m as any).profile?.full_name ?? (m as any).full_name ?? (
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {m.user_id.slice(0, 8)}…
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <Select
-                      value={m.role}
-                      onChange={(e) => changeRole(m.user_id, e.target.value)}
-                      className="h-7 text-xs"
-                    >
-                      <option value="agency_admin">Admin</option>
-                      <option value="agent">Agente</option>
-                      <option value="agent_viewer">Visualizador</option>
-                    </Select>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    {m.role === "agent" ? (
-                      <button
-                        onClick={() => setSelectedAgent(m)}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
-                      >
-                        <Percent className="h-3 w-3" /> Configurar
-                      </button>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(m.created_at)}
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <button
-                      onClick={() => removeMember(m.user_id)}
-                      className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
-                    >
-                      <Trash2 className="h-3 w-3" /> Remover
-                    </button>
-                  </td>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Membros
+        </h3>
+        {filteredMembers.length === 0 ? (
+          <EmptyState title="Sem membros" description="Nenhum membro encontrado ou cadastrado." />
+        ) : (
+          <div className="overflow-hidden rounded-lg border border-border mb-6">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2">Nome</th>
+                  <th className="px-3 py-2">Papel</th>
+                  <th className="px-3 py-2">Comissão</th>
+                  <th className="px-3 py-2">Entrou</th>
+                  <th className="px-3 py-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Convites
-      </h3>
-      {filteredInvites.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Nenhum convite pendente.
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2">Email</th>
-                <th className="px-3 py-2">Papel</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Expira</th>
-                <th className="px-3 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredInvites.map((i) => (
-                <tr key={i.id} className="border-t border-border">
-                  <td className="px-3 py-2.5 font-medium">{i.email}</td>
-                  <td className="px-3 py-2.5 text-xs">{i.role}</td>
-                  <td className="px-3 py-2.5">
-                    <StatusBadge tone={i.accepted_at ? "success" : "warning"}>
-                      {i.accepted_at ? "aceito" : "pendente"}
-                    </StatusBadge>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(i.expires_at)}
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <div className="flex items-center justify-end gap-3">
-                      {!i.accepted_at && (
-                        <button
-                          onClick={() => copyInvite(i.token)}
-                          className="text-xs text-primary hover:underline inline-flex items-center gap-1"
-                        >
-                          <Copy className="h-3 w-3" /> Link
-                        </button>
+              </thead>
+              <tbody>
+                {filteredMembers.map((m) => (
+                  <tr key={m.user_id} className="border-t border-border">
+                    <td className="px-3 py-2.5 font-medium">
+                      {(m as any).profile?.full_name ?? (m as any).full_name ?? (
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {m.user_id.slice(0, 8)}…
+                        </span>
                       )}
-                      <button
-                        onClick={() => deleteInviteById(i.id)}
-                        className="text-xs text-destructive hover:underline"
+                    </td>
+                    <td className="px-3 py-2.5">
+                      <Select
+                        value={m.role}
+                        onChange={(e) => changeRole(m.user_id, e.target.value)}
+                        className="h-7 text-xs"
                       >
-                        Cancelar
+                        <option value="agency_admin">Admin</option>
+                        <option value="agent">Agente</option>
+                        <option value="agent_viewer">Visualizador</option>
+                      </Select>
+                    </td>
+                    <td className="px-3 py-2.5">
+                      {m.role === "agent" ? (
+                        <button
+                          onClick={() => setSelectedAgent(m)}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+                        >
+                          <Percent className="h-3 w-3" /> Configurar
+                        </button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                      {fmtDate(m.created_at)}
+                    </td>
+                    <td className="px-3 py-2.5 text-right">
+                      <button
+                        onClick={() => removeMember(m.user_id)}
+                        className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
+                      >
+                        <Trash2 className="h-3 w-3" /> Remover
                       </button>
-                    </div>
-                  </td>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Convites
+        </h3>
+        {filteredInvites.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Nenhum convite pendente.
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-lg border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2">Email</th>
+                  <th className="px-3 py-2">Papel</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Expira</th>
+                  <th className="px-3 py-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {filteredInvites.map((i) => (
+                  <tr key={i.id} className="border-t border-border">
+                    <td className="px-3 py-2.5 font-medium">{i.email}</td>
+                    <td className="px-3 py-2.5 text-xs">{i.role}</td>
+                    <td className="px-3 py-2.5">
+                      <StatusBadge tone={i.accepted_at ? "success" : "warning"}>
+                        {i.accepted_at ? "aceito" : "pendente"}
+                      </StatusBadge>
+                    </td>
+                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                      {fmtDate(i.expires_at)}
+                    </td>
+                    <td className="px-3 py-2.5 text-right">
+                      <div className="flex items-center justify-end gap-3">
+                        {!i.accepted_at && (
+                          <button
+                            onClick={() => copyInvite(i.token)}
+                            className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+                          >
+                            <Copy className="h-3 w-3" /> Link
+                          </button>
+                        )}
+                        <button
+                          onClick={() => deleteInviteById(i.id)}
+                          className="text-xs text-destructive hover:underline"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {open && agency && (
-        <NewInvite
-          agencyId={agency.id}
-          onClose={() => setOpen(false)}
-          onCreated={() => {
-            setOpen(false);
-            qc.invalidateQueries({ queryKey: ["team-invites", agency.id] });
-          }}
-        />
-      )}
+        {open && agency && (
+          <NewInvite
+            agencyId={agency.id}
+            onClose={() => setOpen(false)}
+            onCreated={() => {
+              setOpen(false);
+              qc.invalidateQueries({ queryKey: ["team-invites", agency.id] });
+            }}
+          />
+        )}
 
-      {selectedAgent && agency && (
-        <AgentCommissionSheet
-          agencyId={agency.id}
-          agent={selectedAgent}
-          onClose={() => setSelectedAgent(null)}
-        />
-      )}
-      <ConfirmDialog />
+        {selectedAgent && agency && (
+          <AgentCommissionSheet
+            agencyId={agency.id}
+            agent={selectedAgent}
+            onClose={() => setSelectedAgent(null)}
+          />
+        )}
+        <ConfirmDialog />
+      </div>
     </div>
-  </div>
-);
+  );
 }
 
 function AgentCommissionSheet({

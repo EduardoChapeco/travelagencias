@@ -35,9 +35,7 @@ export function SlimSidebar({
   });
 
   return (
-    <aside
-      className="slim-sidebar relative flex h-screen w-[56px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground z-20"
-    >
+    <aside className="slim-sidebar relative flex h-screen w-[56px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground z-20">
       <div className="flex h-[var(--header-h)] items-center justify-center border-b border-sidebar-border px-2">
         {brand}
       </div>
@@ -71,7 +69,8 @@ export function SlimSidebar({
                   title={item.label}
                   className={cn(
                     "group/item relative flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                    active && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border border-border/70",
+                    active &&
+                      "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border border-border/70",
                   )}
                 >
                   {isPending ? (
@@ -90,9 +89,7 @@ export function SlimSidebar({
       </nav>
 
       {footer && (
-        <div className="border-t border-sidebar-border p-1.5 flex justify-center">
-          {footer}
-        </div>
+        <div className="border-t border-sidebar-border p-1.5 flex justify-center">{footer}</div>
       )}
     </aside>
   );

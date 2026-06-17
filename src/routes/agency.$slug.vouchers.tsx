@@ -1,7 +1,17 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Ticket, Search, Plane, Download, Eye, MapPin, Calendar, Users, Settings2 } from "lucide-react";
+import {
+  Ticket,
+  Search,
+  Plane,
+  Download,
+  Eye,
+  MapPin,
+  Calendar,
+  Users,
+  Settings2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -95,7 +105,9 @@ function VouchersPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
-        {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando vouchers…</div>}
+        {q.isLoading && (
+          <div className="text-sm text-muted-foreground p-4">Carregando vouchers…</div>
+        )}
 
         {q.data && q.data.data.length === 0 && (
           <EmptyState

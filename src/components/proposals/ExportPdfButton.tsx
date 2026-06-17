@@ -64,7 +64,7 @@ export function ExportPdfButton({ proposal }: Props) {
                 clonedCanvas.style.transform = "none";
                 clonedCanvas.style.transition = "none";
               }
-            }
+            },
           });
 
           el.style.margin = originalMargin;
@@ -75,15 +75,15 @@ export function ExportPdfButton({ proposal }: Props) {
             pdf.addPage("a4", orientation);
           }
 
-          let x = 0;
+          const x = 0;
           let y = 0;
-          let w = pdfW;
+          const w = pdfW;
           let h = pdfH;
 
           if (proposal.canvas_format === "presentation-169") {
             h = pdfW * (9 / 16); // Preserve 16:9 aspect ratio
             y = (pdfH - h) / 2; // Center vertically
-            
+
             try {
               // Retrieve computed background color of the slide to fill PDF margins
               const bg = window.getComputedStyle(el).backgroundColor;
@@ -119,7 +119,7 @@ export function ExportPdfButton({ proposal }: Props) {
               clonedCanvas.style.transform = "none";
               clonedCanvas.style.transition = "none";
             }
-          }
+          },
         });
 
         el.style.margin = originalMargin;
@@ -127,11 +127,11 @@ export function ExportPdfButton({ proposal }: Props) {
         const img = canvas.toDataURL("image/jpeg", 0.95);
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
-        
+
         // Calculate the height of one A4 page in canvas pixels based on target PDF aspect ratio
         const pageCanvasHeight = isLandscape ? imgWidth * 0.707 : imgWidth * 1.414;
         const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
-        
+
         // Calculate total PDF height if the image were rendered continuously
         const totalPdfHeight = pdfW * (imgHeight / imgWidth);
 
@@ -187,7 +187,7 @@ export function ExportPdfButton({ proposal }: Props) {
               clonedCanvas.style.transform = "none";
               clonedCanvas.style.transition = "none";
             }
-          }
+          },
         });
 
         el.style.margin = originalMargin;

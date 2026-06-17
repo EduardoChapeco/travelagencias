@@ -38,7 +38,7 @@ export function DSPageHeader({
       className={cn(
         "flex flex-col sm:flex-row sm:items-start justify-between gap-3",
         compact ? "mb-4" : "mb-6",
-        className
+        className,
       )}
     >
       <div className="min-w-0 flex-1">
@@ -52,11 +52,7 @@ export function DSPageHeader({
           </div>
         )}
         <h1 className="ds-h2 text-foreground">{title}</h1>
-        {subtitle && (
-          <p className="ds-body text-muted-foreground mt-1.5 max-w-2xl">
-            {subtitle}
-          </p>
-        )}
+        {subtitle && <p className="ds-body text-muted-foreground mt-1.5 max-w-2xl">{subtitle}</p>}
       </div>
 
       {actions && (

@@ -63,7 +63,7 @@ function VisasCatalogPage() {
   return (
     <div className="flex h-full flex-col">
       <ConfirmDialog />
-      
+
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button

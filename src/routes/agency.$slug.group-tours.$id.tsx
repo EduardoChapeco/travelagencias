@@ -143,10 +143,7 @@ function TourDetailPage() {
         </div>
       </HeaderPortal>
 
-      <PageHeader
-        title={t.title}
-        description={t.destination ?? "Excursão em grupo"}
-      />
+      <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo"} />
 
       <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4 mb-6">
         <Stat label="Saída" value={fmtDate(t.departure_date)} />

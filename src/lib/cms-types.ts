@@ -15,7 +15,14 @@ export type SectionStyle = {
   padding_y: "none" | "sm" | "md" | "lg";
   border_radius: "none" | "md" | "lg" | "full";
   /** Entrance animation */
-  animation?: "none" | "fade" | "slide-up" | "slide-down" | "zoom-in" | "slide-left" | "slide-right";
+  animation?:
+    | "none"
+    | "fade"
+    | "slide-up"
+    | "slide-down"
+    | "zoom-in"
+    | "slide-left"
+    | "slide-right";
   /** Animation duration in milliseconds (default: 600) */
   animation_duration?: number;
   /** Animation delay in milliseconds (default: 0) */
@@ -178,7 +185,13 @@ export type PortalBlock =
       type: "featured_destinations";
       title: string;
       subtitle: string;
-      items: { image_url: string; destination: string; price?: string; description: string; link: string }[];
+      items: {
+        image_url: string;
+        destination: string;
+        price?: string;
+        description: string;
+        link: string;
+      }[];
       styles?: SectionStyle;
     }
   | {
@@ -695,24 +708,27 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
         destination: "Paris, França",
         price: "R$ 6.900",
         description: "A cidade luz te espera com museus incríveis e gastronomia impecável.",
-        image_url: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80",
+        image_url:
+          "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80",
         link: "#contato",
       },
       {
         destination: "Cancun, México",
         price: "R$ 4.500",
         description: "Resorts all-inclusive à beira do mar do Caribe com praias de areia branca.",
-        image_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
+        image_url:
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80",
         link: "#contato",
       },
       {
         destination: "Tóquio, Japão",
         price: "R$ 9.800",
         description: "Uma fusão única entre templos milenares e tecnologia futurista.",
-        image_url: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=400&q=80",
+        image_url:
+          "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&w=400&q=80",
         link: "#contato",
-      }
-    ]
+      },
+    ],
   },
   social_links: {
     type: "social_links",
@@ -726,7 +742,8 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
   newsletter: {
     type: "newsletter",
     title: "Receba Nossas Ofertas Exclusivas",
-    subtitle: "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros e cupons de desconto.",
+    subtitle:
+      "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros e cupons de desconto.",
     placeholder: "Seu melhor e-mail",
     button_label: "Cadastrar",
   },
@@ -755,9 +772,24 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
     type: "whatsapp_departments",
     title: "Canais de Atendimento Rápido",
     departments: [
-      { name: "Vendas / Orçamentos", phone: "5549999999999", icon: "chat", message: "Olá! Gostaria de fazer um orçamento de viagem." },
-      { name: "Suporte Operacional", phone: "5549999999999", icon: "safe", message: "Olá! Preciso de ajuda com minha viagem contratada." },
-      { name: "Financeiro", phone: "5549999999999", icon: "key", message: "Olá! Gostaria de falar sobre faturamento ou pagamentos." }
+      {
+        name: "Vendas / Orçamentos",
+        phone: "5549999999999",
+        icon: "chat",
+        message: "Olá! Gostaria de fazer um orçamento de viagem.",
+      },
+      {
+        name: "Suporte Operacional",
+        phone: "5549999999999",
+        icon: "safe",
+        message: "Olá! Preciso de ajuda com minha viagem contratada.",
+      },
+      {
+        name: "Financeiro",
+        phone: "5549999999999",
+        icon: "key",
+        message: "Olá! Gostaria de falar sobre faturamento ou pagamentos.",
+      },
     ],
   },
   countdown_tour: {
@@ -840,7 +872,8 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
   client_document_upload: {
     type: "client_document_upload",
     title: "Envio de Documentos de Embarque",
-    instructions: "Faça o upload do seu passaporte ou RG frente e verso para podermos emitir seus vouchers.",
+    instructions:
+      "Faça o upload do seu passaporte ou RG frente e verso para podermos emitir seus vouchers.",
     document_type: "Passport",
   },
   biolink_newsletter_box: {
@@ -860,7 +893,8 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
   insurance_simulator: {
     type: "insurance_simulator",
     title: "Simule e Contrate seu Seguro Viagem",
-    description: "Viaje protegido com assistência médica global, extravio de bagagem e suporte 24h.",
+    description:
+      "Viaje protegido com assistência médica global, extravio de bagagem e suporte 24h.",
   },
   reviews_submission_form: {
     type: "reviews_submission_form",
@@ -910,5 +944,5 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
   client_boarding_timeline: {
     type: "client_boarding_timeline",
     title: "Cronograma de Voo & Embarque",
-  }
+  },
 };

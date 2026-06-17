@@ -241,7 +241,7 @@ export const FeaturedDestinationsBlockSchema = z.object({
         price: z.string().max(100).optional().nullable(),
         description: z.string().max(1000).default(""),
         link: z.string().max(500).default(""),
-      })
+      }),
     )
     .default([]),
   styles: SectionStyleSchema,
@@ -303,7 +303,7 @@ export const PortalBlockSchema = z.union([
     SocialLinksBlockSchema,
     NewsletterBlockSchema,
   ]),
-  CustomBlockSchema
+  CustomBlockSchema,
 ]);
 
 export const PortalBlocksArraySchema = z.array(PortalBlockSchema);

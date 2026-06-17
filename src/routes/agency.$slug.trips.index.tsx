@@ -82,7 +82,7 @@ function TripsList() {
     setImporting(true);
     try {
       const bookingData = await infotravelImportBooking(agency.id, bookingId.trim());
-      
+
       if (!bookingData) throw new Error("Nenhum dado retornado para esta reserva.");
 
       // 1. Procurar ou criar cliente
@@ -111,14 +111,20 @@ function TripsList() {
           })
           .select("id")
           .single();
-        
+
         if (clientErr) throw clientErr;
         clientId = newClient.id;
       }
 
       // 2. Criar a viagem (trip)
-      const startDate = bookingData.flights?.[0]?.date || bookingData.hotels?.[0]?.checkin || new Date().toISOString().split("T")[0];
-      const endDate = bookingData.hotels?.[0]?.checkout || bookingData.flights?.[0]?.date || new Date().toISOString().split("T")[0];
+      const startDate =
+        bookingData.flights?.[0]?.date ||
+        bookingData.hotels?.[0]?.checkin ||
+        new Date().toISOString().split("T")[0];
+      const endDate =
+        bookingData.hotels?.[0]?.checkout ||
+        bookingData.flights?.[0]?.date ||
+        new Date().toISOString().split("T")[0];
 
       const { data: newTrip, error: tripErr } = await supabase
         .from("trips")
@@ -153,10 +159,8 @@ function TripsList() {
           phone: p.phone || null,
           is_lead_passenger: p.full_name === bookingData.client_name,
         }));
-        
-        const { error: passErr } = await supabase
-          .from("trip_passengers")
-          .insert(passengerInserts);
+
+        const { error: passErr } = await supabase.from("trip_passengers").insert(passengerInserts);
         if (passErr) console.error("Erro ao inserir passageiros:", passErr);
       }
 
@@ -186,25 +190,23 @@ function TripsList() {
         confirmation: bookingData.locator || "CONFIRMADO",
       }));
 
-      const { error: voucherErr } = await supabase
-        .from("vouchers")
-        .insert({
-          agency_id: agency.id,
-          trip_id: tripId,
-          source_type: "manual",
-          destination: bookingData.destination || "Vários",
-          general_locator: bookingData.locator || bookingId,
-          passengers: (bookingData.passengers || []).map((p: any) => ({
-            name: p.full_name,
-            document: p.document || "",
-          })),
-          flights: voucherFlights,
-          accommodation: voucherAccommodation,
-          transfers: [],
-          tours: [],
-          insurance: {},
-          emergency_contacts: [],
-        });
+      const { error: voucherErr } = await supabase.from("vouchers").insert({
+        agency_id: agency.id,
+        trip_id: tripId,
+        source_type: "manual",
+        destination: bookingData.destination || "Vários",
+        general_locator: bookingData.locator || bookingId,
+        passengers: (bookingData.passengers || []).map((p: any) => ({
+          name: p.full_name,
+          document: p.document || "",
+        })),
+        flights: voucherFlights,
+        accommodation: voucherAccommodation,
+        transfers: [],
+        tours: [],
+        insurance: {},
+        emergency_contacts: [],
+      });
 
       if (voucherErr) console.error("Erro ao cadastrar voucher:", voucherErr);
 
@@ -212,7 +214,7 @@ function TripsList() {
       qc.invalidateQueries({ queryKey: ["trips", agency.id] });
       setImportOpen(false);
       setBookingId("");
-      
+
       navigate({ to: "/agency/$slug/trips/$id", params: { slug, id: tripId } });
     } catch (err: any) {
       toast.error(err.message || "Erro ao importar reserva do Infotravel.");
@@ -237,7 +239,7 @@ function TripsList() {
         .range((page - 1) * pageSize, page * pageSize - 1);
 
       if (search.trim()) q = q.ilike("title", `%${search.trim()}%`);
-      
+
       if (statusFilter === "archived") {
         q = q.not("archived_at", "is", null);
       } else {
@@ -567,7 +569,10 @@ function TripsList() {
       )}
       {importOpen && agency && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 flex flex-col shadow-none" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 flex flex-col shadow-none"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Importar do Infotravel
@@ -580,7 +585,7 @@ function TripsList() {
                 Fechar
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-1">
@@ -594,7 +599,8 @@ function TripsList() {
                   className="h-9 w-full rounded-md border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
-                  Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros e criar o voucher correspondente.
+                  Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros
+                  e criar o voucher correspondente.
                 </p>
               </div>
 

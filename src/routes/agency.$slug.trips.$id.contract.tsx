@@ -256,7 +256,7 @@ function TripContract() {
       setPackageSummary(contractQ.data.package_summary ?? "");
       setPaymentTerms(contractQ.data.payment_terms ?? "");
       setCustomClauses(contractQ.data.custom_clauses ?? []);
-      
+
       const cData = contractQ.data.client_data;
       if (Array.isArray(cData)) {
         setClientData(cData);
@@ -278,14 +278,16 @@ function TripContract() {
       );
       if (clientQ.data) {
         const client = clientQ.data;
-        setClientData([{
+        setClientData([
+          {
             name: client.full_name,
             email: client.email ?? "",
             phone: client.phone ?? "",
             cpf: client.cpf ?? "",
             passport_number: client.passport_number ?? "",
             address: client.address ? Object.values(client.address).filter(Boolean).join(", ") : "",
-        }]);
+          },
+        ]);
       }
     }
   }, [contractQ.data, tripQ.data, clientQ.data]);

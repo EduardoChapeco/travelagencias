@@ -33,31 +33,31 @@ const AgencyContext = createContext<Ctx>({
 });
 
 export const DEFAULT_MODULE_NAMES: Record<string, string> = {
-  "dashboard": "Dashboard",
+  dashboard: "Dashboard",
   "daily-tasks": "Meu Dia (Tarefas)",
-  "crm": "Negociações & Leads",
-  "calendar": "Agenda",
-  "omnichannel": "Conversas & Mensagens",
-  "proposals": "Orçamentos & Propostas",
-  "trips": "Viagens",
+  crm: "Negociações & Leads",
+  calendar: "Agenda",
+  omnichannel: "Conversas & Mensagens",
+  proposals: "Orçamentos & Propostas",
+  trips: "Viagens",
   "group-tours": "Roteiros em Grupo",
-  "clients": "Clientes",
-  "corporate": "Corporativo",
-  "suppliers": "Fornecedores",
-  "support": "Suporte",
-  "visas": "Vistos",
+  clients: "Clientes",
+  corporate: "Corporativo",
+  suppliers: "Fornecedores",
+  support: "Suporte",
+  visas: "Vistos",
   "bus-layouts": "Frota & Ônibus",
-  "boarding": "Embarques",
-  "financial": "Financeiro",
-  "portal": "Site da Agência",
-  "competitors": "Monitor de Concorrentes",
-  "productivity": "Produtividade Master",
-  "company": "Minha Empresa",
-  "team": "Equipe",
-  "brand": "Identidade Visual",
-  "integrations": "Conexões",
-  "billing": "Assinatura & Planos",
-  "settings": "Configurações"
+  boarding: "Embarques",
+  financial: "Financeiro",
+  portal: "Site da Agência",
+  competitors: "Monitor de Concorrentes",
+  productivity: "Produtividade Master",
+  company: "Minha Empresa",
+  team: "Equipe",
+  brand: "Identidade Visual",
+  integrations: "Conexões",
+  billing: "Assinatura & Planos",
+  settings: "Configurações",
 };
 
 export function getModuleName(moduleKey: string, agency: Agency | null): string {
@@ -97,7 +97,9 @@ export function AgencyProvider({
     queryFn: async () => {
       const res = await supabase
         .from("agencies")
-        .select("id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status, module_names" as any)
+        .select(
+          "id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status, module_names" as any,
+        )
         .eq("id", preloadedAgency.id)
         .maybeSingle();
 
@@ -106,7 +108,9 @@ export function AgencyProvider({
       if (res.error && res.error.message.includes("module_names")) {
         const fallback = await supabase
           .from("agencies")
-          .select("id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status")
+          .select(
+            "id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status",
+          )
           .eq("id", preloadedAgency.id)
           .maybeSingle();
         resultData = fallback.data as any;
@@ -122,12 +126,10 @@ export function AgencyProvider({
   // Apply runtime brand color tokens
   useEffect(() => {
     const el = document.documentElement;
-    if (agency?.brand_color)
-      el.style.setProperty("--agency-brand", agency.brand_color);
+    if (agency?.brand_color) el.style.setProperty("--agency-brand", agency.brand_color);
     if (agency?.brand_color_light)
       el.style.setProperty("--agency-brand-light", agency.brand_color_light);
-    if (agency?.brand_color_fg)
-      el.style.setProperty("--agency-brand-fg", agency.brand_color_fg);
+    if (agency?.brand_color_fg) el.style.setProperty("--agency-brand-fg", agency.brand_color_fg);
     return () => {
       el.style.removeProperty("--agency-brand");
       el.style.removeProperty("--agency-brand-light");

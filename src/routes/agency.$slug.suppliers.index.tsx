@@ -1,7 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Building2, Percent, PhoneCall, Mail, Search, Filter, Settings2, ChevronDown } from "lucide-react";
+import {
+  Plus,
+  Building2,
+  Percent,
+  PhoneCall,
+  Mail,
+  Search,
+  Filter,
+  Settings2,
+  ChevronDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";

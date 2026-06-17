@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { type Proposal, type Tour } from "@/services/proposals";
-import { Accordion, Card, AddBtn, L, Inp, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
+import {
+  Accordion,
+  Card,
+  AddBtn,
+  L,
+  Inp,
+  SMALL_INPUT,
+} from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,7 +45,9 @@ export function SectionTours({ draft, save }: Props) {
     try {
       let q = supabase
         .from("group_tours")
-        .select("id, title, destination, departure_date, return_date, base_price, cover_image_url, status")
+        .select(
+          "id, title, destination, departure_date, return_date, base_price, cover_image_url, status",
+        )
         .eq("agency_id", agency.id)
         .in("status", ["draft", "open", "confirmed"]);
 
@@ -141,7 +150,10 @@ export function SectionTours({ draft, save }: Props) {
 
       {promoOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Promoção / Excursão
@@ -154,7 +166,7 @@ export function SectionTours({ draft, save }: Props) {
                 Fechar
               </button>
             </div>
-            
+
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
               <div className="flex gap-2 items-end">
                 <div className="flex-1">
@@ -212,7 +224,10 @@ export function SectionTours({ draft, save }: Props) {
                       </div>
                       <div className="flex items-center justify-between mt-2 pt-1 border-t border-border/10">
                         <span className="text-xs font-bold text-foreground font-mono">
-                          {Number(promo.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {Number(promo.base_price).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
                         </span>
                         <button
                           type="button"

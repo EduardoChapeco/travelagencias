@@ -5,23 +5,23 @@ export function useScrollAnimation(animation: SectionAnimation | undefined) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!animation || !animation.enabled || animation.type === 'none') return;
-    
+    if (!animation || !animation.enabled || animation.type === "none") return;
+
     // Parallax and countUp are handled separately in components
-    if (animation.type === 'parallax' || animation.type === 'countUp') return;
+    if (animation.type === "parallax" || animation.type === "countUp") return;
 
     const el = ref.current;
     if (!el) return;
 
     // Apply initial opacity/transform for smooth entrance
-    el.style.opacity = '0';
+    el.style.opacity = "0";
 
-    if (animation.trigger === 'onLoad') {
+    if (animation.trigger === "onLoad") {
       const delay = animation.delay || 0;
       const duration = animation.duration || 600;
       setTimeout(() => {
         el.style.transition = `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-        el.style.opacity = '1';
+        el.style.opacity = "1";
         el.classList.add(`animate-${animation.type}`);
       }, delay);
       return;
@@ -34,10 +34,10 @@ export function useScrollAnimation(animation: SectionAnimation | undefined) {
           if (entry.isIntersecting) {
             const delay = animation.delay || 0;
             const duration = animation.duration || 600;
-            
+
             setTimeout(() => {
               el.style.transition = `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1)`;
-              el.style.opacity = '1';
+              el.style.opacity = "1";
               el.classList.add(`animate-${animation.type}`);
             }, delay);
 
@@ -45,7 +45,7 @@ export function useScrollAnimation(animation: SectionAnimation | undefined) {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
 
     observer.observe(el);
@@ -68,7 +68,7 @@ export function useParallax(enabled: boolean) {
       const rect = el.getBoundingClientRect();
       const scrolled = window.scrollY;
       const viewHeight = window.innerHeight;
-      
+
       // Calculate how far the element is from the center of the screen
       const elementCenter = rect.top + rect.height / 2;
       const screenCenter = viewHeight / 2;
@@ -103,15 +103,15 @@ export function useCountUp(valueStr: string, enabled: boolean) {
       el.innerText = valueStr;
       return;
     }
-    
+
     const targetValue = parseInt(match[0], 10);
-    const nonNumericSuffix = valueStr.replace(/\d+/, '');
+    const nonNumericSuffix = valueStr.replace(/\d+/, "");
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            let start = 0;
+            const start = 0;
             const duration = 1500; // ms
             const frameRate = 1000 / 60; // 60fps
             const totalFrames = Math.round(duration / frameRate);
@@ -134,7 +134,7 @@ export function useCountUp(valueStr: string, enabled: boolean) {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
 
     observer.observe(el);

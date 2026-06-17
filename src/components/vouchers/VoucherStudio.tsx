@@ -233,7 +233,7 @@ export function VoucherStudio({
             clonedCanvas.style.transform = "none";
             clonedCanvas.style.transition = "none";
           }
-        }
+        },
       });
       const img = canvas.toDataURL("image/jpeg", 0.96);
       const imgWidth = canvas.width;
@@ -268,7 +268,8 @@ export function VoucherStudio({
   async function exportStoryPng() {
     setExporting(true);
     try {
-      const el = document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
+      const el =
+        document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
       if (!el) throw new Error("Canvas Story não encontrado");
       const canvas = await html2canvas(el, {
         scale: 3,
@@ -280,7 +281,7 @@ export function VoucherStudio({
             clonedCanvas.style.transform = "none";
             clonedCanvas.style.transition = "none";
           }
-        }
+        },
       });
       const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");

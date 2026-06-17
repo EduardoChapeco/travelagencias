@@ -312,16 +312,21 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
   async function handleAgencyBlockedStatusChange(newStatus: "active" | "blocked") {
     confirm({
-      title: newStatus === "blocked" ? "Bloquear Acesso da Agência" : "Desbloquear Acesso da Agência",
-      description: newStatus === "blocked"
-        ? `Tem certeza que deseja bloquear o acesso de toda a agência "${agency.name}"? Isso suspenderá imediatamente o acesso a todas as telas.`
-        : `Deseja liberar o acesso da agência "${agency.name}"?`,
+      title:
+        newStatus === "blocked" ? "Bloquear Acesso da Agência" : "Desbloquear Acesso da Agência",
+      description:
+        newStatus === "blocked"
+          ? `Tem certeza que deseja bloquear o acesso de toda a agência "${agency.name}"? Isso suspenderá imediatamente o acesso a todas as telas.`
+          : `Deseja liberar o acesso da agência "${agency.name}"?`,
       variant: newStatus === "blocked" ? "destructive" : "default",
       onConfirm: async () => {
         setBusy(true);
         try {
           await forceChangeAgencyBlockedStatus(agency.id, newStatus);
-          await logAuditAction(newStatus === "blocked" ? "superadmin_blocked_agency" : "superadmin_unblocked_agency", { status: newStatus });
+          await logAuditAction(
+            newStatus === "blocked" ? "superadmin_blocked_agency" : "superadmin_unblocked_agency",
+            { status: newStatus },
+          );
           toast.success(newStatus === "blocked" ? "Agência suspensa" : "Agência liberada");
           qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
         } catch (error: any) {
@@ -423,7 +428,11 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <GhostButton
-                  onClick={() => handleAgencyBlockedStatusChange(agency.status === "blocked" ? "active" : "blocked")}
+                  onClick={() =>
+                    handleAgencyBlockedStatusChange(
+                      agency.status === "blocked" ? "active" : "blocked",
+                    )
+                  }
                   disabled={busy}
                   className={`text-xs justify-start ${agency.status === "blocked" ? "text-success hover:text-success hover:bg-success/10" : "text-danger hover:text-danger hover:bg-danger/10"}`}
                 >

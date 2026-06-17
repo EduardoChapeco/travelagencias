@@ -25,7 +25,10 @@ serve(async (req) => {
     });
 
     // Validar usuário
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized.");
 
     // Obter payload
@@ -56,10 +59,11 @@ serve(async (req) => {
         "infotravel_username",
         "infotravel_password",
         "infotravel_client",
-        "infotravel_agency"
+        "infotravel_agency",
       ]);
 
-    const getVal = (provider: string) => keys?.find((k) => k.provider === provider)?.key_value || "";
+    const getVal = (provider: string) =>
+      keys?.find((k) => k.provider === provider)?.key_value || "";
 
     const url = getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1";
     const username = getVal("infotravel_username");
@@ -68,7 +72,11 @@ serve(async (req) => {
     const agency = getVal("infotravel_agency");
 
     // Verificar se as credenciais existem ou se estamos no modo simulação
-    const isMock = !username || !password || username.toLowerCase() === "test" || username.toLowerCase() === "sandbox";
+    const isMock =
+      !username ||
+      !password ||
+      username.toLowerCase() === "test" ||
+      username.toLowerCase() === "sandbox";
 
     if (isMock) {
       const responseData = simulateInfotravelResponse(action, params);
@@ -106,7 +114,13 @@ serve(async (req) => {
 });
 
 // ─── Efetuar login no GDS Infotravel para obter JWT token ───────────────────
-async function authenticateInfotravel(url: string, u: string, p: string, c: string, a: string): Promise<string> {
+async function authenticateInfotravel(
+  url: string,
+  u: string,
+  p: string,
+  c: string,
+  a: string,
+): Promise<string> {
   const loginUrl = `${url.replace(/\/$/, "")}/auth/login`;
   try {
     const res = await fetch(loginUrl, {
@@ -132,7 +146,7 @@ async function fetchRealHotels(url: string, token: string, params: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(params),
   });
@@ -145,7 +159,7 @@ async function fetchRealFlights(url: string, token: string, params: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(params),
   });
@@ -160,7 +174,7 @@ async function fetchRealBooking(url: string, token: string, params: any) {
   const res = await fetch(`${url}/booking/${bookingId}`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
   });
   if (!res.ok) throw new Error(`Erro ao buscar a reserva #${bookingId} no Infotravel.`);
@@ -189,8 +203,10 @@ function simulateInfotravelResponse(action: string, params: any) {
           checkout: checkout,
           meal_plan: "Café da Manhã",
           rooms: [{ type: "Suíte Luxo Vista Mar", qty: 1 }],
-          images: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80"],
-          price: 1850.00
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+          ],
+          price: 1850.0,
         },
         {
           id: "info-h-2",
@@ -200,8 +216,10 @@ function simulateInfotravelResponse(action: string, params: any) {
           checkout: checkout,
           meal_plan: "Somente Hospedagem",
           rooms: [{ type: "Quarto Standard Double", qty: 1 }],
-          images: ["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80"],
-          price: 920.00
+          images: [
+            "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=600&q=80",
+          ],
+          price: 920.0,
         },
         {
           id: "info-h-3",
@@ -211,10 +229,12 @@ function simulateInfotravelResponse(action: string, params: any) {
           checkout: checkout,
           meal_plan: "All Inclusive",
           rooms: [{ type: "Bangalô Família", qty: 1 }],
-          images: ["https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80"],
-          price: 3400.00
-        }
-      ]
+          images: [
+            "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80",
+          ],
+          price: 3400.0,
+        },
+      ],
     };
   }
 
@@ -236,7 +256,7 @@ function simulateInfotravelResponse(action: string, params: any) {
           flight_number: "LA-8190",
           stops: 0,
           baggage_rules: "Inclui 1 mala de mão de 10kg + 1 mala despachada de 23kg",
-          price: 2450.00
+          price: 2450.0,
         },
         {
           id: "info-f-2",
@@ -249,9 +269,9 @@ function simulateInfotravelResponse(action: string, params: any) {
           flight_number: "AA-906",
           stops: 1,
           baggage_rules: "Apenas item pessoal + mala de mão de 10kg",
-          price: 1980.00
-        }
-      ]
+          price: 1980.0,
+        },
+      ],
     };
   }
 
@@ -265,7 +285,7 @@ function simulateInfotravelResponse(action: string, params: any) {
       client_cpf: "123.456.789-00",
       client_email: "eduardo@chapeco.com",
       client_phone: "+55 49 99999-8888",
-      total_sale: 8900.00,
+      total_sale: 8900.0,
       flights: [
         {
           origin: "GRU",
@@ -277,8 +297,8 @@ function simulateInfotravelResponse(action: string, params: any) {
           flight_number: "TP-82",
           stops: 0,
           baggage_rules: "Bagagem de mão + 1 mala despachada 23kg",
-          price: 4500.00
-        }
+          price: 4500.0,
+        },
       ],
       hotels: [
         {
@@ -288,9 +308,11 @@ function simulateInfotravelResponse(action: string, params: any) {
           checkout: "2026-09-23",
           meal_plan: "Café da Manhã",
           rooms: [{ type: "Deluxe Vista Avenida", qty: 1 }],
-          images: ["https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=600&q=80"],
-          price: 4400.00
-        }
+          images: [
+            "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=600&q=80",
+          ],
+          price: 4400.0,
+        },
       ],
       passengers: [
         {
@@ -299,9 +321,9 @@ function simulateInfotravelResponse(action: string, params: any) {
           document_type: "rg",
           birth_date: "1990-05-12",
           email: "eduardo@chapeco.com",
-          phone: "+55 49 99999-8888"
-        }
-      ]
+          phone: "+55 49 99999-8888",
+        },
+      ],
     };
   }
 

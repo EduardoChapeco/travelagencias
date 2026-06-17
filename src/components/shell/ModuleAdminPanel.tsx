@@ -208,7 +208,8 @@ export function ModuleAdminPanel({
                   <div>
                     <h3 className="text-sm font-bold text-foreground">Playbooks do Módulo</h3>
                     <p className="text-xs text-muted-foreground">
-                      Defina instruções operacionais e scripts de IA específicos para o módulo {displayName}.
+                      Defina instruções operacionais e scripts de IA específicos para o módulo{" "}
+                      {displayName}.
                     </p>
                   </div>
                   <PrimaryButton
@@ -221,7 +222,9 @@ export function ModuleAdminPanel({
 
                 {/* Scoped Playbooks List */}
                 {playbooksQ.isLoading ? (
-                  <div className="text-xs text-muted-foreground animate-pulse">Carregando playbooks...</div>
+                  <div className="text-xs text-muted-foreground animate-pulse">
+                    Carregando playbooks...
+                  </div>
                 ) : playbooksQ.data && playbooksQ.data.length === 0 ? (
                   <div className="text-xs text-center p-8 border border-dashed border-border rounded-xl text-muted-foreground">
                     Nenhum playbook operacional definido para este módulo.
@@ -263,7 +266,9 @@ export function ModuleAdminPanel({
 
                         <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[10px] text-muted-foreground">
                           <span>{pb.steps?.length || 0} etapas definidas</span>
-                          <span className="font-mono text-[9px]">Atualizado em {new Date(pb.updated_at).toLocaleDateString("pt-BR")}</span>
+                          <span className="font-mono text-[9px]">
+                            Atualizado em {new Date(pb.updated_at).toLocaleDateString("pt-BR")}
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -274,10 +279,13 @@ export function ModuleAdminPanel({
                 <div className="pt-4 border-t border-border">
                   <h3 className="text-sm font-bold text-foreground mb-1">Artigos Relacionados</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Artigos de suporte e tutoriais da base de conhecimento categorizados sob {displayName}.
+                    Artigos de suporte e tutoriais da base de conhecimento categorizados sob{" "}
+                    {displayName}.
                   </p>
                   {articlesQ.isLoading ? (
-                    <div className="text-xs text-muted-foreground animate-pulse">Carregando artigos...</div>
+                    <div className="text-xs text-muted-foreground animate-pulse">
+                      Carregando artigos...
+                    </div>
                   ) : articlesQ.data && articlesQ.data.length === 0 ? (
                     <div className="text-xs text-center p-6 border border-dashed border-border rounded-xl text-muted-foreground">
                       Nenhum artigo da base de conhecimento encontrado nesta categoria.
@@ -292,11 +300,17 @@ export function ModuleAdminPanel({
                           <div className="flex items-center gap-2">
                             <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
                             <div>
-                              <span className="text-xs font-bold text-foreground block">{art.title}</span>
-                              <span className="text-[10px] text-muted-foreground">{art.is_internal ? "Apenas Interno" : "Visível no Portal"}</span>
+                              <span className="text-xs font-bold text-foreground block">
+                                {art.title}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">
+                                {art.is_internal ? "Apenas Interno" : "Visível no Portal"}
+                              </span>
                             </div>
                           </div>
-                          <span className="text-[10px] font-mono text-muted-foreground">{art.views || 0} visualizações</span>
+                          <span className="text-[10px] font-mono text-muted-foreground">
+                            {art.views || 0} visualizações
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -309,14 +323,18 @@ export function ModuleAdminPanel({
 
         {activeTab === "settings" && (
           <div className="flex-1 overflow-auto space-y-6">
-            <form onSubmit={handleSaveCustomName} className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-xl">
+            <form
+              onSubmit={handleSaveCustomName}
+              className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-xl"
+            >
               <div>
                 <h4 className="text-xs font-bold text-foreground">Identificação do Módulo</h4>
                 <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                  Personalize o nome deste módulo no menu lateral, cabeçalhos e fluxos do sistema. Deixe em branco para usar o nome padrão.
+                  Personalize o nome deste módulo no menu lateral, cabeçalhos e fluxos do sistema.
+                  Deixe em branco para usar o nome padrão.
                 </p>
               </div>
-              
+
               <Field label="Nome Personalizado">
                 <Input
                   value={customName}
@@ -325,7 +343,7 @@ export function ModuleAdminPanel({
                   className="text-xs h-9"
                 />
               </Field>
-              
+
               <div className="flex justify-end gap-2">
                 {customName !== currentCustomName && (
                   <GhostButton
@@ -381,9 +399,7 @@ function PlaybookForm({
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [steps, setSteps] = useState<any[]>(
-    initialData?.steps
-      ? [...initialData.steps]
-      : [{ step_number: 1, title: "", description: "" }]
+    initialData?.steps ? [...initialData.steps] : [{ step_number: 1, title: "", description: "" }],
   );
   const [submitting, setSubmitting] = useState(false);
 
@@ -392,9 +408,7 @@ function PlaybookForm({
   };
 
   const removeStep = (idx: number) => {
-    const next = steps
-      .filter((_, i) => i !== idx)
-      .map((st, i) => ({ ...st, step_number: i + 1 }));
+    const next = steps.filter((_, i) => i !== idx).map((st, i) => ({ ...st, step_number: i + 1 }));
     setSteps(next);
   };
 
@@ -436,7 +450,10 @@ function PlaybookForm({
 
       if (pbId) {
         // Delete old steps
-        await supabase.from("knowledge_playbook_steps" as any).delete().eq("playbook_id", pbId);
+        await supabase
+          .from("knowledge_playbook_steps" as any)
+          .delete()
+          .eq("playbook_id", pbId);
 
         // Insert new steps
         const stepsPayload = steps

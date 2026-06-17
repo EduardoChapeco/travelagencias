@@ -22,11 +22,11 @@ Implementamos a reformulação visual completa da plataforma TravelOS para o nov
 ---
 
 ## 🤖 1. Módulo de Cotações Avançadas e IA (Builder)
- 
+
 **Status: 100% Concluído & Homologado**
- 
+
 O Builder de Cotações possui automação por IA para preenchimento de propostas enviadas por fornecedores via PDF/OCR, além de flexibilidade relacional no banco.
- 
+
 - [x] **Fluxo de "Criação de Cotação via PDF + OCR":**
   - [x] Drag-and-drop de PDFs de fornecedores (operadoras, hotéis).
   - [x] Envio para Edge Function Vision (`processOcrFile`).

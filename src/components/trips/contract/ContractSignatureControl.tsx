@@ -58,13 +58,21 @@ export function ContractSignatureControl({
             <div>
               <div className="text-xs font-bold text-foreground">
                 {Array.isArray(contract.client_data)
-                  ? contract.client_data.map((c: any) => c.name).filter(Boolean).join(", ")
+                  ? contract.client_data
+                      .map((c: any) => c.name)
+                      .filter(Boolean)
+                      .join(", ")
                   : (contract.client_data as any)?.name || "Cliente Contratante"}
               </div>
               <div className="text-[10px] text-muted-foreground font-mono">
                 {Array.isArray(contract.client_data)
-                  ? contract.client_data.map((c: any) => c.cpf || c.document).filter(Boolean).join(" / ")
-                  : (contract.client_data as any)?.document || (contract.client_data as any)?.cpf || "Sem doc informado"}
+                  ? contract.client_data
+                      .map((c: any) => c.cpf || c.document)
+                      .filter(Boolean)
+                      .join(" / ")
+                  : (contract.client_data as any)?.document ||
+                    (contract.client_data as any)?.cpf ||
+                    "Sem doc informado"}
               </div>
             </div>
             <div>
@@ -204,7 +212,7 @@ export function ContractSignatureControl({
             {auditChain.map((audit) => {
               let icon = <Clock className="h-3 w-3 text-muted-foreground" />;
               let actionLabel = audit.action;
-              
+
               if (audit.action === "CONTRACT_SIGNED") {
                 icon = <UserCheck className="h-3 w-3 text-success" />;
                 actionLabel = "Contrato Assinado";

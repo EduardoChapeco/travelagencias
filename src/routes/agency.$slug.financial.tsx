@@ -7,7 +7,6 @@ import {
   useParams,
 } from "@tanstack/react-router";
 
-
 import { useState } from "react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -86,4 +85,3 @@ function FinancialLayout() {
     </div>
   );
 }
-

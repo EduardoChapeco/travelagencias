@@ -1,7 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef } from "react";
-import { Plus, ChevronDown, ChevronRight, Upload, X, FileText, Loader2, CheckCircle } from "lucide-react";
+import {
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Upload,
+  X,
+  FileText,
+  Loader2,
+  CheckCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
@@ -72,9 +81,9 @@ function TripFinancial() {
 
   async function applyOcrToInstallment() {
     if (!ocrResult || !ocrTargetInstId) return;
-    
+
     let boletoUrl = ocrResult.boleto_url ?? null;
-    
+
     if (ocrFile && agency) {
       try {
         const fileExt = ocrFile.name.split(".").pop();
@@ -82,9 +91,12 @@ function TripFinancial() {
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("agency-media")
           .upload(filePath, ocrFile);
-          
+
         if (uploadError) {
-          console.warn("Storage upload failed, continuing without saving file: ", uploadError.message);
+          console.warn(
+            "Storage upload failed, continuing without saving file: ",
+            uploadError.message,
+          );
         } else if (uploadData) {
           const { data: publicUrlData } = supabase.storage
             .from("agency-media")
@@ -141,9 +153,15 @@ function TripFinancial() {
 
   const trip = tripQ.data;
   const records = recordsQ.data ?? [];
-  const income = records.filter((r) => r.type === "income" && r.status !== "cancelled" && !r.is_third_party);
-  const expenses = records.filter((r) => r.type === "expense" && r.status !== "cancelled" && !r.is_third_party);
-  const thirdPartyIncome = records.filter((r) => r.type === "income" && r.status !== "cancelled" && r.is_third_party);
+  const income = records.filter(
+    (r) => r.type === "income" && r.status !== "cancelled" && !r.is_third_party,
+  );
+  const expenses = records.filter(
+    (r) => r.type === "expense" && r.status !== "cancelled" && !r.is_third_party,
+  );
+  const thirdPartyIncome = records.filter(
+    (r) => r.type === "income" && r.status !== "cancelled" && r.is_third_party,
+  );
   const totalIncome = income.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
   const totalExpense = expenses.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
   const totalThirdParty = thirdPartyIncome.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
@@ -296,41 +314,41 @@ function TripFinancial() {
         </div>
       )}
 
-      {Array.isArray(planQ.data) && planQ.data.length > 0 ? (
-        planQ.data.map((plan: any, idx: number) => {
-          const isThirdParty = plan.payment_installments?.some((pi: any) => pi.is_third_party);
-          const sectionTitle = isThirdParty 
-            ? `Plano Fornecedor/Terceiros (Plano #${idx + 1})` 
-            : "Plano de Parcelamento (Agência)";
-          return (
-            <Section
-              key={plan.id}
-              title={sectionTitle}
-              total={money(plan.total_amount, trip?.currency)}
-              open={openSection === `plan_${plan.id}`}
-              onToggle={() => setOpenSection(openSection === `plan_${plan.id}` ? null : `plan_${plan.id}`)}
-            >
-              <InstallmentTable
-                installments={plan.payment_installments ?? []}
-                currency={trip?.currency}
-                onMarkPaid={(id) => markPaid.mutate(id)}
-              />
-            </Section>
-          );
-        })
-      ) : (
-        !showPlanForm && (
-          <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-xl mb-6">
-            Nenhum plano de parcelamento criado.
-            <button
-              onClick={() => setShowPlanForm(true)}
-              className="mt-2 block mx-auto text-xs text-primary hover:underline font-bold cursor-pointer"
-            >
-              + Criar primeiro plano
-            </button>
-          </div>
-        )
-      )}
+      {Array.isArray(planQ.data) && planQ.data.length > 0
+        ? planQ.data.map((plan: any, idx: number) => {
+            const isThirdParty = plan.payment_installments?.some((pi: any) => pi.is_third_party);
+            const sectionTitle = isThirdParty
+              ? `Plano Fornecedor/Terceiros (Plano #${idx + 1})`
+              : "Plano de Parcelamento (Agência)";
+            return (
+              <Section
+                key={plan.id}
+                title={sectionTitle}
+                total={money(plan.total_amount, trip?.currency)}
+                open={openSection === `plan_${plan.id}`}
+                onToggle={() =>
+                  setOpenSection(openSection === `plan_${plan.id}` ? null : `plan_${plan.id}`)
+                }
+              >
+                <InstallmentTable
+                  installments={plan.payment_installments ?? []}
+                  currency={trip?.currency}
+                  onMarkPaid={(id) => markPaid.mutate(id)}
+                />
+              </Section>
+            );
+          })
+        : !showPlanForm && (
+            <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-xl mb-6">
+              Nenhum plano de parcelamento criado.
+              <button
+                onClick={() => setShowPlanForm(true)}
+                className="mt-2 block mx-auto text-xs text-primary hover:underline font-bold cursor-pointer"
+              >
+                + Criar primeiro plano
+              </button>
+            </div>
+          )}
 
       {/* ── Add record modal ──────────────────────────────────────────────────── */}
       {agency && (
@@ -359,7 +377,11 @@ function TripFinancial() {
                 <h3 className="font-bold text-foreground">Importar Boleto via OCR</h3>
               </div>
               <button
-                onClick={() => { setShowOcrModal(false); setOcrResult(null); setOcrFile(null); }}
+                onClick={() => {
+                  setShowOcrModal(false);
+                  setOcrResult(null);
+                  setOcrFile(null);
+                }}
                 className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt"
               >
                 <X className="h-4 w-4" />
@@ -369,21 +391,29 @@ function TripFinancial() {
             <div className="p-5 space-y-4">
               {/* File Upload */}
               {!ocrResult && (
-                <label className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}>
+                <label
+                  className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}
+                >
                   {ocrLoading ? (
                     <>
                       <Loader2 className="h-8 w-8 text-brand animate-spin" />
                       <div className="text-center">
                         <p className="text-sm font-bold text-foreground">Analisando com IA...</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Extraindo linha digit\u00e1vel e dados do boleto</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Extraindo linha digit\u00e1vel e dados do boleto
+                        </p>
                       </div>
                     </>
                   ) : (
                     <>
                       <Upload className="h-8 w-8 text-muted-foreground" />
                       <div className="text-center">
-                        <p className="text-sm font-bold text-foreground">Arraste o boleto ou clique para selecionar</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">PDF, PNG ou JPG do boleto banc\u00e1rio</p>
+                        <p className="text-sm font-bold text-foreground">
+                          Arraste o boleto ou clique para selecionar
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          PDF, PNG ou JPG do boleto banc\u00e1rio
+                        </p>
                       </div>
                     </>
                   )}
@@ -409,25 +439,37 @@ function TripFinancial() {
                   </div>
                   <div className="rounded-xl border border-border bg-surface-alt/10 p-4 space-y-2 text-xs font-mono">
                     {ocrResult.amount && (
-                      <div><span className="text-muted-foreground">Valor:</span> {" "}
+                      <div>
+                        <span className="text-muted-foreground">Valor:</span>{" "}
                         <span className="font-bold text-foreground">
-                          {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(ocrResult.amount)}
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(ocrResult.amount)}
                         </span>
                       </div>
                     )}
                     {ocrResult.due_date && (
-                      <div><span className="text-muted-foreground">Vencimento:</span> {" "}
-                        <span className="font-bold">{new Date(ocrResult.due_date + "T12:00:00").toLocaleDateString("pt-BR")}</span>
+                      <div>
+                        <span className="text-muted-foreground">Vencimento:</span>{" "}
+                        <span className="font-bold">
+                          {new Date(ocrResult.due_date + "T12:00:00").toLocaleDateString("pt-BR")}
+                        </span>
                       </div>
                     )}
                     {(ocrResult.barcode || ocrResult.linha_digitavel) && (
                       <div className="pt-1 border-t border-border/50">
                         <div className="text-muted-foreground mb-1">Linha Digit\u00e1vel:</div>
-                        <div className="break-all text-[11px] text-foreground">{ocrResult.barcode ?? ocrResult.linha_digitavel}</div>
+                        <div className="break-all text-[11px] text-foreground">
+                          {ocrResult.barcode ?? ocrResult.linha_digitavel}
+                        </div>
                       </div>
                     )}
                     {ocrResult.beneficiary && (
-                      <div><span className="text-muted-foreground">Benef.</span> {ocrResult.beneficiary}</div>
+                      <div>
+                        <span className="text-muted-foreground">Benef.</span>{" "}
+                        {ocrResult.beneficiary}
+                      </div>
                     )}
                   </div>
 
@@ -442,17 +484,24 @@ function TripFinancial() {
                       className="w-full h-9 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
                     >
                       <option value="">Salvar sem vincular a parcela</option>
-                      {planQ.data?.flatMap((plan: any) => plan.payment_installments ?? []).map((inst: any) => (
-                        <option key={inst.id} value={inst.id}>
-                          Parcela #{inst.number} — {new Date(inst.due_date + "T12:00:00").toLocaleDateString("pt-BR")} — {money(inst.amount)}
-                        </option>
-                      ))}
+                      {planQ.data
+                        ?.flatMap((plan: any) => plan.payment_installments ?? [])
+                        .map((inst: any) => (
+                          <option key={inst.id} value={inst.id}>
+                            Parcela #{inst.number} —{" "}
+                            {new Date(inst.due_date + "T12:00:00").toLocaleDateString("pt-BR")} —{" "}
+                            {money(inst.amount)}
+                          </option>
+                        ))}
                     </select>
                   </div>
 
                   <div className="flex gap-2 pt-1">
                     <button
-                      onClick={() => { setOcrResult(null); setOcrFile(null); }}
+                      onClick={() => {
+                        setOcrResult(null);
+                        setOcrFile(null);
+                      }}
                       className="flex-1 h-9 rounded-lg border border-border text-xs font-bold text-muted-foreground hover:bg-surface-alt"
                     >
                       Refazer Scan

@@ -377,12 +377,19 @@ export function NewTripWizard({
                       <Field label="Nome Completo *" error={errors.new_client_name?.message}>
                         <Input {...register("new_client_name")} placeholder="Ex: João da Silva" />
                       </Field>
-                      <Field label="Documento (CPF/CNPJ)" error={errors.new_client_document?.message}>
+                      <Field
+                        label="Documento (CPF/CNPJ)"
+                        error={errors.new_client_document?.message}
+                      >
                         <Input {...register("new_client_document")} placeholder="000.000.000-00" />
                       </Field>
                       <div className="grid grid-cols-2 gap-4">
                         <Field label="E-mail" error={errors.new_client_email?.message}>
-                          <Input type="email" {...register("new_client_email")} placeholder="joao@email.com" />
+                          <Input
+                            type="email"
+                            {...register("new_client_email")}
+                            placeholder="joao@email.com"
+                          />
                         </Field>
                         <Field label="Telefone" error={errors.new_client_phone?.message}>
                           <Input {...register("new_client_phone")} placeholder="(00) 99999-9999" />

@@ -119,7 +119,13 @@ const ANIMATION_NAME_MAP: Record<string, string> = {
   "zoom-in": "ta-zoom-in",
 };
 
-export function BlockStyleWrapper({ block, children }: { block: PortalBlock; children: React.ReactNode }) {
+export function BlockStyleWrapper({
+  block,
+  children,
+}: {
+  block: PortalBlock;
+  children: React.ReactNode;
+}) {
   const styles = (block as any).styles;
   if (!styles) return <div className="w-full">{children}</div>;
 
@@ -135,7 +141,7 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
     shadow_effect,
     animation,
     animation_duration,
-    animation_delay
+    animation_delay,
   } = styles;
 
   const inlineStyles: React.CSSProperties = {};
@@ -198,13 +204,10 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
       style={inlineStyles}
       className={`w-full transition-all overflow-hidden${paddingClass}${radiusClass}${borderClass}${shadowClass}${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
     >
-      <div className={bg_type === "image" ? "relative z-10 w-full" : "w-full"}>
-        {children}
-      </div>
+      <div className={bg_type === "image" ? "relative z-10 w-full" : "w-full"}>{children}</div>
     </div>
   );
 }
-
 
 export function BlockRenderer({
   blocks,
@@ -226,10 +229,10 @@ export function BlockRenderer({
   const handleLinkClick = (url: string) => {
     if (!pageId || !agencyId) return;
     const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
-    
+
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    
+
     if (supabaseUrl && supabaseKey) {
       const payload = {
         page_id: pageId,
@@ -242,14 +245,14 @@ export function BlockRenderer({
       fetch(`${supabaseUrl}/rest/v1/portal_page_analytics`, {
         method: "POST",
         headers: {
-          "apikey": supabaseKey,
-          "Authorization": `Bearer ${supabaseKey}`,
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
           "Content-Type": "application/json",
-          "Prefer": "return=minimal"
+          Prefer: "return=minimal",
         },
         body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(err => {
+        keepalive: true,
+      }).catch((err) => {
         console.error("Error logging click keepalive:", err);
       });
     } else {
@@ -303,7 +306,13 @@ export function BlockRenderer({
   );
 }
 
-function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick: (url: string) => void, agencyId?: string, pageId?: string) {
+function renderBlock(
+  blockItem: PortalBlock,
+  agencySlug: string,
+  handleLinkClick: (url: string) => void,
+  agencyId?: string,
+  pageId?: string,
+) {
   const b = blockItem as LegacyPortalBlock;
   switch (b.type) {
     // ── HERO ──────────────────────────────────────────────────────
@@ -479,7 +488,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
         return (
           <section className="mx-auto max-w-7xl w-full px-4">
             {b.title && (
-              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">{b.title}</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">
+                {b.title}
+              </h2>
             )}
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {b.items?.map((item, i) => (
@@ -490,8 +501,12 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand mb-5 group-hover:scale-110 transition-transform">
                     {renderIconByName(item.icon, "h-6 w-6")}
                   </div>
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-brand transition-colors">{item.title}</h3>
-                  <p className="text-muted-foreground text-xs leading-relaxed">{item.description}</p>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-brand transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -503,7 +518,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
         return (
           <section className="mx-auto max-w-4xl w-full px-4">
             {b.title && (
-              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">{b.title}</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">
+                {b.title}
+              </h2>
             )}
             <div className="flex flex-col gap-4">
               {b.items?.map((item, i) => (
@@ -588,7 +605,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
         return (
           <section className="mx-auto max-w-5xl w-full px-4">
             {b.title && (
-              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">{b.title}</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-10">
+                {b.title}
+              </h2>
             )}
             <div className="grid gap-6 md:grid-cols-2">
               {b.items?.map((item, i) => (
@@ -645,7 +664,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
         return (
           <section className="mx-auto max-w-6xl w-full px-4">
             {b.title && (
-              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">{b.title}</h2>
+              <h2 className="text-3xl font-extrabold tracking-tight text-center mb-12">
+                {b.title}
+              </h2>
             )}
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {b.items?.map((item, i) => (
@@ -675,7 +696,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                     )}
                     <div>
                       <div className="font-bold text-xs text-foreground">{item.author}</div>
-                      {item.role && <div className="text-[10px] text-muted-foreground">{item.role}</div>}
+                      {item.role && (
+                        <div className="text-[10px] text-muted-foreground">{item.role}</div>
+                      )}
                     </div>
                     <div className="ml-auto flex shrink-0">
                       {Array.from({ length: item.stars || 5 }).map((_, si) => (
@@ -863,9 +886,10 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
           {(b.items || []).map((item, idx) => {
             const style = b.button_style || "solid";
             const rounded = b.button_rounded || "full";
-            
-            let baseClasses = "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border";
-            
+
+            let baseClasses =
+              "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border";
+
             if (rounded === "none") baseClasses += "rounded-none";
             else if (rounded === "md") baseClasses += "rounded-xl";
             else baseClasses += "rounded-full";
@@ -874,12 +898,15 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
               baseClasses += "bg-brand text-brand-foreground border-brand font-bold";
             } else {
               if (style === "solid") {
-                 baseClasses += "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40";
+                baseClasses +=
+                  "bg-surface text-foreground border-border/50 font-medium hover:border-brand/40";
               } else if (style === "outline") {
-                 baseClasses += "bg-transparent text-foreground border-border font-medium hover:border-foreground";
+                baseClasses +=
+                  "bg-transparent text-foreground border-border font-medium hover:border-foreground";
               } else {
-                 // soft
-                 baseClasses += "bg-surface-alt/50 text-foreground border-transparent font-medium hover:bg-surface-alt";
+                // soft
+                baseClasses +=
+                  "bg-surface-alt/50 text-foreground border-transparent font-medium hover:bg-surface-alt";
               }
             }
 
@@ -919,7 +946,8 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
           </div>
           <h2 className="text-2xl font-bold tracking-tight">{b.title || "Área do Passageiro"}</h2>
           <p className="text-muted-foreground text-sm max-w-sm">
-            {b.description || "Acesse seus vouchers, passagens aéreas e guias de embarque da sua viagem."}
+            {b.description ||
+              "Acesse seus vouchers, passagens aéreas e guias de embarque da sua viagem."}
           </p>
           <Link
             to={"/auth/login" as any}
@@ -933,7 +961,13 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
 
     // ── PENDING CONTRACTS WIDGET ──────────────────────────────────
     case "pending_contracts_widget":
-      return <PendingContractsWidgetBlock block={b} agencyId={agencyId} handleLinkClick={handleLinkClick} />;
+      return (
+        <PendingContractsWidgetBlock
+          block={b}
+          agencyId={agencyId}
+          handleLinkClick={handleLinkClick}
+        />
+      );
 
     // ── FEATURED DESTINATIONS ──────────────────────────────────────
     case "featured_destinations":
@@ -942,7 +976,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
           {b.title && (
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-extrabold tracking-tight">{b.title}</h2>
-              {b.subtitle && <p className="mt-2 text-muted-foreground text-sm leading-relaxed">{b.subtitle}</p>}
+              {b.subtitle && (
+                <p className="mt-2 text-muted-foreground text-sm leading-relaxed">{b.subtitle}</p>
+              )}
             </div>
           )}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -979,7 +1015,8 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
                     </p>
                   </div>
                   <div className="mt-4 pt-3 border-t border-border/40 text-xs font-bold text-brand flex items-center gap-1 group-hover:underline">
-                    Fazer Cotação <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    Fazer Cotação{" "}
+                    <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                   </div>
                 </div>
               </a>
@@ -1048,7 +1085,11 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
             )}
             {b.whatsapp && (
               <a
-                href={b.whatsapp.startsWith("http") ? b.whatsapp : `https://wa.me/${b.whatsapp.replace(/\D/g, "")}`}
+                href={
+                  b.whatsapp.startsWith("http")
+                    ? b.whatsapp
+                    : `https://wa.me/${b.whatsapp.replace(/\D/g, "")}`
+                }
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => handleLinkClick(b.whatsapp!)}
@@ -1064,15 +1105,25 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
 
     // ── NEWSLETTER ─────────────────────────────────────────────────
     case "newsletter":
-      return <NewsletterBlock block={b} handleLinkClick={handleLinkClick} agencySlug={agencySlug} />;
+      return (
+        <NewsletterBlock block={b} handleLinkClick={handleLinkClick} agencySlug={agencySlug} />
+      );
 
     // ── TOURS CAROUSEL ─────────────────────────────────────────────
     case "tours_carousel":
-      return <ToursCarouselBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />;
+      return (
+        <ToursCarouselBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />
+      );
 
     // ── DESTINATION FILTER ─────────────────────────────────────────
     case "featured_destination_filter":
-      return <FeaturedDestinationFilterBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />;
+      return (
+        <FeaturedDestinationFilterBlock
+          block={b}
+          agencySlug={agencySlug}
+          handleLinkClick={handleLinkClick}
+        />
+      );
 
     // ── TEAM WIDGET ────────────────────────────────────────────────
     case "team_widget":
@@ -1088,7 +1139,9 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
 
     // ── COUNTDOWN TOUR ─────────────────────────────────────────────
     case "countdown_tour":
-      return <CountdownTourBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />;
+      return (
+        <CountdownTourBlock block={b} agencySlug={agencySlug} handleLinkClick={handleLinkClick} />
+      );
 
     // ── SOCIAL LINKS ROW ───────────────────────────────────────────
     case "social_links_row":
@@ -1183,7 +1236,16 @@ function renderBlock(blockItem: PortalBlock, agencySlug: string, handleLinkClick
     default:
       return (
         <NewSectionsRenderer
-          block={blockItem as { id: string; type: string; config: Record<string, any>; styles?: any; animation?: any; responsive?: any; }}
+          block={
+            blockItem as {
+              id: string;
+              type: string;
+              config: Record<string, any>;
+              styles?: any;
+              animation?: any;
+              responsive?: any;
+            }
+          }
           agencySlug={agencySlug}
           pageId={pageId}
           agencyId={agencyId}
@@ -1245,16 +1307,22 @@ function NewsletterBlock({
         <div className="h-12 w-12 rounded-full bg-brand/15 text-brand flex items-center justify-center mb-2">
           <Mail className="h-5 w-5" />
         </div>
-        <h3 className="text-xl md:text-2xl font-black text-foreground">{block.title || "Receba Nossas Ofertas"}</h3>
+        <h3 className="text-xl md:text-2xl font-black text-foreground">
+          {block.title || "Receba Nossas Ofertas"}
+        </h3>
         <p className="text-xs md:text-sm text-muted-foreground max-w-md">
-          {block.subtitle || "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros."}
+          {block.subtitle ||
+            "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros."}
         </p>
         {subscribed ? (
           <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs bg-emerald-50 dark:bg-emerald-900/10 px-4 py-2 rounded-xl border border-emerald-200/40 font-semibold">
             <CheckCircle2 className="h-4 w-4" /> Cadastro realizado com sucesso!
           </div>
         ) : (
-          <form onSubmit={handleNewsSubmit} className="flex flex-col sm:flex-row gap-2 w-full max-w-md mt-4">
+          <form
+            onSubmit={handleNewsSubmit}
+            className="flex flex-col sm:flex-row gap-2 w-full max-w-md mt-4"
+          >
             <input
               type="email"
               required
@@ -1269,7 +1337,7 @@ function NewsletterBlock({
               disabled={loading}
               className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
             >
-              {loading ? "Cadastrando..." : (block.button_label || "Cadastrar")}
+              {loading ? "Cadastrando..." : block.button_label || "Cadastrar"}
             </button>
           </form>
         )}
@@ -1279,19 +1347,19 @@ function NewsletterBlock({
 }
 
 // ─── PendingContractsWidgetBlock ──────────────────────────────────────────────
-function PendingContractsWidgetBlock({ 
-  block, 
+function PendingContractsWidgetBlock({
+  block,
   handleLinkClick,
-  agencyId 
-}: { 
-  block: any; 
+  agencyId,
+}: {
+  block: any;
   handleLinkClick: (url: string) => void;
   agencyId?: string;
 }) {
   const [contracts, setContracts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   // Estados do formulário de busca para convidados/pagantes sem login
   const [email, setEmail] = useState("");
   const [document, setDocument] = useState("");
@@ -1301,13 +1369,22 @@ function PendingContractsWidgetBlock({
   useEffect(() => {
     async function load() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           setIsLoggedIn(true);
-          const { data: clients } = await supabase.from("clients").select("id").eq("user_id", user.id);
+          const { data: clients } = await supabase
+            .from("clients")
+            .select("id")
+            .eq("user_id", user.id);
           const clientIds = clients?.map((c) => c.id) || [];
           if (clientIds.length) {
-            const { data: trips } = await supabase.from("trips").select("id").in("client_id", clientIds).is("deleted_at", null);
+            const { data: trips } = await supabase
+              .from("trips")
+              .select("id")
+              .in("client_id", clientIds)
+              .is("deleted_at", null);
             const tripIds = trips?.map((t) => t.id) || [];
             if (tripIds.length) {
               const { data: pending } = await supabase
@@ -1315,14 +1392,14 @@ function PendingContractsWidgetBlock({
                 .select("id, status, package_summary, public_token")
                 .in("trip_id", tripIds)
                 .neq("status", "signed");
-              
+
               setContracts(
-                (pending || []).map(c => ({
+                (pending || []).map((c) => ({
                   id: c.id,
                   title: c.package_summary || "Contrato de Viagem",
                   public_token: c.public_token,
-                  status: c.status
-                }))
+                  status: c.status,
+                })),
               );
             }
           }
@@ -1351,7 +1428,7 @@ function PendingContractsWidgetBlock({
       const { data, error } = await (supabase as any).rpc("get_contracts_by_payer_info", {
         p_email: email.trim() || null,
         p_document: document.trim() || null,
-        p_agency_id: agencyId
+        p_agency_id: agencyId,
       });
       if (error) {
         toast.error("Erro ao buscar contratos: " + error.message);
@@ -1378,18 +1455,26 @@ function PendingContractsWidgetBlock({
         <AlertCircle className="h-5 w-5" />
       </div>
       <div>
-        <h3 className="font-bold text-base text-yellow-600 dark:text-yellow-500">{block.title || "Contratos Pendentes"}</h3>
+        <h3 className="font-bold text-base text-yellow-600 dark:text-yellow-500">
+          {block.title || "Contratos Pendentes"}
+        </h3>
         <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-          {block.description || "Você possui termos ou contratos aguardando sua assinatura eletrônica."}
+          {block.description ||
+            "Você possui termos ou contratos aguardando sua assinatura eletrônica."}
         </p>
       </div>
 
       {!isLoggedIn && (
-        <form onSubmit={handleSearch} className="w-full space-y-3 mt-2 text-left bg-surface border border-border/85 p-4 rounded-2xl">
+        <form
+          onSubmit={handleSearch}
+          className="w-full space-y-3 mt-2 text-left bg-surface border border-border/85 p-4 rounded-2xl"
+        >
           <div className="text-xs font-bold text-foreground mb-1">Buscar Contratos (Sem Login)</div>
           <div className="space-y-2">
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">E-mail</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                E-mail
+              </label>
               <input
                 type="email"
                 value={email}
@@ -1399,7 +1484,9 @@ function PendingContractsWidgetBlock({
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Documento (CPF ou CNPJ)</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Documento (CPF ou CNPJ)
+              </label>
               <input
                 type="text"
                 value={document}
@@ -1431,9 +1518,13 @@ function PendingContractsWidgetBlock({
               className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 hover:border-yellow-500/50 transition-colors text-left"
             >
               <div className="flex flex-col truncate max-w-[220px]">
-                <span className="text-xs font-semibold text-foreground truncate">{c.title || "Contrato de Prestação de Serviços"}</span>
+                <span className="text-xs font-semibold text-foreground truncate">
+                  {c.title || "Contrato de Prestação de Serviços"}
+                </span>
                 {c.status && (
-                  <span className="text-[9px] text-muted-foreground lowercase">Status: {c.status}</span>
+                  <span className="text-[9px] text-muted-foreground lowercase">
+                    Status: {c.status}
+                  </span>
                 )}
               </div>
               <span className="text-[10px] font-bold text-yellow-600 bg-yellow-500/15 px-2 py-0.5 rounded-full uppercase shrink-0">
@@ -1443,8 +1534,11 @@ function PendingContractsWidgetBlock({
           ))}
         </div>
       ) : (
-        !isLoggedIn && hasSearched && (
-          <div className="text-xs text-muted-foreground py-2 italic">Nenhum contrato encontrado para os dados informados.</div>
+        !isLoggedIn &&
+        hasSearched && (
+          <div className="text-xs text-muted-foreground py-2 italic">
+            Nenhum contrato encontrado para os dados informados.
+          </div>
         )
       )}
     </section>
@@ -1628,7 +1722,15 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
 }
 
 // ─── ToursGridBlock ────────────────────────────────────────────────────────────
-function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
+function ToursGridBlock({
+  block,
+  agencySlug,
+  handleLinkClick,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+}) {
   const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1672,7 +1774,9 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
           {block.subtitle && <p className="mt-2 text-muted-foreground">{block.subtitle}</p>}
         </div>
       )}
-      <div className={`mt-8${block.layout === "list" ? "flex flex-col gap-4" : "grid gap-6 sm:grid-cols-2 md:grid-cols-3"}`}>
+      <div
+        className={`mt-8${block.layout === "list" ? "flex flex-col gap-4" : "grid gap-6 sm:grid-cols-2 md:grid-cols-3"}`}
+      >
         {tours.map((t) => (
           <Link
             key={t.id}
@@ -1685,7 +1789,9 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
                 : "flex flex-col rounded-2xl hover:-translate-y-1"
             }`}
           >
-            <div className={`relative overflow-hidden shrink-0${block.layout === "list" ? "aspect-video sm:w-60 sm:aspect-[4/3]" : "aspect-video w-full"}`}>
+            <div
+              className={`relative overflow-hidden shrink-0${block.layout === "list" ? "aspect-video sm:w-60 sm:aspect-[4/3]" : "aspect-video w-full"}`}
+            >
               {t.cover_image_url ? (
                 <img
                   src={t.cover_image_url}
@@ -1710,7 +1816,9 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
                   {t.title}
                 </h3>
               </div>
-              <div className={`mt-4 pt-3 border-t border-border/50 flex${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}>
+              <div
+                className={`mt-4 pt-3 border-t border-border/50 flex${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}
+              >
                 <div>
                   <span className="text-[10px] uppercase text-muted-foreground font-bold block">
                     A partir de
@@ -1737,7 +1845,15 @@ function ToursGridBlock({ block, agencySlug, handleLinkClick }: { block: any; ag
 }
 
 // ─── BlogFeedBlock ─────────────────────────────────────────────────────────────
-function BlogFeedBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
+function BlogFeedBlock({
+  block,
+  agencySlug,
+  handleLinkClick,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+}) {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1940,14 +2056,29 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
   );
 }
 
-function ToursCarouselBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
+function ToursCarouselBlock({
+  block,
+  agencySlug,
+  handleLinkClick,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+}) {
   const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
-      const { data: ag } = await supabase.from("agencies").select("id").eq("slug", agencySlug).maybeSingle();
-      if (!ag) { setLoading(false); return; }
+      const { data: ag } = await supabase
+        .from("agencies")
+        .select("id")
+        .eq("slug", agencySlug)
+        .maybeSingle();
+      if (!ag) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("group_tours")
         .select("id, title, destination, departure_date, base_price, cover_image_url")
@@ -1961,7 +2092,10 @@ function ToursCarouselBlock({ block, agencySlug, handleLinkClick }: { block: any
     load();
   }, [agencySlug, block.max_items]);
 
-  if (loading) return <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (tours.length === 0) return null;
 
   return (
@@ -1983,21 +2117,31 @@ function ToursCarouselBlock({ block, agencySlug, handleLinkClick }: { block: any
           >
             <div className="relative aspect-video w-full overflow-hidden shrink-0">
               {t.cover_image_url ? (
-                <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img
+                  src={t.cover_image_url}
+                  alt={t.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               ) : (
                 <div className="h-full w-full bg-surface-alt" />
               )}
               <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-[10px] font-bold backdrop-blur-sm">
-                {t.departure_date ? new Date(t.departure_date).toLocaleDateString("pt-BR") : "A Confirmar"}
+                {t.departure_date
+                  ? new Date(t.departure_date).toLocaleDateString("pt-BR")
+                  : "A Confirmar"}
               </div>
             </div>
             <div className="p-4 flex flex-col justify-between flex-1 min-h-[110px]">
               <div>
-                <h3 className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-brand transition-colors">{t.title}</h3>
+                <h3 className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-brand transition-colors">
+                  {t.title}
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.destination}</p>
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-2 shrink-0">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">A partir de</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                  A partir de
+                </span>
                 <span className="text-sm font-extrabold text-brand">
                   {t.base_price ? `R$ ${t.base_price.toLocaleString("pt-BR")}` : "Sob Consulta"}
                 </span>
@@ -2010,7 +2154,15 @@ function ToursCarouselBlock({ block, agencySlug, handleLinkClick }: { block: any
   );
 }
 
-function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
+function FeaturedDestinationFilterBlock({
+  block,
+  agencySlug,
+  handleLinkClick,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+}) {
   const [tours, setTours] = useState<any[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("all");
@@ -2018,8 +2170,15 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
 
   useEffect(() => {
     async function load() {
-      const { data: ag } = await supabase.from("agencies").select("id").eq("slug", agencySlug).maybeSingle();
-      if (!ag) { setLoading(false); return; }
+      const { data: ag } = await supabase
+        .from("agencies")
+        .select("id")
+        .eq("slug", agencySlug)
+        .maybeSingle();
+      if (!ag) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("group_tours")
         .select("id, title, destination, departure_date, base_price, cover_image_url")
@@ -2028,7 +2187,11 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
         .order("departure_date", { ascending: true });
       if (data) {
         setTours(data);
-        const unique = Array.from(new Set(data.map(t => t.destination?.split(",")[0]?.trim()).filter((x): x is string => !!x)));
+        const unique = Array.from(
+          new Set(
+            data.map((t) => t.destination?.split(",")[0]?.trim()).filter((x): x is string => !!x),
+          ),
+        );
         setDestinations(unique);
       }
       setLoading(false);
@@ -2036,12 +2199,16 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
     load();
   }, [agencySlug]);
 
-  if (loading) return <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-6xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (tours.length === 0) return null;
 
-  const filtered = selected === "all" 
-    ? tours 
-    : tours.filter(t => t.destination?.toLowerCase().includes(selected.toLowerCase()));
+  const filtered =
+    selected === "all"
+      ? tours
+      : tours.filter((t) => t.destination?.toLowerCase().includes(selected.toLowerCase()));
 
   return (
     <section className="mx-auto max-w-6xl w-full px-4">
@@ -2051,7 +2218,7 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
           {block.subtitle && <p className="mt-2 text-muted-foreground">{block.subtitle}</p>}
         </div>
       )}
-      
+
       <div className="flex flex-wrap items-center justify-center gap-1.5 mb-8">
         <button
           type="button"
@@ -2060,7 +2227,7 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
         >
           Todos
         </button>
-        {destinations.map(dest => (
+        {destinations.map((dest) => (
           <button
             key={dest}
             type="button"
@@ -2083,14 +2250,20 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
           >
             <div className="relative aspect-video w-full overflow-hidden shrink-0">
               {t.cover_image_url ? (
-                <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img
+                  src={t.cover_image_url}
+                  alt={t.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               ) : (
                 <div className="h-full w-full bg-surface-alt" />
               )}
             </div>
             <div className="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-base text-foreground line-clamp-1 group-hover:text-brand transition-colors">{t.title}</h3>
+                <h3 className="font-bold text-base text-foreground line-clamp-1 group-hover:text-brand transition-colors">
+                  {t.title}
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1">{t.destination}</p>
               </div>
               <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
@@ -2098,7 +2271,9 @@ function FeaturedDestinationFilterBlock({ block, agencySlug, handleLinkClick }: 
                   {t.base_price ? `R$ ${t.base_price.toLocaleString("pt-BR")}` : "Sob Consulta"}
                 </span>
                 <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                  {t.departure_date ? new Date(t.departure_date).toLocaleDateString("pt-BR") : "A Confirmar"}
+                  {t.departure_date
+                    ? new Date(t.departure_date).toLocaleDateString("pt-BR")
+                    : "A Confirmar"}
                 </span>
               </div>
             </div>
@@ -2115,25 +2290,31 @@ function TeamWidgetBlock({ block, agencyId }: { block: any; agencyId?: string })
 
   useEffect(() => {
     async function load() {
-      if (!agencyId) { setLoading(false); return; }
+      if (!agencyId) {
+        setLoading(false);
+        return;
+      }
       const { data: roles } = await supabase
         .from("user_roles")
         .select("user_id, role")
         .eq("agency_id", agencyId);
-      
+
       if (roles && roles.length > 0) {
-        const userIds = roles.map(r => r.user_id);
+        const userIds = roles.map((r) => r.user_id);
         const { data: profiles } = await supabase
           .from("profiles")
           .select("id, full_name, avatar_url")
           .in("id", userIds);
-        
+
         if (profiles) {
-          const teamWithRoles = profiles.map(p => {
-            const roleInfo = roles.find(r => r.user_id === p.id);
+          const teamWithRoles = profiles.map((p) => {
+            const roleInfo = roles.find((r) => r.user_id === p.id);
             return {
               ...p,
-              role: roleInfo?.role === "agency_admin" ? "Diretor / Proprietário" : "Consultor de Viagens"
+              role:
+                roleInfo?.role === "agency_admin"
+                  ? "Diretor / Proprietário"
+                  : "Consultor de Viagens",
             };
           });
           setTeam(teamWithRoles);
@@ -2144,7 +2325,10 @@ function TeamWidgetBlock({ block, agencyId }: { block: any; agencyId?: string })
     load();
   }, [agencyId]);
 
-  if (loading) return <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (team.length === 0) return null;
 
   return (
@@ -2157,9 +2341,16 @@ function TeamWidgetBlock({ block, agencyId }: { block: any; agencyId?: string })
       )}
       <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
         {team.map((member) => (
-          <div key={member.id} className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50">
+          <div
+            key={member.id}
+            className="flex flex-col items-center text-center p-6 rounded-2xl bg-surface border border-border/50"
+          >
             {member.avatar_url ? (
-              <img src={member.avatar_url} alt={member.full_name} className="w-20 h-20 rounded-full object-cover mb-4 border-2 border-border" />
+              <img
+                src={member.avatar_url}
+                alt={member.full_name}
+                className="w-20 h-20 rounded-full object-cover mb-4 border-2 border-border"
+              />
             ) : (
               <div className="w-20 h-20 rounded-full bg-brand/10 text-brand text-2xl font-bold flex items-center justify-center mb-4">
                 {member.full_name?.charAt(0) || "?"}
@@ -2180,7 +2371,10 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
 
   useEffect(() => {
     async function load() {
-      if (!agencyId) { setLoading(false); return; }
+      if (!agencyId) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("agency_reviews" as any)
         .select("*")
@@ -2193,11 +2387,26 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
     load();
   }, [agencyId]);
 
-  if (loading) return <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (reviews.length === 0) {
     const mockReviews = [
-      { author_name: "Gabriela Abreu", author_role: "Viajou para o Nordeste", review_text: "Excelente atendimento! Tudo muito bem organizado e conforme combinado. Recomendo de olhos fechados.", stars: 5 },
-      { author_name: "Luciano Costa", author_role: "Viagem de Lua de Mel", review_text: "Incrível! Nossa viagem para a Europa foi inesquecível. Suporte perfeito durante todo o tempo.", stars: 5 }
+      {
+        author_name: "Gabriela Abreu",
+        author_role: "Viajou para o Nordeste",
+        review_text:
+          "Excelente atendimento! Tudo muito bem organizado e conforme combinado. Recomendo de olhos fechados.",
+        stars: 5,
+      },
+      {
+        author_name: "Luciano Costa",
+        author_role: "Viagem de Lua de Mel",
+        review_text:
+          "Incrível! Nossa viagem para a Europa foi inesquecível. Suporte perfeito durante todo o tempo.",
+        stars: 5,
+      },
     ];
     return (
       <section className="mx-auto max-w-5xl w-full px-4">
@@ -2209,7 +2418,10 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
         )}
         <div className="grid gap-6 md:grid-cols-2">
           {mockReviews.map((r, i) => (
-            <div key={i} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative">
+            <div
+              key={i}
+              className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative"
+            >
               <Quote className="absolute top-4 right-4 w-8 h-8 opacity-5 text-muted-foreground" />
               <div className="flex gap-1 mb-3">
                 {Array.from({ length: r.stars }).map((_, idx) => (
@@ -2238,7 +2450,10 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
       )}
       <div className="grid gap-6 md:grid-cols-2">
         {reviews.map((r) => (
-          <div key={r.id} className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative">
+          <div
+            key={r.id}
+            className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative"
+          >
             <Quote className="absolute top-4 right-4 w-8 h-8 opacity-5 text-muted-foreground" />
             <div className="flex gap-1 mb-3">
               {Array.from({ length: r.stars }).map((_, idx) => (
@@ -2248,7 +2463,11 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
             <p className="text-sm text-foreground flex-1 italic mb-4">"{r.review_text}"</p>
             <div className="flex items-center gap-3">
               {r.avatar_url ? (
-                <img src={r.avatar_url} alt={r.author_name} className="w-8 h-8 rounded-full object-cover" />
+                <img
+                  src={r.avatar_url}
+                  alt={r.author_name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-brand/10 text-brand text-xs font-bold flex items-center justify-center">
                   {r.author_name?.charAt(0) || "?"}
@@ -2256,7 +2475,9 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
               )}
               <div>
                 <h4 className="font-bold text-xs text-foreground">{r.author_name}</h4>
-                {r.author_role && <p className="text-[10px] text-muted-foreground mt-0.5">{r.author_role}</p>}
+                {r.author_role && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{r.author_role}</p>
+                )}
               </div>
             </div>
           </div>
@@ -2266,12 +2487,20 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
   );
 }
 
-function WhatsappDepartmentsBlock({ block, handleLinkClick }: { block: any; handleLinkClick: (url: string) => void }) {
+function WhatsappDepartmentsBlock({
+  block,
+  handleLinkClick,
+}: {
+  block: any;
+  handleLinkClick: (url: string) => void;
+}) {
   const departments = block.departments || [];
   return (
     <section className="mx-auto max-w-md w-full px-4 pb-8 space-y-3">
       {block.title && (
-        <h3 className="text-sm font-semibold text-center text-muted-foreground uppercase tracking-wider mb-2">{block.title}</h3>
+        <h3 className="text-sm font-semibold text-center text-muted-foreground uppercase tracking-wider mb-2">
+          {block.title}
+        </h3>
       )}
       {departments.map((dept: any, idx: number) => {
         const whatsappUrl = `https://wa.me/${dept.phone.replace(/\D/g, "")}?text=${encodeURIComponent(dept.message || "")}`;
@@ -2288,7 +2517,9 @@ function WhatsappDepartmentsBlock({ block, handleLinkClick }: { block: any; hand
               {renderIconByName(dept.icon || "chat", "h-5 w-5")}
             </div>
             <div className="flex-1 text-left">
-              <h4 className="font-bold text-sm text-foreground group-hover:text-brand transition-colors">{dept.name}</h4>
+              <h4 className="font-bold text-sm text-foreground group-hover:text-brand transition-colors">
+                {dept.name}
+              </h4>
               <p className="text-xs text-muted-foreground mt-0.5">{dept.phone}</p>
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground shrink-0 transition-transform group-hover:translate-x-0.5" />
@@ -2299,14 +2530,25 @@ function WhatsappDepartmentsBlock({ block, handleLinkClick }: { block: any; hand
   );
 }
 
-function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any; agencySlug: string; handleLinkClick: (url: string) => void }) {
+function CountdownTourBlock({
+  block,
+  agencySlug,
+  handleLinkClick,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+}) {
   const [tour, setTour] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
     async function load() {
-      if (!block.tour_id) { setLoading(false); return; }
+      if (!block.tour_id) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("group_tours")
         .select("id, title, departure_date, cover_image_url")
@@ -2344,14 +2586,19 @@ function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any
     return () => clearInterval(interval);
   }, [tour]);
 
-  if (loading) return <div className="mx-auto max-w-lg w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-lg w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
   if (!tour) return null;
 
   return (
     <section className="mx-auto max-w-lg w-full px-4">
       <div className="relative overflow-hidden rounded-3xl border border-border bg-surface p-6 md:p-8 flex flex-col items-center text-center gap-5">
         <div className="space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-brand">{block.title || "Últimas Vagas!"}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+            {block.title || "Últimas Vagas!"}
+          </span>
           <h3 className="font-bold text-lg text-foreground">{tour.title}</h3>
           {block.subtitle && <p className="text-xs text-muted-foreground">{block.subtitle}</p>}
         </div>
@@ -2363,9 +2610,14 @@ function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any
             { label: "Min", value: timeLeft.minutes },
             { label: "Seg", value: timeLeft.seconds },
           ].map((t, idx) => (
-            <div key={idx} className="flex flex-col items-center bg-surface-alt/60 border border-border/50 rounded-xl px-3 py-2 min-w-[56px]">
+            <div
+              key={idx}
+              className="flex flex-col items-center bg-surface-alt/60 border border-border/50 rounded-xl px-3 py-2 min-w-[56px]"
+            >
               <span className="text-xl font-black text-brand tabular-nums">{t.value}</span>
-              <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground mt-0.5">{t.label}</span>
+              <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground mt-0.5">
+                {t.label}
+              </span>
             </div>
           ))}
         </div>
@@ -2383,15 +2635,26 @@ function CountdownTourBlock({ block, agencySlug, handleLinkClick }: { block: any
   );
 }
 
-function SocialLinksRowBlock({ block, handleLinkClick }: { block: any; handleLinkClick: (url: string) => void }) {
+function SocialLinksRowBlock({
+  block,
+  handleLinkClick,
+}: {
+  block: any;
+  handleLinkClick: (url: string) => void;
+}) {
   const links = [
     { key: "instagram", url: block.instagram, icon: Instagram, label: "Instagram" },
     { key: "facebook", url: block.facebook, icon: Facebook, label: "Facebook" },
     { key: "youtube", url: block.youtube, icon: Youtube, label: "YouTube" },
-    { key: "whatsapp", url: block.whatsapp ? `https://wa.me/${block.whatsapp.replace(/\D/g, "")}` : undefined, icon: Phone, label: "WhatsApp" },
+    {
+      key: "whatsapp",
+      url: block.whatsapp ? `https://wa.me/${block.whatsapp.replace(/\D/g, "")}` : undefined,
+      icon: Phone,
+      label: "WhatsApp",
+    },
     { key: "linkedin", url: block.linkedin, icon: Linkedin, label: "LinkedIn" },
-    { key: "tiktok", url: block.tiktok, icon: Globe, label: "TikTok" }
-  ].filter(l => l.url);
+    { key: "tiktok", url: block.tiktok, icon: Globe, label: "TikTok" },
+  ].filter((l) => l.url);
 
   if (links.length === 0) return null;
 
@@ -2424,21 +2687,28 @@ function ExchangeRatesBlock({ block }: { block: any }) {
     USD: "Dólar Comercial",
     EUR: "Euro Comercial",
     GBP: "Libra Esterlina",
-    ARS: "Peso Argentino"
+    ARS: "Peso Argentino",
   };
 
   return (
     <section className="mx-auto max-w-md w-full px-4">
       <div className="p-5 rounded-2xl border border-border bg-surface">
-        <h3 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">{block.title || "Cotação Turismo Sugerida"}</h3>
+        <h3 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">
+          {block.title || "Cotação Turismo Sugerida"}
+        </h3>
         <div className="divide-y divide-border/50">
           {currencies.map((cur: string) => (
-            <div key={cur} className="flex justify-between items-center py-2.5 first:pt-0 last:pb-0">
+            <div
+              key={cur}
+              className="flex justify-between items-center py-2.5 first:pt-0 last:pb-0"
+            >
               <div className="flex items-center gap-2">
                 <div className="h-6 w-10 rounded bg-surface-alt/80 flex items-center justify-center font-bold text-[10px] text-muted-foreground tracking-wider font-mono">
                   {cur}
                 </div>
-                <span className="text-xs text-muted-foreground font-medium">{names[cur] || cur}</span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {names[cur] || cur}
+                </span>
               </div>
               <span className="text-sm font-extrabold text-foreground">
                 {rates[cur] ? `R$ ${rates[cur].toFixed(3)}` : "—"}
@@ -2457,7 +2727,10 @@ function DynamicMapRouteBlock({ block, agencySlug }: { block: any; agencySlug: s
 
   useEffect(() => {
     async function load() {
-      if (!block.tour_id) { setLoading(false); return; }
+      if (!block.tour_id) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("group_tours")
         .select("id, title, destination")
@@ -2469,7 +2742,10 @@ function DynamicMapRouteBlock({ block, agencySlug }: { block: any; agencySlug: s
     load();
   }, [block.tour_id]);
 
-  if (loading) return <div className="mx-auto max-w-4xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-4xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
+    );
 
   const locationQuery = tour?.destination || "Chapecó, SC, Brasil";
   const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(locationQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
@@ -2493,7 +2769,13 @@ function DynamicMapRouteBlock({ block, agencySlug }: { block: any; agencySlug: s
 }
 
 // ─── AGENCY VOUCHERS BLOCK ──────────────────────────────────────────────────
-function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLinkClick: (url: string) => void }) {
+function AgencyVouchersBlock({
+  block,
+  handleLinkClick,
+}: {
+  block: any;
+  handleLinkClick: (url: string) => void;
+}) {
   const [email, setEmail] = useState("");
   const [document, setDocument] = useState("");
   const [loading, setLoading] = useState(false);
@@ -2507,7 +2789,8 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
     try {
       const { data, error } = await supabase
         .from("group_bookings")
-        .select(`
+        .select(
+          `
           id,
           lead_name,
           total_amount,
@@ -2518,9 +2801,10 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
             departure_date,
             cover_image_url
           )
-        `)
+        `,
+        )
         .or(`lead_email.eq.${email.trim()},lead_cpf.eq.${document.trim()}`);
-      
+
       if (error) throw error;
       setVouchers(data || []);
       setSearched(true);
@@ -2534,9 +2818,13 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
   return (
     <div className="mx-auto max-w-md w-full px-4 py-4">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h3 className="text-sm font-bold text-foreground mb-1 uppercase tracking-wider text-center">{block.title || "Vouchers de Viagem"}</h3>
-        <p className="text-xs text-muted-foreground text-center mb-4">Consulte seus bilhetes e vouchers emitidos em tempo real.</p>
-        
+        <h3 className="text-sm font-bold text-foreground mb-1 uppercase tracking-wider text-center">
+          {block.title || "Vouchers de Viagem"}
+        </h3>
+        <p className="text-xs text-muted-foreground text-center mb-4">
+          Consulte seus bilhetes e vouchers emitidos em tempo real.
+        </p>
+
         {!searched ? (
           <form onSubmit={handleSearch} className="space-y-3">
             <input
@@ -2566,21 +2854,37 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
         ) : (
           <div className="space-y-3">
             {vouchers.length === 0 ? (
-              <p className="text-xs text-center text-muted-foreground italic py-4">Nenhum voucher ativo encontrado para estes dados.</p>
+              <p className="text-xs text-center text-muted-foreground italic py-4">
+                Nenhum voucher ativo encontrado para estes dados.
+              </p>
             ) : (
               vouchers.map((v) => (
-                <div key={v.id} className="p-4 rounded-2xl border border-dashed border-border bg-surface-alt/50 relative overflow-hidden">
+                <div
+                  key={v.id}
+                  className="p-4 rounded-2xl border border-dashed border-border bg-surface-alt/50 relative overflow-hidden"
+                >
                   <div className="absolute -right-4 -top-4 w-12 h-12 rounded-full border border-dashed border-border" />
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">
                       {v.status || "Confirmado"}
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground">ID: #{v.id.slice(0, 6)}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground">
+                      ID: #{v.id.slice(0, 6)}
+                    </span>
                   </div>
-                  <h4 className="font-bold text-xs text-foreground line-clamp-1">{v.group_trips?.title}</h4>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{v.group_trips?.destination}</p>
+                  <h4 className="font-bold text-xs text-foreground line-clamp-1">
+                    {v.group_trips?.title}
+                  </h4>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    {v.group_trips?.destination}
+                  </p>
                   <div className="mt-3 pt-2 border-t border-border/50 flex justify-between items-center text-[10px] text-muted-foreground">
-                    <span>Partida: {v.group_trips?.departure_date ? new Date(v.group_trips.departure_date).toLocaleDateString("pt-BR") : "A Confirmar"}</span>
+                    <span>
+                      Partida:{" "}
+                      {v.group_trips?.departure_date
+                        ? new Date(v.group_trips.departure_date).toLocaleDateString("pt-BR")
+                        : "A Confirmar"}
+                    </span>
                     <span className="font-bold text-brand uppercase">Voucher Pronto</span>
                   </div>
                 </div>
@@ -2602,7 +2906,7 @@ function AgencyVouchersBlock({ block, handleLinkClick }: { block: any; handleLin
 // ─── WEATHER FORECAST BLOCK ────────────────────────────────────────────────
 function WeatherForecastBlock({ block }: { block: any }) {
   const [city, setCity] = useState(block.city || "Chapecó, SC");
-  
+
   useEffect(() => {
     async function load() {
       if (!block.tour_id) return;
@@ -2621,21 +2925,28 @@ function WeatherForecastBlock({ block }: { block: any }) {
   const forecast = [
     { temp: 26, condition: "Sol com nuvens" },
     { temp: 24, condition: "Parcialmente Nublado" },
-    { temp: 28, condition: "Céu Limpo" }
+    { temp: 28, condition: "Céu Limpo" },
   ];
 
   return (
     <div className="mx-auto max-w-md w-full px-4">
       <div className="p-5 rounded-2xl border border-border bg-gradient-to-br from-surface to-surface-alt/30 flex items-center justify-between">
         <div className="text-left">
-          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Previsão Climática</span>
+          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+            Previsão Climática
+          </span>
           <h4 className="font-bold text-base text-foreground mt-0.5">{city}</h4>
           <span className="text-xs text-muted-foreground">{forecast[0].condition}</span>
         </div>
         <div className="flex gap-2">
           {forecast.map((f, idx) => (
-            <div key={idx} className="flex flex-col items-center bg-surface border border-border/40 rounded-xl p-2 min-w-[56px]">
-              <span className="text-[10px] text-muted-foreground font-semibold">{idx === 0 ? "Hoje" : idx === 1 ? "Amanhã" : "Depois"}</span>
+            <div
+              key={idx}
+              className="flex flex-col items-center bg-surface border border-border/40 rounded-xl p-2 min-w-[56px]"
+            >
+              <span className="text-[10px] text-muted-foreground font-semibold">
+                {idx === 0 ? "Hoje" : idx === 1 ? "Amanhã" : "Depois"}
+              </span>
               <span className="text-lg font-black text-brand leading-tight mt-1">{f.temp}°</span>
               <span className="text-[8px] text-muted-foreground mt-0.5">Cº</span>
             </div>
@@ -2653,13 +2964,16 @@ function ItineraryTimelineBlock({ block }: { block: any }) {
 
   useEffect(() => {
     async function load() {
-      if (!block.tour_id) { setLoading(false); return; }
+      if (!block.tour_id) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("group_tours")
         .select("itinerary")
         .eq("id", block.tour_id)
         .maybeSingle();
-      
+
       if (data?.itinerary && Array.isArray(data.itinerary)) {
         setItinerary(data.itinerary);
       }
@@ -2668,7 +2982,10 @@ function ItineraryTimelineBlock({ block }: { block: any }) {
     load();
   }, [block.tour_id]);
 
-  if (loading) return <div className="mx-auto max-w-lg w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-lg w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />
+    );
   if (itinerary.length === 0) {
     return (
       <div className="mx-auto max-w-lg p-6 border border-dashed border-border rounded-2xl text-center text-xs text-muted-foreground bg-surface-alt/10">
@@ -2679,15 +2996,25 @@ function ItineraryTimelineBlock({ block }: { block: any }) {
 
   return (
     <div className="mx-auto max-w-xl w-full px-4 text-left">
-      {block.title && <h3 className="text-sm font-bold text-foreground mb-6 uppercase tracking-wider text-center">{block.title}</h3>}
+      {block.title && (
+        <h3 className="text-sm font-bold text-foreground mb-6 uppercase tracking-wider text-center">
+          {block.title}
+        </h3>
+      )}
       <div className="relative pl-6 border-l border-border/80 space-y-6">
         {itinerary.map((day: any, idx: number) => (
           <div key={idx} className="relative">
             <div className="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand border-4 border-background flex items-center justify-center" />
             <div>
-              <span className="text-[10px] font-bold text-brand uppercase tracking-wider">Dia {day.day || idx + 1}</span>
-              <h4 className="font-bold text-sm text-foreground mt-0.5">{day.title || `Atividades do dia`}</h4>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{day.description || `Programação livre`}</p>
+              <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
+                Dia {day.day || idx + 1}
+              </span>
+              <h4 className="font-bold text-sm text-foreground mt-0.5">
+                {day.title || `Atividades do dia`}
+              </h4>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                {day.description || `Programação livre`}
+              </p>
             </div>
           </div>
         ))}
@@ -2740,8 +3067,10 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
           <Phone className="h-5 w-5" />
         </div>
         <h4 className="font-bold text-sm text-foreground">{block.title || "Queremos te ligar!"}</h4>
-        <p className="text-xs text-muted-foreground max-w-xs">{block.subtitle || "Deixe seu número e retornaremos em até 15 minutos."}</p>
-        
+        <p className="text-xs text-muted-foreground max-w-xs">
+          {block.subtitle || "Deixe seu número e retornaremos em até 15 minutos."}
+        </p>
+
         {done ? (
           <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold py-2 bg-emerald-500/10 px-4 rounded-xl border border-emerald-500/20">
             Tudo pronto! Entraremos em contato em breve.
@@ -2792,20 +3121,26 @@ function PromotionalBannerBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4">
       <div className="relative overflow-hidden rounded-3xl border border-brand/30 bg-gradient-to-r from-brand/10 to-indigo-500/10 p-6 text-center flex flex-col items-center gap-3">
-        <h4 className="font-bold text-sm text-foreground">{block.title || "Aproveite esta oferta!"}</h4>
-        
+        <h4 className="font-bold text-sm text-foreground">
+          {block.title || "Aproveite esta oferta!"}
+        </h4>
+
         <div
           onClick={handleCopy}
           className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-surface border border-dashed border-brand cursor-pointer hover:bg-brand/5 active:scale-95 transition-all"
         >
-          <span className="font-mono font-black text-sm tracking-widest text-brand">{block.discount_code || "BEMVINDO10"}</span>
+          <span className="font-mono font-black text-sm tracking-widest text-brand">
+            {block.discount_code || "BEMVINDO10"}
+          </span>
           <span className="text-[10px] font-bold text-muted-foreground uppercase border-l border-border pl-3">
             {copied ? "Copiado!" : "Copiar"}
           </span>
         </div>
-        
+
         {block.expiration_date && (
-          <span className="text-[9px] text-muted-foreground">Válido até: {new Date(block.expiration_date).toLocaleDateString("pt-BR")}</span>
+          <span className="text-[9px] text-muted-foreground">
+            Válido até: {new Date(block.expiration_date).toLocaleDateString("pt-BR")}
+          </span>
         )}
       </div>
     </div>
@@ -2817,8 +3152,10 @@ function PaymentGatewaysDisplayBlock({ block, agencyId }: { block: any; agencyId
   return (
     <div className="mx-auto max-w-md w-full px-4">
       <div className="p-5 rounded-2xl border border-border bg-surface text-center">
-        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">{block.title || "Formas de Pagamento Aceitas"}</h4>
-        
+        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+          {block.title || "Formas de Pagamento Aceitas"}
+        </h4>
+
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-muted-foreground">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-alt border border-border/40">
             <Coins className="h-4 w-4 text-brand" /> Pix com desconto
@@ -2842,7 +3179,10 @@ function AgentProfileCardBlock({ block, agencyId }: { block: any; agencyId?: str
 
   useEffect(() => {
     async function load() {
-      if (!block.agent_id) { setLoading(false); return; }
+      if (!block.agent_id) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("profiles")
         .select("id, full_name, avatar_url")
@@ -2854,7 +3194,10 @@ function AgentProfileCardBlock({ block, agencyId }: { block: any; agencyId?: str
     load();
   }, [block.agent_id]);
 
-  if (loading) return <div className="mx-auto max-w-md w-full h-24 animate-pulse bg-surface-alt rounded-2xl" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-md w-full h-24 animate-pulse bg-surface-alt rounded-2xl" />
+    );
   if (!agent) {
     return (
       <div className="mx-auto max-w-md p-6 border border-dashed border-border rounded-2xl text-center text-xs text-muted-foreground bg-surface-alt/10">
@@ -2867,14 +3210,20 @@ function AgentProfileCardBlock({ block, agencyId }: { block: any; agencyId?: str
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-4 rounded-3xl border border-border bg-surface flex items-center gap-4">
         {agent.avatar_url ? (
-          <img src={agent.avatar_url} alt={agent.full_name} className="w-16 h-16 rounded-full object-cover border-2 border-border shrink-0" />
+          <img
+            src={agent.avatar_url}
+            alt={agent.full_name}
+            className="w-16 h-16 rounded-full object-cover border-2 border-border shrink-0"
+          />
         ) : (
           <div className="w-16 h-16 rounded-full bg-brand/10 text-brand text-2xl font-bold flex items-center justify-center shrink-0">
             {agent.full_name?.charAt(0) || "?"}
           </div>
         )}
         <div className="flex-1">
-          <span className="text-[10px] font-bold text-brand uppercase tracking-wider">Seu Especialista</span>
+          <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
+            Seu Especialista
+          </span>
           <h4 className="font-bold text-sm text-foreground mt-0.5">{agent.full_name}</h4>
           <a
             href="#contato"
@@ -2895,7 +3244,10 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
 
   useEffect(() => {
     async function load() {
-      if (!agencyId) { setLoading(false); return; }
+      if (!agencyId) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from("knowledge_articles" as any)
         .select("id, title, content")
@@ -2908,23 +3260,41 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
     load();
   }, [agencyId]);
 
-  if (loading) return <div className="mx-auto max-w-md w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-md w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />
+    );
   if (articles.length === 0) {
     const defaultTips = [
-      { title: "Qual é o peso da mala de bordo?", content: "O limite padrão da mala de bordo para voos nacionais é de 10 kg, respeitando as medidas da companhia." },
-      { title: "Preciso de vacina de febre amarela?", content: "Para vários países da América do Sul e Caribe é obrigatória a vacinação com o Certificado Internacional." }
+      {
+        title: "Qual é o peso da mala de bordo?",
+        content:
+          "O limite padrão da mala de bordo para voos nacionais é de 10 kg, respeitando as medidas da companhia.",
+      },
+      {
+        title: "Preciso de vacina de febre amarela?",
+        content:
+          "Para vários países da América do Sul e Caribe é obrigatória a vacinação com o Certificado Internacional.",
+      },
     ];
     return (
       <div className="mx-auto max-w-md w-full px-4 text-left">
-        <h4 className="text-xs font-bold text-foreground mb-3 uppercase tracking-wider text-center">Dicas Úteis de Viagem</h4>
+        <h4 className="text-xs font-bold text-foreground mb-3 uppercase tracking-wider text-center">
+          Dicas Úteis de Viagem
+        </h4>
         <div className="space-y-3">
           {defaultTips.map((tip, idx) => (
-            <details key={idx} className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer">
+            <details
+              key={idx}
+              className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer"
+            >
               <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
                 {tip.title}
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
               </summary>
-              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">{tip.content}</p>
+              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                {tip.content}
+              </p>
             </details>
           ))}
         </div>
@@ -2934,15 +3304,22 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
-      <h4 className="text-xs font-bold text-foreground mb-3 uppercase tracking-wider text-center">Dicas Úteis de Viagem</h4>
+      <h4 className="text-xs font-bold text-foreground mb-3 uppercase tracking-wider text-center">
+        Dicas Úteis de Viagem
+      </h4>
       <div className="space-y-3">
         {articles.map((art) => (
-          <details key={art.id} className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer">
+          <details
+            key={art.id}
+            className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer"
+          >
             <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
               {art.title}
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
             </summary>
-            <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">{art.content?.replace(/<[^>]*>/g, "")}</p>
+            <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+              {art.content?.replace(/<[^>]*>/g, "")}
+            </p>
           </details>
         ))}
       </div>
@@ -2953,10 +3330,14 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
 // ─── LIVE TOURS MAP BLOCK ──────────────────────────────────────────────────
 function LiveToursMapBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
   const [dest, setDest] = useState("Chapecó, SC");
-  
+
   useEffect(() => {
     async function load() {
-      const { data: ag } = await supabase.from("agencies").select("id").eq("slug", agencySlug).maybeSingle();
+      const { data: ag } = await supabase
+        .from("agencies")
+        .select("id")
+        .eq("slug", agencySlug)
+        .maybeSingle();
       if (!ag) return;
       const { data } = await supabase
         .from("group_tours")
@@ -2976,7 +3357,9 @@ function LiveToursMapBlock({ block, agencySlug }: { block: any; agencySlug: stri
 
   return (
     <div className="mx-auto max-w-xl w-full px-4 text-center">
-      <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider">Grupos Confirmados em Trânsito</h4>
+      <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider">
+        Grupos Confirmados em Trânsito
+      </h4>
       <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-border bg-surface-alt">
         <iframe
           src={embedUrl}
@@ -3003,8 +3386,12 @@ function GiftCardsStoreBlock({ block, agencySlug }: { block: any; agencySlug: st
         <div className="h-10 w-10 rounded-full bg-brand/15 text-brand flex items-center justify-center">
           <Gift className="h-5 w-5" />
         </div>
-        <h4 className="font-bold text-sm text-foreground">{block.title || "Vale-Viagem Personalizado"}</h4>
-        <p className="text-xs text-muted-foreground max-w-xs">{block.subtitle || "Presenteie quem você ama com experiências e memórias incríveis."}</p>
+        <h4 className="font-bold text-sm text-foreground">
+          {block.title || "Vale-Viagem Personalizado"}
+        </h4>
+        <p className="text-xs text-muted-foreground max-w-xs">
+          {block.subtitle || "Presenteie quem você ama com experiências e memórias incríveis."}
+        </p>
         <button
           onClick={handleGiftClick}
           className="mt-2 h-10 px-5 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
@@ -3018,7 +3405,16 @@ function GiftCardsStoreBlock({ block, agencySlug }: { block: any; agencySlug: st
 
 // ─── CORPORATE RFP FORM BLOCK ──────────────────────────────────────────────
 function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: string }) {
-  const [f, setF] = useState({ company_name: "", cnpj: "", requester_name: "", email: "", phone: "", destination: "", pax_count: 5, details: "" });
+  const [f, setF] = useState({
+    company_name: "",
+    cnpj: "",
+    requester_name: "",
+    email: "",
+    phone: "",
+    destination: "",
+    pax_count: 5,
+    details: "",
+  });
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -3026,22 +3422,24 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
     e.preventDefault();
     setBusy(true);
     try {
-      const { data: agency } = await supabase.from("agencies").select("id").eq("slug", agencySlug).maybeSingle();
+      const { data: agency } = await supabase
+        .from("agencies")
+        .select("id")
+        .eq("slug", agencySlug)
+        .maybeSingle();
       if (!agency) throw new Error("Agência não localizada");
 
-      const { error } = await supabase
-        .from("corporate_rfps" as any)
-        .insert({
-          agency_id: agency.id,
-          company_name: f.company_name,
-          cnpj: f.cnpj,
-          requester_name: f.requester_name,
-          email: f.email,
-          phone: f.phone,
-          destination: f.destination,
-          pax_count: Number(f.pax_count) || 5,
-          details: f.details
-        });
+      const { error } = await supabase.from("corporate_rfps" as any).insert({
+        agency_id: agency.id,
+        company_name: f.company_name,
+        cnpj: f.cnpj,
+        requester_name: f.requester_name,
+        email: f.email,
+        phone: f.phone,
+        destination: f.destination,
+        pax_count: Number(f.pax_count) || 5,
+        details: f.details,
+      });
 
       if (error) throw error;
       setDone(true);
@@ -3056,14 +3454,20 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Solicitação de RFP Corporativa"}</h4>
-        <p className="text-xs text-muted-foreground text-center mb-5">{block.subtitle || "Preencha a demanda da sua empresa e entraremos em contato."}</p>
-        
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Solicitação de RFP Corporativa"}
+        </h4>
+        <p className="text-xs text-muted-foreground text-center mb-5">
+          {block.subtitle || "Preencha a demanda da sua empresa e entraremos em contato."}
+        </p>
+
         {done ? (
           <div className="text-center py-6 flex flex-col items-center justify-center">
             <CheckCircle2 className="h-10 w-10 text-emerald-500 mb-2" />
             <h5 className="font-bold text-xs text-foreground">Solicitação Enviada!</h5>
-            <p className="text-[10px] text-muted-foreground mt-1 max-w-xs text-center">Nossos consultores B2B entrarão em contato em horário comercial.</p>
+            <p className="text-[10px] text-muted-foreground mt-1 max-w-xs text-center">
+              Nossos consultores B2B entrarão em contato em horário comercial.
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -3156,19 +3560,17 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
         .select("id")
         .eq("document", clientCpf.trim())
         .limit(1);
-      
+
       const clientId = clients?.[0]?.id;
 
-      const { error } = await supabase
-        .from("client_documents" as any)
-        .insert({
-          client_id: clientId || null,
-          agency_id: agencyId,
-          document_type: block.document_type || "RG",
-          document_number: clientCpf.trim(),
-          file_url: fileUrl || "https://placeholder-doc-url.pdf",
-          status: "pending_verification"
-        });
+      const { error } = await supabase.from("client_documents" as any).insert({
+        client_id: clientId || null,
+        agency_id: agencyId,
+        document_type: block.document_type || "RG",
+        document_number: clientCpf.trim(),
+        file_url: fileUrl || "https://placeholder-doc-url.pdf",
+        status: "pending_verification",
+      });
 
       if (error) throw error;
       setDone(true);
@@ -3184,8 +3586,12 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface space-y-4">
         <div>
-          <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Envio de Documento de Embarque"}</h4>
-          <p className="text-[11px] text-muted-foreground text-center leading-normal">{block.instructions || "Envie seus dados para a emissão dos vouchers."}</p>
+          <h4 className="font-bold text-sm text-foreground text-center mb-1">
+            {block.title || "Envio de Documento de Embarque"}
+          </h4>
+          <p className="text-[11px] text-muted-foreground text-center leading-normal">
+            {block.instructions || "Envie seus dados para a emissão dos vouchers."}
+          </p>
         </div>
 
         {done ? (
@@ -3211,7 +3617,9 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
               className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Link da foto do documento</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Link da foto do documento
+              </label>
               <input
                 type="text"
                 required
@@ -3279,7 +3687,10 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
           Inscrito com sucesso! Obrigado.
         </div>
       ) : (
-        <form onSubmit={handleSub} className="flex gap-1.5 w-full bg-surface border border-border p-1 rounded-2xl">
+        <form
+          onSubmit={handleSub}
+          className="flex gap-1.5 w-full bg-surface border border-border p-1 rounded-2xl"
+        >
           <input
             type="email"
             required
@@ -3293,7 +3704,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
             disabled={busy}
             className="h-9 px-4 rounded-xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
-            {busy ? "Salvando..." : (block.button_label || "Inscrever")}
+            {busy ? "Salvando..." : block.button_label || "Inscrever"}
           </button>
         </form>
       )}
@@ -3310,21 +3721,25 @@ function LiveSalesCounterBlock({ block, agencyId }: { block: any; agencyId?: str
       if (!agencyId) return;
       const { data } = await supabase
         .from("group_bookings")
-        .select(`
+        .select(
+          `
           id,
           lead_name,
           created_at,
           group_trips (
             title
           )
-        `)
+        `,
+        )
         .eq("status", "confirmed")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
       if (data && data.group_trips) {
-        setSalesMsg(`${data.lead_name?.split(" ")[0]} reservou ${data.group_trips.title} recentemente!`);
+        setSalesMsg(
+          `${data.lead_name?.split(" ")[0]} reservou ${data.group_trips.title} recentemente!`,
+        );
       } else {
         setSalesMsg("Muitos viajantes estão consultando nossos roteiros hoje.");
       }
@@ -3377,13 +3792,19 @@ function VisaCheckerBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Consultor de Vistos de Entrada"}</h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">Verifique a necessidade de visto e documentos para sua viagem.</p>
-        
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Consultor de Vistos de Entrada"}
+        </h4>
+        <p className="text-[11px] text-muted-foreground text-center mb-4">
+          Verifique a necessidade de visto e documentos para sua viagem.
+        </p>
+
         <form onSubmit={handleCheck} className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[9px] uppercase font-bold text-muted-foreground">Nacionalidade</label>
+              <label className="text-[9px] uppercase font-bold text-muted-foreground">
+                Nacionalidade
+              </label>
               <input
                 type="text"
                 required
@@ -3394,7 +3815,9 @@ function VisaCheckerBlock({ block }: { block: any }) {
               />
             </div>
             <div>
-              <label className="text-[9px] uppercase font-bold text-muted-foreground">País de Destino</label>
+              <label className="text-[9px] uppercase font-bold text-muted-foreground">
+                País de Destino
+              </label>
               <input
                 type="text"
                 required
@@ -3419,8 +3842,12 @@ function VisaCheckerBlock({ block }: { block: any }) {
             {result ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Exigência de Visto</span>
-                  <span className={`text-xs font-black px-2 py-0.5 rounded uppercase${result.visa_required ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"}`}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    Exigência de Visto
+                  </span>
+                  <span
+                    className={`text-xs font-black px-2 py-0.5 rounded uppercase${result.visa_required ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"}`}
+                  >
                     {result.visa_required ? "Obrigatório" : "Isento"}
                   </span>
                 </div>
@@ -3444,14 +3871,22 @@ function VisaCheckerBlock({ block }: { block: any }) {
                 )}
                 {result.required_documents && (
                   <div className="text-xs">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Documentos Necessários</span>
-                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-lg border border-border/40 text-[11px]">{result.required_documents}</p>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">
+                      Documentos Necessários
+                    </span>
+                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-lg border border-border/40 text-[11px]">
+                      {result.required_documents}
+                    </p>
                   </div>
                 )}
                 {result.notes && (
                   <div className="text-xs">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Observações Importantes</span>
-                    <p className="text-muted-foreground leading-relaxed text-[11px]">{result.notes}</p>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">
+                      Observações Importantes
+                    </span>
+                    <p className="text-muted-foreground leading-relaxed text-[11px]">
+                      {result.notes}
+                    </p>
                   </div>
                 )}
                 {result.official_url && (
@@ -3468,8 +3903,12 @@ function VisaCheckerBlock({ block }: { block: any }) {
             ) : (
               <div className="text-center py-2">
                 <HelpCircle className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2 animate-pulse" />
-                <p className="text-xs text-muted-foreground font-semibold">Sem regras específicas salvas.</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Consulte seu agente para detalhes deste destino.</p>
+                <p className="text-xs text-muted-foreground font-semibold">
+                  Sem regras específicas salvas.
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  Consulte seu agente para detalhes deste destino.
+                </p>
               </div>
             )}
           </div>
@@ -3505,9 +3944,24 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
     const baseCost = rate * days * paxCount;
 
     return [
-      { name: "Global Basic", price: baseCost, medicalLimit: "USD 30.000", baggageLimit: "USD 500" },
-      { name: "Global Standard", price: baseCost * 1.5, medicalLimit: "USD 60.000", baggageLimit: "USD 1.200" },
-      { name: "Global Premium VIP", price: baseCost * 2.5, medicalLimit: "USD 150.000", baggageLimit: "USD 2.500" }
+      {
+        name: "Global Basic",
+        price: baseCost,
+        medicalLimit: "USD 30.000",
+        baggageLimit: "USD 500",
+      },
+      {
+        name: "Global Standard",
+        price: baseCost * 1.5,
+        medicalLimit: "USD 60.000",
+        baggageLimit: "USD 1.200",
+      },
+      {
+        name: "Global Premium VIP",
+        price: baseCost * 2.5,
+        medicalLimit: "USD 150.000",
+        baggageLimit: "USD 2.500",
+      },
     ];
   };
 
@@ -3551,13 +4005,19 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Simulador de Seguro Viagem"}</h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-5">{block.description || "Simule planos de cobertura médica internacional em segundos."}</p>
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Simulador de Seguro Viagem"}
+        </h4>
+        <p className="text-[11px] text-muted-foreground text-center mb-5">
+          {block.description || "Simule planos de cobertura médica internacional em segundos."}
+        </p>
 
         {step === "simulate" && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Destino / Região</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Destino / Região
+              </label>
               <select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
@@ -3573,7 +4033,9 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Dias de Viagem</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Dias de Viagem
+                </label>
                 <input
                   type="number"
                   min={1}
@@ -3583,7 +4045,9 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 />
               </div>
               <div>
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Passageiros</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Passageiros
+                </label>
                 <input
                   type="number"
                   min={1}
@@ -3595,12 +4059,14 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Faixa Etária do Viajante Mais Velho</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Faixa Etária do Viajante Mais Velho
+              </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
                 {[
                   { key: "under60", label: "Até 60 anos" },
                   { key: "mid", label: "61 a 75 anos" },
-                  { key: "senior", label: "Acima de 75" }
+                  { key: "senior", label: "Acima de 75" },
                 ].map((age) => (
                   <button
                     key={age.key}
@@ -3615,12 +4081,21 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div className="space-y-2.5 pt-2 border-t border-border/50">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase block">Planos Recomendados</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+                Planos Recomendados
+              </span>
               {plans.map((p, idx) => (
-                <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-border bg-surface-alt/30 hover:border-brand/40 transition-colors">
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-3 rounded-xl border border-border bg-surface-alt/30 hover:border-brand/40 transition-colors"
+                >
                   <div>
-                    <span className="text-xs font-bold text-foreground block leading-tight">{p.name}</span>
-                    <span className="text-[9px] text-muted-foreground">Médico: {p.medicalLimit} | Bagagem: {p.baggageLimit}</span>
+                    <span className="text-xs font-bold text-foreground block leading-tight">
+                      {p.name}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground">
+                      Médico: {p.medicalLimit} | Bagagem: {p.baggageLimit}
+                    </span>
                   </div>
                   <button
                     onClick={() => handleSelectPlan(p)}
@@ -3637,13 +4112,21 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
         {step === "contact" && (
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div className="p-3 bg-brand/5 border border-brand/10 rounded-2xl">
-              <span className="text-[10px] font-semibold text-brand block uppercase">Plano Selecionado</span>
-              <span className="text-xs font-bold text-foreground block mt-0.5">{selectedPlan.name}</span>
-              <span className="text-xs font-bold text-brand leading-none">Total: R$ {selectedPlan.price.toFixed(2)}</span>
+              <span className="text-[10px] font-semibold text-brand block uppercase">
+                Plano Selecionado
+              </span>
+              <span className="text-xs font-bold text-foreground block mt-0.5">
+                {selectedPlan.name}
+              </span>
+              <span className="text-xs font-bold text-brand leading-none">
+                Total: R$ {selectedPlan.price.toFixed(2)}
+              </span>
             </div>
-            
+
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Seu Nome Completo</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Seu Nome Completo
+              </label>
               <input
                 type="text"
                 required
@@ -3654,7 +4137,9 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">E-mail</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                E-mail
+              </label>
               <input
                 type="email"
                 required
@@ -3665,7 +4150,9 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">WhatsApp</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                WhatsApp
+              </label>
               <input
                 type="tel"
                 required
@@ -3700,7 +4187,8 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             <CheckCircle2 className="h-12 w-12 text-emerald-500 mb-3" />
             <h5 className="font-bold text-sm text-foreground">Solicitação Recebida!</h5>
             <p className="text-[11px] text-muted-foreground mt-1.5 max-w-xs leading-normal">
-              Seu simulado de seguro viagem foi enviado para emissão da apólice. Nosso consultor entrará em contato via WhatsApp nas próximas horas.
+              Seu simulado de seguro viagem foi enviado para emissão da apólice. Nosso consultor
+              entrará em contato via WhatsApp nas próximas horas.
             </p>
           </div>
         )}
@@ -3723,16 +4211,14 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
     if (!name.trim() || !text.trim() || !agencyId) return;
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from("agency_reviews" as any)
-        .insert({
-          agency_id: agencyId,
-          author_name: name.trim(),
-          author_role: role.trim() || null,
-          review_text: text.trim(),
-          stars: stars,
-          status: "pending"
-        } as any);
+      const { error } = await supabase.from("agency_reviews" as any).insert({
+        agency_id: agencyId,
+        author_name: name.trim(),
+        author_role: role.trim() || null,
+        review_text: text.trim(),
+        stars: stars,
+        status: "pending",
+      } as any);
 
       if (error) throw error;
       setDone(true);
@@ -3747,9 +4233,13 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Deixe seu Depoimento"}</h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">{block.subtitle || "Sua opinião nos ajuda a crescer e aprimorar nossas rotas."}</p>
-        
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Deixe seu Depoimento"}
+        </h4>
+        <p className="text-[11px] text-muted-foreground text-center mb-4">
+          {block.subtitle || "Sua opinião nos ajuda a crescer e aprimorar nossas rotas."}
+        </p>
+
         {done ? (
           <div className="text-center py-6 flex flex-col items-center">
             <CheckCircle2 className="h-10 w-10 text-emerald-500 mb-2" />
@@ -3768,7 +4258,9 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
                   onClick={() => setStars(star)}
                   className="p-1 transition-transform hover:scale-110 active:scale-90"
                 >
-                  <Star className={`h-6 w-6${star <= stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`} />
+                  <Star
+                    className={`h-6 w-6${star <= stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+                  />
                 </button>
               ))}
             </div>
@@ -3790,7 +4282,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
                 className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
             </div>
-            
+
             <textarea
               required
               placeholder="Descreva brevemente como foi sua experiência..."
@@ -3830,7 +4322,7 @@ function WhatsappFloatingBubbleBlock({ block }: { block: any }) {
         .select("id, full_name, avatar_url")
         .eq("id", block.agent_id)
         .maybeSingle();
-      
+
       setAgent(data);
       setLoading(false);
     }
@@ -3859,7 +4351,11 @@ function WhatsappFloatingBubbleBlock({ block }: { block: any }) {
         className="h-14 w-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shrink-0 border border-emerald-400"
       >
         {agent && agent.avatar_url ? (
-          <img src={agent.avatar_url} alt="Agent" className="h-full w-full rounded-full object-cover" />
+          <img
+            src={agent.avatar_url}
+            alt="Agent"
+            className="h-full w-full rounded-full object-cover"
+          />
         ) : (
           <Phone className="h-6 w-6 fill-white text-emerald-500" />
         )}
@@ -3889,9 +4385,10 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
     e.preventDefault();
     setLoading(true);
     try {
-      const budgetLabel = budget === "low" ? "Econômico" : budget === "medium" ? "Moderado" : "Luxo / VIP";
+      const budgetLabel =
+        budget === "low" ? "Econômico" : budget === "medium" ? "Moderado" : "Luxo / VIP";
       const notes = `Lead do Construtor de Pacotes Personalizados. Destino: ${dest}, Partida: ${date}, Duração: ${days} dias, Passageiros: ${adults} adultos, Categoria Hotel: ${hotelStars} estrelas, Perfil Financeiro: ${budgetLabel}.`;
-      
+
       const { error } = await (supabase.rpc as any)("submit_public_lead", {
         _agency_slug: agencySlug,
         _name: name.trim(),
@@ -3920,8 +4417,12 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Planeje seu Roteiro Sob Medida"}</h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-5">{block.subtitle || "Diga o que você sonha e desenharemos nos mínimos detalhes."}</p>
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Planeje seu Roteiro Sob Medida"}
+        </h4>
+        <p className="text-[11px] text-muted-foreground text-center mb-5">
+          {block.subtitle || "Diga o que você sonha e desenharemos nos mínimos detalhes."}
+        </p>
 
         {step < 4 && (
           <div className="flex gap-1.5 justify-center mb-5">
@@ -3937,7 +4438,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         {step === 1 && (
           <div className="space-y-3.5">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Destino Desejado</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Destino Desejado
+              </label>
               <input
                 type="text"
                 required
@@ -3949,7 +4452,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Previsão de Partida</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Previsão de Partida
+                </label>
                 <input
                   type="date"
                   value={date}
@@ -3958,7 +4463,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Duração (dias)</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Duração (dias)
+                </label>
                 <input
                   type="number"
                   min={1}
@@ -3983,7 +4490,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
           <div className="space-y-3.5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Nº Passageiros</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Nº Passageiros
+                </label>
                 <input
                   type="number"
                   min={1}
@@ -3993,7 +4502,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">Hospedagem Preferida</label>
+                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Hospedagem Preferida
+                </label>
                 <select
                   value={hotelStars}
                   onChange={(e) => setHotelStars(e.target.value)}
@@ -4007,12 +4518,14 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Perfil de Investimento</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Perfil de Investimento
+              </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
                 {[
                   { key: "low", label: "Econômico" },
                   { key: "medium", label: "Moderado" },
-                  { key: "high", label: "Altíssimo Padrão" }
+                  { key: "high", label: "Altíssimo Padrão" },
                 ].map((b) => (
                   <button
                     key={b.key}
@@ -4048,7 +4561,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         {step === 3 && (
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">Seu Nome</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                Seu Nome
+              </label>
               <input
                 type="text"
                 required
@@ -4059,7 +4574,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">E-mail</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                E-mail
+              </label>
               <input
                 type="email"
                 required
@@ -4070,7 +4587,9 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">WhatsApp</label>
+              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                WhatsApp
+              </label>
               <input
                 type="tel"
                 required
@@ -4105,7 +4624,8 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             <CheckCircle2 className="h-12 w-12 text-emerald-500 mb-3" />
             <h5 className="font-bold text-sm text-foreground">Solicitação Enviada!</h5>
             <p className="text-[11px] text-muted-foreground mt-1.5 max-w-xs leading-normal">
-              Recebemos suas preferências de viagem. Um designer de roteiros especializado começará a estruturar sua rota e entrará em contato em breve.
+              Recebemos suas preferências de viagem. Um designer de roteiros especializado começará
+              a estruturar sua rota e entrará em contato em breve.
             </p>
           </div>
         )}
@@ -4136,14 +4656,14 @@ function NewsAnnouncementsTickerBlock({ block, agencySlug }: { block: any; agenc
             .eq("status", "published")
             .order("published_at", { ascending: false })
             .limit(block.limit || 5);
-          
+
           if (data && data.length > 0) {
             setHeadlines(data.map((p) => p.title));
           } else {
             setHeadlines([
               "Nova saída para a Itália em Outubro/2026 com vagas promocionais!",
               "Dicas essenciais para sua mala de viagem internacional.",
-              "Visto para o Japão: regras atualizadas de entrada."
+              "Visto para o Japão: regras atualizadas de entrada.",
             ]);
           }
         }
@@ -4185,7 +4705,10 @@ function FaqCategoryAccordionBlock({ block, agencyId }: { block: any; agencyId?:
 
   useEffect(() => {
     async function load() {
-      if (!agencyId) { setLoading(false); return; }
+      if (!agencyId) {
+        setLoading(false);
+        return;
+      }
       try {
         let query = supabase
           .from("knowledge_articles")
@@ -4208,7 +4731,10 @@ function FaqCategoryAccordionBlock({ block, agencyId }: { block: any; agencyId?:
     load();
   }, [agencyId, block.category]);
 
-  if (loading) return <div className="mx-auto max-w-lg w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />;
+  if (loading)
+    return (
+      <div className="mx-auto max-w-lg w-full h-32 animate-pulse bg-surface-alt rounded-2xl" />
+    );
 
   if (articles.length === 0) {
     return (
@@ -4220,10 +4746,17 @@ function FaqCategoryAccordionBlock({ block, agencyId }: { block: any; agencyId?:
 
   return (
     <div className="mx-auto max-w-lg w-full px-4 text-left">
-      {block.title && <h3 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider text-center">{block.title}</h3>}
+      {block.title && (
+        <h3 className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider text-center">
+          {block.title}
+        </h3>
+      )}
       <div className="space-y-2.5">
         {articles.map((art) => (
-          <details key={art.id} className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer transition-colors hover:border-brand/40">
+          <details
+            key={art.id}
+            className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer transition-colors hover:border-brand/40"
+          >
             <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
               {art.title}
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
@@ -4245,21 +4778,30 @@ function AgencyBadgesTrustBlock({ block }: { block: any }) {
     { title: "CADASTUR Regularizado", desc: "MTur Ministério do Turismo", icon: ShieldCheck },
     { title: "IATA Certified", desc: "Emissões Aéreas Globais", icon: Plane },
     { title: "Suporte 24h", desc: "Monitoramento em Viagem", icon: Clock },
-    { title: "Transações Criptografadas", desc: "Segurança nos Pagamentos", icon: Key }
+    { title: "Transações Criptografadas", desc: "Segurança nos Pagamentos", icon: Key },
   ];
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-center">
-      {block.title && <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-4">{block.title}</h4>}
+      {block.title && (
+        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-4">
+          {block.title}
+        </h4>
+      )}
       <div className="grid grid-cols-2 gap-3">
         {badges.map((b, idx) => {
           const Icon = b.icon;
           return (
-            <div key={idx} className="p-3 bg-surface-alt/30 border border-border/60 rounded-2xl flex flex-col items-center text-center gap-1 hover:border-brand/40 transition-colors">
+            <div
+              key={idx}
+              className="p-3 bg-surface-alt/30 border border-border/60 rounded-2xl flex flex-col items-center text-center gap-1 hover:border-brand/40 transition-colors"
+            >
               <div className="h-8 w-8 rounded-full bg-brand/10 text-brand flex items-center justify-center">
                 <Icon className="w-4 h-4" />
               </div>
-              <span className="text-[10px] font-bold text-foreground block leading-tight">{b.title}</span>
+              <span className="text-[10px] font-bold text-foreground block leading-tight">
+                {b.title}
+              </span>
               <span className="text-[8px] text-muted-foreground leading-normal">{b.desc}</span>
             </div>
           );
@@ -4281,7 +4823,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
     if (isNaN(val)) return "0.00";
     const fromRate = rates[fromCur] || 1;
     const toRate = rates[toCur] || 1;
-    
+
     const inBrl = val * fromRate;
     const result = inBrl / toRate;
     return result.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -4295,8 +4837,10 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-5 rounded-2xl border border-border bg-surface">
-        <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">{block.title || "Calculadora de Câmbio"}</h4>
-        
+        <h4 className="text-xs font-bold text-foreground mb-4 uppercase tracking-wider text-center">
+          {block.title || "Calculadora de Câmbio"}
+        </h4>
+
         <div className="space-y-3">
           <div className="flex gap-2 items-center">
             <div className="flex-1">
@@ -4312,7 +4856,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
                 <option value="BRL">BRL - Real</option>
               </select>
             </div>
-            
+
             <button
               type="button"
               onClick={swapCurrencies}
@@ -4320,7 +4864,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
             >
               ⇄
             </button>
-            
+
             <div className="flex-1">
               <label className="text-[9px] uppercase font-bold text-muted-foreground">Para</label>
               <select
@@ -4348,7 +4892,9 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
           </div>
 
           <div className="p-3 bg-brand/5 border border-brand/10 rounded-xl flex justify-between items-center mt-2.5">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Resultado Estimado</span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase">
+              Resultado Estimado
+            </span>
             <span className="text-sm font-black text-brand tracking-tight">
               {toCur} {convert()}
             </span>
@@ -4371,26 +4917,35 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
     if (!code.trim()) return;
     setLoading(true);
     setSearched(true);
-    
+
     setTimeout(() => {
       const codeClean = code.trim().toUpperCase();
       const hash = codeClean.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      
-      const airports = ["GRU (São Paulo)", "GIG (Rio)", "MIA (Miami)", "LHR (Londres)", "CDG (Paris)", "ORL (Orlando)", "FLN (Florianópolis)", "XAP (Chapecó)"];
+
+      const airports = [
+        "GRU (São Paulo)",
+        "GIG (Rio)",
+        "MIA (Miami)",
+        "LHR (Londres)",
+        "CDG (Paris)",
+        "ORL (Orlando)",
+        "FLN (Florianópolis)",
+        "XAP (Chapecó)",
+      ];
       const statusList = ["Confirmado", "Embarque Imediato", "Atrasado", "Decolou"];
-      
+
       const originIdx = hash % airports.length;
       const destIdx = (hash + 3) % airports.length;
       const statusIdx = hash % statusList.length;
-      
+
       setFlight({
         code: codeClean,
         origin: airports[originIdx],
         destination: airports[destIdx === originIdx ? (destIdx + 1) % airports.length : destIdx],
         status: statusList[statusIdx],
         terminal: (hash % 3) + 1,
-        gate: String.fromCharCode(65 + (hash % 6)) + (hash % 25 + 1),
-        baggage: (hash % 10) + 1
+        gate: String.fromCharCode(65 + (hash % 6)) + ((hash % 25) + 1),
+        baggage: (hash % 10) + 1,
       });
       setLoading(false);
     }, 800);
@@ -4399,9 +4954,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="font-bold text-sm text-foreground text-center mb-1">{block.title || "Status de Voos em Tempo Real"}</h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">Insira o código do seu voo para obter portão de embarque e status.</p>
-        
+        <h4 className="font-bold text-sm text-foreground text-center mb-1">
+          {block.title || "Status de Voos em Tempo Real"}
+        </h4>
+        <p className="text-[11px] text-muted-foreground text-center mb-4">
+          Insira o código do seu voo para obter portão de embarque e status.
+        </p>
+
         <form onSubmit={handleSearch} className="flex gap-2 mb-3">
           <input
             type="text"
@@ -4425,9 +4984,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
             <div className="flex justify-between items-center border-b border-border/40 pb-2.5">
               <div>
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">Voo</span>
-                <h5 className="text-base font-black text-foreground leading-none mt-0.5">{flight.code}</h5>
+                <h5 className="text-base font-black text-foreground leading-none mt-0.5">
+                  {flight.code}
+                </h5>
               </div>
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}>
+              <span
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}
+              >
                 {flight.status}
               </span>
             </div>
@@ -4445,16 +5008,26 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
 
             <div className="grid grid-cols-3 gap-2 border-t border-border/40 pt-3 text-center">
               <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
-                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">Terminal</span>
-                <span className="text-sm font-black text-foreground block mt-0.5">{flight.terminal}</span>
+                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
+                  Terminal
+                </span>
+                <span className="text-sm font-black text-foreground block mt-0.5">
+                  {flight.terminal}
+                </span>
               </div>
               <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
-                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">Portão</span>
+                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
+                  Portão
+                </span>
                 <span className="text-sm font-black text-brand block mt-0.5">{flight.gate}</span>
               </div>
               <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
-                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">Esteira</span>
-                <span className="text-sm font-black text-foreground block mt-0.5">{flight.baggage}</span>
+                <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
+                  Esteira
+                </span>
+                <span className="text-sm font-black text-foreground block mt-0.5">
+                  {flight.baggage}
+                </span>
               </div>
             </div>
           </div>
@@ -4474,7 +5047,7 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
       try {
         await navigator.share({
           title: block.title || "Compartilhar Contato",
-          url: currentUrl
+          url: currentUrl,
         });
       } catch (err) {
         console.error(err);
@@ -4492,12 +5065,14 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4 text-center">
       <div className="p-6 rounded-3xl border border-border bg-surface flex flex-col items-center gap-4">
-        <h4 className="font-bold text-sm text-foreground">{block.title || "Compartilhe meu Contato"}</h4>
-        
+        <h4 className="font-bold text-sm text-foreground">
+          {block.title || "Compartilhe meu Contato"}
+        </h4>
+
         <div className="p-2 bg-white rounded-2xl border border-border/50 shrink-0">
           <img src={qrCodeUrl} alt="Biolink QR Code" className="w-32 h-32 object-contain" />
         </div>
-        
+
         <button
           onClick={handleShare}
           className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer"
@@ -4513,30 +5088,71 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
 // ─── CLIENT BOARDING TIMELINE BLOCK ──────────────────────────────────────────
 function ClientBoardingTimelineBlock({ block, agencyId }: { block: any; agencyId?: string }) {
   const timelineSteps = [
-    { title: "Check-in Realizado", desc: "Seus cartões de embarque estão emitidos.", status: "done", time: "09:00" },
-    { title: "Despacho de Bagagem", desc: "Vá ao balcão da cia aérea se possuir malas rígidas.", status: "done", time: "10:15" },
-    { title: "Abertura do Portão", desc: "Aguarde no portão B14 da área de embarque.", status: "active", time: "11:20" },
-    { title: "Embarque Iniciado", desc: "Tenha documento oficial com foto em mãos.", status: "pending", time: "11:40" },
-    { title: "Decolagem", desc: "Voo AD2412 com destino a Miami.", status: "pending", time: "12:15" }
+    {
+      title: "Check-in Realizado",
+      desc: "Seus cartões de embarque estão emitidos.",
+      status: "done",
+      time: "09:00",
+    },
+    {
+      title: "Despacho de Bagagem",
+      desc: "Vá ao balcão da cia aérea se possuir malas rígidas.",
+      status: "done",
+      time: "10:15",
+    },
+    {
+      title: "Abertura do Portão",
+      desc: "Aguarde no portão B14 da área de embarque.",
+      status: "active",
+      time: "11:20",
+    },
+    {
+      title: "Embarque Iniciado",
+      desc: "Tenha documento oficial com foto em mãos.",
+      status: "pending",
+      time: "11:40",
+    },
+    {
+      title: "Decolagem",
+      desc: "Voo AD2412 com destino a Miami.",
+      status: "pending",
+      time: "12:15",
+    },
   ];
 
   return (
     <div className="mx-auto max-w-md w-full px-4 text-left">
       <div className="p-6 rounded-3xl border border-border bg-surface">
-        <h4 className="text-xs font-bold text-foreground mb-6 uppercase tracking-wider text-center">{block.title || "Fluxo de Embarque Operacional"}</h4>
-        
+        <h4 className="text-xs font-bold text-foreground mb-6 uppercase tracking-wider text-center">
+          {block.title || "Fluxo de Embarque Operacional"}
+        </h4>
+
         <div className="relative pl-6 border-l border-border space-y-6">
           {timelineSteps.map((step, idx) => (
             <div key={idx} className="relative">
-              <div className={`absolute -left-[30px] top-0.5 w-4.5 h-4.5 rounded-full border-4 border-background flex items-center justify-center${
-                step.status === "done" ? "bg-emerald-500" : step.status === "active" ? "bg-brand animate-pulse" : "bg-muted-foreground/30"
-              }`} />
+              <div
+                className={`absolute -left-[30px] top-0.5 w-4.5 h-4.5 rounded-full border-4 border-background flex items-center justify-center${
+                  step.status === "done"
+                    ? "bg-emerald-500"
+                    : step.status === "active"
+                      ? "bg-brand animate-pulse"
+                      : "bg-muted-foreground/30"
+                }`}
+              />
               <div className="flex justify-between items-start">
                 <div>
-                  <h5 className={`font-bold text-xs${step.status === "done" ? "text-muted-foreground" : "text-foreground"}`}>{step.title}</h5>
-                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{step.desc}</p>
+                  <h5
+                    className={`font-bold text-xs${step.status === "done" ? "text-muted-foreground" : "text-foreground"}`}
+                  >
+                    {step.title}
+                  </h5>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                    {step.desc}
+                  </p>
                 </div>
-                <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-md font-bold">{step.time}</span>
+                <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-md font-bold">
+                  {step.time}
+                </span>
               </div>
             </div>
           ))}

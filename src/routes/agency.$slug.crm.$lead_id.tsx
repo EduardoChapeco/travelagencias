@@ -227,7 +227,7 @@ function LeadDetailPage() {
     if (missing.length > 0) {
       toast.error(
         `Preencha os campos obrigatórios antes de converter:\n• ${missing.join("\n• ")}`,
-        { duration: 6000 }
+        { duration: 6000 },
       );
       setEditing(true); // Open edit form so user can fill in
       return;
@@ -1585,7 +1585,7 @@ function LeadDetailPage() {
                     if (missing.length > 0) {
                       toast.error(
                         `Preencha os campos obrigatórios para converter:\n• ${missing.join("\n• ")}`,
-                        { duration: 5000 }
+                        { duration: 5000 },
                       );
                       return;
                     }

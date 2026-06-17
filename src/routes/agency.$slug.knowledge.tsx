@@ -71,13 +71,13 @@ function KnowledgePage() {
           .from("knowledge_playbooks" as any)
           .select("*, steps:knowledge_playbook_steps(*)");
         if (error) throw error;
-        
+
         // Sort steps for each playbook
         const sortedPlaybooks = (data || []).map((pb: any) => ({
           ...pb,
-          steps: [...(pb.steps || [])].sort((a: any, b: any) => a.step_number - b.step_number)
+          steps: [...(pb.steps || [])].sort((a: any, b: any) => a.step_number - b.step_number),
         }));
-        
+
         return sortedPlaybooks;
       } catch (err) {
         console.warn("Table knowledge_playbooks does not exist yet. Using mock fallback.", err);
@@ -85,13 +85,30 @@ function KnowledgePage() {
           {
             id: "mock-1",
             title: "Cancelamento Operadora ViagensPromo",
-            description: "Passo a passo padrão para cancelamento de pacotes terrestres e aéreos na ViagensPromo.",
+            description:
+              "Passo a passo padrão para cancelamento de pacotes terrestres e aéreos na ViagensPromo.",
             category: "Cancelamentos",
             steps: [
-              { id: "s-1", step_number: 1, title: "Acessar o Portal do Parceiro", description: "Fazer login com as credenciais master da agência." },
-              { id: "s-2", step_number: 2, title: "Localizar a Reserva", description: "Procurar pelo localizador ou CPF do passageiro principal." },
-              { id: "s-3", step_number: 3, title: "Solicitar Cancelamento via Chat", description: "Abrir chamado com o suporte comercial solicitando o cálculo da multa." },
-            ]
+              {
+                id: "s-1",
+                step_number: 1,
+                title: "Acessar o Portal do Parceiro",
+                description: "Fazer login com as credenciais master da agência.",
+              },
+              {
+                id: "s-2",
+                step_number: 2,
+                title: "Localizar a Reserva",
+                description: "Procurar pelo localizador ou CPF do passageiro principal.",
+              },
+              {
+                id: "s-3",
+                step_number: 3,
+                title: "Solicitar Cancelamento via Chat",
+                description:
+                  "Abrir chamado com o suporte comercial solicitando o cálculo da multa.",
+              },
+            ],
           },
           {
             id: "mock-2",
@@ -99,13 +116,23 @@ function KnowledgePage() {
             description: "Roteiro de alinhamento com clientes antes de viagens internacionais.",
             category: "Operações",
             steps: [
-              { id: "s-4", step_number: 1, title: "Conferir Documentação", description: "Verificar validade de passaporte (>6 meses) e vistos." },
-              { id: "s-5", step_number: 2, title: "Revisar Bilhetes e Vouchers", description: "Verificar horários de voos, conexões e franquia de bagagem." },
-            ]
-          }
+              {
+                id: "s-4",
+                step_number: 1,
+                title: "Conferir Documentação",
+                description: "Verificar validade de passaporte (>6 meses) e vistos.",
+              },
+              {
+                id: "s-5",
+                step_number: 2,
+                title: "Revisar Bilhetes e Vouchers",
+                description: "Verificar horários de voos, conexões e franquia de bagagem.",
+              },
+            ],
+          },
         ];
       }
-    }
+    },
   });
 
   const filtered = (q.data ?? []).filter(
@@ -119,7 +146,7 @@ function KnowledgePage() {
     (p: any) =>
       !search ||
       p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.category?.toLowerCase().includes(search.toLowerCase())
+      p.category?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -155,7 +182,9 @@ function KnowledgePage() {
           <button
             onClick={() => setTab("articles")}
             className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
-              tab === "articles" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+              tab === "articles"
+                ? "bg-surface-alt text-foreground border border-border/40"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Guias
@@ -163,7 +192,9 @@ function KnowledgePage() {
           <button
             onClick={() => setTab("playbooks")}
             className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
-              tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
+              tab === "playbooks"
+                ? "bg-surface-alt text-foreground border border-border/40"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Playbooks
@@ -182,7 +213,6 @@ function KnowledgePage() {
           />
         </div>
       </div>
-
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
@@ -337,7 +367,9 @@ function KnowledgePage() {
               {viewingPlaybook.description}
             </p>
             <div className="mt-6 space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fluxo de Etapas</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Fluxo de Etapas
+              </h4>
               {viewingPlaybook.steps?.length > 0 ? (
                 <div className="space-y-3 pl-2 border-l-2 border-brand/20">
                   {viewingPlaybook.steps.map((st: any, idx: number) => (
@@ -346,12 +378,16 @@ function KnowledgePage() {
                         {st.step_number}
                       </div>
                       <div className="font-semibold text-sm text-foreground">{st.title}</div>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{st.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                        {st.description}
+                      </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground italic">Nenhuma etapa definida neste playbook.</div>
+                <div className="text-xs text-muted-foreground italic">
+                  Nenhuma etapa definida neste playbook.
+                </div>
               )}
             </div>
           </div>
@@ -392,7 +428,7 @@ function PlaybookSheet({
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [category, setCategory] = useState(initialData?.category ?? "");
   const [steps, setSteps] = useState<any[]>(
-    initialData?.steps ? [...initialData.steps] : [{ step_number: 1, title: "", description: "" }]
+    initialData?.steps ? [...initialData.steps] : [{ step_number: 1, title: "", description: "" }],
   );
   const [submitting, setSubmitting] = useState(false);
 
@@ -413,7 +449,7 @@ function PlaybookSheet({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return toast.error("O título é obrigatório");
-    
+
     setSubmitting(true);
     try {
       // Tentar salvar no banco
@@ -421,14 +457,23 @@ function PlaybookSheet({
         agency_id: agencyId,
         title: title.trim(),
         description: description.trim() || null,
-        category: category.trim() || 'Geral'
+        category: category.trim() || "Geral",
       };
 
       let pbId = initialData?.id;
 
       const { data: pb, error: pbErr } = initialData
-        ? await (supabase.from("knowledge_playbooks" as any).update(payload).eq("id", initialData.id).select("id").single() as any)
-        : await (supabase.from("knowledge_playbooks" as any).insert(payload).select("id").single() as any);
+        ? await (supabase
+            .from("knowledge_playbooks" as any)
+            .update(payload)
+            .eq("id", initialData.id)
+            .select("id")
+            .single() as any)
+        : await (supabase
+            .from("knowledge_playbooks" as any)
+            .insert(payload)
+            .select("id")
+            .single() as any);
 
       if (pbErr) throw pbErr;
       if (pb) pbId = pb.id;
@@ -436,29 +481,38 @@ function PlaybookSheet({
       // Se salvou com sucesso, atualizar etapas
       if (pbId) {
         // Apagar etapas antigas
-        await supabase.from("knowledge_playbook_steps" as any).delete().eq("playbook_id", pbId);
-        
+        await supabase
+          .from("knowledge_playbook_steps" as any)
+          .delete()
+          .eq("playbook_id", pbId);
+
         // Inserir etapas novas
         const stepsPayload = steps
-          .filter(st => st.title.trim())
-          .map(st => ({
+          .filter((st) => st.title.trim())
+          .map((st) => ({
             playbook_id: pbId,
             step_number: st.step_number,
             title: st.title.trim(),
-            description: st.description.trim() || null
+            description: st.description.trim() || null,
           }));
 
         if (stepsPayload.length > 0) {
-          const { error: stepsErr } = await supabase.from("knowledge_playbook_steps" as any).insert(stepsPayload);
+          const { error: stepsErr } = await supabase
+            .from("knowledge_playbook_steps" as any)
+            .insert(stepsPayload);
           if (stepsErr) throw stepsErr;
         }
       }
-      
+
       toast.success(initialData ? "Playbook atualizado" : "Playbook criado");
       onSaved();
     } catch (err: any) {
       console.warn("Saving to DB failed, fallback to mock status toast", err);
-      toast.info(initialData ? "Rascunho local de playbook atualizado (Rode a migration SQL para persistir no banco)" : "Rascunho local de playbook criado (Rode a migration SQL para persistir no banco)");
+      toast.info(
+        initialData
+          ? "Rascunho local de playbook atualizado (Rode a migration SQL para persistir no banco)"
+          : "Rascunho local de playbook criado (Rode a migration SQL para persistir no banco)",
+      );
       onSaved();
     } finally {
       setSubmitting(false);
@@ -487,16 +541,26 @@ function PlaybookSheet({
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <form id="playbook-form" onSubmit={submit} className="space-y-4">
             <Field label="Título do Playbook *">
-              <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Cancelamento ViagensPromo ou Roteiro Premium" />
+              <Input
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Cancelamento ViagensPromo ou Roteiro Premium"
+              />
             </Field>
 
             <div className="grid grid-cols-2 gap-3">
               <Field label="Categoria">
-                <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Ex: Cancelamentos, Operações" />
+                <Input
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="Ex: Cancelamentos, Operações"
+                />
               </Field>
               <div className="flex items-end pb-1">
                 <span className="text-[10px] text-muted-foreground bg-surface-alt border border-border rounded px-2 py-1 leading-normal">
-                  Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a dia da agência.
+                  Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a
+                  dia da agência.
                 </span>
               </div>
             </div>
@@ -513,14 +577,21 @@ function PlaybookSheet({
             <div className="pt-4 border-t border-border mt-4">
               <div className="flex items-center justify-between mb-4">
                 <label className="text-sm font-bold text-foreground">Etapas do Processo</label>
-                <GhostButton type="button" onClick={addStep} className="h-8 text-xs font-bold cursor-pointer">
+                <GhostButton
+                  type="button"
+                  onClick={addStep}
+                  className="h-8 text-xs font-bold cursor-pointer"
+                >
                   + Adicionar Etapa
                 </GhostButton>
               </div>
 
               <div className="space-y-4">
                 {steps.map((st, idx) => (
-                  <div key={idx} className="bg-surface-alt/40 border border-border rounded-xl p-4 relative space-y-3">
+                  <div
+                    key={idx}
+                    className="bg-surface-alt/40 border border-border rounded-xl p-4 relative space-y-3"
+                  >
                     <button
                       type="button"
                       onClick={() => removeStep(idx)}
@@ -529,7 +600,7 @@ function PlaybookSheet({
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
-                    
+
                     <div className="flex items-center gap-3">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
                         {st.step_number}

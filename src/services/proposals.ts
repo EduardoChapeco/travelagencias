@@ -35,12 +35,12 @@ export type Transfer = {
   notes: string;
 };
 export type Insurance = {
-  provider?: string | null;   // Ex: "Assist Card", "Allianz"
-  policy?: string | null;     // Número da apólice
-  plan?: string | null;       // Nome do plano (ex: "Premium Internacional")
-  price?: number | null;      // Preço de venda ao cliente
-  cost?: number | null;       // Custo da agência
-  coverage?: string | null;   // Descrição da cobertura
+  provider?: string | null; // Ex: "Assist Card", "Allianz"
+  policy?: string | null; // Número da apólice
+  plan?: string | null; // Nome do plano (ex: "Premium Internacional")
+  price?: number | null; // Preço de venda ao cliente
+  cost?: number | null; // Custo da agência
+  coverage?: string | null; // Descrição da cobertura
   start_date?: string | null;
   end_date?: string | null;
 };
@@ -49,9 +49,9 @@ export type Tour = {
   id: string;
   description: string;
   date: string;
-  price: number;              // Preço padrão (adulto)
+  price: number; // Preço padrão (adulto)
   price_child?: number | null; // Preço criança (se diferente)
-  price_senior?: number | null;// Preço sênior (se diferente)
+  price_senior?: number | null; // Preço sênior (se diferente)
   image_url: string;
   notes: string;
 };

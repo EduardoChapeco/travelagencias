@@ -599,8 +599,8 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
       <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
-        Gerencie livremente qualquer chave de integração para conectores customizados. Estas chaves ficam
-        associadas exclusivamente a esta agência.
+        Gerencie livremente qualquer chave de integração para conectores customizados. Estas chaves
+        ficam associadas exclusivamente a esta agência.
       </div>
 
       <form
@@ -851,7 +851,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       const cfg = agencyData.integrations_config as any;
       setConfig((c) => ({
         ...c,
-        infotravel_markup: cfg.infotravel_markup !== undefined ? String(cfg.infotravel_markup) : "0",
+        infotravel_markup:
+          cfg.infotravel_markup !== undefined ? String(cfg.infotravel_markup) : "0",
       }));
     }
     if (keysQuery.data) {
@@ -885,11 +886,31 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       if (error) throw error;
 
       const secrets = [
-        { provider: "infotravel_url", val: config.infotravel_url.trim(), label: "Infotravel Base URL" },
-        { provider: "infotravel_username", val: config.infotravel_username.trim(), label: "Infotravel Username" },
-        { provider: "infotravel_password", val: config.infotravel_password.trim(), label: "Infotravel Password" },
-        { provider: "infotravel_client", val: config.infotravel_client.trim(), label: "Infotravel Client Code" },
-        { provider: "infotravel_agency", val: config.infotravel_agency.trim(), label: "Infotravel Agency Code" },
+        {
+          provider: "infotravel_url",
+          val: config.infotravel_url.trim(),
+          label: "Infotravel Base URL",
+        },
+        {
+          provider: "infotravel_username",
+          val: config.infotravel_username.trim(),
+          label: "Infotravel Username",
+        },
+        {
+          provider: "infotravel_password",
+          val: config.infotravel_password.trim(),
+          label: "Infotravel Password",
+        },
+        {
+          provider: "infotravel_client",
+          val: config.infotravel_client.trim(),
+          label: "Infotravel Client Code",
+        },
+        {
+          provider: "infotravel_agency",
+          val: config.infotravel_agency.trim(),
+          label: "Infotravel Agency Code",
+        },
       ];
 
       for (const secret of secrets) {
@@ -910,7 +931,9 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   }
 
   if (isLoading)
-    return <div className="p-8 text-center text-sm text-muted-foreground font-sans">Carregando...</div>;
+    return (
+      <div className="p-8 text-center text-sm text-muted-foreground font-sans">Carregando...</div>
+    );
 
   return (
     <form onSubmit={save} className="mt-5 space-y-6">
@@ -920,12 +943,16 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           Conexão GDS Infotravel / Infotera
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-          Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo vinculada ao sistema Infotravel.
+          Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo
+          vinculada ao sistema Infotravel.
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="col-span-2">
-            <Field label="URL da API (Infotravel)" hint="Padrão: http://api.infotravel.com.br/api/v1">
+            <Field
+              label="URL da API (Infotravel)"
+              hint="Padrão: http://api.infotravel.com.br/api/v1"
+            >
               <Input
                 placeholder="http://api.infotravel.com.br/api/v1"
                 value={config.infotravel_url}
@@ -967,7 +994,10 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               required
             />
           </Field>
-          <Field label="Markup (%)" hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas">
+          <Field
+            label="Markup (%)"
+            hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas"
+          >
             <Input
               type="number"
               step="0.01"

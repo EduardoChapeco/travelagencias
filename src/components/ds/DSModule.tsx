@@ -39,29 +39,21 @@ export function DSModule({
       className={cn(
         "rounded-lg border border-border overflow-hidden",
         soft ? "bg-surface-alt" : "bg-surface",
-        className
+        className,
       )}
     >
       {hasHeader && (
         <div
           className={cn(
             "flex items-start justify-between gap-4 border-b border-border",
-            noPadding ? "px-5 py-4" : "px-5 pt-5 pb-4"
+            noPadding ? "px-5 py-4" : "px-5 pt-5 pb-4",
           )}
         >
           <div className="min-w-0 flex-1">
-            {kicker && (
-              <div className="ds-label-caps text-muted-foreground mb-1">
-                {kicker}
-              </div>
-            )}
-            {title && (
-              <div className="ds-h2 text-foreground leading-snug">{title}</div>
-            )}
+            {kicker && <div className="ds-label-caps text-muted-foreground mb-1">{kicker}</div>}
+            {title && <div className="ds-h2 text-foreground leading-snug">{title}</div>}
             {description && (
-              <p className="ds-body text-muted-foreground mt-1 max-w-xl">
-                {description}
-              </p>
+              <p className="ds-body text-muted-foreground mt-1 max-w-xl">{description}</p>
             )}
           </div>
           {action && <div className="shrink-0 pt-0.5">{action}</div>}
@@ -92,22 +84,14 @@ export function DSModuleRow({
     <div
       className={cn(
         "flex items-center justify-between gap-4 border-b border-border/60 py-3 last:border-0",
-        className
+        className,
       )}
     >
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium text-foreground leading-snug truncate">
-          {label}
-        </div>
-        {meta && (
-          <div className="ds-meta mt-0.5 truncate">{meta}</div>
-        )}
+        <div className="text-sm font-medium text-foreground leading-snug truncate">{label}</div>
+        {meta && <div className="ds-meta mt-0.5 truncate">{meta}</div>}
       </div>
-      {value && (
-        <div className="text-sm font-semibold text-foreground shrink-0">
-          {value}
-        </div>
-      )}
+      {value && <div className="text-sm font-semibold text-foreground shrink-0">{value}</div>}
       {action && <div className="shrink-0">{action}</div>}
     </div>
   );

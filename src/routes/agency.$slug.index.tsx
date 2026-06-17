@@ -18,10 +18,10 @@ import { money, fmtDate } from "@/components/ui/form";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-export const Route = createFileRoute("/agency/$slug/")(({
+export const Route = createFileRoute("/agency/$slug/")({
   head: () => ({ meta: [{ title: "Painel de Comando · TravelOS" }] }),
   component: Dashboard,
-}) as any);
+} as any);
 
 function Dashboard() {
   const { agency } = useAgency();
@@ -155,8 +155,8 @@ function Dashboard() {
               ? s.conversionRate >= 20
                 ? { label: "Boa", tone: "success" as const }
                 : s.conversionRate >= 10
-                ? { label: "Média", tone: "warning" as const }
-                : { label: "Baixa", tone: "danger" as const }
+                  ? { label: "Média", tone: "warning" as const }
+                  : { label: "Baixa", tone: "danger" as const }
               : undefined
           }
         />
@@ -181,7 +181,11 @@ function Dashboard() {
                         <stop offset="95%" stopColor="var(--color-success)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid vertical={false} strokeDasharray="2 4" stroke="var(--color-border)" />
+                    <CartesianGrid
+                      vertical={false}
+                      strokeDasharray="2 4"
+                      stroke="var(--color-border)"
+                    />
                     <XAxis
                       dataKey="label"
                       tickLine={false}
@@ -256,11 +260,21 @@ function Dashboard() {
                         <div className="ds-card-title text-foreground group-hover:text-brand transition-colors truncate">
                           {t.title}
                         </div>
-                        <div className="ds-meta truncate">{t.destination || "Destino não informado"}</div>
+                        <div className="ds-meta truncate">
+                          {t.destination || "Destino não informado"}
+                        </div>
                       </div>
                     </div>
                     <div className="text-right shrink-0 ml-4">
-                      <DSCap tone={t.status === "confirmed" ? "success" : t.status === "in_progress" ? "info" : "neutral"}>
+                      <DSCap
+                        tone={
+                          t.status === "confirmed"
+                            ? "success"
+                            : t.status === "in_progress"
+                              ? "info"
+                              : "neutral"
+                        }
+                      >
                         {STATUS_LABEL[t.status] ?? t.status}
                       </DSCap>
                       <div className="ds-meta mt-1">{fmtDate(t.travel_start)}</div>

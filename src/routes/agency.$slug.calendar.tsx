@@ -297,86 +297,86 @@ function CalendarPage() {
 
       <div className="flex-1 overflow-auto bg-background p-2">
         <div className="bg-surface border border-border/70 rounded-xl overflow-hidden h-full flex flex-col">
-        <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
-          {WEEKDAYS.map((day) => (
-            <div
-              key={day}
-              className="py-2.5 text-center text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0"
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-border/50 bg-border/20">
-          {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
-            const dateMeetings = getMeetingsForDate(date, filteredMeetings);
-            const today = isToday(date);
-            return (
+          <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
+            {WEEKDAYS.map((day) => (
               <div
-                key={idx}
-                onClick={() => handleCellClick(date)}
-                className={`min-h-[100px] lg:min-h-[120px] bg-surface p-2 transition-colors hover:bg-surface-alt/15 relative flex flex-col justify-between cursor-pointer group ${
-                  !isCurrentMonth ? "opacity-35" : ""
-                } ${today ? "bg-brand/[0.02]" : ""}`}
+                key={day}
+                className="py-2.5 text-center text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0"
               >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
-                      today
-                        ? "bg-brand text-brand-foreground font-black"
-                        : isCurrentMonth
-                          ? "text-foreground"
-                          : "text-muted-foreground"
-                    }`}
-                  >
-                    {day}
-                  </span>
-                  {dateMeetings.length > 0 && (
-                    <span className="text-[8px] font-extrabold px-1 py-0.5 rounded bg-brand/5 border border-brand/10 text-brand">
-                      {dateMeetings.length}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex-1 mt-2.5 space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
-                  {dateMeetings.slice(0, 3).map((meeting: any) => {
-                    const typeColor =
-                      MEETING_TYPE_COLORS[meeting.meeting_type] ||
-                      "bg-muted text-muted-foreground border-border";
-                    const isGoogle = !!meeting.google_event_id;
-                    return (
-                      <div
-                        key={meeting.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedMeeting(meeting);
-                        }}
-                        className={`text-[9px] font-bold p-1 rounded border truncate flex items-center justify-between gap-1 transition-all ${typeColor}`}
-                        title={`${meeting.title} - ${meeting.leads?.name || "Sem Nome"}`}
-                      >
-                        <span className="truncate flex-1">
-                          {meeting.title} ({meeting.leads?.name || "Lead"})
-                        </span>
-                        {isGoogle && (
-                          <span className="shrink-0 text-[7px] font-bold px-0.5 rounded bg-success/10 text-success border border-success/20">
-                            G
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {dateMeetings.length > 3 && (
-                    <div className="text-[8px] font-bold text-muted-foreground text-center pt-0.5">
-                      + {dateMeetings.length - 3} mais
-                    </div>
-                  )}
-                </div>
+                {day}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-border/50 bg-border/20">
+            {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
+              const dateMeetings = getMeetingsForDate(date, filteredMeetings);
+              const today = isToday(date);
+              return (
+                <div
+                  key={idx}
+                  onClick={() => handleCellClick(date)}
+                  className={`min-h-[100px] lg:min-h-[120px] bg-surface p-2 transition-colors hover:bg-surface-alt/15 relative flex flex-col justify-between cursor-pointer group ${
+                    !isCurrentMonth ? "opacity-35" : ""
+                  } ${today ? "bg-brand/[0.02]" : ""}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
+                        today
+                          ? "bg-brand text-brand-foreground font-black"
+                          : isCurrentMonth
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                      }`}
+                    >
+                      {day}
+                    </span>
+                    {dateMeetings.length > 0 && (
+                      <span className="text-[8px] font-extrabold px-1 py-0.5 rounded bg-brand/5 border border-brand/10 text-brand">
+                        {dateMeetings.length}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex-1 mt-2.5 space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
+                    {dateMeetings.slice(0, 3).map((meeting: any) => {
+                      const typeColor =
+                        MEETING_TYPE_COLORS[meeting.meeting_type] ||
+                        "bg-muted text-muted-foreground border-border";
+                      const isGoogle = !!meeting.google_event_id;
+                      return (
+                        <div
+                          key={meeting.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMeeting(meeting);
+                          }}
+                          className={`text-[9px] font-bold p-1 rounded border truncate flex items-center justify-between gap-1 transition-all ${typeColor}`}
+                          title={`${meeting.title} - ${meeting.leads?.name || "Sem Nome"}`}
+                        >
+                          <span className="truncate flex-1">
+                            {meeting.title} ({meeting.leads?.name || "Lead"})
+                          </span>
+                          {isGoogle && (
+                            <span className="shrink-0 text-[7px] font-bold px-0.5 rounded bg-success/10 text-success border border-success/20">
+                              G
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {dateMeetings.length > 3 && (
+                      <div className="text-[8px] font-bold text-muted-foreground text-center pt-0.5">
+                        + {dateMeetings.length - 3} mais
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
       </div>
 
       {selectedMeeting && (

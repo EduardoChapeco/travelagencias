@@ -6,10 +6,7 @@ const supabase = createClient(
 );
 
 async function check() {
-  const { data, error } = await supabase
-    .from("pg_proc")
-    .select("*")
-    .limit(1);
+  const { data, error } = await supabase.from("pg_proc").select("*").limit(1);
   if (error) {
     console.log("pg_proc check FAILED:", error.message);
   } else {
@@ -18,5 +15,3 @@ async function check() {
 }
 
 check();
-
-

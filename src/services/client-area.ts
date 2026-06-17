@@ -60,7 +60,7 @@ export async function fetchClientTripDetail(tripId: string) {
     .from("trips")
     .select("*, agency:agencies(*)")
     .eq("id", tripId)
-    .is("deleted_at", null)  // ✅ Never show soft-deleted trips to client
+    .is("deleted_at", null) // ✅ Never show soft-deleted trips to client
     .maybeSingle();
   if (error) throw error;
   return data;

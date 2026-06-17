@@ -76,7 +76,9 @@ function DREPage() {
             </div>
           </div>
           <div className="rounded-lg border border-border bg-surface p-4">
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Resultado</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              Resultado
+            </div>
             <div
               className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
             >

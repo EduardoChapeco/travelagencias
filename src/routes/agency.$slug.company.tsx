@@ -445,452 +445,455 @@ function Page() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
           <div className="space-y-0">
-
             {/* ── COMPANY TABS (wrapped in form) ────────────────── */}
             {isCompanyTab && (
               <form onSubmit={save} id="company-form" className="space-y-0">
-              {/* TAB: IDENTITY */}
-              {tab === "identity" && (
-                <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Identidade da empresa</h3>
-                  <Field label="Nome comercial *">
-                    <Input
-                      required
-                      value={form.name}
-                      onChange={(e) => set("name", e.target.value)}
-                    />
-                  </Field>
-                  <Field
-                    label="Slogan / Descrição curta"
-                    hint="Exibido no cabeçalho do portal público"
-                  >
-                    <Input
-                      value={form.short_description}
-                      onChange={(e) => set("short_description", e.target.value)}
-                      placeholder="Sua agência de viagens em Chapecó/SC"
-                    />
-                  </Field>
-                  <Field label="Sobre a agência" hint="Texto completo exibido na página Sobre">
-                    <Textarea
-                      rows={5}
-                      value={form.description}
-                      onChange={(e) => set("description", e.target.value)}
-                      placeholder="História, missão e diferenciais da agência…"
-                    />
-                  </Field>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="Categoria">
+                {/* TAB: IDENTITY */}
+                {tab === "identity" && (
+                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Identidade da empresa</h3>
+                    <Field label="Nome comercial *">
                       <Input
-                        value={form.category}
-                        onChange={(e) => set("category", e.target.value)}
-                        placeholder="Agência de Viagens, Operadora…"
+                        required
+                        value={form.name}
+                        onChange={(e) => set("name", e.target.value)}
                       />
                     </Field>
-                    <Field label="CNPJ">
+                    <Field
+                      label="Slogan / Descrição curta"
+                      hint="Exibido no cabeçalho do portal público"
+                    >
                       <Input
-                        value={form.cnpj}
-                        onChange={(e) => set("cnpj", e.target.value)}
-                        placeholder="00.000.000/0001-00"
+                        value={form.short_description}
+                        onChange={(e) => set("short_description", e.target.value)}
+                        placeholder="Sua agência de viagens em Chapecó/SC"
                       />
                     </Field>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB: CONTACT */}
-              {tab === "contact" && (
-                <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Contato</h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="E-mail comercial">
-                      <Input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => set("email", e.target.value)}
+                    <Field label="Sobre a agência" hint="Texto completo exibido na página Sobre">
+                      <Textarea
+                        rows={5}
+                        value={form.description}
+                        onChange={(e) => set("description", e.target.value)}
+                        placeholder="História, missão e diferenciais da agência…"
                       />
                     </Field>
-                    <Field label="Telefone fixo">
-                      <Input
-                        value={form.phone}
-                        onChange={(e) => set("phone", e.target.value)}
-                        placeholder="(49) 3300-0000"
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="WhatsApp" hint="Com DDI: +55 49 99999-0000">
-                      <Input
-                        value={form.whatsapp}
-                        onChange={(e) => set("whatsapp", e.target.value)}
-                        placeholder="+55 49 99999-0000"
-                      />
-                    </Field>
-                    <Field label="Site">
-                      <Input
-                        type="url"
-                        value={form.website}
-                        onChange={(e) => set("website", e.target.value)}
-                        placeholder="https://suaagencia.com.br"
-                      />
-                    </Field>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB: LOCATION */}
-              {tab === "location" && (
-                <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Localização</h3>
-                  <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
-                    <Field label="Rua / Avenida">
-                      <Input
-                        value={form.address.street}
-                        onChange={(e) => setAddr("street", e.target.value)}
-                      />
-                    </Field>
-                    <Field label="Número">
-                      <Input
-                        value={form.address.number}
-                        onChange={(e) => setAddr("number", e.target.value)}
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label="Complemento">
-                      <Input
-                        value={form.address.complement}
-                        onChange={(e) => setAddr("complement", e.target.value)}
-                        placeholder="Sala 101, 2º andar"
-                      />
-                    </Field>
-                    <Field label="Bairro">
-                      <Input
-                        value={form.address.neighborhood}
-                        onChange={(e) => setAddr("neighborhood", e.target.value)}
-                      />
-                    </Field>
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-[1fr_100px_80px]">
-                    <Field label="Cidade">
-                      <Input
-                        value={form.address.city}
-                        onChange={(e) => setAddr("city", e.target.value)}
-                      />
-                    </Field>
-                    <Field label="Estado (UF)">
-                      <Input
-                        maxLength={2}
-                        value={form.address.state}
-                        onChange={(e) => setAddr("state", e.target.value.toUpperCase())}
-                        placeholder="SC"
-                      />
-                    </Field>
-                    <Field label="CEP">
-                      <Input
-                        value={form.address.zip}
-                        onChange={(e) => setAddr("zip", e.target.value)}
-                        placeholder="89800-000"
-                      />
-                    </Field>
-                  </div>
-
-                  {/* Google Business */}
-                  <div className="border-t border-border pt-4">
-                    <div className="mb-3 flex items-center justify-between">
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Google
-                      </h4>
-                      <button
-                        type="button"
-                        onClick={syncGbp}
-                        disabled={gbpSyncing}
-                        className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
-                      >
-                        <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
-                        {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
-                      </button>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Categoria">
+                        <Input
+                          value={form.category}
+                          onChange={(e) => set("category", e.target.value)}
+                          placeholder="Agência de Viagens, Operadora…"
+                        />
+                      </Field>
+                      <Field label="CNPJ">
+                        <Input
+                          value={form.cnpj}
+                          onChange={(e) => set("cnpj", e.target.value)}
+                          placeholder="00.000.000/0001-00"
+                        />
+                      </Field>
                     </div>
-                    <div className="mb-3 flex items-start gap-2 rounded-md border border-border/50 bg-surface-alt px-3 py-2">
-                      <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <p className="text-[11px] text-muted-foreground">
-                        Preencha o Google Business ID e o Maps URL para sincronizar dados com o
-                        Google Meu Negócio. A sincronização automática via API requer configuração
-                        OAuth no Google Cloud Console.
-                      </p>
+                  </div>
+                )}
+
+                {/* TAB: CONTACT */}
+                {tab === "contact" && (
+                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Contato</h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="E-mail comercial">
+                        <Input
+                          type="email"
+                          value={form.email}
+                          onChange={(e) => set("email", e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Telefone fixo">
+                        <Input
+                          value={form.phone}
+                          onChange={(e) => set("phone", e.target.value)}
+                          placeholder="(49) 3300-0000"
+                        />
+                      </Field>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="Google Business ID">
+                      <Field label="WhatsApp" hint="Com DDI: +55 49 99999-0000">
                         <Input
-                          value={form.google_business_id}
-                          onChange={(e) => set("google_business_id", e.target.value)}
-                          placeholder="ChIJ..."
+                          value={form.whatsapp}
+                          onChange={(e) => set("whatsapp", e.target.value)}
+                          placeholder="+55 49 99999-0000"
                         />
                       </Field>
-                      <Field label="Google Maps URL">
+                      <Field label="Site">
                         <Input
                           type="url"
-                          value={form.google_maps_url}
-                          onChange={(e) => set("google_maps_url", e.target.value)}
-                          placeholder="https://maps.google.com/..."
+                          value={form.website}
+                          onChange={(e) => set("website", e.target.value)}
+                          placeholder="https://suaagencia.com.br"
                         />
                       </Field>
                     </div>
-                    {form.google_maps_url && (
-                      <div className="mt-3">
-                        <Field label="Link de avaliações Google (Review URL)">
+                  </div>
+                )}
+
+                {/* TAB: LOCATION */}
+                {tab === "location" && (
+                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Localização</h3>
+                    <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
+                      <Field label="Rua / Avenida">
+                        <Input
+                          value={form.address.street}
+                          onChange={(e) => setAddr("street", e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Número">
+                        <Input
+                          value={form.address.number}
+                          onChange={(e) => setAddr("number", e.target.value)}
+                        />
+                      </Field>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Complemento">
+                        <Input
+                          value={form.address.complement}
+                          onChange={(e) => setAddr("complement", e.target.value)}
+                          placeholder="Sala 101, 2º andar"
+                        />
+                      </Field>
+                      <Field label="Bairro">
+                        <Input
+                          value={form.address.neighborhood}
+                          onChange={(e) => setAddr("neighborhood", e.target.value)}
+                        />
+                      </Field>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-[1fr_100px_80px]">
+                      <Field label="Cidade">
+                        <Input
+                          value={form.address.city}
+                          onChange={(e) => setAddr("city", e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Estado (UF)">
+                        <Input
+                          maxLength={2}
+                          value={form.address.state}
+                          onChange={(e) => setAddr("state", e.target.value.toUpperCase())}
+                          placeholder="SC"
+                        />
+                      </Field>
+                      <Field label="CEP">
+                        <Input
+                          value={form.address.zip}
+                          onChange={(e) => setAddr("zip", e.target.value)}
+                          placeholder="89800-000"
+                        />
+                      </Field>
+                    </div>
+
+                    {/* Google Business */}
+                    <div className="border-t border-border pt-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Google
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={syncGbp}
+                          disabled={gbpSyncing}
+                          className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
+                        >
+                          <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
+                          {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
+                        </button>
+                      </div>
+                      <div className="mb-3 flex items-start gap-2 rounded-md border border-border/50 bg-surface-alt px-3 py-2">
+                        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <p className="text-[11px] text-muted-foreground">
+                          Preencha o Google Business ID e o Maps URL para sincronizar dados com o
+                          Google Meu Negócio. A sincronização automática via API requer configuração
+                          OAuth no Google Cloud Console.
+                        </p>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <Field label="Google Business ID">
                           <Input
-                            value={form.google_maps_url.replace(/\?.*/, "") + "/review"}
-                            readOnly
-                            className="font-mono text-[11px] opacity-70"
+                            value={form.google_business_id}
+                            onChange={(e) => set("google_business_id", e.target.value)}
+                            placeholder="ChIJ..."
                           />
                         </Field>
+                        <Field label="Google Maps URL">
+                          <Input
+                            type="url"
+                            value={form.google_maps_url}
+                            onChange={(e) => set("google_maps_url", e.target.value)}
+                            placeholder="https://maps.google.com/..."
+                          />
+                        </Field>
+                      </div>
+                      {form.google_maps_url && (
+                        <div className="mt-3">
+                          <Field label="Link de avaliações Google (Review URL)">
+                            <Input
+                              value={form.google_maps_url.replace(/\?.*/, "") + "/review"}
+                              readOnly
+                              className="font-mono text-[11px] opacity-70"
+                            />
+                          </Field>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB: SOCIAL */}
+                {tab === "social" && (
+                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Redes sociais e canais</h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {(
+                        [
+                          { key: "instagram", label: "Instagram", placeholder: "@agencia" },
+                          {
+                            key: "facebook",
+                            label: "Facebook",
+                            placeholder: "facebook.com/agencia",
+                          },
+                          { key: "youtube", label: "YouTube", placeholder: "youtube.com/@agencia" },
+                          {
+                            key: "linkedin",
+                            label: "LinkedIn",
+                            placeholder: "linkedin.com/company/agencia",
+                          },
+                          { key: "tiktok", label: "TikTok", placeholder: "@agencia" },
+                        ] as { key: keyof CP; label: string; placeholder: string }[]
+                      ).map(({ key, label, placeholder }) => (
+                        <Field key={key} label={label}>
+                          <Input
+                            value={form[key] as string}
+                            onChange={(e) => set(key, e.target.value)}
+                            placeholder={placeholder}
+                          />
+                        </Field>
+                      ))}
+                    </div>
+                    <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
+                      <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
+                      <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
+                      <a
+                        href={portalUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline"
+                      >
+                        <ExternalLink className="h-3 w-3" /> Abrir portal
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB: MEDIA */}
+                {tab === "media" && (
+                  <div className="space-y-6 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Mídia e identidade visual</h3>
+                    <div className="space-y-4">
+                      <FileUploader
+                        label="Logo da agência (aparece no cabeçalho do portal)"
+                        value={form.logo_url || null}
+                        onChange={(url) => set("logo_url", url ?? "")}
+                        bucket="agency-logos"
+                        folder={`${agency.id}/logos`}
+                        variant="image"
+                        publicBucket={true}
+                      />
+                      <FileUploader
+                        label="Foto de capa / banner do portal (16:9 recomendado)"
+                        value={form.cover_image_url || null}
+                        onChange={(url) => set("cover_image_url", url ?? "")}
+                        bucket="agency-logos"
+                        folder={`${agency.id}/covers`}
+                        variant="image"
+                        publicBucket={true}
+                      />
+                      <MultiFileUploader
+                        label="Galeria institucional (fotos do escritório, equipe, eventos)"
+                        values={form.gallery}
+                        onChange={(urls) => set("gallery", urls)}
+                        bucket="agency-logos"
+                        folder={`${agency.id}/gallery`}
+                        max={12}
+                        publicBucket={true}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB: HOURS */}
+                {tab === "hours" && (
+                  <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
+                    <h3 className="text-sm font-semibold">Horários de atendimento</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Exibidos no portal público e sincronizados com o Google.
+                    </p>
+                    <div className="space-y-2">
+                      {DAY_KEYS.map((key, i) => {
+                        const h = form.business_hours[key];
+                        return (
+                          <div key={key} className="flex items-center gap-3">
+                            <div className="w-20 text-xs font-medium">{DAYS[i]}</div>
+                            <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <input
+                                type="checkbox"
+                                checked={h.closed}
+                                onChange={(e) => setHours(key, "closed", e.target.checked)}
+                                className="h-3.5 w-3.5"
+                              />
+                              Fechado
+                            </label>
+                            {!h.closed && (
+                              <>
+                                <Input
+                                  type="time"
+                                  value={h.open}
+                                  onChange={(e) => setHours(key, "open", e.target.value)}
+                                  className="w-28 text-xs"
+                                />
+                                <span className="text-xs text-muted-foreground">até</span>
+                                <Input
+                                  type="time"
+                                  value={h.close}
+                                  onChange={(e) => setHours(key, "close", e.target.value)}
+                                  className="w-28 text-xs"
+                                />
+                              </>
+                            )}
+                            {h.closed && (
+                              <span className="text-xs text-muted-foreground italic">
+                                Fechado este dia
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* SAVE BAR (company tabs) */}
+                <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border bg-surface px-5 py-3 text-[11px] text-muted-foreground">
+                  <span>
+                    {(q.data as any)?.updated_at
+                      ? `Última edição: ${new Date((q.data as any).updated_at).toLocaleString("pt-BR")}`
+                      : "Ainda não foi salvo"}
+                  </span>
+                </div>
+              </form>
+            )}
+          </div>
+
+          {/* PORTAL PREVIEW PANEL */}
+          {previewOpen && (
+            <aside className="shrink-0 rounded-lg border border-border bg-surface overflow-hidden h-fit sticky top-4">
+              <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Prévia do portal
+                </span>
+                <a
+                  href={portalUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-brand hover:underline flex items-center gap-1"
+                >
+                  <ExternalLink className="h-3 w-3" /> Abrir
+                </a>
+              </div>
+              <div className="overflow-hidden" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+                {/* Hero preview */}
+                <div className="relative flex h-32 items-end bg-surface-alt overflow-hidden">
+                  {form.cover_image_url && (
+                    <img
+                      src={form.cover_image_url}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover opacity-60"
+                    />
+                  )}
+                  <div className="relative z-10 p-3 w-full">
+                    {form.logo_url && (
+                      <img
+                        src={form.logo_url}
+                        alt=""
+                        className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface"
+                      />
+                    )}
+                    <div className="font-bold text-sm leading-tight">
+                      {form.name || "Nome da agência"}
+                    </div>
+                    {form.short_description && (
+                      <div className="text-[10px] text-muted-foreground line-clamp-1">
+                        {form.short_description}
                       </div>
                     )}
                   </div>
                 </div>
-              )}
-
-              {/* TAB: SOCIAL */}
-              {tab === "social" && (
-                <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Redes sociais e canais</h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {(
-                      [
-                        { key: "instagram", label: "Instagram", placeholder: "@agencia" },
-                        { key: "facebook", label: "Facebook", placeholder: "facebook.com/agencia" },
-                        { key: "youtube", label: "YouTube", placeholder: "youtube.com/@agencia" },
-                        {
-                          key: "linkedin",
-                          label: "LinkedIn",
-                          placeholder: "linkedin.com/company/agencia",
-                        },
-                        { key: "tiktok", label: "TikTok", placeholder: "@agencia" },
-                      ] as { key: keyof CP; label: string; placeholder: string }[]
-                    ).map(({ key, label, placeholder }) => (
-                      <Field key={key} label={label}>
-                        <Input
-                          value={form[key] as string}
-                          onChange={(e) => set(key, e.target.value)}
-                          placeholder={placeholder}
-                        />
-                      </Field>
-                    ))}
+                {/* Portal config preview */}
+                <div className="p-3 border-b border-border">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    Seções ativas
                   </div>
-                  <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
-                    <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
-                    <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
-                    <a
-                      href={portalUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1.5 inline-flex items-center gap-1 text-brand hover:underline"
-                    >
-                      <ExternalLink className="h-3 w-3" /> Abrir portal
-                    </a>
+                  <div className="flex flex-wrap gap-1">
+                    {form.portal_theme.show_tours && (
+                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                        Roteiros
+                      </span>
+                    )}
+                    {form.portal_theme.show_blog && (
+                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                        Blog
+                      </span>
+                    )}
+                    {form.portal_theme.show_gallery && (
+                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                        Galeria
+                      </span>
+                    )}
+                    {form.portal_theme.show_hours && (
+                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                        Horários
+                      </span>
+                    )}
+                    {form.portal_theme.show_map && (
+                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                        Mapa
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
-
-              {/* TAB: MEDIA */}
-              {tab === "media" && (
-                <div className="space-y-6 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Mídia e identidade visual</h3>
-                  <div className="space-y-4">
-                    <FileUploader
-                      label="Logo da agência (aparece no cabeçalho do portal)"
-                      value={form.logo_url || null}
-                      onChange={(url) => set("logo_url", url ?? "")}
-                      bucket="agency-logos"
-                      folder={`${agency.id}/logos`}
-                      variant="image"
-                      publicBucket={true}
+                {/* Cores preview */}
+                <div className="p-3">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                    Cores
+                  </div>
+                  <div className="flex gap-2">
+                    <div
+                      className="h-8 w-8 rounded-md border border-border"
+                      style={{ background: agency.brand_color || "#1E293B" }}
+                      title="Primária"
                     />
-                    <FileUploader
-                      label="Foto de capa / banner do portal (16:9 recomendado)"
-                      value={form.cover_image_url || null}
-                      onChange={(url) => set("cover_image_url", url ?? "")}
-                      bucket="agency-logos"
-                      folder={`${agency.id}/covers`}
-                      variant="image"
-                      publicBucket={true}
-                    />
-                    <MultiFileUploader
-                      label="Galeria institucional (fotos do escritório, equipe, eventos)"
-                      values={form.gallery}
-                      onChange={(urls) => set("gallery", urls)}
-                      bucket="agency-logos"
-                      folder={`${agency.id}/gallery`}
-                      max={12}
-                      publicBucket={true}
+                    <div
+                      className="h-8 w-8 rounded-md border border-border"
+                      style={{ background: agency.brand_color_light || "#F1F5F9" }}
+                      title="Fundo claro"
                     />
                   </div>
                 </div>
-              )}
-
-              {/* TAB: HOURS */}
-              {tab === "hours" && (
-                <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
-                  <h3 className="text-sm font-semibold">Horários de atendimento</h3>
-                  <p className="text-xs text-muted-foreground">
-                    Exibidos no portal público e sincronizados com o Google.
-                  </p>
-                  <div className="space-y-2">
-                    {DAY_KEYS.map((key, i) => {
-                      const h = form.business_hours[key];
-                      return (
-                        <div key={key} className="flex items-center gap-3">
-                          <div className="w-20 text-xs font-medium">{DAYS[i]}</div>
-                          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <input
-                              type="checkbox"
-                              checked={h.closed}
-                              onChange={(e) => setHours(key, "closed", e.target.checked)}
-                              className="h-3.5 w-3.5"
-                            />
-                            Fechado
-                          </label>
-                          {!h.closed && (
-                            <>
-                              <Input
-                                type="time"
-                                value={h.open}
-                                onChange={(e) => setHours(key, "open", e.target.value)}
-                                className="w-28 text-xs"
-                              />
-                              <span className="text-xs text-muted-foreground">até</span>
-                              <Input
-                                type="time"
-                                value={h.close}
-                                onChange={(e) => setHours(key, "close", e.target.value)}
-                                className="w-28 text-xs"
-                              />
-                            </>
-                          )}
-                          {h.closed && (
-                            <span className="text-xs text-muted-foreground italic">
-                              Fechado este dia
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* SAVE BAR (company tabs) */}
-              <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border bg-surface px-5 py-3 text-[11px] text-muted-foreground">
-                <span>
-                  {(q.data as any)?.updated_at
-                    ? `Última edição: ${new Date((q.data as any).updated_at).toLocaleString("pt-BR")}`
-                    : "Ainda não foi salvo"}
-                </span>
               </div>
-            </form>
+            </aside>
           )}
         </div>
-
-        {/* PORTAL PREVIEW PANEL */}
-        {previewOpen && (
-          <aside className="shrink-0 rounded-lg border border-border bg-surface overflow-hidden h-fit sticky top-4">
-            <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Prévia do portal
-              </span>
-              <a
-                href={portalUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-brand hover:underline flex items-center gap-1"
-              >
-                <ExternalLink className="h-3 w-3" /> Abrir
-              </a>
-            </div>
-            <div className="overflow-hidden" style={{ maxHeight: "70vh", overflowY: "auto" }}>
-              {/* Hero preview */}
-              <div className="relative flex h-32 items-end bg-surface-alt overflow-hidden">
-                {form.cover_image_url && (
-                  <img
-                    src={form.cover_image_url}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover opacity-60"
-                  />
-                )}
-                <div className="relative z-10 p-3 w-full">
-                  {form.logo_url && (
-                    <img
-                      src={form.logo_url}
-                      alt=""
-                      className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface"
-                    />
-                  )}
-                  <div className="font-bold text-sm leading-tight">
-                    {form.name || "Nome da agência"}
-                  </div>
-                  {form.short_description && (
-                    <div className="text-[10px] text-muted-foreground line-clamp-1">
-                      {form.short_description}
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* Portal config preview */}
-              <div className="p-3 border-b border-border">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                  Seções ativas
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {form.portal_theme.show_tours && (
-                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
-                      Roteiros
-                    </span>
-                  )}
-                  {form.portal_theme.show_blog && (
-                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
-                      Blog
-                    </span>
-                  )}
-                  {form.portal_theme.show_gallery && (
-                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
-                      Galeria
-                    </span>
-                  )}
-                  {form.portal_theme.show_hours && (
-                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
-                      Horários
-                    </span>
-                  )}
-                  {form.portal_theme.show_map && (
-                    <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
-                      Mapa
-                    </span>
-                  )}
-                </div>
-              </div>
-              {/* Cores preview */}
-              <div className="p-3">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                  Cores
-                </div>
-                <div className="flex gap-2">
-                  <div
-                    className="h-8 w-8 rounded-md border border-border"
-                    style={{ background: agency.brand_color || "#1E293B" }}
-                    title="Primária"
-                  />
-                  <div
-                    className="h-8 w-8 rounded-md border border-border"
-                    style={{ background: agency.brand_color_light || "#F1F5F9" }}
-                    title="Fundo claro"
-                  />
-                </div>
-              </div>
-            </div>
-          </aside>
-        )}
       </div>
     </div>
-  </div>
-);
+  );
 }

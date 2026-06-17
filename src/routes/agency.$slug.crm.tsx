@@ -1,7 +1,18 @@
 import { createFileRoute, useParams, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen, Search, Filter, ChevronDown } from "lucide-react";
+import {
+  Plus,
+  Settings2,
+  X,
+  Trash2,
+  KanbanSquare,
+  Archive,
+  FolderOpen,
+  Search,
+  Filter,
+  ChevronDown,
+} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
@@ -181,10 +192,12 @@ function CRMPage() {
             }`}
             title={showArchived ? "Funil Ativo" : "Ver Arquivados"}
           >
-            {showArchived ? <FolderOpen className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">
-              {showArchived ? "Funil Ativo" : "Arquivados"}
-            </span>
+            {showArchived ? (
+              <FolderOpen className="h-3.5 w-3.5" />
+            ) : (
+              <Archive className="h-3.5 w-3.5" />
+            )}
+            <span className="hidden sm:inline">{showArchived ? "Funil Ativo" : "Arquivados"}</span>
           </button>
           <button
             onClick={() => setNewOpen(true)}

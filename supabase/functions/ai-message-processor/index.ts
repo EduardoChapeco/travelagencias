@@ -242,11 +242,14 @@ Retorne EXATAMENTE e APENAS o objeto JSON. Não inclua blocos de código com mar
 
     let personaPrompt = "";
     if (aiPersona === "conversion") {
-      personaPrompt = "Sua persona de atendimento é focada em conversão e vendas (agressivo comercialmente, tenta qualificar o lead, extrair dados e oferecer cotações rapidamente para fechar vendas).";
+      personaPrompt =
+        "Sua persona de atendimento é focada em conversão e vendas (agressivo comercialmente, tenta qualificar o lead, extrair dados e oferecer cotações rapidamente para fechar vendas).";
     } else if (aiPersona === "retention") {
-      personaPrompt = "Sua persona de atendimento é focada em retenção e relacionamento (estilo consultivo, focado em suporte, tirar dúvidas, resolver problemas de pós-venda e acolhimento).";
+      personaPrompt =
+        "Sua persona de atendimento é focada em retenção e relacionamento (estilo consultivo, focado em suporte, tirar dúvidas, resolver problemas de pós-venda e acolhimento).";
     } else {
-      personaPrompt = "Sua persona de atendimento é equilibrada (tom neutro, profissional, focado tanto em qualificação/venda quanto em tirar dúvidas de forma consultiva).";
+      personaPrompt =
+        "Sua persona de atendimento é equilibrada (tom neutro, profissional, focado tanto em qualificação/venda quanto em tirar dúvidas de forma consultiva).";
     }
 
     const systemPrompt = `Você é um Inside Sales Hunter Sênior (Travel Designer) e assistente de IA da agência de viagens.
@@ -317,7 +320,12 @@ Importante:
     let insights;
 
     try {
-      insights = JSON.parse(aiData.result.replace(/```json/g, "").replace(/```/g, "").trim());
+      insights = JSON.parse(
+        aiData.result
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim(),
+      );
     } catch (e) {
       console.error("Failed to parse AI response as JSON", aiData.result);
       throw new Error("Invalid JSON from AI");
@@ -474,7 +482,8 @@ Retorne EXATAMENTE e APENAS o objeto JSON.
             });
 
             // Append proposal link to reply
-            const appUrl = Deno.env.get("APP_URL") || Deno.env.get("FRONTEND_URL") || "https://travelos.com";
+            const appUrl =
+              Deno.env.get("APP_URL") || Deno.env.get("FRONTEND_URL") || "https://travelos.com";
             const proposalLink = `${appUrl}/m/proposal/${newProposal.public_token}`;
             if (finalReply) {
               finalReply = `${finalReply} ${proposalLink}`;
