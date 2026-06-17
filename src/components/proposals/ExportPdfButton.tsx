@@ -35,7 +35,6 @@ export function ExportPdfButton({ proposal }: Props) {
       const pages = Array.from(
         container.querySelectorAll(".a4-page, .a4-landscape-page, .presentation-page"),
       ) as HTMLElement[];
-      const targets = pages.length > 0 ? pages : [container];
 
       const isLandscape =
         proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
@@ -45,10 +44,42 @@ export function ExportPdfButton({ proposal }: Props) {
       const pdfW = isLandscape ? 297 : 210;
       const pdfH = isLandscape ? 210 : 297;
 
-      for (let i = 0; i < targets.length; i++) {
-        const el = targets[i];
+      if (pages.length > 0) {
+        // Paginated flow: render each page individually
+        for (let i = 0; i < pages.length; i++) {
+          const el = pages[i];
 
-        // Temporarily clear margin for rendering
+          // Temporarily clear margin for rendering
+          const originalMargin = el.style.margin;
+          el.style.margin = "0";
+
+          const canvas = await html2canvas(el, {
+            scale: 2.5,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+            logging: false,
+            onclone: (clonedDoc) => {
+              const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+              if (clonedCanvas) {
+                clonedCanvas.style.transform = "none";
+                clonedCanvas.style.transition = "none";
+              }
+            }
+          });
+
+          el.style.margin = originalMargin;
+
+          const img = canvas.toDataURL("image/jpeg", 0.95);
+
+          if (i > 0) {
+            pdf.addPage("a4", orientation);
+          }
+
+          pdf.addImage(img, "JPEG", 0, 0, pdfW, pdfH);
+        }
+      } else {
+        // Continuous flow: slice a single tall canvas into multiple A4 pages
+        const el = container;
         const originalMargin = el.style.margin;
         el.style.margin = "0";
 
@@ -57,17 +88,35 @@ export function ExportPdfButton({ proposal }: Props) {
           useCORS: true,
           backgroundColor: "#ffffff",
           logging: false,
+          onclone: (clonedDoc) => {
+            const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+            if (clonedCanvas) {
+              clonedCanvas.style.transform = "none";
+              clonedCanvas.style.transition = "none";
+            }
+          }
         });
 
         el.style.margin = originalMargin;
 
         const img = canvas.toDataURL("image/jpeg", 0.95);
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        
+        // Calculate the height of one A4 page in canvas pixels based on target PDF aspect ratio
+        const pageCanvasHeight = isLandscape ? imgWidth * 0.707 : imgWidth * 1.414;
+        const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
+        
+        // Calculate total PDF height if the image were rendered continuously
+        const totalPdfHeight = pdfW * (imgHeight / imgWidth);
 
-        if (i > 0) {
-          pdf.addPage("a4", orientation);
+        for (let page = 0; page < totalPages; page++) {
+          if (page > 0) {
+            pdf.addPage("a4", orientation);
+          }
+          const yOffset = -page * pdfH;
+          pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
         }
-
-        pdf.addImage(img, "JPEG", 0, 0, pdfW, pdfH);
       }
 
       pdf.save(`proposta-${proposal.number}.pdf`);
@@ -76,7 +125,7 @@ export function ExportPdfButton({ proposal }: Props) {
       // Log activity
       await logProposalActivity(proposal.id, proposal.agency_id, "pdf_exported", {
         format: proposal.canvas_format,
-        pages_count: targets.length,
+        pages_count: pages.length > 0 ? pages.length : 1,
       });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao exportar PDF");
@@ -107,6 +156,13 @@ export function ExportPdfButton({ proposal }: Props) {
           useCORS: true,
           backgroundColor: "#ffffff",
           logging: false,
+          onclone: (clonedDoc) => {
+            const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+            if (clonedCanvas) {
+              clonedCanvas.style.transform = "none";
+              clonedCanvas.style.transition = "none";
+            }
+          }
         });
 
         el.style.margin = originalMargin;

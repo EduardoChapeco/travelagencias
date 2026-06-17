@@ -86,6 +86,7 @@ import { Route as AgencySlugCalendarRouteImport } from './routes/agency.$slug.ca
 import { Route as AgencySlugBusLayoutsRouteImport } from './routes/agency.$slug.bus-layouts'
 import { Route as AgencySlugBrandRouteImport } from './routes/agency.$slug.brand'
 import { Route as AgencySlugBoardingRouteImport } from './routes/agency.$slug.boarding'
+import { Route as AgencySlugBillingRouteImport } from './routes/agency.$slug.billing'
 import { Route as AdminAgenciesIdRouteImport } from './routes/admin.agencies.$id'
 import { Route as PAgency_slugKbIndexRouteImport } from './routes/p.$agency_slug.kb.index'
 import { Route as AgencySlugTripsIndexRouteImport } from './routes/agency.$slug.trips.index'
@@ -507,6 +508,11 @@ const AgencySlugBoardingRoute = AgencySlugBoardingRouteImport.update({
   path: '/boarding',
   getParentRoute: () => AgencySlugRoute,
 } as any)
+const AgencySlugBillingRoute = AgencySlugBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
 const AdminAgenciesIdRoute = AdminAgenciesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -736,6 +742,7 @@ export interface FileRoutesByFullPath {
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
+  '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
@@ -845,6 +852,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthIndexRoute
   '/client': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
+  '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
@@ -956,6 +964,7 @@ export interface FileRoutesById {
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
+  '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
@@ -1072,6 +1081,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/client/'
     | '/admin/agencies/$id'
+    | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
@@ -1181,6 +1191,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/client'
     | '/admin/agencies/$id'
+    | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
@@ -1291,6 +1302,7 @@ export interface FileRouteTypes {
     | '/auth/'
     | '/client/'
     | '/admin/agencies/$id'
+    | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
@@ -1930,6 +1942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugBoardingRouteImport
       parentRoute: typeof AgencySlugRoute
     }
+    '/agency/$slug/billing': {
+      id: '/agency/$slug/billing'
+      path: '/billing'
+      fullPath: '/agency/$slug/billing'
+      preLoaderRoute: typeof AgencySlugBillingRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
     '/admin/agencies/$id': {
       id: '/admin/agencies/$id'
       path: '/$id'
@@ -2447,6 +2466,7 @@ const AgencySlugTripsIdRouteWithChildren =
   AgencySlugTripsIdRoute._addFileChildren(AgencySlugTripsIdRouteChildren)
 
 interface AgencySlugRouteChildren {
+  AgencySlugBillingRoute: typeof AgencySlugBillingRoute
   AgencySlugBoardingRoute: typeof AgencySlugBoardingRoute
   AgencySlugBrandRoute: typeof AgencySlugBrandRoute
   AgencySlugBusLayoutsRoute: typeof AgencySlugBusLayoutsRouteWithChildren
@@ -2480,6 +2500,7 @@ interface AgencySlugRouteChildren {
 }
 
 const AgencySlugRouteChildren: AgencySlugRouteChildren = {
+  AgencySlugBillingRoute: AgencySlugBillingRoute,
   AgencySlugBoardingRoute: AgencySlugBoardingRoute,
   AgencySlugBrandRoute: AgencySlugBrandRoute,
   AgencySlugBusLayoutsRoute: AgencySlugBusLayoutsRouteWithChildren,

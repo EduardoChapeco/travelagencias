@@ -221,17 +221,40 @@ export function VoucherStudio({
     setExporting(true);
     try {
       const { jsPDF } = await import("jspdf");
-      const html2canvasLib = (await import("html2canvas")).default;
       const el = document.getElementById("voucher-canvas");
       if (!el) throw new Error("Canvas não encontrado");
-      const canvas = await html2canvasLib(el, {
+      const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: true,
         backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => {
+          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+          if (clonedCanvas) {
+            clonedCanvas.style.transform = "none";
+            clonedCanvas.style.transition = "none";
+          }
+        }
       });
       const img = canvas.toDataURL("image/jpeg", 0.96);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      pdf.addImage(img, "JPEG", 0, 0, 210, 297);
+      const pdfW = 210;
+      const pdfH = 297;
+
+      const pageCanvasHeight = imgWidth * 1.414;
+      const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
+      const totalPdfHeight = pdfW * (imgHeight / imgWidth);
+
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
+          pdf.addPage("a4", "portrait");
+        }
+        const yOffset = -page * pdfH;
+        pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
+      }
+
       pdf.save(`voucher-${draft.destination ?? "viagem"}.pdf`);
       toast.success("PDF exportado com sucesso!");
     } catch (e) {
@@ -245,9 +268,20 @@ export function VoucherStudio({
   async function exportStoryPng() {
     setExporting(true);
     try {
-      const el = document.getElementById("story-preview-canvas");
+      const el = document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
       if (!el) throw new Error("Canvas Story não encontrado");
-      const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: null,
+        onclone: (clonedDoc) => {
+          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+          if (clonedCanvas) {
+            clonedCanvas.style.transform = "none";
+            clonedCanvas.style.transition = "none";
+          }
+        }
+      });
       const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
