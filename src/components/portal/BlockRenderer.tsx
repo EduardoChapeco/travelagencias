@@ -123,7 +123,20 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
   const styles = (block as any).styles;
   if (!styles) return <div className="w-full">{children}</div>;
 
-  const { bg_type, bg_color, bg_gradient, bg_image_url, text_color, padding_y, border_radius, animation, animation_duration, animation_delay } = styles;
+  const {
+    bg_type,
+    bg_color,
+    bg_gradient,
+    bg_image_url,
+    text_color,
+    padding_y,
+    border_radius,
+    border_effect,
+    shadow_effect,
+    animation,
+    animation_duration,
+    animation_delay
+  } = styles;
 
   const inlineStyles: React.CSSProperties = {};
   if (text_color) inlineStyles.color = text_color;
@@ -163,10 +176,27 @@ export function BlockStyleWrapper({ block, children }: { block: PortalBlock; chi
   };
   const radiusClass = radiusMap[border_radius as keyof typeof radiusMap] || "";
 
+  const borderMap = {
+    none: "",
+    solid: "border border-border/80",
+    glass: "border border-white/10 backdrop-blur-md",
+    glow: "border border-indigo-500/30 ring-1 ring-indigo-500/15",
+  };
+  const borderClass = borderMap[border_effect as keyof typeof borderMap] || "";
+
+  const shadowMap = {
+    none: "",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-2xl shadow-black/25",
+    glow: "shadow-lg shadow-indigo-500/20",
+  };
+  const shadowClass = shadowMap[shadow_effect as keyof typeof shadowMap] || "";
+
   return (
     <div
       style={inlineStyles}
-      className={`w-full transition-all overflow-hidden ${paddingClass} ${radiusClass} ${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
+      className={`w-full transition-all overflow-hidden ${paddingClass} ${radiusClass} ${borderClass} ${shadowClass} ${bg_type === "image" ? "relative before:absolute before:inset-0 before:bg-background/20 before:z-0" : ""}`}
     >
       <div className={bg_type === "image" ? "relative z-10 w-full" : "w-full"}>
         {children}

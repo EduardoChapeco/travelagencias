@@ -127,38 +127,53 @@ function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-brand selection:text-brand-foreground">
+    <div className="min-h-screen bg-zinc-950 text-zinc-50 selection:bg-indigo-500 selection:text-white overflow-hidden">
+      {/* ── Background Glow Blobs ────────────────────────────── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-indigo-900/20 rounded-full blur-[140px] animate-pulse duration-[8s]" />
+        <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] bg-violet-900/15 rounded-full blur-[120px] animate-pulse duration-[10s]" />
+        <div className="absolute bottom-[10%] left-[15%] w-[40vw] h-[40vw] bg-purple-900/10 rounded-full blur-[130px]" />
+      </div>
+
       {/* ── Navbar ────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-brand-foreground text-sm font-bold shadow-md shadow-brand/20">
+      <header className="sticky top-0 z-40 border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black shadow-lg shadow-indigo-500/20">
               T
             </div>
-            <span className="text-base font-extrabold tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-              TravelOS
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-black tracking-tight bg-gradient-to-r from-zinc-50 to-zinc-400 bg-clip-text text-transparent">
+                TravelOS
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-indigo-400 leading-none">
+                B2B Workspace
+              </span>
+            </div>
           </div>
 
-          <nav className="hidden items-center gap-6 text-sm text-muted-foreground sm:flex">
-            <a href="#features" className="transition-colors hover:text-foreground font-medium">
-              Funcionalidades
+          <nav className="hidden items-center gap-8 text-sm font-semibold text-zinc-400 md:flex">
+            <a href="#features" className="transition-colors hover:text-zinc-50 flex items-center gap-1">
+              Recursos
             </a>
-            <a href="#comparison" className="transition-colors hover:text-foreground font-medium">
+            <a href="#comparison" className="transition-colors hover:text-zinc-50">
               Antes vs Depois
+            </a>
+            <a href="#testimonials" className="transition-colors hover:text-zinc-50">
+              Depoimentos
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link
               to="/auth/login"
-              className="h-9 rounded-lg border border-border px-4 text-xs font-semibold transition-all hover:bg-surface-alt inline-flex items-center"
+              className="h-10 rounded-xl px-5 text-sm font-bold text-zinc-300 transition-all hover:bg-zinc-900 hover:text-zinc-50 inline-flex items-center"
             >
               Entrar
             </Link>
             <Link
               to="/auth/register"
-              className="h-9 rounded-lg bg-brand px-4 text-xs font-semibold text-brand-foreground shadow-lg shadow-brand/15 hover:shadow-brand/25 transition-all hover:opacity-95 inline-flex items-center"
+              className="h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-6 text-sm font-bold text-white shadow-lg shadow-indigo-500/15 hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center"
             >
               Criar Agência Grátis
             </Link>
@@ -167,66 +182,66 @@ function Landing() {
       </header>
 
       {/* ── Hero BENTO PREMIUM ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-border/50 bg-gradient-to-b from-surface-alt/20 to-background pb-24 pt-32">
-        {/* Glow Effects */}
-        <div className="absolute inset-0 bg-brand/3 backdrop-blur-3xl pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/10 rounded-full blur-[140px] pointer-events-none opacity-40" />
-
-        <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
-          <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand animate-fade-in">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
-            </span>
-            CONSTRUIDO EXCLUSIVAMENTE PARA AGÊNCIAS DE VIAGENS
-          </div>
-
-          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-foreground md:text-7xl leading-[1.08] drop-shadow-sm">
-            O Sistema Operacional que faz sua <span className="bg-gradient-to-r from-brand to-brand/80 bg-clip-text text-transparent">Agência Lucrar Mais</span>.
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed font-medium">
-            Pare de perder vendas por demora no envio de PDFs ou bagunça em planilhas. Centralize propostas interativas, contratos eletrônicos, financeiro com DRE por viagem e embarques em um workspace premium.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/auth/register"
-              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 text-sm font-bold uppercase tracking-wider text-brand-foreground shadow-lg shadow-brand/20 transition-all hover:-translate-y-0.5 hover:shadow-brand/35 overflow-hidden"
-            >
-              <span className="relative flex items-center gap-2">
-                Experimentar Grátis por 14 Dias{" "}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-            <Link
-              to="/auth/login"
-              className="inline-flex h-14 items-center justify-center rounded-xl border border-border/80 bg-surface px-8 text-sm font-bold uppercase tracking-wider text-foreground transition-all hover:border-brand/40 hover:bg-brand/3"
-            >
-              Acessar Painel
-            </Link>
-          </div>
-
-          <div className="mt-8 flex items-center justify-center gap-6 text-xs font-semibold text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-brand" /> Sem cartão de crédito
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-brand" /> Setup em menos de 2 minutos
-            </span>
-          </div>
+      <section className="relative z-10 mx-auto max-w-6xl px-6 pt-20 pb-28 text-center lg:pt-28">
+        <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-400 animate-fadeIn">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+          </span>
+          A ÚNICA PLATAFORMA DE VENDAS E OPERAÇÃO 100% TURISMO
         </div>
 
-        {/* BENTO STATS */}
-        <div className="relative z-10 mx-auto mt-24 max-w-4xl px-6">
+        <h1 className="mx-auto max-w-4xl text-5xl font-black tracking-tight text-white md:text-7xl lg:text-8xl leading-[1.05]">
+          A sua Agência de Viagens operando no{" "}
+          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-pink-500 bg-clip-text text-transparent">
+            máximo lucro
+          </span>.
+        </h1>
+
+        <p className="mx-auto mt-8 max-w-3xl text-base md:text-lg text-zinc-400 leading-relaxed font-medium">
+          Diga adeus às planilhas soltas e PDFs pesados. Centralize propostas interativas que avisam quando são abertas, contratos automatizados com assinatura eletrônica na tela, controle de vistos/passaportes e fluxo de caixa real por viagem.
+        </p>
+
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/auth/register"
+            className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-600 to-pink-600 px-10 text-sm font-black uppercase tracking-wider text-white shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all overflow-hidden"
+          >
+            Começar Agora Grátis
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <a
+            href="#features"
+            className="inline-flex h-14 w-full sm:w-auto items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-md px-10 text-sm font-bold uppercase tracking-wider text-zinc-300 transition-all hover:border-zinc-700 hover:text-white"
+          >
+            Ver Recursos
+          </a>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs font-semibold text-zinc-500">
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-4.5 w-4.5 text-indigo-400" /> Sem cartão de crédito
+          </span>
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-4.5 w-4.5 text-indigo-400" /> Setup completo em 2 minutos
+          </span>
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-4.5 w-4.5 text-indigo-400" /> Teste gratuito por 14 dias
+          </span>
+        </div>
+
+        {/* BENTO STATS DISPLAY */}
+        <div className="mx-auto mt-24 max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center rounded-2xl border border-border/40 bg-surface/60 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-brand/20 hover:bg-surface"
+                className="flex flex-col items-center justify-center rounded-3xl border border-zinc-800/60 bg-zinc-900/30 p-8 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-indigo-500/20 hover:bg-zinc-900/50 group"
               >
-                <div className="text-4xl font-black text-brand tracking-tight">{s.value}</div>
-                <div className="mt-2 text-[10px] uppercase tracking-widest font-extrabold text-muted-foreground text-center">
+                <div className="text-5xl font-black bg-gradient-to-br from-indigo-400 to-violet-500 bg-clip-text text-transparent tracking-tight group-hover:scale-105 transition-transform duration-300">
+                  {s.value}
+                </div>
+                <div className="mt-3 text-[11px] uppercase tracking-widest font-black text-zinc-500">
                   {s.label}
                 </div>
               </div>
@@ -236,77 +251,80 @@ function Landing() {
       </section>
 
       {/* ── Antes vs Depois (Neuromarketing Contrast) ─────────────────────────────────── */}
-      <section id="comparison" className="bg-surface-alt/10 py-24 border-b border-border/50">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="mb-16 text-center max-w-2xl mx-auto">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-brand mb-3">
+      <section id="comparison" className="relative z-10 border-y border-zinc-900 bg-zinc-950/40 py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mb-20 text-center max-w-3xl mx-auto">
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-3">
               O Contraste do Sucesso
             </p>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-              Como sua agência opera hoje vs. no TravelOS
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight text-white">
+              Como sua agência opera hoje vs. no <span className="text-indigo-400">TravelOS</span>
             </h2>
+            <p className="text-zinc-400 text-sm mt-4 font-medium leading-relaxed">
+              O amadorismo e o atraso processual cobram um preço alto na conversão. Compare a realidade operacional.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* O Jeito Doloroso */}
-            <div className="rounded-3xl border border-border bg-surface p-8 space-y-6 opacity-80 hover:opacity-100 transition-opacity">
-              <h3 className="text-lg font-bold text-danger flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 shrink-0" />
-                O Jeito Lento (Planilhas e PDFs)
+            <div className="rounded-3xl border border-red-950/40 bg-red-950/5 p-10 space-y-8 opacity-75 hover:opacity-100 transition-opacity duration-300">
+              <h3 className="text-xl font-bold text-red-400 flex items-center gap-3">
+                <AlertTriangle className="h-6 w-6 shrink-0" />
+                O Jeito Lento (Word, PDFs e WhatsApp Solto)
               </h3>
-              <ul className="space-y-4 text-sm text-muted-foreground">
-                <li className="flex gap-2">
-                  <span className="text-danger font-bold">✕</span>
-                  <span>Gastar 45 minutos montando uma proposta no Word que vira um PDF pesado de 15MB.</span>
+              <ul className="space-y-5 text-sm text-zinc-400">
+                <li className="flex gap-3 items-start">
+                  <span className="text-red-500 font-bold shrink-0 text-base">✕</span>
+                  <span>Gastar 45 minutos montando uma proposta estática que vira um PDF pesado de 15MB, que o cliente mal consegue abrir no 4G.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-danger font-bold">✕</span>
-                  <span>Não ter ideia se o cliente abriu o arquivo ou se simplesmente ignorou o e-mail.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-red-500 font-bold shrink-0 text-base">✕</span>
+                  <span>Não ter ideia se o cliente abriu o link ou se simplesmente ignorou seu orçamento, perdendo o momento ideal de follow-up.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-danger font-bold">✕</span>
-                  <span>Contratos assinados manualmente que demandam impressora, scanner e dias de atraso.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-red-500 font-bold shrink-0 text-base">✕</span>
+                  <span>Contratos impressos ou enviados por e-mail que exigem scanner, assinatura manual e demoram dias para retornar.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-danger font-bold">✕</span>
-                  <span>Esquecer de conferir a validade do passaporte do passageiro e ter problemas no portão de embarque.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-red-500 font-bold shrink-0 text-base">✕</span>
+                  <span>Esquecer de conferir a data de validade de passaporte ou vistos do passageiro, gerando cancelamentos catastróficos no check-in.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-danger font-bold">✕</span>
-                  <span>Financeiro desorganizado, sem clareza da comissão real de cada consultor ou do lucro líquido.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-red-500 font-bold shrink-0 text-base">✕</span>
+                  <span>Financeiro confuso, sem controle exato do DRE real por saída, comissões de consultores ou parcelamentos pendentes.</span>
                 </li>
               </ul>
             </div>
 
             {/* O Jeito TravelOS */}
-            <div className="rounded-3xl border-2 border-brand bg-surface p-8 space-y-6 shadow-xl shadow-brand/5 relative">
-              <div className="absolute -top-3 right-6 rounded-full bg-brand px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-brand-foreground">
-                Recomendado
+            <div className="rounded-3xl border-2 border-indigo-500/80 bg-gradient-to-br from-indigo-950/20 to-zinc-900/50 p-10 space-y-8 shadow-2xl shadow-indigo-500/10 relative">
+              <div className="absolute -top-3.5 right-8 rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-1 text-[9px] font-black uppercase tracking-wider text-white">
+                Fórmula de Alto Lucro
               </div>
-              <h3 className="text-lg font-bold text-brand flex items-center gap-2">
-                <Sparkles className="h-5 w-5 shrink-0" />
-                O Jeito TravelOS
+              <h3 className="text-xl font-bold text-indigo-400 flex items-center gap-3">
+                <Sparkles className="h-6 w-6 shrink-0 text-violet-400" />
+                O Jeito Inteligente TravelOS
               </h3>
-              <ul className="space-y-4 text-sm text-foreground">
-                <li className="flex gap-2">
-                  <span className="text-brand font-bold">✓</span>
-                  <span><strong>Propostas em 5 minutos</strong>: monte itinerários interativos, adicione fotos e envie um link web elegante.</span>
+              <ul className="space-y-5 text-sm text-zinc-100">
+                <li className="flex gap-3 items-start">
+                  <span className="text-emerald-400 font-bold shrink-0 text-base">✓</span>
+                  <span><strong>Roteiros em 5 Minutos</strong>: crie propostas web interativas ultra-rápidas com fotos de alta qualidade e tabelas de preços claras.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-brand font-bold">✓</span>
-                  <span><strong>Leitura rastreada</strong>: receba alertas na hora em que o cliente abre sua proposta para poder ligar de volta.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-emerald-400 font-bold shrink-0 text-base">✓</span>
+                  <span><strong>Alertas de Leitura em Tempo Real</strong>: seja notificado no WhatsApp/sistema no exato instante em que o cliente abre a proposta.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-brand font-bold">✓</span>
-                  <span><strong>Assinatura em 1 clique</strong>: contratos jurídicos gerados a partir do roteiro e assinados eletronicamente na tela.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-emerald-400 font-bold shrink-0 text-base">✓</span>
+                  <span><strong>Assinatura Digital em 1 Clique</strong>: contratos gerados automaticamente baseados na proposta e assinados via celular em segundos.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-brand font-bold">✓</span>
-                  <span><strong>Alertas operacionais</strong>: controle de vistos, passaportes e listas de passageiros em um painel unificado.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-emerald-400 font-bold shrink-0 text-base">✓</span>
+                  <span><strong>Alarme Inteligente de Documentação</strong>: avisos automáticos e recorrentes de vistos, passaportes ou certificados de vacina expirando.</span>
                 </li>
-                <li className="flex gap-2">
-                  <span className="text-brand font-bold">✓</span>
-                  <span><strong>Financeiro sob controle</strong>: saiba exatamente a comissão e o DRE de lucro líquido de cada viagem em tempo real.</span>
+                <li className="flex gap-3 items-start">
+                  <span className="text-emerald-400 font-bold shrink-0 text-base">✓</span>
+                  <span><strong>DRE & Margem por Viagem</strong>: acompanhe centavo por centavo do lucro líquido, custos operacionais e comissões dos consultores.</span>
                 </li>
               </ul>
             </div>
@@ -315,15 +333,18 @@ function Landing() {
       </section>
 
       {/* ── Features Bento Grid ─────────────────────────────────────────── */}
-      <section id="features" className="bg-background py-24">
+      <section id="features" className="relative z-10 py-28">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-16 text-center max-w-2xl mx-auto">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-brand mb-4">
-              Módulos Integrados e Inteligentes
+          <div className="mb-20 text-center max-w-2xl mx-auto">
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">
+              Arquitetura de Sucesso Integrada
             </p>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-              Tudo o que sua agência precisa em uma única tela.
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white leading-tight">
+              Tudo o que sua agência precisa em uma única plataforma.
             </h2>
+            <p className="text-zinc-400 text-sm mt-4 font-medium leading-relaxed">
+              Módulos construídos de forma integrada para evitar redigitação de informações e centralizar sua gestão.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -333,25 +354,27 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                    "group relative overflow-hidden rounded-3xl border border-border/40 bg-surface p-8 transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/2",
-                    (i === 0 || i === 3) && "md:col-span-2 lg:col-span-2 bg-surface-alt/30",
+                    "group relative overflow-hidden rounded-3xl border border-zinc-800/80 bg-zinc-900/20 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-indigo-500/30 hover:bg-zinc-900/40",
+                    (i === 0 || i === 3) && "md:col-span-2 lg:col-span-2 bg-gradient-to-br from-indigo-950/10 to-zinc-900/30",
                   )}
                 >
-                  <div className="absolute right-0 top-0 h-40 w-40 -translate-y-10 translate-x-10 rounded-full bg-brand/5 transition-transform duration-500 group-hover:scale-150" />
+                  <div className="absolute right-[-20px] top-[-20px] h-32 w-32 rounded-full bg-indigo-500/5 blur-xl transition-transform duration-500 group-hover:scale-150" />
 
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 border border-brand/20 text-brand">
-                      <Icon className="h-5 w-5" strokeWidth={2.2} />
+                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
+                      <Icon className="h-5.5 w-5.5" strokeWidth={2} />
                     </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-bold text-foreground">{f.title}</h3>
+                    
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-xl font-bold text-white tracking-tight">{f.title}</h3>
                       {f.badge && (
-                        <span className="rounded bg-brand/10 px-2 py-0.5 text-[9px] font-bold text-brand uppercase tracking-wider">
+                        <span className="rounded-full bg-indigo-500/15 border border-indigo-500/20 px-2.5 py-0.5 text-[9px] font-black text-indigo-400 uppercase tracking-widest">
                           {f.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs leading-relaxed text-muted-foreground font-medium flex-1">
+
+                    <p className="text-xs leading-relaxed text-zinc-400 font-semibold flex-1">
                       {f.description}
                     </p>
                   </div>
@@ -362,30 +385,82 @@ function Landing() {
         </div>
       </section>
 
-      {/* ── CTA Final Premium ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-brand py-24 text-brand-foreground">
-        <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-white/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* ── Testimonials Section ────────────────────────────────────────── */}
+      <section id="testimonials" className="relative z-10 border-t border-zinc-900 bg-zinc-950/60 py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="mb-20 text-center max-w-2xl mx-auto">
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">
+              Resultados de Clientes
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+              O que dizem os donos de agências de viagens
+            </h2>
+          </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6 leading-tight">
-            Pronto para colocar sua Agência no Piloto Automático?
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/20 p-8 space-y-6">
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(n => <span key={n} className="text-amber-500 text-lg">★</span>)}
+              </div>
+              <p className="text-zinc-300 italic text-sm leading-relaxed">
+                "O fechamento das minhas propostas subiu mais de 30% desde que comecei a usar o TravelOS. O cliente abre a proposta interativa no celular, assina ali mesmo em 1 minuto e eu recebo o aviso imediato no WhatsApp. Reduziu meu ciclo de venda de dias para minutos."
+              </p>
+              <div className="flex items-center gap-3 pt-4 border-t border-zinc-800/50">
+                <div className="h-10 w-10 rounded-full bg-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-sm">
+                  AP
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">Ana Paula Castilho</h4>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Diretora · Castilho Operadora B2B</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/20 p-8 space-y-6">
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map(n => <span key={n} className="text-amber-500 text-lg">★</span>)}
+              </div>
+              <p className="text-zinc-300 italic text-sm leading-relaxed">
+                "Antes vivíamos correndo o risco de embarcar cliente com passaporte vencido ou sem vistos. O robô de alertas automáticos do TravelOS salvou nossa agência de um baita prejuízo no mês passado. O financeiro integrado com a margem líquida por viagem também é fantástico."
+              </p>
+              <div className="flex items-center gap-3 pt-4 border-t border-zinc-800/50">
+                <div className="h-10 w-10 rounded-full bg-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-sm">
+                  RC
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">Ricardo Camargo</h4>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">CEO · Camargo Viagens de Luxo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Final Premium ────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-indigo-900 via-violet-950 to-zinc-950 py-32 text-center border-t border-zinc-900">
+        <div className="absolute inset-0 bg-zinc-950/20 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-6">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-8 leading-tight">
+            Chega de planilhas. Comece a lucrar mais com sua agência.
           </h2>
-          <p className="mt-4 text-base font-medium opacity-90 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Elimine erros operacionais, surpreenda seus clientes com propostas incríveis e tenha o controle financeiro na palma da mão. Comece agora sem digitar cartão de crédito.
+          <p className="mt-4 text-base font-semibold text-zinc-300 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Elimine erros operacionais de passageiros, encante com orçamentos digitais modernos e tenha controle total do DRE financeiro em tempo real.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-14 items-center justify-center gap-2 rounded-xl bg-background px-10 text-sm font-bold uppercase tracking-wider text-brand transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/10"
+              className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 px-10 text-sm font-black uppercase tracking-wider text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/45 hover:-translate-y-0.5 transition-all"
             >
-              Criar Conta B2B Grátis{" "}
+              Criar Conta Grátis
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-14 items-center rounded-xl border border-brand-foreground/30 px-10 text-sm font-bold uppercase tracking-wider transition-colors hover:bg-brand-foreground/10"
+              className="inline-flex h-14 w-full sm:w-auto items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-md px-10 text-sm font-bold uppercase tracking-wider text-zinc-300 transition-colors hover:border-zinc-700 hover:text-white"
             >
               Acessar Minha Agência
             </Link>
@@ -394,22 +469,22 @@ function Landing() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────── */}
-      <footer className="border-t border-border bg-surface-alt/10">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-brand-foreground text-xs font-bold">
+      <footer className="border-t border-zinc-900 bg-zinc-950 py-12 relative z-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white text-xs font-black">
               T
             </div>
-            <span className="text-sm font-bold tracking-tight">TravelOS</span>
+            <span className="text-sm font-bold text-white tracking-tight">TravelOS</span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} TravelOS · Desenvolvido exclusivamente para profissionais de turismo.
+          <p className="text-xs text-zinc-500 font-semibold">
+            © {new Date().getFullYear()} TravelOS. Desenvolvido exclusivamente para profissionais de turismo.
           </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <Link to="/auth/login" className="hover:text-foreground transition-colors">
+          <div className="flex items-center gap-6 text-xs text-zinc-500 font-bold">
+            <Link to="/auth/login" className="hover:text-zinc-300 transition-colors">
               Entrar
             </Link>
-            <Link to="/auth/register" className="hover:text-foreground transition-colors">
+            <Link to="/auth/register" className="hover:text-zinc-300 transition-colors">
               Cadastrar
             </Link>
           </div>
@@ -418,3 +493,4 @@ function Landing() {
     </div>
   );
 }
+

@@ -2132,13 +2132,39 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
             )}
 
             {blockStyles.bg_type === "gradient" && (
-              <Field label="Gradiente CSS">
-                <Input
-                  value={blockStyles.bg_gradient || ""}
-                  onChange={(e) => updateStyle({ bg_gradient: e.target.value })}
-                  placeholder="linear-gradient(to right, #1e3a8a, #3b82f6)"
-                />
-              </Field>
+              <div className="space-y-3">
+                <Field label="Gradiente CSS">
+                  <Input
+                    value={blockStyles.bg_gradient || ""}
+                    onChange={(e) => updateStyle({ bg_gradient: e.target.value })}
+                    placeholder="linear-gradient(to right, #1e3a8a, #3b82f6)"
+                  />
+                </Field>
+                {/* Gradient Presets */}
+                <div className="bg-surface-alt/45 p-2.5 rounded-xl border border-border/40 space-y-2">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase">Presets Vibrantes:</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { name: "Indigo Dreams", value: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)" },
+                      { name: "Sunset Glow", value: "linear-gradient(135deg, #f43f5e 0%, #f97316 100%)" },
+                      { name: "Ocean Breeze", value: "linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)" },
+                      { name: "Emerald Mint", value: "linear-gradient(135deg, #10b981 0%, #059669 100%)" },
+                      { name: "Vibrant Dark", value: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)" },
+                      { name: "Neon Purple", value: "linear-gradient(135deg, #d946ef 0%, #4f46e5 100%)" }
+                    ].map((p) => (
+                      <button
+                        key={p.name}
+                        type="button"
+                        onClick={() => updateStyle({ bg_gradient: p.value })}
+                        className="flex items-center gap-1.5 p-1 rounded-lg border border-border text-[9px] font-bold text-left hover:border-brand/40 bg-surface transition-all active:scale-[0.97]"
+                      >
+                        <span className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10" style={{ background: p.value }} />
+                        <span className="truncate">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
 
             {blockStyles.bg_type === "image" && (
@@ -2211,6 +2237,31 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 <option value="md">Suave (md)</option>
                 <option value="lg">Arredondado (lg)</option>
                 <option value="full">Pílula (full)</option>
+              </Select>
+            </Field>
+
+            <Field label="Efeito de Borda">
+              <Select
+                value={blockStyles.border_effect || "none"}
+                onChange={(e) => updateStyle({ border_effect: e.target.value })}
+              >
+                <option value="none">Nenhum</option>
+                <option value="solid">Borda Fina Sólida</option>
+                <option value="glass">Borda de Vidro (Glassmorphism)</option>
+                <option value="glow">Borda Iluminada Vibrante</option>
+              </Select>
+            </Field>
+
+            <Field label="Sombras do Bloco">
+              <Select
+                value={blockStyles.shadow_effect || "none"}
+                onChange={(e) => updateStyle({ shadow_effect: e.target.value })}
+              >
+                <option value="none">Nenhuma</option>
+                <option value="sm">Sombra Leve</option>
+                <option value="md">Sombra Média</option>
+                <option value="lg">Sombra Profunda</option>
+                <option value="glow">Brilho Neon Indigo</option>
               </Select>
             </Field>
 
