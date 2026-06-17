@@ -5,8 +5,9 @@ import { toast } from "sonner";
 import { Upload, X, Palette, Type, Image as ImageIcon, CheckCircle, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
+
 
 export const Route = createFileRoute("/agency/$slug/brand")({
   head: () => ({ meta: [{ title: "Identidade visual · TravelOS" }] }),
@@ -196,10 +197,15 @@ function BrandPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Identidade visual"
-        description="Configure as cores, fontes e ativos visuais da sua agência e veja o preview em tempo real."
-      />
+      <HeaderPortal>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+        >
+          {saving ? "Salvando..." : "Salvar alterações"}
+        </button>
+      </HeaderPortal>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Side settings form - using div wrapper instead of form */}
@@ -359,11 +365,7 @@ function BrandPage() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-2">
-            <PrimaryButton onClick={save} disabled={saving} className="px-6 py-2.5 shadow-md">
-              {saving ? "Salvando..." : "Salvar Identidade Visual"}
-            </PrimaryButton>
-          </div>
+
         </div>
 
         {/* Right Side: Interactive Mockup Live Preview */}

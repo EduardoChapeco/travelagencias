@@ -24,6 +24,7 @@ import {
   fmtDate,
 } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/team")({
@@ -134,13 +135,23 @@ function TeamPage() {
   }
 
   return (
-    <>
-      {/* Unified Toolbar Header */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
-        <div className="relative flex-1 max-w-xs">
-          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Convidar
+          </button>
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <span className="absolute inset-y-0 left-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
             <svg
-              className="h-4 w-4 text-muted-foreground/60"
+              className="h-3.5 w-3.5 text-muted-foreground/60"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -158,16 +169,12 @@ function TeamPage() {
             placeholder="Buscar por nome ou email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-8 pl-9 pr-4 rounded-lg border border-border bg-background text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-brand/50 focus:ring-1 focus:ring-brand/50 outline-none transition-colors"
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
           />
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors"
-        >
-          <Plus className="h-3.5 w-3.5" /> Convidar
-        </button>
       </div>
+
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
 
       <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         Membros
@@ -313,8 +320,9 @@ function TeamPage() {
         />
       )}
       <ConfirmDialog />
-    </>
-  );
+    </div>
+  </div>
+);
 }
 
 function AgentCommissionSheet({

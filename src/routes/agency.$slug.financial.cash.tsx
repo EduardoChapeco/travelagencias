@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
   Field,
   Input,
@@ -95,28 +96,39 @@ function CashPage() {
   });
 
   return (
-    <>
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Card
-          label="Entradas"
-          value={money(totalsQ.data?.income ?? 0)}
-          tone="success"
-          icon={<ArrowDownCircle className="h-4 w-4" />}
-        />
-        <Card
-          label="Saídas"
-          value={money(totalsQ.data?.expense ?? 0)}
-          tone="danger"
-          icon={<ArrowUpCircle className="h-4 w-4" />}
-        />
-        <Card
-          label="Saldo líquido"
-          value={money(totalsQ.data?.net ?? 0)}
-          tone={(totalsQ.data?.net ?? 0) >= 0 ? "success" : "danger"}
-        />
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <HeaderPortal>
+        <button
+          onClick={() => setOpen(true)}
+          className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+        >
+          <Plus className="h-3.5 w-3.5" /> Novo lançamento
+        </button>
+      </HeaderPortal>
+
+      <div className="p-4 pb-0 shrink-0">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <Card
+            label="Entradas"
+            value={money(totalsQ.data?.income ?? 0)}
+            tone="success"
+            icon={<ArrowDownCircle className="h-4 w-4" />}
+          />
+          <Card
+            label="Saídas"
+            value={money(totalsQ.data?.expense ?? 0)}
+            tone="danger"
+            icon={<ArrowUpCircle className="h-4 w-4" />}
+          />
+          <Card
+            label="Saldo líquido"
+            value={money(totalsQ.data?.net ?? 0)}
+            tone={(totalsQ.data?.net ?? 0) >= 0 ? "success" : "danger"}
+          />
+        </div>
       </div>
 
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border bg-surface/50 p-2 shrink-0 mt-4">
         <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
           {(["all", "income", "expense", "pending"] as const).map((f) => (
             <button
@@ -138,118 +150,114 @@ function CashPage() {
             </button>
           ))}
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer w-full sm:w-auto justify-center shrink-0"
-        >
-          <Plus className="h-3.5 w-3.5" /> Novo lançamento
-        </button>
       </div>
 
-      {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-      {q.data?.data.length === 0 && (
-        <EmptyState
-          title="Sem lançamentos"
-          description="Adicione entradas e despesas para acompanhar o caixa."
-        />
-      )}
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+        {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+        {q.data?.data.length === 0 && (
+          <EmptyState
+            title="Sem lançamentos"
+            description="Adicione entradas e despesas para acompanhar o caixa."
+          />
+        )}
 
-      {q.data && q.data.data.length > 0 && (
-        <>
-          <div className="overflow-hidden rounded-lg border border-border">
-            <table className="w-full text-sm">
-              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2 font-medium">Descrição</th>
-                  <th className="px-3 py-2 font-medium">Categoria</th>
-                  <th className="px-3 py-2 font-medium">Tipo</th>
-                  <th className="px-3 py-2 font-medium">Status</th>
-                  <th className="px-3 py-2 font-medium">Vencimento</th>
-                  <th className="px-3 py-2 font-medium text-right">Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {q.data.data.map((r) => (
-                  <tr key={r.id} className="border-t border-border hover:bg-surface-alt/30">
-                    <td className="px-3 py-2.5">
-                      <div className="font-medium">{r.description ?? "—"}</div>
-                      <div className="mt-1 flex flex-col gap-0.5">
-                        {r.payment_method && (
-                          <div className="text-[11px] text-muted-foreground">
-                            Método: {r.payment_method}
-                          </div>
-                        )}
-                        {r.clients?.name && (
-                          <div className="text-[11px] text-brand">👤 {r.clients.name}</div>
-                        )}
-                        {r.trips?.title && (
-                          <div className="text-[11px] text-brand">✈️ {r.trips.title}</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {r.category ?? "—"}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <StatusBadge tone={r.type === "income" ? "success" : "danger"}>
-                        {r.type === "income" ? "Entrada" : "Saída"}
-                      </StatusBadge>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <StatusBadge
-                        tone={
-                          r.status === "paid"
-                            ? "success"
-                            : r.status === "overdue"
-                              ? "danger"
-                              : r.status === "cancelled"
-                                ? "neutral"
-                                : "warning"
-                        }
-                      >
-                        {r.status}
-                      </StatusBadge>
-                    </td>
-                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {fmtDate(r.due_date)}
-                    </td>
-                    <td
-                      className={`px-3 py-2.5 text-right font-mono text-xs ${r.type === "income" ? "text-success" : "text-danger"}`}
-                    >
-                      {r.type === "expense" ? "−" : "+"}
-                      {money(Number(r.amount), r.currency)}
-                    </td>
+        {q.data && q.data.data.length > 0 && (
+          <>
+            <div className="overflow-hidden rounded-lg border border-border bg-surface">
+              <table className="w-full text-sm">
+                <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">Descrição</th>
+                    <th className="px-3 py-2 font-medium">Categoria</th>
+                    <th className="px-3 py-2 font-medium">Tipo</th>
+                    <th className="px-3 py-2 font-medium">Status</th>
+                    <th className="px-3 py-2 font-medium">Vencimento</th>
+                    <th className="px-3 py-2 font-medium text-right">Valor</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {q.data.data.map((r) => (
+                    <tr key={r.id} className="border-t border-border hover:bg-surface-alt/30">
+                      <td className="px-3 py-2.5">
+                        <div className="font-medium">{r.description ?? "—"}</div>
+                        <div className="mt-1 flex flex-col gap-0.5">
+                          {r.payment_method && (
+                            <div className="text-[11px] text-muted-foreground">
+                              Método: {r.payment_method}
+                            </div>
+                          )}
+                          {r.clients?.name && (
+                            <div className="text-[11px] text-brand">👤 {r.clients.name}</div>
+                          )}
+                          {r.trips?.title && (
+                            <div className="text-[11px] text-brand">✈️ {r.trips.title}</div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                        {r.category ?? "—"}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <StatusBadge tone={r.type === "income" ? "success" : "danger"}>
+                          {r.type === "income" ? "Entrada" : "Saída"}
+                        </StatusBadge>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <StatusBadge
+                          tone={
+                            r.status === "paid"
+                              ? "success"
+                              : r.status === "overdue"
+                                ? "danger"
+                                : r.status === "cancelled"
+                                  ? "neutral"
+                                  : "warning"
+                          }
+                        >
+                          {r.status}
+                        </StatusBadge>
+                      </td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                        {fmtDate(r.due_date)}
+                      </td>
+                      <td
+                        className={`px-3 py-2.5 text-right font-mono text-xs ${r.type === "income" ? "text-success" : "text-danger"}`}
+                      >
+                        {r.type === "expense" ? "−" : "+"}
+                        {money(Number(r.amount), r.currency)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Controles de Paginação */}
-          <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-            <div className="text-xs text-muted-foreground">
-              Página <span className="font-medium text-foreground">{page}</span> de{" "}
-              {Math.ceil(q.data.count / pageSize) || 1}
+            {/* Controles de Paginação */}
+            <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+              <div className="text-xs text-muted-foreground">
+                Página <span className="font-medium text-foreground">{page}</span> de{" "}
+                {Math.ceil(q.data.count / pageSize) || 1}
+              </div>
+              <div className="flex items-center gap-2">
+                <GhostButton
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="h-8 px-3 text-xs"
+                >
+                  Anterior
+                </GhostButton>
+                <GhostButton
+                  disabled={page * pageSize >= q.data.count}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="h-8 px-3 text-xs"
+                >
+                  Próxima
+                </GhostButton>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <GhostButton
-                disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3 text-xs"
-              >
-                Anterior
-              </GhostButton>
-              <GhostButton
-                disabled={page * pageSize >= q.data.count}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3 text-xs"
-              >
-                Próxima
-              </GhostButton>
-            </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
 
       {open && agency && (
         <NewRecord
@@ -261,7 +269,7 @@ function CashPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 

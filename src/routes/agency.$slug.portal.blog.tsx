@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
   Field,
   Input,
@@ -117,53 +118,58 @@ function BlogPage() {
   };
 
   return (
-    <>
-      {/* STATS */}
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {[
-          { label: "Total de artigos", value: stats.total, icon: BookOpen },
-          { label: "Publicados", value: stats.published, icon: Eye },
-          { label: "Rascunhos", value: stats.drafts, icon: Edit2 },
-          {
-            label: "Visualizações totais",
-            value: stats.views.toLocaleString("pt-BR"),
-            icon: BarChart2,
-          },
-        ].map((s) => (
-          <div key={s.label} className="rounded-lg border border-border bg-surface p-4">
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <s.icon className="h-3.5 w-3.5" />
-              {s.label}
-            </div>
-            <div className="mt-1.5 text-xl font-bold tracking-tight">{s.value}</div>
-          </div>
-        ))}
-      </div>
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setNewOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo artigo
+          </button>
+        </div>
+      </HeaderPortal>
 
-      {/* Unified Toolbar Header */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
-        <div className="flex gap-1 rounded-lg border border-border bg-surface p-1 w-fit">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 justify-between">
+        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
           {["all", "published", "draft", "scheduled"].map((s) => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
                 filterStatus === s
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s)}
             </button>
           ))}
         </div>
-        <button
-          onClick={() => setNewOpen(true)}
-          className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5" /> Novo artigo
-        </button>
       </div>
+
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
+        {/* STATS */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {[
+            { label: "Total de artigos", value: stats.total, icon: BookOpen },
+            { label: "Publicados", value: stats.published, icon: Eye },
+            { label: "Rascunhos", value: stats.drafts, icon: Edit2 },
+            {
+              label: "Visualizações totais",
+              value: stats.views.toLocaleString("pt-BR"),
+              icon: BarChart2,
+            },
+          ].map((s) => (
+            <div key={s.label} className="rounded-lg border border-border bg-surface p-4">
+              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <s.icon className="h-3.5 w-3.5" />
+                {s.label}
+              </div>
+              <div className="mt-1.5 text-xl font-bold tracking-tight">{s.value}</div>
+            </div>
+          ))}
+        </div>
 
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
@@ -259,8 +265,9 @@ function BlogPage() {
           }}
         />
       )}
-    </>
-  );
+    </div>
+  </div>
+);
 }
 
 function BlogSheet({

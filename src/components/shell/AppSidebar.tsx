@@ -17,6 +17,7 @@ import {
   Store,
   BookOpen,
   Settings,
+  CreditCard,
   LogOut,
   Globe,
   Briefcase,
@@ -29,7 +30,7 @@ import {
   ListTodo,
   BrainCircuit,
 } from "lucide-react";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -64,6 +65,7 @@ const items: SlimSidebarItem[] = [
   { label: "Equipe", to: "team", icon: Users2, adminOnly: true },
   { label: "Identidade Visual", to: "brand", icon: Palette, adminOnly: true },
   { label: "Conexões", to: "integrations", icon: Puzzle, adminOnly: true },
+  { label: "Assinatura & Planos", to: "billing", icon: CreditCard, adminOnly: true },
   { label: "Configurações", to: "settings", icon: Settings, adminOnly: true },
 ];
 
@@ -94,6 +96,7 @@ export function AppSidebar({
       onTogglePin={onTogglePin}
       items={visibleItems.map((i) => ({
         ...i,
+        label: i.to !== undefined ? getModuleName(i.to || "dashboard", agency) : i.label,
         to: i.to !== undefined ? `/agency/${slug}${i.to ? `/${i.to}` : ""}` : undefined,
       }))}
       brand={

@@ -18,7 +18,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
@@ -275,7 +275,7 @@ function PassengersPage() {
         params={{ slug, id }}
         className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para viagem
+        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para detalhes de {getModuleName("trips", agency)}
       </Link>
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>

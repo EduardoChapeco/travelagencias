@@ -41,81 +41,91 @@ function DREPage() {
   });
 
   return (
-    <>
-      <div className="mb-4 flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">Período:</span>
-        {(["month", "quarter", "year"] as const).map((p) => (
-          <button
-            key={p}
-            onClick={() => setPeriod(p)}
-            className={`rounded px-2.5 py-1 text-xs ${period === p ? "bg-primary text-primary-foreground" : "border border-border hover:bg-surface-alt"}`}
-          >
-            {p === "month" ? "30d" : p === "quarter" ? "90d" : "12m"}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
-          <div className="mt-1 font-mono text-xl font-semibold text-success">
-            {money(q.data?.income ?? 0)}
-          </div>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
-          <div className="mt-1 font-mono text-xl font-semibold text-danger">
-            {money(q.data?.expense ?? 0)}
-          </div>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Resultado</div>
-          <div
-            className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
-          >
-            {money(q.data?.net ?? 0)}
-          </div>
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Período:</span>
+          {(["month", "quarter", "year"] as const).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`rounded px-2.5 py-1 text-xs font-semibold cursor-pointer transition-colors ${
+                period === p
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "border border-border hover:bg-surface-alt text-muted-foreground"
+              }`}
+            >
+              {p === "month" ? "30d" : p === "quarter" ? "90d" : "12m"}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border">
-        <table className="w-full text-sm">
-          <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-            <tr>
-              <th className="px-3 py-2 font-medium">Categoria</th>
-              <th className="px-3 py-2 text-right font-medium">Receita</th>
-              <th className="px-3 py-2 text-right font-medium">Despesa</th>
-              <th className="px-3 py-2 text-right font-medium">Resultado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {q.data &&
-              Object.entries(q.data.byCat)
-                .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
-                .map(([cat, v]) => (
-                  <tr key={cat} className="border-t border-border">
-                    <td className="px-3 py-2.5 font-medium">{cat}</td>
-                    <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
-                      {money(v.income)}
-                    </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-xs text-danger">
-                      {money(v.expense)}
-                    </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-xs">
-                      {money(v.income - v.expense)}
-                    </td>
-                  </tr>
-                ))}
-            {q.data && Object.keys(q.data.byCat).length === 0 && (
+      <div className="p-4 pb-0 shrink-0">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
+            <div className="mt-1 font-mono text-xl font-semibold text-success">
+              {money(q.data?.income ?? 0)}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
+            <div className="mt-1 font-mono text-xl font-semibold text-danger">
+              {money(q.data?.expense ?? 0)}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Resultado</div>
+            <div
+              className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
+            >
+              {money(q.data?.net ?? 0)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
-                <td colSpan={4} className="px-3 py-8 text-center text-xs text-muted-foreground">
-                  Sem dados no período.
-                </td>
+                <th className="px-3 py-2 font-medium">Categoria</th>
+                <th className="px-3 py-2 text-right font-medium">Receita</th>
+                <th className="px-3 py-2 text-right font-medium">Despesa</th>
+                <th className="px-3 py-2 text-right font-medium">Resultado</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {q.data &&
+                Object.entries(q.data.byCat)
+                  .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
+                  .map(([cat, v]) => (
+                    <tr key={cat} className="border-t border-border hover:bg-surface-alt/30">
+                      <td className="px-3 py-2.5 font-medium">{cat}</td>
+                      <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
+                        {money(v.income)}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono text-xs text-danger">
+                        {money(v.expense)}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono text-xs">
+                        {money(v.income - v.expense)}
+                      </td>
+                    </tr>
+                  ))}
+              {q.data && Object.keys(q.data.byCat).length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-3 py-8 text-center text-xs text-muted-foreground">
+                    Sem dados no período.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

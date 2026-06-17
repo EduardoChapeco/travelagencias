@@ -26,6 +26,7 @@ import { StatusBadge, Input, Select, PrimaryButton, GhostButton } from "@/compon
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/")({
   head: () => ({ meta: [{ title: "Painel de Páginas do Portal · TravelOS" }] }),
@@ -344,112 +345,9 @@ function PagesPage() {
   const globalCtr = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : "0.0";
 
   return (
-    <div className="space-y-6">
-      {/* Modern Analytics & Highlight Row */}
-      {agency && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Páginas Criadas</span>
-              <h3 className="text-2xl font-black text-foreground mt-1">{totalPages}</h3>
-            </div>
-            <div className="p-3 rounded-lg bg-indigo-50 text-indigo-600">
-              <LayoutTemplate className="h-5 w-5" />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Visualizações</span>
-              <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
-            </div>
-            <div className="p-3 rounded-lg bg-emerald-50 text-emerald-600">
-              <Eye className="h-5 w-5" />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Cliques em Links</span>
-              <h3 className="text-2xl font-black text-foreground mt-1">{totalClicks}</h3>
-            </div>
-            <div className="p-3 rounded-lg bg-sky-50 text-sky-600">
-              <MousePointerClick className="h-5 w-5" />
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CTR Geral</span>
-              <h3 className="text-2xl font-black text-foreground mt-1">{globalCtr}%</h3>
-            </div>
-            <div className="p-3 rounded-lg bg-amber-50 text-amber-600">
-              <TrendingUp className="h-5 w-5" />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tabs, Search & Creation controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-2">
-        <div className="flex flex-wrap gap-1 bg-surface-alt/40 p-1 rounded-xl border border-border/40 shrink-0">
-          <button
-            onClick={() => setActiveTab("all")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeTab === "all"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Todas as Páginas
-          </button>
-          <button
-            onClick={() => setActiveTab("sites")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeTab === "sites"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Websites & Landing Pages
-          </button>
-          <button
-            onClick={() => setActiveTab("biolinks")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeTab === "biolinks"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Links na Bio (Biolinks)
-          </button>
-          <button
-            onClick={() => setActiveTab("templates")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              activeTab === "templates"
-                ? "bg-background text-brand shadow-sm border border-brand/10"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Biblioteca de Templates
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {activeTab !== "templates" && (
-            <div className="relative w-full sm:max-w-xs">
-              <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-muted-foreground/60" />
-              </span>
-              <input
-                type="text"
-                placeholder="Buscar por título ou link..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-9 pl-9 pr-4 rounded-lg border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-brand/50 focus:ring-1 focus:ring-brand/50 outline-none transition-colors"
-              />
-            </div>
-          )}
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => {
               setSelectedTemplateId("empty");
@@ -457,12 +355,99 @@ function PagesPage() {
               setNewPageSlug("");
               setCreateModalOpen(true);
             }}
-            className="flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer shrink-0"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
           >
-            <Plus className="h-4 w-4" /> Nova Página
+            <Plus className="h-3.5 w-3.5" /> Nova Página
           </button>
         </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 justify-between">
+        <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-md border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
+          {(["all", "sites", "biolinks", "templates"] as const).map((tabId) => {
+            const labels = {
+              all: "Todas as Páginas",
+              sites: "Websites & Landing Pages",
+              biolinks: "Links na Bio",
+              templates: "Biblioteca de Templates"
+            };
+            return (
+              <button
+                key={tabId}
+                onClick={() => setActiveTab(tabId)}
+                className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
+                  activeTab === tabId
+                    ? "bg-surface-alt text-foreground border border-border/50"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {labels[tabId]}
+              </button>
+            );
+          })}
+        </div>
+
+        {activeTab !== "templates" && (
+          <div className="relative w-full sm:w-64">
+            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none">
+              <Search className="h-3.5 w-3.5" />
+            </span>
+            <input
+              type="text"
+              placeholder="Buscar por título ou link..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
+            />
+          </div>
+        )}
       </div>
+
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
+        {/* Modern Analytics & Highlight Row */}
+        {agency && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Páginas Criadas</span>
+                <h3 className="text-2xl font-black text-foreground mt-1">{totalPages}</h3>
+              </div>
+              <div className="p-3 rounded-lg bg-indigo-50 text-indigo-600">
+                <LayoutTemplate className="h-5 w-5" />
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Visualizações</span>
+                <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
+              </div>
+              <div className="p-3 rounded-lg bg-emerald-50 text-emerald-600">
+                <Eye className="h-5 w-5" />
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Cliques em Links</span>
+                <h3 className="text-2xl font-black text-foreground mt-1">{totalClicks}</h3>
+              </div>
+              <div className="p-3 rounded-lg bg-sky-50 text-sky-600">
+                <MousePointerClick className="h-5 w-5" />
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-surface p-5 shadow-sm flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">CTR Geral</span>
+                <h3 className="text-2xl font-black text-foreground mt-1">{globalCtr}%</h3>
+              </div>
+              <div className="p-3 rounded-lg bg-amber-50 text-amber-600">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+            </div>
+          </div>
+        )}
 
       {/* Content list representation */}
       {q.isLoading && <div className="text-sm text-muted-foreground">Carregando dados...</div>}
@@ -787,5 +772,6 @@ function PagesPage() {
         </div>
       </SheetPage>
     </div>
-  );
+  </div>
+);
 }

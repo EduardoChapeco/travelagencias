@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Building2, Percent, PhoneCall, Mail, Search, Filter } from "lucide-react";
+import { Plus, Building2, Percent, PhoneCall, Mail, Search, Filter, Settings2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   Field,
   Input,
@@ -37,12 +39,13 @@ type Supplier = {
 };
 
 function SuppliersPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = Route.useParams();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [kindFilter, setKindFilter] = useState("all");
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const q = useQuery({
     enabled: !!agency,
@@ -67,124 +70,137 @@ function SuppliersPage() {
   });
 
   return (
-    <>
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por nome do fornecedor..."
-              className="h-9 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm outline-none focus:border-border-strong placeholder:text-muted-foreground"
-            />
-          </div>
-          <div className="relative w-full sm:w-44">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <select
-              value={kindFilter}
-              onChange={(e) => setKindFilter(e.target.value)}
-              className="h-9 w-full appearance-none rounded-md border border-border bg-surface pl-9 pr-8 text-sm outline-none focus:border-border-strong text-foreground"
-            >
-              <option value="all">Todas as categorias</option>
-              <option value="hotel">Hospedagem</option>
-              <option value="airline">Cia Aérea</option>
-              <option value="tour_operator">Operadora</option>
-              <option value="transfer">Transfer</option>
-              <option value="insurance">Seguro</option>
-              <option value="other">Outros</option>
-            </select>
-          </div>
-        </div>
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
         <div className="flex items-center gap-2">
-          <button
+          <PrimaryButton
             onClick={() => setOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-xs font-semibold cursor-pointer"
+            title="Novo Fornecedor"
           >
-            <Plus className="h-3.5 w-3.5" /> Novo Fornecedor
-          </button>
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Novo Fornecedor</span>
+          </PrimaryButton>
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Fornecedores"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nome do fornecedor..."
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+          />
+        </div>
+        <div className="relative w-full sm:w-44">
+          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <select
+            value={kindFilter}
+            onChange={(e) => setKindFilter(e.target.value)}
+            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground"
+          >
+            <option value="all">Todas as categorias</option>
+            <option value="hotel">Hospedagem</option>
+            <option value="airline">Cia Aérea</option>
+            <option value="tour_operator">Operadora</option>
+            <option value="transfer">Transfer</option>
+            <option value="insurance">Seguro</option>
+            <option value="other">Outros</option>
+          </select>
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         </div>
       </div>
 
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+        {q.isLoading && (
+          <div className="text-sm text-muted-foreground p-4">Carregando cadeia de suprimentos…</div>
+        )}
+        {q.data?.length === 0 && (
+          <EmptyState
+            title="Nenhum fornecedor encontrado"
+            description="Ajuste os filtros ou cadastre um novo fornecedor para começar."
+          />
+        )}
 
-      {q.isLoading && (
-        <div className="text-sm text-muted-foreground p-8">Carregando cadeia de suprimentos…</div>
-      )}
-      {q.data?.length === 0 && (
-        <EmptyState
-          title="Nenhum fornecedor encontrado"
-          description="Ajuste os filtros ou cadastre um novo fornecedor para começar."
-        />
-      )}
-
-      {q.data && q.data.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
-          {q.data.map((s) => (
-            <Link
-              to="/agency/$slug/suppliers/$id"
-              params={{ slug, id: s.id }}
-              key={s.id}
-              className={cn(
-                "group rounded-2xl border border-border/50 bg-surface p-5  transition-all hover:",
-                s.is_active ? "hover:border-brand/40" : "opacity-70",
-              )}
-            >
-              <div className="flex justify-between items-start mb-4 border-b border-border/50 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt border border-border/50">
-                    <Building2 className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground leading-tight group-hover:text-brand transition-colors">
-                      {s.name}
-                    </h3>
-                    <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
-                      {s.kind}
+        {q.data && q.data.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+            {q.data.map((s) => (
+              <Link
+                to="/agency/$slug/suppliers/$id"
+                params={{ slug, id: s.id }}
+                key={s.id}
+                className={cn(
+                  "group rounded-2xl border border-border/50 bg-surface p-5 transition-all hover:border-brand/40",
+                  !s.is_active && "opacity-70",
+                )}
+              >
+                <div className="flex justify-between items-start mb-4 border-b border-border/50 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt border border-border/50">
+                      <Building2 className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-foreground leading-tight group-hover:text-brand transition-colors">
+                        {s.name}
+                      </h3>
+                      <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                        {s.kind}
+                      </div>
                     </div>
                   </div>
+                  <StatusBadge tone={s.is_active ? "success" : "neutral"}>
+                    {s.is_active ? "Ativo" : "Inativo"}
+                  </StatusBadge>
                 </div>
-                <StatusBadge tone={s.is_active ? "success" : "neutral"}>
-                  {s.is_active ? "Ativo" : "Inativo"}
-                </StatusBadge>
-              </div>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <PhoneCall className="h-3 w-3" /> Telefone
-                  </span>
-                  <span className="font-medium">{s.phone || "—"}</span>
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <PhoneCall className="h-3 w-3" /> Telefone
+                    </span>
+                    <span className="font-medium">{s.phone || "—"}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Mail className="h-3 w-3" /> E-mail (SLA)
+                    </span>
+                    <span className="font-medium truncate max-w-[150px]" title={s.email || ""}>
+                      {s.email || "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Building2 className="h-3 w-3" /> Documento
+                    </span>
+                    <span className="font-mono text-xs">{s.document || "—"}</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-3 w-3" /> E-mail (SLA)
-                  </span>
-                  <span className="font-medium truncate max-w-[150px]" title={s.email || ""}>
-                    {s.email || "—"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Building2 className="h-3 w-3" /> Documento
-                  </span>
-                  <span className="font-mono text-xs">{s.document || "—"}</span>
-                </div>
-              </div>
 
-              <div className="pt-4 border-t border-border/50 flex justify-between items-center bg-brand/5 -mx-5 -mb-5 px-5 py-4 rounded-b-2xl">
-                <div className="text-xs font-bold text-brand uppercase tracking-widest flex items-center gap-1.5">
-                  <Percent className="h-3 w-3" /> Markup / Comissão Base
+                <div className="pt-4 border-t border-border/50 flex justify-between items-center bg-brand/5 -mx-5 -mb-5 px-5 py-4 rounded-b-2xl">
+                  <div className="text-xs font-bold text-brand uppercase tracking-widest flex items-center gap-1.5">
+                    <Percent className="h-3 w-3" /> Markup / Comissão Base
+                  </div>
+                  <div className="font-mono text-lg font-bold text-brand">
+                    {Number(s.commission_rate).toFixed(2)}%
+                  </div>
                 </div>
-                <div className="font-mono text-lg font-bold text-brand">
-                  {Number(s.commission_rate).toFixed(2)}%
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
 
       {open && agency && (
         <NewSupplierWizard
@@ -196,7 +212,17 @@ function SuppliersPage() {
           }}
         />
       )}
-    </>
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="suppliers"
+          moduleName="Fornecedores"
+          agencyId={agency.id}
+        />
+      )}
+    </div>
   );
 }
 

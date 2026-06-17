@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter, Settings2 } from "lucide-react";
+import { Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter, Settings2, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -112,9 +112,11 @@ function CorporatePage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            title="Nova RFP"
           >
-            <Plus className="h-3.5 w-3.5" /> Nova RFP
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Nova RFP</span>
           </button>
 
           {isAgencyAdmin && (
@@ -160,6 +162,7 @@ function CorporatePage() {
             <option value="approved">Aprovado</option>
             <option value="rejected">Recusado</option>
           </select>
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         </div>
       </div>
 

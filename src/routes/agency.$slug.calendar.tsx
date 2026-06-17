@@ -219,9 +219,11 @@ function CalendarPage() {
           {/* Actions */}
           <PrimaryButton
             onClick={() => setNewEventOpen(true)}
-            className="gap-1 text-[10px] font-bold h-7 rounded"
+            className="flex h-7 items-center justify-center gap-1 px-2 text-[10px] font-bold rounded cursor-pointer"
+            title="Novo Evento"
           >
-            <Plus className="h-3 w-3" /> Evento
+            <Plus className="h-3 w-3" />
+            <span className="hidden sm:inline">Evento</span>
           </PrimaryButton>
 
           {isAgencyAdmin && (

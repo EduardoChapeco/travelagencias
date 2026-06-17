@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
-import { PageHeader } from "@/components/shell/PageHeader";
+
 
 export const Route = createFileRoute("/agency/$slug/portal")({
   head: () => ({
@@ -35,17 +35,16 @@ function Page() {
   }
 
   return (
-    <>
-      <PageHeader title="Portal Público" description="CMS do portal público" />
-      <div className="mb-5 flex items-center gap-1 border-b border-border">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <div className="flex items-center gap-1 border-b border-border bg-surface/50 px-4 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
         {tabs.map((tab) => {
-          const active = pathname === tab.path;
+          const active = pathname === tab.path || (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
           return (
             <button
               key={tab.path}
               type="button"
               onClick={() => navigate({ to: tab.path as any })}
-              className={`-mb-px border-b-2 px-3 py-2 text-xs font-medium transition ${
+              className={`-mb-px border-b-2 px-3 py-2.5 text-xs font-semibold transition shrink-0 ${
                 active
                   ? "border-foreground text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -56,7 +55,9 @@ function Page() {
           );
         })}
       </div>
-      <Outlet />
-    </>
+      <div className="flex-1 overflow-hidden min-h-0">
+        <Outlet />
+      </div>
+    </div>
   );
 }

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PrimaryButton, GhostButton, Input } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
@@ -108,24 +109,29 @@ function BusLayoutEditorPage() {
   const l = q.data;
 
   return (
-    <>
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <GhostButton
+            onClick={() => generateDefaultMap(l.rows, l.cols)}
+            type="button"
+            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt"
+          >
+            <RefreshCcw className="h-3.5 w-3.5 mr-1.5" /> Recriar Matriz
+          </GhostButton>
+          <PrimaryButton
+            onClick={saveLayout}
+            disabled={saving}
+            className="h-8 px-3 text-xs bg-brand text-brand-foreground hover:bg-brand/90 font-semibold rounded-md flex items-center gap-1.5 cursor-pointer"
+          >
+            <Save className="h-3.5 w-3.5" /> {saving ? "Salvando..." : "Salvar Layout"}
+          </PrimaryButton>
+        </div>
+      </HeaderPortal>
+
       <PageHeader
         title={l.name}
         description="Clique nas células para alternar entre: Poltrona → Corredor → Banheiro → Porta."
-        actions={
-          <div className="flex items-center gap-2">
-            <GhostButton
-              onClick={() => generateDefaultMap(l.rows, l.cols)}
-              type="button"
-              className="text-xs h-9"
-            >
-              <RefreshCcw className="h-3.5 w-3.5 mr-1.5" /> Recriar Matriz
-            </GhostButton>
-            <PrimaryButton onClick={saveLayout} disabled={saving} className="h-9 text-xs">
-              <Save className="h-3.5 w-3.5 mr-1.5" /> {saving ? "Salvando..." : "Salvar Layout"}
-            </PrimaryButton>
-          </div>
-        }
       />
 
       <div className="flex justify-center mt-6">
@@ -168,6 +174,6 @@ function BusLayoutEditorPage() {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

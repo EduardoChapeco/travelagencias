@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen, Search } from "lucide-react";
+import { Plus, Settings2, X, Trash2, KanbanSquare, Archive, FolderOpen, Search, Filter, ChevronDown } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
@@ -173,26 +173,26 @@ function CRMPage() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setShowArchived((v) => !v)}
-            className={`flex h-8 items-center gap-1 px-2.5 rounded-md border border-border text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors ${
-              showArchived ? "bg-brand/10 border-brand text-brand hover:bg-brand/20" : "bg-surface"
+            onClick={() => setShowArchived(!showArchived)}
+            className={`flex h-8 items-center justify-center gap-1.5 rounded-md border px-2 sm:px-3 text-xs font-medium transition-all cursor-pointer ${
+              showArchived
+                ? "bg-brand/10 border-brand text-brand hover:bg-brand/20"
+                : "bg-surface border-border text-muted-foreground hover:text-foreground"
             }`}
+            title={showArchived ? "Funil Ativo" : "Ver Arquivados"}
           >
-            {showArchived ? (
-              <>
-                <FolderOpen className="h-3.5 w-3.5" /> Funil Ativo
-              </>
-            ) : (
-              <>
-                <Archive className="h-3.5 w-3.5" /> Arquivados
-              </>
-            )}
+            {showArchived ? <FolderOpen className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">
+              {showArchived ? "Funil Ativo" : "Arquivados"}
+            </span>
           </button>
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            title="Novo Lead"
           >
-            <Plus className="h-3.5 w-3.5" /> Novo Lead
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Novo Lead</span>
           </button>
           {isAgencyAdmin && (
             <button
@@ -208,20 +208,21 @@ function CRMPage() {
 
       {!showArchived && (
         <div className="flex flex-col sm:flex-row gap-2 border-b border-border bg-surface/50 p-2 shrink-0">
-          <div className="relative w-full sm:w-40">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <input
               placeholder="Buscar lead..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-7.5 h-8 w-full rounded-md border border-border bg-surface px-2 text-xs text-foreground focus:border-brand focus:outline-none"
+              className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
             />
           </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-44">
+            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <select
               value={ownerFilter}
               onChange={(e) => setOwnerFilter(e.target.value)}
-              className="h-8 w-full sm:w-28 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+              className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
             >
               <option value="">Responsáveis</option>
               {usersQ.data?.map(
@@ -233,10 +234,14 @@ function CRMPage() {
                   ),
               )}
             </select>
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          </div>
+          <div className="relative w-full sm:w-40">
+            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
-              className="h-8 w-full sm:w-24 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
+              className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
             >
               <option value="">Origens</option>
               <option value="whatsapp">WhatsApp</option>
@@ -245,6 +250,7 @@ function CRMPage() {
               <option value="referral">Indicação</option>
               <option value="walkin">Presencial</option>
             </select>
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           </div>
         </div>
       )}

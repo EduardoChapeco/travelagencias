@@ -33,6 +33,7 @@ import {
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { supabase } from "@/integrations/supabase/client";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/company")({
   head: () => ({ meta: [{ title: "Minha empresa · TravelOS" }] }),
@@ -391,10 +392,38 @@ function Page() {
   const isCompanyTab = !["brand", "portal_config"].includes(tab);
 
   return (
-    <>
-      {/* Unified Toolbar Header */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 p-4 bg-surface border border-border/80 rounded-xl shrink-0">
-        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <a
+            href={portalUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+          >
+            <Eye className="h-3.5 w-3.5" /> Ver portal
+          </a>
+          <button
+            onClick={() => setPreviewOpen(!previewOpen)}
+            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            {previewOpen ? "Fechar prévia" : "Prévia"}
+          </button>
+          <button
+            type="submit"
+            form="company-form"
+            disabled={busy}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <Save className="h-3.5 w-3.5" />
+            {busy ? "Salvando..." : "Salvar"}
+          </button>
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
+        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -402,7 +431,7 @@ function Page() {
               onClick={() => setTab(t.id)}
               className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
                 tab === t.id
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-surface-alt text-foreground border border-border/50"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
               }`}
             >
@@ -411,32 +440,15 @@ function Page() {
             </button>
           ))}
         </div>
-
-        <div className="flex items-center gap-2">
-          <a
-            href={portalUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
-          >
-            <Eye className="h-3.5 w-3.5" /> Ver portal
-          </a>
-          <button
-            onClick={() => setPreviewOpen(!previewOpen)}
-            className="flex h-8 items-center gap-1.5 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/95 transition-colors cursor-pointer"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            {previewOpen ? "Fechar prévia" : "Prévia"}
-          </button>
-        </div>
       </div>
 
-      <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
-        <div className="space-y-0">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
+          <div className="space-y-0">
 
-          {/* ── COMPANY TABS (wrapped in form) ────────────────── */}
-          {isCompanyTab && (
-            <form onSubmit={save} className="space-y-0">
+            {/* ── COMPANY TABS (wrapped in form) ────────────────── */}
+            {isCompanyTab && (
+              <form onSubmit={save} id="company-form" className="space-y-0">
               {/* TAB: IDENTITY */}
               {tab === "identity" && (
                 <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
@@ -768,16 +780,12 @@ function Page() {
               )}
 
               {/* SAVE BAR (company tabs) */}
-              <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border bg-surface px-5 py-3">
-                <div className="text-[11px] text-muted-foreground">
+              <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border bg-surface px-5 py-3 text-[11px] text-muted-foreground">
+                <span>
                   {(q.data as any)?.updated_at
                     ? `Última edição: ${new Date((q.data as any).updated_at).toLocaleString("pt-BR")}`
                     : "Ainda não foi salvo"}
-                </div>
-                <PrimaryButton type="submit" disabled={busy} className="gap-1.5">
-                  <Save className="h-3.5 w-3.5" />
-                  {busy ? "Salvando…" : "Salvar empresa"}
-                </PrimaryButton>
+                </span>
               </div>
             </form>
           )}
@@ -882,6 +890,7 @@ function Page() {
           </aside>
         )}
       </div>
-    </>
-  );
+    </div>
+  </div>
+);
 }

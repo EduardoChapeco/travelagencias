@@ -13,6 +13,7 @@ import {
   Filter,
   Archive,
   Settings2,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -293,9 +294,11 @@ function TripsList() {
           <button
             id="btn-new-trip"
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            title="Nova viagem"
           >
-            <Plus className="h-3.5 w-3.5" /> Nova viagem
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Nova viagem</span>
           </button>
           {isAgencyAdmin && (
             <button
@@ -323,22 +326,26 @@ function TripsList() {
             className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
           />
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setPage(1);
-          }}
-          className="h-8 w-full sm:w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-        >
-          <option value="all">Todos os status</option>
-          <option value="planning">Planejamento</option>
-          <option value="confirmed">Confirmada</option>
-          <option value="in_progress">Em andamento</option>
-          <option value="completed">Concluída</option>
-          <option value="cancelled">Cancelada</option>
-          <option value="archived">Arquivadas</option>
-        </select>
+        <div className="relative w-full sm:w-44">
+          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-[11px] text-foreground outline-none focus:border-brand"
+          >
+            <option value="all">Todos os status</option>
+            <option value="planning">Planejamento</option>
+            <option value="confirmed">Confirmada</option>
+            <option value="in_progress">Em andamento</option>
+            <option value="completed">Concluída</option>
+            <option value="cancelled">Cancelada</option>
+            <option value="archived">Arquivadas</option>
+          </select>
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        </div>
       </div>
 
       {list.isLoading && (

@@ -15,6 +15,7 @@ import {
   provisionAgencyTrial,
   forceChangeAgencyPlan,
   forceChangeAgencyStatus,
+  forceChangeAgencyBlockedStatus,
   sendOwnerPasswordReset,
 } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -309,6 +310,28 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
     });
   }
 
+  async function handleAgencyBlockedStatusChange(newStatus: "active" | "blocked") {
+    confirm({
+      title: newStatus === "blocked" ? "Bloquear Acesso da Agência" : "Desbloquear Acesso da Agência",
+      description: newStatus === "blocked"
+        ? `Tem certeza que deseja bloquear o acesso de toda a agência "${agency.name}"? Isso suspenderá imediatamente o acesso a todas as telas.`
+        : `Deseja liberar o acesso da agência "${agency.name}"?`,
+      variant: newStatus === "blocked" ? "destructive" : "default",
+      onConfirm: async () => {
+        setBusy(true);
+        try {
+          await forceChangeAgencyBlockedStatus(agency.id, newStatus);
+          await logAuditAction(newStatus === "blocked" ? "superadmin_blocked_agency" : "superadmin_unblocked_agency", { status: newStatus });
+          toast.success(newStatus === "blocked" ? "Agência suspensa" : "Agência liberada");
+          qc.invalidateQueries({ queryKey: ["admin-agency", agency.id] });
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+        setBusy(false);
+      },
+    });
+  }
+
   async function handleResetPassword() {
     if (!priv?.email) return toast.error("Agência sem e-mail do proprietário registrado.");
     confirm({
@@ -390,6 +413,22 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                   className="text-xs text-success hover:text-success hover:bg-success/10 justify-start"
                 >
                   <AlertTriangle className="h-3.5 w-3.5 mr-1" /> Reativar
+                </GhostButton>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-2 border-t border-danger/10">
+              <div className="text-xs font-semibold text-foreground mb-2">
+                Status Administrativo da Agência
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <GhostButton
+                  onClick={() => handleAgencyBlockedStatusChange(agency.status === "blocked" ? "active" : "blocked")}
+                  disabled={busy}
+                  className={`text-xs justify-start ${agency.status === "blocked" ? "text-success hover:text-success hover:bg-success/10" : "text-danger hover:text-danger hover:bg-danger/10"}`}
+                >
+                  <Ban className="h-3.5 w-3.5 mr-1" />
+                  {agency.status === "blocked" ? "Reativar Agência" : "Bloquear Agência"}
                 </GhostButton>
               </div>
             </div>

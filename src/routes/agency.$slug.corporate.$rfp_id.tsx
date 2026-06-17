@@ -16,7 +16,7 @@ import {
   Plus,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { useState } from "react";
 import {
@@ -119,7 +119,7 @@ function RfpDetailPage() {
           params={{ slug }}
           className="mb-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand transition-colors"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Voltar para RFPs
+          <ArrowLeft className="w-3.5 h-3.5" /> Voltar para {getModuleName("corporate", agency)}
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 bg-surface p-6 rounded-2xl border border-border">

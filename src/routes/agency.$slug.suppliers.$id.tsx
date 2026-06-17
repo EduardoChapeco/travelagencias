@@ -11,11 +11,13 @@ import {
   User,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { StatusBadge, GhostButton } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/suppliers/$id")({
   head: () => ({ meta: [{ title: "Detalhes do Fornecedor · TravelOS" }] }),
@@ -50,23 +52,26 @@ function SupplierDetailsPage() {
   }
 
   return (
-    <div className="pb-20">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto pb-20">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <StatusBadge tone={supplier.is_active ? "success" : "neutral"}>
+            {supplier.is_active ? "Ativo" : "Inativo"}
+          </StatusBadge>
+        </div>
+      </HeaderPortal>
+
       <Link
         to="/agency/$slug/suppliers"
         params={{ slug }}
         className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para Fornecedores
+        <ArrowLeft className="h-3.5 w-3.5" /> Voltar para {getModuleName("suppliers", agency)}
       </Link>
 
       <PageHeader
         title={supplier.name}
         description={supplier.legal_name || "Detalhes operacionais"}
-        actions={
-          <StatusBadge tone={supplier.is_active ? "success" : "neutral"}>
-            {supplier.is_active ? "Ativo" : "Inativo"}
-          </StatusBadge>
-        }
       />
 
       <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_320px]">

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star } from "lucide-react";
+import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus } from "lucide-react";
 import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -84,10 +84,12 @@ function SupportRoute() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <PrimaryButton
-            className="h-8 text-[11px] font-bold rounded-lg cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-[11px] font-bold rounded-lg cursor-pointer"
             onClick={() => setTicketSheetOpen(true)}
+            title="Novo Ticket Interno"
           >
-            Novo Ticket Interno
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Novo Ticket Interno</span>
           </PrimaryButton>
         </div>
       </HeaderPortal>

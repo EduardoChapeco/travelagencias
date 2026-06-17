@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Textarea, Select, PrimaryButton } from "@/components/ui/form";
 
@@ -145,35 +146,51 @@ function PortalSettingsPage() {
   ];
 
   return (
-    <form onSubmit={save} className="space-y-0">
-      {/* Tab bar */}
-      <div className="mb-5 flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setTab(t.id)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-              tab === t.id
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
-            }`}
-          >
-            <t.icon className="h-3.5 w-3.5" />
-            {t.label}
-          </button>
-        ))}
-        <div className="ml-auto flex items-center">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
           <a
             href={portalUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground hover:bg-surface-alt transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
           >
-            <Eye className="h-3 w-3" /> Ver portal
+            <Eye className="h-3.5 w-3.5" /> Ver portal
           </a>
+          <button
+            type="submit"
+            form="portal-settings-form"
+            disabled={busy}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <Save className="h-3.5 w-3.5" />
+            {busy ? "Salvando..." : "Salvar"}
+          </button>
+        </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
+        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+                tab === t.id
+                  ? "bg-surface-alt text-foreground border border-border/50"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+              }`}
+            >
+              <t.icon className="h-3.5 w-3.5" />
+              {t.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <form onSubmit={save} id="portal-settings-form" className="space-y-0">
 
       {/* ── SEO GLOBAL ───────────────────────────────────────────── */}
       {tab === "seo" && (
@@ -521,13 +538,8 @@ function PortalSettingsPage() {
         </div>
       )}
 
-      {/* Save bar */}
-      <div className="flex items-center justify-end rounded-b-lg border-x border-b border-border bg-surface px-5 py-3">
-        <PrimaryButton type="submit" disabled={busy} className="gap-1.5">
-          <Save className="h-3.5 w-3.5" />
-          {busy ? "Salvando…" : "Salvar configurações"}
-        </PrimaryButton>
-      </div>
-    </form>
-  );
+      </form>
+    </div>
+  </div>
+);
 }

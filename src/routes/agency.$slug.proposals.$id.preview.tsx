@@ -160,20 +160,21 @@ function ProposalPreview() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       {/* ── Toolbar interno ──────────────────────────────────────────────────── */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-6">
-        <div className="flex items-center gap-3">
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/agency/$slug/proposals/$id"
             params={{ slug, id }}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            className="flex h-7 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            title="Voltar ao editor"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Voltar ao editor
+            <span className="hidden sm:inline">Voltar ao editor</span>
           </Link>
           <span className="text-xs text-muted-foreground">·</span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground" title="Pré-visualização do cliente">
             <Eye className="h-3.5 w-3.5" />
-            Pré-visualização do cliente
+            <span className="hidden sm:inline">Pré-visualização do cliente</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -182,19 +183,21 @@ function ProposalPreview() {
               navigator.clipboard.writeText(publicUrl);
               toast.success("Link copiado");
             }}
-            className="flex h-7 items-center gap-1.5 rounded-md border border-border px-3 text-xs hover:bg-surface-alt"
+            className="flex h-7 items-center justify-center gap-1.5 rounded-md border border-border px-2 sm:px-3 text-xs hover:bg-surface-alt cursor-pointer"
+            title="Copiar link público"
           >
             <Copy className="h-3.5 w-3.5" />
-            Copiar link público
+            <span className="hidden sm:inline">Copiar link</span>
           </button>
           <a
             href={publicUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 items-center gap-1.5 rounded-md border border-border px-3 text-xs hover:bg-surface-alt"
+            className="flex h-7 items-center justify-center gap-1.5 rounded-md border border-border px-2 sm:px-3 text-xs hover:bg-surface-alt"
+            title="Abrir como cliente"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-            Abrir como cliente
+            <span className="hidden sm:inline">Abrir como cliente</span>
           </a>
         </div>
       </div>

@@ -10,6 +10,8 @@ export type Agency = {
   brand_color_light: string | null;
   brand_color_fg: string | null;
   logo_url: string | null;
+  module_names?: Record<string, string> | null;
+  status?: string | null;
 };
 
 type Ctx = {
@@ -29,6 +31,41 @@ const AgencyContext = createContext<Ctx>({
   role: null,
   isAgencyAdmin: false,
 });
+
+export const DEFAULT_MODULE_NAMES: Record<string, string> = {
+  "dashboard": "Dashboard",
+  "daily-tasks": "Meu Dia (Tarefas)",
+  "crm": "Negociações & Leads",
+  "calendar": "Agenda",
+  "omnichannel": "Conversas & Mensagens",
+  "proposals": "Orçamentos & Propostas",
+  "trips": "Viagens",
+  "group-tours": "Roteiros em Grupo",
+  "clients": "Clientes",
+  "corporate": "Corporativo",
+  "suppliers": "Fornecedores",
+  "support": "Suporte",
+  "visas": "Vistos",
+  "bus-layouts": "Frota & Ônibus",
+  "boarding": "Embarques",
+  "financial": "Financeiro",
+  "portal": "Site da Agência",
+  "competitors": "Monitor de Concorrentes",
+  "productivity": "Produtividade Master",
+  "company": "Minha Empresa",
+  "team": "Equipe",
+  "brand": "Identidade Visual",
+  "integrations": "Conexões",
+  "billing": "Assinatura & Planos",
+  "settings": "Configurações"
+};
+
+export function getModuleName(moduleKey: string, agency: Agency | null): string {
+  if (agency?.module_names && agency.module_names[moduleKey]) {
+    return agency.module_names[moduleKey];
+  }
+  return DEFAULT_MODULE_NAMES[moduleKey] || moduleKey;
+}
 
 export function AgencyProvider({
   preloadedAgency,
@@ -53,32 +90,61 @@ export function AgencyProvider({
     },
   });
 
+  const agencyQuery = useQuery({
+    queryKey: ["current-agency-live", preloadedAgency?.id],
+    enabled: !!preloadedAgency?.id,
+    initialData: preloadedAgency,
+    queryFn: async () => {
+      const res = await supabase
+        .from("agencies")
+        .select("id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status, module_names" as any)
+        .eq("id", preloadedAgency.id)
+        .maybeSingle();
+
+      let resultData = res.data;
+
+      if (res.error && res.error.message.includes("module_names")) {
+        const fallback = await supabase
+          .from("agencies")
+          .select("id, slug, name, brand_color, brand_color_light, brand_color_fg, logo_url, status")
+          .eq("id", preloadedAgency.id)
+          .maybeSingle();
+        resultData = fallback.data as any;
+      }
+      return (resultData || preloadedAgency) as Agency;
+    },
+  });
+
   const role = roleQuery.data || null;
   const isAgencyAdmin = role === "agency_admin" || role === "super_admin";
+  const agency = agencyQuery.data || preloadedAgency;
 
   // Apply runtime brand color tokens
   useEffect(() => {
     const el = document.documentElement;
-    if (preloadedAgency?.brand_color)
-      el.style.setProperty("--agency-brand", preloadedAgency.brand_color);
-    if (preloadedAgency?.brand_color_light)
-      el.style.setProperty("--agency-brand-light", preloadedAgency.brand_color_light);
-    if (preloadedAgency?.brand_color_fg)
-      el.style.setProperty("--agency-brand-fg", preloadedAgency.brand_color_fg);
+    if (agency?.brand_color)
+      el.style.setProperty("--agency-brand", agency.brand_color);
+    if (agency?.brand_color_light)
+      el.style.setProperty("--agency-brand-light", agency.brand_color_light);
+    if (agency?.brand_color_fg)
+      el.style.setProperty("--agency-brand-fg", agency.brand_color_fg);
     return () => {
       el.style.removeProperty("--agency-brand");
       el.style.removeProperty("--agency-brand-light");
       el.style.removeProperty("--agency-brand-fg");
     };
-  }, [preloadedAgency]);
+  }, [agency]);
 
   return (
     <AgencyContext.Provider
       value={{
-        agency: preloadedAgency,
-        loading: roleQuery.isLoading,
+        agency,
+        loading: roleQuery.isLoading || agencyQuery.isLoading,
         error: null,
-        refresh: () => {},
+        refresh: () => {
+          roleQuery.refetch();
+          agencyQuery.refetch();
+        },
         role,
         isAgencyAdmin,
       }}

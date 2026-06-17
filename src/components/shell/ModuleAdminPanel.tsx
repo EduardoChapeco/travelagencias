@@ -1,11 +1,12 @@
 import { SheetPage } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BookOpen, Workflow, Settings2, Trash2, Edit2, Plus, ArrowLeft } from "lucide-react";
 import { Field, Input, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useAgency, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
 
 interface ModuleAdminPanelProps {
   isOpen: boolean;
@@ -31,6 +32,52 @@ export function ModuleAdminPanel({
   const [editingPlaybook, setEditingPlaybook] = useState<any | null>(null);
   const [isCreatingPlaybook, setIsCreatingPlaybook] = useState(false);
   const { confirm, ConfirmDialog } = useConfirm();
+
+  const { agency, refresh } = useAgency();
+  const currentCustomName = agency?.module_names?.[moduleKey] || "";
+  const [customName, setCustomName] = useState(currentCustomName);
+  const [savingName, setSavingName] = useState(false);
+  const displayName = currentCustomName || moduleName;
+
+  useEffect(() => {
+    if (isOpen) {
+      setCustomName(agency?.module_names?.[moduleKey] || "");
+    }
+  }, [isOpen, agency, moduleKey]);
+
+  const handleSaveCustomName = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingName(true);
+    try {
+      const currentModuleNames = agency?.module_names || {};
+      const updatedModuleNames = {
+        ...currentModuleNames,
+        [moduleKey]: customName.trim() || undefined,
+      };
+
+      if (!customName.trim()) {
+        delete updatedModuleNames[moduleKey];
+      }
+
+      const { error } = await supabase
+        .from("agencies")
+        .update({
+          module_names: updatedModuleNames,
+        } as any)
+        .eq("id", agencyId);
+
+      if (error) throw error;
+
+      toast.success("Nome do módulo atualizado com sucesso!");
+      qc.invalidateQueries({ queryKey: ["current-agency-live"] });
+      refresh();
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao salvar nome do módulo: " + err.message);
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   // Scoped Playbooks Query
   const playbooksQ = useQuery({
@@ -107,7 +154,7 @@ export function ModuleAdminPanel({
     <SheetPage
       isOpen={isOpen}
       onClose={onClose}
-      title={`Painel do Administrador - Módulo ${moduleName}`}
+      title={`Painel do Administrador - Módulo ${displayName}`}
       width="clamp(520px, 50vw, 800px)"
     >
       <div className="flex flex-col h-full space-y-4">
@@ -161,7 +208,7 @@ export function ModuleAdminPanel({
                   <div>
                     <h3 className="text-sm font-bold text-foreground">Playbooks do Módulo</h3>
                     <p className="text-xs text-muted-foreground">
-                      Defina instruções operacionais e scripts de IA específicos para o módulo {moduleName}.
+                      Defina instruções operacionais e scripts de IA específicos para o módulo {displayName}.
                     </p>
                   </div>
                   <PrimaryButton
@@ -227,7 +274,7 @@ export function ModuleAdminPanel({
                 <div className="pt-4 border-t border-border">
                   <h3 className="text-sm font-bold text-foreground mb-1">Artigos Relacionados</h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Artigos de suporte e tutoriais da base de conhecimento categorizados sob {moduleName}.
+                    Artigos de suporte e tutoriais da base de conhecimento categorizados sob {displayName}.
                   </p>
                   {articlesQ.isLoading ? (
                     <div className="text-xs text-muted-foreground animate-pulse">Carregando artigos...</div>
@@ -261,12 +308,52 @@ export function ModuleAdminPanel({
         )}
 
         {activeTab === "settings" && (
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto space-y-6">
+            <form onSubmit={handleSaveCustomName} className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-xl">
+              <div>
+                <h4 className="text-xs font-bold text-foreground">Identificação do Módulo</h4>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                  Personalize o nome deste módulo no menu lateral, cabeçalhos e fluxos do sistema. Deixe em branco para usar o nome padrão.
+                </p>
+              </div>
+              
+              <Field label="Nome Personalizado">
+                <Input
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder={`Padrão: ${DEFAULT_MODULE_NAMES[moduleKey] || moduleKey}`}
+                  className="text-xs h-9"
+                />
+              </Field>
+              
+              <div className="flex justify-end gap-2">
+                {customName !== currentCustomName && (
+                  <GhostButton
+                    type="button"
+                    onClick={() => setCustomName(currentCustomName)}
+                    className="h-8 text-xs font-bold"
+                  >
+                    Descartar
+                  </GhostButton>
+                )}
+                <PrimaryButton
+                  type="submit"
+                  disabled={savingName || customName === currentCustomName}
+                  className="h-8 text-xs font-bold"
+                >
+                  {savingName ? "Salvando..." : "Salvar Nome"}
+                </PrimaryButton>
+              </div>
+            </form>
+
             {customSettingsComponent ? (
-              customSettingsComponent
+              <div className="pt-4 border-t border-border space-y-4">
+                <h4 className="text-xs font-bold text-foreground">Configurações Específicas</h4>
+                {customSettingsComponent}
+              </div>
             ) : (
               <div className="p-6 border border-dashed border-border rounded-xl text-center text-xs text-muted-foreground">
-                Este módulo utiliza configurações padrão. Não há opções adicionais disponíveis.
+                Este módulo não possui configurações adicionais específicas além da identificação.
               </div>
             )}
           </div>

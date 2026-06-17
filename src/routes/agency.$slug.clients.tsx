@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, queryOptions, useMutation } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Settings2, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   Field,
   Input,
@@ -90,7 +92,7 @@ type Client = {
 };
 
 function ClientsPage() {
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/clients" });
   const qc = useQueryClient();
   const [q, setQ] = useState("");
@@ -99,6 +101,7 @@ function ClientsPage() {
   const pageSize = 20;
   const [newOpen, setNewOpen] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   // Voltar para página 1 sempre que a busca ou filtro mudar
   useEffect(() => {
@@ -208,66 +211,80 @@ function ClientsPage() {
   }
 
   return (
-    <>
-      {/* Unified Module Header Toolbar */}
-      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border/80 px-3 py-2 rounded-xl">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3 max-w-xl items-center">
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar por nome, email, telefone ou documento"
-              className="h-9 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-sm outline-none focus:border-border-strong"
-            />
-          </div>
-          <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
-            {list.data?.count ?? 0} clientes
-          </span>
-        </div>
-
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowDeleted(!showDeleted)}
-            className={`flex h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
+            className={`flex h-8 items-center justify-center gap-1.5 rounded-md border px-2 sm:px-3 text-xs font-semibold transition-all cursor-pointer ${
               showDeleted
-                ? "bg-danger text-danger-foreground border-danger cursor-pointer"
-                : "bg-surface border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                ? "bg-danger/10 border-danger text-danger hover:bg-danger/20"
+                : "bg-surface border-border text-muted-foreground hover:text-foreground"
             }`}
+            title={showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
           >
-            {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
+            {showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Trash2 className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">
+              {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
+            </span>
           </button>
           <PrimaryButton
             onClick={() => setNewOpen(true)}
-            className="flex h-9 items-center gap-1.5 px-3 cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-xs font-semibold cursor-pointer"
+            title="Novo cliente"
           >
-            <Plus className="h-3.5 w-3.5" /> Novo cliente
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Novo cliente</span>
           </PrimaryButton>
+          {isAgencyAdmin && (
+            <button
+              onClick={() => setAdminPanelOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              title="Administrar Clientes"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
+      </HeaderPortal>
+
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+        <div className="relative w-full sm:w-80">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar por nome, email, telefone ou documento..."
+            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+          />
+        </div>
+        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
+          {list.data?.count ?? 0} clientes
+        </span>
       </div>
 
-      {list.isLoading && (
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-        </div>
-      )}
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+        {list.isLoading && (
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        )}
 
-      {list.data && list.data.data.length === 0 && (
-        <EmptyState
-          icon={Users}
-          title="Nenhum cliente"
-          description={
-            debouncedQ
-              ? "Nenhum resultado para a busca."
-              : "Crie seu primeiro cliente para começar a organizar sua base."
-          }
-        />
-      )}
+        {list.data && list.data.data.length === 0 && (
+          <EmptyState
+            icon={Users}
+            title="Nenhum cliente"
+            description={
+              debouncedQ
+                ? "Nenhum resultado para a busca."
+                : "Crie seu primeiro cliente para começar a organizar sua base."
+            }
+          />
+        )}
 
-      {list.data && list.data.data.length > 0 && (
-        <div className="mt-4">
+        {list.data && list.data.data.length > 0 && (
           <DataTable
             columns={columns}
             data={list.data.data}
@@ -280,8 +297,8 @@ function ClientsPage() {
               }
             }}
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {newOpen && agency && (
         <NewClientWizard
@@ -293,6 +310,16 @@ function ClientsPage() {
           }}
         />
       )}
-    </>
+
+      {adminPanelOpen && agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="clients"
+          moduleName="Clientes"
+          agencyId={agency.id}
+        />
+      )}
+    </div>
   );
 }

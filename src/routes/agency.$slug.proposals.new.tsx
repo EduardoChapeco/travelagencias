@@ -264,15 +264,17 @@ function NewProposal() {
   }
 
   return (
-    <>
-      <Link
-        to="/agency/$slug/proposals"
-        params={{ slug }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" /> Voltar
-      </Link>
-      <h1 className="mb-6 text-xl font-semibold tracking-tight">Nova cotação</h1>
+    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+      <div>
+        <Link
+          to="/agency/$slug/proposals"
+          params={{ slug }}
+          className="mb-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Voltar
+        </Link>
+        <h1 className="text-xl font-semibold tracking-tight">Nova cotação</h1>
+      </div>
 
       {/* OCR Dropzone */}
       <div
@@ -428,6 +430,6 @@ function NewProposal() {
           </PrimaryButton>
         </div>
       </form>
-    </>
+    </div>
   );
 }

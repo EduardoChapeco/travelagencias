@@ -18,7 +18,7 @@ import {
   Clock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { StatusBadge, fmtDate } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -173,7 +173,9 @@ function TripLayout() {
           params={{ slug }}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors bg-surface-alt px-2.5 py-1.5 rounded-full"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Voltar para Viagens
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Voltar para {getModuleName("trips", agency)}</span>
+          <span className="sm:hidden">Voltar</span>
         </Link>
 
         <div className="flex items-center gap-2">
@@ -181,18 +183,20 @@ function TripLayout() {
           <button
             onClick={() => window.open(`/client/trips/${id}`, "_blank")}
             title="Ver como cliente"
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
           >
-            <Eye className="h-3.5 w-3.5" /> Ver como Cliente
+            <Eye className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Ver como Cliente</span>
           </button>
 
           {/* Enviar para Cliente */}
           <button
             onClick={handleSendToClient}
             title="Enviar link da viagem ao cliente via WhatsApp"
-            className="flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 transition-colors"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-2 sm:px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 transition-colors cursor-pointer"
           >
-            <Send className="h-3.5 w-3.5" /> Enviar ao Cliente
+            <Send className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Enviar ao Cliente</span>
           </button>
 
           {/* Menu de ações */}

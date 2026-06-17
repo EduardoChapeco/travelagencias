@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Edit3, X, Merge, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAgency } from "@/lib/agency-context";
+import { useAgency, getModuleName } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
@@ -20,6 +20,8 @@ import {
   archiveClient,
   mergeClients,
 } from "@/services/clients";
+
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 // Subcomponents
 import { DocumentsPanel } from "@/components/clients/DocumentsPanel";
@@ -141,89 +143,89 @@ function ClientDetail() {
   const tags = c.tags || [];
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
       <ConfirmDialog />
       <PromptDialog />
 
-      <header className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-border">
-        <div>
-          <Link
-            to="/agency/$slug/clients"
-            params={{ slug }}
-            className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium hover:no-underline"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Voltar para Base de Clientes
-          </Link>
-
-          <div className="flex items-center gap-3 mt-2">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-              {c.full_name}
-            </h1>
-            <StatusBadge tone={c.kind === "company" ? "info" : "neutral"}>
-              {c.kind === "company" ? "B2B" : "B2C"}
-            </StatusBadge>
-            {c.deleted_at && <StatusBadge tone="danger">Arquivado</StatusBadge>}
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {tags.map((t: string) => (
-              <span
-                key={t}
-                className="px-3 py-1 bg-surface-alt border border-border text-foreground text-xs font-bold rounded-full"
-              >
-                {t}
-              </span>
-            ))}
-            <button
-              onClick={() => {
-                prompt({
-                  title: "Nova Tag",
-                  description: "Nome da nova Tag:",
-                  onConfirm: async (newTag) => {
-                    if (newTag) {
-                      try {
-                        const updated = [...tags, newTag];
-                        await supabase.from("clients").update({ tags: updated }).eq("id", c.id);
-                        qc.invalidateQueries({ queryKey: ["client", c.id] });
-                        toast.success("Tag adicionada!");
-                      } catch (e) {
-                        toast.error("Erro ao adicionar tag");
-                      }
-                    }
-                  },
-                });
-              }}
-              className="px-3 py-1 border border-dashed border-border text-muted-foreground hover:text-foreground text-xs font-semibold rounded-full transition-colors cursor-pointer bg-transparent"
-            >
-              + Tag
-            </button>
-          </div>
-        </div>
-
+      <HeaderPortal>
         <div className="flex items-center gap-2">
           {!isEditing ? (
             <>
               <button
                 onClick={() => setIsMerging(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-surface transition-colors cursor-pointer text-foreground bg-background"
+                className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
-                <Merge className="w-4 h-4" /> Unificar Cadastro
+                <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
               </button>
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
               >
-                <Edit3 className="w-4 h-4" /> Editar Perfil
+                <Edit3 className="h-3.5 w-3.5" /> Editar Perfil
               </button>
             </>
           ) : (
             <button
               onClick={() => setIsEditing(false)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-surface transition-colors cursor-pointer text-foreground bg-background"
+              className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
-              <X className="w-4 h-4" /> Cancelar
+              <X className="h-3.5 w-3.5" /> Cancelar
             </button>
           )}
+        </div>
+      </HeaderPortal>
+
+      <header className="pb-6 border-b border-border">
+        <Link
+          to="/agency/$slug/clients"
+          params={{ slug }}
+          className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium hover:no-underline"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Voltar para {getModuleName("clients", agency)}
+        </Link>
+
+        <div className="flex items-center gap-3 mt-2">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+            {c.full_name}
+          </h1>
+          <StatusBadge tone={c.kind === "company" ? "info" : "neutral"}>
+            {c.kind === "company" ? "B2B" : "B2C"}
+          </StatusBadge>
+          {c.deleted_at && <StatusBadge tone="danger">Arquivado</StatusBadge>}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          {tags.map((t: string) => (
+            <span
+              key={t}
+              className="px-3 py-1 bg-surface-alt border border-border text-foreground text-xs font-bold rounded-full"
+            >
+              {t}
+            </span>
+          ))}
+          <button
+            onClick={() => {
+              prompt({
+                title: "Nova Tag",
+                description: "Nome da nova Tag:",
+                onConfirm: async (newTag) => {
+                  if (newTag) {
+                    try {
+                      const updated = [...tags, newTag];
+                      await supabase.from("clients").update({ tags: updated }).eq("id", c.id);
+                      qc.invalidateQueries({ queryKey: ["client", c.id] });
+                      toast.success("Tag adicionada!");
+                    } catch (e) {
+                      toast.error("Erro ao adicionar tag");
+                    }
+                  }
+                },
+              });
+            }}
+            className="px-3 py-1 border border-dashed border-border text-muted-foreground hover:text-foreground text-xs font-semibold rounded-full transition-colors cursor-pointer bg-transparent"
+          >
+            + Tag
+          </button>
         </div>
       </header>
 

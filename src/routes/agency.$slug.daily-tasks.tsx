@@ -120,8 +120,12 @@ function DailyTasksRoute() {
         <div className="flex items-center gap-2">
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <button className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer">
-                <Plus className="w-3.5 h-3.5" /> Nova Tarefa
+              <button
+                className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+                title="Nova Tarefa"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Nova Tarefa</span>
               </button>
             </DialogTrigger>
             <DialogContent>

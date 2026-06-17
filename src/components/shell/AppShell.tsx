@@ -1,11 +1,14 @@
-import { Outlet, useRouterState } from "@tanstack/react-router";
-import { Search, Sparkles } from "lucide-react";
+import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Search, Sparkles, AlertTriangle } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { AIChatPanel } from "./AIChatPanel";
 import { NotificationBadge } from "./NotificationsPanel";
 import { LegalBlocker } from "./LegalBlocker";
 import { CommandMenu } from "./CommandMenu";
+import { useAgency, getModuleName, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function AppShell({
   title,
@@ -16,6 +19,21 @@ export function AppShell({
   actions?: ReactNode;
   children?: ReactNode;
 }) {
+  const { agency } = useAgency();
+  const subQuery = useQuery({
+    queryKey: ["agency-subscription-status", agency?.id],
+    enabled: !!agency,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("agency_subscriptions")
+        .select("status")
+        .eq("agency_id", agency!.id)
+        .maybeSingle();
+      return data?.status || "trialing";
+    },
+  });
+
+  const isPastDue = subQuery.data === "past_due";
   const [aiOpen, setAiOpen] = useState(false);
   const [isPinned, setIsPinned] = useState(() => {
     if (typeof window !== "undefined") {
@@ -45,6 +63,16 @@ export function AppShell({
     pathname.includes("/calendar") ||
     pathname.includes("/daily-tasks") ||
     pathname.includes("/visas") ||
+    pathname.includes("/clients") ||
+    pathname.includes("/suppliers") ||
+    pathname.includes("/group-tours") ||
+    pathname.includes("/bus-layouts") ||
+    pathname.includes("/contracts") ||
+    pathname.includes("/financial") ||
+    pathname.includes("/company") ||
+    pathname.includes("/team") ||
+    pathname.includes("/settings") ||
+    pathname.includes("/portal") ||
     pathname.includes("/support");
 
   const isVisualEditor = /\/portal\/pages\/[^\/]+$/.test(pathname) && !pathname.endsWith("/pages/");
@@ -67,12 +95,19 @@ export function AppShell({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
           <nav className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground">
-            {crumbs.map((c, i) => (
-              <span key={i} className="flex items-center gap-1">
-                {i > 0 && <span>/</span>}
-                <span className="truncate">{decodeURIComponent(c)}</span>
-              </span>
-            ))}
+            {crumbs
+              .filter((c) => c !== "agency" && c !== agency?.slug)
+              .map((c, i) => {
+                const label = DEFAULT_MODULE_NAMES[c] !== undefined
+                  ? getModuleName(c, agency)
+                  : decodeURIComponent(c);
+                return (
+                  <span key={i} className="flex items-center gap-1">
+                    {i > 0 && <span>/</span>}
+                    <span className="truncate">{label}</span>
+                  </span>
+                );
+              })}
           </nav>
 
           <div className="ml-2">
@@ -114,6 +149,20 @@ export function AppShell({
 
         <div className="flex min-h-0 flex-1">
           <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
+            {isPastDue && (
+              <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shadow-md shrink-0">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  <span>Atenção: A assinatura da sua agência está atrasada. Regularize o pagamento para evitar o bloqueio total do acesso.</span>
+                </div>
+                <a
+                  href={`/agency/${agency!.slug}/billing`}
+                  className="bg-white text-rose-600 px-3 py-1 rounded font-black hover:bg-zinc-100 transition-colors uppercase text-[10px]"
+                >
+                  Regularizar Agora
+                </a>
+              </div>
+            )}
             <div
               className={
                 isFullPage

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Save, Building2, Link2, Mail, Phone, FileText, Shield } from "lucide-react";
 import { fetchAgencySettings, saveSettings } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -116,29 +116,44 @@ function Page() {
   if (!agency) return null;
 
   return (
-    <>
-      <div className="max-w-2xl space-y-6">
-        {/* Header card com identidade */}
-        <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4">
-          <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white"
-            style={{ background: agency.brand_color || "#334155" }}
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            form="settings-form"
+            disabled={isSubmitting}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
           >
-            {agency.name.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <div className="font-semibold text-foreground">{agency.name}</div>
-            <div className="text-xs text-muted-foreground font-mono">/{agency.slug}</div>
-            {createdAt && (
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                Criada em {new Date(createdAt).toLocaleDateString("pt-BR")}
-              </div>
-            )}
-          </div>
+            <Save className="h-3.5 w-3.5" />
+            {isSubmitting ? "Salvando..." : "Salvar configurações"}
+          </button>
         </div>
+      </HeaderPortal>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className="max-w-2xl space-y-6">
+          {/* Header card com identidade */}
+          <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4 shadow-sm">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white shadow-sm"
+              style={{ background: agency.brand_color || "#334155" }}
+            >
+              {agency.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="font-semibold text-foreground">{agency.name}</div>
+              <div className="text-xs text-muted-foreground font-mono">/{agency.slug}</div>
+              {createdAt && (
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  Criada em {new Date(createdAt).toLocaleDateString("pt-BR")}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} id="settings-form" className="space-y-6">
           {/* Identificação */}
           <section className="rounded-xl border border-border bg-surface p-5 space-y-4">
             <div className="flex items-center gap-2 text-sm font-semibold">
@@ -218,14 +233,9 @@ function Page() {
             </div>
           )}
 
-          <div className="flex justify-end">
-            <PrimaryButton type="submit" disabled={isSubmitting} className="gap-1.5 px-6">
-              <Save className="h-3.5 w-3.5" />
-              {isSubmitting ? "Salvando…" : "Salvar configurações"}
-            </PrimaryButton>
-          </div>
         </form>
       </div>
-    </>
-  );
+    </div>
+  </div>
+);
 }

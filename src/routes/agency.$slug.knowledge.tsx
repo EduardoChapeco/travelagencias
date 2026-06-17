@@ -130,16 +130,20 @@ function KnowledgePage() {
           {tab === "articles" ? (
             <button
               onClick={() => setOpen(true)}
-              className="flex h-8 items-center gap-1 rounded bg-brand px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
+              className="flex h-8 items-center justify-center gap-1.5 rounded bg-brand px-2 sm:px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+              title="Novo Artigo"
             >
-              <Plus className="h-3 w-3" /> Artigo
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">Artigo</span>
             </button>
           ) : (
             <button
               onClick={() => setPlaybookOpen(true)}
-              className="flex h-8 items-center gap-1 rounded bg-brand px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
+              className="flex h-8 items-center justify-center gap-1.5 rounded bg-brand px-2 sm:px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+              title="Novo Playbook"
             >
-              <Plus className="h-3 w-3" /> Playbook
+              <Plus className="h-3 w-3" />
+              <span className="hidden sm:inline">Playbook</span>
             </button>
           )}
         </div>

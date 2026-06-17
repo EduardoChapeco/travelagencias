@@ -14,6 +14,7 @@ import {
   PencilLine,
   History,
   Settings2,
+  ChevronDown,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -147,9 +148,11 @@ function ProposalsList() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            title="Nova cotação"
           >
-            <Plus className="h-3.5 w-3.5" /> Nova cotação
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Nova cotação</span>
           </button>
           {isAgencyAdmin && (
             <button
@@ -177,23 +180,27 @@ function ProposalsList() {
             }}
           />
         </div>
-        <select
-          className="h-8 w-full sm:w-32 rounded-md border border-border bg-surface px-2 text-[11px] text-foreground focus:border-brand focus:outline-none"
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="all">Todos os Status</option>
-          <option value="draft">Rascunho</option>
-          <option value="sent">Enviada</option>
-          <option value="viewed">Visualizada</option>
-          <option value="accepted">Aceita</option>
-          <option value="converted">Convertida</option>
-          <option value="rejected">Recusada</option>
-          <option value="expired">Expirada</option>
-        </select>
+        <div className="relative w-full sm:w-44">
+          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <select
+            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="all">Todos os Status</option>
+            <option value="draft">Rascunho</option>
+            <option value="sent">Enviada</option>
+            <option value="viewed">Visualizada</option>
+            <option value="accepted">Aceita</option>
+            <option value="converted">Convertida</option>
+            <option value="rejected">Recusada</option>
+            <option value="expired">Expirada</option>
+          </select>
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        </div>
       </div>
 
       {list.isLoading && <div className="text-sm text-muted-foreground px-1">Carregando…</div>}

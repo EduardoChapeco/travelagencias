@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
   Field,
   Input,
@@ -112,34 +113,39 @@ function TourDetailPage() {
     : [];
 
   return (
-    <>
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          <Select
+            value={t.status}
+            onChange={(e) => updateStatus(e.target.value)}
+            className="h-8 text-xs shrink-0 bg-surface text-foreground border border-border rounded-md px-2 focus:border-brand"
+          >
+            <option value="draft">Rascunho</option>
+            <option value="open">Aberta / Inscrições</option>
+            <option value="confirmed">Confirmada</option>
+            <option value="completed">Concluída / Encerrada</option>
+            <option value="cancelled">Cancelada</option>
+          </Select>
+          <GhostButton
+            onClick={togglePublic}
+            type="button"
+            className="shrink-0 h-8 text-xs border border-border bg-surface text-foreground hover:bg-surface-alt"
+          >
+            {t.is_public ? "Tornar privada" : "Publicar"}
+          </GhostButton>
+          <button
+            onClick={() => setOpen(true)}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shrink-0 cursor-pointer"
+          >
+            <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
+          </button>
+        </div>
+      </HeaderPortal>
+
       <PageHeader
         title={t.title}
         description={t.destination ?? "Excursão em grupo"}
-        actions={
-          <div className="flex items-center gap-2">
-            <Select
-              value={t.status}
-              onChange={(e) => updateStatus(e.target.value)}
-              className="h-9 text-xs shrink-0"
-            >
-              <option value="draft">Rascunho</option>
-              <option value="open">Aberta / Inscrições</option>
-              <option value="confirmed">Confirmada</option>
-              <option value="completed">Concluída / Encerrada</option>
-              <option value="cancelled">Cancelada</option>
-            </Select>
-            <GhostButton onClick={togglePublic} type="button" className="shrink-0">
-              {t.is_public ? "Tornar privada" : "Publicar"}
-            </GhostButton>
-            <button
-              onClick={() => setOpen(true)}
-              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground shrink-0"
-            >
-              <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
-            </button>
-          </div>
-        }
       />
 
       <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4 mb-6">
@@ -332,7 +338,7 @@ function TourDetailPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 
