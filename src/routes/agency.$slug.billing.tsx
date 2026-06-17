@@ -24,7 +24,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export const Route = createFileRoute("/agency/$slug/billing" as any)({
+export const Route = createFileRoute("/agency/$slug/billing")({
   head: () => ({ meta: [{ title: "Assinatura & Planos · TravelOS" }] }),
   component: BillingPage,
 });
