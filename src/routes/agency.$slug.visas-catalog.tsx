@@ -75,7 +75,7 @@ function VisasCatalogPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Link
             to="/agency/$slug/visas"
@@ -110,7 +110,8 @@ function VisasCatalogPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (
             <div
               key={req.id}
@@ -219,6 +220,7 @@ function VisasCatalogPage() {
             </div>
           )}
         </div>
+      </div>
 
       {open && agency && (
         <RequirementFormSheet
@@ -278,83 +280,82 @@ function RequirementFormSheet({
 
   return (
     <Sheet title="Novo Requisito Operacional" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="flex flex-col h-[calc(100vh-64px)]">
-        <div className="flex-1 overflow-y-auto p-5 space-y-5">
-          <Field label="Categoria *">
-            <Select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as Category)}
-              required
-            >
-              <option value="visa">Visto Consular</option>
-              <option value="fee">Taxa Turística</option>
-              <option value="health">Saúde & Vacinas</option>
-              <option value="insurance">Seguro Obrigatório</option>
-              <option value="other">Outros</option>
-            </Select>
-          </Field>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Field label="Categoria *">
+          <Select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as Category)}
+            required
+          >
+            <option value="visa">Visto Consular</option>
+            <option value="fee">Taxa Turística</option>
+            <option value="health">Saúde & Vacinas</option>
+            <option value="insurance">Seguro Obrigatório</option>
+            <option value="other">Outros</option>
+          </Select>
+        </Field>
 
-          <Field label="País / Destino *">
+        <Field label="País / Destino *">
+          <Input
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            placeholder="Ex: México"
+            required
+          />
+        </Field>
+
+        <Field label="Título da Regra" hint="Ex: Visitax Quintana Roo, CIVP Febre Amarela">
+          <Input
+            value={ruleTitle}
+            onChange={(e) => setRuleTitle(e.target.value)}
+            placeholder="Ex: Certificado de Febre Amarela"
+          />
+        </Field>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Prazo Estimado (Dias)" hint="Tempo médio de liberação">
             <Input
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              placeholder="Ex: México"
-              required
+              type="number"
+              value={days}
+              onChange={(e) => setDays(e.target.value)}
+              placeholder="Ex: 5"
             />
           </Field>
-
-          <Field label="Título da Regra" hint="Ex: Visitax Quintana Roo, CIVP Febre Amarela">
+          <Field label="Custo Estimado (USD)" hint="Taxa oficial aproximada">
             <Input
-              value={ruleTitle}
-              onChange={(e) => setRuleTitle(e.target.value)}
-              placeholder="Ex: Certificado de Febre Amarela"
-            />
-          </Field>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Prazo Estimado (Dias)" hint="Tempo médio de liberação">
-              <Input
-                type="number"
-                value={days}
-                onChange={(e) => setDays(e.target.value)}
-                placeholder="Ex: 5"
-              />
-            </Field>
-            <Field label="Custo Estimado (USD)" hint="Taxa oficial aproximada">
-              <Input
-                type="number"
-                step="0.01"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="Ex: 25.00"
-              />
-            </Field>
-          </div>
-
-          <Field label="Documentação / Passos *" hint="Insira um item por linha">
-            <Textarea
-              value={docs}
-              onChange={(e) => setDocs(e.target.value)}
-              rows={6}
-              placeholder="- Passaporte Válido&#10;- Certificado Nacional de Vacinação..."
-              required
-            />
-          </Field>
-
-          <Field label="Links Oficiais / Consulta">
-            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
-          </Field>
-
-          <Field label="Notas e Avisos Importantes">
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="Atenção: A vacina deve ser aplicada pelo menos 10 dias antes do embarque..."
+              type="number"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Ex: 25.00"
             />
           </Field>
         </div>
-        <div className="border-t border-border p-4 bg-surface flex justify-end gap-2 shrink-0">
+
+        <Field label="Documentação / Passos *" hint="Insira um item por linha">
+          <Textarea
+            value={docs}
+            onChange={(e) => setDocs(e.target.value)}
+            rows={6}
+            placeholder="- Passaporte Válido\n- Certificado Nacional de Vacinação..."
+            required
+          />
+        </Field>
+
+        <Field label="Links Oficiais / Consulta">
+          <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
+        </Field>
+
+        <Field label="Notas e Avisos Importantes">
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            placeholder="Atenção: A vacina deve ser aplicada pelo menos 10 dias antes do embarque..."
+          />
+        </Field>
+
+        <div className="border-t border-border pt-5 mt-6 flex justify-end gap-2">
           <GhostButton type="button" onClick={onClose} disabled={busy}>
             Cancelar
           </GhostButton>

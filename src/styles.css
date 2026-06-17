@@ -14,11 +14,13 @@
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  --radius-xs: 8px;
-  --radius-sm: 12px;
-  --radius-md: 17px;
-  --radius-lg: 24px;
-  --radius-xl: 28px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
+  --radius-2xl: 12px;
+  --radius-3xl: 12px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -138,7 +140,15 @@
   --sidebar-w-collapsed: 40px;
   --sidebar-w-expanded: 190px;
   --ai-w: 320px;
-  --header-h: 48px;
+  --header-h: 58px;
+  --topbar-h: 58px;
+
+  /* Layout V2 */
+  --max-content-w: 1240px;
+  --main-col: 790px;
+  --side-col: 360px;
+  --module-gap: 18px;
+  --page-gap: 32px;
 
   --highlight-a: #2452C6;
   --highlight-b: #6D36C8;
@@ -298,12 +308,22 @@
   }
 
   .a4-page,
-  .a4-landscape-page,
+  .a4-landscape-page {
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+
   .presentation-page {
     page-break-inside: avoid !important;
     page-break-after: always !important;
     margin: 0 !important;
     border: none !important;
+    /* Scale 1920px width to fit A4 Landscape (1122.5px width at 96 DPI) */
+    zoom: 0.5846 !important;
+    width: 1920px !important;
+    height: 1080px !important;
   }
 }
 
@@ -427,6 +447,14 @@
   font-weight: 750;
   line-height: 1.13;
   letter-spacing: -0.045em;
+}
+
+.ds-card-title {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 750;
+  line-height: 1.14;
+  letter-spacing: -0.040em;
 }
 
 .ds-body {

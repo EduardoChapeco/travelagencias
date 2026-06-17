@@ -18,12 +18,12 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="mb-1.5 block ds-label-caps text-muted-foreground">{label}</span>
       {children}
       {hint && !error && (
         <span className="mt-1 block text-[11px] text-muted-foreground">{hint}</span>
       )}
-      {error && <span className="mt-1 block text-[11px] text-red-500">{error}</span>}
+      {error && <span className="mt-1 block text-[11px] text-danger">{error}</span>}
     </label>
   );
 }
@@ -89,10 +89,10 @@ export function Sheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6"
+        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-border bg-surface p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-6 text-sm font-extrabold uppercase tracking-wider text-foreground border-b border-border pb-3">{title}</h2>
+        <h2 className="mb-6 ds-h3 text-foreground border-b border-border pb-3">{title}</h2>
         {children}
       </div>
     </div>

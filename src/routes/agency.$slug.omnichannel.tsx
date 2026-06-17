@@ -586,7 +586,7 @@ function OmnichannelPage() {
 
   return (
     <>
-      <div className="flex h-[calc(100vh-3rem)] w-full p-0 m-0 border-0 rounded-none overflow-hidden bg-background">
+      <div className="flex h-[calc(100vh-var(--header-h))] w-full p-0 m-0 border-0 rounded-none overflow-hidden bg-background">
         {/* ── SIDEBAR: Session List ─────────────────────────────── */}
         <aside className="flex w-80 shrink-0 flex-col border-r border-border bg-surface">
           {/* Search + Filter */}

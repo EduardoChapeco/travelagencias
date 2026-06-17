@@ -36,6 +36,22 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
     itinerarySlides.push(itineraryDays.slice(i, i + daysPerSlide));
   }
 
+  // Agrupamento de hotéis para caber em slides individuais (2 por slide)
+  const hotelsList = p.hotels || [];
+  const hotelsPerSlide = 2;
+  const hotelSlides: any[][] = [];
+  for (let i = 0; i < hotelsList.length; i += hotelsPerSlide) {
+    hotelSlides.push(hotelsList.slice(i, i + hotelsPerSlide));
+  }
+
+  // Agrupamento de voos para caber em slides individuais (4 por slide)
+  const flightsList = p.flights || [];
+  const flightsPerSlide = 4;
+  const flightSlides: any[][] = [];
+  for (let i = 0; i < flightsList.length; i += flightsPerSlide) {
+    flightSlides.push(flightsList.slice(i, i + flightsPerSlide));
+  }
+
   return (
     <div className="flex flex-col bg-slate-950 font-sans text-slate-100 select-text">
       {/* ─── SLIDE 1: CAPA ─── */}
@@ -166,139 +182,149 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
           </DocumentPage>
         ))}
 
-      {/* ─── SLIDE: HOSPEDAGEM ─── */}
-      {vm.hasHotels && (
-        <DocumentPage format={format} className="bg-slate-900 border-none p-12 justify-between">
-          <div>
-            <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
-              <div className="flex items-center gap-3">
-                <Hotel className="w-6 h-6 text-amber-500" />
-                <h2 className="text-2xl font-black tracking-tight text-white">
-                  Onde você vai ficar
-                </h2>
-              </div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                Hospedagem Premium
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8">
-              {p.hotels!.slice(0, 2).map((h, i) => (
-                <div
-                  key={i}
-                  className="bg-slate-800/30 border border-slate-800 rounded-3xl p-6 flex gap-6"
-                >
-                  {h.images?.[0] && (
-                    <div className="w-44 h-44 shrink-0 rounded-2xl overflow-hidden border border-slate-700 bg-slate-950">
-                      <img
-                        src={h.images[0]}
-                        crossOrigin="anonymous"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-xl font-bold text-white mb-1">{h.name}</h4>
-                      <div
-                        className="text-xs font-bold text-brand uppercase tracking-wider mb-4"
-                        style={{ color: brand !== "#18181b" ? brand : "#38bdf8" }}
-                      >
-                        {h.city}
-                      </div>
-                      <div className="text-xs text-slate-400 space-y-1">
-                        <div>
-                          <strong>Período:</strong> {fmtDate(h.checkin)} a {fmtDate(h.checkout)}
-                        </div>
-                        <div>
-                          <strong>Acomodação:</strong>{" "}
-                          {h.rooms?.[0]
-                            ? h.rooms.map((r: any) => `${r.qty}x ${r.type}`).join(", ")
-                            : "Standard"}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-center text-xs font-bold text-amber-400 self-start mt-2">
-                      Regime: {h.meal_plan || "Café da Manhã"}
-                    </div>
-                  </div>
+      {/* ─── SLIDES: HOSPEDAGEM ─── */}
+      {vm.hasHotels &&
+        hotelSlides.map((slideHotels, slideIdx) => (
+          <DocumentPage
+            key={slideIdx}
+            format={format}
+            className="bg-slate-900 border-none p-12 justify-between"
+          >
+            <div>
+              <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <Hotel className="w-6 h-6 text-amber-500" />
+                  <h2 className="text-2xl font-black tracking-tight text-white">
+                    Onde você vai ficar
+                  </h2>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center text-xs text-slate-600 border-t border-slate-800/60 pt-4">
-            <span>Serviços de Alojamento Selecionados</span>
-            <span>Cotação #{p.number}</span>
-          </div>
-        </DocumentPage>
-      )}
-
-      {/* ─── SLIDE: VOO ─── */}
-      {vm.hasFlights && (
-        <DocumentPage format={format} className="bg-slate-900 border-none p-12 justify-between">
-          <div>
-            <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
-              <div className="flex items-center gap-3">
-                <Plane className="w-6 h-6 text-blue-500" />
-                <h2 className="text-2xl font-black tracking-tight text-white">Logística Aérea</h2>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Hospedagem Premium · Slide {slideIdx + 1} de {hotelSlides.length}
+                </span>
               </div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                Voos Confirmados
-              </span>
-            </div>
 
-            <div className="grid grid-cols-2 gap-8">
-              {p.flights!.slice(0, 4).map((f, i) => (
-                <div key={i} className="bg-slate-800/30 border border-slate-800 rounded-3xl p-6">
-                  <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400">
-                      {f.airline || "Companhia Aérea"}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-800 text-blue-400 px-2 py-0.5 rounded border border-slate-700">
-                      {f.flight_number || "Voo"}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-center py-2">
-                    <div>
-                      <div className="text-4xl font-black text-white tracking-tight">
-                        {(f.origin || "---").slice(0, 3).toUpperCase()}
+              <div className="grid grid-cols-2 gap-8">
+                {slideHotels.map((h, i) => (
+                  <div
+                    key={i}
+                    className="bg-slate-800/30 border border-slate-800 rounded-3xl p-6 flex gap-6"
+                  >
+                    {h.images?.[0] && (
+                      <div className="w-44 h-44 shrink-0 rounded-2xl overflow-hidden border border-slate-700 bg-slate-950">
+                        <img
+                          src={h.images[0]}
+                          crossOrigin="anonymous"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <div className="text-xs font-bold text-slate-400 mt-1">
-                        {f.departure_time || "--:--"}
+                    )}
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <h4 className="text-xl font-bold text-white mb-1">{h.name}</h4>
+                        <div
+                          className="text-xs font-bold text-brand uppercase tracking-wider mb-4"
+                          style={{ color: brand !== "#18181b" ? brand : "#38bdf8" }}
+                        >
+                          {h.city}
+                        </div>
+                        <div className="text-xs text-slate-400 space-y-1">
+                          <div>
+                            <strong>Período:</strong> {fmtDate(h.checkin)} a {fmtDate(h.checkout)}
+                          </div>
+                          <div>
+                            <strong>Acomodação:</strong>{" "}
+                            {h.rooms?.[0]
+                              ? h.rooms.map((r: any) => `${r.qty}x ${r.type}`).join(", ")
+                              : "Standard"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-center text-xs font-bold text-amber-400 self-start mt-2">
+                        Regime: {h.meal_plan || "Café da Manhã"}
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                    <div className="flex-1 px-6 relative flex flex-col items-center">
-                      <div className="w-full border-t border-dashed border-slate-700" />
-                      <span className="absolute -top-3.5 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800 text-[9px] font-black uppercase text-slate-500">
-                        {f.stops === 0 ? "Direto" : `${f.stops} Parada${f.stops > 1 ? "s" : ""}`}
+            <div className="flex justify-between items-center text-xs text-slate-600 border-t border-slate-800/60 pt-4">
+              <span>Serviços de Alojamento Selecionados</span>
+              <span>Cotação #{p.number}</span>
+            </div>
+          </DocumentPage>
+        ))}
+
+      {/* ─── SLIDES: VOO ─── */}
+      {vm.hasFlights &&
+        flightSlides.map((slideFlights, slideIdx) => (
+          <DocumentPage
+            key={slideIdx}
+            format={format}
+            className="bg-slate-900 border-none p-12 justify-between"
+          >
+            <div>
+              <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <Plane className="w-6 h-6 text-blue-500" />
+                  <h2 className="text-2xl font-black tracking-tight text-white">Logística Aérea</h2>
+                </div>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Voos · Slide {slideIdx + 1} de {flightSlides.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8">
+                {slideFlights.map((f, i) => (
+                  <div key={i} className="bg-slate-800/30 border border-slate-800 rounded-3xl p-6">
+                    <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                      <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                        {f.airline || "Companhia Aérea"}
                       </span>
-                      <span className="text-[9px] text-slate-500 font-bold mt-2">
-                        {f.date ? fmtDate(f.date) : ""}
+                      <span className="text-xs font-mono font-bold bg-slate-800 text-blue-400 px-2 py-0.5 rounded border border-slate-700">
+                        {f.flight_number || "Voo"}
                       </span>
                     </div>
-
-                    <div>
-                      <div className="text-4xl font-black text-white tracking-tight">
-                        {(f.destination || "---").slice(0, 3).toUpperCase()}
+                    <div className="flex items-center justify-between text-center py-2">
+                      <div>
+                        <div className="text-4xl font-black text-white tracking-tight">
+                          {(f.origin || "---").slice(0, 3).toUpperCase()}
+                        </div>
+                        <div className="text-xs font-bold text-slate-400 mt-1">
+                          {f.departure_time || "--:--"}
+                        </div>
                       </div>
-                      <div className="text-xs font-bold text-slate-400 mt-1">
-                        {f.arrival_time || "--:--"}
+
+                      <div className="flex-1 px-6 relative flex flex-col items-center">
+                        <div className="w-full border-t border-dashed border-slate-700" />
+                        <span className="absolute -top-3.5 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800 text-[9px] font-black uppercase text-slate-500">
+                          {f.stops === 0 ? "Direto" : `${f.stops} Parada${f.stops > 1 ? "s" : ""}`}
+                        </span>
+                        <span className="text-[9px] text-slate-500 font-bold mt-2">
+                          {f.date ? fmtDate(f.date) : ""}
+                        </span>
+                      </div>
+
+                      <div>
+                        <div className="text-4xl font-black text-white tracking-tight">
+                          {(f.destination || "---").slice(0, 3).toUpperCase()}
+                        </div>
+                        <div className="text-xs font-bold text-slate-400 mt-1">
+                          {f.arrival_time || "--:--"}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-between items-center text-xs text-slate-600 border-t border-slate-800/60 pt-4">
-            <span>Bilhetes Emitidos / Franquias inclusas conforme regras de tarifa</span>
-            <span>Cotação #{p.number}</span>
-          </div>
-        </DocumentPage>
-      )}
+            <div className="flex justify-between items-center text-xs text-slate-600 border-t border-slate-800/60 pt-4">
+              <span>Bilhetes Emitidos / Franquias inclusas conforme regras de tarifa</span>
+              <span>Cotação #{p.number}</span>
+            </div>
+          </DocumentPage>
+        ))}
 
       {/* ─── SLIDE: INCLUSÕES / EXCLUSÕES ─── */}
       {(vm.hasIncludes || vm.hasExcludes) && (

@@ -42,7 +42,7 @@ function DREPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Período:</span>
           {(["month", "quarter", "year"] as const).map((p) => (
@@ -61,7 +61,7 @@ function DREPage() {
         </div>
       </div>
 
-      <div className="p-4 pb-0 shrink-0">
+      <div className="px-4 md:px-6 pt-4 md:pt-6 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-lg border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
@@ -86,7 +86,7 @@ function DREPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         <div className="overflow-hidden rounded-lg border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">

@@ -75,7 +75,32 @@ export function ExportPdfButton({ proposal }: Props) {
             pdf.addPage("a4", orientation);
           }
 
-          pdf.addImage(img, "JPEG", 0, 0, pdfW, pdfH);
+          let x = 0;
+          let y = 0;
+          let w = pdfW;
+          let h = pdfH;
+
+          if (proposal.canvas_format === "presentation-169") {
+            h = pdfW * (9 / 16); // Preserve 16:9 aspect ratio
+            y = (pdfH - h) / 2; // Center vertically
+            
+            try {
+              // Retrieve computed background color of the slide to fill PDF margins
+              const bg = window.getComputedStyle(el).backgroundColor;
+              if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
+                pdf.setFillColor(bg);
+                pdf.rect(0, 0, pdfW, pdfH, "F");
+              } else {
+                pdf.setFillColor(15, 23, 42);
+                pdf.rect(0, 0, pdfW, pdfH, "F");
+              }
+            } catch (err) {
+              pdf.setFillColor(15, 23, 42);
+              pdf.rect(0, 0, pdfW, pdfH, "F");
+            }
+          }
+
+          pdf.addImage(img, "JPEG", x, y, w, h);
         }
       } else {
         // Continuous flow: slice a single tall canvas into multiple A4 pages

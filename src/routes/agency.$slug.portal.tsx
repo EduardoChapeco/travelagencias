@@ -35,7 +35,7 @@ function Page() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <div className="flex items-center gap-1 border-b border-border bg-surface/50 px-4 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
         {tabs.map((tab) => {
           const active = pathname === tab.path || (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));

@@ -112,7 +112,7 @@ function DailyTasksRoute() {
   if (!agency) return null;
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
           Meu Dia · Tarefas e Embarques

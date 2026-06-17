@@ -112,13 +112,13 @@ function TicketDetailRoute() {
   );
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-background">
+    <div className="flex flex-col h-[calc(100vh-var(--header-h))] bg-background">
       {/* Top Header */}
       <div className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate({ to: "/agency/$slug/support", params: { slug } })}
-            className="p-1.5 hover:bg-surface-alt rounded-md border border-border"
+            className="p-1.5 hover:bg-surface-alt rounded-sm border border-border"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>

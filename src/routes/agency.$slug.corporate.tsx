@@ -107,7 +107,7 @@ function CorporatePage() {
   };
 
   return (
-    <>
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -131,7 +131,7 @@ function CorporatePage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -166,123 +166,125 @@ function CorporatePage() {
         </div>
       </div>
 
-      {!rfpsQ.isLoading && rfps.length === 0 && (
-        <EmptyState
-          title="Nenhuma requisição corporativa"
-          description="Inicie um processo de RFP corporativa vinculando uma empresa."
-        />
-      )}
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
+        {!rfpsQ.isLoading && rfps.length === 0 && (
+          <EmptyState
+            title="Nenhuma requisição corporativa"
+            description="Inicie um processo de RFP corporativa vinculando uma empresa."
+          />
+        )}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {rfps.map((rfp) => (
-          <div
-            key={rfp.id}
-            className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
-          >
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {rfps.map((rfp) => (
             <div
-              onClick={() =>
-                navigate({
-                  to: "/agency/$slug/corporate/$rfp_id",
-                  params: { slug: agency!.slug, rfp_id: rfp.id },
-                })
-              }
-              className="flex justify-between items-start group cursor-pointer"
+              key={rfp.id}
+              className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
             >
-              <div>
-                <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">
-                  {rfp.title}
-                </h3>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                  <Building2 className="h-3.5 w-3.5" />
-                  {rfp.client?.full_name}
+              <div
+                onClick={() =>
+                  navigate({
+                    to: "/agency/$slug/corporate/$rfp_id",
+                    params: { slug: agency!.slug, rfp_id: rfp.id },
+                  })
+                }
+                className="flex justify-between items-start group cursor-pointer"
+              >
+                <div>
+                  <h3 className="font-semibold text-foreground group-hover:text-brand transition-colors">
+                    {rfp.title}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                    <Building2 className="h-3.5 w-3.5" />
+                    {rfp.client?.full_name}
+                  </div>
+                </div>
+                <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
+                  {STATUS_MAP[rfp.status]?.label || rfp.status}
+                </StatusBadge>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
+                <div>
+                  <div className="text-muted-foreground mb-0.5">Solicitante</div>
+                  <div className="font-medium truncate" title={rfp.requester_email}>
+                    {rfp.requester_name}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground mb-0.5">Destino</div>
+                  <div className="font-medium truncate">{rfp.destination}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground mb-0.5">Partida</div>
+                  <div className="font-medium">{fmtDate(rfp.departure_date)}</div>
+                </div>
+                <div>
+                  <div className="text-muted-foreground mb-0.5">Orçamento Máx</div>
+                  <div className="font-medium">
+                    {rfp.budget
+                      ? rfp.budget.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                      : "Em aberto"}
+                  </div>
                 </div>
               </div>
-              <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
-                {STATUS_MAP[rfp.status]?.label || rfp.status}
-              </StatusBadge>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
-              <div>
-                <div className="text-muted-foreground mb-0.5">Solicitante</div>
-                <div className="font-medium truncate" title={rfp.requester_email}>
-                  {rfp.requester_name}
+              <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
+                {rfp.status === "pending" && (
+                  <GhostButton
+                    className="text-xs h-8 flex-1"
+                    onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}
+                  >
+                    Iniciar Cotação
+                  </GhostButton>
+                )}
+                {rfp.status === "quoting" && (
+                  <GhostButton
+                    className="text-xs h-8 flex-1 text-primary hover:text-primary"
+                    onClick={() => sendForApproval(rfp)}
+                  >
+                    <Send className="h-3 w-3 mr-1" /> Enviar p/ Aprovação
+                  </GhostButton>
+                )}
+                <div className="w-full text-center mt-2">
+                  <Link
+                    to="/p/corporate/approve"
+                    search={{ token: rfp.approval_token }}
+                    target="_blank"
+                    className="text-[10px] text-muted-foreground hover:underline"
+                  >
+                    Abrir link do cliente
+                  </Link>
                 </div>
               </div>
-              <div>
-                <div className="text-muted-foreground mb-0.5">Destino</div>
-                <div className="font-medium truncate">{rfp.destination}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground mb-0.5">Partida</div>
-                <div className="font-medium">{fmtDate(rfp.departure_date)}</div>
-              </div>
-              <div>
-                <div className="text-muted-foreground mb-0.5">Orçamento Máx</div>
-                <div className="font-medium">
-                  {rfp.budget
-                    ? rfp.budget.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                    : "Em aberto"}
-                </div>
-              </div>
             </div>
-
-            <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
-              {rfp.status === "pending" && (
-                <GhostButton
-                  className="text-xs h-8 flex-1"
-                  onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}
-                >
-                  Iniciar Cotação
-                </GhostButton>
-              )}
-              {rfp.status === "quoting" && (
-                <GhostButton
-                  className="text-xs h-8 flex-1 text-primary hover:text-primary"
-                  onClick={() => sendForApproval(rfp)}
-                >
-                  <Send className="h-3 w-3 mr-1" /> Enviar p/ Aprovação
-                </GhostButton>
-              )}
-              <div className="w-full text-center mt-2">
-                <Link
-                  to="/p/corporate/approve"
-                  search={{ token: rfp.approval_token }}
-                  target="_blank"
-                  className="text-[10px] text-muted-foreground hover:underline"
-                >
-                  Abrir link do cliente
-                </Link>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {rfps.length > 0 && (
-        <div className="mt-8 flex items-center justify-between border-t border-border/40 pt-6">
-          <div className="text-xs text-muted-foreground font-medium">
-            Mostrando página <span className="font-bold text-foreground">{page}</span> de{" "}
-            {Math.ceil((rfpsQ.data?.count ?? 0) / pageSize) || 1}
-          </div>
-          <div className="flex items-center gap-2">
-            <GhostButton
-              disabled={page === 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
-            >
-              Anterior
-            </GhostButton>
-            <GhostButton
-              disabled={page * pageSize >= (rfpsQ.data?.count ?? 0)}
-              onClick={() => setPage((p) => p + 1)}
-              className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
-            >
-              Próxima
-            </GhostButton>
-          </div>
+          ))}
         </div>
-      )}
+
+        {rfps.length > 0 && (
+          <div className="mt-8 flex items-center justify-between border-t border-border/40 pt-6">
+            <div className="text-xs text-muted-foreground font-medium">
+              Mostrando página <span className="font-bold text-foreground">{page}</span> de{" "}
+              {Math.ceil((rfpsQ.data?.count ?? 0) / pageSize) || 1}
+            </div>
+            <div className="flex items-center gap-2">
+              <GhostButton
+                disabled={page === 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+              >
+                Anterior
+              </GhostButton>
+              <GhostButton
+                disabled={page * pageSize >= (rfpsQ.data?.count ?? 0)}
+                onClick={() => setPage((p) => p + 1)}
+                className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+              >
+                Próxima
+              </GhostButton>
+            </div>
+          </div>
+        )}
+      </div>
 
       {newOpen && agency && (
         <NewCorporateRfpWizard
@@ -304,6 +306,6 @@ function CorporatePage() {
           agencyId={agency.id}
         />
       )}
-    </>
+    </div>
   );
 }

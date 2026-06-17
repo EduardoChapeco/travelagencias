@@ -12,7 +12,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
       <div className="min-w-0 flex-1">
-        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="ds-h2 text-foreground">{title}</h1>
       </div>
       {actions && (
         <div className="flex flex-none items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
@@ -35,13 +35,13 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-surface-alt/20 py-16 px-6 text-center transition-all hover:bg-surface-alt/30 hover:border-border/80">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-alt border border-border/50 text-muted-foreground/60">
-        <Icon className="h-8 w-8" strokeWidth={1.5} />
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/60 bg-surface-alt/20 py-16 px-6 text-center">
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-surface-alt border border-border/50 text-muted-foreground/60">
+        <Icon className="h-7 w-7" strokeWidth={1.5} />
       </div>
-      <h3 className="text-base font-semibold text-foreground tracking-tight">{title}</h3>
+      <h3 className="ds-card-title text-foreground">{title}</h3>
       {description && (
-        <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground leading-relaxed">
+        <p className="mx-auto mt-2 max-w-sm ds-body text-muted-foreground">
           {description}
         </p>
       )}

@@ -160,7 +160,7 @@ function BoardingKanbanPage() {
   const activeCard = activeId ? (localCards ?? []).find((c) => c.id === activeId) : null;
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <PrimaryButton

@@ -141,9 +141,9 @@ function ProposalsList() {
       },
     });
   }
-
+ 
   return (
-    <>
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -165,8 +165,8 @@ function ProposalsList() {
           )}
         </div>
       </HeaderPortal>
-
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+ 
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -202,181 +202,183 @@ function ProposalsList() {
           <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         </div>
       </div>
-
-      {list.isLoading && <div className="text-sm text-muted-foreground px-1">Carregando…</div>}
-
-      {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
-        <EmptyState
-          title="Nenhuma cotação ainda"
-          description="Crie sua primeira proposta comercial."
-        />
-      ) : (
-        <div className="space-y-4">
-          <div className="overflow-hidden rounded-md border border-border">
-            <table className="w-full text-sm">
-              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2 font-medium">#</th>
-                  <th className="px-3 py-2 font-medium">Título</th>
-                  <th className="px-3 py-2 font-medium">Destino</th>
-                  <th className="px-3 py-2 font-medium">Viagem</th>
-                  <th className="px-3 py-2 font-medium">Status</th>
-                  <th className="px-3 py-2 font-medium">Visibilidade</th>
-                  <th className="px-3 py-2 text-right font-medium">Total</th>
-                  <th className="px-3 py-2 text-right font-medium">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.data?.data.map((p) => (
-                  <tr key={p.id} className="border-t border-border hover:bg-surface-alt/30">
-                    <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
-                      #{p.number}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <Link
-                        to="/agency/$slug/proposals/$id"
-                        params={{ slug, id: p.id }}
-                        className="font-medium hover:underline"
-                      >
-                        {p.title}
-                      </Link>
-                      <div className="text-xs text-muted-foreground">
-                        criada em {fmtDate(p.created_at)}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2.5 text-xs">{p.destination ?? "—"}</td>
-                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
-                        {STATUS_LABEL[p.status] ?? p.status}
-                      </StatusBadge>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      {p.visibility === "public" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 text-[10px] font-semibold">
-                          🌐 Pública
-                        </span>
-                      ) : p.visibility === "agency" ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-success/10 text-success border border-success/20 px-2 py-0.5 text-[10px] font-semibold">
-                          🏢 Agência
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt text-muted-foreground border border-border px-2 py-0.5 text-[10px] font-semibold">
-                          🔒 Privada
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-3 py-2.5 text-right font-mono text-xs">
-                      {money(Number(p.total), p.currency)}
-                    </td>
-                    <td className="px-3 py-2.5 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <GhostButton className="h-7 w-7 p-0 hover:bg-surface-alt">
-                            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                          </GhostButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem asChild>
-                            <Link
-                              to="/agency/$slug/proposals/$id"
-                              params={{ slug, id: p.id }}
+ 
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
+        {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+ 
+        {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
+          <EmptyState
+            title="Nenhuma cotação ainda"
+            description="Crie sua primeira proposta comercial."
+          />
+        ) : (
+          <div className="space-y-4">
+            <div className="overflow-hidden rounded-md border border-border bg-surface">
+              <table className="w-full text-sm">
+                <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">#</th>
+                    <th className="px-3 py-2 font-medium">Título</th>
+                    <th className="px-3 py-2 font-medium">Destino</th>
+                    <th className="px-3 py-2 font-medium">Viagem</th>
+                    <th className="px-3 py-2 font-medium">Status</th>
+                    <th className="px-3 py-2 font-medium">Visibilidade</th>
+                    <th className="px-3 py-2 text-right font-medium">Total</th>
+                    <th className="px-3 py-2 text-right font-medium">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.data?.data.map((p) => (
+                    <tr key={p.id} className="border-t border-border hover:bg-surface-alt/30">
+                      <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
+                        #{p.number}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <Link
+                          to="/agency/$slug/proposals/$id"
+                          params={{ slug, id: p.id }}
+                          className="font-medium hover:underline"
+                        >
+                          {p.title}
+                        </Link>
+                        <div className="text-xs text-muted-foreground">
+                          criada em {fmtDate(p.created_at)}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-xs">{p.destination ?? "—"}</td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                        {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
+                          {STATUS_LABEL[p.status] ?? p.status}
+                        </StatusBadge>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {p.visibility === "public" ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 text-[10px] font-semibold">
+                            🌐 Pública
+                          </span>
+                        ) : p.visibility === "agency" ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 text-success border border-success/20 px-2 py-0.5 text-[10px] font-semibold">
+                            🏢 Agência
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt text-muted-foreground border border-border px-2 py-0.5 text-[10px] font-semibold">
+                            🔒 Privada
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-mono text-xs">
+                        {money(Number(p.total), p.currency)}
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <GhostButton className="h-7 w-7 p-0 hover:bg-surface-alt">
+                              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                            </GhostButton>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem asChild>
+                              <Link
+                                to="/agency/$slug/proposals/$id"
+                                params={{ slug, id: p.id }}
+                                className="cursor-pointer"
+                              >
+                                <Edit2 className="mr-2 h-4 w-4" /> Editar Proposta
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => window.open(`/m/proposal/${p.public_token}`, "_blank")}
                               className="cursor-pointer"
                             >
-                              <Edit2 className="mr-2 h-4 w-4" /> Editar Proposta
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => window.open(`/m/proposal/${p.public_token}`, "_blank")}
-                            className="cursor-pointer"
-                          >
-                            <Eye className="mr-2 h-4 w-4" /> Ver WebView
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                `${window.location.origin}/m/proposal/${p.public_token}`,
-                              );
-                              toast.success("Link copiado!");
-                            }}
-                            className="cursor-pointer"
-                          >
-                            <Link2 className="mr-2 h-4 w-4" /> Copiar Link
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => renameProposal(p.id, p.title)}
-                            className="cursor-pointer"
-                          >
-                            <PencilLine className="mr-2 h-4 w-4" /> Renomear
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => dupMut.mutate(p.id)}
-                            className="cursor-pointer"
-                          >
-                            <Copy className="mr-2 h-4 w-4" /> Duplicar Cotação
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setHistoryProposal({ id: p.id, title: p.title });
-                              setHistoryOpen(true);
-                            }}
-                            className="cursor-pointer"
-                          >
-                            <History className="mr-2 h-4 w-4" /> Histórico de Edições
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-danger"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              confirm({
-                                title: "Excluir Cotação",
-                                description: "Tem certeza que deseja excluir esta cotação?",
-                                variant: "destructive",
-                                onConfirm: () => {
-                                  delMut.mutate(p.id);
-                                },
-                              });
-                            }}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-            <div className="text-xs text-muted-foreground">
-              Página <span className="font-medium text-foreground">{page}</span> de{" "}
-              {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
+                              <Eye className="mr-2 h-4 w-4" /> Ver WebView
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  `${window.location.origin}/m/proposal/${p.public_token}`,
+                                );
+                                toast.success("Link copiado!");
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <Link2 className="mr-2 h-4 w-4" /> Copiar Link
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => renameProposal(p.id, p.title)}
+                              className="cursor-pointer"
+                            >
+                              <PencilLine className="mr-2 h-4 w-4" /> Renomear
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => dupMut.mutate(p.id)}
+                              className="cursor-pointer"
+                            >
+                              <Copy className="mr-2 h-4 w-4" /> Duplicar Cotação
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setHistoryProposal({ id: p.id, title: p.title });
+                                setHistoryOpen(true);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <History className="mr-2 h-4 w-4" /> Histórico de Edições
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-danger"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirm({
+                                  title: "Excluir Cotação",
+                                  description: "Tem certeza que deseja excluir esta cotação?",
+                                  variant: "destructive",
+                                  onConfirm: () => {
+                                    delMut.mutate(p.id);
+                                  },
+                                });
+                              }}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="flex items-center gap-2">
-              <GhostButton
-                disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 px-3 text-xs"
-              >
-                Anterior
-              </GhostButton>
-              <GhostButton
-                disabled={page * pageSize >= (list.data?.count ?? 0)}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 px-3 text-xs"
-              >
-                Próxima
-              </GhostButton>
+ 
+            <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
+              <div className="text-xs text-muted-foreground">
+                Página <span className="font-medium text-foreground">{page}</span> de{" "}
+                {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
+              </div>
+              <div className="flex items-center gap-2">
+                <GhostButton
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="h-8 px-3 text-xs"
+                >
+                  Anterior
+                </GhostButton>
+                <GhostButton
+                  disabled={page * pageSize >= (list.data?.count ?? 0)}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="h-8 px-3 text-xs"
+                >
+                  Próxima
+                </GhostButton>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-
+        )}
+      </div>
+ 
       {newOpen && (
         <NewProposalSheet
           isOpen={newOpen}
@@ -407,6 +409,6 @@ function ProposalsList() {
           agencyId={agency.id}
         />
       )}
-    </>
+    </div>
   );
 }

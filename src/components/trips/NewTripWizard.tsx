@@ -30,6 +30,10 @@ const tripWizardSchema = z
     travel_start: z.string().optional().nullable(),
     travel_end: z.string().optional().nullable(),
     client_id: z.string().optional().nullable(),
+    new_client_name: z.string().optional().nullable(),
+    new_client_document: z.string().optional().nullable(),
+    new_client_email: z.string().optional().nullable(),
+    new_client_phone: z.string().optional().nullable(),
     currency: z.string().default("BRL"),
     total_sale: z
       .number({ invalid_type_error: "Insira um número válido" })
@@ -68,6 +72,7 @@ export function NewTripWizard({
 }) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [isNewClientMode, setIsNewClientMode] = useState(false);
 
   const {
     register,
@@ -84,6 +89,10 @@ export function NewTripWizard({
       travel_start: "",
       travel_end: "",
       client_id: "",
+      new_client_name: "",
+      new_client_document: "",
+      new_client_email: "",
+      new_client_phone: "",
       currency: "BRL",
       total_sale: 0,
       status: "planning",
@@ -118,7 +127,15 @@ export function NewTripWizard({
     if (step === 0) {
       fieldsToValidate = ["title", "travel_start", "travel_end", "destination"];
     } else if (step === 1) {
-      fieldsToValidate = ["client_id"];
+      if (isNewClientMode) {
+        const nameVal = watch("new_client_name");
+        if (!nameVal || nameVal.trim().length < 3) {
+          toast.error("Por favor, informe o nome do novo cliente (mínimo 3 caracteres)");
+          return;
+        }
+      } else {
+        fieldsToValidate = ["client_id"];
+      }
     } else if (step === 2) {
       fieldsToValidate = ["status", "currency", "total_sale"];
     }
@@ -136,6 +153,56 @@ export function NewTripWizard({
     try {
       const { data: u } = await supabase.auth.getUser();
 
+      let targetClientId = data.client_id || null;
+      let clientName = "";
+      let clientDocument = "";
+
+      if (isNewClientMode && data.new_client_name) {
+        // Verificar se CPF/CNPJ já existe na agência
+        if (data.new_client_document) {
+          const cleanDoc = data.new_client_document.replace(/[^\d]/g, "");
+          const { data: existing } = await supabase
+            .from("clients")
+            .select("id, full_name, document")
+            .eq("agency_id", agencyId)
+            .ilike("document", `%${cleanDoc}%`)
+            .maybeSingle();
+
+          if (existing) {
+            targetClientId = existing.id;
+            clientName = existing.full_name;
+            clientDocument = existing.document || "";
+            toast.info(`Cliente existente localizado pelo documento: ${clientName}`);
+          }
+        }
+
+        if (!targetClientId) {
+          const { data: newClient, error: clientErr } = await supabase
+            .from("clients")
+            .insert({
+              agency_id: agencyId,
+              full_name: data.new_client_name,
+              document: data.new_client_document || null,
+              email: data.new_client_email || null,
+              phone: data.new_client_phone || null,
+              kind: "individual",
+            })
+            .select("id, full_name, document")
+            .single();
+
+          if (clientErr) throw clientErr;
+          targetClientId = newClient.id;
+          clientName = newClient.full_name;
+          clientDocument = newClient.document || "";
+        }
+      } else if (data.client_id) {
+        const client = clientsQ.data?.find((c) => c.id === data.client_id);
+        if (client) {
+          clientName = client.full_name;
+          clientDocument = client.document || "";
+        }
+      }
+
       const { data: tripData, error } = await supabase
         .from("trips")
         .insert({
@@ -144,7 +211,7 @@ export function NewTripWizard({
           destination: data.destination || null,
           travel_start: data.travel_start || null,
           travel_end: data.travel_end || null,
-          client_id: data.client_id || null,
+          client_id: targetClientId,
           status: data.status,
           currency: data.currency,
           total_sale: data.total_sale,
@@ -157,19 +224,16 @@ export function NewTripWizard({
         throw error || new Error("Erro ao criar viagem.");
       }
 
-      // Se cliente selecionado, adicionar como 1º passageiro
-      if (data.client_id) {
-        const client = clientsQ.data?.find((c) => c.id === data.client_id);
-        if (client) {
-          await supabase.from("trip_passengers").insert({
-            agency_id: agencyId,
-            trip_id: tripData.id,
-            client_id: client.id,
-            is_lead_passenger: true,
-            full_name: client.full_name,
-            document: client.document || null,
-          });
-        }
+      // Se cliente selecionado ou criado, adicionar como 1º passageiro
+      if (targetClientId) {
+        await supabase.from("trip_passengers").insert({
+          agency_id: agencyId,
+          trip_id: tripData.id,
+          client_id: targetClientId,
+          is_lead_passenger: true,
+          full_name: clientName,
+          document: clientDocument || null,
+        });
       }
 
       toast.success("Viagem criada com sucesso!");
@@ -276,16 +340,56 @@ export function NewTripWizard({
                     Se ele também viajar, será automaticamente adicionado como o primeiro passageiro
                     do roteiro.
                   </div>
-                  <Field label="Cliente Responsável (Opcional)" error={errors.client_id?.message}>
-                    <Select {...register("client_id")}>
-                      <option value="">— Sem cliente ainda —</option>
-                      {(clientsQ.data ?? []).map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.full_name} {c.document ? `(${c.document})` : ""}
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
+
+                  <div className="flex items-center justify-between border-b border-border/60 pb-1">
+                    <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                      Cliente Responsável
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsNewClientMode(!isNewClientMode);
+                        setValue("client_id", "");
+                        setValue("new_client_name", "");
+                        setValue("new_client_document", "");
+                        setValue("new_client_email", "");
+                        setValue("new_client_phone", "");
+                      }}
+                      className="text-xs font-semibold text-brand hover:underline"
+                    >
+                      {isNewClientMode ? "Selecionar Existente" : "Cadastrar Novo"}
+                    </button>
+                  </div>
+
+                  {!isNewClientMode ? (
+                    <Field label="Cliente Responsável (Opcional)" error={errors.client_id?.message}>
+                      <Select {...register("client_id")}>
+                        <option value="">— Sem cliente ainda —</option>
+                        {(clientsQ.data ?? []).map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.full_name} {c.document ? `(${c.document})` : ""}
+                          </option>
+                        ))}
+                      </Select>
+                    </Field>
+                  ) : (
+                    <div className="space-y-4 rounded-xl border border-border bg-surface/50 p-4">
+                      <Field label="Nome Completo *" error={errors.new_client_name?.message}>
+                        <Input {...register("new_client_name")} placeholder="Ex: João da Silva" />
+                      </Field>
+                      <Field label="Documento (CPF/CNPJ)" error={errors.new_client_document?.message}>
+                        <Input {...register("new_client_document")} placeholder="000.000.000-00" />
+                      </Field>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Field label="E-mail" error={errors.new_client_email?.message}>
+                          <Input type="email" {...register("new_client_email")} placeholder="joao@email.com" />
+                        </Field>
+                        <Field label="Telefone" error={errors.new_client_phone?.message}>
+                          <Input {...register("new_client_phone")} placeholder="(00) 99999-9999" />
+                        </Field>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -353,7 +457,9 @@ export function NewTripWizard({
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">
-                          {selectedClient?.full_name || "Sem cliente"}
+                          {isNewClientMode
+                            ? watch("new_client_name") || "Novo Cliente"
+                            : selectedClient?.full_name || "Sem cliente"}
                         </span>
                       </div>
                       {((watchTravelStart && watchTravelStart.trim() !== "") ||

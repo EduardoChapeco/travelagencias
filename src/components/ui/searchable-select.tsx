@@ -126,7 +126,7 @@ export function SearchableSelect({
         disabled={disabled}
         onClick={() => !disabled && setOpen((o) => !o)}
         className={cn(
-          "flex w-full h-9 items-center justify-between gap-2 rounded-md border border-input bg-surface px-2.5 text-sm outline-none transition-colors",
+          "flex w-full h-9 items-center justify-between gap-2 rounded-sm border border-input bg-surface px-2.5 text-sm outline-none transition-colors",
           "hover:border-border-strong focus:border-border-strong focus:ring-2 focus:ring-ring/20",
           "disabled:cursor-not-allowed disabled:opacity-60",
           open && "border-border-strong ring-2 ring-ring/20",
@@ -171,7 +171,7 @@ export function SearchableSelect({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-border bg-surface shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-100">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-sm border border-border bg-surface shadow-none animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-100">
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

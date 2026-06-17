@@ -106,7 +106,7 @@ function CashPage() {
         </button>
       </HeaderPortal>
 
-      <div className="p-4 pb-0 shrink-0">
+      <div className="px-4 md:px-6 pt-4 md:pt-6 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Card
             label="Entradas"
@@ -128,7 +128,7 @@ function CashPage() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border bg-surface/50 p-2 shrink-0 mt-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 mt-4">
         <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
           {(["all", "income", "expense", "pending"] as const).map((f) => (
             <button
@@ -152,7 +152,7 @@ function CashPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {q.data?.data.length === 0 && (
           <EmptyState

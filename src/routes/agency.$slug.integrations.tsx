@@ -101,6 +101,12 @@ function IntegrationsPage() {
           >
             <KeyRound className="h-3.5 w-3.5" /> Chaves de Acesso
           </TabsTrigger>
+          <TabsTrigger
+            value="infotravel"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+          >
+            <Wifi className="h-3.5 w-3.5" /> Infotravel GDS
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="ai">
@@ -128,6 +134,10 @@ function IntegrationsPage() {
 
         <TabsContent value="apikeys">
           <ApiKeysTab agencyId={agency.id} />
+        </TabsContent>
+
+        <TabsContent value="infotravel">
+          <InfotravelTab agencyId={agency.id} />
         </TabsContent>
       </Tabs>
     </>
@@ -804,5 +814,175 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
         {busy ? "Salvando..." : "Salvar Configurações do Agente de IA"}
       </PrimaryButton>
     </div>
+  );
+}
+
+function InfotravelTab({ agencyId }: { agencyId: string }) {
+  const [busy, setBusy] = useState(false);
+  const [config, setConfig] = useState({
+    infotravel_url: "",
+    infotravel_username: "",
+    infotravel_password: "",
+    infotravel_client: "",
+    infotravel_agency: "",
+    infotravel_markup: "0",
+  });
+
+  const { data: agencyData, isLoading } = useQuery({
+    queryKey: ["agency-integrations-infotravel", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agencies")
+        .select("integrations_config")
+        .eq("id", agencyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const keysQuery = useQuery({
+    queryKey: ["agency-api-keys", agencyId],
+    queryFn: () => fetchApiKeys(agencyId),
+  });
+
+  useEffect(() => {
+    if (agencyData?.integrations_config) {
+      const cfg = agencyData.integrations_config as any;
+      setConfig((c) => ({
+        ...c,
+        infotravel_markup: cfg.infotravel_markup !== undefined ? String(cfg.infotravel_markup) : "0",
+      }));
+    }
+    if (keysQuery.data) {
+      const getVal = (provider: string) =>
+        keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
+      setConfig((c) => ({
+        ...c,
+        infotravel_url: getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1",
+        infotravel_username: getVal("infotravel_username"),
+        infotravel_password: getVal("infotravel_password"),
+        infotravel_client: getVal("infotravel_client"),
+        infotravel_agency: getVal("infotravel_agency"),
+      }));
+    }
+  }, [agencyData, keysQuery.data]);
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const existingConfig = (agencyData?.integrations_config as Record<string, any>) || {};
+      const newConfig = {
+        ...existingConfig,
+        infotravel_markup: parseFloat(config.infotravel_markup) || 0,
+      };
+
+      const { error } = await supabase
+        .from("agencies")
+        .update({ integrations_config: newConfig })
+        .eq("id", agencyId);
+      if (error) throw error;
+
+      const secrets = [
+        { provider: "infotravel_url", val: config.infotravel_url.trim(), label: "Infotravel Base URL" },
+        { provider: "infotravel_username", val: config.infotravel_username.trim(), label: "Infotravel Username" },
+        { provider: "infotravel_password", val: config.infotravel_password.trim(), label: "Infotravel Password" },
+        { provider: "infotravel_client", val: config.infotravel_client.trim(), label: "Infotravel Client Code" },
+        { provider: "infotravel_agency", val: config.infotravel_agency.trim(), label: "Infotravel Agency Code" },
+      ];
+
+      for (const secret of secrets) {
+        await saveApiKey(agencyId, {
+          provider: secret.provider,
+          label: secret.label,
+          key_value: secret.val,
+          is_active: true,
+        });
+      }
+
+      toast.success("Configurações do Infotravel salvas com sucesso!");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao salvar");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (isLoading)
+    return <div className="p-8 text-center text-sm text-muted-foreground font-sans">Carregando...</div>;
+
+  return (
+    <form onSubmit={save} className="mt-5 space-y-6">
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+        <div className="flex items-center gap-2 text-foreground font-semibold">
+          <Wifi className="h-5 w-5 text-brand" />
+          Conexão GDS Infotravel / Infotera
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+          Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo vinculada ao sistema Infotravel.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="col-span-2">
+            <Field label="URL da API (Infotravel)" hint="Padrão: http://api.infotravel.com.br/api/v1">
+              <Input
+                placeholder="http://api.infotravel.com.br/api/v1"
+                value={config.infotravel_url}
+                onChange={(e) => setConfig({ ...config, infotravel_url: e.target.value })}
+                required
+              />
+            </Field>
+          </div>
+          <Field label="Usuário (Username)">
+            <Input
+              placeholder="Digite o usuário de integração…"
+              value={config.infotravel_username}
+              onChange={(e) => setConfig({ ...config, infotravel_username: e.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Senha (Password)">
+            <Input
+              type="password"
+              placeholder="Digite a senha de integração…"
+              value={config.infotravel_password}
+              onChange={(e) => setConfig({ ...config, infotravel_password: e.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Código do Cliente (Client ID)">
+            <Input
+              placeholder="Identificador do cliente operadora…"
+              value={config.infotravel_client}
+              onChange={(e) => setConfig({ ...config, infotravel_client: e.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Código da Agência (Agency ID)">
+            <Input
+              placeholder="Código da agência contratante…"
+              value={config.infotravel_agency}
+              onChange={(e) => setConfig({ ...config, infotravel_agency: e.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Markup (%)" hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas">
+            <Input
+              type="number"
+              step="0.01"
+              placeholder="Ex: 15.00"
+              value={config.infotravel_markup}
+              onChange={(e) => setConfig({ ...config, infotravel_markup: e.target.value })}
+              required
+            />
+          </Field>
+        </div>
+      </div>
+
+      <PrimaryButton disabled={busy} className="w-full">
+        {busy ? "Salvando..." : "Salvar configurações do Infotravel"}
+      </PrimaryButton>
+    </form>
   );
 }

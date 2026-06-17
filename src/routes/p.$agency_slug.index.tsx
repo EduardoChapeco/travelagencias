@@ -139,133 +139,134 @@ function HomePage() {
     );
   }
 
-  // ── LEGACY FALLBACK: Layout premium pré-montado ─────────────────────────────
-  const brandColor = agency.brand_color || "#1E293B";
-  const brandLight = agency.brand_color_light || "#F8FAFC";
+  // ── LEGACY FALLBACK: Layout editorial pré-montado ────────────────────────────
+  const brandColor = agency.brand_color || "#151515";
   const brandFg = agency.brand_color_fg || "#FFFFFF";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
-        {/* Background */}
-        {company?.cover_image_url ? (
-          <>
-            <img
-              src={company.cover_image_url}
-              alt="Cover"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/60" />
-          </>
-        ) : (
-          <>
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `linear-gradient(135deg, ${brandColor} 0%, ${brandColor}cc 100%)`,
-              }}
-            />
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 25% 25%, white 0%, transparent 50%), radial-gradient(circle at 75% 75%, white 0%, transparent 50%)",
-              }}
-            />
-          </>
-        )}
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center px-6 py-28 md:py-40 text-center text-white">
-          {agency.logo_url && (
-            <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <img
-                src={agency.logo_url}
-                alt={agency.name}
-                className="mx-auto h-24 w-24 rounded-2xl object-contain border-2 border-white/20 bg-white/10 backdrop-blur-sm p-2"
-              />
-            </div>
-          )}
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-            {agency.name}
-          </h1>
-          {company?.short_description && (
-            <p className="mx-auto max-w-xl text-lg md:text-xl text-white/80 font-medium mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-              {company.short_description}
-            </p>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+      {/* ── TOPBAR ────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+        <div className="mx-auto max-w-[1240px] px-6 h-[58px] flex items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            {agency.logo_url ? (
+              <img src={agency.logo_url} alt={agency.name} className="h-7 w-7 rounded object-contain" />
+            ) : (
+              <div
+                className="flex h-7 w-7 items-center justify-center rounded text-xs font-bold text-white"
+                style={{ background: brandColor }}
+              >
+                {agency.name.charAt(0)}
+              </div>
+            )}
+            <span className="font-bold text-foreground tracking-tight">{agency.name}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            {tours.length > 0 && (
+              <a
+                href="#roteiros"
+                className="ds-label-caps text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Roteiros
+              </a>
+            )}
             {company?.whatsapp && (
               <a
                 href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold bg-white text-foreground hover:bg-white/90 transition-all hover:scale-105"
+                className="inline-flex items-center gap-2 h-9 rounded border border-border bg-surface px-3 ds-label-caps text-foreground hover:bg-surface-alt transition-colors"
               >
-                <MessageCircle className="h-4 w-4 text-green-600" /> Fale pelo WhatsApp
+                <MessageCircle className="h-3.5 w-3.5 text-[#22C55E]" /> WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* ── HERO Editorial ────────────────────────────────────────── */}
+      <section className="mx-auto max-w-[1240px] px-6 pt-20 pb-16">
+        <div className="max-w-[790px]">
+          {/* Caps */}
+          <div className="flex items-center flex-wrap gap-2 mb-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-[10px] py-[5px] ds-label-caps text-muted-foreground">
+              Agência de viagens
+            </span>
+            {tours.length > 0 && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#157F3D]/25 bg-[#EDF8F1] px-[10px] py-[5px] ds-label-caps text-[#157F3D]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#157F3D]" />
+                {tours.length} roteiros disponíveis
+              </span>
+            )}
+          </div>
+
+          <h1 className="ds-display text-foreground mb-6">{agency.name}</h1>
+
+          {company?.short_description && (
+            <p className="ds-body-large text-muted-foreground mb-8 max-w-[560px]">
+              {company.short_description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-3">
+            {company?.whatsapp && (
+              <a
+                href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 h-[39px] rounded border border-foreground bg-foreground px-[14px] ds-label-caps text-white hover:bg-foreground/85 transition-colors"
+              >
+                <MessageCircle className="h-3.5 w-3.5" /> Falar com consultor
               </a>
             )}
             {tours.length > 0 && (
               <a
                 href="#roteiros"
-                className="inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-sm font-bold text-white hover:bg-white/10 transition-all"
+                className="inline-flex items-center gap-2 h-[39px] rounded border border-border-strong bg-surface px-[14px] ds-label-caps text-foreground hover:bg-surface-alt transition-colors"
               >
-                Ver roteiros <ArrowRight className="h-4 w-4" />
+                Ver roteiros <ArrowRight className="h-3.5 w-3.5" />
               </a>
             )}
           </div>
-
-          <SocialLinks
-            company={company}
-            className="mt-8 [&_a]:text-white/60 [&_a]:hover:text-white"
-          />
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 60"
-            className="w-full"
-            preserveAspectRatio="none"
-            style={{ height: 60 }}
-          >
-            <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="hsl(var(--background))" />
-          </svg>
         </div>
       </section>
 
+      {/* ── COVER IMAGE (se existir) ─────────────────────────────── */}
+      {company?.cover_image_url && (
+        <section className="mx-auto max-w-[1240px] px-6 pb-16">
+          <div className="rounded-lg overflow-hidden aspect-[21/7] border border-border">
+            <img
+              src={company.cover_image_url}
+              alt={agency.name}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </section>
+      )}
+
       {/* ── STATS STRIP ───────────────────────────────────────────── */}
       {tours.length > 0 && (
-        <div className="border-b border-border py-6">
-          <div className="mx-auto max-w-4xl px-6">
+        <div className="border-y border-border py-6 mb-20">
+          <div className="mx-auto max-w-[1240px] px-6">
             <div className="grid grid-cols-3 divide-x divide-border text-center">
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
-                  {tours.length}+
-                </div>
-                <div className="text-xs text-muted-foreground mt-0.5">Roteiros disponíveis</div>
+                <div className="ds-h2 text-foreground">{tours.length}+</div>
+                <div className="ds-label-caps text-muted-foreground mt-1">Roteiros</div>
               </div>
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
-                  100%
-                </div>
-                <div className="text-xs text-muted-foreground mt-0.5">Satisfação garantida</div>
+                <div className="ds-h2 text-foreground">100%</div>
+                <div className="ds-label-caps text-muted-foreground mt-1">Satisfação</div>
               </div>
               <div className="px-4">
-                <div className="text-2xl font-extrabold" style={{ color: brandColor }}>
-                  24h
-                </div>
-                <div className="text-xs text-muted-foreground mt-0.5">Suporte ao viajante</div>
+                <div className="ds-h2 text-foreground">24h</div>
+                <div className="ds-label-caps text-muted-foreground mt-1">Suporte</div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <main className="space-y-20 py-20">
+      <main className="space-y-20 pb-20">
         {/* ── TOURS GRID ──────────────────────────────────────────── */}
         {tours.length > 0 && (
           <section id="roteiros" className="mx-auto max-w-6xl px-6">

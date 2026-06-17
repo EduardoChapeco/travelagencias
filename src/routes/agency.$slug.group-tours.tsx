@@ -67,7 +67,7 @@ function GroupToursPage() {
   }, [q.data, qSearch, statusFilter]);
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -90,7 +90,7 @@ function GroupToursPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -149,7 +149,7 @@ function GroupToursPage() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="font-semibold">{t.title}</div>
+                      <div className="ds-card-title text-foreground">{t.title}</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
                         {t.destination ?? "—"}
                         {t.bus_layout_id && (

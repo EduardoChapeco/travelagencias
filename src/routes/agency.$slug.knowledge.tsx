@@ -123,7 +123,7 @@ function KnowledgePage() {
   );
 
   return (
-    <>
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {/* Actions */}
@@ -149,12 +149,12 @@ function KnowledgePage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         {/* Tab Switcher */}
-        <div className="flex items-center gap-1 rounded bg-surface p-0.5 text-[11px] border border-border/60 w-full sm:w-auto justify-center sm:justify-start">
+        <div className="flex items-center gap-1 rounded bg-surface p-0.5 border border-border/60 w-full sm:w-auto justify-center sm:justify-start">
           <button
             onClick={() => setTab("articles")}
-            className={`rounded px-2.5 py-1 font-bold transition-all ${
+            className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
               tab === "articles" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -162,7 +162,7 @@ function KnowledgePage() {
           </button>
           <button
             onClick={() => setTab("playbooks")}
-            className={`rounded px-2.5 py-1 font-bold transition-all ${
+            className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
               tab === "playbooks" ? "bg-surface-alt text-foreground border border-border/40" : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -186,7 +186,7 @@ function KnowledgePage() {
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
-        <>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
           {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filtered.length === 0 && !q.isLoading && (
             <EmptyState
@@ -242,12 +242,12 @@ function KnowledgePage() {
               </button>
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {/* PLAYBOOKS TAB */}
       {tab === "playbooks" && (
-        <>
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
           {playbooksQ.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filteredPlaybooks.length === 0 && !playbooksQ.isLoading && (
             <EmptyState
@@ -302,7 +302,7 @@ function KnowledgePage() {
               </button>
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {viewing && (
@@ -373,7 +373,7 @@ function KnowledgePage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
 

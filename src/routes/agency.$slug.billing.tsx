@@ -307,7 +307,7 @@ function BillingPage() {
               <div
                 key={plan.id}
                 className={`rounded-2xl border bg-surface p-6 flex flex-col justify-between transition-all hover:border-brand/40 ${
-                  plan.is_featured ? "border-brand border-2 shadow-lg shadow-brand/5 relative scale-105" : "border-border"
+                  plan.is_featured ? "border-brand border-2 ring-1 ring-brand/20 relative scale-105" : "border-border"
                 } ${isCurrent ? "opacity-95 ring-2 ring-brand/10 bg-brand/3" : ""}`}
               >
                 {plan.is_featured && (

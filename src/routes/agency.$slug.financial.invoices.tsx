@@ -48,7 +48,7 @@ function InvoicesPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <div className="flex-1 overflow-y-auto p-4 min-h-0">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
         {!q.isLoading && !q.data?.data.length && (

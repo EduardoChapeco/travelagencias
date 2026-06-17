@@ -29,6 +29,7 @@ import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { NewTripWizard } from "@/components/trips/NewTripWizard";
+import { infotravelImportBooking } from "@/services/infotravel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,12 +67,159 @@ function TripsList() {
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const [newOpen, setNewOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [bookingId, setBookingId] = useState("");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const pageSize = 20;
 
   const { confirm, ConfirmDialog } = useConfirm();
+
+  async function handleImportBooking() {
+    if (!agency || !bookingId.trim()) return;
+    setImporting(true);
+    try {
+      const bookingData = await infotravelImportBooking(agency.id, bookingId.trim());
+      
+      if (!bookingData) throw new Error("Nenhum dado retornado para esta reserva.");
+
+      // 1. Procurar ou criar cliente
+      let clientId = null;
+      if (bookingData.client_cpf || bookingData.client_email) {
+        let q = supabase.from("clients").select("id").eq("agency_id", agency.id);
+        if (bookingData.client_cpf) {
+          q = q.eq("document", bookingData.client_cpf);
+        } else {
+          q = q.eq("email", bookingData.client_email);
+        }
+        const { data: existingClient } = await q.maybeSingle();
+        clientId = existingClient?.id;
+      }
+
+      if (!clientId) {
+        const { data: newClient, error: clientErr } = await supabase
+          .from("clients")
+          .insert({
+            agency_id: agency.id,
+            full_name: bookingData.client_name || "Cliente Importado",
+            document: bookingData.client_cpf || null,
+            email: bookingData.client_email || null,
+            phone: bookingData.client_phone || null,
+            kind: "individual",
+          })
+          .select("id")
+          .single();
+        
+        if (clientErr) throw clientErr;
+        clientId = newClient.id;
+      }
+
+      // 2. Criar a viagem (trip)
+      const startDate = bookingData.flights?.[0]?.date || bookingData.hotels?.[0]?.checkin || new Date().toISOString().split("T")[0];
+      const endDate = bookingData.hotels?.[0]?.checkout || bookingData.flights?.[0]?.date || new Date().toISOString().split("T")[0];
+
+      const { data: newTrip, error: tripErr } = await supabase
+        .from("trips")
+        .insert({
+          agency_id: agency.id,
+          client_id: clientId,
+          title: `Reserva #${bookingId} - ${bookingData.destination || "Infotravel"}`,
+          destination: bookingData.destination || "Vários",
+          travel_start: startDate,
+          travel_end: endDate,
+          total_sale: bookingData.total_sale || 0,
+          total_cost: 0,
+          currency: "BRL",
+          status: "confirmed",
+        })
+        .select("id")
+        .single();
+
+      if (tripErr) throw tripErr;
+      const tripId = newTrip.id;
+
+      // 3. Cadastrar passageiros
+      if (bookingData.passengers && bookingData.passengers.length > 0) {
+        const passengerInserts = bookingData.passengers.map((p: any) => ({
+          trip_id: tripId,
+          agency_id: agency.id,
+          full_name: p.full_name,
+          document: p.document,
+          document_type: p.document_type || "rg",
+          birth_date: p.birth_date || null,
+          email: p.email || null,
+          phone: p.phone || null,
+          is_lead_passenger: p.full_name === bookingData.client_name,
+        }));
+        
+        const { error: passErr } = await supabase
+          .from("trip_passengers")
+          .insert(passengerInserts);
+        if (passErr) console.error("Erro ao inserir passageiros:", passErr);
+      }
+
+      // 4. Cadastrar Voucher
+      const voucherFlights = (bookingData.flights || []).map((f: any) => ({
+        locator: bookingData.locator || "PNR",
+        airline: f.airline || "",
+        flight_number: f.flight_number || "",
+        origin: f.origin || "",
+        destination: f.destination || "",
+        date: f.date || "",
+        departure_time: f.departure_time || "",
+        arrival_time: f.arrival_time || "",
+        class: "Econômica",
+        baggage: f.baggage_rules || "Sem bagagem",
+      }));
+
+      const voucherAccommodation = (bookingData.hotels || []).map((h: any) => ({
+        name: h.name || "",
+        city: h.city || "",
+        address: "",
+        phone: "",
+        checkin: h.checkin || "",
+        checkout: h.checkout || "",
+        room_type: h.rooms?.[0]?.type || "Standard",
+        meal_plan: h.meal_plan || "Somente Hospedagem",
+        confirmation: bookingData.locator || "CONFIRMADO",
+      }));
+
+      const { error: voucherErr } = await supabase
+        .from("vouchers")
+        .insert({
+          agency_id: agency.id,
+          trip_id: tripId,
+          source_type: "manual",
+          destination: bookingData.destination || "Vários",
+          general_locator: bookingData.locator || bookingId,
+          passengers: (bookingData.passengers || []).map((p: any) => ({
+            name: p.full_name,
+            document: p.document || "",
+          })),
+          flights: voucherFlights,
+          accommodation: voucherAccommodation,
+          transfers: [],
+          tours: [],
+          insurance: {},
+          emergency_contacts: [],
+        });
+
+      if (voucherErr) console.error("Erro ao cadastrar voucher:", voucherErr);
+
+      toast.success("Reserva importada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["trips", agency.id] });
+      setImportOpen(false);
+      setBookingId("");
+      
+      navigate({ to: "/agency/$slug/trips/$id", params: { slug, id: tripId } });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao importar reserva do Infotravel.");
+    } finally {
+      setImporting(false);
+    }
+  }
 
   const list = useQuery({
     enabled: !!agency,
@@ -288,7 +436,7 @@ function TripsList() {
   ];
 
   return (
-    <>
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -299,6 +447,14 @@ function TripsList() {
           >
             <Plus className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Nova viagem</span>
+          </button>
+          <button
+            onClick={() => setImportOpen(true)}
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            title="Importar do Infotravel"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Importar do Infotravel</span>
           </button>
           {isAgencyAdmin && (
             <button
@@ -312,7 +468,7 @@ function TripsList() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -348,44 +504,46 @@ function TripsList() {
         </div>
       </div>
 
-      {list.isLoading && (
-        <div className="flex h-32 items-center justify-center">
-          <div className="text-sm text-muted-foreground flex items-center gap-2">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            Carregando viagens...
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 container">
+        {list.isLoading && (
+          <div className="flex h-32 items-center justify-center">
+            <div className="text-sm text-muted-foreground flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              Carregando viagens...
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {list.data && list.data.data.length === 0 && (
-        <EmptyState
-          icon={Plane}
-          title="Nenhuma viagem encontrada"
-          description={
-            search || statusFilter
-              ? "Tente remover os filtros para ver mais resultados."
-              : "Crie a primeira viagem ou converta uma cotação aceita para começar."
-          }
-        />
-      )}
-
-      {list.data && list.data.data.length > 0 && (
-        <DataTable
-          columns={columns}
-          data={list.data.data}
-          isLoading={list.isFetching}
-          pageCount={Math.ceil(list.data.count / pageSize)}
-          pagination={{ pageIndex: page - 1, pageSize }}
-          onPaginationChange={(updater) => {
-            if (typeof updater === "function") {
-              const newState = updater({ pageIndex: page - 1, pageSize });
-              setPage(newState.pageIndex + 1);
-            } else {
-              setPage(updater.pageIndex + 1);
+        {list.data && list.data.data.length === 0 && (
+          <EmptyState
+            icon={Plane}
+            title="Nenhuma viagem encontrada"
+            description={
+              search || statusFilter
+                ? "Tente remover os filtros para ver mais resultados."
+                : "Crie a primeira viagem ou converta uma cotação aceita para começar."
             }
-          }}
-        />
-      )}
+          />
+        )}
+
+        {list.data && list.data.data.length > 0 && (
+          <DataTable
+            columns={columns}
+            data={list.data.data}
+            isLoading={list.isFetching}
+            pageCount={Math.ceil(list.data.count / pageSize)}
+            pagination={{ pageIndex: page - 1, pageSize }}
+            onPaginationChange={(updater) => {
+              if (typeof updater === "function") {
+                const newState = updater({ pageIndex: page - 1, pageSize });
+                setPage(newState.pageIndex + 1);
+              } else {
+                setPage(updater.pageIndex + 1);
+              }
+            }}
+          />
+        )}
+      </div>
 
       {newOpen && agency && (
         <NewTripWizard
@@ -407,6 +565,51 @@ function TripsList() {
           agencyId={agency.id}
         />
       )}
-    </>
+      {importOpen && agency && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+          <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 flex flex-col shadow-none" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
+              <h3 className="ds-h3 text-foreground flex items-center gap-2">
+                <Search className="h-4 w-4 text-brand" /> Importar do Infotravel
+              </h3>
+              <button
+                type="button"
+                onClick={() => setImportOpen(false)}
+                className="text-xs text-muted-foreground hover:text-foreground font-semibold"
+              >
+                Fechar
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-1">
+                  Localizador / ID da Reserva
+                </label>
+                <input
+                  type="text"
+                  value={bookingId}
+                  onChange={(e) => setBookingId(e.target.value)}
+                  placeholder="Ex: B-998877 ou localizador"
+                  className="h-9 w-full rounded-md border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
+                  Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros e criar o voucher correspondente.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={importing || !bookingId.trim()}
+                onClick={handleImportBooking}
+                className="w-full flex h-9 items-center justify-center rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {importing ? "Importando..." : "Confirmar Importação"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

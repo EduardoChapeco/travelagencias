@@ -96,14 +96,14 @@ export function LeadCardView({
   return (
     <div
       {...(dragAttributes ?? {})}
-      className={`group relative cursor-grab rounded-xl border bg-surface p-4 transition-all duration-200 active:cursor-grabbing ${
+      className={`group relative cursor-grab rounded-md border bg-surface p-4 transition-all duration-200 active:cursor-grabbing ${
         dragging
           ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
           : isCold
             ? "border-danger/40 bg-danger/[0.01] hover:border-danger/60 hover:-translate-y-0.5"
             : isStale
               ? "border-warning/40 bg-warning/[0.01] hover:border-warning/60 hover:-translate-y-0.5"
-              : "border-border/80 hover:border-brand/40 hover:-translate-y-0.5 hover:ring-1 hover:ring-brand/10"
+              : "border-border hover:border-brand/40 hover:-translate-y-0.5 hover:ring-1 hover:ring-brand/10"
       }`}
     >
       <div className="flex items-start gap-3">

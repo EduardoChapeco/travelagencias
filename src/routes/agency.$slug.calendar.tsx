@@ -213,7 +213,7 @@ function CalendarPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {/* Actions */}
@@ -238,7 +238,7 @@ function CalendarPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 p-2 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         {/* Month Navigation */}
         <div className="flex items-center justify-between sm:justify-start gap-1 w-full sm:w-auto">
           <button

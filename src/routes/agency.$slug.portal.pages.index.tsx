@@ -362,7 +362,7 @@ function PagesPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 p-2 shrink-0 justify-between">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
         <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-sm border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
           {(["all", "sites", "biolinks", "templates"] as const).map((tabId) => {
             const labels = {
