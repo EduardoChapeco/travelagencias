@@ -139,7 +139,7 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black shadow-lg shadow-indigo-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black">
               T
             </div>
             <div className="flex flex-col">
@@ -173,7 +173,7 @@ function Landing() {
             </Link>
             <Link
               to="/auth/register"
-              className="h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-6 text-sm font-bold text-white shadow-lg shadow-indigo-500/15 hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center"
+              className="h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-6 text-sm font-bold text-white hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center"
             >
               Criar Agência Grátis
             </Link>
@@ -205,7 +205,7 @@ function Landing() {
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/auth/register"
-            className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-600 to-pink-600 px-10 text-sm font-black uppercase tracking-wider text-white shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all overflow-hidden"
+            className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-500 via-violet-600 to-pink-600 px-10 text-sm font-black uppercase tracking-wider text-white hover:-translate-y-0.5 transition-all overflow-hidden"
           >
             Começar Agora Grátis
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -297,7 +297,7 @@ function Landing() {
             </div>
 
             {/* O Jeito TravelOS */}
-            <div className="rounded-3xl border-2 border-indigo-500/80 bg-gradient-to-br from-indigo-950/20 to-zinc-900/50 p-10 space-y-8 shadow-2xl shadow-indigo-500/10 relative">
+            <div className="rounded-3xl border-2 border-indigo-500/80 bg-gradient-to-br from-indigo-950/20 to-zinc-900/50 p-10 space-y-8 relative">
               <div className="absolute -top-3.5 right-8 rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-1 text-[9px] font-black uppercase tracking-wider text-white">
                 Fórmula de Alto Lucro
               </div>
@@ -453,7 +453,7 @@ function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 px-10 text-sm font-black uppercase tracking-wider text-white shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/45 hover:-translate-y-0.5 transition-all"
+              className="group relative inline-flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 px-10 text-sm font-black uppercase tracking-wider text-white hover:-translate-y-0.5 transition-all"
             >
               Criar Conta Grátis
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

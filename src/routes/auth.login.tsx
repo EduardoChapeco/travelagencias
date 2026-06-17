@@ -151,7 +151,7 @@ function LoginPage() {
         
         {/* Header */}
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white text-sm font-black shadow-lg shadow-indigo-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white text-sm font-black">
             T
           </div>
           <span className="text-lg font-black tracking-tight bg-gradient-to-r from-zinc-50 to-zinc-400 bg-clip-text text-transparent">TravelOS</span>
@@ -173,7 +173,7 @@ function LoginPage() {
           </div>
 
           {/* Floating Glassmorphic Benefit Card */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md shadow-2xl space-y-4">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md space-y-4">
             <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400">
               Módulos Inclusos na sua Conta
             </h4>
@@ -212,7 +212,7 @@ function LoginPage() {
         <div className="w-full max-w-sm relative z-10 space-y-8">
           {/* Logo on Mobile */}
           <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black">
               T
             </div>
             <span className="text-base font-black text-white">TravelOS</span>
@@ -273,7 +273,7 @@ function LoginPage() {
               id="login-submit"
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-xs font-black uppercase tracking-widest rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 active:scale-[0.98] transition-all duration-200 mt-6"
+              className="w-full h-11 text-xs font-black uppercase tracking-widest rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white active:scale-[0.98] transition-all duration-200 mt-6"
             >
               {isSubmitting ? "Entrando..." : "Entrar no Workspace"}
             </PrimaryButton>
