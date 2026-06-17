@@ -214,7 +214,8 @@ function ProposalsList() {
         ) : (
           <div className="space-y-4">
             <div className="overflow-hidden rounded-md border border-border bg-surface">
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-sm">
                 <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2 font-medium">#</th>
@@ -350,7 +351,8 @@ function ProposalsList() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
  
             <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">

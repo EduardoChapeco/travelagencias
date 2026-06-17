@@ -178,7 +178,7 @@ function CorporatePage() {
           {rfps.map((rfp) => (
             <div
               key={rfp.id}
-              className="rounded-xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
+              className="rounded-md border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
             >
               <div
                 onClick={() =>
