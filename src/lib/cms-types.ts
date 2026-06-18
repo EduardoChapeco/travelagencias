@@ -946,3 +946,129 @@ export const BLOCK_DEFAULTS: Record<PortalBlockType, any> = {
     title: "Cronograma de Voo & Embarque",
   },
 };
+
+export const BLOCK_CONTEXTS: Record<PortalBlockType, string[]> = {
+  hero: ["site", "package"],
+  text: ["site", "package"],
+  gallery: ["site", "package", "document"],
+  contact: ["site"],
+  features: ["site", "package"],
+  cta: ["site", "package"],
+  faq: ["site", "package", "document"],
+  testimonials: ["site", "package"],
+  tours_grid: ["site"],
+  stats: ["site", "package"],
+  video: ["site", "package"],
+  map: ["site", "package"],
+  blog_feed: ["site"],
+  biolink_header: ["biolink"],
+  biolink_links: ["biolink"],
+  group_tour_details: ["package"],
+  support_ticket_form: ["site"],
+  client_portal_access: ["site", "biolink"],
+  pending_contracts_widget: ["site"],
+  featured_destinations: ["site"],
+  social_links: ["site", "biolink"],
+  newsletter: ["site"],
+  tours_carousel: ["site"],
+  featured_destination_filter: ["site"],
+  team_widget: ["site"],
+  live_reviews: ["site"],
+  whatsapp_departments: ["site", "biolink"],
+  countdown_tour: ["package"],
+  social_links_row: ["biolink"],
+  exchange_rates: ["biolink", "site"],
+  dynamic_map_route: ["package", "document"],
+  agency_vouchers: ["document"],
+  weather_forecast: ["package", "document"],
+  itinerary_timeline: ["package", "document"],
+  lead_capture_callback: ["site", "biolink"],
+  promotional_banner: ["site", "biolink"],
+  payment_gateways_display: ["site", "document"],
+  agent_profile_card: ["site", "biolink"],
+  travel_tips_faq: ["site", "package"],
+  live_tours_map: ["site"],
+  gift_cards_store: ["site"],
+  corporate_rfp_form: ["site"],
+  client_document_upload: ["site", "biolink"],
+  biolink_newsletter_box: ["biolink"],
+  live_sales_counter: ["site", "biolink"],
+  visa_checker: ["site"],
+  insurance_simulator: ["site"],
+  reviews_submission_form: ["site"],
+  whatsapp_floating_bubble: ["site", "biolink"],
+  custom_package_lead_builder: ["site"],
+  news_announcements_ticker: ["site", "biolink"],
+  faq_category_accordion: ["site", "package"],
+  agency_badges_trust: ["site", "document"],
+  currency_calculator: ["site", "biolink"],
+  interactive_flight_tracker: ["site", "document"],
+  biolink_qr_code_share: ["biolink"],
+  client_boarding_timeline: ["document"]
+};
+
+/**
+ * Groups blocks by visual/semantic category for the editor left-panel library.
+ * Each category maps to an ordered list of PortalBlockType keys.
+ */
+export const BLOCK_CATEGORIES: { label: string; types: PortalBlockType[] }[] = [
+  {
+    label: "Estrutura",
+    types: ["hero", "text", "gallery", "video", "stats"],
+  },
+  {
+    label: "Pacotes & Destinos",
+    types: [
+      "tours_grid", "tours_carousel", "featured_destinations",
+      "featured_destination_filter", "group_tour_details",
+      "countdown_tour", "live_tours_map", "custom_package_lead_builder",
+    ],
+  },
+  {
+    label: "Conversão & Leads",
+    types: [
+      "cta", "contact", "newsletter", "lead_capture_callback",
+      "promotional_banner", "corporate_rfp_form", "reviews_submission_form",
+    ],
+  },
+  {
+    label: "Conteúdo & SEO",
+    types: [
+      "blog_feed", "faq", "faq_category_accordion", "travel_tips_faq",
+      "features", "testimonials", "live_reviews",
+      "itinerary_timeline", "news_announcements_ticker",
+    ],
+  },
+  {
+    label: "Interação & Utilitários",
+    types: [
+      "map", "dynamic_map_route", "weather_forecast", "exchange_rates",
+      "currency_calculator", "visa_checker", "insurance_simulator",
+      "interactive_flight_tracker", "payment_gateways_display",
+    ],
+  },
+  {
+    label: "Equipe & Relacionamento",
+    types: [
+      "team_widget", "agent_profile_card", "social_links", "social_links_row",
+      "whatsapp_departments", "whatsapp_floating_bubble",
+      "agency_badges_trust", "gift_cards_store",
+    ],
+  },
+  {
+    label: "Área do Cliente",
+    types: [
+      "client_portal_access", "pending_contracts_widget", "support_ticket_form",
+      "client_document_upload", "client_boarding_timeline",
+      "agency_vouchers", "live_sales_counter",
+    ],
+  },
+  {
+    label: "Biolink",
+    types: [
+      "biolink_header", "biolink_links",
+      "biolink_newsletter_box", "biolink_qr_code_share",
+    ],
+  },
+];
+

@@ -121,9 +121,63 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
   );
 }
 
+function GroupTourSelector({
+  agencyId,
+  selectedTourId,
+  onChange,
+}: {
+  agencyId: string;
+  selectedTourId: string;
+  onChange: (tourId: string) => void;
+}) {
+  const [tours, setTours] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      if (!agencyId) return;
+      const { data } = await supabase
+        .from("group_tours")
+        .select("id, title, destination")
+        .eq("agency_id", agencyId)
+        .in("status", ["open", "confirmed"]);
+      setTours(data || []);
+      setLoading(false);
+    }
+    load();
+  }, [agencyId]);
+
+  return (
+    <Field
+      label="Vincular a Viagem/Pacote"
+      hint="Selecione um pacote para disponibilizar os campos dinâmicos"
+    >
+      {loading ? (
+        <div className="text-xs text-muted-foreground animate-pulse">Carregando viagens...</div>
+      ) : tours.length === 0 ? (
+        <div className="text-xs text-muted-foreground">
+          Nenhuma viagem aberta/confirmada ativa para vincular.
+        </div>
+      ) : (
+        <Select
+          value={selectedTourId}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="">Nenhum (Manter manual/estático)</option>
+          {tours.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.title} ({t.destination})
+            </option>
+          ))}
+        </Select>
+      )}
+    </Field>
+  );
+}
+
 export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Props) {
   const block = blockItem as LegacyPortalBlock;
-  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive">(
+  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive" | "bindings">(
     "content",
   );
   const [brandColors, setBrandColors] = useState<{
@@ -2104,16 +2158,16 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white p-1">
       {/* Tab Selector */}
-      <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
+      <div className="flex border-b border-border bg-white shrink-0 select-none px-2 gap-3 overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveTab("content")}
-          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+          className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
             activeTab === "content"
-              ? "bg-background text-foreground shadow-none border border-border/10"
-              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           Conteúdo
@@ -2121,21 +2175,32 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         <button
           type="button"
           onClick={() => setActiveTab("style")}
-          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+          className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
             activeTab === "style"
-              ? "bg-background text-foreground shadow-none border border-border/10"
-              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           Estilo
         </button>
         <button
           type="button"
+          onClick={() => setActiveTab("bindings")}
+          className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
+            activeTab === "bindings"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Vínculos
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("animation")}
-          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+          className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
             activeTab === "animation"
-              ? "bg-background text-foreground shadow-none border border-border/10"
-              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           Animação
@@ -2143,10 +2208,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         <button
           type="button"
           onClick={() => setActiveTab("responsive")}
-          className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
+          className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
             activeTab === "responsive"
-              ? "bg-background text-foreground shadow-none border border-border/10"
-              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           Responsivo
@@ -2154,8 +2219,105 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
       </div>
 
       {/* Tab Content */}
-      <div className="space-y-4">
+      <div className="space-y-4 bg-white">
         {activeTab === "content" && renderForm()}
+
+        {activeTab === "bindings" && (
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Vincular Dados Dinâmicos</h4>
+              <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                Substitua textos ou imagens estáticas por campos vindos de um Pacote / Roteiro da agência.
+              </p>
+            </div>
+
+            <GroupTourSelector
+              agencyId={agencyId}
+              selectedTourId={(block as any).bindings?.packageId || ""}
+              onChange={(tourId) => {
+                if (!tourId) {
+                  updateBlock(block.id, { bindings: undefined } as any);
+                } else {
+                  updateBlock(block.id, {
+                    bindings: {
+                      source: "package",
+                      packageId: tourId,
+                      fields: (block as any).bindings?.fields || {},
+                    },
+                  } as any);
+                }
+              }}
+            />
+
+            {(block as any).bindings?.packageId && (
+              <div className="pt-4 border-t border-border space-y-3">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  Mapeamento de Campos
+                </span>
+
+                {/* We can dynamically list fields of the block that the user can map */}
+                {(() => {
+                  // Let's identify the editable text/image fields of the block
+                  const mappableKeys = Object.keys(block)
+                    .filter((k) => k !== "id" && k !== "type" && k !== "styles" && k !== "animation" && k !== "responsive" && k !== "bindings" && typeof block[k as keyof typeof block] === "string")
+                    .concat(
+                      Object.keys((block as any).config || {})
+                        .filter((k) => typeof (block as any).config[k] === "string")
+                    );
+
+                  const uniqueMappableKeys = Array.from(new Set(mappableKeys));
+
+                  if (uniqueMappableKeys.length === 0) {
+                    return (
+                      <p className="text-xs text-muted-foreground">
+                        Nenhum campo compatível com vínculos encontrado neste bloco.
+                      </p>
+                    );
+                  }
+
+                  return uniqueMappableKeys.map((key) => {
+                    const currentMapping = (block as any).bindings?.fields?.[key] || "";
+
+                    return (
+                      <div key={key} className="space-y-1">
+                        <label className="text-[11px] font-bold text-foreground capitalize">
+                          {key.replace("_", " ")}
+                        </label>
+                        <Select
+                          value={currentMapping}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const newFields = { ...((block as any).bindings?.fields || {}) };
+                            if (!val) {
+                              delete newFields[key];
+                            } else {
+                              newFields[key] = val;
+                            }
+                            updateBlock(block.id, {
+                              bindings: {
+                                ...(block as any).bindings!,
+                                fields: newFields,
+                              },
+                            } as any);
+                          }}
+                        >
+                          <option value="">-- Manter Estático --</option>
+                          <option value="package.title">Título da Viagem (package.title)</option>
+                          <option value="package.destination">Destino (package.destination)</option>
+                          <option value="package.description">Descrição / Resumo (package.description)</option>
+                          <option value="package.cover_image_url">Imagem de Capa (package.cover_image_url)</option>
+                          <option value="package.price">Preço Vigorante (package.price)</option>
+                          <option value="package.departure_date">Data de Saída (package.departure_date)</option>
+                          <option value="package.return_date">Data de Retorno (package.return_date)</option>
+                        </Select>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            )}
+          </div>
+        )}
 
         {activeTab === "style" && (
           <div className="space-y-4">

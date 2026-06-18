@@ -51,6 +51,8 @@ import {
   Check,
 } from "lucide-react";
 import type { PortalBlock, LegacyPortalBlock } from "@/lib/cms-types";
+import { BLOCK_CONTEXTS } from "@/lib/cms-types";
+
 
 // Re-export so existing imports from this path continue to work
 export type { PortalBlock };
@@ -216,6 +218,7 @@ export function BlockRenderer({
   agencyId,
   onSelectBlock,
   selectedBlockId,
+  mode,
 }: {
   blocks: PortalBlock[];
   agencySlug: string;
@@ -223,6 +226,7 @@ export function BlockRenderer({
   agencyId?: string;
   onSelectBlock?: (id: string) => void;
   selectedBlockId?: string | null;
+  mode?: "site" | "package" | "biolink" | "document";
 }) {
   if (!blocks || blocks.length === 0) return null;
 
@@ -279,6 +283,9 @@ export function BlockRenderer({
         const isSelected = selectedBlockId === b.id;
         const Wrapper = "div";
 
+        const allowedContexts = BLOCK_CONTEXTS[b.type as keyof typeof BLOCK_CONTEXTS] || ["site"];
+        const isCompatible = !mode || allowedContexts.includes(mode);
+
         return (
           <Wrapper
             key={b.id}
@@ -292,11 +299,23 @@ export function BlockRenderer({
                 {b.type.toUpperCase()}
               </div>
             )}
+            {onSelectBlock && !isCompatible && (
+              <div className="absolute top-2 left-2 z-50 bg-destructive/10 text-destructive border border-destructive/20 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
+                ⚠️ Incompatível com o modo {mode?.toUpperCase()}
+              </div>
+            )}
+
             <div
               className={`pointer-events-none transition-opacity${isSelected ? "opacity-100" : onSelectBlock ? "opacity-80 group-hover:opacity-100" : ""}`}
             >
               <BlockStyleWrapper block={b}>
-                {renderBlock(b, agencySlug, handleLinkClick, agencyId, pageId)}
+                <BoundBlockWrapper
+                  block={b}
+                  agencySlug={agencySlug}
+                  handleLinkClick={handleLinkClick}
+                  agencyId={agencyId}
+                  pageId={pageId}
+                />
               </BlockStyleWrapper>
             </div>
           </Wrapper>
@@ -304,6 +323,114 @@ export function BlockRenderer({
       })}
     </div>
   );
+}
+
+import { type BuilderBinding } from "@/types/builder-core";
+
+function BoundBlockWrapper({
+  block,
+  agencySlug,
+  handleLinkClick,
+  agencyId,
+  pageId,
+}: {
+  block: any;
+  agencySlug: string;
+  handleLinkClick: (url: string) => void;
+  agencyId?: string;
+  pageId?: string;
+}) {
+  const [tourData, setTourData] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const binding = block.bindings as BuilderBinding | undefined;
+  const hasPackageBinding = binding && binding.source === "package" && binding.packageId;
+
+  useEffect(() => {
+    const tourId = binding?.packageId;
+    if (!hasPackageBinding || !tourId) {
+      setTourData(null);
+      setLoading(false);
+      return;
+    }
+    const queryTourId: string = tourId;
+
+    let isMounted = true;
+    setLoading(true);
+
+    async function load() {
+      try {
+        const { data } = await supabase
+          .from("group_tours")
+          .select("*")
+          .eq("id", queryTourId)
+          .maybeSingle();
+
+        if (isMounted) {
+          setTourData(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Error loading bound tour:", err);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, [binding?.packageId, hasPackageBinding]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-32 animate-pulse bg-surface-alt border border-dashed border-border rounded-2xl flex items-center justify-center text-xs text-muted-foreground">
+        Carregando dados dinâmicos do pacote...
+      </div>
+    );
+  }
+
+  let resolvedBlock = { ...block };
+  if (hasPackageBinding && tourData) {
+    const fieldsToOverride = binding.fields || {};
+    const updatedFields: Record<string, any> = {};
+
+    Object.entries(fieldsToOverride).forEach(([blockKey, packagePath]) => {
+      if (packagePath.startsWith("package.")) {
+        const dbKey = packagePath.replace("package.", "");
+        let val = tourData[dbKey];
+
+        if (dbKey.includes("date") && val) {
+          val = new Date(val).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+        } else if (dbKey === "price" && typeof val === "number") {
+          val = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
+        }
+
+        if (val !== undefined && val !== null) {
+          updatedFields[blockKey] = val;
+        }
+      }
+    });
+
+    if (resolvedBlock.config) {
+      resolvedBlock = {
+        ...resolvedBlock,
+        config: {
+          ...resolvedBlock.config,
+          ...updatedFields,
+        }
+      };
+    }
+
+    resolvedBlock = {
+      ...resolvedBlock,
+      ...updatedFields,
+    };
+  }
+
+  return renderBlock(resolvedBlock, agencySlug, handleLinkClick, agencyId, pageId);
 }
 
 function renderBlock(

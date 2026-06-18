@@ -72,7 +72,7 @@ import {
   revertPortalPageVersion,
 } from "@/services/portal";
 import { useBlockEditor } from "@/hooks/use-block-editor";
-import { BLOCK_LABELS, BLOCK_DEFAULTS, PortalBlockType } from "@/lib/cms-types";
+import { BLOCK_LABELS, BLOCK_DEFAULTS, PortalBlockType, BLOCK_CONTEXTS, BLOCK_CATEGORIES } from "@/lib/cms-types";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -82,6 +82,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { BlockFormEditor } from "@/components/portal/BlockFormEditors";
+import { IframeSandbox } from "@/components/portal/IframeSandbox";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { SheetPage } from "@/components/ui/sheet";
 
@@ -216,6 +217,13 @@ function PageEditorRoute() {
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
 
+  const mode: "site" | "package" | "biolink" | "document" = 
+    template === "biolink" || template?.startsWith("hopp-")
+      ? "biolink"
+      : template === "roteiros-landing"
+        ? "package"
+        : "site";
+
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [pageSettingsOpen, setPageSettingsOpen] = useState(false);
   const [seoSettingsOpen, setSeoSettingsOpen] = useState(false);
@@ -266,6 +274,13 @@ function PageEditorRoute() {
   useEffect(() => {
     setHasInitialized(false);
   }, [page_id]);
+
+  // Viewport lock for Biolink context
+  useEffect(() => {
+    if (mode === "biolink") {
+      setViewport("mobile");
+    }
+  }, [mode]);
 
   // Sync data when loaded
   useEffect(() => {
@@ -558,23 +573,16 @@ function PageEditorRoute() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-surface px-6 shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
-            className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface-alt text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-
+    <div className="flex flex-col h-screen bg-white overflow-hidden">
+      {/* Top Navigation Bar - Ultrathin (h-11) */}
+      <div className="sticky top-0 z-10 flex h-11 items-center justify-between border-b border-border bg-white px-4 shrink-0 select-none">
+        <div className="flex items-center gap-2">
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 h-9 px-3 rounded-sm border border-border bg-surface text-sm font-semibold text-foreground hover:bg-surface-hover transition-colors cursor-pointer select-none">
+              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-sm border border-border bg-white text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer select-none">
                 <span>Página: {title || "Nova Página"}</span>
-                <span className="text-muted-foreground text-[10px]">▼</span>
+                <span className="text-muted-foreground text-[8px]">▼</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
@@ -618,8 +626,8 @@ function PageEditorRoute() {
           {!isNew && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-9 w-9 items-center justify-center rounded-sm border border-border bg-surface text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors cursor-pointer">
-                  <Settings className="w-4 h-4" />
+                <button className="flex h-7 w-7 items-center justify-center rounded-sm border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer">
+                  <Settings className="w-3.5 h-3.5" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
@@ -687,115 +695,187 @@ function PageEditorRoute() {
           )}
         </div>
 
-        {/* Viewport controls inside header */}
-        <div className="flex items-center bg-surface-alt/45 border border-border p-0.5 rounded-sm gap-0.5">
+        {/* Viewport controls - compact divide group */}
+        <div className="flex items-center bg-white border border-border p-0.5 rounded-sm divide-x divide-border">
           <button
-            onClick={() => setViewport("desktop")}
+            onClick={() => {
+              if (mode === "biolink") {
+                toast.warning("Biolinks são exibidos de forma estrita em visualização Mobile.");
+                return;
+              }
+              setViewport("desktop");
+            }}
+            disabled={mode === "biolink"}
             title="Modo Desktop"
-            className={`p-1.5 rounded-xs transition-colors cursor-pointer${viewport === "desktop" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" />
           </button>
           <button
-            onClick={() => setViewport("tablet")}
+            onClick={() => {
+              if (mode === "biolink") {
+                toast.warning("Biolinks são exibidos de forma estrita em visualização Mobile.");
+                return;
+              }
+              setViewport("tablet");
+            }}
+            disabled={mode === "biolink"}
             title="Modo Tablet"
-            className={`p-1.5 rounded-xs transition-colors cursor-pointer${viewport === "tablet" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Tablet className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => setViewport("mobile")}
             title="Modo Celular"
-            className={`p-1.5 rounded-xs transition-colors cursor-pointer${viewport === "mobile" ? "bg-surface text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Smartphone className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {saveStatus === "saving" && (
-            <span className="text-xs text-muted-foreground animate-pulse mr-2">Salvando...</span>
+            <span className="text-[10px] text-muted-foreground animate-pulse mr-1">Salvando...</span>
           )}
           {saveStatus === "saved" && (
-            <span className="text-xs text-green-500 font-medium mr-2">✓ Salvo</span>
+            <span className="text-[10px] text-green-600 font-bold mr-1">✓ Salvo</span>
           )}
           {saveStatus === "error" && (
-            <span className="text-xs text-destructive font-medium mr-2">✗ Erro ao salvar</span>
+            <span className="text-[10px] text-destructive font-bold mr-1">✗ Erro</span>
           )}
 
-          <div className="flex items-center gap-1 border-r border-border pr-3">
-            {/* Left Sidebar Toggle Button */}
-            <button
-              onClick={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
-              title={isLeftSidebarOpen ? "Recolher Biblioteca" : "Expandir Biblioteca"}
-              className={`p-1.5 rounded-sm border border-border transition-colors hover:bg-surface-alt cursor-pointer${isLeftSidebarOpen ? "bg-surface-alt/70 text-foreground" : "bg-surface text-muted-foreground"}`}
+          {!isNew && (
+            <a
+              href={`https://${agency.slug}.travelos.com/${pageSlug || slugify(title)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Visualizar Página Ao Vivo"
+              className="p-1.5 rounded-sm border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
             >
-              <PanelLeft className="h-4 w-4" />
+              <ExternalLink className="h-3.5 h-3.5" />
+            </a>
+          )}
+
+          <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting} className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider">
+            Salvar Rascunho
+          </GhostButton>
+          <PrimaryButton type="button" onClick={publishPage} disabled={submitting} className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider">
+            {submitting ? "Salvando..." : "Publicar"}
+          </PrimaryButton>
+        </div>
+      </div>
+
+      {/* Main Workspace Layout */}
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        {/* ── 1. ULTRAFINA SIDEBAR (w-12) ── */}
+        <div className="w-12 flex-shrink-0 border-r border-border bg-white flex flex-col items-center py-4 justify-between select-none">
+          <div className="flex flex-col items-center gap-5 w-full">
+            {/* Back button */}
+            <button
+              onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
+              title="Voltar para Lista de Páginas"
+              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="h-4.5 w-4.5" />
             </button>
 
-            {/* Global Config Toggles */}
+            <hr className="w-6 border-border" />
+
+            {/* Sidebar Tab Triggers */}
+            <button
+              onClick={() => {
+                if (isLeftSidebarOpen && leftTab === "sections") {
+                  setIsLeftSidebarOpen(false);
+                } else {
+                  setLeftTab("sections");
+                  setIsLeftSidebarOpen(true);
+                }
+              }}
+              title="Biblioteca de Seções"
+              className={`p-2 rounded-sm transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              <Plus className="h-4.5 w-4.5" />
+            </button>
+
+            <button
+              onClick={() => {
+                if (isLeftSidebarOpen && leftTab === "templates") {
+                  setIsLeftSidebarOpen(false);
+                } else {
+                  setLeftTab("templates");
+                  setIsLeftSidebarOpen(true);
+                }
+              }}
+              title="Templates Prontos"
+              className={`p-2 rounded-sm transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              <Sparkles className="h-4.5 w-4.5" />
+            </button>
+
+            <button
+              onClick={() => {
+                if (isLeftSidebarOpen && leftTab === "layers") {
+                  setIsLeftSidebarOpen(false);
+                } else {
+                  setLeftTab("layers");
+                  setIsLeftSidebarOpen(true);
+                }
+              }}
+              title="Camadas e Ordenação"
+              className={`p-2 rounded-sm relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+            >
+              <Layers className="h-4.5 w-4.5" />
+              {blocks.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-brand text-white text-[7px] font-bold rounded-full h-3.5 w-3.5 flex items-center justify-center scale-90">
+                  {blocks.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 w-full">
+            {/* Settings toggles */}
             <button
               onClick={() => setPageSettingsOpen(true)}
-              title="Configurações da Página"
-              className="p-1.5 rounded-sm border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+              title="Configurações Gerais"
+              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-4.5 w-4.5" />
             </button>
 
             <button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
-              className="p-1.5 rounded-sm border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
-              <Globe className="h-4 w-4" />
+              <Globe className="h-4.5 w-4.5" />
             </button>
 
             {!isNew && (
               <button
                 onClick={() => setHistorySettingsOpen(true)}
                 title="Histórico de Versões"
-                className="p-1.5 rounded-sm border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+                className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
-                <History className="h-4 w-4" />
+                <History className="h-4.5 w-4.5" />
               </button>
             )}
-
-            {!isNew && (
-              <a
-                href={`https://${agency.slug}.travelos.com/${pageSlug || slugify(title)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Visualizar Página Ao Vivo"
-                className="p-1.5 rounded-sm border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center"
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            )}
           </div>
-
-          <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting}>
-            Salvar Rascunho
-          </GhostButton>
-          <PrimaryButton type="button" onClick={publishPage} disabled={submitting}>
-            {submitting ? "Salvando..." : "Publicar Página"}
-          </PrimaryButton>
         </div>
-      </div>
 
-      {/* Main 3-Column Studio Area */}
-      <div className="flex flex-1 overflow-hidden min-h-0">
-        {/* ── 1. LEFT SIDEBAR: Biblioteca de Seções & Camadas (width 320px) ── */}
+        {/* ── 2. DRAWER PANEL: Tab Content (width 268px) ── */}
         {isLeftSidebarOpen && (
-          <div className="w-[320px] flex-shrink-0 border-r border-border bg-surface flex flex-col overflow-hidden">
-            {/* Seletor de Abas Esquerdo */}
-            <div className="flex border-b border-border bg-surface-alt/10 shrink-0 select-none p-1 gap-1">
+          <div className="w-[268px] flex-shrink-0 border-r border-border bg-white flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
+            {/* Minimally Styled Tabs */}
+            <div className="flex border-b border-border bg-white shrink-0 select-none px-4 gap-4">
               <button
                 type="button"
                 onClick={() => setLeftTab("sections")}
-                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "sections"
-                    ? "bg-background text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    ? "border-foreground text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Seções
@@ -803,10 +883,10 @@ function PageEditorRoute() {
               <button
                 type="button"
                 onClick={() => setLeftTab("templates")}
-                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "templates"
-                    ? "bg-background text-brand border border-brand/5"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    ? "border-foreground text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Templates
@@ -814,106 +894,107 @@ function PageEditorRoute() {
               <button
                 type="button"
                 onClick={() => setLeftTab("layers")}
-                className={`flex-1 py-1.5 rounded-sm text-center text-[11px] font-bold transition-all${
+                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "layers"
-                    ? "bg-background text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    ? "border-foreground text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Camadas ({blocks.length})
+                Camadas
               </button>
             </div>
 
-            {/* ABA 1: SEÇÕES */}
+            {/* TAB CONTENT: SECTIONS */}
             {leftTab === "sections" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-xs font-bold text-foreground">Biblioteca de Seções</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Biblioteca de Seções</h4>
                   <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
-                    Adicione novos blocos visuais arrastáveis ao layout de sua página.
+                    Adicione novos blocos ao layout.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  {(Object.keys(BLOCK_LABELS) as PortalBlockType[]).map((type) => {
-                    let IconComponent = LayoutTemplate;
-                    if (type === "text") IconComponent = Type;
-                    else if (type === "gallery" || type === "biolink_header")
-                      IconComponent = ImageIcon;
-                    else if (type === "contact") IconComponent = PhoneCall;
-                    else if (type === "features" || type === "biolink_links")
-                      IconComponent = ListPlus;
-                    else if (
-                      type === "cta" ||
-                      type === "promotional_banner" ||
-                      type === "news_announcements_ticker"
-                    )
-                      IconComponent = Megaphone;
-                    else if (
-                      type === "faq" ||
-                      type === "support_ticket_form" ||
-                      type === "travel_tips_faq" ||
-                      type === "faq_category_accordion"
-                    )
-                      IconComponent = HelpCircle;
-                    else if (
-                      type === "testimonials" ||
-                      type === "live_reviews" ||
-                      type === "reviews_submission_form"
-                    )
-                      IconComponent = Quote;
-                    else if (type === "tours_grid" || type === "tours_carousel")
-                      IconComponent = Bus;
-                    else if (type === "stats") IconComponent = BarChart2;
-                    else if (type === "video") IconComponent = Play;
-                    else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
-                    else if (type === "blog_feed") IconComponent = Rss;
-                    else if (type === "featured_destination_filter") IconComponent = Globe;
-                    else if (type === "team_widget" || type === "agent_profile_card")
-                      IconComponent = Users;
-                    else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble")
-                      IconComponent = MessageSquare;
-                    else if (
-                      type === "countdown_tour" ||
-                      type === "live_sales_counter" ||
-                      type === "client_boarding_timeline"
-                    )
-                      IconComponent = Clock;
-                    else if (type === "exchange_rates" || type === "currency_calculator")
-                      IconComponent = Coins;
-                    else if (type === "agency_vouchers") IconComponent = Ticket;
-                    else if (type === "weather_forecast") IconComponent = CloudSun;
-                    else if (type === "itinerary_timeline") IconComponent = Calendar;
-                    else if (type === "lead_capture_callback") IconComponent = PhoneCall;
-                    else if (type === "payment_gateways_display") IconComponent = CreditCard;
-                    else if (type === "live_tours_map" || type === "custom_package_lead_builder")
-                      IconComponent = Compass;
-                    else if (type === "gift_cards_store") IconComponent = Gift;
-                    else if (type === "corporate_rfp_form") IconComponent = Building;
-                    else if (type === "client_document_upload") IconComponent = Upload;
-                    else if (type === "biolink_newsletter_box") IconComponent = Mail;
-                    else if (type === "visa_checker") IconComponent = FileText;
-                    else if (type === "insurance_simulator") IconComponent = Activity;
-                    else if (type === "agency_badges_trust") IconComponent = Check;
-                    else if (type === "interactive_flight_tracker") IconComponent = Plane;
-                    else if (type === "biolink_qr_code_share") IconComponent = QrCode;
-
-                    const isBiolinkType = type.startsWith("biolink_");
+                {/* ── SECTIONS TAB: Grouped categorical block library ── */}
+                <div className="flex flex-col divide-y divide-border -mx-4">
+                  {BLOCK_CATEGORIES.map((cat) => {
+                    // Filter types allowed by current page context
+                    const visibleTypes = cat.types.filter((type) => {
+                      const contexts = BLOCK_CONTEXTS[type] || ["site"];
+                      return contexts.includes(mode);
+                    });
+                    if (visibleTypes.length === 0) return null;
 
                     return (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => addBlock(type)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-sm border text-center transition-all hover:scale-[1.03] active:scale-95 group hover:border-brand/50 hover:bg-brand/5${isBiolinkType ? "bg-brand/5 border-brand/20 text-brand" : "bg-surface border-border text-muted-foreground hover:text-foreground"}`}
-                      >
-                        <IconComponent
-                          className={`h-5 w-5 mb-1.5 transition-colors group-hover:text-brand${isBiolinkType ? "text-brand" : "text-muted-foreground"}`}
-                        />
-                        <span className="text-[10px] font-bold leading-tight">
-                          {BLOCK_LABELS[type].split(" ")[0]}
-                        </span>
-                      </button>
+                      <div key={cat.label}>
+                        {/* Category header */}
+                        <div className="px-4 py-1.5 bg-surface-alt/60 border-b border-border">
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                            {cat.label}
+                          </span>
+                        </div>
+                        {visibleTypes.map((type) => {
+                          let IconComponent: React.ComponentType<any> = LayoutTemplate;
+                          if (type === "text") IconComponent = Type;
+                          else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
+                          else if (type === "contact") IconComponent = PhoneCall;
+                          else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
+                          else if (type === "cta" || type === "promotional_banner" || type === "news_announcements_ticker") IconComponent = Megaphone;
+                          else if (type === "faq" || type === "support_ticket_form" || type === "travel_tips_faq" || type === "faq_category_accordion") IconComponent = HelpCircle;
+                          else if (type === "testimonials" || type === "live_reviews" || type === "reviews_submission_form") IconComponent = Quote;
+                          else if (type === "tours_grid" || type === "tours_carousel") IconComponent = Bus;
+                          else if (type === "stats") IconComponent = BarChart2;
+                          else if (type === "video") IconComponent = Play;
+                          else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
+                          else if (type === "blog_feed") IconComponent = Rss;
+                          else if (type === "featured_destination_filter") IconComponent = Globe;
+                          else if (type === "team_widget" || type === "agent_profile_card") IconComponent = Users;
+                          else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble") IconComponent = MessageSquare;
+                          else if (type === "countdown_tour" || type === "live_sales_counter" || type === "client_boarding_timeline") IconComponent = Clock;
+                          else if (type === "exchange_rates" || type === "currency_calculator") IconComponent = Coins;
+                          else if (type === "agency_vouchers") IconComponent = Ticket;
+                          else if (type === "weather_forecast") IconComponent = CloudSun;
+                          else if (type === "itinerary_timeline") IconComponent = Calendar;
+                          else if (type === "lead_capture_callback") IconComponent = PhoneCall;
+                          else if (type === "payment_gateways_display") IconComponent = CreditCard;
+                          else if (type === "live_tours_map" || type === "custom_package_lead_builder") IconComponent = Compass;
+                          else if (type === "gift_cards_store") IconComponent = Gift;
+                          else if (type === "corporate_rfp_form") IconComponent = Building;
+                          else if (type === "client_document_upload") IconComponent = Upload;
+                          else if (type === "biolink_newsletter_box") IconComponent = Mail;
+                          else if (type === "visa_checker") IconComponent = FileText;
+                          else if (type === "insurance_simulator") IconComponent = Activity;
+                          else if (type === "agency_badges_trust") IconComponent = Check;
+                          else if (type === "interactive_flight_tracker") IconComponent = Plane;
+                          else if (type === "biolink_qr_code_share") IconComponent = QrCode;
+
+                          const isBiolinkType = type.startsWith("biolink_");
+
+                          return (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => addBlock(type)}
+                              className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors bg-white hover:bg-surface-alt/60 group cursor-pointer border-b border-border/40 last:border-b-0"
+                            >
+                              <IconComponent
+                                className={`h-3.5 w-3.5 shrink-0 transition-colors ${
+                                  isBiolinkType
+                                    ? "text-brand"
+                                    : "text-muted-foreground group-hover:text-foreground"
+                                }`}
+                              />
+                              <span className="flex-1 text-[11px] font-semibold text-foreground leading-tight">
+                                {BLOCK_LABELS[type]}
+                              </span>
+                              {isBiolinkType && (
+                                <span className="text-[8px] font-bold uppercase tracking-wider px-1 bg-brand/10 text-brand rounded-sm shrink-0">
+                                  Bio
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
                     );
                   })}
                 </div>
@@ -921,20 +1002,20 @@ function PageEditorRoute() {
                 <button
                   type="button"
                   onClick={() => setAiModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-1.5 rounded-sm border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                 >
                   <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
                 </button>
               </div>
             )}
 
-            {/* ABA 2: TEMPLATES */}
+            {/* TAB CONTENT: TEMPLATES */}
             {leftTab === "templates" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-xs font-bold text-foreground">Designs Prontos</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Designs Prontos</h4>
                   <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
-                    Substitua a estrutura atual por um template profissional em um clique.
+                    Selecione um template pronto.
                   </p>
                 </div>
 
@@ -944,15 +1025,15 @@ function PageEditorRoute() {
                       key={tpl.id}
                       type="button"
                       onClick={() => handleApplyTemplate(tpl.id)}
-                      className={`w-full text-left p-3 rounded-sm border hover:border-brand/40 transition-all flex flex-col gap-1.5 group${template === tpl.id ? "bg-brand/5 border-brand/40 ring-1 ring-brand/35" : "bg-surface-alt/40 border-border hover:bg-surface-hover"}`}
+                      className={`w-full text-left p-3 border hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "bg-white border-border hover:bg-surface-alt"}`}
                     >
                       <div className="flex justify-between items-center w-full">
                         <span
-                          className={`text-xs font-bold transition-colors group-hover:text-brand${template === tpl.id ? "text-brand" : "text-foreground"}`}
+                          className={`text-xs font-bold transition-colors group-hover:text-brand ${template === tpl.id ? "text-brand" : "text-foreground"}`}
                         >
                           {tpl.name}
                         </span>
-                        <span className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-surface border text-muted-foreground font-mono">
+                        <span className="text-[8px] uppercase font-bold tracking-wider px-1 py-0.5 bg-surface border text-muted-foreground font-mono">
                           {tpl.category}
                         </span>
                       </div>
@@ -965,23 +1046,23 @@ function PageEditorRoute() {
               </div>
             )}
 
-            {/* ABA 3: CAMADAS */}
+            {/* TAB CONTENT: LAYERS */}
             {leftTab === "layers" && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="px-4 py-3 border-b border-border bg-surface-alt/10 flex justify-between items-center shrink-0">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="px-4 py-3 border-b border-border bg-white flex justify-between items-center shrink-0">
+                  <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5" /> Ordenar Seções
                   </h3>
-                  <span className="text-[10px] bg-border px-1.5 py-0.5 rounded font-bold text-muted-foreground">
+                  <span className="text-[9px] bg-border px-1.5 py-0.5 font-bold text-muted-foreground">
                     {blocks.length}
                   </span>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
+                <div className="flex-1 overflow-y-auto p-4 scrollbar-thin bg-white">
                   {blocks.length === 0 ? (
-                    <div className="rounded-sm border border-dashed border-border p-8 text-center bg-surface-alt/10">
+                    <div className="border border-dashed border-border p-8 text-center bg-surface-alt/10">
                       <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
                       <p className="text-[10px] text-muted-foreground/70 mt-1">
-                        Adicione seções pela aba "Seções" ou selecione um template em "Templates".
+                        Adicione seções pela aba "Seções".
                       </p>
                     </div>
                   ) : (
@@ -1014,20 +1095,36 @@ function PageEditorRoute() {
           </div>
         )}
 
+
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
-        <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start pt-4 px-4 pb-4 min-h-0 h-full">
-          {/* Browser / Device Mockup Frame */}
-          <div
-            className={`flex-1 min-h-0 bg-surface border border-border rounded-md overflow-y-auto ring-1 ring-border/5 relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]${
-              viewport === "desktop"
-                ? "w-full max-w-5xl"
-                : viewport === "tablet"
-                  ? "w-[768px]"
-                  : "w-[390px]"
-            }`}
-          >
-            {/* Rendering Canvas area */}
-            <div className="w-full min-h-full">
+        <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
+
+          {/* ── Canvas Ruler: device indicator ── */}
+          <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-border bg-white/70">
+            <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">
+              {viewport === "desktop" && "Desktop · 1200px"}
+              {viewport === "tablet" && "Tablet · 768px"}
+              {viewport === "mobile" && (mode === "biolink" ? "Biolink Mobile · 390px" : "Mobile · 390px")}
+            </span>
+            {mode === "biolink" && (
+              <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-brand/10 text-brand border border-brand/20 rounded-sm">
+                Biolink — apenas mobile
+              </span>
+            )}
+          </div>
+
+          {/* Canvas Scroll Area */}
+          <div className="flex-1 min-h-0 w-full overflow-auto flex flex-col items-center py-4 px-4">
+            {/* Browser / Device Mockup Frame */}
+            <div
+              className={`flex-1 min-h-0 bg-white border border-border overflow-hidden shadow-none relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col${
+                viewport === "desktop"
+                  ? " w-full max-w-5xl"
+                  : viewport === "tablet"
+                    ? " w-[768px] max-w-[768px]"
+                    : " w-[390px] max-w-[390px]"
+              }`}
+            >
               {blocks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[500px] text-center p-8 text-muted-foreground">
                   <LayoutTemplate className="w-14 h-14 mb-4 opacity-25 text-muted-foreground" />
@@ -1038,46 +1135,55 @@ function PageEditorRoute() {
                   </p>
                 </div>
               ) : (
-                <div className="w-full">
-                  <BlockRenderer
-                    blocks={blocks}
-                    agencySlug={agency.slug || "preview"}
-                    pageId={isNew ? undefined : initialData?.id}
-                    agencyId={agency.id}
-                    onSelectBlock={setSelectedBlockId}
-                    selectedBlockId={selectedBlockId}
-                  />
-                </div>
+                <IframeSandbox
+                  className="w-full flex-1"
+                  title="Canvas Preview"
+                  simulatedWidth={
+                    viewport === "desktop" ? undefined : viewport === "tablet" ? 768 : 390
+                  }
+                >
+                  <div className="w-full">
+                    <BlockRenderer
+                      blocks={blocks}
+                      agencySlug={agency.slug || "preview"}
+                      pageId={isNew ? undefined : initialData?.id}
+                      agencyId={agency.id}
+                      onSelectBlock={setSelectedBlockId}
+                      selectedBlockId={selectedBlockId}
+                      mode={mode}
+                    />
+                  </div>
+                </IframeSandbox>
               )}
             </div>
           </div>
         </div>
 
-        {/* ── 3. RIGHT SIDEBAR: Editor de Propriedades (width 360px) ── */}
-        {selectedBlockId && (
-          <div className="w-[360px] flex-shrink-0 border-l border-border bg-surface flex flex-col overflow-hidden">
-            {/* A: Edição do Bloco Selecionado */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center justify-between p-4 border-b border-border bg-surface-alt/30 shrink-0">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+        {/* ── 3. RIGHT SIDEBAR: Block Properties Editor (360px) ── */}
+        {selectedBlockId && (() => {
+          const activeBlock = blocks.find((b) => b.id === selectedBlockId);
+          const blockLabel = BLOCK_LABELS[activeBlock?.type as keyof typeof BLOCK_LABELS] ?? "Seção";
+          return (
+            <div className="w-[360px] flex-shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
+              {/* Header */}
+              <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-border shrink-0">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-brand">
                     Propriedades
                   </span>
-                  <h3 className="font-bold text-sm text-foreground">
-                    {BLOCK_LABELS[
-                      blocks.find((b) => b.id === selectedBlockId)
-                        ?.type as keyof typeof BLOCK_LABELS
-                    ] || "Editar Seção"}
-                  </h3>
+                  <h3 className="font-bold text-sm text-foreground leading-tight">{blockLabel}</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedBlockId(null)}
-                  className="text-muted-foreground hover:text-foreground p-1.5 rounded-sm border border-border bg-surface-alt hover:bg-surface-hover transition-colors"
+                  title="Fechar painel"
+                  className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-sm transition-colors mt-0.5"
                 >
-                  <ArrowLeft className="w-4 h-4 rotate-180" />
+                  <PanelLeft className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Scrollable form area */}
               <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-thin">
                 {blocks.map((block) =>
                   block.id === selectedBlockId ? (
@@ -1090,28 +1196,30 @@ function PageEditorRoute() {
                   ) : null,
                 )}
               </div>
-              <div className="p-4 border-t border-border bg-surface-alt/20 shrink-0 flex gap-2">
+
+              {/* Footer actions */}
+              <div className="px-5 py-3 border-t border-border shrink-0 flex gap-2">
                 <GhostButton
                   type="button"
                   onClick={() => {
                     removeBlock(selectedBlockId);
                     setSelectedBlockId(null);
                   }}
-                  className="w-full justify-center text-destructive hover:bg-destructive/5 hover:text-destructive font-bold text-xs"
+                  className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 text-[10px] uppercase tracking-wider font-bold"
                 >
-                  <Trash2 className="w-4 h-4 mr-2" /> Excluir
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
                 </GhostButton>
                 <PrimaryButton
                   type="button"
                   onClick={() => setSelectedBlockId(null)}
-                  className="w-full justify-center text-xs"
+                  className="flex-1 justify-center text-[10px] uppercase tracking-wider font-bold"
                 >
                   Concluído
                 </PrimaryButton>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Visual template application confirm Sheet */}
