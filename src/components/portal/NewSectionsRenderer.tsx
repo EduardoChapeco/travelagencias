@@ -1020,7 +1020,7 @@ export function NewSectionsRenderer({
           ? "bg-brand/5 border-transparent shadow-none"
           : config.cardStyle === "minimal"
             ? "bg-transparent border-transparent shadow-none p-4"
-            : "bg-surface border-border/80 shadow";
+            : "bg-surface border-border/80 shadow-none";
 
       return (
         <section ref={animRef as any} className="py-16 px-4 max-w-7xl mx-auto w-full">
@@ -1570,7 +1570,7 @@ export function NewSectionsRenderer({
               config.items.map((item: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-surface border border-border/60 p-6 rounded-3xl text-center space-y-4 transition-shadow"
+                  className="bg-surface border border-border/60 p-6 rounded-3xl text-center space-y-4"
                 >
                   <div className="w-24 h-24 rounded-full overflow-hidden mx-auto border-2 border-border">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -1772,7 +1772,7 @@ export function NewSectionsRenderer({
               config.items.map((item: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-surface border border-border p-6 rounded-3xl flex flex-col justify-between transition-shadow"
+                  className="bg-surface border border-border p-6 rounded-3xl flex flex-col justify-between"
                 >
                   <div>
                     <Quote className="h-6 w-6 text-brand/20 mb-4" />

@@ -61,7 +61,7 @@ function VisasCatalogPage() {
   const filteredData = q.data?.filter((req) => activeTab === "all" || req.category === activeTab);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <ConfirmDialog />
 
       <HeaderPortal>

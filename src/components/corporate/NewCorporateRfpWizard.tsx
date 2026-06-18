@@ -107,13 +107,20 @@ export function NewCorporateRfpWizard({
   const selectedClient = clientsQ.data?.find((c) => c.id === clientId);
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Nova Requisição (RFP) Corporativa">
-      <p className="text-xs text-muted-foreground mb-4">
-        Módulo B2B: Cotação estruturada para clientes empresariais.
-      </p>
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Nova Requisição (RFP) Corporativa"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      <div className="px-6 pt-4 pb-2 shrink-0">
+        <p className="text-xs text-muted-foreground">
+          Módulo B2B: Cotação estruturada para clientes empresariais.
+        </p>
+      </div>
 
       {/* Stepper progress */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
         {STEPS.map((s, i) => (
           <div
             key={i}
@@ -145,7 +152,7 @@ export function NewCorporateRfpWizard({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+      <div className="flex-1 overflow-y-auto p-6 bg-surface/30 min-h-0">
         <div className="mx-auto max-w-xl space-y-6">
           {/* STEP 0: Identificação */}
           {step === 0 && (
@@ -310,7 +317,7 @@ export function NewCorporateRfpWizard({
       </div>
 
       {/* Footer Actions */}
-      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4">
+      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
         <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
           <ChevronLeft className="h-4 w-4" /> Voltar
         </GhostButton>

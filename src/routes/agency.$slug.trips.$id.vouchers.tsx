@@ -321,7 +321,7 @@ function TripVouchers() {
 
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (
-    <>
+    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <ConfirmDialog />
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
@@ -561,7 +561,7 @@ function TripVouchers() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

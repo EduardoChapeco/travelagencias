@@ -312,7 +312,7 @@ function Landing() {
             </div>
 
             {/* O Jeito TravelOS */}
-            <div className="rounded-md border-2 border-primary bg-surface p-8 space-y-6 relative hover:shadow-sm transition-all duration-300">
+            <div className="rounded-md border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>

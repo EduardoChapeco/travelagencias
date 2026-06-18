@@ -268,13 +268,20 @@ export function NewGroupTourWizard({
   }
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Nova Excursão em Grupo">
-      <p className="text-xs text-muted-foreground mb-4">
-        Configure as informações do seu pacote passo a passo.
-      </p>
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Nova Excursão em Grupo"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      <div className="px-6 pt-4 pb-2 shrink-0">
+        <p className="text-xs text-muted-foreground">
+          Configure as informações do seu pacote passo a passo.
+        </p>
+      </div>
 
       {/* Stepper progress */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
         {STEPS.map((s, i) => (
           <div
             key={i}
@@ -307,7 +314,7 @@ export function NewGroupTourWizard({
 
       {/* Content Area */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+        <div className="flex-1 overflow-y-auto p-6 bg-surface/30 min-h-0">
           <div className="mx-auto max-w-2xl space-y-6">
             {/* STEP 0: ESSENTIALS */}
             {step === 0 && (

@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { useState } from "react";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
   PrimaryButton,
   GhostButton,
@@ -111,9 +112,26 @@ function RfpDetailPage() {
   const currentStepIndex = STATUS_STEPS.indexOf(rfp.status);
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
+    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <ConfirmDialog />
-      <div className="p-4 md:p-8">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          {rfp.status === "negotiating" && (
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${window.location.origin}/p/corporate/approve?token=${rfp.approval_token}`,
+                );
+                toast.success("Link de aprovação copiado!");
+              }}
+              className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            >
+              <Send className="w-3.5 h-3.5" /> Link do Cliente
+            </button>
+          )}
+        </div>
+      </HeaderPortal>
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-0">
         <Link
           to="/agency/$slug/corporate"
           params={{ slug }}

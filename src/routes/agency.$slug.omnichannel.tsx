@@ -845,8 +845,8 @@ function OmnichannelPage() {
                   <div
                     className={`max-w-[70%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                       m.direction === "outbound"
-                        ? "bg-brand text-brand-foreground rounded-br-sm shadow-sm"
-                        : "bg-surface text-foreground rounded-bl-sm border border-border shadow-sm"
+                        ? "bg-brand text-brand-foreground rounded-br-sm shadow-none"
+                        : "bg-surface text-foreground rounded-bl-sm border border-border shadow-none"
                     }`}
                   >
                     {m.media_url && (

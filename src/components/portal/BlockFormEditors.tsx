@@ -93,7 +93,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
         <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
       </button>
       {open && (
-        <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-xl border border-border bg-surface shadow-xl">
+        <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-xl border border-border bg-surface shadow-none">
           <div className="grid grid-cols-6 gap-1.5">
             {ICON_OPTIONS.map((opt) => (
               <button
@@ -361,7 +361,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="border border-border rounded-xl p-4 space-y-3 bg-surface shadow-sm"
+                  className="border border-border rounded-xl p-4 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
@@ -1133,7 +1133,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item, idx) => (
                 <div
                   key={idx}
-                  className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-sm"
+                  className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex justify-between items-center pb-2 border-b border-border/40">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
@@ -2112,7 +2112,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           onClick={() => setActiveTab("content")}
           className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
             activeTab === "content"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-none border border-border/10"
               : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
           }`}
         >
@@ -2123,7 +2123,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           onClick={() => setActiveTab("style")}
           className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
             activeTab === "style"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-none border border-border/10"
               : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
           }`}
         >
@@ -2134,7 +2134,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           onClick={() => setActiveTab("animation")}
           className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
             activeTab === "animation"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-none border border-border/10"
               : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
           }`}
         >
@@ -2145,7 +2145,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           onClick={() => setActiveTab("responsive")}
           className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold transition-all ${
             activeTab === "responsive"
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-none border border-border/10"
               : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
           }`}
         >
@@ -2202,7 +2202,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         key={key}
                         type="button"
                         onClick={() => updateStyle({ bg_color: val, backgroundColor: val })}
-                        className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                        className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                         style={{ backgroundColor: val as string }}
                         title={`${key}: ${val}`}
                       />
@@ -2410,13 +2410,13 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 <button
                   type="button"
                   onClick={() => updateStyle({ text_color: "#ffffff", textColor: "light" })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm bg-white"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none bg-white"
                   title="Branco: #ffffff"
                 />
                 <button
                   type="button"
                   onClick={() => updateStyle({ text_color: "#0f172a", textColor: "dark" })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm bg-slate-900"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none bg-slate-900"
                   title="Escuro: #0f172a"
                 />
                 {Object.entries(brandColors).map(([key, val]) => {
@@ -2426,7 +2426,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       key={key}
                       type="button"
                       onClick={() => updateStyle({ text_color: val, textColor: val })}
-                      className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                      className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                       style={{ backgroundColor: val as string }}
                       title={`${key}: ${val}`}
                     />
@@ -2759,7 +2759,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => updateStyle({ bg_color: brandColor })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                   style={{ backgroundColor: brandColor }}
                   title={`Cor Principal: ${brandColor}`}
                 />
@@ -2768,7 +2768,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => updateStyle({ bg_color: brandColorLight })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                   style={{ backgroundColor: brandColorLight }}
                   title={`Cor Suave: ${brandColorLight}`}
                 />
@@ -2824,7 +2824,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => updateStyle({ text_color: brandOriginalFg })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                   style={{ backgroundColor: brandOriginalFg }}
                   title={`Texto da Marca: ${brandOriginalFg}`}
                 />
@@ -2833,7 +2833,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 <button
                   type="button"
                   onClick={() => updateStyle({ text_color: brandColor })}
-                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform"
+                  className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
                   style={{ backgroundColor: brandColor }}
                   title={`Principal da Marca: ${brandColor}`}
                 />
@@ -2841,13 +2841,13 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
               <button
                 type="button"
                 onClick={() => updateStyle({ text_color: "#ffffff" })}
-                className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform bg-white"
+                className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform bg-white"
                 title="Branco: #ffffff"
               />
               <button
                 type="button"
                 onClick={() => updateStyle({ text_color: "#0f172a" })}
-                className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-sm hover:scale-110 active:scale-95 transition-transform bg-slate-900"
+                className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform bg-slate-900"
                 title="Escuro: #0f172a"
               />
             </div>
@@ -3178,7 +3178,7 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
       </button>
 
       {open && (
-        <div className="absolute z-50 right-4 w-72 p-4 rounded-xl border border-border bg-surface shadow-2xl space-y-3 mt-2">
+        <div className="absolute z-50 right-4 w-72 p-4 rounded-xl border border-border bg-surface shadow-none space-y-3 mt-2">
           <div className="flex gap-2">
             <input
               type="text"

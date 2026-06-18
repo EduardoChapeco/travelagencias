@@ -95,8 +95,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
             </div>
 
             <h1
-              className="text-7xl font-black tracking-tight leading-none text-white drop-shadow-lg"
-              style={{ textShadow: "0 4px 24px rgba(0,0,0,0.6)" }}
+              className="text-7xl font-black tracking-tight leading-none text-white shadow-none"
             >
               {p.destination || p.title || "Seu Próximo Destino"}
             </h1>
@@ -469,7 +468,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                   src={p.agent_photo_url}
                   alt={p.agent_name}
                   crossOrigin="anonymous"
-                  className="w-14 h-14 rounded-full object-cover border-2 border-slate-800 shadow"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-slate-800 shadow-none"
                 />
               ) : (
                 <div className="w-14 h-14 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-lg font-bold text-slate-400">

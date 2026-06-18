@@ -13,6 +13,7 @@ interface SheetPageProps {
   title: string;
   children: React.ReactNode;
   width?: string;
+  contentClassName?: string;
 }
 
 export function SheetPage({
@@ -21,6 +22,7 @@ export function SheetPage({
   title,
   children,
   width = "clamp(480px, 45vw, 720px)",
+  contentClassName,
 }: SheetPageProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -65,7 +67,7 @@ export function SheetPage({
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="flex-1 overflow-auto p-6 no-scrollbar">{children}</div>
+        <div className={cn("flex-1", contentClassName || "overflow-auto p-6 no-scrollbar")}>{children}</div>
       </div>
     </div>,
     document.body,

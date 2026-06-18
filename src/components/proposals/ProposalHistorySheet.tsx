@@ -171,7 +171,7 @@ export function ProposalHistorySheet({
               <div key={entry.id} className="relative group">
                 {/* Timeline circle badge */}
                 <div
-                  className={`absolute -left-[37px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full border text-xs shadow-sm transition-transform group-hover:scale-110 ${config.color}`}
+                  className={`absolute -left-[37px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full border text-xs shadow-none transition-transform group-hover:scale-110 ${config.color}`}
                 >
                   <ActionIcon className="h-3.5 w-3.5" />
                 </div>

@@ -78,7 +78,7 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-2xl hover:scale-110 transition-transform"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-none border-2 border-primary hover:scale-110 transition-transform"
         >
           <MessageSquare className="h-6 w-6" />
         </button>
@@ -86,7 +86,7 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 flex w-[350px] flex-col overflow-hidden rounded-2xl bg-surface border border-border shadow-2xl sm:w-[400px]">
+        <div className="fixed bottom-6 right-6 z-50 flex w-[350px] flex-col overflow-hidden rounded-2xl bg-surface border-2 border-primary shadow-none sm:w-[400px]">
           {/* Header */}
           <div className="flex items-center justify-between bg-brand px-4 py-3 text-brand-foreground">
             <div className="flex items-center gap-2">

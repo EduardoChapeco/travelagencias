@@ -204,13 +204,20 @@ export function NewVisaWizard({
   const selectedClient = clientsQ.data?.find((c) => c.id === clientId);
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Novo Processo Consular">
-      <p className="text-xs text-muted-foreground mb-4">
-        Gestão profissional de vistos e passaportes.
-      </p>
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Novo Processo Consular"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      <div className="px-6 pt-4 pb-2 shrink-0">
+        <p className="text-xs text-muted-foreground">
+          Gestão profissional de vistos e passaportes.
+        </p>
+      </div>
 
       {/* Stepper progress */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
         {STEPS.map((s, i) => (
           <div
             key={i}
@@ -242,7 +249,7 @@ export function NewVisaWizard({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+      <div className="flex-1 overflow-y-auto p-6 bg-surface/30 min-h-0">
         <div className="mx-auto max-w-xl space-y-6">
           {/* STEP 0: Requerente */}
           {step === 0 && (
@@ -424,7 +431,7 @@ export function NewVisaWizard({
       </div>
 
       {/* Footer Actions */}
-      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4">
+      <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
         <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
           <ChevronLeft className="h-4 w-4" /> Voltar
         </GhostButton>

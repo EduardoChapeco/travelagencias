@@ -329,7 +329,7 @@ function BillingPage() {
                 } ${isCurrent ? "opacity-95 ring-2 ring-brand/10 bg-brand/3" : ""}`}
               >
                 {plan.is_featured && (
-                  <span className="absolute -top-3 right-6 rounded-full bg-brand px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-foreground shadow-sm">
+                  <span className="absolute -top-3 right-6 rounded-full bg-brand px-3 py-1 text-[9px] font-black uppercase tracking-wider text-brand-foreground shadow-none">
                     Recomendado
                   </span>
                 )}

@@ -456,7 +456,7 @@ function BrandPage() {
 
         {/* Right Side: Interactive Mockup Live Preview */}
         <div className="space-y-6">
-          <div className="rounded-md border border-border bg-surface p-5 flex flex-col h-full space-y-4 shadow-sm">
+          <div className="rounded-md border border-border bg-surface p-5 flex flex-col h-full space-y-4 shadow-none">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
@@ -468,7 +468,7 @@ function BrandPage() {
             >
               {/* Mock Navbar */}
               <div
-                className="h-14 px-6 border-b border-border/80 flex items-center justify-between shrink-0 shadow-sm transition-all"
+                className="h-14 px-6 border-b border-border/80 flex items-center justify-between shrink-0 shadow-none transition-all"
                 style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
               >
                 <div className="flex items-center gap-2.5">
@@ -532,7 +532,7 @@ function BrandPage() {
                 </p>
                 <div className="flex gap-2.5">
                   <button
-                    className="px-4 py-2 rounded-sm text-[10px] font-bold transition-all shadow-sm"
+                    className="px-4 py-2 rounded-sm text-[10px] font-bold transition-all shadow-none"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
                     Falar no WhatsApp
@@ -546,7 +546,7 @@ function BrandPage() {
               {/* Mock Content & Cards Grid */}
               <div className="p-6 grid grid-cols-2 gap-4 shrink-0 bg-white border-t border-border">
                 <div
-                  className="p-4 rounded-sm border border-border shadow-sm space-y-2"
+                  className="p-4 rounded-sm border border-border shadow-none space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
@@ -567,7 +567,7 @@ function BrandPage() {
                 </div>
 
                 <div
-                  className="p-4 rounded-sm border border-border shadow-sm space-y-2"
+                  className="p-4 rounded-sm border border-border shadow-none space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
@@ -613,7 +613,7 @@ function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-10 w-10 cursor-pointer rounded-sm border border-border bg-transparent shrink-0 shadow-sm"
+          className="h-10 w-10 cursor-pointer rounded-sm border border-border bg-transparent shrink-0 shadow-none"
         />
       </div>
       <input

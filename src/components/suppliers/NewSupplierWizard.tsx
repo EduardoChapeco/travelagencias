@@ -161,13 +161,20 @@ export function NewSupplierWizard({
   }
 
   return (
-    <SheetPage isOpen={true} onClose={onClose} title="Novo Parceiro de Negócios (B2B)">
-      <p className="text-xs text-muted-foreground mb-4">
-        Cadastre operadoras, hotéis e consolidadoras com seus acordos.
-      </p>
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Novo Parceiro de Negócios (B2B)"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      <div className="px-6 pt-4 pb-2 shrink-0">
+        <p className="text-xs text-muted-foreground">
+          Cadastre operadoras, hotéis e consolidadoras com seus acordos.
+        </p>
+      </div>
 
       {/* Stepper progress */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
         {STEPS.map((s, i) => (
           <div
             key={i}
@@ -200,7 +207,7 @@ export function NewSupplierWizard({
 
       {/* Content Area */}
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-6 bg-surface/30">
+        <div className="flex-1 overflow-y-auto p-6 bg-surface/30 min-h-0">
           <div className="mx-auto max-w-xl space-y-6">
             {/* STEP 0: Identidade */}
             {step === 0 && (

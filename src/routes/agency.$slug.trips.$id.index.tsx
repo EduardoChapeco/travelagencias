@@ -67,7 +67,8 @@ function TripOverview() {
   const margin = Number(t.total_sale || 0) - Number(t.total_cost || 0);
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
+    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
       <form
         className="space-y-4 rounded-lg border border-border bg-surface p-6 "
         onSubmit={(e) => {
@@ -251,6 +252,7 @@ function TripOverview() {
           </Link>
         )}
       </aside>
+      </div>
     </div>
   );
 }

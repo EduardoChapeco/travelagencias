@@ -562,17 +562,7 @@ function TripContract() {
   const trip = tripQ.data;
 
   return (
-    <>
-      {/* ── Back ─────────────────────────────────────────────────────────────── */}
-      <Link
-        to="/agency/$slug/trips/$id"
-        params={{ slug, id: tripId }}
-        className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Voltar à viagem
-      </Link>
-
+    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       {/* ── Header ───────────────────────────────────────────────────────────── */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
@@ -776,6 +766,6 @@ function TripContract() {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

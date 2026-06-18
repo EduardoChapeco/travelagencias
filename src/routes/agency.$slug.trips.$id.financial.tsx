@@ -192,7 +192,7 @@ function TripFinancial() {
   if (tripQ.isLoading) return <div className="p-4 text-sm text-muted-foreground">Carregando…</div>;
 
   return (
-    <>
+    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight text-foreground">Gestão Financeira</h2>
         <div className="flex items-center gap-2">
@@ -519,7 +519,7 @@ function TripFinancial() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
