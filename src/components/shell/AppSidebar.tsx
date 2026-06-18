@@ -86,9 +86,13 @@ const items: SlimSidebarItem[] = [
 export function AppSidebar({
   isPinned,
   onTogglePin,
+  mobileOpen,
+  onMobileClose,
 }: {
   isPinned?: boolean;
   onTogglePin?: () => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }) {
   const navigate = useNavigate();
   const { agency, isAgencyAdmin } = useAgency();
@@ -108,6 +112,8 @@ export function AppSidebar({
     <SlimSidebar
       isPinned={isPinned}
       onTogglePin={onTogglePin}
+      mobileOpen={mobileOpen}
+      onMobileClose={onMobileClose}
       items={visibleItems.map((i) => ({
         ...i,
         label: i.to !== undefined ? getModuleName(i.to || "dashboard", agency) : i.label,
