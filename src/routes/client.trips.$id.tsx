@@ -180,6 +180,40 @@ function ClientTripDetail() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
   });
 
+  const uploadReceipt = useMutation({
+    mutationFn: async ({ instId, file }: { instId: string; file: File }) => {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `receipts/${instId}_${Date.now()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("agency-media")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("agency-media")
+        .getPublicUrl(uploadData.path);
+
+      const { error } = await supabase
+        .from("payment_installments")
+        .update({
+          receipt_url: publicUrlData.publicUrl,
+          receipt_status: "pending",
+          receipt_uploaded_at: new Date().toISOString(),
+        } as any)
+        .eq("id", instId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Comprovante enviado com sucesso! Aguardando verificação da agência.");
+      qc.invalidateQueries({ queryKey: ["client-installments", id] });
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao enviar comprovante: " + err.message);
+    },
+  });
+
   const lgpdQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-lgpd-acceptance", tripQ.data?.client_id],
@@ -1010,74 +1044,129 @@ function ClientTripDetail() {
                       installments.map((inst: any) => (
                         <div
                           key={inst.id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-border bg-surface p-4 gap-4"
+                          className="flex flex-col rounded-2xl border border-border bg-surface p-4 gap-4"
                         >
-                          <div className="flex items-center gap-4">
-                            <div
-                              className={`flex h-12 w-12 items-center justify-center rounded-full${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}
-                            >
-                              {inst.status === "paid" ? (
-                                <CheckCircle className="h-6 w-6" />
-                              ) : inst.status === "late" ? (
-                                <AlertCircle className="h-6 w-6" />
-                              ) : (
-                                <Clock className="h-6 w-6" />
-                              )}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`flex h-12 w-12 items-center justify-center rounded-full${inst.status === "paid" ? "bg-success-bg text-success" : inst.status === "late" ? "bg-danger-bg text-danger" : "bg-surface-alt text-muted-foreground"}`}
+                              >
+                                {inst.status === "paid" ? (
+                                  <CheckCircle className="h-6 w-6" />
+                                ) : inst.status === "late" ? (
+                                  <AlertCircle className="h-6 w-6" />
+                                ) : (
+                                  <Clock className="h-6 w-6" />
+                                )}
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-foreground">
+                                  Parcela {inst.number}
+                                </div>
+                                <div className="text-xs font-medium text-muted-foreground mt-0.5">
+                                  Vencimento: {fmtDate(inst.due_date)}
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <div className="text-sm font-bold text-foreground">
-                                Parcela {inst.number}
+
+                            <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto border-t sm:border-0 border-border/50 pt-3 sm:pt-0">
+                              <div className="text-left sm:text-right flex items-center sm:items-end justify-between sm:flex-col sm:justify-start w-full gap-2">
+                                <div>
+                                  <div className="text-base font-black text-foreground">
+                                    {money(inst.amount, trip.currency)}
+                                  </div>
+                                  <div
+                                    className={`text-[10px] uppercase font-bold tracking-wider${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
+                                  >
+                                    {INST_STATUS[inst.status] ?? inst.status}
+                                  </div>
+                                </div>
+                                {inst.status !== "paid" && (inst.boleto_url || inst.barcode) && (
+                                  <a
+                                    href={inst.boleto_url || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => {
+                                      if (!inst.boleto_url && inst.barcode) {
+                                        e.preventDefault();
+                                        navigator.clipboard.writeText(inst.barcode);
+                                        toast.success("Código de barras copiado!");
+                                      }
+                                    }}
+                                    className="h-8 rounded bg-foreground text-background text-xs font-bold px-3 py-1 flex items-center justify-center hover:opacity-90 transition-opacity"
+                                  >
+                                    {inst.boleto_url ? "Ver Boleto" : "Copiar Linha Digitável"}
+                                  </a>
+                                )}
                               </div>
-                              <div className="text-xs font-medium text-muted-foreground mt-0.5">
-                                Vencimento: {fmtDate(inst.due_date)}
-                              </div>
+                              {!isOperator &&
+                                inst.status !== "paid" &&
+                                !inst.boleto_url &&
+                                !inst.barcode && (
+                                  <div className="flex gap-2">
+                                    <label className="h-8 rounded border border-border bg-surface text-foreground text-xs font-bold px-3 py-1.5 flex items-center justify-center hover:bg-surface-alt transition-colors cursor-pointer">
+                                      {uploadReceipt.isPending ? "Enviando..." : "Enviar Comprovante"}
+                                      <input
+                                        type="file"
+                                        accept="image/*,application/pdf"
+                                        className="hidden"
+                                        disabled={uploadReceipt.isPending}
+                                        onChange={(e) => {
+                                          if (e.target.files?.[0]) {
+                                            uploadReceipt.mutate({
+                                              instId: inst.id,
+                                              file: e.target.files[0],
+                                            });
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
+                                )}
                             </div>
                           </div>
 
-                          <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto border-t sm:border-0 border-border/50 pt-3 sm:pt-0">
-                            <div className="text-left sm:text-right flex items-center sm:items-end justify-between sm:flex-col sm:justify-start w-full gap-2">
-                              <div>
-                                <div className="text-base font-black text-foreground">
-                                  {money(inst.amount, trip.currency)}
+                          {/* Approval Status messages */}
+                          {inst.status !== "paid" && inst.receipt_status && inst.receipt_status !== "none" && (
+                            <div className="border-t border-border/40 pt-3">
+                              {inst.receipt_status === "pending" && (
+                                <div className="text-xs text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2 flex items-center gap-2">
+                                  <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                                  <div>
+                                    <span className="font-bold">Comprovante enviado!</span> Aguardando conciliação da agência.
+                                    {inst.receipt_url && (
+                                      <a href={inst.receipt_url} target="_blank" rel="noreferrer" className="text-brand font-bold underline ml-1.5 inline-block">Visualizar Arquivo</a>
+                                    )}
+                                  </div>
                                 </div>
-                                <div
-                                  className={`text-[10px] uppercase font-bold tracking-wider${inst.status === "paid" ? "text-success" : inst.status === "late" ? "text-danger" : "text-muted-foreground"}`}
-                                >
-                                  {INST_STATUS[inst.status] ?? inst.status}
+                              )}
+                              {inst.receipt_status === "rejected" && (
+                                <div className="text-xs text-rose-700 bg-rose-500/10 border border-rose-500/20 rounded-xl px-3 py-2 flex items-start gap-2">
+                                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                                  <div>
+                                    <span className="font-bold">Comprovante Recusado:</span> {inst.rejection_reason || "Verifique o arquivo e reenvie."}
+                                    <label className="text-brand font-bold underline ml-1.5 cursor-pointer block mt-1">
+                                      Tentar Novamente
+                                      <input
+                                        type="file"
+                                        accept="image/*,application/pdf"
+                                        className="hidden"
+                                        disabled={uploadReceipt.isPending}
+                                        onChange={(e) => {
+                                          if (e.target.files?.[0]) {
+                                            uploadReceipt.mutate({
+                                              instId: inst.id,
+                                              file: e.target.files[0],
+                                            });
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
                                 </div>
-                              </div>
-                              {inst.status !== "paid" && (inst.boleto_url || inst.barcode) && (
-                                <a
-                                  href={inst.boleto_url || "#"}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => {
-                                    if (!inst.boleto_url && inst.barcode) {
-                                      e.preventDefault();
-                                      navigator.clipboard.writeText(inst.barcode);
-                                      toast.success("Código de barras copiado!");
-                                    }
-                                  }}
-                                  className="h-8 rounded bg-foreground text-background text-xs font-bold px-3 py-1 flex items-center justify-center hover:opacity-90 transition-opacity"
-                                >
-                                  {inst.boleto_url ? "Ver Boleto" : "Copiar Linha Digitável"}
-                                </a>
                               )}
                             </div>
-                            {!isOperator &&
-                              inst.status !== "paid" &&
-                              !inst.boleto_url &&
-                              !inst.barcode && (
-                                <button
-                                  onClick={() =>
-                                    toast.info("Funcionalidade de gateway em desenvolvimento.")
-                                  }
-                                  className="px-4 py-2 rounded-xl bg-foreground text-background text-xs font-bold hover:opacity-90"
-                                >
-                                  Pagar Agora
-                                </button>
-                              )}
-                          </div>
+                          )}
                         </div>
                       ))
                     )}

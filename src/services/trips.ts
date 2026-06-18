@@ -36,6 +36,10 @@ export type PaymentInstallment = {
   barcode?: string | null;
   payment_warning?: string | null;
   is_third_party?: boolean;
+  receipt_url?: string | null;
+  receipt_status?: "none" | "pending" | "approved" | "rejected";
+  rejection_reason?: string | null;
+  receipt_uploaded_at?: string | null;
 };
 
 export type PaymentPlan = {

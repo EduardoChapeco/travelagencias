@@ -33,7 +33,7 @@ export function ModuleAdminPanel({
   const [isCreatingPlaybook, setIsCreatingPlaybook] = useState(false);
   const { confirm, ConfirmDialog } = useConfirm();
 
-  const { agency, refresh } = useAgency();
+  const { agency, refresh, role } = useAgency();
   const currentCustomName = agency?.module_names?.[moduleKey] || "";
   const [customName, setCustomName] = useState(currentCustomName);
   const [savingName, setSavingName] = useState(false);
@@ -171,16 +171,18 @@ export function ModuleAdminPanel({
             >
               <Workflow className="w-3.5 h-3.5 inline mr-1" /> KIs & Playbooks do Módulo
             </button>
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`rounded px-3.5 py-1.5 font-bold transition-all ${
-                activeTab === "settings"
-                  ? "bg-surface-alt text-foreground border border-border/40"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Settings2 className="w-3.5 h-3.5 inline mr-1" /> Configurações Avançadas
-            </button>
+            {role === "super_admin" && (
+              <button
+                onClick={() => setActiveTab("settings")}
+                className={`rounded px-3.5 py-1.5 font-bold transition-all ${
+                  activeTab === "settings"
+                    ? "bg-surface-alt text-foreground border border-border/40"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Settings2 className="w-3.5 h-3.5 inline mr-1" /> Configurações Avançadas
+              </button>
+            )}
           </div>
         )}
 
@@ -321,7 +323,7 @@ export function ModuleAdminPanel({
           </div>
         )}
 
-        {activeTab === "settings" && (
+        {activeTab === "settings" && role === "super_admin" && (
           <div className="flex-1 overflow-auto space-y-6">
             <form
               onSubmit={handleSaveCustomName}

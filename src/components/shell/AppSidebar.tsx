@@ -38,27 +38,40 @@ import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
 
 const items: SlimSidebarItem[] = [
   { label: "Dashboard", to: "", icon: LayoutDashboard, exact: true },
-  { type: "header", label: "Fluxo Diário" },
+  
+  { type: "header", label: "Dia a Dia" },
   { label: "Meu Dia (Tarefas)", to: "daily-tasks", icon: ListTodo },
-  { label: "Negociações & Leads", to: "crm", icon: Users },
   { label: "Agenda", to: "calendar", icon: Calendar },
   { label: "Conversas & Mensagens", to: "omnichannel", icon: MessageSquare },
+
+  { type: "header", label: "Vendas & CRM" },
+  { label: "Negociações & Leads", to: "crm", icon: Users },
   { label: "Orçamentos & Propostas", to: "proposals", icon: FileText },
-  { label: "Viagens", to: "trips", icon: Luggage },
+  { label: "Contratos", to: "contracts", icon: ScrollText },
+
+  { type: "header", label: "Operações & Viagens" },
   { label: "Roteiros em Grupo", to: "group-tours", icon: Bus },
+  { label: "Viagens", to: "trips", icon: Luggage },
+  { label: "Embarques", to: "boarding", icon: Plane },
+  { label: "Vouchers", to: "vouchers", icon: Ticket },
+  { label: "Frota & Ônibus", to: "bus-layouts", icon: Bus },
+
   { type: "header", label: "Clientes & Parceiros" },
   { label: "Clientes", to: "clients", icon: UserRound },
   { label: "Corporativo", to: "corporate", icon: Building2 },
   { label: "Fornecedores", to: "suppliers", icon: Store },
-  { type: "header", label: "Operacional" },
+
+  { type: "header", label: "Financeiro" },
+  { label: "Financeiro", to: "financial", icon: Wallet },
+
+  { type: "header", label: "Suporte & Vistos" },
   { label: "Suporte", to: "support", icon: LifeBuoy },
   { label: "Vistos", to: "visas", icon: Globe2 },
-  { label: "Frota & Ônibus", to: "bus-layouts", icon: Bus },
-  { label: "Embarques", to: "boarding", icon: Plane },
-  { label: "Financeiro", to: "financial", icon: Wallet },
+
   { type: "header", label: "Site & Marketing" },
   { label: "Site da Agência", to: "portal", icon: Globe, adminOnly: true },
   { label: "Monitor de Concorrentes", to: "competitors", icon: Radar, adminOnly: true },
+
   { type: "header", label: "Gestão", adminOnly: true },
   { label: "Produtividade Master", to: "productivity", icon: BrainCircuit, adminOnly: true },
   { label: "Minha Empresa", to: "company", icon: Building2, adminOnly: true },

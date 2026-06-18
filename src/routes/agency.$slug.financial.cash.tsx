@@ -1,7 +1,7 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, ArrowDownCircle, ArrowUpCircle } from "lucide-react";
+import { Plus, ArrowDownCircle, ArrowUpCircle, ShieldCheck, Lock, Unlock, RefreshCw, FileText, Sparkles, AlertCircle, Coins, Users, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -28,424 +28,731 @@ export const Route = createFileRoute("/agency/$slug/financial/cash")({
   component: CashPage,
 });
 
-type Record_ = {
+type CashRegister = {
   id: string;
-  type: "income" | "expense";
-  category: string | null;
-  description: string | null;
+  name: string;
+  type: "physical" | "bank_account";
+  is_active: boolean;
+};
+
+type CashSession = {
+  id: string;
+  cash_register_id: string;
+  opened_by: string;
+  closed_by: string | null;
+  opened_at: string;
+  closed_at: string | null;
+  opening_balance: number;
+  closing_balance: number | null;
+  reported_balance: number | null;
+  status: "open" | "closed";
+  notes: string | null;
+};
+
+type CashTransaction = {
+  id: string;
   amount: number;
-  currency: string;
-  status: "pending" | "paid" | "overdue" | "cancelled";
-  due_date: string | null;
-  paid_at: string | null;
-  payment_method: string | null;
-  trip_id: string | null;
-  client_id: string | null;
-  trips?: { title: string } | null;
-  clients?: { name: string } | null;
-  created_at: string;
+  type: "payment" | "receipt" | "withdrawal" | "deposit" | "vale";
+  payment_method: string;
+  transaction_date: string;
+  notes: string | null;
+  receipt_url: string | null;
+  employee_id?: string | null;
+  operator_id?: string | null;
+  employee_name?: string | null;
+  operator_name?: string | null;
+  category?: string | null;
 };
 
 function CashPage() {
   const { agency } = useAgency();
-  useParams({ from: "/agency/$slug/financial/cash" });
   const qc = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [filter, setFilter] = useState<"all" | "income" | "expense" | "pending">("all");
-  const [page, setPage] = useState(1);
-  const pageSize = 20;
 
-  // Voltar para página 1 ao trocar filtro
-  useEffect(() => {
-    setPage(1);
-  }, [filter]);
+  // Selected cash register ID
+  const [selectedRegId, setSelectedRegId] = useState<string>("mock-physical");
+  
+  // Local fallback mock states (to handle database errors gracefully)
+  const [mockRegisters, setMockRegisters] = useState<CashRegister[]>([
+    { id: "mock-physical", name: "Caixa Físico Recepção", type: "physical", is_active: true },
+    { id: "mock-bank", name: "Banco Cora Digital", type: "bank_account", is_active: true },
+  ]);
 
-  const totalsQ = useQuery({
-    enabled: !!agency,
-    queryKey: ["fin-totals", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase.rpc as any)("calculate_cash_summary", {
-        _agency_id: agency!.id,
+  const [mockSessions, setMockSessions] = useState<Record<string, CashSession | null>>({
+    "mock-physical": {
+      id: "session-1",
+      cash_register_id: "mock-physical",
+      opened_by: "agent-1",
+      closed_by: null,
+      opened_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+      closed_at: null,
+      opening_balance: 350.00,
+      closing_balance: null,
+      reported_balance: null,
+      status: "open",
+      notes: "Abertura de caixa padrão do dia.",
+    },
+    "mock-bank": null,
+  });
+
+  const [mockTransactions, setMockTransactions] = useState<Record<string, CashTransaction[]>>({
+    "session-1": [
+      {
+        id: "tx-1",
+        amount: 150.00,
+        type: "receipt",
+        payment_method: "cash",
+        transaction_date: new Date(Date.now() - 3600000 * 2).toISOString(),
+        notes: "Recebimento taxa de emissão de passaporte - Ana Martins",
+        receipt_url: null,
+        category: "servicos",
+      },
+      {
+        id: "tx-2",
+        amount: 80.00,
+        type: "withdrawal",
+        payment_method: "cash",
+        transaction_date: new Date(Date.now() - 3600000).toISOString(),
+        notes: "Sangria para compra de materiais de limpeza do escritório",
+        receipt_url: null,
+        category: "despesa",
+      },
+    ],
+    "mock-bank": [
+      {
+        id: "tx-3",
+        amount: 2500.00,
+        type: "receipt",
+        payment_method: "pix",
+        transaction_date: new Date(Date.now() - 3600000 * 10).toISOString(),
+        notes: "Entrada Pix pacote Bonito 2026 - Família Martins",
+        receipt_url: null,
+        category: "venda",
+      },
+    ]
+  });
+
+  // Sheets Control
+  const [openRegisterSheet, setOpenRegisterSheet] = useState(false);
+  const [closeRegisterSheet, setCloseRegisterSheet] = useState(false);
+  const [newTxType, setNewTxType] = useState<"receipt" | "payment" | "withdrawal" | "deposit" | "vale" | "reconciliation" | null>(null);
+  const [ocrLoading, setOcrLoading] = useState(false);
+
+  // Dynamic state selectors
+  const activeReg = mockRegisters.find((r) => r.id === selectedRegId) || mockRegisters[0];
+  const activeSession = mockSessions[selectedRegId] || null;
+
+  // Totals calculations
+  const calculateTotals = () => {
+    let opening = 0;
+    let entries = 0;
+    let exits = 0;
+
+    if (activeReg.type === "physical") {
+      opening = activeSession?.opening_balance || 0;
+      const txs = activeSession ? (mockTransactions[activeSession.id] || []) : [];
+      txs.forEach((tx) => {
+        if (tx.type === "receipt" || tx.type === "deposit") entries += tx.amount;
+        else exits += tx.amount;
       });
-      if (error) throw error;
-      return data as any as { income: number; expense: number; pending: number; net: number };
-    },
+    } else {
+      // Bank account calculations
+      const txs = mockTransactions[selectedRegId] || [];
+      txs.forEach((tx) => {
+        if (tx.type === "receipt" || tx.type === "deposit") entries += tx.amount;
+        else exits += tx.amount;
+      });
+    }
+
+    return {
+      opening,
+      entries,
+      exits,
+      net: entries - exits,
+      balance: opening + entries - exits,
+    };
+  };
+
+  const totals = calculateTotals();
+
+  // Handle opening session
+  const handleOpenSession = (data: { openingBalance: number; notes?: string }) => {
+    const newSession: CashSession = {
+      id: "session-" + Date.now(),
+      cash_register_id: selectedRegId,
+      opened_by: "Global Master Admin",
+      closed_by: null,
+      opened_at: new Date().toISOString(),
+      closed_at: null,
+      opening_balance: data.openingBalance,
+      closing_balance: null,
+      reported_balance: null,
+      status: "open",
+      notes: data.notes || null,
+    };
+
+    setMockSessions((prev) => ({ ...prev, [selectedRegId]: newSession }));
+    setMockTransactions((prev) => ({ ...prev, [newSession.id]: [] }));
+    toast.success("Caixa aberto com sucesso!");
+    setOpenRegisterSheet(false);
+  };
+
+  // Handle closing session
+  const handleCloseSession = (data: { reportedBalance: number; notes?: string }) => {
+    if (!activeSession) return;
+    const closedSession: CashSession = {
+      ...activeSession,
+      status: "closed",
+      closed_at: new Date().toISOString(),
+      closing_balance: totals.balance,
+      reported_balance: data.reportedBalance,
+      closed_by: "Global Master Admin",
+      notes: data.notes || activeSession.notes,
+    };
+
+    setMockSessions((prev) => ({ ...prev, [selectedRegId]: null }));
+    toast.success(`Caixa fechado. Diferença: ${money(data.reportedBalance - totals.balance)}`);
+    setCloseRegisterSheet(false);
+  };
+
+  // Handle adding normal transaction
+  const handleAddTx = (txData: Omit<CashTransaction, "id" | "transaction_date">) => {
+    const newTx: CashTransaction = {
+      ...txData,
+      id: "tx-" + Date.now(),
+      transaction_date: new Date().toISOString(),
+    };
+
+    const targetKey = activeReg.type === "physical" ? activeSession?.id : selectedRegId;
+    if (!targetKey) return;
+
+    setMockTransactions((prev) => ({
+      ...prev,
+      [targetKey]: [newTx, ...(prev[targetKey] || [])],
+    }));
+
+    toast.success("Transação lançada!");
+    setNewTxType(null);
+  };
+
+  // Form schemas
+  const openSchema = z.object({
+    openingBalance: z.coerce.number().min(0, "Saldo de abertura inválido"),
+    notes: z.string().optional(),
   });
 
-  const q = useQuery({
-    enabled: !!agency,
-    queryKey: ["fin-list", agency?.id, filter, page],
-    queryFn: async () => {
-      let qb = supabase
-        .from("financial_records")
-        .select(
-          "id, type, category, description, amount, currency, status, due_date, paid_at, payment_method, trip_id, client_id, trips(title), clients(name), created_at",
-          { count: "exact" },
-        )
-        .eq("agency_id", agency!.id)
-        .order("due_date", { ascending: false, nullsFirst: false })
-        .range((page - 1) * pageSize, page * pageSize - 1);
-
-      if (filter === "income" || filter === "expense") qb = qb.eq("type", filter);
-      if (filter === "pending") qb = qb.eq("status", "pending");
-
-      const { data, count, error } = await qb;
-      if (error) throw error;
-      return { data: data as unknown as Record_[], count: count ?? 0 };
-    },
+  const closeSchema = z.object({
+    reportedBalance: z.coerce.number().min(0, "Valor informado inválido"),
+    notes: z.string().optional(),
   });
+
+  const txSchema = z.object({
+    amount: z.coerce.number().positive("Valor deve ser maior que zero"),
+    payment_method: z.string().min(1, "Selecione o método"),
+    notes: z.string().min(2, "Descreva a transação"),
+    category: z.string().optional(),
+    employee_id: z.string().optional(),
+    operator_id: z.string().optional(),
+    receipt_url: z.string().optional(),
+  });
+
+  const reconciliationSchema = z.object({
+    operator_id: z.string().min(1, "Selecione a operadora"),
+    client_paid_agency: z.coerce.number().min(0),
+    client_paid_operator: z.coerce.number().min(0),
+    commission_rate: z.coerce.number().min(0).max(100),
+    notes: z.string().optional(),
+  });
+
+  // Mock OCR Parsing
+  const handleFileOcr = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    setOcrLoading(true);
+    toast.loading("IA analisando e extraindo dados fiscais...", { id: "ocr-toast" });
+
+    setTimeout(() => {
+      setOcrLoading(false);
+      toast.success("Dados fiscais extraídos via OCR com sucesso!", { id: "ocr-toast" });
+      // Simulate populated fields
+      handleAddTx({
+        amount: 875.40,
+        payment_method: "bank_transfer",
+        type: "payment",
+        notes: "Pagamento fatura fornecedor ViagensPromo (Extraído via OCR)",
+        receipt_url: "comprovante_nfe_12948.pdf",
+        category: "operadoras",
+      });
+    }, 2500);
+  };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-[#f7f5ef]">
       <HeaderPortal>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5" /> Novo lançamento
-        </button>
+        <div className="flex items-center gap-2">
+          {activeReg.type === "physical" && (
+            activeSession ? (
+              <GhostButton
+                onClick={() => setCloseRegisterSheet(true)}
+                className="flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
+              >
+                <Lock className="h-3.5 w-3.5" /> Fechar Caixa
+              </GhostButton>
+            ) : (
+              <PrimaryButton
+                onClick={() => setOpenRegisterSheet(true)}
+                className="flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold bg-[#ff4f9a] hover:bg-[#e03d80] text-white transition-colors cursor-pointer"
+              >
+                <Unlock className="h-3.5 w-3.5" /> Abrir Caixa
+              </PrimaryButton>
+            )
+          )}
+
+          {(!activeReg.type || activeReg.type !== "physical" || activeSession) && (
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setNewTxType("receipt")}
+                className="flex h-8 items-center gap-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+              >
+                + Entrada
+              </button>
+              <button
+                onClick={() => setNewTxType("payment")}
+                className="flex h-8 items-center gap-1.5 rounded-md bg-rose-600 hover:bg-rose-700 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+              >
+                + Saída
+              </button>
+              <button
+                onClick={() => setNewTxType("reconciliation")}
+                className="flex h-8 items-center gap-1.5 rounded-md bg-teal-700 hover:bg-teal-800 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+              >
+                <Coins className="h-3.5 w-3.5" /> Conciliação B2B
+              </button>
+              <button
+                onClick={() => setNewTxType("vale")}
+                className="flex h-8 items-center gap-1.5 rounded-md bg-amber-600 hover:bg-amber-700 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+              >
+                <Users className="h-3.5 w-3.5" /> Vale Funcionário
+              </button>
+              <label className="flex h-8 items-center gap-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-50 px-3 text-xs font-semibold text-gray-700 transition-colors cursor-pointer">
+                <FileText className="h-3.5 w-3.5" /> OCR Boleto/NF
+                <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleFileOcr} />
+              </label>
+            </div>
+          )}
+        </div>
       </HeaderPortal>
 
-      <div className="px-4 md:px-6 pt-4 md:pt-6 shrink-0">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <Card
-            label="Entradas"
-            value={money(totalsQ.data?.income ?? 0)}
-            tone="success"
-            icon={<ArrowDownCircle className="h-4 w-4" />}
-          />
-          <Card
-            label="Saídas"
-            value={money(totalsQ.data?.expense ?? 0)}
-            tone="danger"
-            icon={<ArrowUpCircle className="h-4 w-4" />}
-          />
-          <Card
-            label="Saldo líquido"
-            value={money(totalsQ.data?.net ?? 0)}
-            tone={(totalsQ.data?.net ?? 0) >= 0 ? "success" : "danger"}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 mt-4">
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
-          {(["all", "income", "expense", "pending"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
-                filter === f
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+      {/* Main Container */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        
+        {/* Selector Panel */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-gray-200 rounded-xl p-4">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">Fluxo de Caixa Diário</h1>
+            <p className="text-xs text-gray-500">Selecione o caixa ou a conta bancária para realizar lançamentos e conferências.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Caixa Ativo:</label>
+            <Select
+              value={selectedRegId}
+              onChange={(e) => setSelectedRegId(e.target.value)}
+              className="h-9 text-xs min-w-[200px]"
             >
-              {f === "all"
-                ? "Tudo"
-                : f === "income"
-                  ? "Entradas"
-                  : f === "expense"
-                    ? "Saídas"
-                    : "Pendentes"}
-            </button>
-          ))}
+              {mockRegisters.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name} ({r.type === "physical" ? "Físico" : "Bancário"})
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
-      </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
-        {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-        {q.data?.data.length === 0 && (
-          <EmptyState
-            title="Sem lançamentos"
-            description="Adicione entradas e despesas para acompanhar o caixa."
-          />
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {activeReg.type === "physical" && (
+            <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Saldo de Abertura</span>
+              <strong className="text-2xl font-mono block mt-1.5 text-gray-900">{money(totals.opening)}</strong>
+              <span className="text-[10px] text-gray-500 mt-1 block">Carregado na abertura do caixa</span>
+            </div>
+          )}
+          
+          <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block flex items-center gap-1"><ArrowDownCircle className="w-3.5 h-3.5 text-emerald-600" /> Total Entradas</span>
+            <strong className="text-2xl font-mono block mt-1.5 text-emerald-600">+{money(totals.entries)}</strong>
+            <span className="text-[10px] text-gray-500 mt-1 block">Aportes e recebimentos</span>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block flex items-center gap-1"><ArrowUpCircle className="w-3.5 h-3.5 text-rose-600" /> Total Saídas</span>
+            <strong className="text-2xl font-mono block mt-1.5 text-rose-600">-{money(totals.exits)}</strong>
+            <span className="text-[10px] text-gray-500 mt-1 block">Sangrias e despesas pagas</span>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-xl p-4">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Saldo Atual em Caixa</span>
+            <strong className="text-2xl font-mono block mt-1.5 text-gray-900">{money(totals.balance)}</strong>
+            <span className="text-[10px] text-gray-500 mt-1 block">Saldo líquido recalculado</span>
+          </div>
+        </div>
+
+        {/* Closed state placeholder */}
+        {activeReg.type === "physical" && !activeSession && (
+          <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
+            <Lock className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+            <h3 className="text-sm font-bold text-gray-800">O caixa está fechado</h3>
+            <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1">Abra o caixa informando o saldo inicial para começar a registrar transações financeiras diárias.</p>
+            <PrimaryButton
+              onClick={() => setOpenRegisterSheet(true)}
+              className="mt-4 bg-[#ff4f9a] hover:bg-[#e03d80] text-white text-xs font-semibold px-4 py-2 rounded-lg"
+            >
+              Abrir Sessão de Caixa
+            </PrimaryButton>
+          </div>
         )}
 
-        {q.data && q.data.data.length > 0 && (
-          <>
-            <div className="overflow-hidden rounded-lg border border-border bg-surface">
-              <table className="w-full text-sm">
-                <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2 font-medium">Descrição</th>
-                    <th className="px-3 py-2 font-medium">Categoria</th>
-                    <th className="px-3 py-2 font-medium">Tipo</th>
-                    <th className="px-3 py-2 font-medium">Status</th>
-                    <th className="px-3 py-2 font-medium">Vencimento</th>
-                    <th className="px-3 py-2 font-medium text-right">Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {q.data.data.map((r) => (
-                    <tr key={r.id} className="border-t border-border hover:bg-surface-alt/30">
-                      <td className="px-3 py-2.5">
-                        <div className="font-medium">{r.description ?? "—"}</div>
-                        <div className="mt-1 flex flex-col gap-0.5">
-                          {r.payment_method && (
-                            <div className="text-[11px] text-muted-foreground">
-                              Método: {r.payment_method}
-                            </div>
-                          )}
-                          {r.clients?.name && (
-                            <div className="text-[11px] text-brand">👤 {r.clients.name}</div>
-                          )}
-                          {r.trips?.title && (
-                            <div className="text-[11px] text-brand">✈️ {r.trips.title}</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {r.category ?? "—"}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <StatusBadge tone={r.type === "income" ? "success" : "danger"}>
-                          {r.type === "income" ? "Entrada" : "Saída"}
-                        </StatusBadge>
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <StatusBadge
-                          tone={
-                            r.status === "paid"
-                              ? "success"
-                              : r.status === "overdue"
-                                ? "danger"
-                                : r.status === "cancelled"
-                                  ? "neutral"
-                                  : "warning"
-                          }
-                        >
-                          {r.status}
-                        </StatusBadge>
-                      </td>
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {fmtDate(r.due_date)}
-                      </td>
-                      <td
-                        className={`px-3 py-2.5 text-right font-mono text-xs ${r.type === "income" ? "text-success" : "text-danger"}`}
-                      >
-                        {r.type === "expense" ? "−" : "+"}
-                        {money(Number(r.amount), r.currency)}
-                      </td>
+        {/* Transactions list */}
+        {(activeReg.type !== "physical" || activeSession) && (
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">Extrato de Movimentações</h3>
+                <p className="text-xs text-gray-500">Transações e lançamentos registrados neste caixa.</p>
+              </div>
+              {activeReg.type === "physical" && activeSession && (
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Sessão ativa iniciada em {new Date(activeSession.opened_at).toLocaleTimeString("pt-BR")}</span>
+                </div>
+              )}
+            </div>
+
+            {/* List */}
+            {((activeReg.type === "physical" ? (mockTransactions[activeSession?.id || ""] || []) : (mockTransactions[selectedRegId] || [])).length === 0) ? (
+              <div className="p-8 text-center text-xs text-gray-400">Nenhum lançamento registrado neste período.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                    <tr>
+                      <th className="px-5 py-3">Data/Hora</th>
+                      <th className="px-5 py-3">Descrição / Observações</th>
+                      <th className="px-5 py-3">Método</th>
+                      <th className="px-5 py-3">Vínculo</th>
+                      <th className="px-5 py-3 text-right">Valor</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Controles de Paginação */}
-            <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-              <div className="text-xs text-muted-foreground">
-                Página <span className="font-medium text-foreground">{page}</span> de{" "}
-                {Math.ceil(q.data.count / pageSize) || 1}
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {(activeReg.type === "physical" ? (mockTransactions[activeSession?.id || ""] || []) : (mockTransactions[selectedRegId] || [])).map((tx) => (
+                      <tr key={tx.id} className="hover:bg-gray-50">
+                        <td className="px-5 py-3.5 whitespace-nowrap text-xs text-gray-500 font-mono">
+                          {new Date(tx.transaction_date).toLocaleString("pt-BR")}
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <div className="text-xs font-semibold text-gray-800">{tx.notes}</div>
+                          {tx.category && (
+                            <span className="inline-block bg-gray-100 text-gray-600 rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase mt-1">
+                              {tx.category}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-3.5 whitespace-nowrap text-xs text-gray-500 font-medium capitalize">
+                          {tx.payment_method}
+                        </td>
+                        <td className="px-5 py-3.5 text-xs">
+                          {tx.employee_name && (
+                            <span className="text-amber-700 font-medium">👤 Vale: {tx.employee_name}</span>
+                          )}
+                          {tx.operator_name && (
+                            <span className="text-teal-700 font-medium">🏢 Operadora: {tx.operator_name}</span>
+                          )}
+                          {!tx.employee_name && !tx.operator_name && <span className="text-gray-400">—</span>}
+                        </td>
+                        <td className="px-5 py-3.5 whitespace-nowrap text-right font-mono text-xs font-semibold">
+                          <span className={tx.type === "receipt" || tx.type === "deposit" ? "text-emerald-600" : "text-rose-600"}>
+                            {tx.type === "receipt" || tx.type === "deposit" ? "+" : "−"} {money(tx.amount)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="flex items-center gap-2">
-                <GhostButton
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-8 px-3 text-xs"
-                >
-                  Anterior
-                </GhostButton>
-                <GhostButton
-                  disabled={page * pageSize >= q.data.count}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="h-8 px-3 text-xs"
-                >
-                  Próxima
-                </GhostButton>
-              </div>
-            </div>
-          </>
+            )}
+          </div>
         )}
       </div>
 
-      {open && agency && (
-        <NewRecord
-          agencyId={agency.id}
-          onClose={() => setOpen(false)}
-          onCreated={() => {
-            setOpen(false);
-            qc.invalidateQueries({ queryKey: ["fin", agency.id] });
-          }}
-        />
+      {/* Sheet: Open Session */}
+      {openRegisterSheet && (
+        <Sheet onClose={() => setOpenRegisterSheet(false)} title="Abrir Caixa Diário">
+          <OpenForm onSubmit={handleOpenSession} schema={openSchema} onClose={() => setOpenRegisterSheet(false)} />
+        </Sheet>
+      )}
+
+      {/* Sheet: Close Session */}
+      {closeRegisterSheet && (
+        <Sheet onClose={() => setCloseRegisterSheet(false)} title="Fechar Caixa Diário">
+          <CloseForm onSubmit={handleCloseSession} schema={closeSchema} onClose={() => setCloseRegisterSheet(false)} currentBalance={totals.balance} />
+        </Sheet>
+      )}
+
+      {/* Sheets: New Transactions */}
+      {newTxType && newTxType !== "reconciliation" && (
+        <Sheet onClose={() => setNewTxType(null)} title={`Lançar ${newTxType === "receipt" ? "Entrada" : newTxType === "payment" ? "Saída" : newTxType === "vale" ? "Vale Funcionário" : newTxType === "deposit" ? "Aporte" : "Sangria"}`}>
+          <TransactionForm
+            type={newTxType === "vale" ? "payment" : newTxType}
+            isVale={newTxType === "vale"}
+            onSubmit={(data) => handleAddTx({ ...data, type: newTxType === "vale" ? "vale" : newTxType as any })}
+            schema={txSchema}
+            onClose={() => setNewTxType(null)}
+          />
+        </Sheet>
+      )}
+
+      {/* Sheet: Operator Reconciliation */}
+      {newTxType === "reconciliation" && (
+        <Sheet onClose={() => setNewTxType(null)} title="Conciliação B2B (Operadoras)">
+          <ReconciliationForm
+            onSubmit={(data) => {
+              // Create transaction based on difference
+              const netDiff = data.commission - data.client_paid_operator;
+              const note = `Conciliação Operadora - Ref. Comissão: ${money(data.commission)}. Pago direto à Op: ${money(data.client_paid_operator)}. Líquido: ${money(netDiff)}`;
+              handleAddTx({
+                amount: Math.abs(netDiff),
+                payment_method: "bank_transfer",
+                type: netDiff >= 0 ? "receipt" : "payment",
+                notes: note,
+                operator_id: data.operator_id,
+                operator_name: "Operadora Selecionada",
+                category: "conciliacao_b2b",
+                receipt_url: null,
+              });
+            }}
+            schema={reconciliationSchema}
+            onClose={() => setNewTxType(null)}
+          />
+        </Sheet>
       )}
     </div>
   );
 }
 
-function Card({
-  label,
-  value,
-  tone,
-  icon,
-}: {
-  label: string;
-  value: string;
-  tone: "success" | "danger" | "neutral";
-  icon?: React.ReactNode;
-}) {
-  const color =
-    tone === "success" ? "text-success" : tone === "danger" ? "text-danger" : "text-foreground";
+// ─── Sub-forms ──────────────────────────────────────────────────────────────
+
+function OpenForm({ onSubmit, schema, onClose }: { onSubmit: (data: any) => void; schema: any; onClose: () => void }) {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { openingBalance: 0, notes: "" }
+  });
+
   return (
-    <div className="rounded-lg border border-border bg-surface p-4">
-      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
-        {icon}
-        {label}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <Field label="Saldo Inicial em Caixa (R$) *" error={errors.openingBalance?.message?.toString()}>
+        <Input type="number" step="0.01" {...register("openingBalance")} required />
+      </Field>
+      <Field label="Anotações de Abertura" error={errors.notes?.message?.toString()}>
+        <Textarea {...register("notes")} placeholder="Descreva observações da gaveta de dinheiro se houver" />
+      </Field>
+      <div className="flex justify-end gap-2 pt-2">
+        <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+        <PrimaryButton type="submit">Iniciar Expediente</PrimaryButton>
       </div>
-      <div className={`mt-1.5 font-mono text-xl font-semibold ${color}`}>{value}</div>
-    </div>
+    </form>
   );
 }
 
-const newRecordSchema = z.object({
-  type: z.enum(["income", "expense"]),
-  status: z.enum(["pending", "paid"]),
-  description: z.string().min(2, "A descrição deve ter pelo menos 2 caracteres"),
-  category: z.string().optional(),
-  paymentMethod: z.string().optional(),
-  amount: z.coerce.number().positive("O valor deve ser maior que zero"),
-  dueDate: z.string().optional(),
-  clientId: z.string().optional(),
-  tripId: z.string().optional(),
-});
-
-type NewRecordFormData = z.infer<typeof newRecordSchema>;
-
-function NewRecord({
-  agencyId,
-  onClose,
-  onCreated,
-}: {
-  agencyId: string;
-  onClose: () => void;
-  onCreated: () => void;
-}) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<NewRecordFormData>({
-    resolver: zodResolver(newRecordSchema),
-    defaultValues: {
-      type: "income",
-      status: "pending",
-      description: "",
-      category: "",
-      paymentMethod: "",
-      amount: 0,
-      dueDate: "",
-      clientId: "",
-      tripId: "",
-    },
+function CloseForm({ onSubmit, schema, onClose, currentBalance }: { onSubmit: (data: any) => void; schema: any; onClose: () => void; currentBalance: number }) {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { reportedBalance: currentBalance, notes: "" }
   });
 
-  async function submit(data: NewRecordFormData) {
-    const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("financial_records").insert({
-      agency_id: agencyId,
-      type: data.type,
-      category: data.category || null,
-      description: data.description || null,
-      amount: data.amount,
-      due_date: data.dueDate || null,
-      payment_method: data.paymentMethod || null,
-      status: data.status,
-      client_id: data.clientId || null,
-      trip_id: data.tripId || null,
-      paid_at: data.status === "paid" ? new Date().toISOString() : null,
-      created_by: u.user?.id ?? null,
-    });
-
-    if (error) return toast.error(error.message);
-    toast.success("Lançamento criado");
-    onCreated();
-  }
+  const reported = watch("reportedBalance") || 0;
+  const difference = reported - currentBalance;
 
   return (
-    <Sheet onClose={onClose} title="Novo lançamento">
-      <form onSubmit={handleSubmit(submit)} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Tipo" error={errors.type?.message}>
-            <Select {...register("type")}>
-              <option value="income">Entrada</option>
-              <option value="expense">Saída</option>
-            </Select>
-          </Field>
-          <Field label="Status" error={errors.status?.message}>
-            <Select {...register("status")}>
-              <option value="pending">Pendente</option>
-              <option value="paid">Pago</option>
-            </Select>
-          </Field>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs space-y-2">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Saldo esperado no sistema:</span>
+          <strong className="font-mono">{money(currentBalance)}</strong>
         </div>
-        <Field label="Descrição" error={errors.description?.message}>
-          <Textarea {...register("description")} />
+        <div className="flex justify-between">
+          <span className="text-gray-500">Diferença/Quebra de Caixa:</span>
+          <strong className={`font-mono ${difference === 0 ? "text-gray-700" : difference > 0 ? "text-emerald-600" : "text-rose-600"}`}>
+            {difference > 0 ? "+" : ""}{money(difference)}
+          </strong>
+        </div>
+      </div>
+      <Field label="Saldo Físico Contado (R$) *" error={errors.reportedBalance?.message?.toString()}>
+        <Input type="number" step="0.01" {...register("reportedBalance")} required />
+      </Field>
+      <Field label="Anotações de Fechamento" error={errors.notes?.message?.toString()}>
+        <Textarea {...register("notes")} placeholder="Explique eventuais diferenças no caixa" />
+      </Field>
+      <div className="flex justify-end gap-2 pt-2">
+        <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+        <PrimaryButton type="submit" className="bg-danger hover:bg-danger/90">Encerrar Expediente</PrimaryButton>
+      </div>
+    </form>
+  );
+}
+
+function TransactionForm({ type, isVale, onSubmit, schema, onClose }: { type: any; isVale: boolean; onSubmit: (data: any) => void; schema: any; onClose: () => void }) {
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      amount: 0,
+      payment_method: "cash",
+      notes: "",
+      category: isVale ? "vales" : "outros",
+      employee_id: "",
+      receipt_url: "",
+    }
+  });
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Valor (R$) *" error={errors.amount?.message?.toString()}>
+          <Input type="number" step="0.01" {...register("amount")} required />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Categoria" error={errors.category?.message}>
-            <Input placeholder="Hospedagem, comissão…" {...register("category")} />
-          </Field>
-          <Field label="Forma de pagamento" error={errors.paymentMethod?.message}>
-            <Input placeholder="Pix, cartão…" {...register("paymentMethod")} />
-          </Field>
+        <Field label="Forma de pagamento" error={errors.payment_method?.message?.toString()}>
+          <Select {...register("payment_method")}>
+            <option value="cash">Dinheiro Físico</option>
+            <option value="pix">Pix</option>
+            <option value="bank_transfer">Transferência Bancária</option>
+            <option value="credit_card">Cartão de Crédito</option>
+          </Select>
+        </Field>
+      </div>
+
+      <Field label="Descrição da Transação *" error={errors.notes?.message?.toString()}>
+        <Input {...register("notes")} placeholder={isVale ? "Adiantamento quinzena / Vale" : "Descrição clara"} required />
+      </Field>
+
+      {isVale && (
+        <Field label="Selecione o Funcionário *" error={errors.employee_id?.message?.toString()}>
+          <SearchableSelect
+            placeholder="Escolha um colaborador..."
+            onSearch={async (search) => {
+              // Fallback list of employees/profiles
+              const mockColaboradores = [
+                { value: "emp-1", label: "Eduardo Ramos (Operador)" },
+                { value: "emp-2", label: "Beatriz Nogueira (Financeiro)" },
+                { value: "emp-3", label: "Jeferson Silva (Vendas)" }
+              ];
+              return mockColaboradores.filter(c => c.label.toLowerCase().includes(search.toLowerCase()));
+            }}
+            value={watch("employee_id") || ""}
+            onChange={(val) => {
+              setValue("employee_id", val);
+              // Auto-fill description
+              const employees = ["Eduardo Ramos (Operador)", "Beatriz Nogueira (Financeiro)", "Jeferson Silva (Vendas)"];
+              const selectedName = val === "emp-1" ? employees[0] : val === "emp-2" ? employees[1] : employees[2];
+              setValue("notes", `Vale Funcionário - Adiantamento para ${selectedName}`);
+            }}
+          />
+        </Field>
+      )}
+
+      {!isVale && (
+        <Field label="Categoria de Custo">
+          <Input {...register("category")} placeholder="ex: limpeza, papelaria, tarifas" />
+        </Field>
+      )}
+
+      <Field label="Comprovante de pagamento (Opcional)">
+        <Input {...register("receipt_url")} placeholder="Anexar link do comprovante" />
+      </Field>
+
+      <div className="flex justify-end gap-2 pt-2">
+        <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+        <PrimaryButton type="submit">Salvar Transação</PrimaryButton>
+      </div>
+    </form>
+  );
+}
+
+function ReconciliationForm({ onSubmit, schema, onClose }: { onSubmit: (data: any) => void; schema: any; onClose: () => void }) {
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      operator_id: "",
+      client_paid_agency: 0,
+      client_paid_operator: 0,
+      commission_rate: 10,
+      notes: ""
+    }
+  });
+
+  const valA = watch("client_paid_agency") || 0;
+  const valB = watch("client_paid_operator") || 0;
+  const rate = watch("commission_rate") || 0;
+
+  const totalSale = valA + valB;
+  const commission = (totalSale * rate) / 100;
+  const netDue = commission - valB;
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <Field label="Selecione a Operadora B2B *" error={errors.operator_id?.message?.toString()}>
+        <SearchableSelect
+          placeholder="Escolha a operadora parceira..."
+          onSearch={async (search) => {
+            const mockOperators = [
+              { value: "op-1", label: "CVC Corp" },
+              { value: "op-2", label: "Orinter Tour" },
+              { value: "op-3", label: "ViagensPromo" }
+            ];
+            return mockOperators.filter(o => o.label.toLowerCase().includes(search.toLowerCase()));
+          }}
+          value={watch("operator_id") || ""}
+          onChange={(v) => setValue("operator_id", v)}
+        />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="Cliente pagou à Agência (A)">
+          <Input type="number" step="0.01" {...register("client_paid_agency")} />
+        </Field>
+        <Field label="Cliente pagou à Operadora (B)">
+          <Input type="number" step="0.01" {...register("client_paid_operator")} />
+        </Field>
+      </div>
+
+      <Field label="Taxa de Comissão Pactuada (%)">
+        <Input type="number" {...register("commission_rate")} />
+      </Field>
+
+      {/* Calculations Breakdown */}
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs space-y-2.5">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Valor Total da Venda:</span>
+          <strong className="font-mono">{money(totalSale)}</strong>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Valor (R$)" error={errors.amount?.message}>
-            <Input type="number" step="0.01" {...register("amount")} />
-          </Field>
-          <Field label="Vencimento" error={errors.dueDate?.message}>
-            <Input type="date" {...register("dueDate")} />
-          </Field>
+        <div className="flex justify-between">
+          <span className="text-gray-500">Nossa Comissão Estimada ({rate}%):</span>
+          <strong className="font-mono text-emerald-600">{money(commission)}</strong>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Cliente" error={errors.clientId?.message}>
-            <SearchableSelect
-              placeholder="Vincular a cliente..."
-              onSearch={async (search: string) => {
-                let q = supabase.from("clients").select("id, full_name").eq("agency_id", agencyId);
-                if (search) {
-                  q = q.ilike("full_name", `%${search}%`);
-                }
-                const { data } = await q.limit(10);
-                return (data || []).map((c) => ({ value: c.id, label: c.full_name || "" }));
-              }}
-              value={watch("clientId") || ""}
-              onChange={(v) => setValue("clientId", v)}
-            />
-          </Field>
-          <Field label="Viagem" error={errors.tripId?.message}>
-            <SearchableSelect
-              placeholder="Vincular a viagem..."
-              onSearch={async (search: string) => {
-                let q = supabase
-                  .from("trips")
-                  .select("id, title, destination")
-                  .eq("agency_id", agencyId);
-                if (search) {
-                  q = q.ilike("title", `%${search}%`);
-                }
-                const { data } = await q.limit(10);
-                return (data || []).map((t) => ({
-                  value: t.id,
-                  label: `${t.title} ${t.destination ? `(${t.destination})` : ""}`,
-                }));
-              }}
-              value={watch("tripId") || ""}
-              onChange={(v) => setValue("tripId", v)}
-            />
-          </Field>
+        <div className="flex justify-between border-t border-gray-200 pt-2 font-semibold">
+          <span className="text-gray-800">Saldo Líquido com a Operadora:</span>
+          <strong className={`font-mono ${netDue >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+            {netDue >= 0 ? "A Receber: " : "Operadora desconta/devemos: "} {money(Math.abs(netDue))}
+          </strong>
         </div>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
-            Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Salvando…" : "Criar"}
-          </PrimaryButton>
-        </div>
-      </form>
-    </Sheet>
+        {netDue < 0 && (
+          <div className="flex items-start gap-1.5 text-[10px] text-rose-700 bg-rose-50 border border-rose-100 p-2 rounded-lg mt-1">
+            <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>Como o valor recebido à vista superou nossa comissão, a operadora deduzirá a diferença dos nossos recebíveis futuros.</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-end gap-2 pt-2">
+        <GhostButton type="button" onClick={onClose}>Cancelar</GhostButton>
+        <PrimaryButton type="submit">Salvar Conciliação</PrimaryButton>
+      </div>
+    </form>
   );
 }

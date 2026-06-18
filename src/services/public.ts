@@ -289,6 +289,7 @@ export async function enrollPublicTour(
       phone: values.phone || null,
       destination: `Interesse: ${destination}`,
       estimated_value: unitPrice * pax,
+      source: (values as any).source || "Portal Público",
     });
   }
 

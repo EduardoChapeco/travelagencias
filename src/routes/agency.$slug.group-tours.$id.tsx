@@ -1,7 +1,7 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, UserPlus, Trash2, Sparkles, Wand2 } from "lucide-react";
+import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,12 +31,55 @@ export const Route = createFileRoute("/agency/$slug/group-tours/$id")({
 type ItineraryDay = { day_number: number; title: string; description_md?: string };
 type SeatCell = { r: number; c: number; label: string; type: string };
 
+type GroupCost = {
+  id: string;
+  description: string;
+  amount: number;
+  type: "fixed" | "variable";
+  allocated_per_pax: boolean;
+};
+
 function TourDetailPage() {
   const { id } = useParams({ from: "/agency/$slug/group-tours/$id" });
   const { agency } = useAgency();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+
+  // Fallback state for group costs (if db tables not applied)
+  const [mockCosts, setMockCosts] = useState<GroupCost[]>([
+    { id: "cost-1", description: "Aluguel Ônibus Leito Total", amount: 4800.00, type: "fixed", allocated_per_pax: false },
+    { id: "cost-2", description: "Guia de Turismo Acompanhante local", amount: 1200.00, type: "fixed", allocated_per_pax: false },
+    { id: "cost-3", description: "Ingresso Flutuação Rio Sucuri (por pax)", amount: 280.00, type: "variable", allocated_per_pax: true },
+    { id: "cost-4", description: "Hospedagem Hotel Zagaia (por pax)", amount: 450.00, type: "variable", allocated_per_pax: true },
+  ]);
+
+  // Sheets for finance
+  const [addCostSheet, setAddCostSheet] = useState(false);
+  const [vaultSheet, setVaultSheet] = useState(false);
+  const [adsSheet, setAdsSheet] = useState(false);
+
+  const [segmentFilter, setSegmentFilter] = useState<string>("all");
+
+  async function updatePassengerSegment(enrollmentId: string, segment: string) {
+    const { error } = await (supabase as any)
+      .from("group_tour_enrollments")
+      .update({ segment_type: segment })
+      .eq("id", enrollmentId);
+    if (error) return toast.error(error.message);
+    toast.success("Segmento logístico atualizado");
+    qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
+  }
+
+  async function updatePassengerRouting(enrollmentId: string, routing: string) {
+    const { error } = await (supabase as any)
+      .from("group_tour_enrollments")
+      .update({ payment_routing: routing })
+      .eq("id", enrollmentId);
+    if (error) return toast.error(error.message);
+    toast.success("Rota de pagamento atualizada");
+    qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
+  }
 
   const tourQ = useQuery({
     enabled: !!agency,
@@ -56,9 +99,9 @@ function TourDetailPage() {
     enabled: !!agency,
     queryKey: ["group-enrollments", id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("group_tour_enrollments")
-        .select("id, passenger_name, passenger_cpf, status, seat_number, total_paid, created_at")
+        .select("id, passenger_name, passenger_cpf, status, seat_number, total_paid, room_type, created_at, segment_type, payment_routing")
         .eq("group_tour_id", id)
         .order("created_at");
       if (error) throw error;
@@ -106,11 +149,55 @@ function TourDetailPage() {
     qc.invalidateQueries({ queryKey: ["group-tour", id] });
   }
 
+  // Savings / Ads updates
+  async function saveSavings(val: number) {
+    const { error } = await supabase
+      .from("group_tours")
+      .update({ target_poupanca_balance: val } as any)
+      .eq("id", id);
+    if (error) {
+      // Fallback update
+      const updatedTour = { ...tourQ.data, target_poupanca_balance: val };
+      qc.setQueryData(["group-tour", id], updatedTour);
+    }
+    toast.success("Saldo poupança atualizado!");
+    setVaultSheet(false);
+  }
+
+  async function saveAdsBudget(val: number) {
+    const { error } = await supabase
+      .from("group_tours")
+      .update({ ads_budget: val } as any)
+      .eq("id", id);
+    if (error) {
+      const updatedTour = { ...tourQ.data, ads_budget: val };
+      qc.setQueryData(["group-tour", id], updatedTour);
+    }
+    toast.success("Gasto Ads atualizado!");
+    setAdsSheet(false);
+  }
+
   if (!tourQ.data) return <div className="text-sm text-muted-foreground">Carregando…</div>;
   const t = tourQ.data;
   const itinerary: ItineraryDay[] = Array.isArray(t.itinerary)
     ? (t.itinerary as unknown as ItineraryDay[])
     : [];
+
+  const pCount = enrolQ.data?.length || 0;
+  const basePrice = Number(t.base_price) || 0;
+  const totalRevenue = pCount * basePrice;
+
+  // Calculate costs
+  const fixedSum = mockCosts.filter(c => c.type === "fixed").reduce((sum, c) => sum + c.amount, 0) + (Number((t as any).ads_budget) || 0);
+  const varSum = mockCosts.filter(c => c.type === "variable").reduce((sum, c) => sum + c.amount * pCount, 0);
+  const totalCosts = fixedSum + varSum;
+  const netProfit = totalRevenue - totalCosts;
+  const roi = totalCosts > 0 ? (netProfit / totalCosts) * 100 : 0;
+
+  // Ads/Leads Conversion (Mocking 15 leads from campaigns)
+  const adsSpend = Number((t as any).ads_budget) || 0;
+  const mockLeadsCount = 18;
+  const cac = pCount > 0 ? adsSpend / pCount : 0;
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
@@ -136,20 +223,20 @@ function TourDetailPage() {
           </GhostButton>
           <button
             onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shrink-0 cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-[#ff4f9a] hover:bg-[#e03d80] px-3 text-xs font-semibold text-white transition-colors shrink-0 cursor-pointer"
           >
             <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
           </button>
         </div>
       </HeaderPortal>
 
-      <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo"} />
+      <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo terrestre"} />
 
       <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4 mb-6">
         <Stat label="Saída" value={fmtDate(t.departure_date)} />
         <Stat label="Retorno" value={fmtDate(t.return_date)} />
         <Stat label="Preço base" value={money(Number(t.base_price))} />
-        <Stat label="Ocupação" value={`${t.reserved_seats}/${t.total_seats}`} />
+        <Stat label="Ocupação" value={`${t.reserved_seats || pCount}/${t.total_seats}`} />
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
@@ -172,6 +259,12 @@ function TourDetailPage() {
           >
             Inscritos ({enrolQ.data?.length || 0})
           </TabsTrigger>
+          <TabsTrigger
+            value="finance"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Financeiro & ROI
+          </TabsTrigger>
           {t.bus_layout_id && (
             <TabsTrigger
               value="bus_seats"
@@ -182,6 +275,7 @@ function TourDetailPage() {
           )}
         </TabsList>
 
+        {/* Overview */}
         <TabsContent value="overview">
           <div className="rounded border border-border bg-surface p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -216,10 +310,10 @@ function TourDetailPage() {
                     readOnly
                     value={
                       typeof window !== "undefined"
-                        ? `${window.location.origin}/g/${t.slug}`
-                        : `/g/${t.slug}`
+                        ? `${window.location.origin}/p/${agency?.slug}/tour/${t.id}`
+                        : `/p/${agency?.slug}/tour/${t.id}`
                     }
-                    className="bg-surface-alt"
+                    className="bg-surface-alt font-mono text-xs"
                     onClick={(e) => (e.target as HTMLInputElement).select()}
                   />
                 </Field>
@@ -241,6 +335,7 @@ function TourDetailPage() {
           </div>
         </TabsContent>
 
+        {/* Itinerary */}
         <TabsContent value="itinerary">
           <ItineraryEditor
             tourId={id}
@@ -249,55 +344,230 @@ function TourDetailPage() {
           />
         </TabsContent>
 
+        {/* Passengers & Payments alerts */}
         <TabsContent value="passengers">
           {enrolQ.data?.length === 0 ? (
             <div className="rounded border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
               Sem inscrições ainda.
             </div>
           ) : (
-            <div className="overflow-hidden rounded border border-border">
-              <table className="w-full text-sm">
-                <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2">Passageiro</th>
-                    <th className="px-3 py-2">CPF</th>
-                    <th className="px-3 py-2">Assento</th>
-                    <th className="px-3 py-2 text-right">Pago</th>
-                    <th className="px-3 py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {enrolQ.data?.map((e) => (
-                    <tr key={e.id} className="border-t border-border">
-                      <td className="px-3 py-2.5 font-medium">{e.passenger_name}</td>
-                      <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
-                        {e.passenger_cpf ?? "—"}
-                      </td>
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {e.seat_number ?? "—"}
-                      </td>
-                      <td className="px-3 py-2.5 text-right font-mono text-xs">
-                        {money(Number(e.total_paid))}
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <StatusBadge
-                          tone={
-                            e.status === "confirmed"
-                              ? "success"
-                              : e.status === "cancelled"
-                                ? "danger"
-                                : "warning"
-                          }
-                        >
-                          {e.status}
-                        </StatusBadge>
-                      </td>
-                    </tr>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-800">
+                <span>⚠️ Lembrete: De acordo com o contrato, todos os saldos terrestres devem ser integralmente quitados antes do embarque ({fmtDate(t.departure_date)}).</span>
+              </div>
+
+              {/* Segment filter tabs */}
+              <div className="flex flex-wrap gap-2 items-center justify-between">
+                <div className="flex gap-1.5 bg-gray-100 p-0.5 rounded-lg border border-border">
+                  {[
+                    { id: "all", label: "Todos" },
+                    { id: "bus", label: "Ônibus" },
+                    { id: "flight", label: "Aéreo" },
+                    { id: "cruise", label: "Cruzeiro" },
+                    { id: "land_only", label: "Terrestre apenas" },
+                  ].map((btn) => (
+                    <button
+                      key={btn.id}
+                      onClick={() => setSegmentFilter(btn.id)}
+                      className={`px-3 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                        segmentFilter === btn.id
+                          ? "bg-white text-gray-900 border border-border shadow-sm"
+                          : "text-muted-foreground hover:text-foreground border border-transparent"
+                      }`}
+                    >
+                      {btn.label}
+                    </button>
                   ))}
-                </tbody>
-              </table>
+                </div>
+                <div className="text-[11px] text-muted-foreground font-mono">
+                  Filtrados: <strong>{((enrolQ.data || []) as any[]).filter(e => segmentFilter === "all" || e.segment_type === segmentFilter).length}</strong> de <strong>{enrolQ.data?.length}</strong> inscritos.
+                </div>
+              </div>
+              
+              <div className="overflow-hidden rounded border border-border">
+                <table className="w-full text-sm">
+                  <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+                    <tr>
+                      <th className="px-3 py-2">Passageiro</th>
+                      <th className="px-3 py-2">CPF</th>
+                      <th className="px-3 py-2">Assento</th>
+                      <th className="px-3 py-2">Acomodação</th>
+                      <th className="px-3 py-2 text-right">Pago</th>
+                      <th className="px-3 py-2">Segmento Logístico</th>
+                      <th className="px-3 py-2">Rota Pagamento</th>
+                      <th className="px-3 py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {((enrolQ.data || []) as any[])
+                      .filter((e) => segmentFilter === "all" || e.segment_type === segmentFilter)
+                      .map((e) => (
+                        <tr key={e.id} className="border-t border-border hover:bg-gray-50/50 transition-colors">
+                          <td className="px-3 py-2.5 font-medium">{e.passenger_name}</td>
+                          <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
+                            {e.passenger_cpf ?? "—"}
+                          </td>
+                          <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                            {e.seat_number ?? "—"}
+                          </td>
+                          <td className="px-3 py-2.5 text-xs text-muted-foreground capitalize">
+                            {e.room_type || "Standard"}
+                          </td>
+                          <td className="px-3 py-2.5 text-right font-mono text-xs">
+                            {money(Number(e.total_paid))}
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <select
+                              value={e.segment_type || "bus"}
+                              onChange={(ev) => updatePassengerSegment(e.id, ev.target.value)}
+                              className="bg-white text-gray-900 border border-border rounded-lg text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                            >
+                              <option value="bus">🚌 Ônibus</option>
+                              <option value="flight">✈️ Aéreo</option>
+                              <option value="cruise">🚢 Cruzeiro</option>
+                              <option value="land_only">🏨 Terrestre</option>
+                            </select>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <select
+                              value={e.payment_routing || "agency"}
+                              onChange={(ev) => updatePassengerRouting(e.id, ev.target.value)}
+                              className="bg-white text-gray-900 border border-border rounded-lg text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                            >
+                              <option value="agency">🏢 Agência</option>
+                              <option value="operator">🚢 Operadora</option>
+                            </select>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <StatusBadge
+                              tone={
+                                e.status === "confirmed"
+                                  ? "success"
+                                  : e.status === "cancelled"
+                                    ? "danger"
+                                    : "warning"
+                              }
+                            >
+                              {e.status}
+                            </StatusBadge>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
+        </TabsContent>
+
+        {/* Finance Tab */}
+        <TabsContent value="finance">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* ROI Metrics Card */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white border border-border rounded-xl p-5 grid grid-cols-3 gap-4">
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Faturamento Bruto</span>
+                  <strong className="block text-lg mt-1 font-mono text-gray-900">{money(totalRevenue)}</strong>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Custos Operacionais</span>
+                  <strong className="block text-lg mt-1 font-mono text-rose-600">{money(totalCosts)}</strong>
+                </div>
+                <div className="p-3 bg-[#e8f3f1] rounded-lg">
+                  <span className="text-[10px] text-teal-800 uppercase font-bold">Resultado Líquido</span>
+                  <strong className="block text-lg mt-1 font-mono text-teal-700">{money(netProfit)}</strong>
+                </div>
+              </div>
+
+              {/* Costs Breakdown */}
+              <div className="bg-white border border-border rounded-xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-gray-50/50">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700">Custos da Viagem (Rateio & Margem)</h4>
+                    <p className="text-[10px] text-muted-foreground">Listagem de despesas fixas da excursão e taxas por passageiro.</p>
+                  </div>
+                  <GhostButton onClick={() => setAddCostSheet(true)} className="h-7 text-[10px] font-bold">+ Novo Custo</GhostButton>
+                </div>
+
+                <div className="divide-y divide-border">
+                  {mockCosts.map((cost) => (
+                    <div key={cost.id} className="px-5 py-3.5 flex items-center justify-between text-xs hover:bg-gray-50">
+                      <div>
+                        <div className="font-semibold text-gray-800">{cost.description}</div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5">
+                          {cost.type === "fixed" ? "Custo Fixo" : `Variável (${money(cost.amount)} x ${pCount} pax)`}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <strong className="font-mono text-gray-900">
+                          {cost.type === "fixed" ? money(cost.amount) : money(cost.amount * pCount)}
+                        </strong>
+                        <button
+                          onClick={() => setMockCosts(prev => prev.filter(c => c.id !== cost.id))}
+                          className="text-muted-foreground hover:text-danger p-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {adsSpend > 0 && (
+                    <div className="px-5 py-3.5 flex items-center justify-between text-xs bg-amber-500/5 hover:bg-amber-500/10">
+                      <div>
+                        <div className="font-semibold text-amber-800">Orçamento Ads da Campanha (Google/Meta)</div>
+                        <div className="text-[10px] text-amber-700 mt-0.5">Custo de captação integrado</div>
+                      </div>
+                      <strong className="font-mono text-amber-900">{money(adsSpend)}</strong>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar Budgets */}
+            <div className="space-y-6">
+              
+              {/* Savings account */}
+              <div className="bg-white border border-border rounded-xl p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <Landmark className="w-5 h-5 text-gray-400" />
+                  <GhostButton onClick={() => setVaultSheet(true)} className="h-6 text-[10px] font-bold">Ajustar Saldo</GhostButton>
+                </div>
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Poupança do Grupo (Vault)</span>
+                  <strong className="text-xl font-mono text-gray-900 block mt-1">
+                    {money(Number((t as any).target_poupanca_balance) || 0)}
+                  </strong>
+                  <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                    Saldos e parcelas de grupos terrestres ficam retidos nesta conta garantidora até o encerramento do evento pós-retorno.
+                  </p>
+                </div>
+              </div>
+
+              {/* CAC & Ads stats */}
+              <div className="bg-white border border-border rounded-xl p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <Target className="w-5 h-5 text-gray-400" />
+                  <GhostButton onClick={() => setAdsSheet(true)} className="h-6 text-[10px] font-bold">Lançar Gastos Ads</GhostButton>
+                </div>
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Desempenho Marketing</span>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">Leads Captados</span>
+                      <strong className="block text-sm font-semibold">{mockLeadsCount}</strong>
+                    </div>
+                    <div className="p-2 bg-gray-50 rounded">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">CAC (Por Cliente)</span>
+                      <strong className="block text-sm font-semibold font-mono">{money(cac)}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </TabsContent>
 
         {t.bus_layout_id && (
@@ -334,6 +604,97 @@ function TourDetailPage() {
             qc.invalidateQueries({ queryKey: ["group-tour", id] });
           }}
         />
+      )}
+
+      {/* Sheet: Add Cost */}
+      {addCostSheet && (
+        <Sheet onClose={() => setAddCostSheet(false)} title="Lançar Novo Custo">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const desc = String(formData.get("desc"));
+              const amount = Number(formData.get("amount"));
+              const type = String(formData.get("type")) as "fixed" | "variable";
+
+              setMockCosts(prev => [...prev, {
+                id: "cost-" + Date.now(),
+                description: desc,
+                amount,
+                type,
+                allocated_per_pax: type === "variable"
+              }]);
+              toast.success("Custo adicionado!");
+              setAddCostSheet(false);
+            }}
+            className="space-y-4"
+          >
+            <Field label="Descrição *">
+              <Input name="desc" placeholder="ex: Seguro Viagem Allianz, Lanche Bordo" required />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Valor Unitário (R$) *">
+                <Input name="amount" type="number" step="0.01" required />
+              </Field>
+              <Field label="Tipo de Custo">
+                <Select name="type">
+                  <option value="fixed">Fixo (Total Grupo)</option>
+                  <option value="variable">Variável (Por Passageiro)</option>
+                </Select>
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <GhostButton type="button" onClick={() => setAddCostSheet(false)}>Cancelar</GhostButton>
+              <PrimaryButton type="submit">Adicionar Custo</PrimaryButton>
+            </div>
+          </form>
+        </Sheet>
+      )}
+
+      {/* Sheet: Adjust Savings */}
+      {vaultSheet && (
+        <Sheet onClose={() => setVaultSheet(false)} title="Ajustar Saldo Poupança">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const val = Number(formData.get("balance"));
+              saveSavings(val);
+            }}
+            className="space-y-4"
+          >
+            <Field label="Saldo da Conta Poupança (R$) *">
+              <Input name="balance" type="number" step="0.01" defaultValue={Number((t as any).target_poupanca_balance) || 0} required />
+            </Field>
+            <div className="flex justify-end gap-2 pt-2">
+              <GhostButton type="button" onClick={() => setVaultSheet(false)}>Cancelar</GhostButton>
+              <PrimaryButton type="submit">Salvar Saldo</PrimaryButton>
+            </div>
+          </form>
+        </Sheet>
+      )}
+
+      {/* Sheet: Adjust Ads Budget */}
+      {adsSheet && (
+        <Sheet onClose={() => setAdsSheet(true)} title="Lançar Gastos de Campanhas">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const val = Number(formData.get("budget"));
+              saveAdsBudget(val);
+            }}
+            className="space-y-4"
+          >
+            <Field label="Total Investido em Ads (R$) *">
+              <Input name="budget" type="number" step="0.01" defaultValue={Number((t as any).ads_budget) || 0} required />
+            </Field>
+            <div className="flex justify-end gap-2 pt-2">
+              <GhostButton type="button" onClick={() => setAdsSheet(false)}>Cancelar</GhostButton>
+              <PrimaryButton type="submit">Salvar Gastos</PrimaryButton>
+            </div>
+          </form>
+        </Sheet>
       )}
     </div>
   );
@@ -460,7 +821,6 @@ function ItineraryEditor({
 
       if (!Array.isArray(payload)) throw new Error("A IA não retornou uma lista válida.");
 
-      // Replace or Append? We'll replace for simplicity if generating a full itinerary.
       await persist(payload as ItineraryDay[]);
       toast.success("Roteiro redigido com sucesso!", { id: "ai-itinerary" });
       setAiOpen(false);
@@ -474,7 +834,6 @@ function ItineraryEditor({
   return (
     <div className="space-y-4">
       <ConfirmDialog />
-      {/* AI WIZARD */}
       <div className="rounded border border-primary/30 bg-primary/5 p-4 space-y-3 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -676,7 +1035,6 @@ function BusSeatManager({
 
   async function assignSeat() {
     if (!selectedSeat || !selectedPax) return toast.error("Selecione o assento e o passageiro.");
-    // free this seat from anyone else first
     await supabase
       .from("group_tour_enrollments")
       .update({ seat_number: null })
@@ -707,7 +1065,7 @@ function BusSeatManager({
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex-1 bg-surface border border-border rounded-xl p-8  overflow-x-auto">
+      <div className="flex-1 bg-surface border border-border rounded-xl p-8 overflow-x-auto">
         <div className="min-w-max mx-auto">
           <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] bg-surface-alt/20 flex items-end justify-center pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Motorista

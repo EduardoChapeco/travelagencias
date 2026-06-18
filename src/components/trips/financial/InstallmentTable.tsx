@@ -41,7 +41,7 @@ export function InstallmentTable({
           <tr key={inst.id} className="border-b border-border/50 hover:bg-surface-alt/40">
             <td className="py-2 font-mono pr-3 text-foreground">#{inst.number}</td>
             <td className="py-2 pr-3 text-muted-foreground font-mono">{fmtDate(inst.due_date)}</td>
-            <td className="py-2 pr-3">
+            <td className="py-2 pr-3 flex flex-col gap-0.5">
               <StatusBadge tone={INST_STATUS_TONE[inst.status] ?? "neutral"}>
                 {inst.status === "paid"
                   ? "Pago"
@@ -51,6 +51,11 @@ export function InstallmentTable({
                       ? "Isento"
                       : "Pendente"}
               </StatusBadge>
+              {inst.status !== "paid" && inst.receipt_status === "pending" && (
+                <span className="text-[9px] text-amber-700 bg-amber-50 px-1 py-0.5 rounded font-semibold w-fit">
+                  Pendente Conciliação
+                </span>
+              )}
             </td>
             <td className="py-2 pr-3 text-muted-foreground">
               {inst.paid_at ? fmtDate(inst.paid_at) : "—"}
@@ -64,16 +69,26 @@ export function InstallmentTable({
               )}
             </td>
             <td className="py-2 text-right">
+              {inst.status !== "paid" && inst.receipt_url && (
+                <a
+                  href={inst.receipt_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block mr-2 text-[10px] text-brand hover:underline font-bold align-middle"
+                >
+                  Ver Recibo
+                </a>
+              )}
               {inst.status === "pending" || inst.status === "late" ? (
                 <button
                   onClick={() => onMarkPaid(inst.id)}
-                  className="flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium text-success hover:bg-success-bg cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium text-success hover:bg-success-bg cursor-pointer align-middle"
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
                   Pago
                 </button>
               ) : (
-                <CheckCircle className="h-3.5 w-3.5 text-success mx-auto" />
+                <CheckCircle className="h-3.5 w-3.5 text-success mx-auto align-middle" />
               )}
             </td>
           </tr>

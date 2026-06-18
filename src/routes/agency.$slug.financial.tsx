@@ -31,9 +31,10 @@ function FinancialLayout() {
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
 
   const tabs = [
-    { to: "/agency/$slug/financial/cash", label: "Fluxo de caixa" },
-    { to: "/agency/$slug/financial/dre", label: "DRE" },
-    { to: "/agency/$slug/financial/invoices", label: "Faturas" },
+    { to: "/agency/$slug/financial/cash" as any, label: "Fluxo de caixa" },
+    { to: "/agency/$slug/financial/reconciliation" as any, label: "Conciliação diária" },
+    { to: "/agency/$slug/financial/dre" as any, label: "DRE" },
+    { to: "/agency/$slug/financial/invoices" as any, label: "Faturas" },
   ] as const;
 
   return (
@@ -67,7 +68,7 @@ function FinancialLayout() {
             <Link
               key={t.to}
               to={t.to}
-              params={{ slug }}
+              params={{ slug } as any}
               className={`-mb-px border-b-2 px-3 py-2.5 text-xs font-semibold transition shrink-0 ${
                 active
                   ? "border-foreground text-foreground"
