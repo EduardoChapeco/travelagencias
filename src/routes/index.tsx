@@ -129,7 +129,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-hidden font-sans">
       {/* ── Background Grid Accent (Editorial style instead of neon glows) ────────────────────────────── */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.045] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
       {/* ── Navbar ────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
@@ -232,7 +232,7 @@ function Landing() {
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center rounded-md border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
+                className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
               >
                 <div className="text-4xl font-extrabold text-foreground tracking-tight group-hover:scale-105 transition-transform duration-300">
                   {s.value}
@@ -267,7 +267,7 @@ function Landing() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* O Jeito Doloroso */}
-            <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
+            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
               <h3 className="text-base font-bold text-danger flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 shrink-0" />O Jeito Lento (Word, PDFs e WhatsApp
                 Solto)
@@ -312,7 +312,7 @@ function Landing() {
             </div>
 
             {/* O Jeito TravelOS */}
-            <div className="rounded-md border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
+            <div className="rounded-xl border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>
@@ -384,13 +384,13 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                    "group relative overflow-hidden rounded-md border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
+                    "group relative overflow-hidden rounded-xl border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
                     (i === 0 || i === 3) &&
                       "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
                   )}
                 >
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-sm bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Icon className="h-5 w-5" strokeWidth={2} />
                     </div>
 
@@ -432,7 +432,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -459,7 +459,7 @@ function Landing() {
               </div>
             </div>
 
-            <div className="rounded-md border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -490,12 +490,15 @@ function Landing() {
       </section>
 
       {/* ── CTA Final Premium ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-primary py-24 text-center border-t border-border">
+      <section className="relative overflow-hidden bg-surface-alt py-24 text-center border-t border-border">
+        {/* Editorial Dot Matrix Accent */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
+
         <div className="relative z-10 mx-auto max-w-4xl px-6">
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mb-6 leading-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">
             Chega de planilhas. Comece a lucrar mais com sua agência.
           </h2>
-          <p className="mt-3 text-sm font-semibold text-primary-foreground/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="mt-3 text-sm font-semibold text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
             Elimine erros operacionais de passageiros, encante com orçamentos digitais modernos e
             tenha controle total do DRE financeiro em tempo real.
           </p>
@@ -503,14 +506,14 @@ function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-primary-foreground px-8 text-xs font-bold uppercase tracking-wider text-primary hover:bg-primary-foreground/90 transition-all"
+              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 transition-all"
             >
               Criar Conta Grátis
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 text-primary" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 text-primary-foreground" />
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-sm border border-primary-foreground/20 bg-primary/10 backdrop-blur-md px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:border-primary-foreground/45 hover:bg-primary/20"
+              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-sm border border-border bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-surface-alt"
             >
               Acessar Minha Agência
             </Link>

@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Sparkles, CheckCircle } from "lucide-react";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
@@ -71,7 +72,6 @@ function RegisterPage() {
       toast.success("Conta criada! Verifique seu e-mail.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro ao criar a conta";
-      // Prevent exposing raw Supabase errors when possible
       if (msg.includes("already registered")) {
         toast.error("Este e-mail já está em uso.");
       } else {
@@ -84,7 +84,7 @@ function RegisterPage() {
     return (
       <div className="flex min-h-screen items-center justify-center p-6 bg-background">
         <div className="w-full max-w-sm text-center">
-          <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+          <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-success-bg text-success border border-success/30">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -96,14 +96,14 @@ function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Verifique seu e-mail</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight">Verifique seu e-mail</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Enviamos um e-mail de confirmação. Clique no link da mensagem para ativar sua conta.
           </p>
           <div className="mt-8 space-y-3">
             <Link
               to="/auth/login"
-              className="block text-sm font-medium text-primary hover:underline"
+              className="block text-sm font-bold text-accent hover:underline"
             >
               Ir para o Login
             </Link>
@@ -114,80 +114,172 @@ function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6 bg-background">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-bold">
+    <div className="grid min-h-screen grid-cols-1 md:grid-cols-2 bg-background text-foreground">
+      {/* ── Left Column: Identical Neuromarketing Imagery / Copy ─── */}
+      <div className="relative hidden flex-col justify-between bg-surface-alt p-12 text-foreground md:flex overflow-hidden border-r border-border">
+        {/* Editorial Dot Matrix Accent */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
+
+        {/* Header */}
+        <Link to="/" className="relative z-10 flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-sm font-semibold">TravelOS</span>
-        </div>
+          <span className="text-base font-black tracking-tight text-foreground">
+            TravelOS
+          </span>
+        </Link>
 
-        <h1 className="text-2xl font-semibold tracking-tight">Criar sua conta</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Preencha seus dados para começar.</p>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
-          <Field label="Nome completo" error={errors.fullName?.message}>
-            <Input {...register("fullName")} />
-          </Field>
-
-          <Field label="E-mail" error={errors.email?.message}>
-            <Input type="email" autoComplete="email" {...register("email")} />
-          </Field>
-
-          <Field label="Senha" error={errors.password?.message}>
-            <Input
-              type="password"
-              autoComplete="new-password"
-              placeholder="Mínimo de 8 caracteres"
-              {...register("password")}
-            />
-          </Field>
-
-          <Field label="Confirmação de senha" error={errors.confirmPassword?.message}>
-            <Input type="password" autoComplete="new-password" {...register("confirmPassword")} />
-          </Field>
-
-          <div>
-            <div className="flex items-start space-x-2 pt-2">
-              <Controller
-                control={control}
-                name="acceptedTerms"
-                render={({ field }) => (
-                  <Checkbox id="terms" checked={field.value} onCheckedChange={field.onChange} />
-                )}
-              />
-              <label
-                htmlFor="terms"
-                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
-              >
-                Eu aceito os{" "}
-                <a href="/terms" target="_blank" className="text-primary hover:underline">
-                  Termos de Serviço
-                </a>{" "}
-                e a{" "}
-                <a href="/privacy" target="_blank" className="text-primary hover:underline">
-                  Política de Privacidade
-                </a>
-                .
-              </label>
+        {/* Center content: Premium Editorial Typography */}
+        <div className="relative z-10 my-auto max-w-md space-y-8">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-accent/20 px-3.5 py-1 text-xs font-bold text-accent">
+              <Sparkles className="h-3.5 w-3.5" /> Workspace Operacional & Financeiro
             </div>
-            {errors.acceptedTerms && (
-              <p className="mt-1 text-[11px] text-red-500">{errors.acceptedTerms.message}</p>
-            )}
+            <h2 className="text-4xl font-extrabold tracking-tight leading-[1.10] text-foreground">
+              Simplifique sua agência. <br />
+              Aumente seus lucros.
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+              Elimine o retrabalho de planilhas e a demora de PDFs. Surpreenda seus clientes com
+              propostas interativas de alta conversão e controle faturas em tempo real.
+            </p>
           </div>
 
-          <PrimaryButton type="submit" disabled={isSubmitting} className="w-full mt-6">
-            {isSubmitting ? "Criando conta…" : "Criar conta"}
-          </PrimaryButton>
-        </form>
+          {/* Floating Benefit Card */}
+          <div className="bg-surface border border-border rounded-xl p-6 space-y-4 shadow-none">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
+              Módulos Inclusos na sua Conta
+            </h4>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
+                <span>Roteiros Digitais e Propostas Interativas</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
+                <span>Assinatura de Contratos Eletrônicos na Tela</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
+                <span>Alertas Automáticos de Passaportes e Vistos</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
+                <span>Margem de Lucro e DRE Real por Viagem</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Já tem conta?{" "}
-          <Link to="/auth/login" className="font-medium text-foreground hover:underline">
-            Entrar
-          </Link>
+        {/* Footer */}
+        <p className="relative z-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
+          © {new Date().getFullYear()} TravelOS. Desenvolvido para profissionais de turismo.
         </p>
+      </div>
+
+      {/* ── Right Column: Register Form ─── */}
+      <div className="flex items-center justify-center bg-background p-8 sm:p-12 relative overflow-hidden">
+        <div className="w-full max-w-sm relative z-10 space-y-8">
+          {/* Logo on Mobile */}
+          <div className="flex items-center gap-2 md:hidden">
+            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
+              T
+            </div>
+            <span className="text-sm font-black text-foreground">TravelOS</span>
+          </div>
+
+          <div className="space-y-2.5">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Criar sua conta</h1>
+            <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+              Preencha seus dados para começar a gerenciar sua agência.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <Field label="Nome completo" error={errors.fullName?.message}>
+              <Input
+                placeholder="Seu nome completo"
+                {...register("fullName")}
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+              />
+            </Field>
+
+            <Field label="E-mail profissional" error={errors.email?.message}>
+              <Input
+                type="email"
+                placeholder="nome@suaagencia.com.br"
+                autoComplete="email"
+                {...register("email")}
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+              />
+            </Field>
+
+            <Field label="Senha" error={errors.password?.message}>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                placeholder="Mínimo de 8 caracteres"
+                {...register("password")}
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+              />
+            </Field>
+
+            <Field label="Confirmação de senha" error={errors.confirmPassword?.message}>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                placeholder="Repita sua senha"
+                {...register("confirmPassword")}
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+              />
+            </Field>
+
+            <div className="space-y-1">
+              <div className="flex items-start space-x-2 pt-2">
+                <Controller
+                  control={control}
+                  name="acceptedTerms"
+                  render={({ field }) => (
+                    <Checkbox id="terms" checked={field.value} onCheckedChange={field.onChange} />
+                  )}
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground"
+                >
+                  Eu aceito os{" "}
+                  <a href="/terms" target="_blank" className="text-accent hover:underline">
+                    Termos de Serviço
+                  </a>{" "}
+                  e a{" "}
+                  <a href="/privacy" target="_blank" className="text-accent hover:underline">
+                    Política de Privacidade
+                  </a>
+                  .
+                </label>
+              </div>
+              {errors.acceptedTerms && (
+                <p className="mt-1 text-[11px] text-danger font-bold">{errors.acceptedTerms.message}</p>
+              )}
+            </div>
+
+            <PrimaryButton
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-sm bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6"
+            >
+              {isSubmitting ? "Criando conta…" : "Criar conta"}
+            </PrimaryButton>
+          </form>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground font-semibold">
+            Já tem conta?{" "}
+            <Link to="/auth/login" className="font-bold text-accent hover:text-accent/90 hover:underline">
+              Entrar
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

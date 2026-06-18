@@ -142,59 +142,58 @@ function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen grid-cols-1 md:grid-cols-2 bg-zinc-950">
+    <div className="grid min-h-screen grid-cols-1 md:grid-cols-2 bg-background text-foreground">
       {/* ── Left Column: Neuromarketing Imagery / Selling Copy ─── */}
-      <div className="relative hidden flex-col justify-between bg-gradient-to-br from-zinc-950 via-indigo-950/40 to-zinc-950 p-12 text-white md:flex overflow-hidden border-r border-zinc-900">
-        {/* Glow backgrounds */}
-        <div className="absolute top-[-10%] right-[-10%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[90px]" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-violet-600/10 rounded-full blur-[90px]" />
+      <div className="relative hidden flex-col justify-between bg-surface-alt p-12 text-foreground md:flex overflow-hidden border-r border-border">
+        {/* Editorial Dot Matrix Accent */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
         {/* Header */}
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white text-sm font-black">
+          <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-lg font-black tracking-tight bg-gradient-to-r from-zinc-50 to-zinc-400 bg-clip-text text-transparent">
+          <span className="text-base font-black tracking-tight text-foreground">
             TravelOS
           </span>
         </Link>
 
-        {/* Center content: Floating Glassmorphism Cards */}
+        {/* Center content: Premium Editorial Typography */}
         <div className="relative z-10 my-auto max-w-md space-y-8">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1 text-xs font-bold text-indigo-400">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft border border-accent/20 px-3.5 py-1 text-xs font-bold text-accent">
               <Sparkles className="h-3.5 w-3.5" /> Workspace Operacional & Financeiro
             </div>
-            <h2 className="text-4xl font-black tracking-tight leading-[1.15] text-white">
+            <h2 className="text-4xl font-extrabold tracking-tight leading-[1.10] text-foreground">
               Simplifique sua agência. <br />
               Aumente seus lucros.
             </h2>
-            <p className="text-sm text-zinc-400 leading-relaxed font-medium">
+            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
               Elimine o retrabalho de planilhas e a demora de PDFs. Surpreenda seus clientes com
               propostas interativas de alta conversão e controle faturas em tempo real.
             </p>
           </div>
 
-          {/* Floating Glassmorphic Benefit Card */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md space-y-4">
-            <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400">
+          {/* Floating Benefit Card */}
+          <div className="bg-surface border border-border rounded-xl p-6 space-y-4 shadow-none">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
               Módulos Inclusos na sua Conta
             </h4>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-xs font-semibold text-zinc-300">
-                <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
                 <span>Roteiros Digitais e Propostas Interativas</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-semibold text-zinc-300">
-                <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
                 <span>Assinatura de Contratos Eletrônicos na Tela</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-semibold text-zinc-300">
-                <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
                 <span>Alertas Automáticos de Passaportes e Vistos</span>
               </div>
-              <div className="flex items-center gap-3 text-xs font-semibold text-zinc-300">
-                <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+              <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
+                <CheckCircle className="h-4 w-4 text-accent shrink-0" />
                 <span>Margem de Lucro e DRE Real por Viagem</span>
               </div>
             </div>
@@ -202,28 +201,25 @@ function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="relative z-10 text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+        <p className="relative z-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
           © {new Date().getFullYear()} TravelOS. Desenvolvido para profissionais de turismo.
         </p>
       </div>
 
       {/* ── Right Column: Login Form ─── */}
-      <div className="flex items-center justify-center bg-zinc-950 p-8 sm:p-12 relative overflow-hidden">
-        {/* Glow backdrop behind form on mobile */}
-        <div className="absolute bottom-[-10%] right-[-10%] w-[250px] h-[250px] bg-indigo-500/5 rounded-full blur-[80px] md:hidden" />
-
+      <div className="flex items-center justify-center bg-background p-8 sm:p-12 relative overflow-hidden">
         <div className="w-full max-w-sm relative z-10 space-y-8">
           {/* Logo on Mobile */}
           <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 text-white font-black">
+            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
-            <span className="text-base font-black text-white">TravelOS</span>
+            <span className="text-sm font-black text-foreground">TravelOS</span>
           </div>
 
           <div className="space-y-2.5">
-            <h1 className="text-3.5xl font-black tracking-tight text-white">Acessar Painel</h1>
-            <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Acessar Painel</h1>
+            <p className="text-sm text-muted-foreground font-medium leading-relaxed">
               Insira seus dados de acesso para gerenciar sua agência.
             </p>
           </div>
@@ -231,7 +227,7 @@ function LoginPage() {
           {errorMsg && (
             <div
               role="alert"
-              className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs font-bold text-red-400 leading-relaxed"
+              className="rounded-xl border border-danger/30 bg-danger-bg/20 px-4 py-3 text-xs font-bold text-danger leading-relaxed"
             >
               {errorMsg}
             </div>
@@ -245,18 +241,18 @@ function LoginPage() {
                 placeholder="nome@suaagencia.com.br"
                 autoComplete="email"
                 {...register("email")}
-                className="h-11 text-xs rounded-xl bg-zinc-900 border-zinc-800 focus:border-indigo-500 focus:ring-indigo-500 text-zinc-100 placeholder:text-zinc-600 transition-all"
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Senha
                 </label>
                 <Link
                   to="/auth/forgot-password"
-                  className="text-xs font-bold text-zinc-400 hover:text-indigo-400 transition-colors"
+                  className="text-xs font-bold text-muted-foreground hover:text-accent transition-colors"
                 >
                   Esqueceu a senha?
                 </Link>
@@ -267,10 +263,10 @@ function LoginPage() {
                 placeholder="••••••••"
                 autoComplete="current-password"
                 {...register("password")}
-                className="h-11 text-xs rounded-xl bg-zinc-900 border-zinc-800 focus:border-indigo-500 focus:ring-indigo-500 text-zinc-100 placeholder:text-zinc-600 transition-all"
+                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
               {errors.password?.message && (
-                <p className="text-[10px] font-bold text-red-400 mt-1">{errors.password.message}</p>
+                <p className="text-[10px] font-bold text-danger mt-1">{errors.password.message}</p>
               )}
             </div>
 
@@ -278,17 +274,17 @@ function LoginPage() {
               id="login-submit"
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-xs font-black uppercase tracking-widest rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white active:scale-[0.98] transition-all duration-200 mt-6"
+              className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-sm bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6"
             >
               {isSubmitting ? "Entrando..." : "Entrar no Workspace"}
             </PrimaryButton>
           </form>
 
-          <p className="text-center text-xs text-zinc-500 font-semibold pt-4">
+          <p className="text-center text-xs text-muted-foreground font-semibold pt-4">
             Sua agência ainda não usa o TravelOS?{" "}
             <Link
               to="/auth/register"
-              className="font-black text-indigo-400 hover:underline transition-colors"
+              className="font-bold text-accent hover:text-accent/90 hover:underline transition-colors"
             >
               Cadastrar agência grátis
             </Link>
