@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { DndContext, DragOverlay, useSensor, useSensors, PointerSensor, useDraggable, useDroppable } from "@dnd-kit/core";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/$id")({
   head: () => ({ meta: [{ title: "Excursão · TravelOS" }] }),
@@ -1312,8 +1313,92 @@ function EditTour({
   );
 }
 
-// ─── Room type constants (moved to rooming.ts service) ────────────────────────
+// ─── Drag and Drop Helper Components ──────────────────────────────────────────
+function DraggablePassenger({ id, name, isCompact = false, onRemove }: { id: string; name: string; isCompact?: boolean; onRemove?: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `passenger_${id}`,
+    data: { id, name },
+  });
 
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 9999,
+      }
+    : undefined;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className={cn(
+        "flex items-center justify-between py-1.5 px-3 rounded-lg bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
+        isDragging && "opacity-45 border-dashed border-brand",
+        isCompact ? "text-xs font-semibold py-1 px-2.5 bg-brand/5 border-brand/10 text-foreground" : "text-xs font-semibold text-foreground bg-surface"
+      )}
+    >
+      <div className="flex items-center gap-1.5 min-w-0">
+        <Users2 className="h-3.5 w-3.5 text-brand shrink-0" />
+        <span className="truncate">{name}</span>
+      </div>
+      {onRemove && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation(); // Avoid triggering any drag
+            onRemove();
+          }}
+          className="text-muted-foreground hover:text-danger transition-colors cursor-pointer ml-2 shrink-0 pointer-events-auto"
+        >
+          <XCircle className="h-3.5 w-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+function DroppableRoom({ room, children, isFull }: { room: any; children: React.ReactNode; isFull: boolean }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `room_${room.id}`,
+    data: { roomId: room.id, isFull },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "rounded-xl border bg-surface overflow-hidden transition-all duration-200",
+        room.is_confirmed ? "border-success/40" : "border-border",
+        isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
+        isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5"
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function DroppableUnallocated({ children }: { children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: "unallocated",
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "rounded-xl border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        isOver && "ring-2 ring-brand border-brand bg-brand/5"
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ─── Room type constants (moved to rooming.ts service) ────────────────────────
 
 function RoomingListManager({
   tourId,
@@ -1329,6 +1414,19 @@ function RoomingListManager({
   returnDate: string | null;
 }) {
   const qc = useQueryClient();
+
+  // ── Sensors ─────────────────────────────────────────────────────────────
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  // ── Drag state ──────────────────────────────────────────────────────────
+  const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const [activeDragName, setActiveDragName] = useState<string | null>(null);
 
   // ── Query: fetch rooms from normalized table ──────────────────────────────
   const roomsQ = useQuery({
@@ -1448,17 +1546,26 @@ function RoomingListManager({
     if (!room) return;
     const cap = ROOM_CAPACITY[room.room_type] ?? 2;
     const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
-    if (roomPax.length >= cap) {
-      return toast.error(`Quarto ${room.room_number} está lotado (máx. ${cap} pax).`);
-    }
-    if (rooms.some((r) =>
+    
+    // Check if passenger is in another room and deallocate first
+    const currentRoom = rooms.find((r) =>
       ((r.passengers as unknown as RoomingPassenger[]) ?? []).some(
         (p) => p.passenger_id === passengerId
       )
-    )) {
-      return toast.warning(`${pax.passenger_name} já está alocado em outro quarto.`);
+    );
+
+    if (currentRoom && currentRoom.id === roomId) return;
+
+    if (roomPax.length >= cap) {
+      return toast.error(`Quarto ${room.room_number} está lotado (máx. ${cap} pax).`);
     }
+
     try {
+      if (currentRoom) {
+        const curRoomPax = (currentRoom.passengers as unknown as RoomingPassenger[]) ?? [];
+        await deallocatePassengerFromRoom(currentRoom.id, curRoomPax, passengerId);
+      }
+      
       await allocatePassengerToRoom(roomId, roomPax, {
         passenger_id: passengerId,
         name: pax.passenger_name,
@@ -1482,242 +1589,295 @@ function RoomingListManager({
     }
   }
 
+  // ── Drag & Drop Event Handlers ──────────────────────────────────────────
+  function handleDragStart(event: any) {
+    const { active } = event;
+    setActiveDragId(active.id);
+    setActiveDragName(active.data.current?.name || "");
+  }
+
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    setActiveDragId(null);
+    setActiveDragName(null);
+
+    if (!over) return;
+
+    const activeIdStr = active.id as string;
+    const passengerId = activeIdStr.replace("passenger_", "");
+
+    // 1. Dropped on a room
+    if (over.id.startsWith("room_")) {
+      const roomId = over.id.replace("room_", "");
+      assignPassengerToRoom(roomId, passengerId);
+    }
+    // 2. Dropped on unallocated area
+    else if (over.id === "unallocated") {
+      const currentRoom = rooms.find((r) =>
+        ((r.passengers as unknown as RoomingPassenger[]) ?? []).some(
+          (p) => p.passenger_id === passengerId
+        )
+      );
+      if (currentRoom) {
+        removePassengerFromRoom(currentRoom.id, passengerId);
+      }
+    }
+  }
+
   if (roomsQ.isLoading)
     return <div className="p-8 text-sm text-muted-foreground">Carregando rooming list…</div>;
 
   return (
-    <div className="space-y-6">
-      {/* Summary KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-border bg-surface p-4 text-center">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Quartos</div>
-          <div className="text-2xl font-black text-foreground">{rooms.length}</div>
-        </div>
-        <div className="rounded-xl border border-border bg-surface p-4 text-center">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Leitos</div>
-          <div className="text-2xl font-black text-foreground">{totalBeds}</div>
-        </div>
-        <div className="rounded-xl border border-border bg-surface p-4 text-center">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Alocados</div>
-          <div className="text-2xl font-black text-brand">{totalOccupied}</div>
-        </div>
-        <div className={`rounded-xl border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}>
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Sem Quarto</div>
-          <div className={`text-2xl font-black ${unallocated.length === 0 ? "text-success" : "text-warning"}`}>{unallocated.length}</div>
-        </div>
-      </div>
-
-      {/* Unallocated warning */}
-      {unallocated.length > 0 && (
-        <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/5 px-4 py-3">
-          <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-          <div>
-            <div className="text-xs font-bold text-warning">Passageiros sem quarto alocado:</div>
-            <div className="text-xs text-muted-foreground mt-1">{unallocated.map((p) => p.passenger_name).join(", ")}</div>
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="space-y-6">
+        {/* Summary KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Quartos</div>
+            <div className="text-2xl font-black text-foreground">{rooms.length}</div>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Leitos</div>
+            <div className="text-2xl font-black text-foreground">{totalBeds}</div>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Alocados</div>
+            <div className="text-2xl font-black text-brand">{totalOccupied}</div>
+          </div>
+          <div className={`rounded-xl border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Sem Quarto</div>
+            <div className={`text-2xl font-black ${unallocated.length === 0 ? "text-success" : "text-warning"}`}>{unallocated.length}</div>
           </div>
         </div>
-      )}
 
-      {/* Header actions */}
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-          <Hotel className="h-4 w-4 text-brand" /> Distribuição de Quartos
-        </h3>
-        <div className="flex items-center gap-2">
-          {rooms.length > 0 && (
+        {/* Passageiros Sem Quarto (Droppable List) */}
+        <DroppableUnallocated>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <Users2 className="h-3.5 w-3.5 text-brand" /> Passageiros Sem Quarto ({unallocated.length})
+            </h4>
+            <span className="text-[10px] text-muted-foreground font-semibold">Arrastar passageiro para o quarto</span>
+          </div>
+          {unallocated.length === 0 ? (
+            <p className="text-xs text-success font-semibold py-2">Todos os passageiros alocados!</p>
+          ) : (
+            <div className="flex flex-wrap gap-2 pt-1">
+              {unallocated.map((p) => (
+                <DraggablePassenger key={p.id} id={p.id} name={p.passenger_name} />
+              ))}
+            </div>
+          )}
+        </DroppableUnallocated>
+
+        {/* Header actions */}
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Hotel className="h-4 w-4 text-brand" /> Distribuição de Quartos
+          </h3>
+          <div className="flex items-center gap-2">
+            {rooms.length > 0 && (
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                disabled={exporting}
+                title="Exportar Rooming List para Excel (.xlsx)"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Download className="h-3.5 w-3.5" /> {exporting ? "Exportando..." : "Exportar Excel"}
+              </button>
+            )}
             <button
               type="button"
-              onClick={handleExportExcel}
-              disabled={exporting}
-              title="Exportar Rooming List para Excel (.xlsx)"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setAddOpen(true)}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
             >
-              <Download className="h-3.5 w-3.5" /> {exporting ? "Exportando..." : "Exportar Excel"}
+              <Plus className="h-3.5 w-3.5" /> Novo Quarto
             </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setAddOpen(true)}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo Quarto
-          </button>
-        </div>
-      </div>
-
-      {/* Add room form */}
-      {addOpen && (
-        <div className="rounded-xl border border-brand/20 bg-brand/5 p-5">
-          <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
-          <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Field label="Número/Nome *">
-                <Input
-                  value={newRoom.room_number}
-                  onChange={(e) => setNewRoom({ ...newRoom, room_number: e.target.value })}
-                  placeholder="ex: 201 ou Quarto Família"
-                  required
-                />
-              </Field>
-              <Field label="Tipo *">
-                <Select value={newRoom.room_type} onChange={(e) => setNewRoom({ ...newRoom, room_type: e.target.value })}>
-                  {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                </Select>
-              </Field>
-              <Field label="Hotel/Pousada">
-                <Input
-                  value={newRoom.hotel_name}
-                  onChange={(e) => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
-                  placeholder="Nome do hotel"
-                />
-              </Field>
-              <Field label="Check-in">
-                <Input type="date" value={newRoom.checkin_date} onChange={(e) => setNewRoom({ ...newRoom, checkin_date: e.target.value })} />
-              </Field>
-              <Field label="Check-out">
-                <Input type="date" value={newRoom.checkout_date} onChange={(e) => setNewRoom({ ...newRoom, checkout_date: e.target.value })} />
-              </Field>
-              <Field label="Notas">
-                <Input value={newRoom.notes} onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })} placeholder="Observações..." />
-              </Field>
-            </div>
-            <div className="flex gap-2 justify-end">
-              <GhostButton type="button" onClick={() => setAddOpen(false)}>Cancelar</GhostButton>
-              <PrimaryButton type="submit" disabled={addRoomMutation.isPending}>
-                {addRoomMutation.isPending ? "Salvando..." : "Adicionar Quarto"}
-              </PrimaryButton>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Room cards grid */}
-      {rooms.length === 0 && !addOpen ? (
-        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          <BedDouble className="h-8 w-8 mx-auto mb-3 text-muted-foreground/30" />
-          Nenhum quarto cadastrado. Clique em "Novo Quarto" para começar a montagem do rooming list.
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {rooms.map((room) => {
-            const cap = ROOM_CAPACITY[room.room_type] ?? 2;
-            const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
-            const pctFull = roomPax.length / cap;
-            const isFull = roomPax.length >= cap;
-            return (
-              <div key={room.id} className={`rounded-xl border bg-surface overflow-hidden transition-all ${room.is_confirmed ? "border-success/40" : "border-border"}`}>
-                {/* Room header */}
-                <div className={`flex items-center justify-between px-4 py-3 ${room.is_confirmed ? "bg-success/5" : "bg-surface-alt/30"}`}>
-                  <div className="flex items-center gap-2">
-                    <BedDouble className="h-4 w-4 text-brand shrink-0" />
-                    <div>
-                      <div className="font-bold text-sm text-foreground">Quarto {room.room_number}</div>
-                      <div className="text-[10px] text-muted-foreground">{ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleConfirmed(room.id, room.is_confirmed)}
-                      title={room.is_confirmed ? "Clique para desconfirmar" : "Confirmar quarto"}
-                      className={`p-1 rounded transition-colors cursor-pointer ${room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"}`}
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removeRoom(room.id)}
-                      className="p-1 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Occupancy bar */}
-                <div className="px-4 pt-3 pb-1">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Ocupação</span>
-                    <span className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}>{roomPax.length}/{cap}</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-surface-alt overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${isFull ? "bg-success" : pctFull >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"}`}
-                      style={{ width: `${Math.min(100, pctFull * 100)}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Passenger list */}
-                <div className="px-4 pb-3 space-y-1.5 mt-2">
-                  {roomPax.map((p) => (
-                    <div key={p.passenger_id} className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-brand/5 border border-brand/10">
-                      <span className="text-xs font-semibold text-foreground">{p.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => removePassengerFromRoom(room.id, p.passenger_id)}
-                        className="text-muted-foreground hover:text-danger transition-colors cursor-pointer ml-2"
-                      >
-                        <XCircle className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                  {!isFull && (
-                    <select
-                      defaultValue=""
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          assignPassengerToRoom(room.id, e.target.value);
-                          e.target.value = "";
-                        }
-                      }}
-                      className="w-full mt-1 h-8 rounded-lg border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
-                    >
-                      <option value="">+ Alocar passageiro...</option>
-                      {unallocated.map((p) => (
-                        <option key={p.id} value={p.id}>{p.passenger_name}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                {/* Hotel / dates */}
-                {(room.hotel_name || room.checkin_date) && (
-                  <div className="px-4 pb-3 border-t border-border/50 pt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground font-medium">
-                    {room.hotel_name && <span className="flex items-center gap-1"><Hotel className="h-2.5 w-2.5" />{room.hotel_name}</span>}
-                    {room.checkin_date && <span>In: {room.checkin_date}</span>}
-                    {room.checkout_date && <span>Out: {room.checkout_date}</span>}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Group Closure Checklist */}
-      {rooms.length > 0 && (
-        <div className="rounded-xl border border-border bg-surface p-5 mt-2">
-          <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-success" /> Validação de Fechamento do Grupo
-          </h4>
-          <div className="space-y-2.5">
-            {[
-              { ok: unallocated.length === 0, label: `Todos os passageiros alocados em quartos (${allocatedIds.size}/${passengers.length})` },
-              { ok: rooms.every((r) => r.is_confirmed), label: `Todos os quartos confirmados pelo hotel (${rooms.filter((r) => r.is_confirmed).length}/${rooms.length})` },
-              { ok: rooms.every((r) => !!r.hotel_name), label: "Nome do hotel preenchido em todos os quartos" },
-              { ok: rooms.every((r) => !!r.checkin_date && !!r.checkout_date), label: "Check-in e check-out preenchidos em todos os quartos" },
-            ].map((check, i) => (
-              <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}>
-                {check.ok
-                  ? <CheckCircle2 className="h-4 w-4 shrink-0" />
-                  : <AlertTriangle className="h-4 w-4 shrink-0" />}
-                {check.label}
-              </div>
-            ))}
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Add room form */}
+        {addOpen && (
+          <div className="rounded-xl border border-brand/20 bg-brand/5 p-5">
+            <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
+            <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <Field label="Número/Nome *">
+                  <Input
+                    value={newRoom.room_number}
+                    onChange={(e) => setNewRoom({ ...newRoom, room_number: e.target.value })}
+                    placeholder="ex: 201 ou Quarto Família"
+                    required
+                  />
+                </Field>
+                <Field label="Tipo *">
+                  <Select value={newRoom.room_type} onChange={(e) => setNewRoom({ ...newRoom, room_type: e.target.value })}>
+                    {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                  </Select>
+                </Field>
+                <Field label="Hotel/Pousada">
+                  <Input
+                    value={newRoom.hotel_name}
+                    onChange={(e) => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
+                    placeholder="Nome do hotel"
+                  />
+                </Field>
+                <Field label="Check-in">
+                  <Input type="date" value={newRoom.checkin_date} onChange={(e) => setNewRoom({ ...newRoom, checkin_date: e.target.value })} />
+                </Field>
+                <Field label="Check-out">
+                  <Input type="date" value={newRoom.checkout_date} onChange={(e) => setNewRoom({ ...newRoom, checkout_date: e.target.value })} />
+                </Field>
+                <Field label="Notas">
+                  <Input value={newRoom.notes} onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })} placeholder="Observações..." />
+                </Field>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <GhostButton type="button" onClick={() => setAddOpen(false)}>Cancelar</GhostButton>
+                <PrimaryButton type="submit" disabled={addRoomMutation.isPending}>
+                  {addRoomMutation.isPending ? "Salvando..." : "Adicionar Quarto"}
+                </PrimaryButton>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Room cards grid */}
+        {rooms.length === 0 && !addOpen ? (
+          <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+            <BedDouble className="h-8 w-8 mx-auto mb-3 text-muted-foreground/30" />
+            Nenhum quarto cadastrado. Clique em "Novo Quarto" para começar a montagem do rooming list.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {rooms.map((room) => {
+              const cap = ROOM_CAPACITY[room.room_type] ?? 2;
+              const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
+              const pctFull = roomPax.length / cap;
+              const isFull = roomPax.length >= cap;
+              return (
+                <DroppableRoom key={room.id} room={room} isFull={isFull}>
+                  {/* Room header */}
+                  <div className={`flex items-center justify-between px-4 py-3 ${room.is_confirmed ? "bg-success/5" : "bg-surface-alt/30"}`}>
+                    <div className="flex items-center gap-2">
+                      <BedDouble className="h-4 w-4 text-brand shrink-0" />
+                      <div>
+                        <div className="font-bold text-sm text-foreground">Quarto {room.room_number}</div>
+                        <div className="text-[10px] text-muted-foreground">{ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleConfirmed(room.id, room.is_confirmed)}
+                        title={room.is_confirmed ? "Clique para desconfirmar" : "Confirmar quarto"}
+                        className={`p-1 rounded transition-colors cursor-pointer ${room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"}`}
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeRoom(room.id)}
+                        className="p-1 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Occupancy bar */}
+                  <div className="px-4 pt-3 pb-1">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Ocupação</span>
+                      <span className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}>{roomPax.length}/{cap}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-surface-alt overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${isFull ? "bg-success" : pctFull >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"}`}
+                        style={{ width: `${Math.min(100, pctFull * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Passenger list */}
+                  <div className="px-4 pb-3 space-y-1.5 mt-2">
+                    {roomPax.map((p) => (
+                      <DraggablePassenger
+                        key={p.passenger_id}
+                        id={p.passenger_id}
+                        name={p.name}
+                        isCompact={true}
+                        onRemove={() => removePassengerFromRoom(room.id, p.passenger_id)}
+                      />
+                    ))}
+                    {!isFull && (
+                      <select
+                        defaultValue=""
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            assignPassengerToRoom(room.id, e.target.value);
+                            e.target.value = "";
+                          }
+                        }}
+                        className="w-full mt-1 h-8 rounded-lg border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
+                      >
+                        <option value="">+ Alocar passageiro...</option>
+                        {unallocated.map((p) => (
+                          <option key={p.id} value={p.id}>{p.passenger_name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  {/* Hotel / dates */}
+                  {(room.hotel_name || room.checkin_date) && (
+                    <div className="px-4 pb-3 border-t border-border/50 pt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground font-medium">
+                      {room.hotel_name && <span className="flex items-center gap-1"><Hotel className="h-2.5 w-2.5" />{room.hotel_name}</span>}
+                      {room.checkin_date && <span>In: {room.checkin_date}</span>}
+                      {room.checkout_date && <span>Out: {room.checkout_date}</span>}
+                    </div>
+                  )}
+                </DroppableRoom>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Group Closure Checklist */}
+        {rooms.length > 0 && (
+          <div className="rounded-xl border border-border bg-surface p-5 mt-2">
+            <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-success" /> Validação de Fechamento do Grupo
+            </h4>
+            <div className="space-y-2.5">
+              {[
+                { ok: unallocated.length === 0, label: `Todos os passageiros alocados em quartos (${allocatedIds.size}/${passengers.length})` },
+                { ok: rooms.every((r) => r.is_confirmed), label: `Todos os quartos confirmados pelo hotel (${rooms.filter((r) => r.is_confirmed).length}/${rooms.length})` },
+                { ok: rooms.every((r) => !!r.hotel_name), label: "Nome do hotel preenchido em todos os quartos" },
+                { ok: rooms.every((r) => !!r.checkin_date && !!r.checkout_date), label: "Check-in e check-out preenchidos em todos os quartos" },
+              ].map((check, i) => (
+                <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}>
+                  {check.ok
+                    ? <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    : <AlertTriangle className="h-4 w-4 shrink-0" />}
+                  {check.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Drag Overlay for Premium Ghosting */}
+      <DragOverlay>
+        {activeDragId ? (
+          <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-surface border border-brand shadow-md text-xs font-semibold text-foreground select-none cursor-grabbing opacity-90">
+            <Users2 className="h-3.5 w-3.5 text-brand" />
+            <span>{activeDragName}</span>
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }
+

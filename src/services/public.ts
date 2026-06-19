@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export async function fetchPublicAgencyLayout(slug: string) {
-  const { data: agency } = await (supabase as any)
+  const { data: agency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: slug })
     .maybeSingle();
   if (!agency) return { agency: null, pages: [], settings: null };
@@ -13,18 +13,24 @@ export async function fetchPublicAgencyLayout(slug: string) {
       .eq("agency_id", agency.id)
       .eq("is_published", true)
       .order("created_at"),
-    (supabase as any).from("portal_settings").select("*").eq("agency_id", agency.id).maybeSingle(),
+    supabase.from("portal_settings").select("*").eq("agency_id", agency.id).maybeSingle(),
   ]);
+
+  const settings = settingsRes.data ? {
+    ...settingsRes.data,
+    nav_links: (settingsRes.data.nav_links as unknown as any[]) || [],
+    footer_links: (settingsRes.data.footer_links as unknown as any[]) || [],
+  } : null;
 
   return {
     agency,
     pages: pagesRes.data || [],
-    settings: settingsRes.data || null,
+    settings,
   };
 }
 
 export async function fetchPublicAgencyHome(slug: string) {
-  const { data: agency } = await (supabase as any)
+  const { data: agency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: slug })
     .maybeSingle();
   if (!agency) return { agency: null, company: null, tours: [], posts: [], homePage: null };
@@ -46,38 +52,46 @@ export async function fetchPublicAgencyHome(slug: string) {
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(6),
-    (supabase as any)
+    supabase
       .from("portal_pages")
-      .select("blocks:published_blocks, seo:published_seo, template")
+      .select("id, title:published_title, blocks:published_blocks, seo:published_seo, template")
       .eq("agency_id", agency.id)
       .eq("slug", "home")
       .eq("is_published", true)
       .maybeSingle(),
   ]);
 
+  const homePageData = homePage.data ? {
+    id: homePage.data.id,
+    title: homePage.data.title,
+    template: homePage.data.template,
+    blocks: (homePage.data.blocks as unknown as any[]) || [],
+    seo: (homePage.data.seo as any) || {}
+  } : null;
+
   return {
     agency,
     company: company.data,
     tours: tours.data || [],
     posts: posts.data || [],
-    homePage: homePage.data,
+    homePage: homePageData,
   };
 }
 
 // ─── Agency (basic, for contact page) ───────────────────────────────────────
 export async function fetchPublicAgencyBasic(slug: string) {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("agencies")
     .select("id, name, logo_url")
     .eq("slug", slug)
-    .eq("is_active", true)
+    .eq("status", "active")
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
 export async function fetchPublicAgencyPolicies() {
-  const { data } = await (supabase as any)
+  const { data } = await supabase
     .from("policy_documents")
     .select("id, kind, version")
     .eq("is_published", true);
@@ -98,48 +112,56 @@ export async function submitPublicLead(payload: {
   source: string;
   notes?: string | null;
 }) {
-  const { error } = await (supabase as any).rpc("submit_public_lead", {
+  const { error } = await supabase.rpc("submit_public_lead", {
     _agency_slug: payload.agency_slug,
     _name: payload.name,
-    _email: payload.email ?? null,
-    _phone: payload.phone ?? null,
-    _destination: payload.destination ?? null,
-    _travel_start: payload.travel_start ?? null,
-    _travel_end: payload.travel_end ?? null,
+    _email: payload.email ?? (null as unknown as string),
+    _phone: payload.phone ?? (null as unknown as string),
+    _destination: payload.destination ?? (null as unknown as string),
+    _travel_start: payload.travel_start ?? (null as unknown as string),
+    _travel_end: payload.travel_end ?? (null as unknown as string),
     _pax_count: payload.pax_count,
     _estimated_value: payload.estimated_value,
     _source: payload.source,
-    _notes: payload.notes ?? null,
+    _notes: payload.notes ?? (null as unknown as string),
   });
   if (error) throw error;
 }
 
 // ─── Dynamic CMS page ────────────────────────────────────────────────────────
 export async function fetchPublicDynamicPage(agencySlug: string, pageSlug: string) {
-  const { data: agency } = await (supabase as any)
+  const { data: agency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: agencySlug })
     .maybeSingle();
   if (!agency) return { agency: null, page: null };
 
-  const { data: page } = await (supabase as any)
+  const { data: page } = await supabase
     .from("portal_pages")
-    .select("title:published_title, blocks:published_blocks, seo:published_seo, template")
+    .select("id, title:published_title, blocks:published_blocks, seo:published_seo, template")
     .eq("agency_id", agency.id)
     .eq("slug", pageSlug)
     .eq("is_published", true)
     .maybeSingle();
 
-  return { agency, page };
+  const pageData = page ? {
+    id: page.id,
+    title: page.title,
+    template: page.template,
+    blocks: (page.blocks as unknown as any[]) || [],
+    seo: (page.seo as any) || {}
+  } : null;
+
+  return { agency, page: pageData };
 }
 
 export async function fetchPublicDynamicPageSeo(agencySlug: string, pageSlug: string) {
   try {
-    const { data: agency } = await (supabase as any)
+    const { data: agency } = await supabase
       .rpc("get_public_agency_by_slug", { _slug: agencySlug })
       .maybeSingle();
     if (!agency) return null;
 
-    const { data: page } = await (supabase as any)
+    const { data: page } = await supabase
       .from("portal_pages")
       .select("seo:published_seo")
       .eq("agency_id", agency.id)
@@ -155,12 +177,12 @@ export async function fetchPublicDynamicPageSeo(agencySlug: string, pageSlug: st
 
 // ─── Forms ──────────────────────────────────────────────────────────────────
 export async function fetchPublicLeadForm(agencySlug: string, formId: string) {
-  const { data: rawAgency } = await (supabase as any)
+  const { data: rawAgency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: agencySlug })
     .maybeSingle();
   const agency = rawAgency as any;
   if (!agency) return null;
-  const { data: rawForm } = await (supabase as any)
+  const { data: rawForm } = await supabase
     .from("lead_forms")
     .select("*")
     .eq("id", formId)
@@ -178,7 +200,7 @@ export async function submitPublicLeadForm(
   values: any,
   submissionsCount: number,
 ) {
-  const { data: leadData, error: leadErr } = await (supabase as any)
+  const { data: leadData, error: leadErr } = await supabase
     .from("leads")
     .insert({
       agency_id: agencyId,
@@ -195,7 +217,7 @@ export async function submitPublicLeadForm(
     .select("id");
 
   if (!leadErr && leadData) {
-    await (supabase as any)
+    await supabase
       .from("lead_forms")
       .update({ submissions_count: submissionsCount + 1 })
       .eq("id", formId);
@@ -206,20 +228,20 @@ export async function submitPublicLeadForm(
 
 // ─── Tours ──────────────────────────────────────────────────────────────────
 export async function fetchPublicTour(agencySlug: string, tourId: string) {
-  const { data: rawAgency } = await (supabase as any)
+  const { data: rawAgency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: agencySlug })
     .maybeSingle();
   const agency = rawAgency as any;
   if (!agency) return null;
 
   const [tourDataRes, settingsRes] = await Promise.all([
-    (supabase as any)
+    supabase
       .from("group_tours")
       .select("*")
       .eq("id", tourId)
       .eq("agency_id", agency.id)
       .maybeSingle(),
-    (supabase as any)
+    supabase
       .from("portal_settings")
       .select("pix_key")
       .eq("agency_id", agency.id)
@@ -236,13 +258,13 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
   let assignedSeats: string[] = [];
 
   if (tour.bus_layout_id) {
-    const { data: l } = await (supabase as any)
+    const { data: l } = await supabase
       .from("bus_layouts")
       .select("*")
       .eq("id", tour.bus_layout_id)
       .maybeSingle();
     if (l) layout = l;
-    const { data: assigned } = await (supabase as any)
+    const { data: assigned } = await supabase
       .from("group_tour_enrollments")
       .select("seat_number")
       .eq("group_tour_id", tourId)
@@ -264,6 +286,7 @@ export async function enrollPublicTour(
     email?: string;
     phone?: string;
     notes?: string;
+    source?: string;
   },
   selectedSeats: string[],
   unitPrice: number,
@@ -271,29 +294,28 @@ export async function enrollPublicTour(
   destination: string,
   receiptUrl?: string | null,
 ) {
-  const { data, error } = await (supabase as any).rpc("enroll_public_tour", {
+  const { error } = await supabase.rpc("enroll_public_tour", {
     _agency_id: agencyId,
     _tour_id: tourId,
     _passenger_name: values.passenger_name,
-    _passenger_cpf: values.passenger_cpf || null,
-    _email: values.email || null,
-    _phone: values.phone || null,
-    _notes: values.notes || null,
-    _source: (values as any).source || "Portal Público",
+    _passenger_cpf: values.passenger_cpf || (null as unknown as string),
+    _email: values.email || (null as unknown as string),
+    _phone: values.phone || (null as unknown as string),
+    _notes: values.notes || (null as unknown as string),
+    _source: values.source || "Portal Público",
     _selected_seats: selectedSeats,
     _unit_price: unitPrice,
     _pax_count: pax,
     _destination: destination,
-    _receipt_url: receiptUrl || null,
+    _receipt_url: receiptUrl || undefined,
   });
 
   return { error };
 }
 
-
 // ─── Knowledge Base ──────────────────────────────────────────────────────────
 export async function fetchPublicAgencyForKb(slug: string) {
-  const { data } = await (supabase as any)
+  const { data } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: slug })
     .maybeSingle();
   return data as {
@@ -308,14 +330,14 @@ export async function fetchPublicAgencyForKb(slug: string) {
 
 export async function fetchKbArticles(agencyId: string, search?: string) {
   if (search?.trim()) {
-    const { data } = await (supabase as any).rpc("search_knowledge_articles", {
+    const { data } = await supabase.rpc("search_knowledge_articles", {
       p_agency_id: agencyId,
       p_query: search,
       p_is_internal: false,
     });
     return (data || []) as any[];
   }
-  const { data } = await (supabase as any)
+  const { data } = await supabase
     .from("knowledge_articles")
     .select("id, title, slug, category, views")
     .eq("agency_id", agencyId)
@@ -325,12 +347,12 @@ export async function fetchKbArticles(agencyId: string, search?: string) {
 }
 
 export async function fetchKbArticle(agencySlug: string, articleSlug: string) {
-  const { data: agency } = await (supabase as any)
+  const { data: agency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: agencySlug })
     .maybeSingle();
   if (!agency) return null;
 
-  const { data: article } = await (supabase as any)
+  const { data: article } = await supabase
     .from("knowledge_articles")
     .select("*")
     .eq("agency_id", agency.id)
@@ -339,7 +361,7 @@ export async function fetchKbArticle(agencySlug: string, articleSlug: string) {
     .maybeSingle();
 
   if (article) {
-    // fire-and-forget
+    // fire-and-forget using as any since increment_ka_views is not in typed RPCs yet
     (supabase as any).rpc("increment_ka_views", { p_article_id: article.id }).then();
   }
 
@@ -347,7 +369,7 @@ export async function fetchKbArticle(agencySlug: string, articleSlug: string) {
 }
 
 export async function voteKbArticle(articleId: string, isUpvote: boolean) {
-  const { error } = await (supabase as any).rpc("vote_knowledge_article", {
+  const { error } = await supabase.rpc("vote_knowledge_article", {
     p_article_id: articleId,
     p_is_upvote: isUpvote,
   });
@@ -356,7 +378,7 @@ export async function voteKbArticle(articleId: string, isUpvote: boolean) {
 
 // ─── Blog Post ───────────────────────────────────────────────────────────────
 export async function fetchPublicBlogPost(agencySlug: string, postSlug: string) {
-  const { data: agency } = await (supabase as any)
+  const { data: agency } = await supabase
     .rpc("get_public_agency_by_slug", { _slug: agencySlug })
     .maybeSingle();
   if (!agency) return { agency: null, post: null, related: [] };
@@ -370,6 +392,7 @@ export async function fetchPublicBlogPost(agencySlug: string, postSlug: string) 
     .maybeSingle();
 
   if (post) {
+    // fire-and-forget using as any since increment_post_views is not in typed RPCs yet
     (supabase as any).rpc("increment_post_views", { p_post_id: post.id }).then();
   }
 
@@ -390,16 +413,25 @@ export async function fetchPublicBlogPost(agencySlug: string, postSlug: string) 
 }
 
 export async function submitBlogLead(
-  agencyId: string,
+  agencySlug: string,
   name: string,
   contact: string,
   origin: string,
 ) {
-  const { error } = await (supabase as any).rpc("submit_public_lead", {
-    p_agency_id: agencyId,
-    p_name: name,
-    p_contact: contact,
-    p_origin: origin,
+  const isEmail = contact.includes("@");
+  const { error } = await supabase.rpc("submit_public_lead", {
+    _agency_slug: agencySlug,
+    _name: name,
+    _email: isEmail ? contact : (null as unknown as string),
+    _phone: isEmail ? (null as unknown as string) : contact,
+    _destination: "Blog Newsletter",
+    _travel_start: null as unknown as string,
+    _travel_end: null as unknown as string,
+    _pax_count: 1,
+    _estimated_value: 0,
+    _source: origin,
+    _notes: `Inscrição pelo blog. Contato fornecido: ${contact}`,
+    _tags: ["blog"],
   });
   if (error) throw error;
 }
@@ -433,7 +465,7 @@ export async function submitCorporateApproval(token: string, approved: boolean, 
 
 // ─── Corporate RFP (direct table flow) ───────────────────────────────────────
 export async function fetchCorporateRfp(token: string) {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("corporate_rfps")
     .select("*, agency:agencies(slug, name), client:clients(full_name)")
     .eq("approval_token", token)

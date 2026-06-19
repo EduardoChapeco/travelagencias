@@ -174,9 +174,9 @@ function ClientTripDetail() {
     mutationFn: async ({ instId, file }: { instId: string; file: File }) => {
       const fileExt = file.name.split(".").pop();
       const filePath = `receipts/${instId}_${Date.now()}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage.from("agency-media").upload(filePath, file);
+      const { data: uploadData, error: uploadError } = await supabase.storage.from("payment-receipts").upload(filePath, file);
       if (uploadError) throw uploadError;
-      const { data: publicUrlData } = supabase.storage.from("agency-media").getPublicUrl(uploadData.path);
+      const { data: publicUrlData } = supabase.storage.from("payment-receipts").getPublicUrl(uploadData.path);
       const { error } = await supabase.from("payment_installments").update({ receipt_url: publicUrlData.publicUrl, receipt_status: "pending", receipt_uploaded_at: new Date().toISOString() } as any).eq("id", instId);
       if (error) throw error;
     },

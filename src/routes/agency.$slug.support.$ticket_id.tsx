@@ -87,7 +87,7 @@ function TicketDetailRoute() {
     mutationFn: async () => {
       if (!replyText.trim()) return;
       const isExternal = replyType === "client" || replyType === "supplier";
-      const sender = replyType === "internal" ? "system" : "agent";
+      const sender = replyType === "internal" ? "system" : "agency";
 
       // 1. Persist message locally first (always)
       const { error: msgErr } = await supabase.from("ticket_messages").insert({
@@ -245,9 +245,9 @@ function TicketDetailRoute() {
             {messages.map((m) => (
               <div key={m.id} className="flex gap-4">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.sender === "agent" ? "bg-brand text-brand-foreground" : m.sender === "system" ? "bg-warning text-warning-foreground" : "bg-primary/10 text-primary"}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.sender === "agency" ? "bg-brand text-brand-foreground" : m.sender === "system" ? "bg-warning text-warning-foreground" : "bg-primary/10 text-primary"}`}
                 >
-                  {m.sender === "agent" ? (
+                  {m.sender === "agency" ? (
                     <User className="w-4 h-4" />
                   ) : m.sender === "system" ? (
                     <Lock className="w-4 h-4" />
@@ -258,7 +258,7 @@ function TicketDetailRoute() {
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2">
                     <span className="font-bold">
-                      {m.sender === "agent"
+                      {m.sender === "agency"
                         ? "Agente"
                         : m.sender === "system"
                           ? "Nota Interna"
@@ -269,7 +269,7 @@ function TicketDetailRoute() {
                     </span>
                   </div>
                   <div
-                    className={`border p-4 rounded-xl mt-1 ${m.sender === "agent" ? "bg-brand/5 border-brand/20 rounded-tl-none" : m.sender === "system" ? "bg-warning/10 border-warning/20 border-dashed rounded-tl-none" : "bg-surface-alt border-border rounded-tl-none"}`}
+                    className={`border p-4 rounded-xl mt-1 ${m.sender === "agency" ? "bg-brand/5 border-brand/20 rounded-tl-none" : m.sender === "system" ? "bg-warning/10 border-warning/20 border-dashed rounded-tl-none" : "bg-surface-alt border-border rounded-tl-none"}`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{m.content}</p>
                   </div>

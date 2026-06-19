@@ -247,7 +247,7 @@ function PublicBlogPage() {
                   Nossos consultores da <strong>{agency.name}</strong> são especialistas e podem
                   montar um roteiro 100% personalizado para você, cuidando de cada detalhe.
                 </p>
-                <LeadCaptureForm agencyId={agency.id} origin={`Blog: ${post.title}`} />
+                <LeadCaptureForm agencySlug={agency.slug} origin={`Blog: ${post.title}`} />
               </div>
               <div className="hidden md:flex justify-center">
                 <div className="w-full aspect-square max-w-[280px] bg-white/5 rounded-full border border-white/10 flex items-center justify-center p-8">
@@ -263,7 +263,7 @@ function PublicBlogPage() {
 }
 
 // Componente Isolado de Captura de Leads
-function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: string }) {
+function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: string }) {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [lgpdAccepted, setLgpdAccepted] = useState(false);
@@ -288,7 +288,7 @@ function LeadCaptureForm({ agencyId, origin }: { agencyId: string; origin: strin
         finalOrigin += `\nUTM: ${utms.source}/${utms.medium}/${utms.campaign}`;
       }
 
-      await submitBlogLead(agencyId, name, contact, finalOrigin);
+      await submitBlogLead(agencySlug, name, contact, finalOrigin);
     },
     onSuccess: () => setSuccess(true),
     onError: (e) => toast.error("Falha ao enviar: " + e.message),

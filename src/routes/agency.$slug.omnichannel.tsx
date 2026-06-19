@@ -392,7 +392,7 @@ function OmnichannelPage() {
       channel: selectedSession?.channel ?? "whatsapp",
       direction: "outbound",
       content: reply.trim(),
-      status: "sent",
+      status: "pending",
       agency_id: agency!.id,
       lead_id: matchedLead?.id || null,
     });
@@ -453,7 +453,7 @@ function OmnichannelPage() {
             content: "Mensagem de Voz",
             media_url: publicUrl,
             media_type: "audio",
-            status: "sent",
+            status: "pending",
             agency_id: agency!.id,
             lead_id: matchedLead?.id || null,
           });
@@ -508,7 +508,7 @@ function OmnichannelPage() {
           : file.type.startsWith("audio/")
             ? "audio"
             : "document",
-        status: "sent",
+        status: "pending",
         agency_id: agency.id,
         lead_id: matchedLead?.id || null,
       });

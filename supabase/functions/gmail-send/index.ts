@@ -123,7 +123,7 @@ serve(async (req) => {
     // Save to timeline
     await supabase.from("ticket_messages").insert({
       ticket_id,
-      sender: "agent",
+      sender: "system",
       content: `[E-mail enviado para ${to}]\n\n${text}`,
     });
 
