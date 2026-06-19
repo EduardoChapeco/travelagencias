@@ -212,14 +212,24 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
   const agency = rawAgency as any;
   if (!agency) return null;
 
-  const { data: tourData } = await (supabase as any)
-    .from("group_tours")
-    .select("*")
-    .eq("id", tourId)
-    .eq("agency_id", agency.id)
-    .maybeSingle();
-  const tour = tourData as any;
-  if (!tour) return { agency, tour: null, days: [], layout: null, assignedSeats: [] };
+  const [tourDataRes, settingsRes] = await Promise.all([
+    (supabase as any)
+      .from("group_tours")
+      .select("*")
+      .eq("id", tourId)
+      .eq("agency_id", agency.id)
+      .maybeSingle(),
+    (supabase as any)
+      .from("portal_settings")
+      .select("pix_key")
+      .eq("agency_id", agency.id)
+      .maybeSingle()
+  ]);
+
+  const tour = tourDataRes.data as any;
+  const settings = settingsRes.data || null;
+
+  if (!tour) return { agency, tour: null, days: [], layout: null, assignedSeats: [], settings };
 
   const days = Array.isArray(tour.itinerary) ? tour.itinerary : [];
   let layout: any = null;
@@ -242,7 +252,7 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
       .filter((s: any): s is string => !!s);
   }
 
-  return { agency, tour, days, layout, assignedSeats };
+  return { agency, tour, days, layout, assignedSeats, settings };
 }
 
 export async function enrollPublicTour(
@@ -259,55 +269,27 @@ export async function enrollPublicTour(
   unitPrice: number,
   pax: number,
   destination: string,
+  receiptUrl?: string | null,
 ) {
-  // 1. Enrollments
-  const rows = (selectedSeats.length > 0 ? selectedSeats : [null]).map((seat) => ({
-    agency_id: agencyId,
-    group_tour_id: tourId,
-    passenger_name: values.passenger_name,
-    passenger_cpf: values.passenger_cpf || null,
-    seat_number: seat,
-    total_paid: 0,
-    status: "pending",
-    notes: values.notes || null,
-  }));
-  const { error: bErr } = await (supabase as any).from("group_tour_enrollments").insert(rows);
+  const { data, error } = await (supabase as any).rpc("enroll_public_tour", {
+    _agency_id: agencyId,
+    _tour_id: tourId,
+    _passenger_name: values.passenger_name,
+    _passenger_cpf: values.passenger_cpf || null,
+    _email: values.email || null,
+    _phone: values.phone || null,
+    _notes: values.notes || null,
+    _source: (values as any).source || "Portal Público",
+    _selected_seats: selectedSeats,
+    _unit_price: unitPrice,
+    _pax_count: pax,
+    _destination: destination,
+    _receipt_url: receiptUrl || null,
+  });
 
-  // 2. CRM lead
-  const { data: stages } = await (supabase as any)
-    .from("lead_stages")
-    .select("id")
-    .eq("agency_id", agencyId)
-    .order("position")
-    .limit(1);
-  if (stages && stages.length > 0) {
-    await (supabase as any).from("leads").insert({
-      agency_id: agencyId,
-      stage_id: stages[0].id,
-      name: values.passenger_name,
-      email: values.email || null,
-      phone: values.phone || null,
-      destination: `Interesse: ${destination}`,
-      estimated_value: unitPrice * pax,
-      source: (values as any).source || "Portal Público",
-    });
-  }
-
-  // 3. Counter
-  const { data: cur } = await (supabase as any)
-    .from("group_tours")
-    .select("reserved_seats")
-    .eq("id", tourId)
-    .maybeSingle();
-  if (cur) {
-    await (supabase as any)
-      .from("group_tours")
-      .update({ reserved_seats: (cur.reserved_seats || 0) + pax })
-      .eq("id", tourId);
-  }
-
-  return { error: bErr };
+  return { error };
 }
+
 
 // ─── Knowledge Base ──────────────────────────────────────────────────────────
 export async function fetchPublicAgencyForKb(slug: string) {

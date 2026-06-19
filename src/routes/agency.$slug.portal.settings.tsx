@@ -46,6 +46,7 @@ type PortalSettings = {
   analytics_id: string;
   meta_pixel_id: string;
   custom_head_script: string;
+  pix_key: string;
 };
 
 const defaults = (agencyName = ""): PortalSettings => ({
@@ -70,6 +71,7 @@ const defaults = (agencyName = ""): PortalSettings => ({
   analytics_id: "",
   meta_pixel_id: "",
   custom_head_script: "",
+  pix_key: "",
 });
 
 function PortalSettingsPage() {
@@ -514,6 +516,17 @@ function PortalSettingsPage() {
                     ✓ Meta Pixel será ativado no portal
                   </p>
                 )}
+              </Field>
+
+              <Field
+                label="Chave Pix para Checkout B2C"
+                hint="Sua chave Pix (CNPJ, Celular, E-mail, Chave Aleatória) ou Código Copia e Cola completo para recebimento de inscrições públicas"
+              >
+                <Input
+                  value={form.pix_key || ""}
+                  onChange={(e) => set("pix_key", e.target.value)}
+                  placeholder="Ex: pix@suaagencia.com.br"
+                />
               </Field>
 
               <Field

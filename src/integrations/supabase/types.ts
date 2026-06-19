@@ -2296,6 +2296,9 @@ export type Database = {
           status: string;
           total_paid: number;
           updated_at: string;
+          receipt_url: string | null;
+          email: string | null;
+          phone: string | null;
         };
         Insert: {
           agency_id: string;
@@ -2314,6 +2317,9 @@ export type Database = {
           status?: string;
           total_paid?: number;
           updated_at?: string;
+          receipt_url?: string | null;
+          email?: string | null;
+          phone?: string | null;
         };
         Update: {
           agency_id?: string;
@@ -2330,6 +2336,9 @@ export type Database = {
           status?: string;
           total_paid?: number;
           updated_at?: string;
+          receipt_url?: string | null;
+          email?: string | null;
+          phone?: string | null;
         };
         Relationships: [];
       };
@@ -3727,6 +3736,77 @@ export type Database = {
             foreignKeyName: "portal_pages_agency_id_fkey";
             columns: ["agency_id"];
             isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      portal_settings: {
+        Row: {
+          analytics_id: string | null;
+          created_at: string;
+          custom_domain: string | null;
+          custom_head_script: string | null;
+          footer_links: Json | null;
+          footer_text: string | null;
+          header_cta_label: string | null;
+          header_cta_url: string | null;
+          header_style: string | null;
+          id: string;
+          agency_id: string;
+          meta_pixel_id: string | null;
+          nav_links: Json | null;
+          seo_default_description: string | null;
+          seo_og_image_url: string | null;
+          seo_title_suffix: string | null;
+          updated_at: string;
+          pix_key: string | null;
+        };
+        Insert: {
+          analytics_id?: string | null;
+          created_at?: string;
+          custom_domain?: string | null;
+          custom_head_script?: string | null;
+          footer_links?: Json | null;
+          footer_text?: string | null;
+          header_cta_label?: string | null;
+          header_cta_url?: string | null;
+          header_style?: string | null;
+          id?: string;
+          agency_id: string;
+          meta_pixel_id?: string | null;
+          nav_links?: Json | null;
+          seo_default_description?: string | null;
+          seo_og_image_url?: string | null;
+          seo_title_suffix?: string | null;
+          updated_at?: string;
+          pix_key?: string | null;
+        };
+        Update: {
+          analytics_id?: string | null;
+          created_at?: string;
+          custom_domain?: string | null;
+          custom_head_script?: string | null;
+          footer_links?: Json | null;
+          footer_text?: string | null;
+          header_cta_label?: string | null;
+          header_cta_url?: string | null;
+          header_style?: string | null;
+          id?: string;
+          agency_id?: string;
+          meta_pixel_id?: string | null;
+          nav_links?: Json | null;
+          seo_default_description?: string | null;
+          seo_og_image_url?: string | null;
+          seo_title_suffix?: string | null;
+          updated_at?: string;
+          pix_key?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "portal_settings_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: true;
             referencedRelation: "agencies";
             referencedColumns: ["id"];
           },

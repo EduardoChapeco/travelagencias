@@ -6,6 +6,7 @@ import { fetchPublicTour, enrollPublicTour } from "@/services/public";
 import { Field, Input, PrimaryButton, Textarea, Select, GhostButton, money } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Check, Clipboard, Copy, FileText, QrCode, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/p/$agency_slug/tour/$id")({
   head: ({ params }) => ({ meta: [{ title: `Roteiro · ${params.agency_slug}` }] }),
@@ -41,6 +42,7 @@ function Page() {
   // Checkout steps: 'form' | 'pix' | 'success'
   const [checkoutStep, setCheckoutStep] = useState<"form" | "pix" | "success">("form");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -70,7 +72,7 @@ function Page() {
     return <div className="p-10 text-center text-sm font-semibold text-gray-500 bg-[#f7f5ef] min-h-screen">Roteiro não disponível</div>;
   }
 
-  const { agency, tour: t, days, layout, assignedSeats } = q.data;
+  const { agency, tour: t, days, layout, assignedSeats, settings } = q.data;
   const seatMap: SeatCell[] =
     layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
 
@@ -97,22 +99,46 @@ function Page() {
     });
   };
 
-  // Mock upload of PIX receipt
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Real upload of PIX receipt to payment-receipts bucket
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
     const file = e.target.files[0];
-    setUploadProgress(10);
     
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setUploadedFile(file.name);
-          return 100;
-        }
-        return prev + 30;
-      });
-    }, 200);
+    try {
+      setUploadProgress(10);
+      setUploadedFileName(file.name);
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${agency.id}/${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      
+      setUploadProgress(30);
+      
+      const { data, error } = await supabase.storage
+        .from("payment-receipts")
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+        
+      if (error) {
+        throw error;
+      }
+      
+      setUploadProgress(80);
+      
+      const { data: { publicUrl } } = supabase.storage
+        .from("payment-receipts")
+        .getPublicUrl(fileName);
+        
+      setUploadedFile(publicUrl);
+      setUploadProgress(100);
+      toast.success("Comprovante enviado com sucesso!");
+    } catch (err: any) {
+      setUploadProgress(0);
+      setUploadedFileName(null);
+      setUploadedFile(null);
+      toast.error(`Erro ao enviar comprovante: ${err.message}`);
+    }
   };
 
   async function handleFormSubmit(e: React.FormEvent) {
@@ -134,9 +160,6 @@ function Page() {
     if (extraPassengers.length > 0) {
       finalNotes += `\nPassageiros adicionais:\n` + extraPassengers.map((name, i) => `${i + 2}: ${name}`).join("\n");
     }
-    if (uploadedFile) {
-      finalNotes += `\n[PIX VOUCHER UPLOADED: ${uploadedFile}]`;
-    }
 
     const { error: bErr } = await enrollPublicTour(
       agency.id,
@@ -150,6 +173,7 @@ function Page() {
       unitPrice,
       pax,
       t.title,
+      uploadedFile,
     );
 
     setBusy(false);
@@ -165,12 +189,13 @@ function Page() {
   const excludes = Array.isArray(t.excludes) ? (t.excludes as string[]) : [];
   const totalPrice = (Number(t.base_price) || 0) * (seatMap.length > 0 ? Math.max(1, selectedSeats.length) : passengerCount);
 
+  const pixKey = settings?.pix_key || "00020101021226830014br.gov.bcb.pix2561pix.cora.com.br/v2/esmppoxxnyiscidzsjvy901248012410";
+
   // Copy Pix key
   const copyPix = () => {
-    const pixCode = "00020101021226830014br.gov.bcb.pix2561pix.cora.com.br/v2/esmppoxxnyiscidzsjvy901248012410";
-    navigator.clipboard.writeText(pixCode);
+    navigator.clipboard.writeText(pixKey);
     setCopied(true);
-    toast.success("Código Copia e Cola Pix copiado!");
+    toast.success("Código Pix copiado!");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -464,6 +489,18 @@ function Page() {
                 />
               </Field>
 
+              <div className="flex items-start gap-2.5 rounded-xl border border-gray-200 bg-gray-50/50 p-4 mb-4">
+                <input
+                  type="checkbox"
+                  id="lgpd_consent"
+                  required
+                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#ff4f9a] focus:ring-[#ff4f9a] cursor-pointer"
+                />
+                <label htmlFor="lgpd_consent" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
+                  Eu concordo com o processamento dos meus dados pessoais para fins de cadastro, contato e reserva desta viagem, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD)</strong>.
+                </label>
+              </div>
+
               <PrimaryButton
                 type="submit"
                 className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[#ff4f9a] hover:bg-[#e03d80] text-white rounded-xl transition-all cursor-pointer"
@@ -487,9 +524,11 @@ function Page() {
 
             {/* Pix Copy and paste */}
             <div className="space-y-2.5">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Código Copia e Cola Pix:</label>
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
+                {pixKey.startsWith("000201") ? "Código Copia e Cola Pix:" : "Chave Pix para Transferência:"}
+              </label>
               <div className="flex items-center gap-2 border border-gray-200 bg-gray-50 rounded-xl px-3 py-2 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
-                <span>00020101021226830014br.gov.bcb.pix2561pix.cora.com.br/v2/esmppoxxnyiscidzsjvy901248012410</span>
+                <span>{pixKey}</span>
                 <button
                   type="button"
                   onClick={copyPix}
@@ -520,9 +559,9 @@ function Page() {
                 <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between text-xs text-emerald-800">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold">{uploadedFile}</span>
+                    <span className="font-semibold">{uploadedFileName}</span>
                   </div>
-                  <button type="button" onClick={() => setUploadedFile(null)} className="text-gray-500 hover:text-danger font-semibold">Remover</button>
+                  <button type="button" onClick={() => { setUploadedFile(null); setUploadedFileName(null); }} className="text-gray-500 hover:text-danger font-semibold">Remover</button>
                 </div>
               )}
             </div>
