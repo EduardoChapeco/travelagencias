@@ -30,19 +30,19 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    // 1. Find the agency by emailAddress in settings->'gmail_tokens'
+    // 1. Find the agency by emailAddress in integrations_config->'gmail_tokens'
     // For simplicity in Postgres JSON query via PostgREST:
     const { data: agencies, error: agencyErr } = await supabase
       .from("agencies")
-      .select("id, settings")
-      .contains("settings", { gmail_tokens: { email_address: emailAddress } });
+      .select("id, integrations_config")
+      .contains("integrations_config", { gmail_tokens: { email_address: emailAddress } });
 
     if (agencyErr || !agencies || agencies.length === 0) {
       return new Response("Agency not found for email", { status: 200 }); // Return 200 to ack PubSub
     }
 
     const agency = agencies[0];
-    const tokens = agency.settings.gmail_tokens;
+    const tokens = (agency.integrations_config as any)?.gmail_tokens;
 
     // 2. Fetch history from Gmail API
     // https://gmail.googleapis.com/gmail/v1/users/me/history?startHistoryId=xxxx

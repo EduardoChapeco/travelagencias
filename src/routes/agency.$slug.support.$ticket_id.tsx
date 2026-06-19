@@ -20,7 +20,7 @@ import {
   Lock,
   AlertCircle,
 } from "lucide-react";
-import { Field, Select, StatusBadge, PrimaryButton, Textarea } from "@/components/ui/form";
+import { Field, Select, StatusBadge, PrimaryButton, Textarea, Input } from "@/components/ui/form";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -36,6 +36,7 @@ function TicketDetailRoute() {
   const qc = useQueryClient();
   const [replyText, setReplyText] = useState("");
   const [replyType, setReplyType] = useState<"client" | "supplier" | "internal">("client");
+  const [supplierEmail, setSupplierEmail] = useState("");
 
   const { data: ticket, isLoading } = useQuery({
     queryKey: ["ticket_full", ticket_id],
@@ -99,8 +100,7 @@ function TicketDetailRoute() {
       // 2. Se for reply externo (cliente ou fornecedor), chamar gmail-send
       if (isExternal && agency) {
         // Determinar email de destino
-        const clientEmail = (ticket as any)?.client?.email ?? null;
-        const toEmail = clientEmail;
+        const toEmail = replyType === "supplier" ? supplierEmail : (ticket as any)?.client?.email ?? null;
 
         if (toEmail) {
           try {
@@ -114,11 +114,10 @@ function TicketDetailRoute() {
               },
             });
             if (fnErr) {
-              // Gmail pode não estar configurado — apenas avisa sem bloquear
               console.warn("gmail-send falhou:", fnErr.message);
-              toast.warning("Mensagem salva. E-mail não enviado: Gmail não configurado na agência.");
+              toast.warning("Mensagem salva. E-mail não enviado: integrações não configuradas.");
             } else {
-              toast.success("Mensagem enviada e e-mail disparado ao cliente!");
+              toast.success("Mensagem enviada e e-mail disparado!");
             }
           } catch (e: any) {
             console.warn("gmail-send exception:", e.message);
@@ -126,13 +125,18 @@ function TicketDetailRoute() {
           }
           return; // Evitar double-toast abaixo
         } else {
-          toast.warning("Mensagem salva. Cliente não possui e-mail cadastrado.");
+          toast.warning(
+            replyType === "supplier"
+              ? "Mensagem salva. Fornecedor não possui e-mail informado."
+              : "Mensagem salva. Cliente não possui e-mail cadastrado."
+          );
           return;
         }
       }
     },
     onSuccess: () => {
       setReplyText("");
+      setSupplierEmail("");
       qc.invalidateQueries({ queryKey: ["ticket_full"] });
       if (replyType === "internal") {
         toast.success("Nota interna registrada.");
@@ -297,6 +301,17 @@ function TicketDetailRoute() {
               </button>
             </div>
 
+            {replyType === "supplier" && (
+              <div className="mb-2">
+                <Input
+                  type="email"
+                  value={supplierEmail}
+                  onChange={(e) => setSupplierEmail(e.target.value)}
+                  placeholder="E-mail do fornecedor (ex: reservas@hotel.com)"
+                  className="h-8 text-xs bg-surface border border-border"
+                />
+              </div>
+            )}
             <div
               className={`rounded-xl border ${replyType === "internal" ? "border-warning/50 bg-warning/5" : replyType === "supplier" ? "border-brand/50 bg-brand/5" : "border-border bg-background"} overflow-hidden focus-within:ring-1 focus-within:ring-primary`}
             >
