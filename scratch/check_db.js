@@ -14,14 +14,15 @@ async function main() {
 
   // Query list of tables in public schema
   const res = await client.query(`
-    SELECT table_name 
-    FROM information_schema.tables 
-    WHERE table_schema = 'public' 
-    ORDER BY table_name;
+    SELECT column_name, data_type 
+    FROM information_schema.columns 
+    WHERE table_name = 'group_tours' 
+      AND table_schema = 'public'
+    ORDER BY column_name;
   `);
 
-  console.log('Tables in public schema:');
-  console.log(res.rows.map(r => r.table_name));
+  console.log('Columns in group_tours:');
+  console.dir(res.rows, { maxArrayLength: null });
 
   await client.end();
 }

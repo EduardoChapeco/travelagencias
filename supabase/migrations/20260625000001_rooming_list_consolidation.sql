@@ -18,52 +18,59 @@ CREATE INDEX IF NOT EXISTS rooming_list_group_tour_idx
   ON public.boarding_rooming_list(group_tour_id);
 
 -- ────────────────────────────────────────────────────────────────────────────
--- 2. Migrar dados existentes do JSONB para linhas normalizadas
---    Preserva quartos já configurados via editor de grupos
+-- 2. Migrar dados existentes do JSONB para linhas normalizadas se a coluna existir
 -- ────────────────────────────────────────────────────────────────────────────
-INSERT INTO public.boarding_rooming_list (
-  agency_id,
-  group_tour_id,
-  card_id,
-  room_number,
-  room_type,
-  hotel_name,
-  checkin_date,
-  checkout_date,
-  notes,
-  is_confirmed,
-  passengers,
-  order_index
-)
-SELECT
-  gt.agency_id,
-  gt.id                                                    AS group_tour_id,
-  NULL                                                     AS card_id,
-  COALESCE(room->>'room_number', 'Quarto')::text,
-  COALESCE(room->>'room_type', 'double'),
-  room->>'hotel_name',
-  NULLIF(room->>'checkin_date', '')::date,
-  NULLIF(room->>'checkout_date', '')::date,
-  room->>'notes',
-  COALESCE((room->>'is_confirmed')::boolean, false),
-  COALESCE(room->'passengers', '[]'::jsonb),
-  (row_number() OVER (PARTITION BY gt.id ORDER BY (room->>'room_number')))::int
-FROM public.group_tours gt,
-     jsonb_array_elements(
-       CASE
-         WHEN jsonb_typeof(gt.rooming_list) = 'array' THEN gt.rooming_list
-         ELSE '[]'::jsonb
-       END
-     ) AS room
-WHERE gt.rooming_list IS NOT NULL
-  AND gt.rooming_list != 'null'::jsonb
-  AND gt.rooming_list != '[]'::jsonb;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+    FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+      AND table_name = 'group_tours' 
+      AND column_name = 'rooming_list'
+  ) THEN
+    INSERT INTO public.boarding_rooming_list (
+      agency_id,
+      group_tour_id,
+      card_id,
+      room_number,
+      room_type,
+      hotel_name,
+      checkin_date,
+      checkout_date,
+      notes,
+      is_confirmed,
+      passengers,
+      order_index
+    )
+    SELECT
+      gt.agency_id,
+      gt.id                                                    AS group_tour_id,
+      NULL                                                     AS card_id,
+      COALESCE(room->>'room_number', 'Quarto')::text,
+      COALESCE(room->>'room_type', 'double'),
+      room->>'hotel_name',
+      NULLIF(room->>'checkin_date', '')::date,
+      NULLIF(room->>'checkout_date', '')::date,
+      room->>'notes',
+      COALESCE((room->>'is_confirmed')::boolean, false),
+      COALESCE(room->'passengers', '[]'::jsonb),
+      (row_number() OVER (PARTITION BY gt.id ORDER BY (room->>'room_number')))::int
+    FROM public.group_tours gt,
+         jsonb_array_elements(
+           CASE
+             WHEN jsonb_typeof(gt.rooming_list) = 'array' THEN gt.rooming_list
+             ELSE '[]'::jsonb
+           END
+         ) AS room
+    WHERE gt.rooming_list IS NOT NULL
+      AND gt.rooming_list != 'null'::jsonb
+      AND gt.rooming_list != '[]'::jsonb;
 
--- ────────────────────────────────────────────────────────────────────────────
--- 3. Remover coluna JSONB legada de group_tours
--- ────────────────────────────────────────────────────────────────────────────
-ALTER TABLE public.group_tours
-  DROP COLUMN IF EXISTS rooming_list;
+    ALTER TABLE public.group_tours
+      DROP COLUMN rooming_list;
+  END IF;
+END $$;
 
 -- ────────────────────────────────────────────────────────────────────────────
 -- 4. Recriar políticas RLS (agora cobrindo ambos card_id e group_tour_id)
