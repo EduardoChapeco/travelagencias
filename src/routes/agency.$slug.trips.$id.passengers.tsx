@@ -48,7 +48,7 @@ function PassengersPage() {
     enabled: !!agency,
     queryKey: ["passengers", id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("trip_passengers")
         .select("*")
         .eq("trip_id", id)
@@ -65,8 +65,9 @@ function PassengersPage() {
     enabled: !!agency,
     queryKey: ["trip", id],
     queryFn: async () => {
-      const { data, error } = await (supabase.from("trips") as any)
-        .select("id, title, travel_start, travel_end, lead_id, proposal_id")
+      const { data, error } = await supabase
+        .from("trips")
+        .select("id, title, travel_start, travel_end, proposal_id")
         .eq("id", id)
         .single();
       if (error) throw error;
@@ -91,7 +92,7 @@ function PassengersPage() {
   // 4. Mutação para remover passageiro
   const remove = useMutation({
     mutationFn: async (pid: string) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from("trip_passengers")
         .update({ deleted_at: new Date().toISOString() })
         .eq("id", pid);

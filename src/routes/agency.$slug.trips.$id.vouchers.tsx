@@ -43,6 +43,7 @@ import {
   deleteVoucherData,
   uploadVoucherSourceFile,
   uploadVoucherStoryImage,
+  uploadVoucherPdf,
   type Voucher,
   type VoucherTrip as Trip,
   type TripPassenger as Passenger,
@@ -261,6 +262,9 @@ function TripVouchers() {
     if (!el || !agency) return;
     setGeneratingStory(true);
     try {
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
       const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
       const dataUrl = canvas.toDataURL("image/png");
 
@@ -314,10 +318,22 @@ function TripVouchers() {
           setSelected(null);
         }}
         onUploadPdf={(file) => uploadSourcePdf.mutate(file)}
+        onPdfGenerated={async (blob: Blob) => {
+          if (!agency || !draft.id) return;
+          try {
+            const url = await uploadVoucherPdf(agency.id, tripId, draft.id, blob);
+            qc.invalidateQueries({ queryKey: ["vouchers", tripId] });
+            toast.success("PDF salvo na nuvem!");
+            window.open(url, "_blank", "noopener");
+          } catch (e: any) {
+            toast.error(`Falha ao salvar PDF: ${e.message}`);
+          }
+        }}
         isEdit={!!selected?.id}
       />
     );
   }
+
 
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (

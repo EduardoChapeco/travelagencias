@@ -64,7 +64,7 @@ export function ContractClauseLibrary({
     enabled: isOpen && !!agencyId,
     queryKey: ["contract_clauses", agencyId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("contract_clauses")
         .select("*")
         .or(`agency_id.is.null,agency_id.eq.${agencyId}`)
@@ -77,7 +77,7 @@ export function ContractClauseLibrary({
 
   const createMut = useMutation({
     mutationFn: async (payload: Omit<Clause, "id" | "created_at">) => {
-      const { error } = await (supabase as any).from("contract_clauses").insert(payload);
+      const { error } = await supabase.from("contract_clauses").insert(payload);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -90,7 +90,7 @@ export function ContractClauseLibrary({
 
   const updateMut = useMutation({
     mutationFn: async (payload: { id: string; patch: Partial<Clause> }) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from("contract_clauses")
         .update(payload.patch)
         .eq("id", payload.id);
@@ -106,7 +106,7 @@ export function ContractClauseLibrary({
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("contract_clauses").delete().eq("id", id);
+      const { error } = await supabase.from("contract_clauses").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

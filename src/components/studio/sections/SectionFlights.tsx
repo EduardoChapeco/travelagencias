@@ -16,6 +16,7 @@ import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton } from "@/components/ui/form";
 import { Search } from "lucide-react";
+import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
 
 interface Props {
   draft: Proposal;
@@ -139,6 +140,25 @@ export function SectionFlights({ draft, save }: Props) {
                 ph="14:00"
               />
             </L>
+          </div>
+          <div className="grid grid-cols-1 gap-2 mb-2">
+            <div className="mb-1">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+                Buscar Companhia Aérea no Catálogo
+              </span>
+              <SupplierAutocomplete
+                agencyId={agency?.id ?? ""}
+                value={null}
+                onChange={(s: SupplierOption | null) => {
+                  if (!s) return;
+                  upd(i, {
+                    airline: s.name,
+                  });
+                }}
+                filterKind="airline"
+                placeholder="Buscar cia aérea..."
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-2">
             <L label="Companhia">

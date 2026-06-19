@@ -164,7 +164,7 @@ const BLOCK_PRESETS = {
     { name: "Vidro (Glassmorphic)", class: "border border-white/20 bg-white/5 backdrop-blur-md" },
     {
       name: "Glow Iluminada",
-      class: "border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20",
+      class: "border border-brand/40 ring-1 ring-brand/20 shadow-none",
     },
   ],
 };
@@ -872,7 +872,7 @@ function DesignSystemPage() {
                       <option value="border border-white/20 bg-white/5 backdrop-blur-md">
                         Vidro (Glassmorphic)
                       </option>
-                      <option value="border border-brand/40 shadow-lg shadow-brand/10 ring-1 ring-brand/20">
+                      <option value="border border-brand/40 ring-1 ring-brand/20 shadow-none">
                         Glow Iluminada
                       </option>
                       <option value="border-0">Nenhuma</option>

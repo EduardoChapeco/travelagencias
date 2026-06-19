@@ -1,4 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type VoucherInsert = Database["public"]["Tables"]["vouchers"]["Insert"];
+type VoucherUpdate = Database["public"]["Tables"]["vouchers"]["Update"];
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -128,10 +133,15 @@ export async function saveVoucherData(
   selectedId?: string,
 ): Promise<void> {
   if (selectedId) {
-    const { error } = await (supabase as any).from("vouchers").update(payload).eq("id", selectedId);
+    const { error } = await supabase
+      .from("vouchers")
+      .update(payload as VoucherUpdate)
+      .eq("id", selectedId);
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await (supabase as any).from("vouchers").insert(payload);
+    const { error } = await supabase
+      .from("vouchers")
+      .insert(payload as VoucherInsert);
     if (error) throw new Error(error.message);
   }
 }
@@ -139,7 +149,7 @@ export async function saveVoucherData(
 export async function deleteVoucherData(id: string): Promise<void> {
   const { error } = await supabase
     .from("vouchers")
-    .update({ deleted_at: new Date().toISOString() } as any)
+    .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw new Error(error.message);
 }
@@ -185,3 +195,51 @@ export async function uploadVoucherStoryImage(
 
   if (error) throw new Error(error.message);
 }
+
+/**
+ * Fase 6 — Pipeline completo de PDF do voucher:
+ * 1. Renderiza o elemento HTML para Blob PDF
+ * 2. Faz upload para o bucket voucher-pdfs no Storage
+ * 3. Cria uma URL pública assinada (1 ano)
+ * 4. Persiste pdf_url e generated_at no registro do voucher
+ *
+ * Retorna a URL pública do PDF gerado.
+ */
+export async function uploadVoucherPdf(
+  agencyId: string,
+  tripId: string,
+  voucherId: string,
+  pdfBlob: Blob,
+): Promise<string> {
+  const fileName = `voucher-${voucherId}-${Date.now()}.pdf`;
+  const path = `${agencyId}/${tripId}/${fileName}`;
+
+  // 1. Upload para Storage
+  const { error: upErr } = await supabase.storage
+    .from("voucher-pdfs")
+    .upload(path, pdfBlob, { contentType: "application/pdf", upsert: true });
+  if (upErr) throw new Error(`Falha ao fazer upload do PDF: ${upErr.message}`);
+
+  // 2. Gerar URL assinada (1 ano de validade)
+  const { data: signed, error: signErr } = await supabase.storage
+    .from("voucher-pdfs")
+    .createSignedUrl(path, 60 * 60 * 24 * 365);
+  if (signErr || !signed?.signedUrl) {
+    throw new Error("Falha ao gerar URL pública do PDF.");
+  }
+
+  const pdfUrl = signed.signedUrl;
+
+  // 3. Persistir pdf_url e generated_at no voucher
+  const { error: updErr } = await supabase
+    .from("vouchers")
+    .update({
+      pdf_url: pdfUrl,
+      generated_at: new Date().toISOString(),
+    })
+    .eq("id", voucherId);
+  if (updErr) throw new Error(`Falha ao salvar URL do PDF: ${updErr.message}`);
+
+  return pdfUrl;
+}
+

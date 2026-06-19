@@ -37,7 +37,7 @@ function Dashboard() {
         return { label: d.toLocaleString("pt-BR", { month: "short" }), start: d };
       });
 
-      const [leads, won, trips, groups, fin] = await Promise.all([
+      const [leads, won, trips, groups, fin, flights] = await Promise.all([
         supabase
           .from("leads")
           .select("id, estimated_value", { count: "exact" })
@@ -67,6 +67,14 @@ function Dashboard() {
           .from("financial_records")
           .select("amount, type, status, created_at")
           .eq("agency_id", agency!.id),
+        supabase
+          .from("boarding_tickets")
+          .select("id, ticket_code, passenger_name, date_time, venue, status")
+          .eq("agency_id", agency!.id)
+          .eq("kind", "flight")
+          .gte("date_time", now.toISOString())
+          .lte("date_time", new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000).toISOString())
+          .order("date_time", { ascending: true }),
       ]);
 
       const totalLeads = leads.count ?? 0;
@@ -99,6 +107,7 @@ function Dashboard() {
         conversionRate,
         upcomingTrips: trips.data ?? [],
         upcomingGroups: groups.data ?? [],
+        upcomingFlights: flights.data ?? [],
         revenueData,
       };
     },
@@ -316,6 +325,65 @@ function Dashboard() {
                     </div>
                   </Link>
                 ))}
+              </div>
+            )}
+          </DSModule>
+
+          {/* Conferência de Voos */}
+          <DSModule
+            kicker="Auditoria Operacional"
+            title="Conferência de voos (60 dias)"
+            action={
+              <Link
+                to="/agency/$slug/vouchers"
+                search={{ tab: "flight_audit" }}
+                params={{ slug }}
+                className="ds-label-caps text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              >
+                Ver Fila <ChevronRight className="h-3 w-3" />
+              </Link>
+            }
+          >
+            {isLoading ? (
+              <LoadingSkeleton rows={2} />
+            ) : (s?.upcomingFlights ?? []).length === 0 ? (
+              <EmptyList icon={PlaneTakeoff} text="Nenhum voo nos próximos 60 dias." />
+            ) : (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2 text-center text-[10px] pb-3 border-b border-border/50">
+                  <div className="bg-success/5 border border-success/15 rounded p-2">
+                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">Conferidos</span>
+                    <strong className="text-success text-sm font-black">
+                      {(s?.upcomingFlights ?? []).filter(f => f.status === "confirmed").length}
+                    </strong>
+                  </div>
+                  <div className="bg-warning/5 border border-warning/15 rounded p-2">
+                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">Pendentes</span>
+                    <strong className="text-warning text-sm font-black">
+                      {(s?.upcomingFlights ?? []).filter(f => f.status !== "confirmed").length}
+                    </strong>
+                  </div>
+                </div>
+                <div className="divide-y divide-border/50 max-h-[160px] overflow-y-auto pr-1">
+                  {(s?.upcomingFlights ?? []).slice(0, 3).map((f) => (
+                    <div key={f.id} className="py-2 flex items-center justify-between text-xs">
+                      <div className="min-w-0">
+                        <div className="font-semibold text-foreground truncate">{f.passenger_name}</div>
+                        <div className="text-[10px] text-muted-foreground truncate mt-0.5">
+                          ✈️ {f.venue || "Rota não especificada"} · Loc: <span className="font-mono">{f.ticket_code || "—"}</span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0 ml-3">
+                        <DSCap tone={f.status === "confirmed" ? "success" : "warning"}>
+                          {f.status === "confirmed" ? "Conferido" : "Pendente"}
+                        </DSCap>
+                        <div className="text-[10px] text-muted-foreground mt-1">
+                          {f.date_time ? new Date(f.date_time).toLocaleDateString("pt-BR") : "—"}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </DSModule>

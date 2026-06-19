@@ -313,7 +313,7 @@ function ReconciliationPage() {
           <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-none">
           <table className="w-full text-xs">
             <thead className="bg-gray-50 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-gray-500">
               <tr>
@@ -399,7 +399,7 @@ function ReconciliationPage() {
       {/* Approve / Conciliation Drawer Modal */}
       {selectedReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-xl">
+          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-none">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
@@ -478,7 +478,7 @@ function ReconciliationPage() {
       {/* Reject Drawer Modal */}
       {rejectReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-xl">
+          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-none">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-rose-600" />

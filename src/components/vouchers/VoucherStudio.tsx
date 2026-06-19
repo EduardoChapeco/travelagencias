@@ -39,6 +39,7 @@ import TemplateVoucherEmbarqueA4 from "./templates/TemplateVoucherEmbarqueA4";
 import TemplateVoucherStory from "./templates/TemplateVoucherStory";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAgency } from "@/lib/agency-context";
+import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,7 @@ interface Props {
   saving: boolean;
   onCancel: () => void;
   onUploadPdf: (file: File) => void;
+  onPdfGenerated?: (blob: Blob) => Promise<void>;
   isEdit: boolean;
 }
 
@@ -131,6 +133,7 @@ export function VoucherStudio({
   saving,
   onCancel,
   onUploadPdf,
+  onPdfGenerated,
   isEdit,
 }: Props) {
   const [mode, setMode] = useState<CanvasMode>("a4-portrait");
@@ -226,6 +229,9 @@ export function VoucherStudio({
       const { jsPDF } = await import("jspdf");
       const el = document.getElementById("voucher-canvas");
       if (!el) throw new Error("Canvas não encontrado");
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
       const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: true,
@@ -258,7 +264,15 @@ export function VoucherStudio({
         pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
       }
 
+      // Download local
       pdf.save(`voucher-${draft.destination ?? "viagem"}.pdf`);
+
+      // Fase 6: persistir PDF no Storage via callback do componente pai
+      if (onPdfGenerated) {
+        const blob = pdf.output("blob");
+        await onPdfGenerated(blob);
+      }
+
       toast.success("PDF exportado com sucesso!");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao exportar");
@@ -274,6 +288,9 @@ export function VoucherStudio({
       const el =
         document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
       if (!el) throw new Error("Canvas Story não encontrado");
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
       const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: true,
@@ -524,6 +541,25 @@ export function VoucherStudio({
             {flights.map((f, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
+                  <div className="col-span-2">
+                    <Lbl label="Buscar Cia Aérea no Catálogo">
+                      <SupplierAutocomplete
+                        agencyId={draft.agency_id ?? ""}
+                        value={null}
+                        onChange={(s: SupplierOption | null) => {
+                          if (!s) return;
+                          const arr = [...flights];
+                          arr[i] = {
+                            ...f,
+                            airline: s.name,
+                          };
+                          upd("flights", arr);
+                        }}
+                        filterKind="airline"
+                        placeholder="Buscar cia aérea cadastrada..."
+                      />
+                    </Lbl>
+                  </div>
                   <Lbl label="Cia Aérea">
                     <input
                       className={SMALL}
@@ -668,7 +704,28 @@ export function VoucherStudio({
             {accommodation.map((a, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
-                  <Lbl label="Hotel">
+                <div className="col-span-2">
+                  <Lbl label="Buscar Hotel no Catálogo da Agência">
+                    <SupplierAutocomplete
+                      agencyId={draft.agency_id ?? ""}
+                      value={null}
+                      onChange={(s: SupplierOption | null) => {
+                        if (!s) return;
+                        const arr = [...accommodation];
+                        arr[i] = {
+                          ...a,
+                          name: s.name,
+                          city: s.city ?? a.city,
+                          phone: s.phone ?? a.phone,
+                        };
+                        upd("accommodation", arr);
+                      }}
+                      filterKind="hotel"
+                      placeholder="Buscar hotel cadastrado..."
+                    />
+                  </Lbl>
+                </div>
+                <Lbl label="Hotel">
                     <input
                       className={SMALL}
                       value={a.name}
@@ -788,6 +845,25 @@ export function VoucherStudio({
             {transfers.map((t, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
                 <div className="grid grid-cols-2 gap-1.5">
+                  <div className="col-span-2">
+                    <Lbl label="Buscar Operadora de Transfer">
+                      <SupplierAutocomplete
+                        agencyId={draft.agency_id ?? ""}
+                        value={null}
+                        onChange={(s: SupplierOption | null) => {
+                          if (!s) return;
+                          const arr = [...transfers];
+                          arr[i] = {
+                            ...t,
+                            supplier: s.name,
+                          };
+                          upd("transfers", arr);
+                        }}
+                        filterKind="transport"
+                        placeholder="Buscar transfer/operadora..."
+                      />
+                    </Lbl>
+                  </div>
                   <Lbl label="Tipo">
                     <input
                       className={SMALL}

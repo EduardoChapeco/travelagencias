@@ -1,7 +1,7 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar } from "lucide-react";
+import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -264,6 +264,12 @@ function TourDetailPage() {
             className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
           >
             Financeiro & ROI
+          </TabsTrigger>
+          <TabsTrigger
+            value="rooming"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Rooming List
           </TabsTrigger>
           {t.bus_layout_id && (
             <TabsTrigger
@@ -580,6 +586,17 @@ function TourDetailPage() {
             />
           </TabsContent>
         )}
+
+        {/* Rooming List Tab */}
+        <TabsContent value="rooming">
+          <RoomingListManager
+            tourId={id}
+            agencyId={agency?.id || ""}
+            passengers={(enrolQ.data || []) as any[]}
+            departureDate={t.departure_date}
+            returnDate={t.return_date}
+          />
+        </TabsContent>
       </Tabs>
 
       {open && agency && (
@@ -1280,5 +1297,377 @@ function EditTour({
         </div>
       </form>
     </Sheet>
+  );
+}
+
+// ─── Room type labels ─────────────────────────────────────────────────────────
+const ROOM_TYPE_LABEL: Record<string, string> = {
+  single: "Single (1 pax)",
+  double: "Double (2 pax)",
+  triple: "Triple (3 pax)",
+  quad: "Quádruplo (4 pax)",
+  suite: "Suíte",
+};
+const ROOM_CAPACITY: Record<string, number> = {
+  single: 1, double: 2, triple: 3, quad: 4, suite: 2,
+};
+
+type RoomEntry = {
+  id: string;
+  room_number: string;
+  room_type: string;
+  hotel_name: string;
+  checkin_date: string;
+  checkout_date: string;
+  notes: string;
+  is_confirmed: boolean;
+  passengers: Array<{ passenger_id: string; name: string }>;
+};
+
+function RoomingListManager({
+  tourId,
+  agencyId,
+  passengers,
+  departureDate,
+  returnDate,
+}: {
+  tourId: string;
+  agencyId: string;
+  passengers: Array<{ id: string; passenger_name: string; room_type?: string }>;
+  departureDate: string | null;
+  returnDate: string | null;
+}) {
+  const qc = useQueryClient();
+
+  const roomsQ = useQuery({
+    queryKey: ["rooming-list", tourId],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("group_tours")
+        .select("rooming_list")
+        .eq("id", tourId)
+        .maybeSingle();
+      if (error) throw error;
+      return (data?.rooming_list as RoomEntry[]) ?? [];
+    },
+  });
+
+  const rooms: RoomEntry[] = roomsQ.data ?? [];
+
+  async function persistRooms(next: RoomEntry[]) {
+    const { error } = await (supabase as any)
+      .from("group_tours")
+      .update({ rooming_list: next })
+      .eq("id", tourId);
+    if (error) throw error;
+    qc.invalidateQueries({ queryKey: ["rooming-list", tourId] });
+  }
+
+  const [addOpen, setAddOpen] = useState(false);
+  const [newRoom, setNewRoom] = useState({
+    room_number: "",
+    room_type: "double",
+    hotel_name: "",
+    checkin_date: departureDate ? String(departureDate).slice(0, 10) : "",
+    checkout_date: returnDate ? String(returnDate).slice(0, 10) : "",
+    notes: "",
+  });
+
+  async function handleAddRoom(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newRoom.room_number.trim()) return toast.error("Informe o número/nome do quarto.");
+    const entry: RoomEntry = {
+      id: crypto.randomUUID(),
+      ...newRoom,
+      is_confirmed: false,
+      passengers: [],
+    };
+    try {
+      await persistRooms([...rooms, entry]);
+      toast.success("Quarto adicionado!");
+      setAddOpen(false);
+      setNewRoom({ room_number: "", room_type: "double", hotel_name: "", checkin_date: departureDate ? String(departureDate).slice(0, 10) : "", checkout_date: returnDate ? String(returnDate).slice(0, 10) : "", notes: "" });
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  async function removeRoom(roomId: string) {
+    try {
+      await persistRooms(rooms.filter(r => r.id !== roomId));
+      toast.success("Quarto removido.");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  async function toggleConfirmed(roomId: string) {
+    try {
+      await persistRooms(rooms.map(r => r.id === roomId ? { ...r, is_confirmed: !r.is_confirmed } : r));
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  async function assignPassengerToRoom(roomId: string, passengerId: string) {
+    const pax = passengers.find(p => p.id === passengerId);
+    if (!pax) return;
+    const room = rooms.find(r => r.id === roomId);
+    if (!room) return;
+    const cap = ROOM_CAPACITY[room.room_type] ?? 2;
+    if (room.passengers.length >= cap) {
+      return toast.error(`Quarto ${room.room_number} está lotado (máx. ${cap} pax).`);
+    }
+    if (rooms.some(r => r.passengers.some(p => p.passenger_id === passengerId))) {
+      return toast.warning(`${pax.passenger_name} já está alocado em outro quarto.`);
+    }
+    try {
+      await persistRooms(rooms.map(r =>
+        r.id === roomId
+          ? { ...r, passengers: [...r.passengers, { passenger_id: passengerId, name: pax.passenger_name }] }
+          : r
+      ));
+      toast.success(`${pax.passenger_name} alocado no quarto ${room.room_number}.`);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  async function removePassengerFromRoom(roomId: string, passengerId: string) {
+    try {
+      await persistRooms(rooms.map(r =>
+        r.id === roomId
+          ? { ...r, passengers: r.passengers.filter(p => p.passenger_id !== passengerId) }
+          : r
+      ));
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  const allocatedIds = new Set(rooms.flatMap(r => r.passengers.map(p => p.passenger_id)));
+  const unallocated = passengers.filter(p => !allocatedIds.has(p.id));
+  const totalBeds = rooms.reduce((sum, r) => sum + ROOM_CAPACITY[r.room_type], 0);
+  const totalOccupied = rooms.reduce((sum, r) => sum + r.passengers.length, 0);
+
+  return (
+    <div className="space-y-6">
+      {/* Summary KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Quartos</div>
+          <div className="text-2xl font-black text-foreground">{rooms.length}</div>
+        </div>
+        <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Leitos</div>
+          <div className="text-2xl font-black text-foreground">{totalBeds}</div>
+        </div>
+        <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Alocados</div>
+          <div className="text-2xl font-black text-brand">{totalOccupied}</div>
+        </div>
+        <div className={`rounded-xl border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}>
+          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">Sem Quarto</div>
+          <div className={`text-2xl font-black ${unallocated.length === 0 ? "text-success" : "text-warning"}`}>{unallocated.length}</div>
+        </div>
+      </div>
+
+      {/* Unallocated warning */}
+      {unallocated.length > 0 && (
+        <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/5 px-4 py-3">
+          <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
+          <div>
+            <div className="text-xs font-bold text-warning">Passageiros sem quarto alocado:</div>
+            <div className="text-xs text-muted-foreground mt-1">{unallocated.map(p => p.passenger_name).join(", ")}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Header actions */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <Hotel className="h-4 w-4 text-brand" /> Distribuição de Quartos
+        </h3>
+        <button
+          type="button"
+          onClick={() => setAddOpen(true)}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
+        >
+          <Plus className="h-3.5 w-3.5" /> Novo Quarto
+        </button>
+      </div>
+
+      {/* Add room form */}
+      {addOpen && (
+        <div className="rounded-xl border border-brand/20 bg-brand/5 p-5">
+          <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
+          <form onSubmit={handleAddRoom} className="space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <Field label="Número/Nome *">
+                <Input
+                  value={newRoom.room_number}
+                  onChange={e => setNewRoom({ ...newRoom, room_number: e.target.value })}
+                  placeholder="ex: 201 ou Quarto Família"
+                  required
+                />
+              </Field>
+              <Field label="Tipo *">
+                <Select value={newRoom.room_type} onChange={e => setNewRoom({ ...newRoom, room_type: e.target.value })}>
+                  {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </Select>
+              </Field>
+              <Field label="Hotel/Pousada">
+                <Input
+                  value={newRoom.hotel_name}
+                  onChange={e => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
+                  placeholder="Nome do hotel"
+                />
+              </Field>
+              <Field label="Check-in">
+                <Input type="date" value={newRoom.checkin_date} onChange={e => setNewRoom({ ...newRoom, checkin_date: e.target.value })} />
+              </Field>
+              <Field label="Check-out">
+                <Input type="date" value={newRoom.checkout_date} onChange={e => setNewRoom({ ...newRoom, checkout_date: e.target.value })} />
+              </Field>
+              <Field label="Notas">
+                <Input value={newRoom.notes} onChange={e => setNewRoom({ ...newRoom, notes: e.target.value })} placeholder="Observações..." />
+              </Field>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <GhostButton type="button" onClick={() => setAddOpen(false)}>Cancelar</GhostButton>
+              <PrimaryButton type="submit">Adicionar Quarto</PrimaryButton>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Room cards grid */}
+      {rooms.length === 0 && !addOpen ? (
+        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+          <BedDouble className="h-8 w-8 mx-auto mb-3 text-muted-foreground/30" />
+          Nenhum quarto cadastrado. Clique em "Novo Quarto" para começar a montagem do rooming list.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {rooms.map(room => {
+            const cap = ROOM_CAPACITY[room.room_type] ?? 2;
+            const pctFull = room.passengers.length / cap;
+            const isFull = room.passengers.length >= cap;
+            return (
+              <div key={room.id} className={`rounded-xl border bg-surface overflow-hidden transition-all ${room.is_confirmed ? "border-success/40" : "border-border"}`}>
+                {/* Room header */}
+                <div className={`flex items-center justify-between px-4 py-3 ${room.is_confirmed ? "bg-success/5" : "bg-surface-alt/30"}`}>
+                  <div className="flex items-center gap-2">
+                    <BedDouble className="h-4 w-4 text-brand shrink-0" />
+                    <div>
+                      <div className="font-bold text-sm text-foreground">Quarto {room.room_number}</div>
+                      <div className="text-[10px] text-muted-foreground">{ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleConfirmed(room.id)}
+                      title={room.is_confirmed ? "Clique para desconfirmar" : "Confirmar quarto"}
+                      className={`p-1 rounded transition-colors cursor-pointer ${room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"}`}
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeRoom(room.id)}
+                      className="p-1 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Occupancy bar */}
+                <div className="px-4 pt-3 pb-1">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Ocupação</span>
+                    <span className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}>{room.passengers.length}/{cap}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-surface-alt overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${isFull ? "bg-success" : pctFull >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"}`}
+                      style={{ width: `${Math.min(100, (room.passengers.length / cap) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Passenger list */}
+                <div className="px-4 pb-3 space-y-1.5 mt-2">
+                  {room.passengers.map(p => (
+                    <div key={p.passenger_id} className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-brand/5 border border-brand/10">
+                      <span className="text-xs font-semibold text-foreground">{p.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removePassengerFromRoom(room.id, p.passenger_id)}
+                        className="text-muted-foreground hover:text-danger transition-colors cursor-pointer ml-2"
+                      >
+                        <XCircle className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                  {!isFull && (
+                    <select
+                      defaultValue=""
+                      onChange={e => {
+                        if (e.target.value) {
+                          assignPassengerToRoom(room.id, e.target.value);
+                          e.target.value = "";
+                        }
+                      }}
+                      className="w-full mt-1 h-8 rounded-lg border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
+                    >
+                      <option value="">+ Alocar passageiro...</option>
+                      {unallocated.map(p => (
+                        <option key={p.id} value={p.id}>{p.passenger_name}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                {/* Hotel / dates */}
+                {(room.hotel_name || room.checkin_date) && (
+                  <div className="px-4 pb-3 border-t border-border/50 pt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground font-medium">
+                    {room.hotel_name && <span className="flex items-center gap-1"><Hotel className="h-2.5 w-2.5" />{room.hotel_name}</span>}
+                    {room.checkin_date && <span>In: {room.checkin_date}</span>}
+                    {room.checkout_date && <span>Out: {room.checkout_date}</span>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Group Closure Checklist */}
+      {rooms.length > 0 && (
+        <div className="rounded-xl border border-border bg-surface p-5 mt-2">
+          <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-success" /> Validação de Fechamento do Grupo
+          </h4>
+          <div className="space-y-2.5">
+            {[
+              { ok: unallocated.length === 0, label: `Todos os passageiros alocados em quartos (${allocatedIds.size}/${passengers.length})` },
+              { ok: rooms.every(r => r.is_confirmed), label: `Todos os quartos confirmados pelo hotel (${rooms.filter(r => r.is_confirmed).length}/${rooms.length})` },
+              { ok: rooms.every(r => !!r.hotel_name), label: "Nome do hotel preenchido em todos os quartos" },
+              { ok: rooms.every(r => !!r.checkin_date && !!r.checkout_date), label: "Check-in e check-out preenchidos em todos os quartos" },
+            ].map((check, i) => (
+              <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}>
+                {check.ok
+                  ? <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  : <AlertTriangle className="h-4 w-4 shrink-0" />
+                }
+                {check.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

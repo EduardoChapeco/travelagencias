@@ -603,25 +603,212 @@ export type Database = {
           },
         ];
       };
+      destination_info: {
+        Row: {
+          id: string;
+          destination: string;
+          country_code: string | null;
+          slug: string | null;
+          visa_required: boolean | null;
+          visa_info: string | null;
+          entry_requirements: string | null;
+          tourist_tax: string | null;
+          tourist_tax_amount: number | null;
+          tourist_tax_currency: string | null;
+          vaccinations_required: string[] | null;
+          vaccinations_recommended: string[] | null;
+          health_notes: string | null;
+          currency: string | null;
+          currency_code: string | null;
+          plug_type: string | null;
+          language: string | null;
+          time_zone: string | null;
+          utc_offset: string | null;
+          safety_level: string | null;
+          safety_notes: string | null;
+          cultural_tips: string | null;
+          best_season: string | null;
+          budget_range: string | null;
+          ai_generated_at: string | null;
+          ai_model: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          destination: string;
+          country_code?: string | null;
+          slug?: string | null;
+          visa_required?: boolean | null;
+          visa_info?: string | null;
+          entry_requirements?: string | null;
+          tourist_tax?: string | null;
+          tourist_tax_amount?: number | null;
+          tourist_tax_currency?: string | null;
+          vaccinations_required?: string[] | null;
+          vaccinations_recommended?: string[] | null;
+          health_notes?: string | null;
+          currency?: string | null;
+          currency_code?: string | null;
+          plug_type?: string | null;
+          language?: string | null;
+          time_zone?: string | null;
+          utc_offset?: string | null;
+          safety_level?: string | null;
+          safety_notes?: string | null;
+          cultural_tips?: string | null;
+          best_season?: string | null;
+          budget_range?: string | null;
+          ai_generated_at?: string | null;
+          ai_model?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          destination?: string;
+          country_code?: string | null;
+          slug?: string | null;
+          visa_required?: boolean | null;
+          visa_info?: string | null;
+          entry_requirements?: string | null;
+          tourist_tax?: string | null;
+          tourist_tax_amount?: number | null;
+          tourist_tax_currency?: string | null;
+          vaccinations_required?: string[] | null;
+          vaccinations_recommended?: string[] | null;
+          health_notes?: string | null;
+          currency?: string | null;
+          currency_code?: string | null;
+          plug_type?: string | null;
+          language?: string | null;
+          time_zone?: string | null;
+          utc_offset?: string | null;
+          safety_level?: string | null;
+          safety_notes?: string | null;
+          cultural_tips?: string | null;
+          best_season?: string | null;
+          budget_range?: string | null;
+          ai_generated_at?: string | null;
+          ai_model?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      boarding_rooming_list: {
+        Row: {
+          id: string;
+          agency_id: string;
+          card_id: string;
+          room_number: string;
+          room_type: string;
+          hotel_name: string | null;
+          checkin_date: string | null;
+          checkout_date: string | null;
+          passengers: Json;
+          notes: string | null;
+          is_confirmed: boolean;
+          order_index: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          agency_id: string;
+          card_id: string;
+          room_number: string;
+          room_type?: string;
+          hotel_name?: string | null;
+          checkin_date?: string | null;
+          checkout_date?: string | null;
+          passengers?: Json;
+          notes?: string | null;
+          is_confirmed?: boolean;
+          order_index?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          agency_id?: string;
+          card_id?: string;
+          room_number?: string;
+          room_type?: string;
+          hotel_name?: string | null;
+          checkin_date?: string | null;
+          checkout_date?: string | null;
+          passengers?: Json;
+          notes?: string | null;
+          is_confirmed?: boolean;
+          order_index?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "boarding_rooming_list_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "boarding_rooming_list_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "boarding_cards";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       boarding_cards: {
         Row: {
           agency_id: string;
           airline: string | null;
           alerts: string[];
+          arrival_airport: string | null;
           briefing_date: string | null;
           briefing_url: string | null;
           checklist: Json;
           created_at: string;
           deleted_at: string | null;
+          departure_airport: string | null;
           departure_date: string | null;
+          destination: string | null;
+          destination_type: string | null;
+          documents_checklist: Json;
+          emergency_phone: string | null;
+          flight_class: string | null;
+          flight_date: string | null;
+          flight_number: string | null;
+          guide_name: string | null;
+          guide_phone: string | null;
+          guide_whatsapp: string | null;
+          hotel_address: string | null;
+          hotel_checkin: string | null;
+          hotel_checkout: string | null;
+          hotel_name: string | null;
+          hotel_phone: string | null;
           id: string;
           internal_ref: string | null;
           notes: string | null;
+          notes_internal: string | null;
           passengers_count: number | null;
+          pax_count: number | null;
           pnr: string | null;
           position: number;
           status: string;
           tags: string[] | null;
+          transfer_provider: string | null;
+          transfer_time: string | null;
+          transfer_vehicle: string | null;
           trip_id: string;
           updated_at: string;
         };
@@ -629,20 +816,42 @@ export type Database = {
           agency_id: string;
           airline?: string | null;
           alerts?: string[];
+          arrival_airport?: string | null;
           briefing_date?: string | null;
           briefing_url?: string | null;
           checklist?: Json;
           created_at?: string;
           deleted_at?: string | null;
+          departure_airport?: string | null;
           departure_date?: string | null;
+          destination?: string | null;
+          destination_type?: string | null;
+          documents_checklist?: Json;
+          emergency_phone?: string | null;
+          flight_class?: string | null;
+          flight_date?: string | null;
+          flight_number?: string | null;
+          guide_name?: string | null;
+          guide_phone?: string | null;
+          guide_whatsapp?: string | null;
+          hotel_address?: string | null;
+          hotel_checkin?: string | null;
+          hotel_checkout?: string | null;
+          hotel_name?: string | null;
+          hotel_phone?: string | null;
           id?: string;
           internal_ref?: string | null;
           notes?: string | null;
+          notes_internal?: string | null;
           passengers_count?: number | null;
+          pax_count?: number | null;
           pnr?: string | null;
           position?: number;
           status?: string;
           tags?: string[] | null;
+          transfer_provider?: string | null;
+          transfer_time?: string | null;
+          transfer_vehicle?: string | null;
           trip_id: string;
           updated_at?: string;
         };
@@ -650,24 +859,128 @@ export type Database = {
           agency_id?: string;
           airline?: string | null;
           alerts?: string[];
+          arrival_airport?: string | null;
           briefing_date?: string | null;
           briefing_url?: string | null;
           checklist?: Json;
           created_at?: string;
           deleted_at?: string | null;
+          departure_airport?: string | null;
           departure_date?: string | null;
+          destination?: string | null;
+          destination_type?: string | null;
+          documents_checklist?: Json;
+          emergency_phone?: string | null;
+          flight_class?: string | null;
+          flight_date?: string | null;
+          flight_number?: string | null;
+          guide_name?: string | null;
+          guide_phone?: string | null;
+          guide_whatsapp?: string | null;
+          hotel_address?: string | null;
+          hotel_checkin?: string | null;
+          hotel_checkout?: string | null;
+          hotel_name?: string | null;
+          hotel_phone?: string | null;
           id?: string;
           internal_ref?: string | null;
           notes?: string | null;
+          notes_internal?: string | null;
           passengers_count?: number | null;
+          pax_count?: number | null;
           pnr?: string | null;
           position?: number;
           status?: string;
           tags?: string[] | null;
+          transfer_provider?: string | null;
+          transfer_time?: string | null;
+          transfer_vehicle?: string | null;
           trip_id?: string;
           updated_at?: string;
         };
         Relationships: [];
+      };
+      boarding_tickets: {
+        Row: {
+          id: string;
+          card_id: string;
+          passenger_id: string | null;
+          agency_id: string;
+          kind: string;
+          ticket_code: string | null;
+          passenger_name: string;
+          date_time: string | null;
+          venue: string | null;
+          seat: string | null;
+          status: string;
+          file_url: string | null;
+          file_path: string | null;
+          extracted_data: Json;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          card_id: string;
+          passenger_id?: string | null;
+          agency_id: string;
+          kind: string;
+          ticket_code?: string | null;
+          passenger_name: string;
+          date_time?: string | null;
+          venue?: string | null;
+          seat?: string | null;
+          status?: string;
+          file_url?: string | null;
+          file_path?: string | null;
+          extracted_data?: Json;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          card_id?: string;
+          passenger_id?: string | null;
+          agency_id?: string;
+          kind?: string;
+          ticket_code?: string | null;
+          passenger_name?: string;
+          date_time?: string | null;
+          venue?: string | null;
+          seat?: string | null;
+          status?: string;
+          file_url?: string | null;
+          file_path?: string | null;
+          extracted_data?: Json;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "boarding_tickets_card_id_fkey";
+            columns: ["card_id"];
+            isOneToOne: false;
+            referencedRelation: "boarding_cards";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "boarding_tickets_passenger_id_fkey";
+            columns: ["passenger_id"];
+            isOneToOne: false;
+            referencedRelation: "trip_passengers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "boarding_tickets_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       booking_installments: {
         Row: {
@@ -1279,13 +1592,65 @@ export type Database = {
         };
         Relationships: [];
       };
+      contract_clauses: {
+        Row: {
+          id: string;
+          agency_id: string | null;
+          title: string;
+          body: string;
+          kind: string;
+          is_default: boolean;
+          is_active: boolean;
+          version: number;
+          order_index: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          agency_id?: string | null;
+          title: string;
+          body: string;
+          kind: string;
+          is_default?: boolean;
+          is_active?: boolean;
+          version?: number;
+          order_index?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          agency_id?: string | null;
+          title?: string;
+          body?: string;
+          kind?: string;
+          is_default?: boolean;
+          is_active?: boolean;
+          version?: number;
+          order_index?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_clauses_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       contracts: {
         Row: {
           agency_data: Json;
           agency_id: string;
+          audit_trail: Json;
           cancellation_reason: string | null;
           cancelled_at: string | null;
           certificate: Json | null;
+          clause_snapshot: Json | null;
           client_data: Json;
           content_hash: string | null;
           created_at: string;
@@ -1293,6 +1658,7 @@ export type Database = {
           deleted_at: string | null;
           fixed_clauses: Json;
           id: string;
+          is_custom_clauses: boolean;
           last_viewed_at: string | null;
           package_summary: string | null;
           passengers_data: Json;
@@ -1303,18 +1669,21 @@ export type Database = {
           signed_at: string | null;
           signed_hash: string | null;
           status: string;
+          template_id: string | null;
           total_value: number;
           trip_id: string;
-          version: string;
+          version: number | string;
           view_count: number | null;
           viewed_at: string | null;
         };
         Insert: {
           agency_data?: Json;
           agency_id: string;
+          audit_trail?: Json;
           cancellation_reason?: string | null;
           cancelled_at?: string | null;
           certificate?: Json | null;
+          clause_snapshot?: Json | null;
           client_data?: Json;
           content_hash?: string | null;
           created_at?: string;
@@ -1322,6 +1691,7 @@ export type Database = {
           deleted_at?: string | null;
           fixed_clauses?: Json;
           id?: string;
+          is_custom_clauses?: boolean;
           last_viewed_at?: string | null;
           package_summary?: string | null;
           passengers_data?: Json;
@@ -1332,18 +1702,21 @@ export type Database = {
           signed_at?: string | null;
           signed_hash?: string | null;
           status?: string;
+          template_id?: string | null;
           total_value?: number;
           trip_id: string;
-          version?: string;
+          version?: number | string;
           view_count?: number | null;
           viewed_at?: string | null;
         };
         Update: {
           agency_data?: Json;
           agency_id?: string;
+          audit_trail?: Json;
           cancellation_reason?: string | null;
           cancelled_at?: string | null;
           certificate?: Json | null;
+          clause_snapshot?: Json | null;
           client_data?: Json;
           content_hash?: string | null;
           created_at?: string;
@@ -1351,6 +1724,7 @@ export type Database = {
           deleted_at?: string | null;
           fixed_clauses?: Json;
           id?: string;
+          is_custom_clauses?: boolean;
           last_viewed_at?: string | null;
           package_summary?: string | null;
           passengers_data?: Json;
@@ -1361,9 +1735,10 @@ export type Database = {
           signed_at?: string | null;
           signed_hash?: string | null;
           status?: string;
+          template_id?: string | null;
           total_value?: number;
           trip_id?: string;
-          version?: string;
+          version?: number | string;
           view_count?: number | null;
           viewed_at?: string | null;
         };
@@ -4126,61 +4501,103 @@ export type Database = {
       };
       suppliers: {
         Row: {
+          address: string | null;
           agency_id: string;
+          city: string | null;
           commission_rate: number;
           contact_name: string | null;
+          contract_url: string | null;
+          country: string | null;
+          cover_url: string | null;
           created_at: string;
           deleted_at: string | null;
           document: string | null;
           email: string | null;
           id: string;
+          instagram: string | null;
           is_active: boolean;
           kind: Database["public"]["Enums"]["supplier_kind"];
           legal_name: string | null;
+          logo_url: string | null;
+          metadata: Json;
           name: string;
           notes: string | null;
           payment_terms: string | null;
           phone: string | null;
+          rating: number | null;
+          sla_hours: number;
+          state: string | null;
+          tags: string[] | null;
           updated_at: string;
           website: string | null;
+          whatsapp: string | null;
+          zip: string | null;
         };
         Insert: {
+          address?: string | null;
           agency_id: string;
+          city?: string | null;
           commission_rate?: number;
           contact_name?: string | null;
+          contract_url?: string | null;
+          country?: string | null;
+          cover_url?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           document?: string | null;
           email?: string | null;
           id?: string;
+          instagram?: string | null;
           is_active?: boolean;
           kind?: Database["public"]["Enums"]["supplier_kind"];
           legal_name?: string | null;
+          logo_url?: string | null;
+          metadata?: Json;
           name: string;
           notes?: string | null;
           payment_terms?: string | null;
           phone?: string | null;
+          rating?: number | null;
+          sla_hours?: number;
+          state?: string | null;
+          tags?: string[] | null;
           updated_at?: string;
           website?: string | null;
+          whatsapp?: string | null;
+          zip?: string | null;
         };
         Update: {
+          address?: string | null;
           agency_id?: string;
+          city?: string | null;
           commission_rate?: number;
           contact_name?: string | null;
+          contract_url?: string | null;
+          country?: string | null;
+          cover_url?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           document?: string | null;
           email?: string | null;
           id?: string;
+          instagram?: string | null;
           is_active?: boolean;
           kind?: Database["public"]["Enums"]["supplier_kind"];
           legal_name?: string | null;
+          logo_url?: string | null;
+          metadata?: Json;
           name?: string;
           notes?: string | null;
           payment_terms?: string | null;
           phone?: string | null;
+          rating?: number | null;
+          sla_hours?: number;
+          state?: string | null;
+          tags?: string[] | null;
           updated_at?: string;
           website?: string | null;
+          whatsapp?: string | null;
+          zip?: string | null;
         };
         Relationships: [
           {
@@ -4190,6 +4607,256 @@ export type Database = {
             referencedRelation: "agencies";
             referencedColumns: ["id"];
           },
+        ];
+      };
+      supplier_contacts: {
+        Row: {
+          id: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          role: string | null;
+          email: string | null;
+          phone: string | null;
+          whatsapp: string | null;
+          is_primary: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          role?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          whatsapp?: string | null;
+          is_primary?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          supplier_id?: string;
+          agency_id?: string;
+          name?: string;
+          role?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          whatsapp?: string | null;
+          is_primary?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "supplier_contacts_supplier_id_fkey";
+            columns: ["supplier_id"];
+            isOneToOne: false;
+            referencedRelation: "suppliers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "supplier_contacts_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      supplier_files: {
+        Row: {
+          id: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          kind: string | null;
+          file_url: string;
+          file_path: string | null;
+          expires_at: string | null;
+          ocr_data: Json | null;
+          ocr_reviewed: boolean;
+          ocr_reviewed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          kind?: string | null;
+          file_url: string;
+          file_path?: string | null;
+          expires_at?: string | null;
+          ocr_data?: Json | null;
+          ocr_reviewed?: boolean;
+          ocr_reviewed_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          supplier_id?: string;
+          agency_id?: string;
+          name?: string;
+          kind?: string | null;
+          file_url?: string;
+          file_path?: string | null;
+          expires_at?: string | null;
+          ocr_data?: Json | null;
+          ocr_reviewed?: boolean;
+          ocr_reviewed_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "supplier_files_supplier_id_fkey";
+            columns: ["supplier_id"];
+            isOneToOne: false;
+            referencedRelation: "suppliers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "supplier_files_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      supplier_products: {
+        Row: {
+          id: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          kind: string;
+          destination: string | null;
+          country: string | null;
+          city: string | null;
+          description: string | null;
+          price_from: number | null;
+          currency: string;
+          duration_days: number | null;
+          capacity: number | null;
+          images: string[] | null;
+          metadata: Json;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          supplier_id: string;
+          agency_id: string;
+          name: string;
+          kind: string;
+          destination?: string | null;
+          country?: string | null;
+          city?: string | null;
+          description?: string | null;
+          price_from?: number | null;
+          currency?: string;
+          duration_days?: number | null;
+          capacity?: number | null;
+          images?: string[] | null;
+          metadata?: Json;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          supplier_id?: string;
+          agency_id?: string;
+          name?: string;
+          kind?: string;
+          destination?: string | null;
+          country?: string | null;
+          city?: string | null;
+          description?: string | null;
+          price_from?: number | null;
+          currency?: string;
+          duration_days?: number | null;
+          capacity?: number | null;
+          images?: string[] | null;
+          metadata?: Json;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_supplier_id_fkey";
+            columns: ["supplier_id"];
+            isOneToOne: false;
+            referencedRelation: "suppliers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "supplier_products_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      supplier_reviews: {
+        Row: {
+          id: string;
+          supplier_id: string;
+          agency_id: string;
+          trip_id: string | null;
+          user_id: string | null;
+          rating: number;
+          comment: string | null;
+          tags: string[] | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          supplier_id: string;
+          agency_id: string;
+          trip_id?: string | null;
+          user_id?: string | null;
+          rating: number;
+          comment?: string | null;
+          tags?: string[] | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          supplier_id?: string;
+          agency_id?: string;
+          trip_id?: string | null;
+          user_id?: string | null;
+          rating?: number;
+          comment?: string | null;
+          tags?: string[] | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "supplier_reviews_supplier_id_fkey";
+            columns: ["supplier_id"];
+            isOneToOne: false;
+            referencedRelation: "suppliers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "supplier_reviews_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "supplier_reviews_trip_id_fkey";
+            columns: ["trip_id"];
+            isOneToOne: false;
+            referencedRelation: "trips";
+            referencedColumns: ["id"];
+          }
         ];
       };
       support_tickets: {

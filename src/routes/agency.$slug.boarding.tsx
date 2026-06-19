@@ -210,7 +210,7 @@ function BoardingKanbanPage() {
               onClick={() => setViewMode("kanban")}
               className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
                 viewMode === "kanban"
-                  ? "bg-surface text-foreground shadow-sm"
+                  ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
               }`}
               title="Visualização em Quadro (Kanban)"
@@ -222,7 +222,7 @@ function BoardingKanbanPage() {
               onClick={() => setViewMode("list")}
               className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
                 viewMode === "list"
-                  ? "bg-surface text-foreground shadow-sm"
+                  ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
               }`}
               title="Visualização em Lista"
@@ -234,7 +234,7 @@ function BoardingKanbanPage() {
               onClick={() => setViewMode("calendar")}
               className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
                 viewMode === "calendar"
-                  ? "bg-surface text-foreground shadow-sm"
+                  ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
               }`}
               title="Visualização em Calendário"

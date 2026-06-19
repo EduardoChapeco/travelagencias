@@ -125,7 +125,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
   const q = useQuery({
     queryKey: ["supplier_contacts", supplierId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("supplier_contacts")
         .select("*")
         .eq("supplier_id", supplierId)
@@ -137,7 +137,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
   const addMut = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).from("supplier_contacts").insert({
+      const { error } = await supabase.from("supplier_contacts").insert({
         supplier_id: supplierId, agency_id: agencyId, ...form,
       });
       if (error) throw error;
@@ -153,7 +153,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("supplier_contacts").delete().eq("id", id);
+      const { error } = await supabase.from("supplier_contacts").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -247,7 +247,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
   const q = useQuery({
     queryKey: ["supplier_products", supplierId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("supplier_products")
         .select("*")
         .eq("supplier_id", supplierId)
@@ -259,7 +259,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
   const addMut = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).from("supplier_products").insert({
+      const { error } = await supabase.from("supplier_products").insert({
         supplier_id: supplierId,
         agency_id: agencyId,
         name: form.name,
@@ -286,7 +286,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("supplier_products").delete().eq("id", id);
+      const { error } = await supabase.from("supplier_products").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -388,7 +388,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
   const q = useQuery({
     queryKey: ["supplier_files", supplierId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("supplier_files").select("*").eq("supplier_id", supplierId).order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("supplier_files").select("*").eq("supplier_id", supplierId).order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -396,7 +396,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("supplier_files").delete().eq("id", id);
+      const { error } = await supabase.from("supplier_files").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Arquivo removido"); qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] }); },
@@ -412,7 +412,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
       const { error: upErr } = await supabase.storage.from("supplier-files").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("supplier-files").getPublicUrl(path);
-      const { error: dbErr } = await (supabase as any).from("supplier_files").insert({
+      const { error: dbErr } = await supabase.from("supplier_files").insert({
         supplier_id: supplierId, agency_id: agencyId,
         name: file.name, kind: "other", file_url: publicUrl, file_path: path,
       });
@@ -438,7 +438,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
       });
       if (!res.ok) throw new Error(await res.text());
       const { result } = await res.json();
-      await (supabase as any).from("supplier_files").update({ ocr_data: result }).eq("id", fileId);
+      await supabase.from("supplier_files").update({ ocr_data: result }).eq("id", fileId);
       toast.success("Dados extraídos! Revise abaixo.");
       qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
     } catch (e: any) {
@@ -509,13 +509,90 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                 <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">{JSON.stringify(f.ocr_data, null, 2)}</pre>
                 <button
                   onClick={async () => {
-                    await (supabase as any).from("supplier_files").update({ ocr_reviewed: true, ocr_reviewed_at: new Date().toISOString() }).eq("id", f.id);
-                    toast.success("Marcado como revisado");
-                    qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
+                    const ocr = f.ocr_data as any;
+                    const toastId = toast.loading("Persistindo dados extraídos...");
+                    try {
+                      // 1. Insert contacts
+                      if (Array.isArray(ocr?.contacts) && ocr.contacts.length > 0) {
+                        const contactRows = ocr.contacts
+                          .filter((c: any) => c?.name)
+                          .map((c: any) => ({
+                            supplier_id: supplierId,
+                            agency_id: agencyId,
+                            name: c.name,
+                            role: c.role || "Outro",
+                            email: c.email || null,
+                            phone: c.phone || null,
+                            notes: null,
+                          }));
+                        if (contactRows.length > 0) {
+                          const { error: cErr } = await supabase
+                            .from("supplier_contacts")
+                            .insert(contactRows);
+                          if (cErr) console.warn("supplier_contacts insert:", cErr.message);
+                        }
+                      }
+
+                      // 2. Insert products
+                      if (Array.isArray(ocr?.products) && ocr.products.length > 0) {
+                        const productRows = ocr.products
+                          .filter((p: any) => p?.name)
+                          .map((p: any) => ({
+                            supplier_id: supplierId,
+                            agency_id: agencyId,
+                            name: p.name,
+                            kind: p.kind || "other",
+                            destination: p.destination || null,
+                            price_from: p.price_from ? Number(p.price_from) : null,
+                            currency: p.currency || "BRL",
+                            duration_days: p.duration_days ? Number(p.duration_days) : null,
+                            description: p.description || null,
+                            is_active: true,
+                          }));
+                        if (productRows.length > 0) {
+                          const { error: pErr } = await supabase
+                            .from("supplier_products")
+                            .insert(productRows);
+                          if (pErr) console.warn("supplier_products insert:", pErr.message);
+                        }
+                      }
+
+                      // 3. Update supplier with top-level OCR metadata
+                      const supplierPatch: {
+                        phone?: string;
+                        email?: string;
+                        website?: string;
+                        payment_terms?: string;
+                        commission_rate?: number;
+                      } = {};
+                      if (ocr?.phone) supplierPatch.phone = String(ocr.phone);
+                      if (ocr?.email) supplierPatch.email = String(ocr.email);
+                      if (ocr?.website) supplierPatch.website = String(ocr.website);
+                      if (ocr?.payment_terms) supplierPatch.payment_terms = String(ocr.payment_terms);
+                      if (ocr?.commission_rate != null) supplierPatch.commission_rate = Number(ocr.commission_rate);
+                      if (Object.keys(supplierPatch).length > 0) {
+                        await supabase.from("suppliers").update(supplierPatch).eq("id", supplierId);
+                      }
+
+
+                      // 4. Mark file as reviewed
+                      await supabase
+                        .from("supplier_files")
+                        .update({ ocr_reviewed: true, ocr_reviewed_at: new Date().toISOString() })
+                        .eq("id", f.id);
+
+                      toast.success("Dados confirmados e persistidos com sucesso!", { id: toastId });
+                      qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
+                      qc.invalidateQueries({ queryKey: ["supplier_contacts", supplierId] });
+                      qc.invalidateQueries({ queryKey: ["supplier_products", supplierId] });
+                      qc.invalidateQueries({ queryKey: ["supplier", supplierId] });
+                    } catch (e: any) {
+                      toast.error("Erro ao persistir: " + e.message, { id: toastId });
+                    }
                   }}
                   className="mt-2 text-amber-700 border border-amber-300 rounded px-2 py-1 hover:bg-amber-100 transition-colors"
                 >
-                  ✓ Confirmar dados
+                  ✓ Confirmar e persistir dados
                 </button>
               </div>
             )}
@@ -537,7 +614,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
   const q = useQuery({
     queryKey: ["supplier_reviews", supplierId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("supplier_reviews")
         .select("*, user:user_id(email), trip:trip_id(destination)")
         .eq("supplier_id", supplierId)
@@ -551,7 +628,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
     mutationFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       const tags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
-      const { error } = await (supabase as any).from("supplier_reviews").insert({
+      const { error } = await supabase.from("supplier_reviews").insert({
         supplier_id: supplierId, agency_id: agencyId,
         user_id: user?.id,
         rating: form.rating,
@@ -572,7 +649,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("supplier_reviews").delete().eq("id", id);
+      const { error } = await supabase.from("supplier_reviews").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -712,7 +789,7 @@ function SupplierDetailsPage() {
               <div className="h-16 bg-gradient-to-r from-surface to-surface-alt border-b border-border" />
             )}
             <div className="px-5 pb-5 -mt-5 flex items-end gap-4">
-              <div className={cn("flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white bg-white shadow-sm")}>
+              <div className={cn("flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white bg-white shadow-none border border-border/40")}>
                 {supplier.logo_url ? (
                   <img src={supplier.logo_url} alt={supplier.name} className="h-12 w-12 object-contain rounded-xl" />
                 ) : (

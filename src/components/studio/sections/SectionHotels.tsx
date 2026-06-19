@@ -16,6 +16,7 @@ import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { infotravelSearchHotels } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton } from "@/components/ui/form";
+import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
 
 interface Props {
   draft: Proposal;
@@ -139,6 +140,24 @@ export function SectionHotels({ draft, save }: Props) {
       {hotels.map((h, i) => (
         <Card key={h.id || i} onRemove={() => remove(i)}>
           <div className="grid grid-cols-1 gap-2 mb-2">
+            <div className="mb-1">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+                Buscar Hotel no Catálogo da Agência
+              </span>
+              <SupplierAutocomplete
+                agencyId={agency?.id ?? ""}
+                value={null}
+                onChange={(s: SupplierOption | null) => {
+                  if (!s) return;
+                  upd(i, {
+                    name: s.name,
+                    city: s.city ?? h.city,
+                  });
+                }}
+                filterKind="hotel"
+                placeholder="Buscar hotel cadastrado..."
+              />
+            </div>
             <L label="Nome do hotel">
               <Inp value={h.name} onChange={(v) => upd(i, { name: v })} ph="ex. Grand Hyatt" />
             </L>

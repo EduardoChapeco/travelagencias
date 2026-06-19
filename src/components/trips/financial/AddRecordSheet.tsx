@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { SheetPage } from "@/components/ui/sheet";
 import { Field, Input, Select } from "@/components/ui/form";
 import { addFinancialRecord } from "@/services/trips";
+import {
+  SupplierAutocomplete,
+  type SupplierOption,
+} from "@/components/suppliers/SupplierAutocomplete";
 
 const INCOME_CATEGORIES = [
   "Pacote",
@@ -68,6 +72,7 @@ export function AddRecordSheet({
   onCreated: () => void;
 }) {
   const [recordType, setRecordType] = useState<"income" | "expense">(initialType);
+  const [selectedSupplier, setSelectedSupplier] = useState<SupplierOption | null>(null);
 
   useEffect(() => {
     setRecordType(initialType);
@@ -77,6 +82,7 @@ export function AddRecordSheet({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<TripRecordFormData>({
     resolver: zodResolver(tripRecordSchema),
@@ -100,8 +106,29 @@ export function AddRecordSheet({
         due_date: "",
         status: "confirmed",
       });
+      setSelectedSupplier(null);
     }
   }, [isOpen, recordType, reset]);
+
+  // When supplier is selected, auto-fill description and category
+  function handleSupplierSelect(supplier: SupplierOption | null) {
+    setSelectedSupplier(supplier);
+    if (supplier) {
+      const kindToCat: Record<string, string> = {
+        hotel: "Hospedagem",
+        airline: "Aéreo",
+        transport: "Transfer",
+        tour_operator: "Passeio",
+        insurance: "Outro",
+        attraction: "Passeio",
+        restaurant: "Outro",
+        other: "Outro",
+      };
+      const cat = kindToCat[supplier.kind] ?? "Outro";
+      setValue("description", supplier.name);
+      setValue("category", cat);
+    }
+  }
 
   const onSubmit = async (data: TripRecordFormData) => {
     try {
@@ -149,6 +176,23 @@ export function AddRecordSheet({
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Supplier picker — only for expense records */}
+        {recordType === "expense" && (
+          <Field label="Fornecedor (opcional)">
+            <SupplierAutocomplete
+              agencyId={agencyId}
+              value={selectedSupplier}
+              onChange={handleSupplierSelect}
+              placeholder="Buscar fornecedor cadastrado..."
+            />
+            {selectedSupplier?.commission_rate != null && selectedSupplier.commission_rate > 0 && (
+              <p className="mt-1 text-[10px] text-green-600 font-semibold">
+                ✓ Comissão de {selectedSupplier.commission_rate}% configurada neste fornecedor
+              </p>
+            )}
+          </Field>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <Field label="Categoria" error={errors.category?.message}>
             <Select {...register("category")}>

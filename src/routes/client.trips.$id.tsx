@@ -29,6 +29,8 @@ import {
   CheckSquare,
   Loader2,
   AlertTriangle,
+  Heart,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -111,6 +113,23 @@ function ClientTripDetail() {
     queryFn: () => fetchClientTripMemories(id),
   });
 
+  // Destination Intelligence — busca por slug/nome similar ao destino da viagem
+  const destInfoQ = useQuery({
+    enabled: !!tripQ.data?.destination,
+    queryKey: ["destination-info-client", tripQ.data?.destination],
+    queryFn: async () => {
+      const dest = tripQ.data!.destination as string;
+      const { data, error } = await supabase
+        .from("destination_info")
+        .select("*")
+        .ilike("destination", `%${dest.split(",")[0].trim()}%`)
+        .not("reviewed_at", "is", null)
+        .maybeSingle();
+      if (error) return null;
+      return data as any;
+    },
+  });
+
   const boardingCardQ = useQuery({
     enabled: !!tripQ.data,
     queryKey: ["client-boarding-card", id],
@@ -171,6 +190,44 @@ function ClientTripDetail() {
         toast.error(e.message);
       }
     },
+  });
+
+  const triggerEmergency = useMutation({
+    mutationFn: async (kind: "delay" | "cancellation") => {
+      const pnr = trip.pnr || boardingCardQ.data?.pnr || "";
+      const title = kind === "delay"
+        ? `EMERGÊNCIA: Voo Atrasado (PNR: ${pnr || "Pendente"})`
+        : `EMERGÊNCIA: Voo Cancelado (PNR: ${pnr || "Pendente"})`;
+      const description = `Alerta gerado automaticamente pelo passageiro no portal de autoatendimento.\n` +
+        `Informações do voo:\n` +
+        `- Ref da Viagem: ${trip.title} (${trip.code || "N/A"})\n` +
+        `- Passageiro reportou: ${kind === "delay" ? "Atraso no Voo" : "Voo Cancelado"}.`;
+
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .insert({
+          agency_id: trip.agency_id!,
+          trip_id: id,
+          title,
+          description,
+          priority: "urgent",
+          type: "trip",
+          status: "open",
+        })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      toast.success(
+        variables === "delay"
+          ? "Notificação de atraso enviada para a agência!"
+          : "Notificação de cancelamento enviada para a agência!",
+        { description: "Nossa equipe de suporte foi alertada em caráter de urgência." }
+      );
+    },
+    onError: (e: any) => toast.error(e.message || "Erro ao gerar alerta de emergência"),
   });
 
   const uploadMemory = useMutation({
@@ -438,6 +495,111 @@ function ClientTripDetail() {
                           </div>
                         ))}
                       </div>
+
+                      {/* Check-in Rápido e Botões de Emergência */}
+                      {(() => {
+                        const pnr = trip.pnr || boardingCardQ.data?.pnr || "";
+                        const firstPassenger = passengers?.[0];
+                        const lastName = firstPassenger
+                          ? firstPassenger.full_name.trim().split(" ").pop()
+                          : "";
+
+                        const checkinButtons = voucher?.flights?.map((f: any, idx: number) => {
+                          const airlineNorm = (f.airline || "").toLowerCase();
+                          const isLatam = airlineNorm.includes("latam") || airlineNorm.includes("la");
+                          const isGol = airlineNorm.includes("gol") || airlineNorm.includes("g3");
+                          const isAzul = airlineNorm.includes("azul") || airlineNorm.includes("ad");
+
+                          let checkinUrl = "";
+                          let label = "";
+                          let color = "";
+
+                          if (isLatam) {
+                            label = `Check-in LATAM (Voo ${f.flight_number || ""})`;
+                            checkinUrl = `https://www.latamairlines.com/br/pt/check-in?recordLocator=${encodeURIComponent(pnr)}`;
+                            if (lastName) checkinUrl += `&lastName=${encodeURIComponent(lastName)}`;
+                            color = "bg-red-600 hover:bg-red-700 text-white";
+                          } else if (isGol) {
+                            label = `Check-in GOL (Voo ${f.flight_number || ""})`;
+                            checkinUrl = `https://www.voegol.com.br/check-in?pnr=${encodeURIComponent(pnr)}`;
+                            if (f.origin) checkinUrl += `&departureAirport=${encodeURIComponent(f.origin)}`;
+                            color = "bg-orange-500 hover:bg-orange-600 text-white";
+                          } else if (isAzul) {
+                            label = `Check-in Azul (Voo ${f.flight_number || ""})`;
+                            checkinUrl = `https://www.voeazul.com.br/check-in?locator=${encodeURIComponent(pnr)}`;
+                            if (f.origin) checkinUrl += `&origin=${encodeURIComponent(f.origin)}`;
+                            color = "bg-blue-600 hover:bg-blue-700 text-white";
+                          } else {
+                            label = `Check-in ${f.airline || "Voo"} ${f.flight_number || ""}`;
+                            checkinUrl = `https://www.google.com/search?q=${encodeURIComponent((f.airline || "") + " check-in " + pnr)}`;
+                            color = "bg-slate-700 hover:bg-slate-800 text-white";
+                          }
+
+                          return (
+                            <a
+                              key={idx}
+                              href={checkinUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-colors shadow-none text-center ${color}`}
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              {label}
+                            </a>
+                          );
+                        });
+
+                        return (
+                          <div className="mt-5 border-t border-border/50 pt-4 space-y-4">
+                            {checkinButtons && checkinButtons.length > 0 && (
+                              <div className="space-y-2">
+                                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                  Links Rápidos de Check-in
+                                </div>
+                                <div className="grid grid-cols-1 gap-2">
+                                  {checkinButtons}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Botões de Emergência */}
+                            <div className="p-3.5 rounded-2xl border border-rose-200 bg-rose-500/5 space-y-2.5">
+                              <div className="flex items-center gap-1.5 text-rose-700 font-extrabold text-xs uppercase tracking-wider">
+                                <AlertTriangle className="h-4 w-4 text-rose-600" /> Emergência no Aeroporto
+                              </div>
+                              <p className="text-[10px] text-rose-600 font-medium leading-normal">
+                                Teve algum problema com seu voo no aeroporto? Clique abaixo para alertar nosso suporte instantaneamente.
+                              </p>
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  disabled={triggerEmergency.isPending}
+                                  onClick={() => {
+                                    if (confirm("Deseja notificar a agência sobre o atraso do seu voo?")) {
+                                      triggerEmergency.mutate("delay");
+                                    }
+                                  }}
+                                  className="flex-1 py-1.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-none transition-colors disabled:opacity-50"
+                                >
+                                  Meu Voo Atrasou
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={triggerEmergency.isPending}
+                                  onClick={() => {
+                                    if (confirm("Deseja notificar a agência sobre o cancelamento do seu voo?")) {
+                                      triggerEmergency.mutate("cancellation");
+                                    }
+                                  }}
+                                  className="flex-1 py-1.5 px-3 rounded-xl border border-rose-600 text-rose-700 hover:bg-rose-50 text-xs font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
+                                >
+                                  Voo Cancelado
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </AppWidget>
                 )}
@@ -908,79 +1070,197 @@ function ClientTripDetail() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                <AppWidget
-                  title="Dicas de Segurança e Leis Locais"
-                  icon={<ShieldAlert className="w-5 h-5 text-warning" />}
-                >
-                  <div className="space-y-4">
-                    <div className="bg-warning/10 p-4 rounded-2xl border border-warning/20">
-                      <div className="text-sm font-bold text-warning mb-1">Atenção Especial</div>
-                      <div className="text-xs text-muted-foreground leading-relaxed">
-                        Sempre ande com uma cópia do seu passaporte. Evite áreas não turísticas após
-                        as 22h. Cuidado com pertences em multidões.
+            {/* ── Destination Intelligence block ─────────────────────────────────── */}
+            {destInfoQ.data && (() => {
+              const di = destInfoQ.data;
+              const safetyColor = di.safety_level === "safe" ? "success" : di.safety_level === "moderate" ? "warning" : "danger";
+              const safetyLabel = di.safety_level === "safe" ? "Seguro" : di.safety_level === "moderate" ? "Moderado" : di.safety_level === "caution" ? "Atenção" : "Alto Risco";
+              return (
+                <div className="space-y-4">
+                  {/* Safety + Visa banner */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {di.safety_level && (
+                      <div className={`rounded-2xl border p-5 ${safetyColor === "success" ? "bg-success/5 border-success/20" : safetyColor === "warning" ? "bg-warning/5 border-warning/20" : "bg-danger/5 border-danger/20"}`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <ShieldAlert className={`h-5 w-5 ${safetyColor === "success" ? "text-success" : safetyColor === "warning" ? "text-warning" : "text-danger"}`} />
+                          <span className="text-sm font-bold text-foreground">Segurança: {safetyLabel}</span>
+                        </div>
+                        {di.safety_notes && <p className="text-xs text-muted-foreground leading-relaxed">{di.safety_notes}</p>}
                       </div>
-                    </div>
-                    <div className="bg-surface p-4 rounded-2xl border border-border">
-                      <div className="text-sm font-bold text-foreground mb-1">Leis Regionais</div>
-                      <div className="text-xs text-muted-foreground leading-relaxed">
-                        É terminantemente proibido o consumo de bebidas alcoólicas nas ruas ou
-                        transporte público neste destino.
+                    )}
+                    {di.visa_required !== null && (
+                      <div className={`rounded-2xl border p-5 ${di.visa_required ? "bg-danger/5 border-danger/20" : "bg-success/5 border-success/20"}`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Globe className={`h-5 w-5 ${di.visa_required ? "text-danger" : "text-success"}`} />
+                          <span className="text-sm font-bold text-foreground">Visto: {di.visa_required ? "Exigido" : "Não Exigido"}</span>
+                        </div>
+                        {di.visa_info && <p className="text-xs text-muted-foreground leading-relaxed">{di.visa_info}</p>}
+                        {di.entry_requirements && <p className="text-xs text-muted-foreground leading-relaxed mt-1">{di.entry_requirements}</p>}
                       </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div className="lg:col-span-2 space-y-4">
+                      {/* Vaccinations */}
+                      {(di.vaccinations_required ?? []).length > 0 && (
+                        <AppWidget title="Saúde & Vacinas" icon={<Heart className="w-5 h-5 text-danger" />}>
+                          <div className="space-y-3">
+                            <div className="bg-danger/5 border border-danger/20 rounded-xl p-3">
+                              <div className="text-xs font-bold text-danger uppercase tracking-wider mb-2">Obrigatórias</div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {di.vaccinations_required.map((v: string, i: number) => (
+                                  <span key={i} className="text-[10px] font-semibold bg-danger/10 text-danger border border-danger/20 px-2 py-0.5 rounded-full">{v}</span>
+                                ))}
+                              </div>
+                            </div>
+                            {(di.vaccinations_recommended ?? []).length > 0 && (
+                              <div className="bg-warning/5 border border-warning/20 rounded-xl p-3">
+                                <div className="text-xs font-bold text-warning uppercase tracking-wider mb-2">Recomendadas</div>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {di.vaccinations_recommended.map((v: string, i: number) => (
+                                    <span key={i} className="text-[10px] font-semibold bg-warning/10 text-warning border border-warning/20 px-2 py-0.5 rounded-full">{v}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {di.health_notes && <p className="text-xs text-muted-foreground leading-relaxed">{di.health_notes}</p>}
+                          </div>
+                        </AppWidget>
+                      )}
+
+                      {/* Practical info */}
+                      <AppWidget title="Informações Práticas" icon={<Lightbulb className="w-5 h-5 text-brand" />}>
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          {di.currency && (
+                            <div className="rounded-xl border border-border bg-surface p-3">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">💱 Moeda</div>
+                              <div className="font-semibold text-foreground">{di.currency} ({di.currency_code})</div>
+                            </div>
+                          )}
+                          {di.language && (
+                            <div className="rounded-xl border border-border bg-surface p-3">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">🗣️ Idioma</div>
+                              <div className="font-semibold text-foreground">{di.language}</div>
+                            </div>
+                          )}
+                          {di.plug_type && (
+                            <div className="rounded-xl border border-border bg-surface p-3">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">🔌 Tomada</div>
+                              <div className="font-semibold text-foreground">{di.plug_type}</div>
+                            </div>
+                          )}
+                          {di.utc_offset && (
+                            <div className="rounded-xl border border-border bg-surface p-3">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">🕐 Fuso</div>
+                              <div className="font-semibold text-foreground">UTC{di.utc_offset}</div>
+                            </div>
+                          )}
+                          {di.best_season && (
+                            <div className="rounded-xl border border-border bg-surface p-3 col-span-2">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">🌤️ Melhor Época</div>
+                              <div className="font-semibold text-foreground">{di.best_season}</div>
+                            </div>
+                          )}
+                          {di.budget_range && (
+                            <div className="rounded-xl border border-brand/20 bg-brand/5 p-3 col-span-2">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-brand mb-1">💰 Orçamento Estimado</div>
+                              <div className="font-semibold text-foreground">{di.budget_range}</div>
+                            </div>
+                          )}
+                        </div>
+                      </AppWidget>
+
+                      {/* Cultural tips */}
+                      {di.cultural_tips && (
+                        <AppWidget title="Dicas Culturais" icon={<Map className="w-5 h-5 text-info" />}>
+                          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{di.cultural_tips}</p>
+                        </AppWidget>
+                      )}
                     </div>
-                  </div>
-                </AppWidget>
 
-                <AppWidget title="Mapa Exploratório" icon={<Map className="w-5 h-5 text-info" />}>
-                  <div className="rounded-2xl overflow-hidden border border-border h-64 bg-muted relative">
-                    <iframe
-                      title="mapa"
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      scrolling="no"
-                      marginHeight={0}
-                      marginWidth={0}
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(trip.destination || "Brazil")}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                    />
-                  </div>
-                </AppWidget>
-              </div>
+                    <div className="space-y-4">
+                      {/* Tourist tax */}
+                      {di.tourist_tax && (
+                        <div className="rounded-2xl border border-warning/20 bg-warning/5 p-5">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xl">🏛️</span>
+                            <span className="text-sm font-bold text-foreground">Taxa Turística</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground leading-relaxed">{di.tourist_tax}</p>
+                          {di.tourist_tax_amount && (
+                            <div className="mt-3 font-mono font-bold text-warning text-lg">
+                              {di.tourist_tax_amount} {di.tourist_tax_currency}
+                            </div>
+                          )}
+                        </div>
+                      )}
 
-              <div className="space-y-6">
-                <AppWidget
-                  title="Curadoria Profissional"
-                  icon={<Lightbulb className="w-5 h-5 text-brand" />}
-                >
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="flex gap-3 items-start border-b border-border/50 pb-4 last:border-0 last:pb-0"
-                      >
-                        <div className="w-16 h-16 rounded-xl bg-muted shrink-0 overflow-hidden">
-                          <img
-                            src={`https://source.unsplash.com/200x200/?landmark,${trip.destination}&sig=${i}`}
-                            alt="Local"
-                            className="w-full h-full object-cover"
+                      {/* Map */}
+                      <AppWidget title="Mapa" icon={<Map className="w-5 h-5 text-info" />}>
+                        <div className="rounded-xl overflow-hidden border border-border h-48">
+                          <iframe
+                            title="mapa"
+                            width="100%"
+                            height="100%"
+                            frameBorder="0"
+                            src={`https://maps.google.com/maps?q=${encodeURIComponent(trip.destination || "Brazil")}&t=&z=11&ie=UTF8&iwloc=&output=embed`}
                           />
                         </div>
-                        <div>
-                          <div className="text-xs font-bold text-foreground">
-                            Ponto Turístico {i}
-                          </div>
-                          <div className="text-[10px] text-muted-foreground line-clamp-2 mt-1">
-                            Um dos locais mais visitados da região, ideal para fotos ao pôr do sol.
-                            Requer ingresso antecipado.
-                          </div>
+                      </AppWidget>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Fallback: sem dados cadastrados */}
+            {!destInfoQ.data && !destInfoQ.isLoading && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                  <AppWidget
+                    title="Dicas de Segurança"
+                    icon={<ShieldAlert className="w-5 h-5 text-warning" />}
+                  >
+                    <div className="space-y-4">
+                      <div className="bg-warning/10 p-4 rounded-2xl border border-warning/20">
+                        <div className="text-sm font-bold text-warning mb-1">Recomendações Gerais</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">
+                          Sempre ande com cópia do documento. Evite áreas não turísticas após as 22h.
+                          Mantenha contato com a agência em caso de imprevistos.
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </AppWidget>
+                    </div>
+                  </AppWidget>
+                  <AppWidget title="Mapa" icon={<Map className="w-5 h-5 text-info" />}>
+                    <div className="rounded-2xl overflow-hidden border border-border h-64">
+                      <iframe
+                        title="mapa"
+                        width="100%" height="100%" frameBorder="0"
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent(trip.destination || "Brazil")}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                      />
+                    </div>
+                  </AppWidget>
+                </div>
+                <div className="space-y-6">
+                  <AppWidget title="Curadoria" icon={<Lightbulb className="w-5 h-5 text-brand" />}>
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex gap-3 items-start border-b border-border/50 pb-3 last:border-0 last:pb-0">
+                          <div className="w-14 h-14 rounded-xl bg-muted shrink-0 overflow-hidden">
+                            <img src={`https://source.unsplash.com/200x200/?landmark,${trip.destination}&sig=${i}`} alt="Local" className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-foreground">Ponto Turístico {i}</div>
+                            <div className="text-[10px] text-muted-foreground line-clamp-2 mt-1">Um dos locais mais visitados da região, ideal para fotos ao pôr do sol.</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </AppWidget>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

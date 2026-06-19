@@ -35,6 +35,11 @@ export async function generateContractPdf(elementId: string): Promise<Blob> {
     interactiveForm.style.display = "none";
   }
 
+  // Aguarda carregamento completo das fontes antes da renderização
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
   // Captura o HTML para Canvas
   const canvas = await html2canvas(element, {
     scale: 2, // Maior resolução

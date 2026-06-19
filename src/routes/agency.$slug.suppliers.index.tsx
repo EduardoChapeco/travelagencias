@@ -121,7 +121,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       params={{ slug, id: s.id }}
       className={cn(
         "group flex flex-col rounded-xl border border-border bg-white p-5 transition-all duration-200",
-        "hover:border-[--brand-primary,theme(colors.pink.400)] hover:shadow-[0_0_0_1px_var(--brand-primary,theme(colors.pink.400))/20]",
+        "hover:border-[--brand-primary,theme(colors.pink.400)] hover:bg-gray-50/40",
         !s.is_active && "opacity-60"
       )}
     >

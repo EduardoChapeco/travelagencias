@@ -67,6 +67,7 @@ const items: SlimSidebarItem[] = [
   { type: "header", label: "Suporte & Vistos" },
   { label: "Suporte", to: "support", icon: LifeBuoy },
   { label: "Vistos", to: "visas", icon: Globe2 },
+  { label: "Destination Intelligence", to: "destination-intelligence", icon: BrainCircuit, adminOnly: true },
 
   { type: "header", label: "Site & Marketing" },
   { label: "Site da Agência", to: "portal", icon: Globe, adminOnly: true },

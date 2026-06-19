@@ -167,13 +167,26 @@ function TripContract() {
   });
 
   const clausesQ = useQuery({
-    queryKey: ["contract_clauses_template"],
+    enabled: !!agency,
+    queryKey: ["contract_clauses_template", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("contract_template_clauses");
+      const { data, error } = await supabase
+        .from("contract_clauses")
+        .select("id, title, body, kind, is_default, is_active, order_index")
+        .or(`agency_id.is.null,agency_id.eq.${agency!.id}`)
+        .eq("is_active", true)
+        .order("order_index", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as Clause[];
+      // Map to the Clause format expected by ContractEditor
+      return (data ?? []).map((c, idx) => ({
+        number: idx + 1,
+        section: c.title,
+        clause_text: c.body,
+        is_immutable: c.is_default && c.kind !== "custom",
+      })) as Clause[];
     },
   });
+
 
   const clientQ = useQuery({
     enabled: !!tripQ.data?.client_id,
@@ -341,9 +354,18 @@ function TripContract() {
           client_data: clientData,
           agency_data,
           passengers_data,
+          // Fase 5: snapshot imutável das cláusulas no momento da criação
+          clause_snapshot: JSON.stringify({
+            fixed: clauses,
+            custom: customClauses,
+            captured_at: new Date().toISOString(),
+            clause_count: clauses.length + customClauses.length,
+          }),
+          is_custom_clauses: customClauses.length > 0,
         })
         .select("*")
         .single();
+
 
       if (error) throw error;
       return data;

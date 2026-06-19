@@ -85,25 +85,63 @@ function TicketDetailRoute() {
   const sendReply = useMutation({
     mutationFn: async () => {
       if (!replyText.trim()) return;
-      const { data: user } = await supabase.auth.getUser();
+      const isExternal = replyType === "client" || replyType === "supplier";
       const sender = replyType === "internal" ? "system" : "agent";
 
-      const { error } = await supabase.from("ticket_messages").insert({
+      // 1. Persist message locally first (always)
+      const { error: msgErr } = await supabase.from("ticket_messages").insert({
         ticket_id,
         sender,
         content: replyText,
       });
-      if (error) throw error;
+      if (msgErr) throw msgErr;
 
-      // Se for email real do Gmail, uma Edge Function poderia interceptar via Webhook na tabela ticket_messages
-      // Ou chamamos a EF diretamente aqui, mas por ora vamos focar na persistência local.
+      // 2. Se for reply externo (cliente ou fornecedor), chamar gmail-send
+      if (isExternal && agency) {
+        // Determinar email de destino
+        const clientEmail = (ticket as any)?.client?.email ?? null;
+        const toEmail = clientEmail;
+
+        if (toEmail) {
+          try {
+            const { error: fnErr } = await supabase.functions.invoke("gmail-send", {
+              body: {
+                ticket_id,
+                agency_id: agency.id,
+                to: toEmail,
+                subject: `Re: Chamado #${(ticket as any)?.code ?? ticket_id.substring(0, 8)} — ${(ticket as any)?.title ?? "Atendimento"}`,
+                text: replyText,
+              },
+            });
+            if (fnErr) {
+              // Gmail pode não estar configurado — apenas avisa sem bloquear
+              console.warn("gmail-send falhou:", fnErr.message);
+              toast.warning("Mensagem salva. E-mail não enviado: Gmail não configurado na agência.");
+            } else {
+              toast.success("Mensagem enviada e e-mail disparado ao cliente!");
+            }
+          } catch (e: any) {
+            console.warn("gmail-send exception:", e.message);
+            toast.warning("Mensagem salva localmente. Falha ao enviar e-mail.");
+          }
+          return; // Evitar double-toast abaixo
+        } else {
+          toast.warning("Mensagem salva. Cliente não possui e-mail cadastrado.");
+          return;
+        }
+      }
     },
     onSuccess: () => {
       setReplyText("");
       qc.invalidateQueries({ queryKey: ["ticket_full"] });
-      toast.success("Mensagem enviada");
+      if (replyType === "internal") {
+        toast.success("Nota interna registrada.");
+      } else {
+        toast.success("Mensagem enviada.");
+      }
     },
   });
+
 
   if (isLoading || !ticket) return <div className="p-8">Carregando...</div>;
 

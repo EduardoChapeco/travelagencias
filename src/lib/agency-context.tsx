@@ -164,68 +164,92 @@ export function AgencyProvider({
   // Apply runtime brand color and typography tokens
   useEffect(() => {
     const el = document.documentElement;
-    if (agency?.brand_color) el.style.setProperty("--agency-brand", agency.brand_color);
-    if (agency?.brand_color_light)
-      el.style.setProperty("--agency-brand-light", agency.brand_color_light);
-    if (agency?.brand_color_fg) el.style.setProperty("--agency-brand-fg", agency.brand_color_fg);
 
-    // Dynamic Visual Identity from brand_kit
-    if (brandKit) {
-      const primaryColor = brandKit.primary_color || brandKit.brand_color || agency?.brand_color || "#1E3A5F";
-      const secondaryColor = brandKit.secondary_color || "#D4AF37";
-      const accentColor = brandKit.accent_color || "#E63946";
-      const bgColor = brandKit.background_color || "#FFFFFF";
-      const textColor = brandKit.text_color || "#111827";
-      const fontHeading = brandKit.font_heading || "Inter";
-      const fontBody = brandKit.font_body || "Inter";
+    const applyStyling = (color: string | null, light: string | null, fg: string | null, bk: any) => {
+      if (color) el.style.setProperty("--agency-brand", color);
+      if (light) el.style.setProperty("--agency-brand-light", light);
+      if (fg) el.style.setProperty("--agency-brand-fg", fg);
 
-      el.style.setProperty("--brand-primary", primaryColor);
-      el.style.setProperty("--brand-secondary", secondaryColor);
-      el.style.setProperty("--brand-accent", accentColor);
-      el.style.setProperty("--brand-bg", bgColor);
-      el.style.setProperty("--brand-text", textColor);
-      el.style.setProperty("--brand-heading-font", `"${fontHeading}", sans-serif`);
-      el.style.setProperty("--brand-body-font", `"${fontBody}", sans-serif`);
+      if (bk) {
+        const primaryColor = bk.primary_color || bk.brand_color || color || "#1E3A5F";
+        const secondaryColor = bk.secondary_color || "#D4AF37";
+        const accentColor = bk.accent_color || "#E63946";
+        const bgColor = bk.background_color || "#FFFFFF";
+        const textColor = bk.text_color || "#111827";
+        const fontHeading = bk.font_heading || "Inter";
+        const fontBody = bk.font_body || "Inter";
 
-      // Load fonts
-      const linkId = "google-fonts-agency-head";
-      let linkEl = document.getElementById(linkId) as HTMLLinkElement;
-      if (!linkEl) {
-        linkEl = document.createElement("link");
-        linkEl.id = linkId;
-        linkEl.rel = "stylesheet";
-        document.head.appendChild(linkEl);
+        el.style.setProperty("--brand-primary", primaryColor);
+        el.style.setProperty("--brand-secondary", secondaryColor);
+        el.style.setProperty("--brand-accent", accentColor);
+        el.style.setProperty("--brand-bg", bgColor);
+        el.style.setProperty("--brand-text", textColor);
+        el.style.setProperty("--brand-heading-font", `"${fontHeading}", sans-serif`);
+        el.style.setProperty("--brand-body-font", `"${fontBody}", sans-serif`);
+
+        // Load fonts
+        const linkId = "google-fonts-agency-head";
+        let linkEl = document.getElementById(linkId) as HTMLLinkElement;
+        if (!linkEl) {
+          linkEl = document.createElement("link");
+          linkEl.id = linkId;
+          linkEl.rel = "stylesheet";
+          document.head.appendChild(linkEl);
+        }
+        const headingFormatted = fontHeading.replace(/\s+/g, "+");
+        const bodyFormatted = fontBody.replace(/\s+/g, "+");
+        linkEl.href = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+      } else {
+        const fallbackColor = color || "#1E3A5F";
+        el.style.setProperty("--brand-primary", fallbackColor);
+        el.style.setProperty("--brand-secondary", "#D4AF37");
+        el.style.setProperty("--brand-accent", "#E63946");
+        el.style.setProperty("--brand-bg", "#FFFFFF");
+        el.style.setProperty("--brand-text", "#111827");
+        el.style.setProperty("--brand-heading-font", `"Inter", sans-serif`);
+        el.style.setProperty("--brand-body-font", `"Inter", sans-serif`);
       }
-      const headingFormatted = fontHeading.replace(/\s+/g, "+");
-      const bodyFormatted = fontBody.replace(/\s+/g, "+");
-      linkEl.href = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
-    } else {
-      // Fallback defaults
-      const fallbackColor = agency?.brand_color || "#1E3A5F";
-      el.style.setProperty("--brand-primary", fallbackColor);
-      el.style.setProperty("--brand-secondary", "#D4AF37");
-      el.style.setProperty("--brand-accent", "#E63946");
-      el.style.setProperty("--brand-bg", "#FFFFFF");
-      el.style.setProperty("--brand-text", "#111827");
-      el.style.setProperty("--brand-heading-font", `"Inter", sans-serif`);
-      el.style.setProperty("--brand-body-font", `"Inter", sans-serif`);
+    };
+
+    // Load from localStorage as fast fallback
+    if (preloadedAgency?.id) {
+      try {
+        const cached = localStorage.getItem(`brand-kit-${preloadedAgency.id}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          applyStyling(
+            preloadedAgency.brand_color,
+            preloadedAgency.brand_color_light,
+            preloadedAgency.brand_color_fg,
+            parsed
+          );
+        }
+      } catch (e) {
+        console.warn("Failed to load cached brand kit", e);
+      }
+    }
+
+    // Apply live brandKit or fallback
+    applyStyling(
+      agency?.brand_color || preloadedAgency?.brand_color,
+      agency?.brand_color_light || preloadedAgency?.brand_color_light,
+      agency?.brand_color_fg || preloadedAgency?.brand_color_fg,
+      brandKit
+    );
+
+    // Save to cache when brandKit changes
+    if (brandKit && preloadedAgency?.id) {
+      try {
+        localStorage.setItem(`brand-kit-${preloadedAgency.id}`, JSON.stringify(brandKit));
+      } catch (e) {
+        console.warn("Failed to cache brand kit", e);
+      }
     }
 
     return () => {
-      el.style.removeProperty("--agency-brand");
-      el.style.removeProperty("--agency-brand-light");
-      el.style.removeProperty("--agency-brand-fg");
-      el.style.removeProperty("--brand-primary");
-      el.style.removeProperty("--brand-secondary");
-      el.style.removeProperty("--brand-accent");
-      el.style.removeProperty("--brand-bg");
-      el.style.removeProperty("--brand-text");
-      el.style.removeProperty("--brand-heading-font");
-      el.style.removeProperty("--brand-body-font");
-      const linkEl = document.getElementById("google-fonts-agency-head");
-      if (linkEl) linkEl.remove();
+      // Clean up only if agency changes
     };
-  }, [agency, brandKit]);
+  }, [agency, brandKit, preloadedAgency]);
 
   return (
     <AgencyContext.Provider

@@ -33,6 +33,8 @@ import {
   updateBoardingCard,
   updateBoardingCardChecklist,
 } from "@/services/boarding";
+import { RoomingList } from "./RoomingList";
+
 
 export function CardDetailPanel({
   card,
@@ -66,21 +68,21 @@ export function CardDetailPanel({
   const [briefingUrl, setBriefingUrl] = useState(card.briefing_url ?? "");
 
   // Operational fields (new)
-  const [hotelName, setHotelName] = useState((card as any).hotel_name ?? "");
-  const [hotelAddress, setHotelAddress] = useState((card as any).hotel_address ?? "");
-  const [hotelCheckin, setHotelCheckin] = useState((card as any).hotel_checkin ?? "");
-  const [hotelCheckout, setHotelCheckout] = useState((card as any).hotel_checkout ?? "");
-  const [hotelPhone, setHotelPhone] = useState((card as any).hotel_phone ?? "");
-  const [transferProvider, setTransferProvider] = useState((card as any).transfer_provider ?? "");
-  const [transferTime, setTransferTime] = useState((card as any).transfer_time ?? "");
-  const [guideName, setGuideName] = useState((card as any).guide_name ?? "");
-  const [guidePhone, setGuidePhone] = useState((card as any).guide_phone ?? "");
-  const [emergencyPhone, setEmergencyPhone] = useState((card as any).emergency_phone ?? "");
-  const [destination, setDestination] = useState((card as any).destination ?? "");
-  const [destinationType, setDestinationType] = useState((card as any).destination_type ?? "national");
+  const [hotelName, setHotelName] = useState(card.hotel_name ?? "");
+  const [hotelAddress, setHotelAddress] = useState(card.hotel_address ?? "");
+  const [hotelCheckin, setHotelCheckin] = useState(card.hotel_checkin ?? "");
+  const [hotelCheckout, setHotelCheckout] = useState(card.hotel_checkout ?? "");
+  const [hotelPhone, setHotelPhone] = useState(card.hotel_phone ?? "");
+  const [transferProvider, setTransferProvider] = useState(card.transfer_provider ?? "");
+  const [transferTime, setTransferTime] = useState(card.transfer_time ?? "");
+  const [guideName, setGuideName] = useState(card.guide_name ?? "");
+  const [guidePhone, setGuidePhone] = useState(card.guide_phone ?? "");
+  const [emergencyPhone, setEmergencyPhone] = useState(card.emergency_phone ?? "");
+  const [destination, setDestination] = useState(card.destination ?? "");
+  const [destinationType, setDestinationType] = useState(card.destination_type ?? "national");
 
   // Tickets panel
-  const [activeSection, setActiveSection] = useState<"main" | "tickets">("main");
+  const [activeSection, setActiveSection] = useState<"main" | "tickets" | "rooming">("main");
   const ticketFileRef = useRef<HTMLInputElement>(null);
 
   // Support ticket form
@@ -251,6 +253,10 @@ export function CardDetailPanel({
 
       document.body.appendChild(printContainer);
 
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
       const canvas = await html2canvas(printContainer, {
         scale: 2.5,
         useCORS: true,
@@ -309,7 +315,7 @@ export function CardDetailPanel({
       const { data, error } = await supabase
         .from("support_tickets")
         .insert({
-          agency_id: card.agency_id || (card as any).agencyId,
+          agency_id: card.agency_id!,
           trip_id: card.trip_id,
           title: ticketTitle,
           description: ticketDesc || null,
@@ -330,6 +336,45 @@ export function CardDetailPanel({
       qc.invalidateQueries({ queryKey: ["support_tickets_by_trip", card.trip_id] });
     },
     onError: (e: any) => toast.error(e.message || "Erro ao abrir chamado"),
+  });
+
+  const triggerEmergency = useMutation({
+    mutationFn: async (kind: "delay" | "cancellation") => {
+      const title = kind === "delay"
+        ? `EMERGÊNCIA: Voo Atrasado (PNR: ${pnr || "Pendente"})`
+        : `EMERGÊNCIA: Voo Cancelado (PNR: ${pnr || "Pendente"})`;
+      const description = `Alerta gerado automaticamente pelo portal do passageiro.\n` +
+        `Informações do voo:\n` +
+        `- Cia Aérea: ${airline || "Não informada"}\n` +
+        `- Ref interna: ${card.internal_ref || "Não informada"}\n` +
+        `- Passageiro gerou o alerta de ${kind === "delay" ? "atraso" : "cancelamento"}.`;
+
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .insert({
+          agency_id: card.agency_id!,
+          trip_id: card.trip_id,
+          title,
+          description,
+          priority: "urgent",
+          type: "trip",
+          status: "open",
+        })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      toast.success(
+        variables === "delay"
+          ? "Notificação de atraso enviada para a agência!"
+          : "Notificação de cancelamento enviada para a agência!",
+        { description: "Nossa equipe de suporte foi alertada em caráter de urgência." }
+      );
+      qc.invalidateQueries({ queryKey: ["support_tickets_by_trip", card.trip_id] });
+    },
+    onError: (e: any) => toast.error(e.message || "Erro ao gerar alerta de emergência"),
   });
 
   const PRESET_TAGS = [
@@ -361,7 +406,7 @@ export function CardDetailPanel({
   const ticketsCardQ = useQuery({
     queryKey: ["boarding_tickets", card.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("boarding_tickets")
         .select("*")
         .eq("card_id", card.id)
@@ -384,7 +429,7 @@ export function CardDetailPanel({
         briefing_url: briefingUrl || null,
       });
       // Save operational fields via direct update
-      await (supabase as any).from("boarding_cards").update({
+      const { error: opErr } = await supabase.from("boarding_cards").update({
         hotel_name: hotelName || null,
         hotel_address: hotelAddress || null,
         hotel_checkin: hotelCheckin || null,
@@ -398,6 +443,7 @@ export function CardDetailPanel({
         destination: destination || null,
         destination_type: destinationType || null,
       }).eq("id", card.id);
+      if (opErr) throw opErr;
       toast.success("Card atualizado!");
       setEditDirty(false);
       setIsEditing(false);
@@ -519,6 +565,16 @@ export function CardDetailPanel({
           >
             Bilhetes {ticketsCardQ.data && ticketsCardQ.data.length > 0 && `(${ticketsCardQ.data.length})`}
           </button>
+          <button
+            onClick={() => setActiveSection("rooming")}
+            className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+              activeSection === "rooming"
+                ? "border-b-2 border-brand text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Rooming List
+          </button>
         </div>
 
         {/* ── SECTION: TICKETS ── */}
@@ -544,9 +600,9 @@ export function CardDetailPanel({
                   const { error: upErr } = await supabase.storage.from("boarding-tickets").upload(path, file, { upsert: true });
                   if (upErr) { toast.error(upErr.message); return; }
                   const { data: { publicUrl } } = supabase.storage.from("boarding-tickets").getPublicUrl(path);
-                  const { error: dbErr } = await (supabase as any).from("boarding_tickets").insert({
+                  const { error: dbErr } = await supabase.from("boarding_tickets").insert({
                     card_id: card.id,
-                    agency_id: card.agency_id,
+                    agency_id: card.agency_id!,
                     kind: "other",
                     passenger_name: "—",
                     file_url: publicUrl,
@@ -583,7 +639,7 @@ export function CardDetailPanel({
                     )}
                     <button
                       onClick={async () => {
-                        await (supabase as any).from("boarding_tickets").delete().eq("id", t.id);
+                      await supabase.from("boarding_tickets").delete().eq("id", t.id);
                         qc.invalidateQueries({ queryKey: ["boarding_tickets", card.id] });
                       }}
                       className="text-muted-foreground hover:text-danger p-1"
@@ -594,6 +650,17 @@ export function CardDetailPanel({
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* ── SECTION: ROOMING LIST ── */}
+        {activeSection === "rooming" && (
+          <div className="p-5 space-y-4">
+            <RoomingList
+              cardId={card.id}
+              agencyId={card.agency_id ?? ""}
+              defaultHotel={card.hotel_name ?? ""}
+            />
           </div>
         )}
 
@@ -803,6 +870,97 @@ export function CardDetailPanel({
                     />
                   </div>
                 </div>
+                {/* Fase 7 — Links de Check-in Contextual por Companhia Aérea */}
+                {pnr && airline && (() => {
+                  const airlineNorm = airline.toLowerCase();
+                  const isLatam = airlineNorm.includes("latam") || airlineNorm.includes("la");
+                  const isGol = airlineNorm.includes("gol") || airlineNorm.includes("g3");
+                  const isAzul = airlineNorm.includes("azul") || airlineNorm.includes("ad");
+                  const checkinLinks: Array<{ label: string; url: string; color: string }> = [];
+                  if (isLatam) {
+                    checkinLinks.push({
+                      label: "Check-in LATAM",
+                      url: `https://www.latamairlines.com/br/pt/check-in?recordLocator=${encodeURIComponent(pnr)}`,
+                      color: "text-red-600 border-red-200 bg-red-50 hover:bg-red-100",
+                    });
+                  }
+                  if (isGol) {
+                    checkinLinks.push({
+                      label: "Check-in GOL",
+                      url: `https://www.voegol.com.br/check-in?pnr=${encodeURIComponent(pnr)}`,
+                      color: "text-orange-600 border-orange-200 bg-orange-50 hover:bg-orange-100",
+                    });
+                  }
+                  if (isAzul) {
+                    checkinLinks.push({
+                      label: "Check-in Azul",
+                      url: `https://www.voeazul.com.br/check-in?locator=${encodeURIComponent(pnr)}`,
+                      color: "text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100",
+                    });
+                  }
+                  // Generic fallback
+                  if (checkinLinks.length === 0) {
+                    checkinLinks.push({
+                      label: `Check-in (PNR: ${pnr})`,
+                      url: `https://www.google.com/search?q=${encodeURIComponent(airline + " check-in " + pnr)}`,
+                      color: "text-brand border-brand/20 bg-brand/5 hover:bg-brand/10",
+                    });
+                  }
+                  return (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {checkinLinks.map((link) => (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={`inline-flex items-center gap-1 text-[11px] font-semibold border rounded px-2.5 py-1 transition-colors ${link.color}`}
+                          title={`Abrir ${link.label}`}
+                        >
+                          <Globe className="h-3 w-3" />
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                {/* Botões de Emergência (Fase 7) */}
+                <div className="mt-3 p-3 rounded-lg border border-red-200 bg-red-50/50 space-y-2">
+                  <div className="flex items-center gap-1.5 text-red-700 font-bold text-xs uppercase tracking-wider">
+                    <AlertTriangle className="h-4 w-4" /> Emergência no Aeroporto
+                  </div>
+                  <p className="text-[10px] text-red-600">
+                    Seu voo atrasou ou foi cancelado? Clique abaixo para alertar nossa agência instantaneamente.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      disabled={triggerEmergency.isPending}
+                      onClick={() => {
+                        if (confirm("Confirmar alerta de atraso de voo para a agência?")) {
+                          triggerEmergency.mutate("delay");
+                        }
+                      }}
+                      className="flex-1 py-1.5 px-3 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold shadow-none transition-colors disabled:opacity-50"
+                    >
+                      Meu Voo Atrasou
+                    </button>
+                    <button
+                      type="button"
+                      disabled={triggerEmergency.isPending}
+                      onClick={() => {
+                        if (confirm("Confirmar alerta de cancelamento de voo para a agência?")) {
+                          triggerEmergency.mutate("cancellation");
+                        }
+                      }}
+                      className="flex-1 py-1.5 px-3 rounded border border-red-600 hover:bg-red-100 text-red-700 text-[11px] font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
+                    >
+                      Voo Cancelado
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-[11px] text-muted-foreground font-medium">
                     Data de Embarque

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,10 +45,37 @@ export type BoardingCard = {
   trip_destination?: string;
   tags?: string[];
   notes?: string | null;
+  notes_internal?: string | null;
   internal_ref?: string | null;
   proposal_details?: ProposedDetails | null;
   briefing_date?: string | null;
   briefing_url?: string | null;
+  // Voo
+  departure_airport?: string | null;
+  arrival_airport?: string | null;
+  flight_number?: string | null;
+  flight_date?: string | null;
+  flight_class?: string | null;
+  // Hotel
+  hotel_name?: string | null;
+  hotel_address?: string | null;
+  hotel_checkin?: string | null;
+  hotel_checkout?: string | null;
+  hotel_phone?: string | null;
+  // Transfer
+  transfer_provider?: string | null;
+  transfer_time?: string | null;
+  transfer_vehicle?: string | null;
+  // Guia & Emergência
+  guide_name?: string | null;
+  guide_phone?: string | null;
+  guide_whatsapp?: string | null;
+  emergency_phone?: string | null;
+  // Destino
+  destination?: string | null;
+  destination_type?: string | null;
+  pax_count?: number | null;
+  documents_checklist?: unknown[];
 };
 
 export type MinTrip = {
@@ -68,11 +96,18 @@ export async function fetchBoardingCards(agencyId: string): Promise<BoardingCard
   const { data, error } = await supabase
     .from("boarding_cards")
     .select(
-      "id, pnr, airline, status, alerts, trip_id, position, checklist, departure_date, passengers_count, tags, notes, internal_ref, briefing_date, briefing_url",
+      `id, agency_id, pnr, airline, status, alerts, trip_id, position, checklist,
+       departure_date, passengers_count, tags, notes, internal_ref, briefing_date, briefing_url,
+       departure_airport, arrival_airport, flight_number, flight_date, flight_class,
+       hotel_name, hotel_address, hotel_checkin, hotel_checkout, hotel_phone,
+       transfer_provider, transfer_time, transfer_vehicle,
+       emergency_phone, guide_name, guide_phone, guide_whatsapp,
+       notes_internal, destination, destination_type, pax_count, documents_checklist`,
     )
     .eq("agency_id", agencyId)
     .order("position");
   if (error) throw new Error(error.message);
+
 
   const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
   const tripMap: Record<
@@ -173,13 +208,34 @@ export async function updateBoardingCard(
       | "pnr"
       | "airline"
       | "departure_date"
+      | "departure_airport"
+      | "arrival_airport"
+      | "flight_number"
+      | "flight_date"
+      | "flight_class"
       | "passengers_count"
+      | "pax_count"
       | "tags"
       | "notes"
+      | "notes_internal"
       | "internal_ref"
       | "alerts"
       | "briefing_date"
       | "briefing_url"
+      | "hotel_name"
+      | "hotel_address"
+      | "hotel_checkin"
+      | "hotel_checkout"
+      | "hotel_phone"
+      | "transfer_provider"
+      | "transfer_time"
+      | "transfer_vehicle"
+      | "guide_name"
+      | "guide_phone"
+      | "guide_whatsapp"
+      | "emergency_phone"
+      | "destination"
+      | "destination_type"
     >
   >,
 ): Promise<void> {
@@ -204,9 +260,8 @@ export type CreateBoardingCardPayload = {
 export async function createBoardingCard(payload: CreateBoardingCardPayload): Promise<void> {
   const { agencyId, tripId, pnr, airline, departureDate, paxCount, alerts, passengersList } =
     payload;
-  const { data: u } = await supabase.auth.getUser();
 
-  const checklist =
+  const checklist: Json =
     passengersList.length > 0
       ? passengersList.map((p) => ({
           label: `Check-in: ${p.full_name} (${p.document || "S/Doc"})`,
@@ -219,17 +274,16 @@ export async function createBoardingCard(payload: CreateBoardingCardPayload): Pr
           { label: "Documentos verificados", done: false },
         ];
 
-  const { error } = await (supabase as any).from("boarding_cards").insert({
+  const { error } = await supabase.from("boarding_cards").insert({
     agency_id: agencyId,
     trip_id: tripId,
     pnr: pnr || null,
     airline: airline || null,
     status: "pending",
-    created_by: u.user?.id,
     departure_date: departureDate || null,
     passengers_count: passengersList.length || (paxCount ? parseInt(paxCount) : null),
     alerts: alerts,
-    checklist: checklist,
+    checklist,
   });
 
   if (error) throw new Error(error.message);

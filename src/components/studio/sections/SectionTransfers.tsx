@@ -8,6 +8,8 @@ import {
   SMALL_INPUT,
 } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
+import { useAgency } from "@/lib/agency-context";
+import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
 
 interface Props {
   draft: Proposal;
@@ -25,6 +27,7 @@ const BLANK: Transfer = {
 };
 
 export function SectionTransfers({ draft, save }: Props) {
+  const { agency } = useAgency();
   const transfers = draft.transfers ?? [];
 
   function add() {
@@ -44,6 +47,23 @@ export function SectionTransfers({ draft, save }: Props) {
       {transfers.map((t, i) => (
         <Card key={t.id || i} onRemove={() => remove(i)}>
           <div className="mb-2">
+            <div className="mb-1">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+                Buscar Operadora de Transfer no Catálogo
+              </span>
+              <SupplierAutocomplete
+                agencyId={agency?.id ?? ""}
+                value={null}
+                onChange={(s: SupplierOption | null) => {
+                  if (!s) return;
+                  upd(i, {
+                    description: `${s.name} - ${t.description || "Transfer"}`,
+                  });
+                }}
+                filterKind="transport"
+                placeholder="Buscar transfer/operadora..."
+              />
+            </div>
             <L label="Descrição">
               <Inp
                 value={t.description}

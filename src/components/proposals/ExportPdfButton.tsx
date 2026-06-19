@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, Image as ImageIcon, Server, ExternalLink } from "lucide-react";
+import { Download, FileText, Image as ImageIcon, Server, ExternalLink, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   type Proposal,
@@ -20,17 +20,60 @@ type Props = {
   proposal: Proposal;
 };
 
+// ─── Validators ──────────────────────────────────────────────────────────────
+
+type ValidationResult = { ok: boolean; errors: string[] };
+
+function validateProposalForExport(proposal: Proposal): ValidationResult {
+  const errors: string[] = [];
+
+  // Minimum: must have title or destination
+  if (!proposal.title?.trim() && !proposal.destination?.trim()) {
+    errors.push("A proposta precisa ter um título ou destino definido.");
+  }
+
+  // Must have at least one section with real content
+  const hasFlights = (proposal.flights ?? []).length > 0;
+  const hasHotels = (proposal.hotels ?? []).length > 0;
+  const hasTransfers = (proposal.transfers ?? []).length > 0;
+  const hasTours = (proposal.tours ?? []).length > 0;
+  const hasItinerary = (proposal.itinerary ?? []).length > 0;
+  const hasIncludes = (proposal.includes ?? []).length > 0;
+
+  if (!hasFlights && !hasHotels && !hasTransfers && !hasTours && !hasItinerary && !hasIncludes) {
+    errors.push("Adicione pelo menos uma seção de conteúdo (voo, hotel, transfer, passeio ou roteiro) antes de exportar.");
+  }
+
+  // Must have a total value > 0 if it's a commercial proposal
+  if (proposal.status !== "draft" && (!proposal.total || proposal.total <= 0)) {
+    errors.push("A proposta precisa ter um valor total definido.");
+  }
+
+  return { ok: errors.length === 0, errors };
+}
+
+
 export function ExportPdfButton({ proposal }: Props) {
   const [busy, setBusy] = useState(false);
   const [serverPdfUrl, setServerPdfUrl] = useState<string | null>(null);
 
   async function exportPdf() {
+    // Validate minimum data before export
+    const validation = validateProposalForExport(proposal);
+    if (!validation.ok) {
+      validation.errors.forEach((err) => toast.error(err, { duration: 5000 }));
+      return;
+    }
     setBusy(true);
     try {
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
       const container = document.getElementById("proposal-canvas");
       if (!container) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
+
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
 
       const pages = Array.from(
         container.querySelectorAll(".a4-page, .a4-landscape-page, .presentation-page"),
@@ -160,11 +203,21 @@ export function ExportPdfButton({ proposal }: Props) {
   }
 
   async function exportImage(format: "png" | "jpeg" = "png") {
+    // Validate minimum data before export
+    const validation = validateProposalForExport(proposal);
+    if (!validation.ok) {
+      validation.errors.forEach((err) => toast.error(err, { duration: 5000 }));
+      return;
+    }
     setBusy(true);
     try {
       const html2canvas = (await import("html2canvas")).default;
       const container = document.getElementById("proposal-canvas");
       if (!container) throw new Error("Canvas não encontrado. Abra o editor da proposta primeiro.");
+
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
 
       const pages = Array.from(
         container.querySelectorAll(".a4-page, .a4-landscape-page, .presentation-page"),
@@ -218,6 +271,12 @@ export function ExportPdfButton({ proposal }: Props) {
   }
 
   async function exportServerPdf() {
+    // Validate minimum data before export
+    const validation = validateProposalForExport(proposal);
+    if (!validation.ok) {
+      validation.errors.forEach((err) => toast.error(err, { duration: 5000 }));
+      return;
+    }
     setBusy(true);
     setServerPdfUrl(null);
     const toastId = "server-pdf";
