@@ -796,6 +796,7 @@ export type Database = {
           hotel_checkout: string | null;
           hotel_name: string | null;
           hotel_phone: string | null;
+          hotel_stars: number | null;
           id: string;
           internal_ref: string | null;
           notes: string | null;
@@ -839,6 +840,7 @@ export type Database = {
           hotel_checkout?: string | null;
           hotel_name?: string | null;
           hotel_phone?: string | null;
+          hotel_stars?: number | null;
           id?: string;
           internal_ref?: string | null;
           notes?: string | null;
@@ -882,6 +884,7 @@ export type Database = {
           hotel_checkout?: string | null;
           hotel_name?: string | null;
           hotel_phone?: string | null;
+          hotel_stars?: number | null;
           id?: string;
           internal_ref?: string | null;
           notes?: string | null;
@@ -5073,6 +5076,197 @@ export type Database = {
           },
         ];
       };
+      flight_itineraries: {
+        Row: {
+          id: string;
+          trip_id: string;
+          agency_id: string;
+          version: number;
+          type: string;
+          status: string;
+          source: string;
+          source_document_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          trip_id: string;
+          agency_id: string;
+          version?: number;
+          type?: string;
+          status?: string;
+          source?: string;
+          source_document_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          trip_id?: string;
+          agency_id?: string;
+          version?: number;
+          type?: string;
+          status?: string;
+          source?: string;
+          source_document_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "flight_itineraries_trip_id_fkey";
+            columns: ["trip_id"];
+            isOneToOne: false;
+            referencedRelation: "trips";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "flight_itineraries_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      flight_segments: {
+        Row: {
+          id: string;
+          itinerary_id: string;
+          segment_order: number;
+          airline_code: string;
+          flight_number: string;
+          origin_iata: string;
+          destination_iata: string;
+          departure_at: string;
+          arrival_at: string;
+          cabin: string | null;
+          baggage: string | null;
+          record_locator: string | null;
+          airport_terminal: string | null;
+          status: string;
+          raw_source: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          itinerary_id: string;
+          segment_order?: number;
+          airline_code: string;
+          flight_number: string;
+          origin_iata: string;
+          destination_iata: string;
+          departure_at: string;
+          arrival_at: string;
+          cabin?: string | null;
+          baggage?: string | null;
+          record_locator?: string | null;
+          airport_terminal?: string | null;
+          status?: string;
+          raw_source?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          itinerary_id?: string;
+          segment_order?: number;
+          airline_code?: string;
+          flight_number?: string;
+          origin_iata?: string;
+          destination_iata?: string;
+          departure_at?: string;
+          arrival_at?: string;
+          cabin?: string | null;
+          baggage?: string | null;
+          record_locator?: string | null;
+          airport_terminal?: string | null;
+          status?: string;
+          raw_source?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "flight_segments_itinerary_id_fkey";
+            columns: ["itinerary_id"];
+            isOneToOne: false;
+            referencedRelation: "flight_itineraries";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      trip_confirmation_items: {
+        Row: {
+          id: string;
+          trip_id: string;
+          agency_id: string;
+          item_type: string;
+          provider_name: string;
+          details: string | null;
+          service_date: string | null;
+          locator_code: string;
+          status: string;
+          notes: string | null;
+          sort_order: number;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          trip_id: string;
+          agency_id: string;
+          item_type?: string;
+          provider_name: string;
+          details?: string | null;
+          service_date?: string | null;
+          locator_code: string;
+          status?: string;
+          notes?: string | null;
+          sort_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          trip_id?: string;
+          agency_id?: string;
+          item_type?: string;
+          provider_name?: string;
+          details?: string | null;
+          service_date?: string | null;
+          locator_code?: string;
+          status?: string;
+          notes?: string | null;
+          sort_order?: number;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "trip_confirmation_items_trip_id_fkey";
+            columns: ["trip_id"];
+            isOneToOne: false;
+            referencedRelation: "trips";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trip_confirmation_items_agency_id_fkey";
+            columns: ["agency_id"];
+            isOneToOne: false;
+            referencedRelation: "agencies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       trip_passengers: {
         Row: {
           agency_id: string;
@@ -5224,6 +5418,14 @@ export type Database = {
           transfers: Json | null;
           tours: Json | null;
           insurance: Json | null;
+          lead_id: string | null;
+          archived_at: string | null;
+          trip_type: string;
+          lifecycle_status: string;
+          group_tour_id: string | null;
+          booking_reference: string | null;
+          assigned_agent_id: string | null;
+          portal_enabled: boolean;
         };
         Insert: {
           agency_id: string;
@@ -5266,6 +5468,14 @@ export type Database = {
           transfers?: Json | null;
           tours?: Json | null;
           insurance?: Json | null;
+          lead_id?: string | null;
+          archived_at?: string | null;
+          trip_type?: string;
+          lifecycle_status?: string;
+          group_tour_id?: string | null;
+          booking_reference?: string | null;
+          assigned_agent_id?: string | null;
+          portal_enabled?: boolean;
         };
         Update: {
           agency_id?: string;
@@ -5308,6 +5518,14 @@ export type Database = {
           transfers?: Json | null;
           tours?: Json | null;
           insurance?: Json | null;
+          lead_id?: string | null;
+          archived_at?: string | null;
+          trip_type?: string;
+          lifecycle_status?: string;
+          group_tour_id?: string | null;
+          booking_reference?: string | null;
+          assigned_agent_id?: string | null;
+          portal_enabled?: boolean;
         };
         Relationships: [
           {

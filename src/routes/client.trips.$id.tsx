@@ -142,6 +142,20 @@ function ClientTripDetail() {
     },
   });
 
+  const confirmationItemsQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-trip-confirmation-items", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trip_confirmation_items")
+        .select("*")
+        .eq("trip_id", id)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const [localChecklist, setLocalChecklist] = useState<any[]>([]);
 
   useEffect(() => {
@@ -448,6 +462,68 @@ function ClientTripDetail() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-6">
+                {confirmationItemsQ.data && confirmationItemsQ.data.length > 0 && (
+                  <AppWidget
+                    title="Confirmações & Localizadores"
+                    icon={<CheckCircle className="h-5 w-5 text-emerald-500" />}
+                  >
+                    <div className="space-y-4">
+                      {confirmationItemsQ.data.map((item) => (
+                        <div
+                          key={item.id}
+                          className="rounded-2xl bg-surface border border-border p-5 flex items-center justify-between gap-4"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="shrink-0 h-8 w-8 rounded-lg bg-surface-alt flex items-center justify-center">
+                              {item.item_type === "flight" ? (
+                                <Plane className="h-4 w-4 text-sky-500" />
+                              ) : item.item_type === "hotel" ? (
+                                <Hotel className="h-4 w-4 text-brand" />
+                              ) : (
+                                <FileText className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                {item.item_type === "flight"
+                                  ? "Voo"
+                                  : item.item_type === "hotel"
+                                  ? "Hospedagem"
+                                  : item.item_type === "transfer"
+                                  ? "Transfer"
+                                  : item.item_type === "insurance"
+                                  ? "Seguro Viagem"
+                                  : item.item_type === "cruise"
+                                  ? "Cruzeiro"
+                                  : item.item_type === "tour"
+                                  ? "Passeio"
+                                  : "Outro"}
+                              </div>
+                              <div className="font-bold text-foreground text-sm truncate">
+                                {item.provider_name}
+                              </div>
+                              {item.details && (
+                                <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                                  {item.details}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">
+                              Localizador
+                            </span>
+                            <span className="font-mono text-sm font-bold text-foreground bg-surface-alt px-2 py-0.5 rounded tracking-widest">
+                              {item.locator_code}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </AppWidget>
+                )}
+
                 {(trip.airline || trip.pnr || voucher?.flights?.length) && (
                   <AppWidget
                     title="Localizador e Voos"
