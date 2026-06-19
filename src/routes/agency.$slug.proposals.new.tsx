@@ -392,7 +392,7 @@ function NewProposal() {
             <Input type="date" {...register("travel_end")} />
           </Field>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Field label="Adultos" error={errors.pax_adults?.message}>
             <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
           </Field>

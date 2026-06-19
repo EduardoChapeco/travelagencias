@@ -8,6 +8,7 @@ import {
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { PrimaryButton, Sheet } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/m/payment/$token")({
   head: () => ({ meta: [{ title: "Meu Carnê Digital · TravelOS" }] }),
@@ -24,6 +25,55 @@ function Page() {
   const [err, setErr] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedInst, setSelectedInst] = useState<Installment | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleUploadReceipt = async (instId: string, file: File) => {
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `receipts/${instId}_${Date.now()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("payment-receipts")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("payment-receipts")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      const { error: rpcError } = await supabase.rpc("confirm_payment_with_token", {
+        _token: token,
+        _payment_method: "pix",
+        _receipt_url: publicUrl,
+      });
+
+      if (rpcError) throw rpcError;
+
+      toast.success("Comprovante enviado com sucesso!");
+      
+      setInstallments(prev => prev.map(inst => {
+        if (inst.id === instId) {
+          return {
+            ...inst,
+            status: "paid" as const,
+            paid_at: new Date().toISOString(),
+            payment_method: "pix",
+          };
+        }
+        return inst;
+      }));
+      
+      setSelectedInst(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Erro ao enviar comprovante: " + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   useEffect(() => {
     // Agora o sistema está 100% livre de Mocks. Consumimos a Stored Procedure RPC "public_installments_by_token"
@@ -203,6 +253,30 @@ function Page() {
                   >
                     <Copy className="h-4 w-4" /> Copiar Código
                   </PrimaryButton>
+
+                  <div className="mt-6 border-t border-border/50 pt-4 text-left">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                      Enviar Comprovante de Pagamento
+                    </label>
+                    <div className="space-y-2">
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-4 bg-surface hover:bg-surface-alt transition-colors cursor-pointer text-center">
+                        <span className="text-xs font-bold text-brand">
+                          {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          className="hidden"
+                          disabled={isUploading}
+                          onChange={async (e) => {
+                            if (e.target.files?.[0]) {
+                              await handleUploadReceipt(selectedInst.id, e.target.files[0]);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </div>
               ) : selectedInst.payment_method === "credit_card" && selectedInst.external_link ? (
                 <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-5 text-center">

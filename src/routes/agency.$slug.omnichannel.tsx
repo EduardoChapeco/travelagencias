@@ -612,7 +612,7 @@ function OmnichannelPage() {
     <>
       <div className="flex h-[calc(100vh-var(--header-h))] w-full p-0 m-0 border-0 rounded-none overflow-hidden bg-background">
         {/* ── SIDEBAR: Session List ─────────────────────────────── */}
-        <aside className="flex w-80 shrink-0 flex-col border-r border-border bg-surface">
+        <aside className={cn("shrink-0 flex-col border-r border-border bg-surface", selectedId ? "hidden md:flex md:w-80" : "flex w-full md:w-80")}>
           {/* Search + Filter */}
           <div className="space-y-2 p-3 border-b border-border">
             <div className="relative">
@@ -750,9 +750,16 @@ function OmnichannelPage() {
 
         {/* ── MAIN: Conversation ───────────────────────────────── */}
         {selectedId ? (
-          <div className="flex flex-1 flex-col bg-surface border-r border-border">
+          <div className={cn("flex flex-1 flex-col bg-surface border-r border-border", selectedId ? "flex" : "hidden md:flex")}>
             {/* Conversation header */}
             <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-surface">
+              <button
+                onClick={() => setSelectedId(null)}
+                className="md:hidden flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title="Voltar"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-alt border border-border">
                 {selectedSession?.contact_avatar_url ? (
                   <img
@@ -936,7 +943,7 @@ function OmnichannelPage() {
           </div>
         ) : (
           /* Empty state */
-          <div className="flex flex-1 flex-col items-center justify-center p-10 text-center bg-surface border-r border-border">
+          <div className="hidden md:flex flex-1 flex-col items-center justify-center p-10 text-center bg-surface border-r border-border">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-alt">
               <MessageSquare className="h-8 w-8 text-muted-foreground/40" />
             </div>
@@ -949,7 +956,7 @@ function OmnichannelPage() {
 
         {/* ── DETAILS PANEL: Collapsible ── */}
         {selectedId && showDetails && (
-          <aside className="w-80 shrink-0 bg-surface flex flex-col overflow-y-auto no-scrollbar border-l border-border md:border-l-0">
+          <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border bg-surface overflow-y-auto no-scrollbar md:relative md:w-80 md:z-0 md:flex md:shadow-none shadow-2xl">
             {/* Panel Header */}
             <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
               <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">

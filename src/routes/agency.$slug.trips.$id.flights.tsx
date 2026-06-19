@@ -141,6 +141,26 @@ function TripFlightsPage() {
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["trip-flight-itineraries", tripId] });
+    qc.invalidateQueries({ queryKey: ["trip-boarding-cards", tripId] });
+    qc.invalidateQueries({ queryKey: ["trip-flight-tickets", tripId] });
+  };
+
+  const isItinerarySynced = (it: FlightItinerary) => {
+    if (it.status !== "active") return false;
+    if (!it.segments || it.segments.length === 0) return false;
+    const firstSeg = it.segments[0];
+    
+    const matchedCard = cards.find(c => {
+      const pnrMatch = (c.pnr || "").trim().toUpperCase() === (firstSeg.record_locator || "").trim().toUpperCase();
+      const airlineMatch = (c.airline || "").trim().toUpperCase() === (firstSeg.airline_code || "").trim().toUpperCase();
+      const flightNumMatch = (c.flight_number || "").trim().toUpperCase() === (firstSeg.flight_number || "").trim().toUpperCase();
+      const originMatch = (c.departure_airport || "").trim().toUpperCase() === (firstSeg.origin_iata || "").trim().toUpperCase();
+      const destMatch = (c.arrival_airport || "").trim().toUpperCase() === (firstSeg.destination_iata || "").trim().toUpperCase();
+      
+      return pnrMatch && airlineMatch && flightNumMatch && originMatch && destMatch;
+    });
+    
+    return !!matchedCard;
   };
 
   // ── Mutations ────────────────────────────────────────────────────────
@@ -553,9 +573,20 @@ function TripFlightsPage() {
                         {ITINERARY_TYPE_LABELS[it.type] || it.type}
                       </span>
                       {it.status === "active" && (
-                        <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
-                          <Check className="h-3 w-3" /> Vigente / Confirmado
-                        </span>
+                        <>
+                          <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                            <Check className="h-3 w-3" /> Vigente / Confirmado
+                          </span>
+                          {isItinerarySynced(it) ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200">
+                              <CheckCircle2 className="h-3 w-3 text-blue-500" /> Sincronizado
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200 animate-pulse">
+                              <AlertTriangle className="h-3 w-3 text-amber-500" /> Desatualizado
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
 

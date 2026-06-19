@@ -10,10 +10,12 @@ import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
+import { exportBoardingListXlsx } from "@/lib/exportRoomingList";
 import {
   DndContext,
   DragOverlay,
@@ -63,6 +65,7 @@ function BoardingKanbanPage() {
   const [detail, setDetail] = useState<Card | null>(null);
   const [viewMode, setViewMode] = useState<"kanban" | "list" | "calendar">("kanban");
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [exporting, setExporting] = useState(false);
 
   const q = useQuery({
     enabled: !!agency,
@@ -201,6 +204,25 @@ function BoardingKanbanPage() {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
   };
 
+  async function handleExportExcel() {
+    const cards = localCards ?? [];
+    if (cards.length === 0) {
+      return toast.warning("Nenhum localizador de embarque para exportar.");
+    }
+    setExporting(true);
+    try {
+      await exportBoardingListXlsx(cards, {
+        filename: `lista-embarque-${new Date().toISOString().slice(0, 10)}`,
+        agencyName: agency?.name ?? "Agência",
+      });
+      toast.success("Lista de Embarque exportada com sucesso!");
+    } catch (err: any) {
+      toast.error(`Erro ao exportar: ${err.message}`);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
@@ -257,6 +279,17 @@ function BoardingKanbanPage() {
               title="Administrar Embarques"
             >
               <Settings2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+          {(localCards?.length ?? 0) > 0 && (
+            <button
+              onClick={handleExportExcel}
+              disabled={exporting}
+              className="flex h-8 items-center gap-1.5 px-3 rounded-sm border border-border bg-surface text-foreground text-xs font-semibold hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Exportar Lista de Embarque (.xlsx)"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{exporting ? "Exportando..." : "Exportar Excel"}</span>
             </button>
           )}
         </div>

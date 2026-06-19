@@ -38,6 +38,10 @@ function Page() {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
 
+  // LGPD — consentimento explícito obrigatório antes de enviar dados pessoais
+  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [lgpdError, setLgpdError] = useState(false);
+
   useEffect(() => {
     supabase.rpc("public_passenger_by_token", { _token: token }).then(({ data, error }) => {
       if (error) {
@@ -57,6 +61,13 @@ function Page() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    // Validação LGPD: bloqueio explícito via estado React, não apenas HTML required
+    if (!lgpdConsent) {
+      setLgpdError(true);
+      document.getElementById("lgpd_passenger_consent")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      toast.error("Você precisa aceitar o consentimento LGPD para enviar seus dados.");
+      return;
+    }
     setSaving(true);
     const { error } = await supabase.rpc("save_passenger_with_token", {
       _token: token,
@@ -178,7 +189,47 @@ function Page() {
               onChange={(e) => setForm({ ...form, disabilities: e.target.value })}
             />
           </Field>
-          <PrimaryButton disabled={saving} className="w-full">
+          {/* LGPD Consent — obrigatório, validado via estado React */}
+          <div
+            id="lgpd_passenger_consent"
+            className={`flex items-start gap-2.5 rounded-lg border p-4 transition-all ${
+              lgpdError
+                ? "border-red-400 bg-red-50/50"
+                : lgpdConsent
+                  ? "border-emerald-300 bg-emerald-50/30"
+                  : "border-border bg-surface"
+            }`}
+          >
+            <input
+              type="checkbox"
+              id="lgpd_passenger_check"
+              checked={lgpdConsent}
+              onChange={(e) => {
+                setLgpdConsent(e.target.checked);
+                if (e.target.checked) setLgpdError(false);
+              }}
+              className="mt-0.5 h-4 w-4 flex-shrink-0 rounded border-gray-300 cursor-pointer"
+              style={{ accentColor: "#10b981" }}
+            />
+            <label
+              htmlFor="lgpd_passenger_check"
+              className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
+            >
+              Li e concordo com o tratamento dos meus dados pessoais (nome, CPF, passaporte, data de nascimento, contatos) para fins exclusivos de gestão desta viagem, em conformidade com a{" "}
+              <strong className="text-foreground">Lei Geral de Proteção de Dados — LGPD (Lei n.º 13.709/2018)</strong>. Esses dados não serão compartilhados com terceiros sem o meu consentimento expresso. *
+            </label>
+          </div>
+          {lgpdError && (
+            <p className="text-xs text-red-600 font-semibold pl-1 -mt-1 flex items-center gap-1">
+              <span>⚠</span> Aceite o consentimento LGPD para enviar seus dados.
+            </p>
+          )}
+          <PrimaryButton
+            disabled={saving || !lgpdConsent}
+            className={`w-full ${
+              !lgpdConsent ? "opacity-40 cursor-not-allowed" : ""
+            }`}
+          >
             {saving ? "Enviando…" : "Enviar dados"}
           </PrimaryButton>
         </form>

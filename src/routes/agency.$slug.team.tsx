@@ -463,7 +463,7 @@ function AgentCommissionSheet({
                     key={index}
                     className="flex items-center gap-2 rounded-lg border border-border bg-surface p-2.5"
                   >
-                    <div className="grid grid-cols-3 gap-2 flex-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                       <div>
                         <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
                           Min (R$)

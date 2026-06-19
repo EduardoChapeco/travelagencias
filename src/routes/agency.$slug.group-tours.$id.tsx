@@ -1,11 +1,12 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { exportRoomingListXlsx } from "@/lib/exportRoomingList";
 import {
   fetchRoomingListByTour,
   createRoomRecord,
@@ -483,7 +484,7 @@ function TourDetailPage() {
             
             {/* ROI Metrics Card */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white border border-border rounded-xl p-5 grid grid-cols-3 gap-4">
+              <div className="bg-white border border-border rounded-xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <span className="text-[10px] text-muted-foreground uppercase font-bold">Faturamento Bruto</span>
                   <strong className="block text-lg mt-1 font-mono text-gray-900">{money(totalRevenue)}</strong>
@@ -1363,6 +1364,28 @@ function RoomingListManager({
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["rooming-list", tourId] });
 
+  // ── Export state ──────────────────────────────────────────────────────────
+  const [exporting, setExporting] = useState(false);
+
+  async function handleExportExcel() {
+    if (rooms.length === 0) {
+      return toast.warning("Nenhum quarto cadastrado para exportar.");
+    }
+    setExporting(true);
+    try {
+      await exportRoomingListXlsx(rooms as any, {
+        filename: `rooming-list-${tourId.slice(0, 8)}`,
+        tourTitle: `Excursão`,
+        departureDate: departureDate,
+      });
+      toast.success("Rooming List exportada com sucesso!");
+    } catch (err: any) {
+      toast.error(`Erro ao exportar: ${err.message}`);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   // ── Mutations ─────────────────────────────────────────────────────────────
   const addRoomMutation = useMutation({
     mutationFn: async (e: React.FormEvent) => {
@@ -1496,17 +1519,30 @@ function RoomingListManager({
       )}
 
       {/* Header actions */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
           <Hotel className="h-4 w-4 text-brand" /> Distribuição de Quartos
         </h3>
-        <button
-          type="button"
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5" /> Novo Quarto
-        </button>
+        <div className="flex items-center gap-2">
+          {rooms.length > 0 && (
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              disabled={exporting}
+              title="Exportar Rooming List para Excel (.xlsx)"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="h-3.5 w-3.5" /> {exporting ? "Exportando..." : "Exportar Excel"}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" /> Novo Quarto
+          </button>
+        </div>
       </div>
 
       {/* Add room form */}

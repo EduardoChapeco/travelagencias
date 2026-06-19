@@ -305,7 +305,7 @@ function PortalSettingsPage() {
               {/* Header style */}
               <div>
                 <div className="mb-2 text-xs font-medium">Estilo do cabeçalho</div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {(
                     [
                       {

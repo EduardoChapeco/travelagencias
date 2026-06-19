@@ -38,7 +38,11 @@ function Page() {
   const [extraPassengers, setExtraPassengers] = useState<string[]>([]);
   const [passengerCount, setPassengerCount] = useState(1);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  
+
+  // LGPD consent — obrigatório para avançar
+  const [lgpdConsent, setLgpdConsent] = useState(false);
+  const [lgpdError, setLgpdError] = useState(false);
+
   // Checkout steps: 'form' | 'pix' | 'success'
   const [checkoutStep, setCheckoutStep] = useState<"form" | "pix" | "success">("form");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
@@ -146,6 +150,14 @@ function Page() {
     if (seatMap.length > 0 && selectedSeats.length === 0) {
       return toast.error("Por favor, selecione pelo menos uma poltrona no ônibus.");
     }
+    // Validação LGPD obrigatória — bloqueio explícito via estado React
+    if (!lgpdConsent) {
+      setLgpdError(true);
+      // Scroll suave até o checkbox
+      document.getElementById("lgpd_consent")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return toast.error("Você precisa aceitar o consentimento LGPD para prosseguir.");
+    }
+    setLgpdError(false);
     // Proceed to B2C PIX details
     setCheckoutStep("pix");
   }
@@ -489,21 +501,51 @@ function Page() {
                 />
               </Field>
 
-              <div className="flex items-start gap-2.5 rounded-xl border border-gray-200 bg-gray-50/50 p-4 mb-4">
+              {/* LGPD Consent — obrigatório, validado via estado React */}
+              <div
+                id="lgpd_consent_wrapper"
+                className={`flex items-start gap-2.5 rounded-xl border p-4 mb-1 transition-colors ${
+                  lgpdError
+                    ? "border-red-400 bg-red-50/60"
+                    : lgpdConsent
+                      ? "border-emerald-300 bg-emerald-50/40"
+                      : "border-gray-200 bg-gray-50/50"
+                }`}
+              >
                 <input
                   type="checkbox"
                   id="lgpd_consent"
-                  required
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#ff4f9a] focus:ring-[#ff4f9a] cursor-pointer"
+                  checked={lgpdConsent}
+                  onChange={(e) => {
+                    setLgpdConsent(e.target.checked);
+                    if (e.target.checked) setLgpdError(false);
+                  }}
+                  className="mt-0.5 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-[#ff4f9a] focus:ring-[#ff4f9a] cursor-pointer accent-[#ff4f9a]"
                 />
                 <label htmlFor="lgpd_consent" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
-                  Eu concordo com o processamento dos meus dados pessoais para fins de cadastro, contato e reserva desta viagem, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD)</strong>.
+                  Li e concordo com o processamento dos meus dados pessoais para fins de cadastro, contato e reserva desta viagem, em conformidade com a{" "}
+                  <strong className="text-gray-800">Lei Geral de Proteção de Dados (LGPD — Lei n.º 13.709/2018)</strong>.{" "}
+                  Seus dados serão tratados exclusivamente para gestão da viagem e não serão compartilhados com terceiros sem o seu consentimento.{" "}
+                  <a
+                    href="#"
+                    onClick={(e) => e.preventDefault()}
+                    className="underline text-[#ff4f9a] hover:text-[#e03d80] font-semibold"
+                  >
+                    Política de Privacidade
+                  </a>
+                  . *
                 </label>
               </div>
+              {lgpdError && (
+                <p className="text-xs text-red-600 font-semibold pl-1 mb-2 flex items-center gap-1">
+                  <span>⚠</span> Consentimento LGPD obrigatório para prosseguir.
+                </p>
+              )}
 
               <PrimaryButton
                 type="submit"
-                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[#ff4f9a] hover:bg-[#e03d80] text-white rounded-xl transition-all cursor-pointer"
+                disabled={!lgpdConsent}
+                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[#ff4f9a] hover:bg-[#e03d80] text-white rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Avançar para Pagamento — {money(totalPrice)}
               </PrimaryButton>
@@ -612,6 +654,8 @@ function Page() {
                 setCheckoutStep("form");
                 setUploadedFile(null);
                 setSelectedSeats([]);
+                setLgpdConsent(false);
+                setLgpdError(false);
                 setForm({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
               }}
               className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-gray-900 text-white rounded-xl cursor-pointer hover:bg-gray-800"
