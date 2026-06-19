@@ -16,6 +16,9 @@ import {
   Send,
   Plane,
   Clock,
+  Hotel,
+  CheckCircle2,
+  Navigation,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
@@ -341,6 +344,14 @@ function TripLayout() {
               Visão Geral
             </Link>
             <Link
+              to="/agency/$slug/trips/$id/passengers"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <Users className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Passageiros ({paxQ.data?.length ?? 0})
+            </Link>
+            <Link
               to="/agency/$slug/trips/$id/financial"
               params={{ slug, id }}
               className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
@@ -351,20 +362,20 @@ function TripLayout() {
               Financeiro
             </Link>
             <Link
-              to="/agency/$slug/trips/$id/passengers"
+              to="/agency/$slug/trips/$id/flights"
               params={{ slug, id }}
               className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
             >
-              <Users className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
-              Passageiros ({paxQ.data?.length ?? 0})
+              <Plane className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Aéreos
             </Link>
             <Link
-              to="/agency/$slug/trips/$id/vouchers"
+              to="/agency/$slug/trips/$id/lodging"
               params={{ slug, id }}
               className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
             >
-              <Ticket className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
-              Vouchers
+              <Hotel className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Hospedagem
             </Link>
             <Link
               to="/agency/$slug/trips/$id/contract"
@@ -372,7 +383,47 @@ function TripLayout() {
               className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
             >
               <FileSignature className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
-              Contrato Jurídico
+              Contrato
+            </Link>
+            <Link
+              to="/agency/$slug/trips/$id/confirmation"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <CheckCircle2 className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Confirmação
+            </Link>
+            <Link
+              to="/agency/$slug/trips/$id/vouchers"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <Ticket className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Voucher
+            </Link>
+            <Link
+              to="/agency/$slug/trips/$id/boarding"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <Navigation className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Check-in & Embarque
+            </Link>
+            <Link
+              to="/agency/$slug/trips/$id/destination"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <MapPin className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Destino & Segurança
+            </Link>
+            <Link
+              to="/agency/$slug/trips/$id/history"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <Clock className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              Histórico
             </Link>
           </nav>
         </div>

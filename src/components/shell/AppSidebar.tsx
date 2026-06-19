@@ -20,7 +20,6 @@ import {
   CreditCard,
   LogOut,
   Globe,
-  Briefcase,
   Radar,
   Calendar,
   MessageSquare,
@@ -29,6 +28,9 @@ import {
   Puzzle,
   ListTodo,
   BrainCircuit,
+  ClipboardCheck,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -38,7 +40,7 @@ import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
 
 const items: SlimSidebarItem[] = [
   { label: "Dashboard", to: "", icon: LayoutDashboard, exact: true },
-  
+
   { type: "header", label: "Dia a Dia" },
   { label: "Meu Dia (Tarefas)", to: "daily-tasks", icon: ListTodo },
   { label: "Agenda", to: "calendar", icon: Calendar },
@@ -49,11 +51,13 @@ const items: SlimSidebarItem[] = [
   { label: "Orçamentos & Propostas", to: "proposals", icon: FileText },
   { label: "Contratos", to: "contracts", icon: ScrollText },
 
-  { type: "header", label: "Operações & Viagens" },
-  { label: "Roteiros em Grupo", to: "group-tours", icon: Bus },
-  { label: "Viagens", to: "trips", icon: Luggage },
-  { label: "Embarques", to: "boarding", icon: Plane },
-  { label: "Vouchers", to: "vouchers", icon: Ticket },
+  { type: "header", label: "Viagens" },
+  { label: "Todas as Viagens", to: "trips", icon: Luggage },
+  { label: "Aéreos & Conferência", to: "vouchers?tab=flight_audit", icon: Plane },
+  { label: "Check-in & Embarques", to: "boarding", icon: ClipboardCheck },
+
+  { type: "header", label: "Grupos" },
+  { label: "Excursões & Grupos", to: "group-tours", icon: Bus },
   { label: "Frota & Ônibus", to: "bus-layouts", icon: Bus },
 
   { type: "header", label: "Clientes & Parceiros" },
@@ -67,17 +71,19 @@ const items: SlimSidebarItem[] = [
   { type: "header", label: "Suporte & Vistos" },
   { label: "Suporte", to: "support", icon: LifeBuoy },
   { label: "Vistos", to: "visas", icon: Globe2 },
-  { label: "Destination Intelligence", to: "destination-intelligence", icon: BrainCircuit, adminOnly: true },
 
   { type: "header", label: "Site & Marketing" },
   { label: "Site da Agência", to: "portal", icon: Globe, adminOnly: true },
   { label: "Monitor de Concorrentes", to: "competitors", icon: Radar, adminOnly: true },
 
+  { type: "header", label: "Identidade & Templates", adminOnly: true },
+  { label: "Identidade Visual", to: "brand", icon: Palette, adminOnly: true },
+  { label: "Destination Intelligence", to: "destination-intelligence", icon: BrainCircuit, adminOnly: true },
+
   { type: "header", label: "Gestão", adminOnly: true },
   { label: "Produtividade Master", to: "productivity", icon: BrainCircuit, adminOnly: true },
   { label: "Minha Empresa", to: "company", icon: Building2, adminOnly: true },
   { label: "Equipe", to: "team", icon: Users2, adminOnly: true },
-  { label: "Identidade Visual", to: "brand", icon: Palette, adminOnly: true },
   { label: "Design System", to: "design-system", icon: BookOpen, adminOnly: true },
   { label: "Conexões", to: "integrations", icon: Puzzle, adminOnly: true },
   { label: "Assinatura & Planos", to: "billing", icon: CreditCard, adminOnly: true },
