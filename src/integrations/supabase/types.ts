@@ -706,7 +706,8 @@ export type Database = {
         Row: {
           id: string;
           agency_id: string;
-          card_id: string;
+          card_id: string | null;
+          group_tour_id: string | null;
           room_number: string;
           room_type: string;
           hotel_name: string | null;
@@ -722,7 +723,8 @@ export type Database = {
         Insert: {
           id?: string;
           agency_id: string;
-          card_id: string;
+          card_id?: string | null;
+          group_tour_id?: string | null;
           room_number: string;
           room_type?: string;
           hotel_name?: string | null;
@@ -738,7 +740,8 @@ export type Database = {
         Update: {
           id?: string;
           agency_id?: string;
-          card_id?: string;
+          card_id?: string | null;
+          group_tour_id?: string | null;
           room_number?: string;
           room_type?: string;
           hotel_name?: string | null;
@@ -766,8 +769,16 @@ export type Database = {
             referencedRelation: "boarding_cards";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "boarding_rooming_list_group_tour_id_fkey";
+            columns: ["group_tour_id"];
+            isOneToOne: false;
+            referencedRelation: "group_tours";
+            referencedColumns: ["id"];
+          },
         ];
       };
+
       boarding_cards: {
         Row: {
           agency_id: string;

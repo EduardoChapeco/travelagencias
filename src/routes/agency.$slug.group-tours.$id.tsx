@@ -1,11 +1,22 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import {
+  fetchRoomingListByTour,
+  createRoomRecord,
+  updateRoomRecord,
+  deleteRoomRecord,
+  allocatePassengerToRoom,
+  deallocatePassengerFromRoom,
+  ROOM_TYPE_LABEL,
+  ROOM_CAPACITY,
+  type RoomingPassenger,
+} from "@/services/rooming";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
@@ -1300,29 +1311,8 @@ function EditTour({
   );
 }
 
-// ─── Room type labels ─────────────────────────────────────────────────────────
-const ROOM_TYPE_LABEL: Record<string, string> = {
-  single: "Single (1 pax)",
-  double: "Double (2 pax)",
-  triple: "Triple (3 pax)",
-  quad: "Quádruplo (4 pax)",
-  suite: "Suíte",
-};
-const ROOM_CAPACITY: Record<string, number> = {
-  single: 1, double: 2, triple: 3, quad: 4, suite: 2,
-};
+// ─── Room type constants (moved to rooming.ts service) ────────────────────────
 
-type RoomEntry = {
-  id: string;
-  room_number: string;
-  room_type: string;
-  hotel_name: string;
-  checkin_date: string;
-  checkout_date: string;
-  notes: string;
-  is_confirmed: boolean;
-  passengers: Array<{ passenger_id: string; name: string }>;
-};
 
 function RoomingListManager({
   tourId,
@@ -1339,30 +1329,28 @@ function RoomingListManager({
 }) {
   const qc = useQueryClient();
 
+  // ── Query: fetch rooms from normalized table ──────────────────────────────
   const roomsQ = useQuery({
     queryKey: ["rooming-list", tourId],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("group_tours")
-        .select("rooming_list")
-        .eq("id", tourId)
-        .maybeSingle();
-      if (error) throw error;
-      return (data?.rooming_list as RoomEntry[]) ?? [];
-    },
+    queryFn: () => fetchRoomingListByTour(tourId),
   });
 
-  const rooms: RoomEntry[] = roomsQ.data ?? [];
+  const rooms = roomsQ.data ?? [];
 
-  async function persistRooms(next: RoomEntry[]) {
-    const { error } = await (supabase as any)
-      .from("group_tours")
-      .update({ rooming_list: next })
-      .eq("id", tourId);
-    if (error) throw error;
-    qc.invalidateQueries({ queryKey: ["rooming-list", tourId] });
-  }
+  // ── Derived state ─────────────────────────────────────────────────────────
+  const allocatedIds = new Set(
+    rooms.flatMap((r) =>
+      ((r.passengers ?? []) as unknown as RoomingPassenger[]).map((p) => p.passenger_id)
+    )
+  );
+  const unallocated = passengers.filter((p) => !allocatedIds.has(p.id));
+  const totalBeds = rooms.reduce((sum, r) => sum + (ROOM_CAPACITY[r.room_type] ?? 2), 0);
+  const totalOccupied = rooms.reduce(
+    (sum, r) => sum + ((r.passengers as unknown as RoomingPassenger[]) ?? []).length,
+    0
+  );
 
+  // ── Add room state ────────────────────────────────────────────────────────
   const [addOpen, setAddOpen] = useState(false);
   const [newRoom, setNewRoom] = useState({
     room_number: "",
@@ -1373,82 +1361,106 @@ function RoomingListManager({
     notes: "",
   });
 
-  async function handleAddRoom(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newRoom.room_number.trim()) return toast.error("Informe o número/nome do quarto.");
-    const entry: RoomEntry = {
-      id: crypto.randomUUID(),
-      ...newRoom,
-      is_confirmed: false,
-      passengers: [],
-    };
-    try {
-      await persistRooms([...rooms, entry]);
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["rooming-list", tourId] });
+
+  // ── Mutations ─────────────────────────────────────────────────────────────
+  const addRoomMutation = useMutation({
+    mutationFn: async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!newRoom.room_number.trim()) throw new Error("Informe o número/nome do quarto.");
+      await createRoomRecord({
+        agency_id: agencyId,
+        group_tour_id: tourId,
+        card_id: null as any,
+        room_number: newRoom.room_number,
+        room_type: newRoom.room_type,
+        hotel_name: newRoom.hotel_name || null,
+        checkin_date: newRoom.checkin_date || null,
+        checkout_date: newRoom.checkout_date || null,
+        notes: newRoom.notes || null,
+        is_confirmed: false,
+        passengers: [],
+        order_index: rooms.length,
+      });
+    },
+    onSuccess: () => {
       toast.success("Quarto adicionado!");
       setAddOpen(false);
-      setNewRoom({ room_number: "", room_type: "double", hotel_name: "", checkin_date: departureDate ? String(departureDate).slice(0, 10) : "", checkout_date: returnDate ? String(returnDate).slice(0, 10) : "", notes: "" });
-    } catch (e: any) {
-      toast.error(e.message);
-    }
-  }
+      setNewRoom({
+        room_number: "",
+        room_type: "double",
+        hotel_name: "",
+        checkin_date: departureDate ? String(departureDate).slice(0, 10) : "",
+        checkout_date: returnDate ? String(returnDate).slice(0, 10) : "",
+        notes: "",
+      });
+      invalidate();
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
 
   async function removeRoom(roomId: string) {
     try {
-      await persistRooms(rooms.filter(r => r.id !== roomId));
+      await deleteRoomRecord(roomId);
       toast.success("Quarto removido.");
+      invalidate();
     } catch (e: any) {
       toast.error(e.message);
     }
   }
 
-  async function toggleConfirmed(roomId: string) {
+  async function toggleConfirmed(roomId: string, current: boolean) {
     try {
-      await persistRooms(rooms.map(r => r.id === roomId ? { ...r, is_confirmed: !r.is_confirmed } : r));
+      await updateRoomRecord(roomId, { is_confirmed: !current });
+      invalidate();
     } catch (e: any) {
       toast.error(e.message);
     }
   }
 
   async function assignPassengerToRoom(roomId: string, passengerId: string) {
-    const pax = passengers.find(p => p.id === passengerId);
+    const pax = passengers.find((p) => p.id === passengerId);
     if (!pax) return;
-    const room = rooms.find(r => r.id === roomId);
+    const room = rooms.find((r) => r.id === roomId);
     if (!room) return;
     const cap = ROOM_CAPACITY[room.room_type] ?? 2;
-    if (room.passengers.length >= cap) {
+    const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
+    if (roomPax.length >= cap) {
       return toast.error(`Quarto ${room.room_number} está lotado (máx. ${cap} pax).`);
     }
-    if (rooms.some(r => r.passengers.some(p => p.passenger_id === passengerId))) {
+    if (rooms.some((r) =>
+      ((r.passengers as unknown as RoomingPassenger[]) ?? []).some(
+        (p) => p.passenger_id === passengerId
+      )
+    )) {
       return toast.warning(`${pax.passenger_name} já está alocado em outro quarto.`);
     }
     try {
-      await persistRooms(rooms.map(r =>
-        r.id === roomId
-          ? { ...r, passengers: [...r.passengers, { passenger_id: passengerId, name: pax.passenger_name }] }
-          : r
-      ));
+      await allocatePassengerToRoom(roomId, roomPax, {
+        passenger_id: passengerId,
+        name: pax.passenger_name,
+      });
       toast.success(`${pax.passenger_name} alocado no quarto ${room.room_number}.`);
+      invalidate();
     } catch (e: any) {
       toast.error(e.message);
     }
   }
 
   async function removePassengerFromRoom(roomId: string, passengerId: string) {
+    const room = rooms.find((r) => r.id === roomId);
+    if (!room) return;
+    const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
     try {
-      await persistRooms(rooms.map(r =>
-        r.id === roomId
-          ? { ...r, passengers: r.passengers.filter(p => p.passenger_id !== passengerId) }
-          : r
-      ));
+      await deallocatePassengerFromRoom(roomId, roomPax, passengerId);
+      invalidate();
     } catch (e: any) {
       toast.error(e.message);
     }
   }
 
-  const allocatedIds = new Set(rooms.flatMap(r => r.passengers.map(p => p.passenger_id)));
-  const unallocated = passengers.filter(p => !allocatedIds.has(p.id));
-  const totalBeds = rooms.reduce((sum, r) => sum + ROOM_CAPACITY[r.room_type], 0);
-  const totalOccupied = rooms.reduce((sum, r) => sum + r.passengers.length, 0);
+  if (roomsQ.isLoading)
+    return <div className="p-8 text-sm text-muted-foreground">Carregando rooming list…</div>;
 
   return (
     <div className="space-y-6">
@@ -1478,7 +1490,7 @@ function RoomingListManager({
           <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <div>
             <div className="text-xs font-bold text-warning">Passageiros sem quarto alocado:</div>
-            <div className="text-xs text-muted-foreground mt-1">{unallocated.map(p => p.passenger_name).join(", ")}</div>
+            <div className="text-xs text-muted-foreground mt-1">{unallocated.map((p) => p.passenger_name).join(", ")}</div>
           </div>
         </div>
       )}
@@ -1501,41 +1513,43 @@ function RoomingListManager({
       {addOpen && (
         <div className="rounded-xl border border-brand/20 bg-brand/5 p-5">
           <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
-          <form onSubmit={handleAddRoom} className="space-y-3">
+          <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <Field label="Número/Nome *">
                 <Input
                   value={newRoom.room_number}
-                  onChange={e => setNewRoom({ ...newRoom, room_number: e.target.value })}
+                  onChange={(e) => setNewRoom({ ...newRoom, room_number: e.target.value })}
                   placeholder="ex: 201 ou Quarto Família"
                   required
                 />
               </Field>
               <Field label="Tipo *">
-                <Select value={newRoom.room_type} onChange={e => setNewRoom({ ...newRoom, room_type: e.target.value })}>
+                <Select value={newRoom.room_type} onChange={(e) => setNewRoom({ ...newRoom, room_type: e.target.value })}>
                   {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </Select>
               </Field>
               <Field label="Hotel/Pousada">
                 <Input
                   value={newRoom.hotel_name}
-                  onChange={e => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
+                  onChange={(e) => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
                   placeholder="Nome do hotel"
                 />
               </Field>
               <Field label="Check-in">
-                <Input type="date" value={newRoom.checkin_date} onChange={e => setNewRoom({ ...newRoom, checkin_date: e.target.value })} />
+                <Input type="date" value={newRoom.checkin_date} onChange={(e) => setNewRoom({ ...newRoom, checkin_date: e.target.value })} />
               </Field>
               <Field label="Check-out">
-                <Input type="date" value={newRoom.checkout_date} onChange={e => setNewRoom({ ...newRoom, checkout_date: e.target.value })} />
+                <Input type="date" value={newRoom.checkout_date} onChange={(e) => setNewRoom({ ...newRoom, checkout_date: e.target.value })} />
               </Field>
               <Field label="Notas">
-                <Input value={newRoom.notes} onChange={e => setNewRoom({ ...newRoom, notes: e.target.value })} placeholder="Observações..." />
+                <Input value={newRoom.notes} onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })} placeholder="Observações..." />
               </Field>
             </div>
             <div className="flex gap-2 justify-end">
               <GhostButton type="button" onClick={() => setAddOpen(false)}>Cancelar</GhostButton>
-              <PrimaryButton type="submit">Adicionar Quarto</PrimaryButton>
+              <PrimaryButton type="submit" disabled={addRoomMutation.isPending}>
+                {addRoomMutation.isPending ? "Salvando..." : "Adicionar Quarto"}
+              </PrimaryButton>
             </div>
           </form>
         </div>
@@ -1549,10 +1563,11 @@ function RoomingListManager({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {rooms.map(room => {
+          {rooms.map((room) => {
             const cap = ROOM_CAPACITY[room.room_type] ?? 2;
-            const pctFull = room.passengers.length / cap;
-            const isFull = room.passengers.length >= cap;
+            const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
+            const pctFull = roomPax.length / cap;
+            const isFull = roomPax.length >= cap;
             return (
               <div key={room.id} className={`rounded-xl border bg-surface overflow-hidden transition-all ${room.is_confirmed ? "border-success/40" : "border-border"}`}>
                 {/* Room header */}
@@ -1567,7 +1582,7 @@ function RoomingListManager({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => toggleConfirmed(room.id)}
+                      onClick={() => toggleConfirmed(room.id, room.is_confirmed)}
                       title={room.is_confirmed ? "Clique para desconfirmar" : "Confirmar quarto"}
                       className={`p-1 rounded transition-colors cursor-pointer ${room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"}`}
                     >
@@ -1587,19 +1602,19 @@ function RoomingListManager({
                 <div className="px-4 pt-3 pb-1">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Ocupação</span>
-                    <span className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}>{room.passengers.length}/{cap}</span>
+                    <span className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}>{roomPax.length}/{cap}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-surface-alt overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${isFull ? "bg-success" : pctFull >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"}`}
-                      style={{ width: `${Math.min(100, (room.passengers.length / cap) * 100)}%` }}
+                      style={{ width: `${Math.min(100, pctFull * 100)}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Passenger list */}
                 <div className="px-4 pb-3 space-y-1.5 mt-2">
-                  {room.passengers.map(p => (
+                  {roomPax.map((p) => (
                     <div key={p.passenger_id} className="flex items-center justify-between py-1 px-2.5 rounded-lg bg-brand/5 border border-brand/10">
                       <span className="text-xs font-semibold text-foreground">{p.name}</span>
                       <button
@@ -1614,7 +1629,7 @@ function RoomingListManager({
                   {!isFull && (
                     <select
                       defaultValue=""
-                      onChange={e => {
+                      onChange={(e) => {
                         if (e.target.value) {
                           assignPassengerToRoom(room.id, e.target.value);
                           e.target.value = "";
@@ -1623,7 +1638,7 @@ function RoomingListManager({
                       className="w-full mt-1 h-8 rounded-lg border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
                     >
                       <option value="">+ Alocar passageiro...</option>
-                      {unallocated.map(p => (
+                      {unallocated.map((p) => (
                         <option key={p.id} value={p.id}>{p.passenger_name}</option>
                       ))}
                     </select>
@@ -1653,15 +1668,14 @@ function RoomingListManager({
           <div className="space-y-2.5">
             {[
               { ok: unallocated.length === 0, label: `Todos os passageiros alocados em quartos (${allocatedIds.size}/${passengers.length})` },
-              { ok: rooms.every(r => r.is_confirmed), label: `Todos os quartos confirmados pelo hotel (${rooms.filter(r => r.is_confirmed).length}/${rooms.length})` },
-              { ok: rooms.every(r => !!r.hotel_name), label: "Nome do hotel preenchido em todos os quartos" },
-              { ok: rooms.every(r => !!r.checkin_date && !!r.checkout_date), label: "Check-in e check-out preenchidos em todos os quartos" },
+              { ok: rooms.every((r) => r.is_confirmed), label: `Todos os quartos confirmados pelo hotel (${rooms.filter((r) => r.is_confirmed).length}/${rooms.length})` },
+              { ok: rooms.every((r) => !!r.hotel_name), label: "Nome do hotel preenchido em todos os quartos" },
+              { ok: rooms.every((r) => !!r.checkin_date && !!r.checkout_date), label: "Check-in e check-out preenchidos em todos os quartos" },
             ].map((check, i) => (
               <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}>
                 {check.ok
                   ? <CheckCircle2 className="h-4 w-4 shrink-0" />
-                  : <AlertTriangle className="h-4 w-4 shrink-0" />
-                }
+                  : <AlertTriangle className="h-4 w-4 shrink-0" />}
                 {check.label}
               </div>
             ))}

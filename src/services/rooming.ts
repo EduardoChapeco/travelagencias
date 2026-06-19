@@ -5,13 +5,32 @@ export type RoomRecord = Database["public"]["Tables"]["boarding_rooming_list"]["
 export type InsertRoomRecord = Database["public"]["Tables"]["boarding_rooming_list"]["Insert"];
 
 export interface RoomingPassenger {
-  id: string;
+  passenger_id: string;
   name: string;
   document?: string | null;
+  meal_plan?: string | null;
 }
 
+// ─── Room type constants ───────────────────────────────────────────────────────
+export const ROOM_TYPE_LABEL: Record<string, string> = {
+  single: "Single (1 pax)",
+  double: "Double (2 pax)",
+  triple: "Triple (3 pax)",
+  quad: "Quádruplo (4 pax)",
+  suite: "Suíte",
+};
+
+export const ROOM_CAPACITY: Record<string, number> = {
+  single: 1,
+  double: 2,
+  triple: 3,
+  quad: 4,
+  suite: 2,
+};
+
+// ─── Fetch by boarding card (embarques avulsos) ────────────────────────────────
 /**
- * Fetch all rooms/allocations for a given boarding card (which represents the group tour hotel)
+ * Fetch all rooms for a given boarding card.
  */
 export async function fetchRoomingList(cardId: string): Promise<RoomRecord[]> {
   const { data, error } = await supabase
@@ -24,10 +43,29 @@ export async function fetchRoomingList(cardId: string): Promise<RoomRecord[]> {
   return data ?? [];
 }
 
+// ─── Fetch by group tour (excursões de grupo) ──────────────────────────────────
 /**
- * Add a new room/allocation record
+ * Fetch all rooms for a given group tour (normalized table, not JSONB).
  */
-export async function createRoomRecord(payload: Omit<InsertRoomRecord, "id" | "created_at" | "updated_at">): Promise<RoomRecord> {
+export async function fetchRoomingListByTour(tourId: string): Promise<RoomRecord[]> {
+  const { data, error } = await (supabase as any)
+    .from("boarding_rooming_list")
+    .select("*")
+    .eq("group_tour_id", tourId)
+    .order("order_index", { ascending: true });
+
+  if (error) throw new Error(`Error fetching rooming list for tour: ${error.message}`);
+  return data ?? [];
+}
+
+// ─── CRUD ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Add a new room record.
+ */
+export async function createRoomRecord(
+  payload: Omit<InsertRoomRecord, "id" | "created_at" | "updated_at">
+): Promise<RoomRecord> {
   const { data, error } = await supabase
     .from("boarding_rooming_list")
     .insert({
@@ -42,7 +80,7 @@ export async function createRoomRecord(payload: Omit<InsertRoomRecord, "id" | "c
 }
 
 /**
- * Update an existing room record
+ * Update an existing room record.
  */
 export async function updateRoomRecord(
   roomId: string,
@@ -57,7 +95,7 @@ export async function updateRoomRecord(
 }
 
 /**
- * Delete a room record
+ * Delete a room record.
  */
 export async function deleteRoomRecord(roomId: string): Promise<void> {
   const { error } = await supabase
@@ -68,37 +106,34 @@ export async function deleteRoomRecord(roomId: string): Promise<void> {
   if (error) throw new Error(`Error deleting room: ${error.message}`);
 }
 
+// ─── Passenger allocation helpers ─────────────────────────────────────────────
+
 /**
- * Allocate a passenger to a specific room
+ * Allocate a passenger to a specific room.
+ * Prevents duplicates within the same room.
  */
 export async function allocatePassengerToRoom(
   roomId: string,
   currentPassengers: RoomingPassenger[],
   newPassenger: RoomingPassenger
 ): Promise<void> {
-  // Prevent duplicate allocations in the same room
-  if (currentPassengers.some((p) => p.id === newPassenger.id)) {
+  if (currentPassengers.some((p) => p.passenger_id === newPassenger.passenger_id)) {
     return;
   }
-
   const updatedPassengers = [...currentPassengers, newPassenger];
-
-  await updateRoomRecord(roomId, {
-    passengers: updatedPassengers as any,
-  });
+  await updateRoomRecord(roomId, { passengers: updatedPassengers as any });
 }
 
 /**
- * Deallocate a passenger from a specific room
+ * Deallocate a passenger from a specific room.
  */
 export async function deallocatePassengerFromRoom(
   roomId: string,
   currentPassengers: RoomingPassenger[],
   passengerId: string
 ): Promise<void> {
-  const updatedPassengers = currentPassengers.filter((p) => p.id !== passengerId);
-
-  await updateRoomRecord(roomId, {
-    passengers: updatedPassengers as any,
-  });
+  const updatedPassengers = currentPassengers.filter(
+    (p) => p.passenger_id !== passengerId
+  );
+  await updateRoomRecord(roomId, { passengers: updatedPassengers as any });
 }
