@@ -16,12 +16,12 @@ async function main() {
   const res = await client.query(`
     SELECT column_name, data_type 
     FROM information_schema.columns 
-    WHERE table_name = 'group_tours' 
+    WHERE table_name = 'trip_passengers' 
       AND table_schema = 'public'
     ORDER BY column_name;
   `);
 
-  console.log('Columns in group_tours:');
+  console.log('Columns in trip_passengers:');
   console.dir(res.rows, { maxArrayLength: null });
 
   await client.end();

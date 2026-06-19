@@ -13,13 +13,13 @@
 --   - Tabela trip_passengers com colunas accommodation_status e status
 -- =============================================================================
 
--- Garantir que as colunas necessárias existem em trip_passengers
 ALTER TABLE public.trip_passengers
   ADD COLUMN IF NOT EXISTS accommodation_status text
     CHECK (accommodation_status IN ('pending', 'confirmed', 'reallocated', 'cancelled', 'no_show'))
     DEFAULT 'pending',
   ADD COLUMN IF NOT EXISTS accommodation_notes text,
-  ADD COLUMN IF NOT EXISTS accommodation_updated_at timestamptz;
+  ADD COLUMN IF NOT EXISTS accommodation_updated_at timestamptz,
+  ADD COLUMN IF NOT EXISTS status text CHECK (status IN ('pending', 'confirmed', 'cancelled')) DEFAULT 'confirmed';
 
 -- =============================================================================
 -- FUNÇÃO: trigger_reaccommodation_whatsapp
