@@ -45,7 +45,7 @@ create policy "rooming update" on public.boarding_rooming_list
 
 create policy "rooming delete" on public.boarding_rooming_list
   for delete to authenticated
-  using (public.has_role(auth.uid(), 'admin') or public.is_agency_member(auth.uid(), agency_id));
+  using (public.has_role(auth.uid(), 'super_admin'::public.app_role) or public.is_agency_member(auth.uid(), agency_id));
 
 -- Grants
 grant select, insert, update, delete on public.boarding_rooming_list to authenticated;
