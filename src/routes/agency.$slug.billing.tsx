@@ -128,7 +128,7 @@ function BillingPage() {
     queryKey: ["proration-calculation", agency?.id, checkoutPlan?.id],
     enabled: !!agency && !!checkoutPlan,
     queryFn: async () => {
-      const { data, error } = await (supabase as any).rpc("calculate_proration_credit", {
+      const { data, error } = await supabase.rpc("calculate_proration_credit", {
         _agency_id: agency!.id,
         _new_plan_id: checkoutPlan.id,
       });
@@ -162,7 +162,7 @@ function BillingPage() {
         );
       }
 
-      const { data, error } = await (supabase as any).rpc("upgrade_agency_plan", {
+      const { data, error } = await supabase.rpc("upgrade_agency_plan", {
         _agency_id: agency!.id,
         _new_plan_id: checkoutPlan.id,
       });

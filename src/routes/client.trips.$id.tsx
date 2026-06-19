@@ -99,9 +99,9 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-boarding-card", id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).rpc("get_client_boarding_card", { p_trip_id: id });
+      const { data, error } = await supabase.rpc("get_client_boarding_card", { p_trip_id: id });
       if (error) throw error;
-      return (data as any)?.[0] ?? null;
+      return data?.[0] ?? null;
     },
   });
 
@@ -126,15 +126,15 @@ function ClientTripDetail() {
   });
 
   useEffect(() => {
-    if (boardingCardQ.data?.checklist) setLocalChecklist(boardingCardQ.data.checklist);
+    if (boardingCardQ.data?.checklist) setLocalChecklist(boardingCardQ.data.checklist as unknown as any[]);
   }, [boardingCardQ.data]);
 
   // ── Mutations ─────────────────────────────────────────────────────────────
   const toggleBoardingItem = useMutation({
     mutationFn: async (payload: { cardId: string; nextChecklist: any[] }) => {
-      const { error } = await (supabase as any).rpc("update_client_boarding_checklist", {
+      const { error } = await supabase.rpc("update_client_boarding_checklist", {
         p_boarding_card_id: payload.cardId,
-        p_checklist: payload.nextChecklist,
+        p_checklist: payload.nextChecklist as unknown as import("@/integrations/supabase/types").Json,
       });
       if (error) throw error;
     },
@@ -289,8 +289,8 @@ function ClientTripDetail() {
                       pnr={pnr}
                       passengers={passengers}
                       flights={voucher?.flights ?? []}
-                      checkinOpensAt={boardingCardQ.data?.checkin_opens_at}
-                      checkinLinks={boardingCardQ.data?.checkin_links}
+                      checkinOpensAt={(boardingCardQ.data as any)?.checkin_opens_at}
+                      checkinLinks={(boardingCardQ.data as any)?.checkin_links}
                       onEmergencyDelay={() => triggerEmergency.mutate("delay")}
                       onEmergencyCancellation={() => triggerEmergency.mutate("cancellation")}
                       emergencyPending={triggerEmergency.isPending}

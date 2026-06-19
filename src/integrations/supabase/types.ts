@@ -3716,6 +3716,64 @@ export type Database = {
           },
         ]
       }
+      legal_acceptances: {
+        Row: {
+          accepted_at: string
+          agency_id: string | null
+          client_id: string | null
+          context: string | null
+          document_id: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string
+          agency_id?: string | null
+          client_id?: string | null
+          context?: string | null
+          document_id: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string
+          agency_id?: string | null
+          client_id?: string | null
+          context?: string | null
+          document_id?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_acceptances_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_acceptances_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_acceptances_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "policy_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_activities: {
         Row: {
           agency_id: string
@@ -4178,64 +4236,6 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      legal_acceptances: {
-        Row: {
-          accepted_at: string
-          agency_id: string | null
-          client_id: string | null
-          context: string | null
-          document_id: string
-          id: string
-          ip_address: string | null
-          user_agent: string | null
-          user_id: string | null
-        }
-        Insert: {
-          accepted_at?: string
-          agency_id?: string | null
-          client_id?: string | null
-          context?: string | null
-          document_id: string
-          id?: string
-          ip_address?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          accepted_at?: string
-          agency_id?: string | null
-          client_id?: string | null
-          context?: string | null
-          document_id?: string
-          id?: string
-          ip_address?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "legal_acceptances_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "agencies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "legal_acceptances_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "legal_acceptances_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "policy_documents"
             referencedColumns: ["id"]
           },
         ]

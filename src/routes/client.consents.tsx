@@ -37,18 +37,18 @@ function ClientConsentsPage() {
       const agencyIds = [...new Set(clients.map((c) => c.agency_id))];
 
       // Pegar documentos obrigatórios vigentes (publicados)
-      const { data: policies } = await (supabase as any)
+      const { data: policies } = await supabase
         .from("policy_documents")
         .select("id, kind, version, content_md, effective_at, is_published")
         .eq("is_published", true);
 
       // Pegar os aceites deste usuário
-      const { data: acceptances } = await (supabase as any)
+      const { data: acceptances } = await supabase
         .from("legal_acceptances")
         .select("id, document_id, accepted_at, ip_address, policy_documents(kind, version)")
         .eq("user_id", u.user.id);
 
-      const accMap = new Set((acceptances as any[])?.map((a) => a.document_id));
+      const accMap = new Set((acceptances as { document_id: string }[] | null)?.map((a) => a.document_id));
 
       // Todos os publicados são obrigatórios para os clientes
       const missing = ((policies as any[]) || []).filter((p) => !accMap.has(p.id));
@@ -67,7 +67,7 @@ function ClientConsentsPage() {
       if (!u.user) throw new Error("Não autenticado");
 
       // Usar a RPC que grava IP/UA forenses e funciona com a restrição de RLS
-      const { error } = await (supabase as any).rpc("record_legal_acceptance", {
+      const { error } = await supabase.rpc("record_legal_acceptance", {
         _document_id: docId,
         _context: "client_portal",
       });

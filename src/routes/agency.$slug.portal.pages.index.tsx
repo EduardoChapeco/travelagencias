@@ -219,7 +219,7 @@ function PagesPage() {
       if (error) return toast.error(error.message);
       toast.success("Página despublicada");
     } else {
-      const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: p.id });
+      const { error } = await supabase.rpc("publish_portal_page", { p_page_id: p.id });
       if (error) return toast.error(error.message);
       toast.success("Página publicada com sucesso!");
     }
@@ -243,7 +243,7 @@ function PagesPage() {
   }
 
   async function handleDuplicate(p: PageRow) {
-    const { error } = await (supabase as any).rpc("duplicate_portal_page", { p_page_id: p.id });
+    const { error } = await supabase.rpc("duplicate_portal_page", { p_page_id: p.id });
     if (error) return toast.error(error.message);
     toast.success("Página duplicada com sucesso");
     qc.invalidateQueries({ queryKey: ["portal-pages", agency?.id] });

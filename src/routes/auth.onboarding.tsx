@@ -170,7 +170,6 @@ function Page() {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) throw new Error("Usuário não autenticado");
 
-      // @ts-ignore: Types will be updated when supabase gen types runs
       const { data: rows, error } = await supabase.rpc("create_agency_onboarding", {
         _name: data.name,
         _slug: data.slug,

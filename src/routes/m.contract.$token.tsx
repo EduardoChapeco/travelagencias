@@ -105,28 +105,28 @@ function Page() {
 
   const fetchAddendums = () => {
     setLoadingAddendums(true);
-    (supabase as any)
+    supabase
       .rpc("public_addendums_by_token", { _token: token })
-      .then(({ data, error }: any) => {
+      .then(({ data, error }) => {
         setLoadingAddendums(false);
         if (error) {
           console.error("Error fetching public addendums:", error);
         } else {
-          setAddendums(data || []);
+          setAddendums((data as any) || []);
         }
       });
   };
 
   const fetchAuditTrail = () => {
     setLoadingAudit(true);
-    (supabase as any)
+    supabase
       .rpc("public_audit_chain_by_token", { _token: token })
-      .then(({ data, error }: any) => {
+      .then(({ data, error }) => {
         setLoadingAudit(false);
         if (error) {
           console.error("Error fetching public audit chain:", error);
         } else {
-          setAuditTrail(data || []);
+          setAuditTrail((data as any) || []);
         }
       });
   };
@@ -144,17 +144,17 @@ function Page() {
       .then((r) => r.json())
       .then((j) => {
         setIpAddress(j.ip);
-        (supabase as any).rpc("log_contract_activity", {
+        supabase.rpc("log_contract_activity", {
           _token: token,
           _action: "CONTRACT_VIEWED",
-          _metadata: { ip: j.ip, user_agent: ua },
+          _metadata: { ip: j.ip, user_agent: ua } as unknown as import("@/integrations/supabase/types").Json,
         });
       })
       .catch(() => {
-        (supabase as any).rpc("log_contract_activity", {
+        supabase.rpc("log_contract_activity", {
           _token: token,
           _action: "CONTRACT_VIEWED",
-          _metadata: { ip: "0.0.0.0", user_agent: ua },
+          _metadata: { ip: "0.0.0.0", user_agent: ua } as unknown as import("@/integrations/supabase/types").Json,
         });
       });
 
@@ -221,10 +221,10 @@ function Page() {
     if (isBottom) {
       setReadConfirmed(true);
       toast.success("Confirmação de leitura registrada!");
-      (supabase as any).rpc("log_contract_activity", {
+      supabase.rpc("log_contract_activity", {
         _token: token,
         _action: "CONTRACT_READ",
-        _metadata: { ip: ipAddress, user_agent: userAgent },
+        _metadata: { ip: ipAddress, user_agent: userAgent } as unknown as import("@/integrations/supabase/types").Json,
       });
     }
   };
@@ -1500,7 +1500,7 @@ function AdendumSignerPanel({
         .then((j) => j.ip)
         .catch(() => "0.0.0.0");
 
-      const { error: signErr } = await (supabase as any).rpc("sign_addendum_with_token", {
+      const { error: signErr } = await supabase.rpc("sign_addendum_with_token", {
         _addendum_id: addendum.id,
         _token: token,
         _signer_name: signerName,

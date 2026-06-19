@@ -100,16 +100,16 @@ function MobileCheckinPage() {
   const [submittingEmergency, setSubmittingEmergency] = useState(false);
 
   async function loadDetails() {
-    const { data, error } = await (supabase as any).rpc("get_public_boarding_card_details", { 
+    const { data, error } = await supabase.rpc("get_public_boarding_card_details", { 
       p_id: token 
     });
     
     if (error) {
       setErr(error.message);
-    } else if (!data || !data.card) {
+    } else if (!data || !(data as unknown as BoardingCardDetails)?.card) {
       setErr("Cartão de embarque não encontrado ou expirado.");
     } else {
-      const d = data as BoardingCardDetails;
+      const d = data as unknown as BoardingCardDetails;
       setDetails(d);
       setChecklist(d.card.checklist || []);
       
@@ -128,9 +128,9 @@ function MobileCheckinPage() {
     const next = checklist.map((c, i) => (i === idx ? { ...c, done: !c.done } : c));
     setChecklist(next);
     setSaving(true);
-    const { error } = await (supabase as any).rpc("update_public_boarding_card_checklist", {
+    const { error } = await supabase.rpc("update_public_boarding_card_checklist", {
       p_id: token,
-      p_checklist: next,
+      p_checklist: next as unknown as import("@/integrations/supabase/types").Json,
     });
     setSaving(false);
     if (error) {
@@ -145,20 +145,20 @@ function MobileCheckinPage() {
     window.open(url, "_blank");
     
     // Log event in database
-    await (supabase as any).rpc("create_public_boarding_event", {
+    await supabase.rpc("create_public_boarding_event", {
       p_boarding_card_id: token,
-      p_traveler_id: selectedPassengerId || null,
+      p_traveler_id: selectedPassengerId || "",
       p_flight_segment_id: segment.id,
       p_event_type: "checkin_link_clicked",
-      p_metadata: { segment_id: segment.id, url }
+      p_metadata: { segment_id: segment.id, url } as unknown as import("@/integrations/supabase/types").Json,
     });
   }
 
   async function handleAcceptReaccommodation(itineraryId: string) {
     setAcceptingReac(true);
-    const { error } = await (supabase as any).rpc("accept_public_reaccommodation", {
+    const { error } = await supabase.rpc("accept_public_reaccommodation", {
       p_boarding_card_id: token,
-      p_itinerary_id: itineraryId
+      p_itinerary_id: itineraryId,
     });
     setAcceptingReac(false);
     
@@ -174,10 +174,10 @@ function MobileCheckinPage() {
     if (!emergencyType) return;
     setSubmittingEmergency(true);
     
-    const { error } = await (supabase as any).rpc("submit_emergency_flight_issue", {
+    const { error } = await supabase.rpc("submit_emergency_flight_issue", {
       p_boarding_card_id: token,
       p_issue_type: emergencyType,
-      p_description: emergencyComment
+      p_description: emergencyComment,
     });
     setSubmittingEmergency(false);
     
