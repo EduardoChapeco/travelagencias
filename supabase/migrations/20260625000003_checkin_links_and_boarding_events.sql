@@ -35,6 +35,7 @@ ALTER TABLE public.checkin_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.boarding_events ENABLE ROW LEVEL SECURITY;
 
 -- checkin_links RLS policies
+DROP POLICY IF EXISTS "Agency members can select checkin_links" ON public.checkin_links;
 CREATE POLICY "Agency members can select checkin_links"
   ON public.checkin_links FOR SELECT
   USING (
@@ -44,6 +45,7 @@ CREATE POLICY "Agency members can select checkin_links"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can insert checkin_links" ON public.checkin_links;
 CREATE POLICY "Agency members can insert checkin_links"
   ON public.checkin_links FOR INSERT
   WITH CHECK (
@@ -53,6 +55,7 @@ CREATE POLICY "Agency members can insert checkin_links"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can update checkin_links" ON public.checkin_links;
 CREATE POLICY "Agency members can update checkin_links"
   ON public.checkin_links FOR UPDATE
   USING (
@@ -62,6 +65,7 @@ CREATE POLICY "Agency members can update checkin_links"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can delete checkin_links" ON public.checkin_links;
 CREATE POLICY "Agency members can delete checkin_links"
   ON public.checkin_links FOR DELETE
   USING (
@@ -72,6 +76,7 @@ CREATE POLICY "Agency members can delete checkin_links"
   );
 
 -- boarding_events RLS policies
+DROP POLICY IF EXISTS "Agency members can select boarding_events" ON public.boarding_events;
 CREATE POLICY "Agency members can select boarding_events"
   ON public.boarding_events FOR SELECT
   USING (
@@ -85,6 +90,7 @@ CREATE POLICY "Agency members can select boarding_events"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can insert boarding_events" ON public.boarding_events;
 CREATE POLICY "Agency members can insert boarding_events"
   ON public.boarding_events FOR INSERT
   WITH CHECK (
@@ -98,6 +104,7 @@ CREATE POLICY "Agency members can insert boarding_events"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can update boarding_events" ON public.boarding_events;
 CREATE POLICY "Agency members can update boarding_events"
   ON public.boarding_events FOR UPDATE
   USING (
@@ -111,6 +118,7 @@ CREATE POLICY "Agency members can update boarding_events"
     )
   );
 
+DROP POLICY IF EXISTS "Agency members can delete boarding_events" ON public.boarding_events;
 CREATE POLICY "Agency members can delete boarding_events"
   ON public.boarding_events FOR DELETE
   USING (
