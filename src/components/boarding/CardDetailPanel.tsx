@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -12,6 +12,18 @@ import {
   Square,
   Pencil,
   Check,
+  Hotel,
+  Bus,
+  UserCheck,
+  Phone,
+  Plane,
+  MapPin,
+  Upload,
+  Ticket,
+  Loader2,
+  Trash2,
+  Globe,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PrimaryButton, GhostButton, fmtDate } from "@/components/ui/form";
@@ -53,12 +65,215 @@ export function CardDetailPanel({
   const [briefingDate, setBriefingDate] = useState(card.briefing_date ?? "");
   const [briefingUrl, setBriefingUrl] = useState(card.briefing_url ?? "");
 
+  // Operational fields (new)
+  const [hotelName, setHotelName] = useState((card as any).hotel_name ?? "");
+  const [hotelAddress, setHotelAddress] = useState((card as any).hotel_address ?? "");
+  const [hotelCheckin, setHotelCheckin] = useState((card as any).hotel_checkin ?? "");
+  const [hotelCheckout, setHotelCheckout] = useState((card as any).hotel_checkout ?? "");
+  const [hotelPhone, setHotelPhone] = useState((card as any).hotel_phone ?? "");
+  const [transferProvider, setTransferProvider] = useState((card as any).transfer_provider ?? "");
+  const [transferTime, setTransferTime] = useState((card as any).transfer_time ?? "");
+  const [guideName, setGuideName] = useState((card as any).guide_name ?? "");
+  const [guidePhone, setGuidePhone] = useState((card as any).guide_phone ?? "");
+  const [emergencyPhone, setEmergencyPhone] = useState((card as any).emergency_phone ?? "");
+  const [destination, setDestination] = useState((card as any).destination ?? "");
+  const [destinationType, setDestinationType] = useState((card as any).destination_type ?? "national");
+
+  // Tickets panel
+  const [activeSection, setActiveSection] = useState<"main" | "tickets">("main");
+  const ticketFileRef = useRef<HTMLInputElement>(null);
+
   // Support ticket form
   const [showTicketForm, setShowTicketForm] = useState(false);
   const [ticketTitle, setTicketTitle] = useState("");
   const [ticketDesc, setTicketDesc] = useState("");
   const [ticketPriority, setTicketPriority] = useState("medium");
   const [ticketType, setTicketType] = useState("trip");
+
+  async function exportGuiaPdf() {
+    const toastId = toast.loading("Gerando Guia de Embarque PDF...");
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const { jsPDF } = await import("jspdf");
+
+      // Create a temporary hidden container for PDF generation
+      const printContainer = document.createElement("div");
+      printContainer.style.position = "fixed";
+      printContainer.style.left = "-9999px";
+      printContainer.style.top = "-9999px";
+      printContainer.style.width = "800px";
+      printContainer.style.backgroundColor = "#FFFFFF";
+      printContainer.style.fontFamily = "sans-serif";
+      printContainer.style.color = "#151515";
+      printContainer.style.padding = "40px";
+
+      // Contextual recommendations
+      const recommendations = destinationType === "international" 
+        ? [
+            "Passaporte: Deve ter validade mínima de 6 meses a partir da data de retorno.",
+            "Visto e Entrada: Certifique-se de que o país de destino não exige visto prévio ou realize a emissão do e-Visa/autorização correspondente.",
+            "Vacinas: Certificado Internacional de Vacinação (CIVP) de Febre Amarela e outras vacinas conforme as exigências do destino.",
+            "Seguro Viagem: Altamente recomendado, sendo obrigatório para entrada em diversos territórios (ex: Tratado de Schengen na Europa).",
+            "Chip eSIM / Conectividade: Ative o roaming internacional ou adquira um chip eSIM de internet antes do embarque.",
+          ]
+        : [
+            "Documentação: Leve documento original com foto oficial (RG atualizado ou CNH física/digital válida).",
+            "Apresentação no Aeroporto: Compareça com no mínimo 2 horas de antecedência para voos nacionais.",
+            "Franquia de Bagagem: Verifique as dimensões da mala de mão (limite padrão de 10kg) e itens permitidos na cabine.",
+            "Medicamentos: Mantenha receitas médicas para medicamentos controlados e transporte-os na bagagem de mão.",
+          ];
+
+      let innerHTML = `
+        <div style="border: 1px solid #E8E4DC; padding: 30px; background-color: #FFFFFF;">
+          <!-- Header -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #FF4F9A; padding-bottom: 20px; margin-bottom: 30px;">
+            <div>
+              <h1 style="font-size: 24px; font-weight: 800; margin: 0; color: #151515; letter-spacing: -0.5px; text-transform: uppercase;">GUIA DE EMBARQUE</h1>
+              <p style="font-size: 11px; color: #777168; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">TravelOS Intelligence</p>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 14px; font-weight: 800; color: #FF4F9A; font-family: monospace;">PNR: ${pnr || "PENDENTE"}</span>
+              <p style="font-size: 10px; color: #777168; margin: 4px 0 0 0;">Ref: ${card.internal_ref || "—"}</p>
+            </div>
+          </div>
+
+          <!-- Trip details -->
+          <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 11px; font-weight: 700; border-bottom: 1px solid #E8E4DC; padding-bottom: 6px; color: #777168; text-transform: uppercase; margin-bottom: 12px;">Informações da Viagem</h2>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+              <div>
+                <p style="margin: 0; font-size: 14px; font-weight: 700; color: #151515;">${card.trip_title || "Sem título de viagem"}</p>
+                <p style="margin: 4px 0 0 0; font-size: 11px; color: #777168; text-transform: uppercase;">Destino: ${card.trip_destination || destination || "Não especificado"}</p>
+              </div>
+              <div style="text-align: right;">
+                <p style="margin: 0; font-size: 12px; font-weight: 600;">Data: ${departureDate ? new Date(departureDate + "T00:00:00").toLocaleDateString("pt-BR") : "Pendente"}</p>
+                <p style="margin: 4px 0 0 0; font-size: 11px; color: #777168;">Cia Aérea: ${airline || "—"}</p>
+              </div>
+            </div>
+          </div>
+      `;
+
+      if (hotelName) {
+        innerHTML += `
+          <!-- Hotel and accommodation details -->
+          <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 11px; font-weight: 700; border-bottom: 1px solid #E8E4DC; padding-bottom: 6px; color: #777168; text-transform: uppercase; margin-bottom: 12px;">Hospedagem</h2>
+            <div style="background-color: #F8F7F4; padding: 15px; border-radius: 4px; border: 1px solid #E8E4DC;">
+              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #151515;">${hotelName}</p>
+              ${hotelAddress ? `<p style="margin: 4px 0 0 0; font-size: 11px; color: #777168;">Endereço: ${hotelAddress}</p>` : ""}
+              <div style="display: flex; gap: 30px; margin-top: 10px; font-size: 11px;">
+                <div><strong>Check-in:</strong> ${hotelCheckin ? new Date(hotelCheckin + "T00:00:00").toLocaleDateString("pt-BR") : "—"}</div>
+                <div><strong>Check-out:</strong> ${hotelCheckout ? new Date(hotelCheckout + "T00:00:00").toLocaleDateString("pt-BR") : "—"}</div>
+                ${hotelPhone ? `<div><strong>Telefone:</strong> ${hotelPhone}</div>` : ""}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (transferProvider || guideName || emergencyPhone) {
+        innerHTML += `
+          <!-- Operational and local guide details -->
+          <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 11px; font-weight: 700; border-bottom: 1px solid #E8E4DC; padding-bottom: 6px; color: #777168; text-transform: uppercase; margin-bottom: 12px;">Operações & Receptivo Local</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        `;
+
+        if (transferProvider) {
+          innerHTML += `
+              <div style="background-color: #FFFFFF; padding: 12px; border: 1px solid #E8E4DC; border-radius: 4px;">
+                <strong style="font-size: 11px; color: #777168; text-transform: uppercase; display: block; margin-bottom: 4px;">Transfer / Translado</strong>
+                <span style="font-size: 12px; font-weight: 700; color: #151515;">${transferProvider}</span>
+                ${transferTime ? `<p style="margin: 4px 0 0 0; font-size: 11px; color: #777168;">Horário: ${transferTime}</p>` : ""}
+              </div>
+          `;
+        }
+
+        if (guideName) {
+          innerHTML += `
+              <div style="background-color: #FFFFFF; padding: 12px; border: 1px solid #E8E4DC; border-radius: 4px;">
+                <strong style="font-size: 11px; color: #777168; text-transform: uppercase; display: block; margin-bottom: 4px;">Guia Turístico</strong>
+                <span style="font-size: 12px; font-weight: 700; color: #151515;">${guideName}</span>
+                ${guidePhone ? `<p style="margin: 4px 0 0 0; font-size: 11px; color: #777168;">Telefone: ${guidePhone}</p>` : ""}
+              </div>
+          `;
+        }
+
+        innerHTML += `
+            </div>
+        `;
+
+        if (emergencyPhone) {
+          innerHTML += `
+            <div style="margin-top: 10px; background-color: #FFF0F5; border: 1px solid #FFB6C1; padding: 10px 15px; border-radius: 4px; font-size: 12px;">
+              <strong>Contato de Emergência / Suporte 24h:</strong> <span style="font-family: monospace; font-weight: bold; color: #FF4F9A;">${emergencyPhone}</span>
+            </div>
+          `;
+        }
+
+        innerHTML += `
+          </div>
+        `;
+      }
+
+      innerHTML += `
+          <!-- Recommendations -->
+          <div style="margin-bottom: 25px;">
+            <h2 style="font-size: 11px; font-weight: 700; border-bottom: 1px solid #E8E4DC; padding-bottom: 6px; color: #777168; text-transform: uppercase; margin-bottom: 12px;">Recomendações Contextuais (${destinationType === "international" ? "Viagem Internacional" : "Viagem Nacional"})</h2>
+            <ul style="margin: 0; padding-left: 20px; font-size: 11px; color: #151515; line-height: 1.6;">
+              ${recommendations.map(r => `<li style="margin-bottom: 6px;">${r}</li>`).join("")}
+            </ul>
+          </div>
+      `;
+
+      if (checklist.length > 0) {
+        innerHTML += `
+          <!-- Checklist -->
+          <div style="margin-bottom: 15px;">
+            <h2 style="font-size: 11px; font-weight: 700; border-bottom: 1px solid #E8E4DC; padding-bottom: 6px; color: #777168; text-transform: uppercase; margin-bottom: 12px;">Checklist Pré-Embarque</h2>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+              ${checklist.map(c => `
+                <div style="display: flex; align-items: center; gap: 10px; font-size: 11px;">
+                  <span style="font-size: 14px; font-family: monospace; font-weight: bold; color: ${c.done ? '#10B981' : '#94A3B8'}">${c.done ? '[x]' : '[ ]'}</span>
+                  <span style="text-decoration: ${c.done ? 'line-through' : 'none'}; color: ${c.done ? '#777168' : '#151515'}">${c.label}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      innerHTML += `
+        </div>
+      `;
+
+      printContainer.innerHTML = innerHTML;
+
+      document.body.appendChild(printContainer);
+
+      const canvas = await html2canvas(printContainer, {
+        scale: 2.5,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+
+      document.body.removeChild(printContainer);
+
+      const img = canvas.toDataURL("image/jpeg", 0.98);
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdfW = 210;
+      const pdfH = 297;
+      const computedH = (canvas.height * pdfW) / canvas.width;
+
+      pdf.addImage(img, "JPEG", 0, 0, pdfW, Math.min(pdfH, computedH));
+      pdf.save(`guia-embarque-${pnr || "reserva"}.pdf`);
+
+      toast.success("Guia de Embarque PDF baixado com sucesso!", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao gerar PDF", { id: toastId });
+    }
+  }
 
   // Activities timeline query
   const activitiesQ = useQuery({
@@ -142,6 +357,20 @@ export function CardDetailPanel({
             : "text-success bg-success/10 border-success/20"
       : "";
 
+  // Query for tickets
+  const ticketsCardQ = useQuery({
+    queryKey: ["boarding_tickets", card.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("boarding_tickets")
+        .select("*")
+        .eq("card_id", card.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   async function saveInlineEdits() {
     setEditSaving(true);
     try {
@@ -154,6 +383,21 @@ export function CardDetailPanel({
         briefing_date: briefingDate || null,
         briefing_url: briefingUrl || null,
       });
+      // Save operational fields via direct update
+      await (supabase as any).from("boarding_cards").update({
+        hotel_name: hotelName || null,
+        hotel_address: hotelAddress || null,
+        hotel_checkin: hotelCheckin || null,
+        hotel_checkout: hotelCheckout || null,
+        hotel_phone: hotelPhone || null,
+        transfer_provider: transferProvider || null,
+        transfer_time: transferTime || null,
+        guide_name: guideName || null,
+        guide_phone: guidePhone || null,
+        emergency_phone: emergencyPhone || null,
+        destination: destination || null,
+        destination_type: destinationType || null,
+      }).eq("id", card.id);
       toast.success("Card atualizado!");
       setEditDirty(false);
       setIsEditing(false);
@@ -228,6 +472,15 @@ export function CardDetailPanel({
             )}
             <button
               type="button"
+              onClick={exportGuiaPdf}
+              className="flex items-center gap-1.5 h-7 rounded border border-border bg-surface px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors"
+              title="Gerar Guia de Embarque PDF"
+            >
+              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>PDF Guia</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setIsEditing(!isEditing)}
               className={`rounded border border-border p-1 hover:bg-surface-alt ${isEditing ? "bg-brand/10 border-brand text-brand" : ""}`}
               title={isEditing ? "Visualizar Informações" : "Editar Informações"}
@@ -244,6 +497,108 @@ export function CardDetailPanel({
           </div>
         </div>
 
+        {/* Section toggle */}
+        <div className="flex border-b border-border shrink-0">
+          <button
+            onClick={() => setActiveSection("main")}
+            className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+              activeSection === "main"
+                ? "border-b-2 border-brand text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Operacional
+          </button>
+          <button
+            onClick={() => setActiveSection("tickets")}
+            className={`flex-1 py-2 text-xs font-semibold transition-colors ${
+              activeSection === "tickets"
+                ? "border-b-2 border-brand text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Bilhetes {ticketsCardQ.data && ticketsCardQ.data.length > 0 && `(${ticketsCardQ.data.length})`}
+          </button>
+        </div>
+
+        {/* ── SECTION: TICKETS ── */}
+        {activeSection === "tickets" && (
+          <div className="p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">Bilhetes / Ingressos</h3>
+              <button
+                onClick={() => ticketFileRef.current?.click()}
+                className="flex items-center gap-1.5 h-7 border border-border rounded-md px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+              >
+                <Upload className="h-3 w-3" /> Upload Bilhete
+              </button>
+              <input
+                ref={ticketFileRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !card.agency_id) return;
+                  const path = `${card.agency_id}/${card.id}/${Date.now()}_${file.name}`;
+                  const { error: upErr } = await supabase.storage.from("boarding-tickets").upload(path, file, { upsert: true });
+                  if (upErr) { toast.error(upErr.message); return; }
+                  const { data: { publicUrl } } = supabase.storage.from("boarding-tickets").getPublicUrl(path);
+                  const { error: dbErr } = await (supabase as any).from("boarding_tickets").insert({
+                    card_id: card.id,
+                    agency_id: card.agency_id,
+                    kind: "other",
+                    passenger_name: "—",
+                    file_url: publicUrl,
+                    file_path: path,
+                    status: "pending",
+                  });
+                  if (dbErr) toast.error(dbErr.message);
+                  else { toast.success("Bilhete enviado"); qc.invalidateQueries({ queryKey: ["boarding_tickets", card.id] }); }
+                }}
+              />
+            </div>
+
+            {ticketsCardQ.data?.length === 0 && (
+              <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+                Nenhum bilhete. Envie bilhetes aéreos, ingressos ou vouchers de transfer.
+              </div>
+            )}
+
+            <div className="space-y-2">
+              {ticketsCardQ.data?.map((t: any) => (
+                <div key={t.id} className="flex items-center gap-3 rounded-xl border border-border bg-white p-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
+                    <Ticket className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold truncate">{t.passenger_name}</div>
+                    <div className="text-xs text-muted-foreground">{t.kind} {t.ticket_code ? `· ${t.ticket_code}` : ""}</div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {t.file_url && (
+                      <a href={t.file_url} target="_blank" rel="noreferrer" className="text-xs border border-border rounded px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">
+                        Ver
+                      </a>
+                    )}
+                    <button
+                      onClick={async () => {
+                        await (supabase as any).from("boarding_tickets").delete().eq("id", t.id);
+                        qc.invalidateQueries({ queryKey: ["boarding_tickets", card.id] });
+                      }}
+                      className="text-muted-foreground hover:text-danger p-1"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── SECTION: MAIN OPERATIONAL ── */}
+        {activeSection === "main" && (
         <div className="p-5 space-y-5">
           {/* Trip info */}
           {card.trip_title && (
@@ -516,6 +871,60 @@ export function CardDetailPanel({
                       </div>
                     </div>
                   </label>
+                </div>
+              </div>
+
+              {/* Operational edit fields */}
+              <div className="space-y-3 pt-3 border-t border-border">
+                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Dados Operacionais</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="col-span-2">
+                    <label className="text-[11px] text-muted-foreground font-medium">Destino</label>
+                    <input type="text" value={destination} onChange={(e) => { setDestination(e.target.value); setEditDirty(true); }} placeholder="ex: Cancún, México" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Tipo</label>
+                    <select value={destinationType} onChange={(e) => { setDestinationType(e.target.value); setEditDirty(true); }} className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground">
+                      <option value="national">Nacional</option>
+                      <option value="international">Internacional</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Hotel</label>
+                    <input type="text" value={hotelName} onChange={(e) => { setHotelName(e.target.value); setEditDirty(true); }} placeholder="Nome do hotel" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Telefone Hotel</label>
+                    <input type="text" value={hotelPhone} onChange={(e) => { setHotelPhone(e.target.value); setEditDirty(true); }} placeholder="+1 555 000 0000" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Check-in Hotel</label>
+                    <input type="date" value={hotelCheckin} onChange={(e) => { setHotelCheckin(e.target.value); setEditDirty(true); }} className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Check-out Hotel</label>
+                    <input type="date" value={hotelCheckout} onChange={(e) => { setHotelCheckout(e.target.value); setEditDirty(true); }} className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Empresa de Transfer</label>
+                    <input type="text" value={transferProvider} onChange={(e) => { setTransferProvider(e.target.value); setEditDirty(true); }} placeholder="ex: GiraTur Transfer" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Horário Transfer</label>
+                    <input type="datetime-local" value={transferTime ? transferTime.slice(0, 16) : ""} onChange={(e) => { setTransferTime(e.target.value); setEditDirty(true); }} className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Nome do Guia</label>
+                    <input type="text" value={guideName} onChange={(e) => { setGuideName(e.target.value); setEditDirty(true); }} placeholder="ex: Carlos Matos" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-muted-foreground font-medium">Telefone Guia</label>
+                    <input type="text" value={guidePhone} onChange={(e) => { setGuidePhone(e.target.value); setEditDirty(true); }} placeholder="55 99999-0000" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-[11px] text-muted-foreground font-medium">📞 Telefone de Emergência</label>
+                    <input type="text" value={emergencyPhone} onChange={(e) => { setEmergencyPhone(e.target.value); setEditDirty(true); }} placeholder="0800 123 456" className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground" />
+                  </div>
                 </div>
               </div>
 
@@ -859,6 +1268,7 @@ export function CardDetailPanel({
             )}
           </div>
         </div>
+        )} {/* end activeSection === main */}
       </div>
     </div>
   );

@@ -38,6 +38,7 @@ import { StudioFrame, type CanvasFormat } from "@/components/studio/StudioFrame"
 import TemplateVoucherEmbarqueA4 from "./templates/TemplateVoucherEmbarqueA4";
 import TemplateVoucherStory from "./templates/TemplateVoucherStory";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useAgency } from "@/lib/agency-context";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -136,6 +137,8 @@ export function VoucherStudio({
   const [openSection, setOpenSection] = useState<TabId | null>("passengers");
   const [exporting, setExporting] = useState(false);
   const [storySheetOpen, setStorySheetOpen] = useState(false);
+
+  const { brandKit, companyProfile } = useAgency();
 
   const flights = draft.flights ?? [];
   const accommodation = draft.accommodation ?? [];
@@ -323,7 +326,7 @@ export function VoucherStudio({
   return (
     <div className="flex h-[calc(100vh-var(--header-h)-110px)] flex-col">
       {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-2.5 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2.5 shrink-0">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -959,7 +962,7 @@ export function VoucherStudio({
         </div>
 
         {/* Right: Canvas preview / WhatsApp Chat */}
-        <div className="flex-1 overflow-auto bg-surface-alt/30 flex items-start justify-center py-8">
+        <div className="flex-1 min-w-0 overflow-auto bg-surface-alt/30 flex items-start justify-center py-8">
           {mode === "whatsapp" ? (
             <div className="w-full max-w-sm bg-[#efeae2] rounded-xl border border-border/80 overflow-hidden flex flex-col h-[569px] font-sans">
               {/* WhatsApp Header */}
@@ -1012,11 +1015,20 @@ export function VoucherStudio({
             <StudioFrame format={mode} zoomMode={0.72}>
               {mode === "a4-portrait" ? (
                 <div id="voucher-canvas">
-                  <TemplateVoucherEmbarqueA4 voucher={voucherForTemplate} agency={agency} />
+                  <TemplateVoucherEmbarqueA4
+                    voucher={voucherForTemplate}
+                    agency={agency}
+                    brandKit={brandKit || undefined}
+                    companyProfile={companyProfile || undefined}
+                  />
                 </div>
               ) : (
                 <div id="story-preview-canvas" className="w-full h-full">
-                  <TemplateVoucherStory voucher={voucherForTemplate} agency={agency} />
+                  <TemplateVoucherStory
+                    voucher={voucherForTemplate}
+                    agency={agency}
+                    brandKit={brandKit || undefined}
+                  />
                 </div>
               )}
             </StudioFrame>
@@ -1040,7 +1052,11 @@ export function VoucherStudio({
               className="relative overflow-hidden shrink-0"
               style={{ width: "320px", height: "569px" }}
             >
-              <TemplateVoucherStory voucher={voucherForTemplate} agency={agency} />
+              <TemplateVoucherStory
+                voucher={voucherForTemplate}
+                agency={agency}
+                brandKit={brandKit || undefined}
+              />
             </div>
             <div className="flex gap-3 w-full">
               <button

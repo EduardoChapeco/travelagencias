@@ -102,10 +102,13 @@ export function Sheet({
 export function StatusBadge({
   children,
   tone = "neutral",
+  className = "",
+  ...props
 }: {
   children: ReactNode;
   tone?: "neutral" | "success" | "warning" | "danger" | "info";
-}) {
+  className?: string;
+} & React.HTMLAttributes<HTMLSpanElement>) {
   const tones: Record<string, string> = {
     neutral: "bg-surface-alt text-muted-foreground border border-border/40",
     success: "bg-success-bg text-success border border-success/30",
@@ -115,7 +118,8 @@ export function StatusBadge({
   };
   return (
     <span
-      className={`inline-flex items-center rounded-xs px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tones[tone]}`}
+      className={`inline-flex items-center rounded-xs px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tones[tone]} ${className}`}
+      {...props}
     >
       {children}
     </span>

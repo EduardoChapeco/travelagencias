@@ -12,6 +12,7 @@ import {
   User,
   Settings2,
   ChevronDown,
+  BookOpen,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -21,6 +22,7 @@ import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibrary";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
   head: () => ({ meta: [{ title: "Contratos · TravelOS" }] }),
@@ -54,6 +56,7 @@ function ContractsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+  const [clauseLibraryOpen, setClauseLibraryOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 400);
   const pageSize = 20;
 
@@ -91,13 +94,23 @@ function ContractsPage() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Contratos"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
+            <>
+              <button
+                onClick={() => setClauseLibraryOpen(true)}
+                className="flex h-8 items-center gap-1.5 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                title="Biblioteca de Cláusulas"
+              >
+                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>Biblioteca de Cláusulas</span>
+              </button>
+              <button
+                onClick={() => setAdminPanelOpen(true)}
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                title="Administrar Contratos"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </button>
+            </>
           )}
         </div>
       </HeaderPortal>
@@ -283,6 +296,13 @@ function ContractsPage() {
           moduleKey="contracts"
           moduleName="Contratos"
           agencyId={agency.id}
+        />
+      )}
+      {clauseLibraryOpen && agency && (
+        <ContractClauseLibrary
+          agencyId={agency.id}
+          isOpen={clauseLibraryOpen}
+          onClose={() => setClauseLibraryOpen(false)}
         />
       )}
     </div>

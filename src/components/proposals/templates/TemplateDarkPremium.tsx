@@ -14,10 +14,13 @@ interface TemplateProps {
 
 export default function TemplateDarkPremium({ proposal: p, agency }: TemplateProps) {
   const vm = buildBaseViewModel(p, agency);
-  const brand = vm.agency.brand_color;
+  const brand = "var(--brand-primary, " + (vm.agency.brand_color || "#1E3A5F") + ")";
 
   return (
-    <div className="flex flex-col w-full font-sans bg-white text-slate-900 pb-16">
+    <div 
+      className="flex flex-col w-full bg-white text-slate-900 pb-16"
+      style={{ fontFamily: "var(--brand-body-font, sans-serif)" }}
+    >
       {/* CAPA DRAMÁTICA (500px) */}
       <div className="relative w-full h-[500px] break-inside-avoid">
         <img
@@ -58,7 +61,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
           <h1
             className="text-6xl font-bold tracking-tight mb-6"
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)",
               textShadow: "0 4px 12px rgba(0,0,0,0.5)",
             }}
           >
@@ -139,7 +142,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
           <div className="break-inside-avoid">
             <h2
               className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
             >
               <Plane className="w-6 h-6 text-blue-500" /> Transporte Aéreo
             </h2>
@@ -190,7 +193,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
           <div className="break-inside-avoid">
             <h2
               className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
             >
               <Hotel className="w-6 h-6 text-amber-500" /> Acomodação
             </h2>
@@ -267,7 +270,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
           <div className="bg-[#1E293B] rounded-[40px] p-12 text-white text-center border border-slate-700 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
-            <h2 className="text-3xl mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl mb-8" style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}>
               Resumo do Investimento
             </h2>
 

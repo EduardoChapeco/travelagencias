@@ -77,7 +77,8 @@ export function AppShell({
     pathname.includes("/portal") ||
     pathname.includes("/design-system") ||
     pathname.includes("/support") ||
-    pathname.includes("/knowledge");
+    pathname.includes("/knowledge") ||
+    pathname.includes("/brand");
 
   const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 

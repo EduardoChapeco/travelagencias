@@ -10,6 +10,7 @@ import {
   Percent,
   PhoneCall,
   Mail,
+  MapPin,
 } from "lucide-react";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
@@ -19,7 +20,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { validateCNPJ, formatCNPJ } from "@/lib/validations/document";
 
-const STEPS = ["Identidade B2B", "Comercial & Markups", "Contatos (SLA)"];
+const STEPS = ["Identidade B2B", "Localização", "Comercial & Markups", "Contatos (SLA)"];
 
 const supplierWizardSchema = z
   .object({
@@ -38,6 +39,11 @@ const supplierWizardSchema = z
       ])
       .default("operator"),
     document: z.string().optional().nullable(),
+    zip: z.string().optional().nullable(),
+    address: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    state: z.string().optional().nullable(),
+    country: z.string().optional().nullable(),
     commission: z
       .number({ invalid_type_error: "Insira um número válido" })
       .min(0, "Comissão mínima é 0%")
@@ -92,6 +98,11 @@ export function NewSupplierWizard({
       legalName: "",
       kind: "operator",
       document: "",
+      zip: "",
+      address: "",
+      city: "",
+      state: "",
+      country: "",
       commission: 0,
       notes: "",
       email: "",
@@ -103,6 +114,11 @@ export function NewSupplierWizard({
   const watchLegalName = watch("legalName");
   const watchKind = watch("kind");
   const watchDocument = watch("document");
+  const watchZip = watch("zip");
+  const watchAddress = watch("address");
+  const watchCity = watch("city");
+  const watchState = watch("state");
+  const watchCountry = watch("country");
   const watchCommission = watch("commission");
   const watchNotes = watch("notes");
   const watchEmail = watch("email");
@@ -118,8 +134,10 @@ export function NewSupplierWizard({
     if (step === 0) {
       fieldsToValidate = ["name", "legalName", "kind", "document"];
     } else if (step === 1) {
-      fieldsToValidate = ["commission", "notes"];
+      fieldsToValidate = ["zip", "address", "city", "state", "country"];
     } else if (step === 2) {
+      fieldsToValidate = ["commission", "notes"];
+    } else if (step === 3) {
       fieldsToValidate = ["email", "phone"];
     }
 
@@ -134,12 +152,17 @@ export function NewSupplierWizard({
   async function onSubmit(data: SupplierWizardFormData) {
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("suppliers").insert({
+      const { error } = await (supabase as any).from("suppliers").insert({
         agency_id: agencyId,
         name: data.name,
         legal_name: data.legalName || null,
         kind: data.kind as any,
         document: data.document || null,
+        zip: data.zip || null,
+        address: data.address || null,
+        city: data.city || null,
+        state: data.state || null,
+        country: data.country || null,
         email: data.email || null,
         phone: data.phone || null,
         commission_rate: data.commission,
@@ -250,8 +273,37 @@ export function NewSupplierWizard({
               </div>
             )}
 
-            {/* STEP 1: Markups */}
+            {/* STEP 1: Localização */}
             {step === 1 && (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-1">
+                    <Field label="CEP / ZIP" error={errors.zip?.message}>
+                      <Input {...register("zip")} placeholder="00000-000" />
+                    </Field>
+                  </div>
+                  <div className="col-span-2">
+                    <Field label="Endereço / Logradouro" error={errors.address?.message}>
+                      <Input {...register("address")} placeholder="Av. Paulista, 1000" />
+                    </Field>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <Field label="Cidade" error={errors.city?.message}>
+                    <Input {...register("city")} placeholder="São Paulo" />
+                  </Field>
+                  <Field label="Estado" error={errors.state?.message}>
+                    <Input {...register("state")} placeholder="SP" />
+                  </Field>
+                  <Field label="País" error={errors.country?.message}>
+                    <Input {...register("country")} placeholder="Brasil" />
+                  </Field>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: Markups */}
+            {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="rounded-xl border border-brand/20 bg-brand/5 p-6">
                   <Field
@@ -286,8 +338,8 @@ export function NewSupplierWizard({
               </div>
             )}
 
-            {/* STEP 2: SLA e Contatos */}
-            {step === 2 && (
+            {/* STEP 3: SLA e Contatos */}
+            {step === 3 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="E-mail de Reservas / Financeiro" error={errors.email?.message}>
@@ -320,6 +372,12 @@ export function NewSupplierWizard({
                       <span className="text-muted-foreground block">Categoria:</span>
                       <strong className="text-foreground">{watchKind}</strong>
                     </div>
+                    {watchCity && (
+                      <div>
+                        <span className="text-muted-foreground block">Localização:</span>
+                        <strong className="text-foreground">{watchCity} / {watchState || "—"} ({watchCountry || "—"})</strong>
+                      </div>
+                    )}
                     <div>
                       <span className="text-muted-foreground block">Comissão Geral:</span>
                       <strong className="text-brand font-mono text-sm">{watchCommission}%</strong>

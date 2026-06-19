@@ -77,6 +77,11 @@ type ProposalPublic = {
     logo_url: string | null;
     brand_color: string | null;
     brand_color_fg: string | null;
+    logo_white_url?: string | null;
+    secondary_color?: string | null;
+    accent_color?: string | null;
+    font_heading?: string | null;
+    font_body?: string | null;
   };
 };
 
@@ -269,10 +274,55 @@ function PublicProposalView() {
   const currentTemplate = p.template || "editorial-flat";
   const TemplateComponent = getProposalTemplate(currentTemplate);
 
+  // Load Google Fonts dynamically for public proposal
+  useEffect(() => {
+    if (!p?.agency) return;
+    const fontHeading = p.agency.font_heading || "Inter";
+    const fontBody = p.agency.font_body || "Inter";
+
+    const linkId = "google-fonts-proposal-head";
+    let linkEl = document.getElementById(linkId) as HTMLLinkElement;
+    if (!linkEl) {
+      linkEl = document.createElement("link");
+      linkEl.id = linkId;
+      linkEl.rel = "stylesheet";
+      document.head.appendChild(linkEl);
+    }
+    const headingFormatted = fontHeading.replace(/\s+/g, "+");
+    const bodyFormatted = fontBody.replace(/\s+/g, "+");
+    linkEl.href = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+
+    return () => {
+      const el = document.getElementById(linkId);
+      if (el) el.remove();
+    };
+  }, [p?.agency]);
+
+  const primaryColor = p.agency?.brand_color || "#3b82f6";
+  const secondaryColor = p.agency?.secondary_color || "#D4AF37";
+  const accentColor = p.agency?.accent_color || "#E63946";
+  const fontHeading = p.agency?.font_heading || "Inter";
+  const fontBody = p.agency?.font_body || "Inter";
+
+  const brandStyles = {
+    "--agency-brand": primaryColor,
+    "--agency-brand-fg": p.agency?.brand_color_fg || "#ffffff",
+    "--brand-primary": primaryColor,
+    "--brand-secondary": secondaryColor,
+    "--brand-accent": accentColor,
+    "--brand-bg": "#FFFFFF",
+    "--brand-text": "#111827",
+    "--brand-heading-font": `"${fontHeading}", sans-serif`,
+    "--brand-body-font": `"${fontBody}", sans-serif`,
+  } as React.CSSProperties;
+
   // ─── Export Mode (Puppeteer headless server-side print) ─────────────────────
   if (isExport) {
     return (
-      <div className="w-full flex flex-col items-center bg-white print:bg-transparent">
+      <div 
+        className="w-full flex flex-col items-center bg-white print:bg-transparent"
+        style={brandStyles}
+      >
         <div id="proposal-canvas" className="w-full flex flex-col">
           <TemplateComponent proposal={p as any} agency={p.agency} />
         </div>
@@ -282,7 +332,10 @@ function PublicProposalView() {
 
   // ─── Standard Client Interactive View ───────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f19] text-foreground font-sans pb-20">
+    <div 
+      className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f19] text-foreground font-sans pb-20"
+      style={brandStyles}
+    >
       {/* Sticky Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3.5">

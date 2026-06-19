@@ -53,7 +53,7 @@ export function SheetPage({
       />
       <div
         className={cn(
-          "relative flex h-full flex-col bg-surface border-l border-border  transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "relative flex h-full flex-col bg-surface border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width }}

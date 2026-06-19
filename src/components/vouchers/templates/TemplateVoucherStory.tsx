@@ -1,9 +1,6 @@
-/**
- * TemplateVoucherStory — Canvas 9:16 para redes sociais (Instagram/WhatsApp)
- * Usado no VoucherStudio com StudioFrame canvas_format = "story"
- */
 import { Plane, Hotel, MapPin } from "lucide-react";
 import { type Voucher } from "@/services/vouchers";
+import { type BrandKit } from "@/lib/agency-context";
 
 interface Props {
   voucher: Voucher;
@@ -13,36 +10,71 @@ interface Props {
     logo_url?: string | null;
     brand_color?: string;
   };
+  brandKit?: BrandKit | null;
 }
 
-export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
-  const brand = agency.brand_color ?? "#4f46e5";
+export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: Props) {
+  const primaryColor = brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#4f46e5";
+  const secondaryColor = brandKit?.secondary_color || "#ec4899";
+  const bgColor = brandKit?.background_color || "#FFFFFF";
+  const textColor = brandKit?.text_color || "#111827";
+  const fontHeading = brandKit?.font_heading || "Outfit";
+  const fontBody = brandKit?.font_body || "Inter";
+
+  const brand = primaryColor;
+  const logoUrl = brandKit?.logo_white_url || brandKit?.logo_url || agency.logo_url;
+
+  const styleVars = {
+    "--brand-primary": primaryColor,
+    "--brand-secondary": secondaryColor,
+    "--brand-heading-font": `"${fontHeading}", sans-serif`,
+    "--brand-body-font": `"${fontBody}", sans-serif`,
+  } as React.CSSProperties;
+
+  const fontHeadingUrl = fontHeading.replace(/\s+/g, "+");
+  const fontBodyUrl = fontBody.replace(/\s+/g, "+");
 
   return (
     <div
-      className="relative flex flex-col w-full h-full overflow-hidden bg-indigo-950 text-white"
-      style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}
+      className="relative flex flex-col w-full h-full overflow-hidden text-white"
+      style={{ 
+        ...styleVars,
+        background: `linear-gradient(135deg, ${primaryColor}4D, #030712)`,
+        fontFamily: "var(--brand-body-font, sans-serif)"
+      }}
     >
+      <link
+        href={`https://fonts.googleapis.com/css2?family=${fontHeadingUrl}:wght@400;600;700;800&family=${fontBodyUrl}:wght@400;500;700&display=swap`}
+        rel="stylesheet"
+      />
       {/* Decorative blobs */}
       <div
         className="absolute top-[-80px] right-[-80px] w-64 h-64 rounded-full opacity-25 blur-[80px]"
-        style={{ backgroundColor: brand }}
+        style={{ backgroundColor: primaryColor }}
       />
-      <div className="absolute bottom-[-80px] left-[-80px] w-64 h-64 rounded-full opacity-20 blur-[80px] bg-pink-500" />
+      <div 
+        className="absolute bottom-[-80px] left-[-80px] w-64 h-64 rounded-full opacity-20 blur-[80px]" 
+        style={{ backgroundColor: secondaryColor }}
+      />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full p-8">
         {/* Agency logo */}
         <div className="flex items-center gap-3 mb-auto">
-          {agency.logo_url ? (
+          {logoUrl ? (
             <img
-              src={agency.logo_url}
+              src={logoUrl}
               alt={agency.name}
               crossOrigin="anonymous"
-              className="h-10 w-auto object-contain bg-white rounded-md p-1"
+              className="h-10 w-auto object-contain bg-white/5 backdrop-blur-sm rounded-md p-1"
             />
           ) : (
-            <span className="font-black text-xl tracking-tighter">{agency.name}</span>
+            <span 
+              className="font-black text-xl tracking-tighter"
+              style={{ fontFamily: "var(--brand-heading-font, sans-serif)", color: primaryColor }}
+            >
+              {agency.name}
+            </span>
           )}
         </div>
 
@@ -54,7 +86,10 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
               Próximo destino
             </span>
           </div>
-          <h1 className="text-4xl font-black leading-none tracking-tighter">
+          <h1 
+            className="text-4xl font-black leading-none tracking-tighter"
+            style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
+          >
             {v.destination ?? "Sua Viagem!"}
           </h1>
           {v.general_locator && (
@@ -72,7 +107,10 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
                 <span>Voo Confirmado</span>
                 <Plane className="w-4 h-4" />
               </div>
-              <div className="flex justify-between items-center text-lg font-bold">
+              <div 
+                className="flex justify-between items-center text-lg font-bold"
+                style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
+              >
                 <span>{v.flights[0].origin ?? "—"}</span>
                 <div className="flex items-center gap-1 text-white/40">
                   <div className="h-px w-8 bg-white/30" />
@@ -95,7 +133,12 @@ export default function TemplateVoucherStory({ voucher: v, agency }: Props) {
                 <span>Hospedagem</span>
                 <Hotel className="w-4 h-4" />
               </div>
-              <div className="text-base font-bold truncate">{v.accommodation[0].name}</div>
+              <div 
+                className="text-base font-bold truncate"
+                style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
+              >
+                {v.accommodation[0].name}
+              </div>
               {v.accommodation[0].city && (
                 <div className="text-[10px] text-white/50 mt-0.5 truncate">
                   {v.accommodation[0].city}

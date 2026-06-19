@@ -14,11 +14,14 @@ interface TemplateProps {
 
 export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateProps) {
   const vm = buildBaseViewModel(p, agency);
-  const brand = vm.agency.brand_color;
+  const brand = "var(--brand-primary, " + (vm.agency.brand_color || "#1E3A5F") + ")";
   const brandFg = vm.agency.brand_color_fg ?? "#FFFFFF";
 
   return (
-    <div className="flex flex-col w-full font-sans bg-white text-slate-900">
+    <div 
+      className="flex flex-col w-full bg-white text-slate-900"
+      style={{ fontFamily: "var(--brand-body-font, sans-serif)" }}
+    >
       {/* 
         CAPA SPLIT SCREEN - 450px 
         break-inside-avoid para não quebrar a capa no PDF
@@ -46,7 +49,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             </div>
             <h1
               className="text-5xl leading-tight mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
             >
               {p.title || "Proposta Exclusiva de Viagem"}
             </h1>
@@ -128,7 +131,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             <div className="break-inside-avoid">
               <h2
                 className="text-2xl mb-6 pb-4 border-b border-slate-200"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
               >
                 Malha Aérea
               </h2>
@@ -194,7 +197,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             <div className="break-inside-avoid">
               <h2
                 className="text-2xl mb-6 pb-4 border-b border-slate-200"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
               >
                 Alojamento Premium
               </h2>
@@ -246,7 +249,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             <div className="break-inside-avoid">
               <h2
                 className="text-2xl mb-8 pb-4 border-b border-slate-200"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
               >
                 Roteiro Dia a Dia
               </h2>
@@ -283,7 +286,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             <div className="break-inside-avoid">
               <h2
                 className="text-2xl mb-6 pb-4 border-b border-slate-200"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
               >
                 Mapa da Rota
               </h2>
@@ -303,7 +306,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                 <div>
                   <h2
                     className="text-xl mb-4 pb-2 border-b border-slate-200"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
                   >
                     O que inclui
                   </h2>
@@ -321,7 +324,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                 <div>
                   <h2
                     className="text-xl mb-4 pb-2 border-b border-slate-200"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
                   >
                     Não inclui
                   </h2>
@@ -342,7 +345,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
           <div className="mt-16 pt-16 border-t-2 border-slate-100 break-inside-avoid">
             <h2
               className="text-3xl mb-8 text-center"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
             >
               Investimento
             </h2>

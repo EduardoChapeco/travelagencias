@@ -142,6 +142,30 @@ function Layout() {
     }
   }, [settings]);
 
+  // Load Google Fonts dynamically for public portal
+  useEffect(() => {
+    if (!agency) return;
+    const fontHeading = (agency as any).font_heading || "Inter";
+    const fontBody = (agency as any).font_body || "Inter";
+
+    const linkId = "google-fonts-portal-head";
+    let linkEl = document.getElementById(linkId) as HTMLLinkElement;
+    if (!linkEl) {
+      linkEl = document.createElement("link");
+      linkEl.id = linkId;
+      linkEl.rel = "stylesheet";
+      document.head.appendChild(linkEl);
+    }
+    const headingFormatted = fontHeading.replace(/\s+/g, "+");
+    const bodyFormatted = fontBody.replace(/\s+/g, "+");
+    linkEl.href = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+
+    return () => {
+      const el = document.getElementById(linkId);
+      if (el) el.remove();
+    };
+  }, [agency]);
+
   if (q.isLoading)
     return <div className="p-10 text-center text-sm text-muted-foreground">Carregando…</div>;
   if (!agency) return <div className="p-10 text-center text-sm">Agência não encontrada</div>;
@@ -166,16 +190,29 @@ function Layout() {
   const footerLinks: NavLink[] =
     settings?.footer_links && Array.isArray(settings.footer_links) ? settings.footer_links : [];
 
+  const primaryColor = agency.brand_color || "#1E3A5F";
+  const secondaryColor = (agency as any).secondary_color || "#D4AF37";
+  const accentColor = (agency as any).accent_color || "#E63946";
+  const fontHeading = (agency as any).font_heading || "Inter";
+  const fontBody = (agency as any).font_body || "Inter";
+
+  const brandStyles = {
+    "--agency-brand": primaryColor,
+    "--agency-brand-fg": agency.brand_color_fg || "#ffffff",
+    "--brand-primary": primaryColor,
+    "--brand-secondary": secondaryColor,
+    "--brand-accent": accentColor,
+    "--brand-bg": "#FFFFFF",
+    "--brand-text": "#111827",
+    "--brand-heading-font": `"${fontHeading}", sans-serif`,
+    "--brand-body-font": `"${fontBody}", sans-serif`,
+  } as React.CSSProperties;
+
   if (isBiolink) {
     return (
       <div
         className="min-h-screen bg-background flex flex-col w-full"
-        style={
-          {
-            "--agency-brand": agency.brand_color || "#18181b",
-            "--agency-brand-fg": agency.brand_color_fg || "#ffffff",
-          } as React.CSSProperties
-        }
+        style={brandStyles}
       >
         <main className="flex-1 flex flex-col items-center w-full">
           <Outlet />
@@ -187,12 +224,7 @@ function Layout() {
   return (
     <div
       className="min-h-screen bg-background flex flex-col"
-      style={
-        {
-          "--agency-brand": agency.brand_color || "#18181b",
-          "--agency-brand-fg": agency.brand_color_fg || "#ffffff",
-        } as React.CSSProperties
-      }
+      style={brandStyles}
     >
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-surface/80 backdrop-blur-md">
