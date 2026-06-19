@@ -4,6 +4,8 @@
 ALTER TABLE public.boarding_cards
   ADD COLUMN IF NOT EXISTS checkin_opens_at timestamptz;
 
+DROP FUNCTION IF EXISTS public.get_client_boarding_card(uuid);
+
 CREATE OR REPLACE FUNCTION public.get_client_boarding_card(p_trip_id uuid)
 RETURNS TABLE (
   id uuid,
