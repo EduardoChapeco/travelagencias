@@ -187,7 +187,7 @@ serve(async (req) => {
       );
       if (modelPreference !== "fast" && geminiKey) {
         try {
-          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${geminiKey}`;
           const res = await fetch(geminiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
