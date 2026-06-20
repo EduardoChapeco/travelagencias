@@ -82,6 +82,55 @@ export function AgencyProvider({
   preloadedAgency: Agency;
   children: ReactNode;
 }) {
+  // Synchronously apply cached styles on initial render to prevent visual flicker
+  if (typeof window !== "undefined" && preloadedAgency?.id) {
+    try {
+      const cached = localStorage.getItem(`brand-kit-${preloadedAgency.id}`);
+      const el = document.documentElement;
+      const color = preloadedAgency.brand_color;
+      const light = preloadedAgency.brand_color_light;
+      const fg = preloadedAgency.brand_color_fg;
+      if (color) el.style.setProperty("--agency-brand", color);
+      if (light) el.style.setProperty("--agency-brand-light", light);
+      if (fg) el.style.setProperty("--agency-brand-fg", fg);
+
+      if (cached) {
+        const bk = JSON.parse(cached);
+        const primaryColor = bk.primary_color || bk.brand_color || color || "#1E3A5F";
+        const secondaryColor = bk.secondary_color || "#D4AF37";
+        const accentColor = bk.accent_color || "#E63946";
+        const bgColor = bk.background_color || "#FFFFFF";
+        const textColor = bk.text_color || "#111827";
+        const fontHeading = bk.font_heading || "Inter";
+        const fontBody = bk.font_body || "Inter";
+
+        el.style.setProperty("--brand-primary", primaryColor);
+        el.style.setProperty("--brand-secondary", secondaryColor);
+        el.style.setProperty("--brand-accent", accentColor);
+        el.style.setProperty("--brand-bg", bgColor);
+        el.style.setProperty("--brand-text", textColor);
+        el.style.setProperty("--brand-heading-font", `"${fontHeading}", sans-serif`);
+        el.style.setProperty("--brand-body-font", `"${fontBody}", sans-serif`);
+
+        // Load fonts synchronously if needed
+        const linkId = "google-fonts-agency-head";
+        let linkEl = document.getElementById(linkId) as HTMLLinkElement;
+        if (!linkEl) {
+          linkEl = document.createElement("link");
+          linkEl.id = linkId;
+          linkEl.rel = "stylesheet";
+          document.head.appendChild(linkEl);
+        }
+        const headingFormatted = fontHeading.replace(/\s+/g, "+");
+        const bodyFormatted = fontBody.replace(/\s+/g, "+");
+        const fontUrl = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+        if (linkEl.href !== fontUrl) linkEl.href = fontUrl;
+      }
+    } catch (e) {
+      console.warn("Failed to load cached brand kit", e);
+    }
+  }
+
   const roleQuery = useQuery({
     queryKey: ["current-user-role", preloadedAgency?.id],
     enabled: !!preloadedAgency?.id,
@@ -161,7 +210,7 @@ export function AgencyProvider({
   const brandKit = brandKitQuery.data || null;
   const companyProfile = companyProfileQuery.data || null;
 
-  // Apply runtime brand color and typography tokens
+  // Apply live brand color and typography tokens
   useEffect(() => {
     const el = document.documentElement;
 
@@ -198,7 +247,8 @@ export function AgencyProvider({
         }
         const headingFormatted = fontHeading.replace(/\s+/g, "+");
         const bodyFormatted = fontBody.replace(/\s+/g, "+");
-        linkEl.href = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+        const fontUrl = `https://fonts.googleapis.com/css2?family=${headingFormatted}:wght@400;600;700;800&family=${bodyFormatted}:wght@400;500;700&display=swap`;
+        if (linkEl.href !== fontUrl) linkEl.href = fontUrl;
       } else {
         const fallbackColor = color || "#1E3A5F";
         el.style.setProperty("--brand-primary", fallbackColor);
@@ -210,24 +260,6 @@ export function AgencyProvider({
         el.style.setProperty("--brand-body-font", `"Inter", sans-serif`);
       }
     };
-
-    // Load from localStorage as fast fallback
-    if (preloadedAgency?.id) {
-      try {
-        const cached = localStorage.getItem(`brand-kit-${preloadedAgency.id}`);
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          applyStyling(
-            preloadedAgency.brand_color,
-            preloadedAgency.brand_color_light,
-            preloadedAgency.brand_color_fg,
-            parsed
-          );
-        }
-      } catch (e) {
-        console.warn("Failed to load cached brand kit", e);
-      }
-    }
 
     // Apply live brandKit or fallback
     applyStyling(

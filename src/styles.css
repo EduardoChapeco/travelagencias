@@ -198,13 +198,25 @@
   }
 
   /* Flat Design: Eliminate static box shadows */
+  .shadow-xs,
   .shadow-sm,
   .shadow,
   .shadow-md,
   .shadow-lg,
   .shadow-xl,
-  .shadow-2xl {
+  .shadow-2xl,
+  [class*="shadow-"],
+  [class*="shadow"]:hover,
+  [data-radix-popper-content-wrapper],
+  [role="dialog"],
+  [role="menu"],
+  [role="listbox"],
+  .dialog-content,
+  .popover-content,
+  .dropdown-content,
+  .sheet-content {
     box-shadow: none !important;
+    border: 1px solid var(--color-border-strong) !important;
   }
 
   html,

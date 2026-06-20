@@ -355,12 +355,12 @@ function TripContract() {
           agency_data,
           passengers_data,
           // Fase 5: snapshot imutável das cláusulas no momento da criação
-          clause_snapshot: JSON.stringify({
+          clause_snapshot: {
             fixed: clauses,
             custom: customClauses,
             captured_at: new Date().toISOString(),
             clause_count: clauses.length + customClauses.length,
-          }),
+          },
           is_custom_clauses: customClauses.length > 0,
         })
         .select("*")

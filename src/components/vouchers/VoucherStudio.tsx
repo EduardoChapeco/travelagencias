@@ -25,6 +25,7 @@ import {
   Upload,
   Save,
   Eye,
+  SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
@@ -140,304 +141,13 @@ export function VoucherStudio({
   const [openSection, setOpenSection] = useState<TabId | null>("passengers");
   const [exporting, setExporting] = useState(false);
   const [storySheetOpen, setStorySheetOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { brandKit, companyProfile } = useAgency();
 
-  const flights = draft.flights ?? [];
-  const accommodation = draft.accommodation ?? [];
-  const transfers = draft.transfers ?? [];
-  const passengers = draft.passengers ?? [];
-  const emergency = draft.emergency_contacts ?? [];
+  const renderSidebarContent = () => (
+    <>
 
-  function upd<K extends keyof Voucher>(key: K, value: any) {
-    setDraft((d) => ({ ...d, [key]: value }));
-  }
-
-  // ── WhatsApp Text Generator ──────────────────────────────────────────────
-  function generateWhatsAppText(): string {
-    let text = `✈️ *RESUMO DE EMBARQUE - ${draft.destination || "Sua Viagem"}*\n\n`;
-
-    if (draft.general_locator) {
-      text += `🔑 *Localizador Geral:* \`${draft.general_locator}\`\n\n`;
-    }
-
-    if (passengers.length > 0) {
-      text += `👤 *Passageiros:*\n`;
-      passengers.forEach((p) => {
-        text += `- ${p.name}${p.document ? ` (Doc: ${p.document})` : ""}${p.seat ? ` - Assento: ${p.seat}` : ""}\n`;
-      });
-      text += `\n`;
-    }
-
-    if (flights.length > 0) {
-      text += `🛫 *Voos Confirmados:*\n`;
-      flights.forEach((f, idx) => {
-        text += `*Voo ${idx + 1}:* ${f.airline} ${f.flight_number || ""}\n`;
-        text += `📍 ${f.origin} ➔ ${f.destination}\n`;
-        text += `📅 Data: ${f.date || "A confirmar"} | Saída: ${f.departure_time || "--:--"} | Chegada: ${f.arrival_time || "--:--"}\n`;
-        if (f.locator) text += `🔑 Localizador: \`${f.locator}\`\n`;
-        if (f.class) text += `💺 Classe: ${f.class}\n`;
-        text += `\n`;
-      });
-    }
-
-    if (accommodation.length > 0) {
-      text += `🏨 *Hospedagem:*\n`;
-      accommodation.forEach((h, idx) => {
-        text += `*Hotel ${idx + 1}:* ${h.name}\n`;
-        if (h.city) text += `📍 Cidade: ${h.city}\n`;
-        text += `📅 Check-in: ${h.checkin || "A confirmar"} | Check-out: ${h.checkout || "A confirmar"}\n`;
-        if (h.room_type) text += `🛏️ Quarto: ${h.room_type}\n`;
-        if (h.meal_plan) text += `☕ Regime: ${h.meal_plan}\n`;
-        if (h.confirmation) text += `🔑 Confirmação: \`${h.confirmation}\`\n`;
-        text += `\n`;
-      });
-    }
-
-    if (transfers.length > 0) {
-      text += `🚌 *Transfers:*\n`;
-      transfers.forEach((t) => {
-        text += `- ${t.type || "Transfer"}: ${t.origin || "Origem"} ➔ ${t.destination || "Destino"}\n`;
-        if (t.date) text += `  📅 Data: ${t.date}\n`;
-        if (t.vehicle) text += `  🚗 Veículo: ${t.vehicle}\n`;
-        if (t.supplier) text += `  🏢 Operadora: ${t.supplier}\n`;
-        if (t.confirmation) text += `  🔑 Confirmação: \`${t.confirmation}\`\n`;
-        text += `\n`;
-      });
-    }
-
-    if (emergency.length > 0) {
-      text += `🚨 *Contatos de Emergência:*\n`;
-      emergency.forEach((c) => {
-        text += `- ${c.name} (${c.role || "Suporte"}): ${c.phone}\n`;
-      });
-      text += `\n`;
-    }
-
-    if (draft.observations) {
-      text += `📝 *Observações Importantes:*\n${draft.observations}\n\n`;
-    }
-
-    text += `💙 *Desejamos uma excelente viagem!*\n\nPlanejado com cuidado por *${agency.name}*`;
-    return text;
-  }
-
-  // ── Export A4 PDF ──────────────────────────────────────────────────────────
-  async function exportA4Pdf() {
-    setExporting(true);
-    try {
-      const { jsPDF } = await import("jspdf");
-      const el = document.getElementById("voucher-canvas");
-      if (!el) throw new Error("Canvas não encontrado");
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        onclone: (clonedDoc) => {
-          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
-          if (clonedCanvas) {
-            clonedCanvas.style.transform = "none";
-            clonedCanvas.style.transition = "none";
-          }
-        },
-      });
-      const img = canvas.toDataURL("image/jpeg", 0.96);
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pdfW = 210;
-      const pdfH = 297;
-
-      const pageCanvasHeight = imgWidth * 1.414;
-      const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
-      const totalPdfHeight = pdfW * (imgHeight / imgWidth);
-
-      for (let page = 0; page < totalPages; page++) {
-        if (page > 0) {
-          pdf.addPage("a4", "portrait");
-        }
-        const yOffset = -page * pdfH;
-        pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
-      }
-
-      // Download local
-      pdf.save(`voucher-${draft.destination ?? "viagem"}.pdf`);
-
-      // Fase 6: persistir PDF no Storage via callback do componente pai
-      if (onPdfGenerated) {
-        const blob = pdf.output("blob");
-        await onPdfGenerated(blob);
-      }
-
-      toast.success("PDF exportado com sucesso!");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro ao exportar");
-    } finally {
-      setExporting(false);
-    }
-  }
-
-  // ── Export Story PNG ───────────────────────────────────────────────────────
-  async function exportStoryPng() {
-    setExporting(true);
-    try {
-      const el =
-        document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
-      if (!el) throw new Error("Canvas Story não encontrado");
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: null,
-        onclone: (clonedDoc) => {
-          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
-          if (clonedCanvas) {
-            clonedCanvas.style.transform = "none";
-            clonedCanvas.style.transition = "none";
-          }
-        },
-      });
-      const dataUrl = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `story-${draft.destination ?? "viagem"}.png`;
-      a.click();
-      toast.success("Story exportado!");
-    } catch (e) {
-      toast.error("Erro ao gerar Story");
-    } finally {
-      setExporting(false);
-    }
-  }
-
-  // ─── Voucher as full prop for templates ────────────────────────────────────
-  const voucherForTemplate: Voucher = {
-    id: draft.id ?? "",
-    trip_id: draft.trip_id ?? "",
-    agency_id: draft.agency_id ?? "",
-    source_type: draft.source_type ?? "manual",
-    source_file_url: null,
-    destination: draft.destination ?? null,
-    general_locator: draft.general_locator ?? null,
-    observations: draft.observations ?? null,
-    cover_image_url: null,
-    template: draft.template ?? "navy",
-    passengers,
-    flights,
-    accommodation,
-    transfers,
-    tours: draft.tours ?? [],
-    insurance: draft.insurance ?? {},
-    emergency_contacts: emergency,
-    pdf_url: null,
-    generated_at: null,
-    created_at: new Date().toISOString(),
-  };
-
-  return (
-    <div className="flex h-[calc(100vh-var(--header-h)-110px)] flex-col">
-      {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2.5 shrink-0">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <div>
-            <div className="text-sm font-semibold">
-              {isEdit ? "Editar Voucher" : "Novo Voucher"}
-            </div>
-            <div className="text-[10px] text-muted-foreground">
-              {draft.destination ?? "Sem destino"}
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Format toggle */}
-          <div className="flex rounded-md border border-border overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setMode("a4-portrait")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "a4-portrait" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
-            >
-              A4
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("story-916")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "story-916" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
-            >
-              Story 9:16
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("whatsapp")}
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "whatsapp" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
-            >
-              WhatsApp
-            </button>
-          </div>
-
-          {/* Upload PDF */}
-          <label className="flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-dashed border-brand/50 bg-brand/5 px-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors">
-            <Upload className="h-3.5 w-3.5" />
-            OCR IA
-            <input
-              type="file"
-              accept="application/pdf"
-              className="hidden"
-              onChange={(e) => e.target.files?.[0] && onUploadPdf(e.target.files[0])}
-            />
-          </label>
-
-          {/* Export */}
-          {mode === "a4-portrait" && (
-            <button
-              type="button"
-              onClick={exportA4Pdf}
-              disabled={exporting}
-              className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors disabled:opacity-60"
-            >
-              <Download className="h-3.5 w-3.5" />
-              {exporting ? "Exportando…" : "PDF A4"}
-            </button>
-          )}
-          {mode === "story-916" && (
-            <button
-              type="button"
-              onClick={() => setStorySheetOpen(true)}
-              className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors"
-            >
-              <Instagram className="h-3.5 w-3.5" />
-              Story
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saving}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap"
-          >
-            <Save className="h-3.5 w-3.5" />
-            {saving ? "Salvando…" : isEdit ? "Salvar" : "Criar Voucher"}
-          </button>
-        </div>
-      </div>
-
-      {/* ── Body ─────────────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left: Sidebar */}
-        <div className="w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-3 space-y-2">
           {/* Header fields */}
           <div className="rounded-lg border border-border bg-surface p-3 grid grid-cols-1 gap-2">
             <Lbl label="Destino">
@@ -1035,6 +745,315 @@ export function VoucherStudio({
               placeholder="Informações adicionais para o passageiro…"
             />
           </AccordionSection>
+    </>
+  );
+
+  const flights = draft.flights ?? [];
+  const accommodation = draft.accommodation ?? [];
+  const transfers = draft.transfers ?? [];
+  const passengers = draft.passengers ?? [];
+  const emergency = draft.emergency_contacts ?? [];
+
+  function upd<K extends keyof Voucher>(key: K, value: any) {
+    setDraft((d) => ({ ...d, [key]: value }));
+  }
+
+  // ── WhatsApp Text Generator ──────────────────────────────────────────────
+  function generateWhatsAppText(): string {
+    let text = `✈️ *RESUMO DE EMBARQUE - ${draft.destination || "Sua Viagem"}*\n\n`;
+
+    if (draft.general_locator) {
+      text += `🔑 *Localizador Geral:* \`${draft.general_locator}\`\n\n`;
+    }
+
+    if (passengers.length > 0) {
+      text += `👤 *Passageiros:*\n`;
+      passengers.forEach((p) => {
+        text += `- ${p.name}${p.document ? ` (Doc: ${p.document})` : ""}${p.seat ? ` - Assento: ${p.seat}` : ""}\n`;
+      });
+      text += `\n`;
+    }
+
+    if (flights.length > 0) {
+      text += `🛫 *Voos Confirmados:*\n`;
+      flights.forEach((f, idx) => {
+        text += `*Voo ${idx + 1}:* ${f.airline} ${f.flight_number || ""}\n`;
+        text += `📍 ${f.origin} ➔ ${f.destination}\n`;
+        text += `📅 Data: ${f.date || "A confirmar"} | Saída: ${f.departure_time || "--:--"} | Chegada: ${f.arrival_time || "--:--"}\n`;
+        if (f.locator) text += `🔑 Localizador: \`${f.locator}\`\n`;
+        if (f.class) text += `💺 Classe: ${f.class}\n`;
+        text += `\n`;
+      });
+    }
+
+    if (accommodation.length > 0) {
+      text += `🏨 *Hospedagem:*\n`;
+      accommodation.forEach((h, idx) => {
+        text += `*Hotel ${idx + 1}:* ${h.name}\n`;
+        if (h.city) text += `📍 Cidade: ${h.city}\n`;
+        text += `📅 Check-in: ${h.checkin || "A confirmar"} | Check-out: ${h.checkout || "A confirmar"}\n`;
+        if (h.room_type) text += `🛏️ Quarto: ${h.room_type}\n`;
+        if (h.meal_plan) text += `☕ Regime: ${h.meal_plan}\n`;
+        if (h.confirmation) text += `🔑 Confirmação: \`${h.confirmation}\`\n`;
+        text += `\n`;
+      });
+    }
+
+    if (transfers.length > 0) {
+      text += `🚌 *Transfers:*\n`;
+      transfers.forEach((t) => {
+        text += `- ${t.type || "Transfer"}: ${t.origin || "Origem"} ➔ ${t.destination || "Destino"}\n`;
+        if (t.date) text += `  📅 Data: ${t.date}\n`;
+        if (t.vehicle) text += `  🚗 Veículo: ${t.vehicle}\n`;
+        if (t.supplier) text += `  🏢 Operadora: ${t.supplier}\n`;
+        if (t.confirmation) text += `  🔑 Confirmação: \`${t.confirmation}\`\n`;
+        text += `\n`;
+      });
+    }
+
+    if (emergency.length > 0) {
+      text += `🚨 *Contatos de Emergência:*\n`;
+      emergency.forEach((c) => {
+        text += `- ${c.name} (${c.role || "Suporte"}): ${c.phone}\n`;
+      });
+      text += `\n`;
+    }
+
+    if (draft.observations) {
+      text += `📝 *Observações Importantes:*\n${draft.observations}\n\n`;
+    }
+
+    text += `💙 *Desejamos uma excelente viagem!*\n\nPlanejado com cuidado por *${agency.name}*`;
+    return text;
+  }
+
+  // ── Export A4 PDF ──────────────────────────────────────────────────────────
+  async function exportA4Pdf() {
+    setExporting(true);
+    try {
+      const { jsPDF } = await import("jspdf");
+      const el = document.getElementById("voucher-canvas");
+      if (!el) throw new Error("Canvas não encontrado");
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (clonedDoc) => {
+          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+          if (clonedCanvas) {
+            clonedCanvas.style.transform = "none";
+            clonedCanvas.style.transition = "none";
+          }
+        },
+      });
+      const img = canvas.toDataURL("image/jpeg", 0.96);
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdfW = 210;
+      const pdfH = 297;
+
+      const pageCanvasHeight = imgWidth * 1.414;
+      const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
+      const totalPdfHeight = pdfW * (imgHeight / imgWidth);
+
+      for (let page = 0; page < totalPages; page++) {
+        if (page > 0) {
+          pdf.addPage("a4", "portrait");
+        }
+        const yOffset = -page * pdfH;
+        pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
+      }
+
+      // Download local
+      pdf.save(`voucher-${draft.destination ?? "viagem"}.pdf`);
+
+      // Fase 6: persistir PDF no Storage via callback do componente pai
+      if (onPdfGenerated) {
+        const blob = pdf.output("blob");
+        await onPdfGenerated(blob);
+      }
+
+      toast.success("PDF exportado com sucesso!");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao exportar");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  // ── Export Story PNG ───────────────────────────────────────────────────────
+  async function exportStoryPng() {
+    setExporting(true);
+    try {
+      const el =
+        document.getElementById("story-canvas") || document.getElementById("story-preview-canvas");
+      if (!el) throw new Error("Canvas Story não encontrado");
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: null,
+        onclone: (clonedDoc) => {
+          const clonedCanvas = clonedDoc.getElementById("proposal-canvas");
+          if (clonedCanvas) {
+            clonedCanvas.style.transform = "none";
+            clonedCanvas.style.transition = "none";
+          }
+        },
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `story-${draft.destination ?? "viagem"}.png`;
+      a.click();
+      toast.success("Story exportado!");
+    } catch (e) {
+      toast.error("Erro ao gerar Story");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  // ─── Voucher as full prop for templates ────────────────────────────────────
+  const voucherForTemplate: Voucher = {
+    id: draft.id ?? "",
+    trip_id: draft.trip_id ?? "",
+    agency_id: draft.agency_id ?? "",
+    source_type: draft.source_type ?? "manual",
+    source_file_url: null,
+    destination: draft.destination ?? null,
+    general_locator: draft.general_locator ?? null,
+    observations: draft.observations ?? null,
+    cover_image_url: null,
+    template: draft.template ?? "navy",
+    passengers,
+    flights,
+    accommodation,
+    transfers,
+    tours: draft.tours ?? [],
+    insurance: draft.insurance ?? {},
+    emergency_contacts: emergency,
+    pdf_url: null,
+    generated_at: null,
+    created_at: new Date().toISOString(),
+  };
+
+  return (
+    <div className="flex h-[calc(100vh-var(--header-h)-110px)] flex-col">
+      {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2.5 shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <div className="text-sm font-semibold">
+              {isEdit ? "Editar Voucher" : "Novo Voucher"}
+            </div>
+            <div className="text-[10px] text-muted-foreground">
+              {draft.destination ?? "Sem destino"}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Mobile/Tablet config panel toggle */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="xl:hidden flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <span>Campos</span>
+          </button>
+          {/* Format toggle */}
+          <div className="flex rounded-md border border-border overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setMode("a4-portrait")}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "a4-portrait" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
+            >
+              A4
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("story-916")}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "story-916" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
+            >
+              Story 9:16
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("whatsapp")}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${mode === "whatsapp" ? "bg-primary text-primary-foreground" : "hover:bg-surface-alt"}`}
+            >
+              WhatsApp
+            </button>
+          </div>
+
+          {/* Upload PDF */}
+          <label className="flex h-8 cursor-pointer items-center gap-1.5 rounded-md border border-dashed border-brand/50 bg-brand/5 px-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors">
+            <Upload className="h-3.5 w-3.5" />
+            OCR IA
+            <input
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && onUploadPdf(e.target.files[0])}
+            />
+          </label>
+
+          {/* Export */}
+          {mode === "a4-portrait" && (
+            <button
+              type="button"
+              onClick={exportA4Pdf}
+              disabled={exporting}
+              className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors disabled:opacity-60"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {exporting ? "Exportando…" : "PDF A4"}
+            </button>
+          )}
+          {mode === "story-916" && (
+            <button
+              type="button"
+              onClick={() => setStorySheetOpen(true)}
+              className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors"
+            >
+              <Instagram className="h-3.5 w-3.5" />
+              Story
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap"
+          >
+            <Save className="h-3.5 w-3.5" />
+            {saving ? "Salvando…" : isEdit ? "Salvar" : "Criar Voucher"}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Body ─────────────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left: Sidebar */}
+        <div className="hidden xl:block w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-3 space-y-2">
+          {renderSidebarContent()}
+
         </div>
 
         {/* Right: Canvas preview / WhatsApp Chat */}
@@ -1154,6 +1173,18 @@ export function VoucherStudio({
             </div>
           </div>
         </SheetContent>
+      {/* ── Mobile Sidebar Config Sheet ────────────────────────────────────── */}
+      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SheetContent side="left" className="w-full max-w-[320px] p-0 overflow-y-auto bg-surface animate-none">
+          <SheetHeader className="px-4 py-3 border-b border-border bg-surface-alt/10">
+            <SheetTitle className="text-xs font-bold uppercase tracking-wider">Campos do Voucher</SheetTitle>
+          </SheetHeader>
+          <div className="p-3 space-y-2">
+            {renderSidebarContent()}
+          </div>
+        </SheetContent>
+      </Sheet>
+
       </Sheet>
     </div>
   );

@@ -696,7 +696,7 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls - compact divide group */}
-        <div className="flex items-center bg-white border border-border p-0.5 rounded-sm divide-x divide-border">
+        <div className="hidden md:flex items-center bg-white border border-border p-0.5 rounded-sm divide-x divide-border">
           <button
             onClick={() => {
               if (mode === "biolink") {
@@ -734,7 +734,7 @@ function PageEditorRoute() {
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-2">
           {saveStatus === "saving" && (
             <span className="text-[10px] text-muted-foreground animate-pulse mr-1">Salvando...</span>
           )}
@@ -1555,6 +1555,29 @@ function PageEditorRoute() {
           </div>
         </div>
       )}
+
+      {/* Floating Action Menu for mobile devices */}
+      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-md border border-border/85 p-2.5 rounded-xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {saveStatus === "saving" && (
+            <span className="text-[10px] text-muted-foreground animate-pulse truncate">Salvando...</span>
+          )}
+          {saveStatus === "saved" && (
+            <span className="text-[10px] text-green-600 font-bold">✓ Salvo</span>
+          )}
+          {saveStatus === "error" && (
+            <span className="text-[10px] text-destructive font-bold">✗ Erro</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting} className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg">
+            Salvar
+          </GhostButton>
+          <PrimaryButton type="button" onClick={publishPage} disabled={submitting} className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg">
+            {submitting ? "..." : "Publicar"}
+          </PrimaryButton>
+        </div>
+      </div>
     </div>
   );
 }

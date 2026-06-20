@@ -10,6 +10,14 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+type DayKey = "seg" | "ter" | "qua" | "qui" | "sex" | "sab" | "dom";
+type BusinessHours = Record<DayKey, { open: string; close: string; closed: boolean }>;
+const DAY_KEYS: DayKey[] = ["seg", "ter", "qua", "qui", "sex", "sab", "dom"];
+const defaultHours = (): BusinessHours =>
+  Object.fromEntries(
+    DAY_KEYS.map((k, i) => [k, { open: "09:00", close: "18:00", closed: i >= 5 }]),
+  ) as BusinessHours;
+
 export const Route = createFileRoute("/auth/onboarding")({
   head: () => ({ meta: [{ title: "Configure sua agência · TravelOS" }] }),
   component: Page,
@@ -185,6 +193,7 @@ function Page() {
         _address_neighborhood: data.address_neighborhood,
         _address_city: data.address_city,
         _address_state: data.address_state,
+        _business_hours: defaultHours() as any,
         _onboarding_completed: true,
       });
 

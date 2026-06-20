@@ -39,7 +39,40 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { useAgency, getModuleName } from "@/lib/agency-context";
+
+type OcrContact = {
+  name?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
+};
+
+type OcrProduct = {
+  name?: string;
+  kind?: string;
+  destination?: string;
+  price_from?: number | string;
+  currency?: string;
+  duration_days?: number | string;
+  description?: string;
+};
+
+type OcrData = {
+  phone?: string;
+  email?: string;
+  website?: string;
+  payment_terms?: string;
+  commission_rate?: number;
+  contacts?: OcrContact[];
+  products?: OcrProduct[];
+};
+
+type ReviewWithJoins = Database["public"]["Tables"]["supplier_reviews"]["Row"] & {
+  user: { email: string | null } | null;
+  trip: { destination: string | null } | null;
+};
 import { PageHeader } from "@/components/shell/PageHeader";
 import { StatusBadge, GhostButton, PrimaryButton, Field, Input, Select, Textarea } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -509,7 +542,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                 <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">{JSON.stringify(f.ocr_data, null, 2)}</pre>
                 <button
                   onClick={async () => {
-                    const ocr = f.ocr_data as any;
+                    const ocr = f.ocr_data as unknown as OcrData;
                     const toastId = toast.loading("Persistindo dados extraídos...");
                     try {
                       // 1. Insert contacts
@@ -523,7 +556,6 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                             role: c.role || "Outro",
                             email: c.email || null,
                             phone: c.phone || null,
-                            notes: null,
                           }));
                         if (contactRows.length > 0) {
                           const { error: cErr } = await supabase
@@ -620,7 +652,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
         .eq("supplier_id", supplierId)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data as unknown as ReviewWithJoins[];
     },
   });
 
@@ -696,7 +728,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
       )}
 
       <div className="space-y-3">
-        {q.data?.map((r: any) => (
+        {q.data?.map((r) => (
           <div key={r.id} className="rounded-xl border border-border bg-white p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
@@ -712,7 +744,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
                   ))}
                 </div>
                 <div className="text-[11px] text-muted-foreground mt-1">
-                  {new Date(r.created_at).toLocaleDateString("pt-BR")} · {(r.user as any)?.email ?? "—"}
+                  {new Date(r.created_at).toLocaleDateString("pt-BR")} · {r.user?.email ?? "—"}
                 </div>
               </div>
               <button onClick={() => deleteMut.mutate(r.id)} className="text-muted-foreground hover:text-danger p-1">
@@ -740,7 +772,7 @@ function SupplierDetailsPage() {
     queryFn: async () => {
       const { data, error } = await supabase.from("suppliers").select("*").eq("id", id).single();
       if (error) throw error;
-      return data as any;
+      return data;
     },
   });
 

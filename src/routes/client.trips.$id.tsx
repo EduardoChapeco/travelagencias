@@ -166,7 +166,7 @@ function ClientTripDetail() {
   });
 
   const uploadMemory = useMutation({
-    mutationFn: async (urls: string[]) => { await addTripMemories(id, urls); },
+    mutationFn: async (urls: string[]) => { await addTripMemories(id, urls, tripQ.data?.agency_id ?? ""); },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
   });
 

@@ -106,16 +106,17 @@ export async function fetchClientTripPassengers(tripId: string) {
 }
 
 export async function fetchClientTripMemories(tripId: string) {
-  const { data } = await (supabase as any)
+  const { data } = await supabase
     .from("trip_memories")
-    .select("id, image_url, created_at")
+    .select("id, image_url, caption, created_at")
     .eq("trip_id", tripId)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
   return data || [];
 }
 
 export async function requestTripCancellation(tripId: string, clientId: string, reason: string) {
-  const { error } = await supabase.rpc("request_trip_cancellation" as any, {
+  const { error } = await (supabase.rpc as any)("request_trip_cancellation", {
     p_trip_id: tripId,
     p_client_id: clientId,
     p_reason: reason,
@@ -123,9 +124,13 @@ export async function requestTripCancellation(tripId: string, clientId: string, 
   if (error) throw error;
 }
 
-export async function addTripMemories(tripId: string, urls: string[]) {
-  const inserts = urls.map((url) => ({ trip_id: tripId, image_url: url }));
-  const { error } = await (supabase as any).from("trip_memories").insert(inserts);
+export async function addTripMemories(tripId: string, urls: string[], agencyId: string) {
+  const inserts = urls.map((url) => ({
+    trip_id: tripId,
+    agency_id: agencyId,
+    image_url: url,
+  }));
+  const { error } = await supabase.from("trip_memories").insert(inserts);
   if (error) throw error;
 }
 

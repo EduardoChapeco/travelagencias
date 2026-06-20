@@ -66,72 +66,16 @@ function KnowledgePage() {
     enabled: !!agency && tab === "playbooks",
     queryKey: ["playbooks", agency?.id],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("knowledge_playbooks" as any)
-          .select("*, steps:knowledge_playbook_steps(*)");
-        if (error) throw error;
+      const { data, error } = await (supabase as any)
+        .from("knowledge_playbooks")
+        .select("*, steps:knowledge_playbook_steps(*)");
+      if (error) throw error;
 
-        // Sort steps for each playbook
-        const sortedPlaybooks = (data || []).map((pb: any) => ({
-          ...pb,
-          steps: [...(pb.steps || [])].sort((a: any, b: any) => a.step_number - b.step_number),
-        }));
-
-        return sortedPlaybooks;
-      } catch (err) {
-        console.warn("Table knowledge_playbooks does not exist yet. Using mock fallback.", err);
-        return [
-          {
-            id: "mock-1",
-            title: "Cancelamento Operadora ViagensPromo",
-            description:
-              "Passo a passo padrão para cancelamento de pacotes terrestres e aéreos na ViagensPromo.",
-            category: "Cancelamentos",
-            steps: [
-              {
-                id: "s-1",
-                step_number: 1,
-                title: "Acessar o Portal do Parceiro",
-                description: "Fazer login com as credenciais master da agência.",
-              },
-              {
-                id: "s-2",
-                step_number: 2,
-                title: "Localizar a Reserva",
-                description: "Procurar pelo localizador ou CPF do passageiro principal.",
-              },
-              {
-                id: "s-3",
-                step_number: 3,
-                title: "Solicitar Cancelamento via Chat",
-                description:
-                  "Abrir chamado com o suporte comercial solicitando o cálculo da multa.",
-              },
-            ],
-          },
-          {
-            id: "mock-2",
-            title: "Reunião de Pré-Embarque",
-            description: "Roteiro de alinhamento com clientes antes de viagens internacionais.",
-            category: "Operações",
-            steps: [
-              {
-                id: "s-4",
-                step_number: 1,
-                title: "Conferir Documentação",
-                description: "Verificar validade de passaporte (>6 meses) e vistos.",
-              },
-              {
-                id: "s-5",
-                step_number: 2,
-                title: "Revisar Bilhetes e Vouchers",
-                description: "Verificar horários de voos, conexões e franquia de bagagem.",
-              },
-            ],
-          },
-        ];
-      }
+      // Sort steps for each playbook
+      return (data || []).map((pb: any) => ({
+        ...pb,
+        steps: [...(pb.steps || [])].sort((a: any, b: any) => a.step_number - b.step_number),
+      }));
     },
   });
 
@@ -323,11 +267,6 @@ function KnowledgePage() {
                     <ClipboardList className="w-3.5 h-3.5 text-muted-foreground" />
                     {pb.steps?.length || 0} etapas definidas
                   </span>
-                  {pb.id.startsWith("mock-") && (
-                    <span className="text-[9px] bg-surface-alt border px-1 rounded font-semibold uppercase text-muted-foreground">
-                      Mock
-                    </span>
-                  )}
                 </div>
               </button>
             ))}
@@ -504,16 +443,14 @@ function PlaybookSheet({
         }
       }
 
-      toast.success(initialData ? "Playbook atualizado" : "Playbook criado");
-      onSaved();
-    } catch (err: any) {
-      console.warn("Saving to DB failed, fallback to mock status toast", err);
       toast.info(
         initialData
-          ? "Rascunho local de playbook atualizado (Rode a migration SQL para persistir no banco)"
-          : "Rascunho local de playbook criado (Rode a migration SQL para persistir no banco)",
+          ? "Playbook atualizado com sucesso"
+          : "Playbook criado com sucesso",
       );
       onSaved();
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao salvar playbook");
     } finally {
       setSubmitting(false);
     }

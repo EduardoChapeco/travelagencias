@@ -314,9 +314,10 @@ function ReconciliationPage() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-none">
-          <table className="w-full text-xs">
-            <thead className="bg-gray-50 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-gray-500">
-              <tr>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-xs">
+              <thead className="bg-gray-50 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-gray-500">
+                <tr>
                 <th className="px-4 py-3">Código/Viagem</th>
                 <th className="px-4 py-3">Passageiro</th>
                 <th className="px-4 py-3">Parcela</th>
@@ -394,6 +395,7 @@ function ReconciliationPage() {
             </tbody>
           </table>
         </div>
+      </div>
       )}
 
       {/* Approve / Conciliation Drawer Modal */}
