@@ -28,7 +28,17 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
-import html2canvas from "html2canvas";
+// ⚡ html2canvas is loaded on-demand to prevent build heap exhaustion.
+// Do NOT revert to a static import — this library is ~150 KB and triggers
+// Vite SSR out-of-memory errors when statically bundled.
+let _html2canvas: typeof import("html2canvas").default | null = null;
+async function getHtml2Canvas() {
+  if (!_html2canvas) {
+    const mod = await import("html2canvas");
+    _html2canvas = mod.default;
+  }
+  return _html2canvas;
+}
 import {
   type Voucher,
   type VoucherFlight,
@@ -837,6 +847,7 @@ export function VoucherStudio({
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
+      const html2canvas = await getHtml2Canvas();
       const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: true,
@@ -896,6 +907,7 @@ export function VoucherStudio({
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
+      const html2canvas = await getHtml2Canvas();
       const canvas = await html2canvas(el, {
         scale: 3,
         useCORS: true,

@@ -417,6 +417,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [running, setRunning] = useState<string | null>(null);
+  const [isPersisting, setIsPersisting] = useState<string | null>(null);
 
   const q = useQuery({
     queryKey: ["supplier_files", supplierId],
@@ -541,77 +542,26 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                 </div>
                 <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">{JSON.stringify(f.ocr_data, null, 2)}</pre>
                 <button
+                  disabled={isPersisting === f.id}
                   onClick={async () => {
+                    setIsPersisting(f.id);
                     const ocr = f.ocr_data as unknown as OcrData;
                     const toastId = toast.loading("Persistindo dados extraídos...");
                     try {
-                      // 1. Insert contacts
-                      if (Array.isArray(ocr?.contacts) && ocr.contacts.length > 0) {
-                        const contactRows = ocr.contacts
-                          .filter((c: any) => c?.name)
-                          .map((c: any) => ({
-                            supplier_id: supplierId,
-                            agency_id: agencyId,
-                            name: c.name,
-                            role: c.role || "Outro",
-                            email: c.email || null,
-                            phone: c.phone || null,
-                          }));
-                        if (contactRows.length > 0) {
-                          const { error: cErr } = await supabase
-                            .from("supplier_contacts")
-                            .insert(contactRows);
-                          if (cErr) console.warn("supplier_contacts insert:", cErr.message);
-                        }
-                      }
+                      const { error } = await supabase.rpc("confirm_ocr_supplier_data", {
+                        _supplier_id: supplierId,
+                        _agency_id: agencyId,
+                        _file_id: f.id,
+                        _contacts: ocr?.contacts || [],
+                        _products: ocr?.products || [],
+                        _phone: ocr?.phone || null,
+                        _email: ocr?.email || null,
+                        _website: ocr?.website || null,
+                        _payment_terms: ocr?.payment_terms || null,
+                        _commission_rate: ocr?.commission_rate != null ? Number(ocr.commission_rate) : null,
+                      });
 
-                      // 2. Insert products
-                      if (Array.isArray(ocr?.products) && ocr.products.length > 0) {
-                        const productRows = ocr.products
-                          .filter((p: any) => p?.name)
-                          .map((p: any) => ({
-                            supplier_id: supplierId,
-                            agency_id: agencyId,
-                            name: p.name,
-                            kind: p.kind || "other",
-                            destination: p.destination || null,
-                            price_from: p.price_from ? Number(p.price_from) : null,
-                            currency: p.currency || "BRL",
-                            duration_days: p.duration_days ? Number(p.duration_days) : null,
-                            description: p.description || null,
-                            is_active: true,
-                          }));
-                        if (productRows.length > 0) {
-                          const { error: pErr } = await supabase
-                            .from("supplier_products")
-                            .insert(productRows);
-                          if (pErr) console.warn("supplier_products insert:", pErr.message);
-                        }
-                      }
-
-                      // 3. Update supplier with top-level OCR metadata
-                      const supplierPatch: {
-                        phone?: string;
-                        email?: string;
-                        website?: string;
-                        payment_terms?: string;
-                        commission_rate?: number;
-                      } = {};
-                      if (ocr?.phone) supplierPatch.phone = String(ocr.phone);
-                      if (ocr?.email) supplierPatch.email = String(ocr.email);
-                      if (ocr?.website) supplierPatch.website = String(ocr.website);
-                      if (ocr?.payment_terms) supplierPatch.payment_terms = String(ocr.payment_terms);
-                      if (ocr?.commission_rate != null) supplierPatch.commission_rate = Number(ocr.commission_rate);
-                      if (Object.keys(supplierPatch).length > 0) {
-                        await supabase.from("suppliers").update(supplierPatch).eq("id", supplierId);
-                      }
-
-
-                      // 4. Mark file as reviewed
-                      await supabase
-                        .from("supplier_files")
-                        .update({ ocr_reviewed: true, ocr_reviewed_at: new Date().toISOString() })
-                        .eq("id", f.id);
+                      if (error) throw error;
 
                       toast.success("Dados confirmados e persistidos com sucesso!", { id: toastId });
                       qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
@@ -620,11 +570,13 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                       qc.invalidateQueries({ queryKey: ["supplier", supplierId] });
                     } catch (e: any) {
                       toast.error("Erro ao persistir: " + e.message, { id: toastId });
+                    } finally {
+                      setIsPersisting(null);
                     }
                   }}
-                  className="mt-2 text-amber-700 border border-amber-300 rounded px-2 py-1 hover:bg-amber-100 transition-colors"
+                  className="mt-2 text-amber-700 border border-amber-300 rounded px-2 py-1 hover:bg-amber-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  ✓ Confirmar e persistir dados
+                  {isPersisting === f.id ? "Salvando..." : "✓ Confirmar e persistir dados"}
                 </button>
               </div>
             )}

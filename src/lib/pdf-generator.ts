@@ -1,5 +1,5 @@
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+// html2canvas and jsPDF are loaded on-demand to prevent build heap exhaustion.
+// Do NOT revert to static imports — these trigger Vite SSR out-of-memory errors.
 
 /**
  * Gera um hash SHA-256 no cliente usando Web Crypto API.
@@ -39,6 +39,10 @@ export async function generateContractPdf(elementId: string): Promise<Blob> {
   if (document.fonts?.ready) {
     await document.fonts.ready;
   }
+
+  // Lazy-load heavy libraries to avoid SSR bundle heap exhaustion
+  const html2canvas = (await import("html2canvas")).default;
+  const { jsPDF } = await import("jspdf");
 
   // Captura o HTML para Canvas
   const canvas = await html2canvas(element, {

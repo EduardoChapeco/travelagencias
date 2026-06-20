@@ -33,7 +33,7 @@ import {
   PrimaryButton,
 } from "@/components/ui/form";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
-import html2canvas from "html2canvas";
+// html2canvas is loaded on-demand — see getHtml2Canvas() below
 import { Instagram } from "lucide-react";
 import {
   fetchVoucherTrip,
@@ -214,7 +214,7 @@ function TripVouchers() {
       toast.loading("Inteligência Artificial Lendo PDF…", { id: "ocr" });
 
       try {
-        const aiResult = await processVoucherWithAI(file);
+        const aiResult = await processVoucherWithAI(file, agency.id);
 
         // Convertendo o resultado da IA em preenchimento inteligente de Voucher
         setDraft((d) => ({
@@ -265,6 +265,7 @@ function TripVouchers() {
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
+      const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(el, { scale: 3, useCORS: true, backgroundColor: null });
       const dataUrl = canvas.toDataURL("image/png");
 

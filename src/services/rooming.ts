@@ -80,7 +80,8 @@ export async function createRoomRecord(
 }
 
 /**
- * Update an existing room record.
+ * Update an existing room record (non-versioned — use for metadata changes).
+ * For passenger allocation, prefer `allocatePassengerToRoom` which uses versioned RPC.
  */
 export async function updateRoomRecord(
   roomId: string,
@@ -106,34 +107,66 @@ export async function deleteRoomRecord(roomId: string): Promise<void> {
   if (error) throw new Error(`Error deleting room: ${error.message}`);
 }
 
-// ─── Passenger allocation helpers ─────────────────────────────────────────────
+// ─── Versioned Passenger allocation (uses optimistic locking RPC) ─────────────
 
 /**
- * Allocate a passenger to a specific room.
- * Prevents duplicates within the same room.
+ * Allocate a passenger to a specific room using the versioned RPC.
+ * Uses optimistic locking to prevent the "Lost Update" race condition.
+ * Throws a ConflictError if another operator has modified the room concurrently.
  */
 export async function allocatePassengerToRoom(
   roomId: string,
   currentPassengers: RoomingPassenger[],
-  newPassenger: RoomingPassenger
+  newPassenger: RoomingPassenger,
+  currentVersion: number = 1,
 ): Promise<void> {
   if (currentPassengers.some((p) => p.passenger_id === newPassenger.passenger_id)) {
+    // Already allocated — no-op
     return;
   }
   const updatedPassengers = [...currentPassengers, newPassenger];
-  await updateRoomRecord(roomId, { passengers: updatedPassengers as any });
+  const success = await updatePassengersVersioned(roomId, updatedPassengers, currentVersion);
+  if (!success) {
+    throw new Error(
+      "Conflito de edição: outro operador modificou este quarto ao mesmo tempo. Recarregue a lista e tente novamente.",
+    );
+  }
 }
 
 /**
- * Deallocate a passenger from a specific room.
+ * Deallocate a passenger from a specific room using the versioned RPC.
+ * Uses optimistic locking to prevent the "Lost Update" race condition.
  */
 export async function deallocatePassengerFromRoom(
   roomId: string,
   currentPassengers: RoomingPassenger[],
-  passengerId: string
+  passengerId: string,
+  currentVersion: number = 1,
 ): Promise<void> {
-  const updatedPassengers = currentPassengers.filter(
-    (p) => p.passenger_id !== passengerId
-  );
-  await updateRoomRecord(roomId, { passengers: updatedPassengers as any });
+  const updatedPassengers = currentPassengers.filter((p) => p.passenger_id !== passengerId);
+  const success = await updatePassengersVersioned(roomId, updatedPassengers, currentVersion);
+  if (!success) {
+    throw new Error(
+      "Conflito de edição: outro operador modificou este quarto ao mesmo tempo. Recarregue a lista e tente novamente.",
+    );
+  }
+}
+
+/**
+ * Internal: calls the versioned RPC to atomically update passenger list.
+ * Returns true on success, false on version conflict.
+ */
+async function updatePassengersVersioned(
+  roomId: string,
+  passengers: RoomingPassenger[],
+  version: number,
+): Promise<boolean> {
+  const { data, error } = await (supabase as any).rpc("update_rooming_list_versioned", {
+    _room_id: roomId,
+    _passengers: passengers,
+    _version: version,
+  });
+
+  if (error) throw new Error(`Error in versioned room update: ${error.message}`);
+  return data === true;
 }

@@ -2,6 +2,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { handleViewReceipt } from "@/utils/storage-helper";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import {
@@ -360,15 +361,13 @@ function ReconciliationPage() {
                   </td>
                   <td className="px-4 py-3.5 text-right">
                     <div className="inline-flex items-center gap-1.5">
-                      <a
-                        href={rec.receipt_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                      <button
+                        onClick={() => handleViewReceipt(rec.receipt_url)}
+                        className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
                         title="Ver Comprovante"
                       >
                         <Eye className="w-4 h-4" />
-                      </a>
+                      </button>
                       <button
                         onClick={() => {
                           setSelectedReceipt(rec);
@@ -422,9 +421,12 @@ function ReconciliationPage() {
                 </div>
                 <div className="flex justify-between border-t border-border/50 pt-1.5 mt-1.5 font-bold">
                   <span className="text-gray-600">Comprovante:</span>
-                  <a href={selectedReceipt.receipt_url} target="_blank" rel="noreferrer" className="text-brand underline flex items-center gap-1">
+                  <button
+                    onClick={() => handleViewReceipt(selectedReceipt.receipt_url)}
+                    className="text-brand underline flex items-center gap-1 bg-transparent border-0 p-0 cursor-pointer"
+                  >
                     <FileText className="w-3.5 h-3.5" /> Abrir Anexo
-                  </a>
+                  </button>
                 </div>
               </div>
 

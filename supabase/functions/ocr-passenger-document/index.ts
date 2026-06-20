@@ -7,6 +7,26 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// AES Decryption for stored keys
+async function getCryptoKey(password: string) {
+  const enc = new TextEncoder();
+  return await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password.padEnd(32, "0").substring(0, 32)),
+    { name: "AES-GCM" },
+    false,
+    ["encrypt", "decrypt"],
+  );
+}
+async function decryptData(encodedBase64: string, password: string) {
+  const key = await getCryptoKey(password);
+  const payload = decode(encodedBase64);
+  const iv = payload.slice(0, 12);
+  const ciphertext = payload.slice(12);
+  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  return new TextDecoder().decode(decrypted);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -18,6 +38,8 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -28,6 +50,11 @@ serve(async (req) => {
     } = await supabaseClient.auth.getUser();
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
+    // Create service role client to query keys table and bypass RLS
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+      auth: { persistSession: false },
+    });
+
     const body = await req.json();
     const { file_base64, mime, agency_id } = body;
 
@@ -35,17 +62,54 @@ serve(async (req) => {
       throw new Error("Nenhum arquivo fornecido para análise.");
     }
 
+    if (!agency_id) {
+      throw new Error("Missing agency_id parameter.");
+    }
+
+    // Validar se o usuário do JWT é membro associado à agência no user_roles
+    const { data: userRole, error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("agency_id", agency_id)
+      .maybeSingle();
+
+    if (roleError || !userRole) {
+      throw new Error("Unauthorized: User does not belong to the requested agency.");
+    }
+
     // Obter chave API do Gemini (tenta carregar da agência ou do ENV)
     let geminiApiKey = Deno.env.get("GEMINI_API_KEY");
     if (agency_id) {
-      const { data: agencyKeyData } = await supabaseClient
-        .from("api_keys")
-        .select("key_value")
-        .eq("agency_id", agency_id)
-        .eq("provider", "gemini")
-        .maybeSingle();
-      if (agencyKeyData?.key_value) {
-        geminiApiKey = agencyKeyData.key_value;
+      // Try to query using pick_active_api_key RPC first (same as orchestrator)
+      try {
+        const { data: rpcData } = await supabaseAdmin.rpc("pick_active_api_key", {
+          _provider: "gemini",
+          _agency_id: agency_id,
+        });
+        if (rpcData && rpcData.length > 0) {
+          let val = rpcData[0].key_value;
+          const keySecret = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
+          if (val && val.includes("=====")) {
+            val = await decryptData(val, keySecret);
+          }
+          if (val) geminiApiKey = val;
+        }
+      } catch (rpcErr) {
+        console.error("RPC pick_active_api_key failed, falling back to direct table select:", rpcErr);
+      }
+
+      // Fallback to direct select via service role client (bypasses RLS)
+      if (!geminiApiKey) {
+        const { data: agencyKeyData } = await supabaseAdmin
+          .from("api_keys")
+          .select("key_value")
+          .eq("agency_id", agency_id)
+          .eq("provider", "gemini")
+          .maybeSingle();
+        if (agencyKeyData?.key_value) {
+          geminiApiKey = agencyKeyData.key_value;
+        }
       }
     }
 

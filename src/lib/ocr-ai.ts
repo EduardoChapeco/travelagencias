@@ -15,7 +15,7 @@ export interface VoucherAIResult {
  * Processa um arquivo (PDF ou Imagem) enviando o conteúdo binário em base64
  * para a Edge Function, que fará a extração e análise usando IA.
  */
-export async function processVoucherWithAI(file: File): Promise<VoucherAIResult> {
+export async function processVoucherWithAI(file: File, agencyId?: string): Promise<VoucherAIResult> {
   return new Promise<VoucherAIResult>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async () => {
@@ -24,7 +24,7 @@ export async function processVoucherWithAI(file: File): Promise<VoucherAIResult>
         const base64 = result.split(",")[1];
 
         const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
-          body: { file_base64: base64, mime: file.type, file_name: file.name },
+          body: { file_base64: base64, mime: file.type, file_name: file.name, agency_id: agencyId },
         });
 
         if (error) {

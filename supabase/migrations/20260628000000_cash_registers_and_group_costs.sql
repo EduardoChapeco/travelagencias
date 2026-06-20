@@ -19,7 +19,7 @@ ALTER TABLE public.cash_registers ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "agency_cash_registers" ON public.cash_registers
   FOR ALL USING (
     agency_id IN (
-      SELECT agency_id FROM public.agency_users WHERE user_id = auth.uid()
+      SELECT agency_id FROM public.user_roles WHERE user_id = auth.uid()
     )
   );
 
@@ -46,7 +46,7 @@ ALTER TABLE public.cash_sessions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "agency_cash_sessions" ON public.cash_sessions
   FOR ALL USING (
     agency_id IN (
-      SELECT agency_id FROM public.agency_users WHERE user_id = auth.uid()
+      SELECT agency_id FROM public.user_roles WHERE user_id = auth.uid()
     )
   );
 
@@ -78,7 +78,7 @@ ALTER TABLE public.cash_transactions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "agency_cash_transactions" ON public.cash_transactions
   FOR ALL USING (
     agency_id IN (
-      SELECT agency_id FROM public.agency_users WHERE user_id = auth.uid()
+      SELECT agency_id FROM public.user_roles WHERE user_id = auth.uid()
     )
   );
 
@@ -104,7 +104,7 @@ ALTER TABLE public.group_tour_costs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "agency_group_tour_costs" ON public.group_tour_costs
   FOR ALL USING (
     agency_id IN (
-      SELECT agency_id FROM public.agency_users WHERE user_id = auth.uid()
+      SELECT agency_id FROM public.user_roles WHERE user_id = auth.uid()
     )
   );
 
@@ -155,7 +155,7 @@ BEGIN
       FOR ALL USING (
         trip_id IN (
           SELECT t.id FROM public.trips t
-          JOIN public.agency_users au ON au.agency_id = t.agency_id
+          JOIN public.user_roles au ON au.agency_id = t.agency_id
           WHERE au.user_id = auth.uid()
         )
       );
@@ -178,7 +178,7 @@ ALTER TABLE public.knowledge_playbooks ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "agency_knowledge_playbooks" ON public.knowledge_playbooks
   FOR ALL USING (
     agency_id IN (
-      SELECT agency_id FROM public.agency_users WHERE user_id = auth.uid()
+      SELECT agency_id FROM public.user_roles WHERE user_id = auth.uid()
     )
   );
 
@@ -197,7 +197,7 @@ CREATE POLICY "agency_playbook_steps" ON public.knowledge_playbook_steps
   FOR ALL USING (
     playbook_id IN (
       SELECT kp.id FROM public.knowledge_playbooks kp
-      JOIN public.agency_users au ON au.agency_id = kp.agency_id
+      JOIN public.user_roles au ON au.agency_id = kp.agency_id
       WHERE au.user_id = auth.uid()
     )
   );

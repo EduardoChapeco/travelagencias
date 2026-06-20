@@ -173,11 +173,25 @@ function ClientTripDetail() {
   const uploadReceipt = useMutation({
     mutationFn: async ({ instId, file }: { instId: string; file: File }) => {
       const fileExt = file.name.split(".").pop();
-      const filePath = `receipts/${instId}_${Date.now()}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage.from("payment-receipts").upload(filePath, file);
+      const agencyId = tripQ.data?.agency_id;
+      if (!agencyId) throw new Error("Agency ID not found on trip.");
+      // Build a deterministic path: agencyId/installmentId/timestamp.ext
+      const filePath = `${agencyId}/${instId}/${Date.now()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("payment-receipts")
+        .upload(filePath, file, { upsert: false });
       if (uploadError) throw uploadError;
-      const { data: publicUrlData } = supabase.storage.from("payment-receipts").getPublicUrl(uploadData.path);
-      const { error } = await supabase.from("payment_installments").update({ receipt_url: publicUrlData.publicUrl, receipt_status: "pending", receipt_uploaded_at: new Date().toISOString() } as any).eq("id", instId);
+      // Store the storage path (NOT a public URL) so that handleViewReceipt()
+      // can generate a signed URL on demand from the private bucket.
+      const storagePath = uploadData.path;
+      const { error } = await supabase
+        .from("payment_installments")
+        .update({
+          receipt_url: storagePath,
+          receipt_status: "pending",
+          receipt_uploaded_at: new Date().toISOString(),
+        } as any)
+        .eq("id", instId);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Comprovante enviado! Aguardando verificação da agência."); qc.invalidateQueries({ queryKey: ["client-installments", id] }); },

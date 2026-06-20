@@ -26,12 +26,14 @@ function Page() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedInst, setSelectedInst] = useState<Installment | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [agencyId, setAgencyId] = useState<string | null>(null);
 
   const handleUploadReceipt = async (instId: string, file: File) => {
     setIsUploading(true);
     try {
       const fileExt = file.name.split(".").pop();
-      const filePath = `receipts/${instId}_${Date.now()}.${fileExt}`;
+      if (!agencyId) throw new Error("ID da agência não carregado.");
+      const filePath = `${agencyId}/${token}/${instId}_${Date.now()}.${fileExt}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("payment-receipts")
         .upload(filePath, file);
@@ -86,6 +88,8 @@ function Page() {
           setIsLoading(false);
           return;
         }
+
+        setAgencyId(contractData[0]?.agency_id || null);
 
         const paymentData = await fetchPublicInstallmentsByToken(token);
         setInstallments(paymentData);

@@ -1598,13 +1598,14 @@ function RoomingListManager({
     try {
       if (currentRoom) {
         const curRoomPax = (currentRoom.passengers as unknown as RoomingPassenger[]) ?? [];
-        await deallocatePassengerFromRoom(currentRoom.id, curRoomPax, passengerId);
+        // Pass current version for optimistic locking
+        await deallocatePassengerFromRoom(currentRoom.id, curRoomPax, passengerId, (currentRoom as any).version ?? 1);
       }
       
       await allocatePassengerToRoom(roomId, roomPax, {
         passenger_id: passengerId,
         name: pax.passenger_name,
-      });
+      }, (room as any).version ?? 1);
       toast.success(`${pax.passenger_name} alocado no quarto ${room.room_number}.`);
       invalidate();
     } catch (e: any) {
@@ -1617,7 +1618,8 @@ function RoomingListManager({
     if (!room) return;
     const roomPax = (room.passengers as unknown as RoomingPassenger[]) ?? [];
     try {
-      await deallocatePassengerFromRoom(roomId, roomPax, passengerId);
+      // Pass current version for optimistic locking
+      await deallocatePassengerFromRoom(roomId, roomPax, passengerId, (room as any).version ?? 1);
       invalidate();
     } catch (e: any) {
       toast.error(e.message);

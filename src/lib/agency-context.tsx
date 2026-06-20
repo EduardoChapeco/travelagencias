@@ -3,6 +3,46 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
+/** All CSS custom properties written by the brand kit engine. */
+const BRAND_CSS_VARS = [
+  "--agency-brand",
+  "--agency-brand-light",
+  "--agency-brand-fg",
+  "--brand-primary",
+  "--brand-secondary",
+  "--brand-accent",
+  "--brand-bg",
+  "--brand-text",
+  "--brand-heading-font",
+  "--brand-body-font",
+] as const;
+
+/**
+ * Removes all agency brand CSS variables from <html> and clears the
+ * associated localStorage cache. Call this on logout or agency switch
+ * to prevent cross-tenant visual bleed.
+ */
+export function cleanupBrandKit(agencyId?: string) {
+  if (typeof document === "undefined") return;
+  const el = document.documentElement;
+  for (const v of BRAND_CSS_VARS) {
+    el.style.removeProperty(v);
+  }
+  // Remove injected Google Fonts link
+  const linkEl = document.getElementById("google-fonts-agency-head");
+  if (linkEl) linkEl.remove();
+  // Clear localStorage cache for this agency (or all brand-kit caches)
+  if (agencyId) {
+    try { localStorage.removeItem(`brand-kit-${agencyId}`); } catch { /* noop */ }
+  } else {
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("brand-kit-"))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch { /* noop */ }
+  }
+}
+
 export type Agency = {
   id: string;
   slug: string;
@@ -278,8 +318,10 @@ export function AgencyProvider({
       }
     }
 
+    // Cleanup: when agency changes (e.g., user switches agency or logs out),
+    // remove all brand CSS vars to prevent cross-tenant visual bleed.
     return () => {
-      // Clean up only if agency changes
+      cleanupBrandKit(preloadedAgency?.id);
     };
   }, [agency, brandKit, preloadedAgency]);
 

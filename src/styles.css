@@ -197,26 +197,25 @@
     border-color: var(--color-border);
   }
 
-  /* Flat Design: Eliminate static box shadows */
+  /*
+   * Flat Design: Suppress decorative box-shadows from Tailwind shadow utilities.
+   * We target only explicit shadow utility classes, NOT semantic roles like
+   * [role="dialog"] or [role="menu"] — those need per-component border styling
+   * and should not be forced here to avoid breaking Radix overlays/popovers.
+   */
   .shadow-xs,
   .shadow-sm,
   .shadow,
   .shadow-md,
   .shadow-lg,
   .shadow-xl,
-  .shadow-2xl,
-  [class*="shadow-"],
-  [class*="shadow"]:hover,
-  [data-radix-popper-content-wrapper],
-  [role="dialog"],
-  [role="menu"],
-  [role="listbox"],
-  .dialog-content,
-  .popover-content,
-  .dropdown-content,
-  .sheet-content {
+  .shadow-2xl {
     box-shadow: none !important;
-    border: 1px solid var(--color-border-strong) !important;
+  }
+
+  /* Radix popper containers — remove shadow, keep border from component styles */
+  [data-radix-popper-content-wrapper] > * {
+    box-shadow: none !important;
   }
 
   html,

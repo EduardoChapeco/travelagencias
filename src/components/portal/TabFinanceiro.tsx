@@ -2,6 +2,7 @@ import { AlertCircle, CreditCard, CheckCircle, Clock } from "lucide-react";
 import { fmtDate, money } from "@/components/ui/form";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 import { toast } from "sonner";
+import { handleViewReceipt } from "@/utils/storage-helper";
 
 interface TabFinanceiroProps {
   trip: any;
@@ -191,14 +192,12 @@ export function TabFinanceiro({
                                 <span className="font-bold">Comprovante enviado!</span> Aguardando
                                 conciliação da agência.
                                 {inst.receipt_url && (
-                                  <a
-                                    href={inst.receipt_url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-brand font-bold underline ml-1.5 inline-block"
+                                  <button
+                                    onClick={() => handleViewReceipt(inst.receipt_url)}
+                                    className="text-brand font-bold underline ml-1.5 inline-block bg-transparent border-0 p-0 cursor-pointer"
                                   >
                                     Visualizar Arquivo
-                                  </a>
+                                  </button>
                                 )}
                               </div>
                             </div>

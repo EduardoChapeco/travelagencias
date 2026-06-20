@@ -54,14 +54,36 @@ serve(async (req) => {
     if (authError || !user) {
       throw new Error("Unauthorized: Invalid JWT token.");
     }
-    const { text, file_name, file_base64, mime } = await req.json();
+    const { text, file_name, file_base64, mime, agency_id } = await req.json();
 
     if (!text && !file_base64) {
       throw new Error("Nenhum arquivo ou texto foi enviado.");
     }
 
+    if (!agency_id) {
+      throw new Error("Missing agency_id parameter.");
+    }
+
+    // Create service role client to query keys table and bypass RLS
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+      auth: { persistSession: false },
+    });
+
+    // Validar se o usuário do JWT é membro associado à agência no user_roles
+    const { data: userRole, error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("agency_id", agency_id)
+      .maybeSingle();
+
+    if (roleError || !userRole) {
+      throw new Error("Unauthorized: User does not belong to the requested agency.");
+    }
+
     // 1.6 Buscar Chaves Orquestradas
-    const { data: gs } = await supabaseClient
+    const { data: gs } = await supabaseAdmin
       .from("global_settings")
       .select("value")
       .eq("key", "integrations_config_encrypted")
@@ -80,7 +102,40 @@ serve(async (req) => {
       }
     }
 
-    const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
+    let geminiApiKey = Deno.env.get("GEMINI_API_KEY");
+    if (agency_id) {
+      // Try to query using pick_active_api_key RPC first (same as orchestrator)
+      try {
+        const { data: rpcData } = await supabaseAdmin.rpc("pick_active_api_key", {
+          _provider: "gemini",
+          _agency_id: agency_id,
+        });
+        if (rpcData && rpcData.length > 0) {
+          let val = rpcData[0].key_value;
+          const keySecret = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
+          if (val && val.includes("=====")) {
+            val = await decryptData(val, keySecret);
+          }
+          if (val) geminiApiKey = val;
+        }
+      } catch (rpcErr) {
+        console.error("RPC pick_active_api_key failed, falling back to direct table select:", rpcErr);
+      }
+
+      // Fallback to direct select via service role client (bypasses RLS)
+      if (!geminiApiKey) {
+        const { data: agencyKeyData } = await supabaseAdmin
+          .from("api_keys")
+          .select("key_value")
+          .eq("agency_id", agency_id)
+          .eq("provider", "gemini")
+          .maybeSingle();
+        if (agencyKeyData?.key_value) {
+          geminiApiKey = agencyKeyData.key_value;
+        }
+      }
+    }
+
     if (!geminiApiKey && !groqKey) {
       throw new Error("Nenhuma chave de IA configurada (Gemini ou Groq).");
     }

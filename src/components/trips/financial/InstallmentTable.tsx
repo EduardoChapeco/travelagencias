@@ -1,6 +1,7 @@
 import { CheckCircle } from "lucide-react";
 import { StatusBadge, money, fmtDate } from "@/components/ui/form";
 import { type PaymentInstallment } from "@/services/trips";
+import { handleViewReceipt } from "@/utils/storage-helper";
 
 const INST_STATUS_TONE: Record<string, "success" | "warning" | "danger" | "neutral"> = {
   paid: "success",
@@ -70,14 +71,12 @@ export function InstallmentTable({
             </td>
             <td className="py-2 text-right">
               {inst.status !== "paid" && inst.receipt_url && (
-                <a
-                  href={inst.receipt_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-block mr-2 text-[10px] text-brand hover:underline font-bold align-middle"
+                <button
+                  onClick={() => handleViewReceipt(inst.receipt_url!)}
+                  className="inline-block mr-2 text-[10px] text-brand hover:underline font-bold align-middle bg-transparent border-0 p-0 cursor-pointer"
                 >
                   Ver Recibo
-                </a>
+                </button>
               )}
               {inst.status === "pending" || inst.status === "late" ? (
                 <button

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { handleViewReceipt } from "@/utils/storage-helper";
 import {
   ArrowDownCircle,
   ArrowUpCircle,
@@ -573,14 +574,12 @@ function CashPage() {
                         <td className="px-5 py-3.5">
                           <div className="text-xs font-semibold text-foreground">{tx.notes}</div>
                           {tx.receipt_url && (
-                            <a
-                              href={tx.receipt_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[10px] text-brand hover:underline"
+                            <button
+                              onClick={() => handleViewReceipt(tx.receipt_url!)}
+                              className="text-[10px] text-brand hover:underline bg-transparent border-0 p-0 cursor-pointer"
                             >
                               Ver comprovante
-                            </a>
+                            </button>
                           )}
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground capitalize">
