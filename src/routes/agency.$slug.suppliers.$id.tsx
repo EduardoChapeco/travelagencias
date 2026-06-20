@@ -548,17 +548,18 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                     const ocr = f.ocr_data as unknown as OcrData;
                     const toastId = toast.loading("Persistindo dados extraídos...");
                     try {
+                      // Note: confirm_ocr_supplier_data is now reflected in types.ts (regenerated 2026-07-01)
                       const { error } = await supabase.rpc("confirm_ocr_supplier_data", {
                         _supplier_id: supplierId,
                         _agency_id: agencyId,
                         _file_id: f.id,
                         _contacts: ocr?.contacts || [],
                         _products: ocr?.products || [],
-                        _phone: ocr?.phone || null,
-                        _email: ocr?.email || null,
-                        _website: ocr?.website || null,
-                        _payment_terms: ocr?.payment_terms || null,
-                        _commission_rate: ocr?.commission_rate != null ? Number(ocr.commission_rate) : null,
+                        _phone: ocr?.phone || "",
+                        _email: ocr?.email || "",
+                        _website: ocr?.website || "",
+                        _payment_terms: ocr?.payment_terms || "",
+                        _commission_rate: ocr?.commission_rate != null ? Number(ocr.commission_rate) : (null as any),
                       });
 
                       if (error) throw error;

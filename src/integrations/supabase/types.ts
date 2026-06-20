@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -821,6 +821,7 @@ export type Database = {
           arrival_airport: string | null
           briefing_date: string | null
           briefing_url: string | null
+          checkin_opens_at: string | null
           checklist: Json
           created_at: string
           deleted_at: string | null
@@ -865,6 +866,7 @@ export type Database = {
           arrival_airport?: string | null
           briefing_date?: string | null
           briefing_url?: string | null
+          checkin_opens_at?: string | null
           checklist?: Json
           created_at?: string
           deleted_at?: string | null
@@ -909,6 +911,7 @@ export type Database = {
           arrival_airport?: string | null
           briefing_date?: string | null
           briefing_url?: string | null
+          checkin_opens_at?: string | null
           checklist?: Json
           created_at?: string
           deleted_at?: string | null
@@ -1023,6 +1026,7 @@ export type Database = {
           room_number: string
           room_type: string
           updated_at: string
+          version: number
         }
         Insert: {
           agency_id: string
@@ -1040,6 +1044,7 @@ export type Database = {
           room_number: string
           room_type?: string
           updated_at?: string
+          version?: number
         }
         Update: {
           agency_id?: string
@@ -1057,6 +1062,7 @@ export type Database = {
           room_number?: string
           room_type?: string
           updated_at?: string
+          version?: number
         }
         Relationships: [
           {
@@ -1505,6 +1511,103 @@ export type Database = {
             columns: ["cash_register_id"]
             isOneToOne: false
             referencedRelation: "cash_registers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_transactions: {
+        Row: {
+          agency_id: string
+          amount: number
+          cash_register_id: string
+          cash_session_id: string | null
+          category: string | null
+          created_at: string
+          created_by: string | null
+          employee_id: string | null
+          id: string
+          notes: string | null
+          operator_id: string | null
+          payment_method: string
+          receipt_url: string | null
+          transaction_date: string
+          type: string
+        }
+        Insert: {
+          agency_id: string
+          amount: number
+          cash_register_id: string
+          cash_session_id?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          operator_id?: string | null
+          payment_method?: string
+          receipt_url?: string | null
+          transaction_date?: string
+          type: string
+        }
+        Update: {
+          agency_id?: string
+          amount?: number
+          cash_register_id?: string
+          cash_session_id?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          employee_id?: string | null
+          id?: string
+          notes?: string | null
+          operator_id?: string | null
+          payment_method?: string
+          receipt_url?: string | null
+          transaction_date?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_transactions_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_cash_register_id_fkey"
+            columns: ["cash_register_id"]
+            isOneToOne: false
+            referencedRelation: "cash_registers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_cash_session_id_fkey"
+            columns: ["cash_session_id"]
+            isOneToOne: false
+            referencedRelation: "cash_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
         ]
@@ -3716,64 +3819,6 @@ export type Database = {
           },
         ]
       }
-      legal_acceptances: {
-        Row: {
-          accepted_at: string
-          agency_id: string | null
-          client_id: string | null
-          context: string | null
-          document_id: string
-          id: string
-          ip_address: string | null
-          user_agent: string | null
-          user_id: string | null
-        }
-        Insert: {
-          accepted_at?: string
-          agency_id?: string | null
-          client_id?: string | null
-          context?: string | null
-          document_id: string
-          id?: string
-          ip_address?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          accepted_at?: string
-          agency_id?: string | null
-          client_id?: string | null
-          context?: string | null
-          document_id?: string
-          id?: string
-          ip_address?: string | null
-          user_agent?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "legal_acceptances_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "agencies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "legal_acceptances_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "legal_acceptances_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "policy_documents"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       lead_activities: {
         Row: {
           agency_id: string
@@ -4236,6 +4281,64 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_acceptances: {
+        Row: {
+          accepted_at: string
+          agency_id: string | null
+          client_id: string | null
+          context: string | null
+          document_id: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string
+          agency_id?: string | null
+          client_id?: string | null
+          context?: string | null
+          document_id: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string
+          agency_id?: string | null
+          client_id?: string | null
+          context?: string | null
+          document_id?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_acceptances_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_acceptances_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_acceptances_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "policy_documents"
             referencedColumns: ["id"]
           },
         ]
@@ -6118,6 +6221,9 @@ export type Database = {
       }
       trip_passengers: {
         Row: {
+          accommodation_notes: string | null
+          accommodation_status: string | null
+          accommodation_updated_at: string | null
           agency_id: string
           birth_date: string | null
           client_id: string | null
@@ -6143,10 +6249,14 @@ export type Database = {
           passport_number: string | null
           phone: string | null
           relationship: string | null
+          status: string | null
           trip_id: string
           vaccination_certificates: Json
         }
         Insert: {
+          accommodation_notes?: string | null
+          accommodation_status?: string | null
+          accommodation_updated_at?: string | null
           agency_id: string
           birth_date?: string | null
           client_id?: string | null
@@ -6172,10 +6282,14 @@ export type Database = {
           passport_number?: string | null
           phone?: string | null
           relationship?: string | null
+          status?: string | null
           trip_id: string
           vaccination_certificates?: Json
         }
         Update: {
+          accommodation_notes?: string | null
+          accommodation_status?: string | null
+          accommodation_updated_at?: string | null
           agency_id?: string
           birth_date?: string | null
           client_id?: string | null
@@ -6201,6 +6315,7 @@ export type Database = {
           passport_number?: string | null
           phone?: string | null
           relationship?: string | null
+          status?: string | null
           trip_id?: string
           vaccination_certificates?: Json
         }
@@ -7113,6 +7228,29 @@ export type Database = {
         Returns: boolean
       }
       check_agency_limits: { Args: { _agency_id: string }; Returns: boolean }
+      close_cash_session: {
+        Args: {
+          p_notes?: string
+          p_reported_balance: number
+          p_session_id: string
+        }
+        Returns: undefined
+      }
+      confirm_ocr_supplier_data: {
+        Args: {
+          _agency_id: string
+          _commission_rate: number
+          _contacts: Json
+          _email: string
+          _file_id: string
+          _payment_terms: string
+          _phone: string
+          _products: Json
+          _supplier_id: string
+          _website: string
+        }
+        Returns: undefined
+      }
       confirm_payment_with_token: {
         Args: { _payment_method: string; _receipt_url: string; _token: string }
         Returns: string
@@ -7190,6 +7328,8 @@ export type Database = {
           alerts: string[]
           briefing_date: string
           briefing_url: string
+          checkin_links: Json
+          checkin_opens_at: string
           checklist: Json
           id: string
           pnr: string
@@ -7314,6 +7454,15 @@ export type Database = {
         Args: { p_source_id: string; p_target_id: string }
         Returns: undefined
       }
+      open_cash_session: {
+        Args: {
+          p_agency_id: string
+          p_notes?: string
+          p_opening_balance: number
+          p_register_id: string
+        }
+        Returns: string
+      }
       persist_boarding_card_move: {
         Args: { _card_id: string; _reordered_ids: string[]; _to_status: string }
         Returns: undefined
@@ -7385,7 +7534,6 @@ export type Database = {
           agency_id: string
           agency_logo: string
           agency_name: string
-          certificate: Json
           client_data: Json
           content_hash: string
           custom_clauses: Json
@@ -7394,7 +7542,6 @@ export type Database = {
           package_summary: string
           passengers_data: Json
           payment_terms: string
-          signatures: Json
           signed_at: string
           status: string
           total_value: number
@@ -7633,6 +7780,10 @@ export type Database = {
         }
         Returns: string
       }
+      sync_flight_to_boarding_ticket: {
+        Args: { p_itinerary_id: string }
+        Returns: undefined
+      }
       tags_to_string: { Args: { tags: string[] }; Returns: string }
       trip_financial_summary: {
         Args: { _trip_id: string }
@@ -7658,6 +7809,15 @@ export type Database = {
       update_public_boarding_card_checklist: {
         Args: { p_checklist: Json; p_id: string }
         Returns: undefined
+      }
+      update_rooming_list_versioned: {
+        Args: {
+          _agency_id?: string
+          _passengers: Json
+          _room_id: string
+          _version: number
+        }
+        Returns: boolean
       }
       upgrade_agency_plan: {
         Args: { _agency_id: string; _is_annual?: boolean; _new_plan_id: string }

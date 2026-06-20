@@ -40,16 +40,10 @@ function Page() {
 
       if (uploadError) throw uploadError;
 
-      const { data: publicUrlData } = supabase.storage
-        .from("payment-receipts")
-        .getPublicUrl(filePath);
-
-      const publicUrl = publicUrlData.publicUrl;
-
       const { error: rpcError } = await supabase.rpc("confirm_payment_with_token", {
         _token: token,
         _payment_method: "pix",
-        _receipt_url: publicUrl,
+        _receipt_url: uploadData.path,
       });
 
       if (rpcError) throw rpcError;

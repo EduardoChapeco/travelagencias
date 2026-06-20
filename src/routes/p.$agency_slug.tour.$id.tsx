@@ -130,11 +130,7 @@ function Page() {
       
       setUploadProgress(80);
       
-      const { data: { publicUrl } } = supabase.storage
-        .from("payment-receipts")
-        .getPublicUrl(fileName);
-        
-      setUploadedFile(publicUrl);
+      setUploadedFile(data.path);
       setUploadProgress(100);
       toast.success("Comprovante enviado com sucesso!");
     } catch (err: any) {

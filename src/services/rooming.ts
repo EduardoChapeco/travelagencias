@@ -161,9 +161,10 @@ async function updatePassengersVersioned(
   passengers: RoomingPassenger[],
   version: number,
 ): Promise<boolean> {
-  const { data, error } = await (supabase as any).rpc("update_rooming_list_versioned", {
+  // update_rooming_list_versioned is now in types.ts (regenerated 2026-07-01)
+  const { data, error } = await supabase.rpc("update_rooming_list_versioned", {
     _room_id: roomId,
-    _passengers: passengers,
+    _passengers: passengers as unknown as ReturnType<typeof JSON.parse>,
     _version: version,
   });
 
