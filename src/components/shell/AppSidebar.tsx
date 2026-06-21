@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   Hotel,
   BarChart3,
+  BedDouble,
 } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
@@ -46,15 +47,16 @@ import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } fr
 // Keys here use relative "to" (no base prefix). Mapped in component.
 // ─────────────────────────────────────────────────────────────────────────────
 const HUB_ITEMS: SlimSidebarItem[] = [
-  { label: "dashboard",    to: "",               icon: LayoutDashboard, exact: true },
-  { label: "daily-tasks",  to: "daily-tasks",    icon: CalendarClock,   matchPaths: ["calendar", "omnichannel"] },
-  { label: "crm",          to: "crm",            icon: Users,           matchPaths: ["proposals", "contracts"] },
-  { label: "trips",        to: "trips",          icon: Luggage,         matchPaths: ["vouchers", "boarding", "group-tours", "bus-layouts"] },
-  { label: "clients",      to: "clients",        icon: UserRound,       matchPaths: ["corporate", "suppliers"] },
-  { label: "financial",    to: "financial",      icon: Wallet },
-  { label: "support",      to: "support",        icon: LifeBuoy,        matchPaths: ["visas"] },
-  { label: "portal",       to: "portal",         icon: Globe,           adminOnly: true, matchPaths: ["competitors", "destination-intelligence"] },
-  { label: "settings",     to: "settings",       icon: Settings,        adminOnly: true, matchPaths: ["team", "brand", "integrations", "billing", "company", "productivity"] },
+  { label: "dashboard",   to: "",               icon: LayoutDashboard, exact: true },
+  { label: "daily-tasks", to: "daily-tasks",    icon: CalendarClock,   matchPaths: ["calendar", "omnichannel"] },
+  { label: "crm",         to: "crm",            icon: Users,           matchPaths: ["proposals", "contracts"] },
+  { label: "trips",       to: "trips",          icon: Luggage,         matchPaths: ["vouchers", "boarding"] },
+  { label: "Grupos & Excursões", to: "group-tours", icon: Bus,         matchPaths: ["bus-layouts", "rooming-list"] },
+  { label: "clients",     to: "clients",        icon: UserRound,       matchPaths: ["corporate", "suppliers"] },
+  { label: "financial",   to: "financial",      icon: Wallet },
+  { label: "support",     to: "support",        icon: LifeBuoy,        matchPaths: ["visas"] },
+  { label: "portal",      to: "portal",         icon: Globe,           adminOnly: true, matchPaths: ["competitors", "destination-intelligence"] },
+  { label: "settings",    to: "settings",       icon: Settings,        adminOnly: true, matchPaths: ["team", "brand", "integrations", "billing", "company", "productivity"] },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -74,12 +76,16 @@ const MOBILE_ITEMS: SlimSidebarItem[] = [
   { label: "proposals",         to: "proposals",                   icon: FileText },
   { label: "contracts",         to: "contracts",                   icon: ScrollText },
 
-  { type: "header", label: "Viagens & Grupos" },
-  { label: "trips",             to: "trips",                       icon: Luggage },
-  { label: "vouchers",          to: "vouchers",                    icon: Plane },
-  { label: "boarding",          to: "boarding",                    icon: ClipboardCheck },
-  { label: "group-tours",       to: "group-tours",                 icon: Bus },
-  { label: "bus-layouts",       to: "bus-layouts",                 icon: Bus },
+  { type: "header", label: "Viagens" },
+  { label: "trips",        to: "trips",         icon: Luggage },
+  { label: "vouchers",     to: "vouchers",      icon: Plane },
+  { label: "boarding",     to: "boarding",      icon: ClipboardCheck },
+
+  { type: "header", label: "Grupos & Excursões" },
+  { label: "group-tours",  to: "group-tours",   icon: Bus },
+  { label: "bus-layouts",  to: "bus-layouts",   icon: Bus },
+  { label: "Rooming List", to: "rooming-list",  icon: BedDouble },
+
 
   { type: "header", label: "Clientes & Parceiros" },
   { label: "clients",           to: "clients",                     icon: UserRound },
@@ -181,24 +187,39 @@ function buildContext(
     };
   }
 
-  // ── Viagens & Grupos (list) ────────────────────────────────────────────────
+  // ── Viagens (individual trips list) ─────────────────────────────────────────────────
   if (
     pathname.includes("/trips") ||
     pathname.includes("/boarding") ||
-    pathname.includes("/vouchers") ||
-    pathname.includes("/group-tours") ||
-    pathname.includes("/bus-layouts")
+    pathname.includes("/vouchers")
   ) {
     return {
-      title: "Viagens & Grupos",
+      title: "Viagens",
       items: [
         { label: "Todas as Viagens",      to: `${base}/trips`,       icon: Luggage },
         { label: "Aéreos & Conferência",  to: `${base}/vouchers`,    icon: Plane },
         { label: "Check-in & Embarques",  to: `${base}/boarding`,    icon: ClipboardCheck },
-        { label: "Excursões & Grupos",    to: `${base}/group-tours`, icon: Bus },
-        { label: "Frota & Ônibus",        to: `${base}/bus-layouts`, icon: Bus },
       ],
       aiActions: [],
+    };
+  }
+
+  // ── Grupos & Excursões ─────────────────────────────────────────────────
+  if (
+    pathname.includes("/group-tours") ||
+    pathname.includes("/bus-layouts") ||
+    pathname.includes("/rooming-list")
+  ) {
+    return {
+      title: "Grupos & Excursões",
+      items: [
+        { label: "Excursões & Grupos",   to: `${base}/group-tours`,    icon: Bus },
+        { label: "Frota & Ônibus",       to: `${base}/bus-layouts`,    icon: Bus },
+        { label: "Rooming List Geral",   to: `${base}/rooming-list`,   icon: BedDouble },
+      ],
+      aiActions: [
+        { label: "Resumir Grupos", prompt: "Liste os grupos de excursão ativos e me dê um resumo de ocupação e status." },
+      ],
     };
   }
 
