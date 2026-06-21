@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Search, Sparkles, AlertTriangle } from "lucide-react";
+import { Search, Sparkles, AlertTriangle, Menu } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { AIChatPanel } from "./AIChatPanel";
@@ -35,20 +35,7 @@ export function AppShell({
 
   const isPastDue = subQuery.data === "past_due";
   const [aiOpen, setAiOpen] = useState(false);
-  const [isPinned, setIsPinned] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("sidebar-pinned") === "true";
-    }
-    return false;
-  });
-
-  const togglePin = () => {
-    setIsPinned((v) => {
-      const next = !v;
-      localStorage.setItem("sidebar-pinned", String(next));
-      return next;
-    });
-  };
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
@@ -94,11 +81,19 @@ export function AppShell({
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
-      <AppSidebar isPinned={isPinned} onTogglePin={togglePin} />
+      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
       <CommandMenu />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-[58px] shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden shrink-0"
+            aria-label="Abrir menu"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
           <nav className="flex min-w-0 items-center gap-1 ds-meta">
             {crumbs
               .filter((c) => c !== "agency" && c !== agency?.slug)
