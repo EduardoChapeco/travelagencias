@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "build:safe": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "deploy": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build && npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
