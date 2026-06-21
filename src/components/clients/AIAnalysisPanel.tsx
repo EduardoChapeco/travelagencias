@@ -86,7 +86,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
 
       if (error) throw error;
       let resultText = data?.result;
-      if (!resultText) throw new Error("Não foi possível obter uma resposta da IA.");
+      if (!resultText) throw new Error("Não foi possível obter uma resposta do assistente.");
 
       resultText = resultText.replace(/```json\s*|```\s*/g, "").trim();
       const parsed = JSON.parse(resultText);
@@ -94,7 +94,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
       if (parsed && typeof parsed === "object") {
         setAnalysis(parsed);
       } else {
-        throw new Error("Formato inválido de JSON retornado pela IA.");
+        throw new Error("Formato inválido retornado pelo assistente.");
       }
     } catch (e) {
       console.error(e);
@@ -113,7 +113,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
       >
         <div className="flex items-center gap-2">
           <Brain className="h-4 w-4 text-brand" />
-          Análise IA do Perfil
+          Análise de Perfil
         </div>
         <div className="text-[10px] font-bold text-brand opacity-70">BETA</div>
       </button>
@@ -124,7 +124,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
             <div className="pt-4 text-center">
               <Sparkles className="h-8 w-8 text-brand mx-auto mb-3 opacity-60" />
               <p className="text-sm text-muted-foreground mb-4">
-                A IA analisará o histórico de viagens, cotações e padrões de comportamento do
+                O assistente analisará o histórico de viagens, cotações e padrões de comportamento do
                 cliente.
               </p>
               <button
@@ -179,7 +179,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
 
               <div className="space-y-2">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Sugestões da IA
+                  Sugestões do Assistente
                 </div>
                 {analysis.suggestions.map((s: string, i: number) => (
                   <div key={i} className="flex gap-2 text-sm text-foreground">

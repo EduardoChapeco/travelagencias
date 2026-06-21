@@ -321,7 +321,7 @@ export function NewTripWizard({
                   >
                     <Input {...register("destination")} placeholder="Ex: Cancún, México" />
                   </Field>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="Data de Ida Prevista" error={errors.travel_start?.message}>
                       <Input type="date" {...register("travel_start")} />
                     </Field>
@@ -383,7 +383,7 @@ export function NewTripWizard({
                       >
                         <Input {...register("new_client_document")} placeholder="000.000.000-00" />
                       </Field>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Field label="E-mail" error={errors.new_client_email?.message}>
                           <Input
                             type="email"
@@ -403,7 +403,7 @@ export function NewTripWizard({
               {/* STEP 2: Financeiro */}
               {step === 2 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="Status Inicial" error={errors.status?.message}>
                       <Select {...register("status")}>
                         <option value="planning">Planejamento</option>

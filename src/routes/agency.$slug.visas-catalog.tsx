@@ -312,7 +312,7 @@ function RequirementFormSheet({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Prazo Estimado (Dias)" hint="Tempo médio de liberação">
             <Input
               type="number"

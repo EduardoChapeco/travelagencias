@@ -290,7 +290,7 @@ function PublicLeadFormPage() {
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand" /> Datas Previstas
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Ida Prevista">
                   <Input
                     type="date"
@@ -471,7 +471,7 @@ function PublicLeadFormPage() {
                       className="h-9 text-xs"
                     />
                   </Field>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Field label="CPF / Documento">
                       <Input
                         placeholder="Apenas números"

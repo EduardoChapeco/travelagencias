@@ -210,19 +210,19 @@ function TripVouchers() {
       toast.loading("Enviando arquivo original…", { id: "ocr" });
       const signedUrl = await uploadVoucherSourceFile(agency.id, tripId, file);
 
-      // OCR Inteligente via PDF.js + AI Edge Function
-      toast.loading("Inteligência Artificial Lendo PDF…", { id: "ocr" });
+      // OCR via PDF.js
+      toast.loading("Processando e lendo PDF…", { id: "ocr" });
 
       try {
         const aiResult = await processVoucherWithAI(file, agency.id);
 
-        // Convertendo o resultado da IA em preenchimento inteligente de Voucher
+        // Convertendo o resultado da leitura em preenchimento de Voucher
         setDraft((d) => ({
           ...d,
           destination: aiResult.title || d.destination,
           general_locator: aiResult.locator || d.general_locator,
           observations:
-            "Extraído via IA OCR\n\nProvedor: " +
+            "Extraído via OCR\n\nProvedor: " +
             (aiResult.provider || "") +
             "\n\nTexto Bruto:\n" +
             (aiResult.raw_extracted_text?.substring(0, 400) || ""),
@@ -230,11 +230,11 @@ function TripVouchers() {
           source_type: "operator_pdf" as const,
         }));
 
-        toast.success("Dados estruturados pela IA com sucesso!", { id: "ocr" });
+        toast.success("Dados extraídos com sucesso!", { id: "ocr" });
       } catch (err: any) {
         toast.warning(
           err.message ||
-            "A IA não conseguiu ler os dados exatos. O arquivo foi salvo, mas preencha manualmente.",
+            "Não foi possível ler todos os dados automaticamente. O arquivo foi salvo, mas preencha manualmente.",
           { id: "ocr", duration: 5000 },
         );
         setDraft((d) => ({

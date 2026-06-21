@@ -175,7 +175,7 @@ function PassengersPage() {
         .upload(filePath, file);
       if (uploadErr) throw uploadErr;
 
-      toast.loading("Analisando com Inteligência Artificial (OCR)...", { id: toastId });
+      toast.loading("Analisando documento (OCR)...", { id: toastId });
 
       // B. Converter para base64
       const reader = new FileReader();
@@ -208,7 +208,7 @@ function PassengersPage() {
           if (extractedData.expiration_date) {
             expirationDate = extractedData.expiration_date;
           }
-          toast.success("IA extraiu os dados com sucesso!", { id: toastId });
+          toast.success("Dados extraídos do documento!", { id: toastId });
         } else {
           console.warn("OCR returned empty or error", ocrErr);
           toast.success("Documento enviado sem extração automática.", { id: toastId });
@@ -585,7 +585,7 @@ function PassengersPage() {
                     </div>
                     <label className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
-                      Anexar & Processar OCR
+                      Anexar & Extrair Dados
                       <input
                         type="file"
                         accept="application/pdf,image/*"

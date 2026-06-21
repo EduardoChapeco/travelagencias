@@ -78,7 +78,7 @@ function Page() {
           <div className="mb-4 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-brand" />
             <div>
-              <h3 className="text-sm font-semibold">Orquestrador de IA</h3>
+              <h3 className="text-sm font-semibold">Modelos de Inteligência Artificial</h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Chaves utilizadas pelas Edge Functions para geração de viagens, roteiros e OCR.
               </p>

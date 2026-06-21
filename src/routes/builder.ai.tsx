@@ -18,8 +18,8 @@ import { searchUnsplashPhoto } from "@/lib/unsplash";
 export const Route = createFileRoute("/builder/ai")({
   head: () => ({
     meta: [
-      { title: "AI Site Builder · TravelOS" },
-      { name: "description", content: "Crie seu site completo com inteligência artificial." },
+      { title: "Criador de Sites · TravelOS" },
+      { name: "description", content: "Crie seu site completo de forma rápida e simples." },
     ],
   }),
   component: AISiteBuilder,
@@ -41,7 +41,7 @@ function AISiteBuilder() {
     {
       role: "assistant",
       content:
-        "Olá! Sou o assistente de inteligência artificial da TravelOS. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
+        "Olá! Sou o assistente virtual da TravelOS. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
     },
   ]);
   const [input, setInput] = useState("");
@@ -124,7 +124,7 @@ function AISiteBuilder() {
       );
 
       if (aiError || !aiResponse || !aiResponse.blocks) {
-        throw new Error(aiError?.message || "Falha na geração do layout pela IA.");
+        throw new Error(aiError?.message || "Falha na geração do layout.");
       }
 
       setCurrentStep(3);
@@ -188,8 +188,8 @@ function AISiteBuilder() {
       setCurrentProgress(progressSteps[4]);
 
       // 3. Save to database (portal_pages)
-      const pageTitle = `Site Gerado IA - ${new Date().toLocaleDateString()}`;
-      const slugValue = `ia-site-${Math.random().toString(36).substring(2, 7)}`;
+      const pageTitle = `Site Gerado - ${new Date().toLocaleDateString()}`;
+      const slugValue = `site-${Math.random().toString(36).substring(2, 7)}`;
 
       const { data: newPage, error: saveError } = await supabase
         .from("portal_pages")
@@ -203,7 +203,7 @@ function AISiteBuilder() {
           published_at: new Date().toISOString(),
           seo: {
             meta_title: pageTitle,
-            meta_description: "Site completo de turismo criado por Inteligência Artificial.",
+            meta_description: "Site completo de turismo gerado automaticamente.",
           },
         })
         .select("id, slug")
@@ -275,8 +275,8 @@ function AISiteBuilder() {
             </Link>
           )}
           <div>
-            <h1 className="text-xs font-bold uppercase tracking-wider text-brand">AI Builder</h1>
-            <p className="text-[10px] text-muted-foreground">Portal & Landing Page Generator</p>
+            <h1 className="text-xs font-bold uppercase tracking-wider text-brand">Criador de Sites</h1>
+            <p className="text-[10px] text-muted-foreground">Gerador automático de portal e páginas</p>
           </div>
         </div>
 
@@ -309,7 +309,7 @@ function AISiteBuilder() {
 
           <div className="border border-border rounded-xl p-4 bg-surface-alt/20 space-y-2.5">
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-brand" /> Dicas de prompts
+              <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
             <ul className="space-y-1.5 text-[10px] text-muted-foreground list-disc pl-4 leading-normal">
               <li>"Site de cruzeiros de luxo no Caribe com grid de destinos e depoimentos."</li>

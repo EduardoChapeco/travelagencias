@@ -640,7 +640,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
         </div>
       </form>
 
-      <div className="rounded-lg border border-border bg-surface overflow-hidden">
+      <div className="rounded-lg border border-border bg-surface overflow-x-auto">
         {(q.data ?? []).length === 0 ? (
           <div className="flex flex-col items-center gap-2 p-8 text-xs text-muted-foreground">
             <KeyRound className="h-6 w-6" />

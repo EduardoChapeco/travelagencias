@@ -357,7 +357,7 @@ function BoardingKanbanPage() {
                   Nenhum localizador de embarque cadastrado.
                 </div>
               ) : (
-                <div className="overflow-hidden border border-border rounded-sm bg-surface">
+                <div className="overflow-x-auto border border-border rounded-sm bg-surface">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
                       <tr className="border-b border-border bg-surface-alt font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">

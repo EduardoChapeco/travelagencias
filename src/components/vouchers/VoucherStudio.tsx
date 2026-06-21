@@ -188,7 +188,7 @@ export function VoucherStudio({
             setOpenId={setOpenSection}
           >
             {passengers.map((p, i) => (
-              <div key={i} className="grid grid-cols-2 gap-1.5 rounded-md border border-border p-2">
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 rounded-md border border-border p-2">
                 <Lbl label="Nome">
                   <input
                     className={SMALL}
@@ -260,8 +260,8 @@ export function VoucherStudio({
           >
             {flights.map((f, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <div className="sm:col-span-2">
                     <Lbl label="Buscar Cia Aérea no Catálogo">
                       <SupplierAutocomplete
                         agencyId={draft.agency_id ?? ""}
@@ -423,8 +423,8 @@ export function VoucherStudio({
           >
             {accommodation.map((a, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
-                <div className="grid grid-cols-2 gap-1.5">
-                <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                <div className="sm:col-span-2">
                   <Lbl label="Buscar Hotel no Catálogo da Agência">
                     <SupplierAutocomplete
                       agencyId={draft.agency_id ?? ""}
@@ -564,8 +564,8 @@ export function VoucherStudio({
           >
             {transfers.map((t, i) => (
               <div key={i} className="space-y-1.5 rounded-md border border-border p-2">
-                <div className="grid grid-cols-2 gap-1.5">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <div className="sm:col-span-2">
                     <Lbl label="Buscar Operadora de Transfer">
                       <SupplierAutocomplete
                         agencyId={draft.agency_id ?? ""}
@@ -677,7 +677,7 @@ export function VoucherStudio({
             setOpenId={setOpenSection}
           >
             {emergency.map((c, i) => (
-              <div key={i} className="grid grid-cols-2 gap-1.5 rounded-md border border-border p-2">
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 rounded-md border border-border p-2">
                 <Lbl label="Nome">
                   <input
                     className={SMALL}

@@ -158,7 +158,7 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
           </Field>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Quantidade de Dias">
             <Input
               type="number"

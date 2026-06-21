@@ -126,7 +126,7 @@ function Page() {
               onChange={(e) => setForm({ ...form, full_name: e.target.value })}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="CPF">
               <Input
                 value={form.cpf ?? ""}
@@ -141,7 +141,7 @@ function Page() {
               />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Passaporte">
               <Input
                 value={form.passport_number ?? ""}
@@ -162,7 +162,7 @@ function Page() {
               onChange={(e) => setForm({ ...form, nationality: e.target.value })}
             />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="E-mail">
               <Input
                 type="email"

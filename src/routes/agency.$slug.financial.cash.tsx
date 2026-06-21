@@ -865,7 +865,7 @@ function TransactionForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Valor (R$) *" error={errors.amount?.message?.toString()}>
           <Input type="number" step="0.01" {...register("amount")} required />
         </Field>
@@ -983,7 +983,7 @@ function ReconciliationForm({
         />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Cliente pagou à Agência (A)">
           <Input type="number" step="0.01" {...register("client_paid_agency")} />
         </Field>

@@ -96,7 +96,7 @@ export function NewPassengerSheet({
             <Input {...register("fullName")} placeholder="Nome conforme o documento" autoFocus />
           </Field>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Tipo de Viajante" error={errors.kind?.message}>
               <Select {...register("kind")}>
                 <option value="adult">Adulto</option>
@@ -114,7 +114,7 @@ export function NewPassengerSheet({
               <FileText className="w-4 h-4 text-muted-foreground" />
               Documentação Primária
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Tipo de Documento" error={errors.documentType?.message}>
                 <Select {...register("documentType")}>
                   <option value="passport">Passaporte</option>
@@ -132,7 +132,7 @@ export function NewPassengerSheet({
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Email (Opcional)" error={errors.email?.message}>
               <Input type="email" {...register("email")} placeholder="passageiro@email.com" />
             </Field>

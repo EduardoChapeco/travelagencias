@@ -25,7 +25,7 @@ export function MagicAIAssistant({ draft, onApply }: Props) {
   const [busy, setBusy] = useState(false);
 
   async function handleMagic() {
-    if (!prompt.trim()) return toast.error("Digite o que a IA deve fazer");
+    if (!prompt.trim()) return toast.error("Digite as instruções de escrita");
     setBusy(true);
 
     try {
@@ -65,7 +65,7 @@ Não inclua crases markdown nem texto adicional.`;
       toast.success("Mágica aplicada com sucesso!");
       setOpen(false);
     } catch (e) {
-      toast.error("Falha ao gerar o roteiro com IA. Tente novamente.");
+      toast.error("Falha ao gerar o roteiro. Tente novamente.");
       console.error(e);
     } finally {
       setBusy(false);
@@ -79,13 +79,13 @@ Não inclua crases markdown nem texto adicional.`;
           type="button"
           className="flex h-9 items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
         >
-          <Sparkles className="h-3.5 w-3.5" /> Magic AI
+          <Sparkles className="h-3.5 w-3.5" /> Assistente de Escrita
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-amber-600">
-            <Sparkles className="h-5 w-5" /> Assistente de Escrita IA
+            <Sparkles className="h-5 w-5" /> Assistente de Escrita
           </DialogTitle>
           <DialogDescription>
             Deixe o TravelOS reescrever e enriquecer os textos do seu roteiro e proposta para você.
@@ -95,14 +95,14 @@ Não inclua crases markdown nem texto adicional.`;
         <div className="mt-4 space-y-4">
           <div>
             <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-2 block">
-              Instrução para a IA
+              Instruções para o Assistente
             </label>
             <textarea
               rows={4}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
-              placeholder="Como a IA deve reescrever esta proposta?"
+              placeholder="Como o assistente deve reescrever esta proposta?"
             />
           </div>
 

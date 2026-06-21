@@ -114,7 +114,7 @@ function DailyTasksRoute() {
       qc.invalidateQueries({ queryKey: ["agent_tasks"] });
       setDialogOpen(false);
       setNewTaskTitle("");
-      toast.success("Tarefa criada! A IA avaliará a dificuldade.");
+      toast.success("Tarefa criada com sucesso!");
     },
   });
 
@@ -232,7 +232,7 @@ function DailyTasksRoute() {
                         </StatusBadge>
                         <div
                           className="flex items-center gap-1 text-[10px] bg-brand/10 text-brand px-1.5 py-0.5 rounded font-bold"
-                          title="Score de Dificuldade da IA"
+                          title="Complexidade Estimada"
                         >
                           <BrainCircuit className="w-3 h-3" /> {t.difficulty_score}
                         </div>

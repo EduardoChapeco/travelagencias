@@ -32,7 +32,7 @@ export function AIGeneratorSheet({ open, onOpenChange, onGenerate }: AIGenerator
 
       // 1. Scrape se for URL
       if (tab === "url") {
-        toast.loading("Lendo o conteúdo da URL (Scraping)...", { id: "ai-gen" });
+        toast.loading("Lendo o conteúdo da URL...", { id: "ai-gen" });
         const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke(
           "ai-orchestrator",
           {
@@ -48,7 +48,7 @@ export function AIGeneratorSheet({ open, onOpenChange, onGenerate }: AIGenerator
       }
 
       // 2. Completion
-      toast.loading("Escrevendo o artigo com IA...", { id: "ai-gen" });
+      toast.loading("Estruturando o texto do artigo...", { id: "ai-gen" });
       const systemPrompt = `Você é um redator especialista em turismo. 
 Escreva um artigo otimizado para SEO com o tom: ${tone}.
 Retorne APENAS HTML limpo compatível com Tiptap (sem markdown extra, sem bloco de código, sem head/body).
@@ -74,13 +74,13 @@ Contexto fornecido: ${context}`;
       if (compData?.error) throw new Error(compData.error);
 
       const html = compData.result;
-      if (!html) throw new Error("A IA não retornou nenhum texto.");
+      if (!html) throw new Error("Não foi possível gerar o texto.");
 
       toast.success("Artigo gerado com sucesso!", { id: "ai-gen" });
       onGenerate(html);
       onOpenChange(false);
     } catch (err: any) {
-      toast.error(err.message || "Falha na geração com IA.", { id: "ai-gen" });
+      toast.error(err.message || "Falha ao gerar texto.", { id: "ai-gen" });
     } finally {
       setLoading(false);
     }
@@ -90,7 +90,7 @@ Contexto fornecido: ${context}`;
     <SheetPage
       isOpen={open}
       onClose={() => onOpenChange(false)}
-      title="Redator de Artigos IA"
+      title="Assistente de Escrita de Artigos"
       width="450px"
     >
       <div className="mb-6 space-y-1">
@@ -99,7 +99,7 @@ Contexto fornecido: ${context}`;
           Gerador Inteligente
         </div>
         <p className="text-xs text-muted-foreground">
-          Deixe a inteligência artificial escrever ou curar o conteúdo do seu blog.
+          Deixe o assistente estruturar ou curar o conteúdo do seu blog.
         </p>
       </div>
       <div className="flex border-b border-border mb-4">
@@ -132,7 +132,7 @@ Contexto fornecido: ${context}`;
         ) : (
           <Field
             label="URL do conteúdo base"
-            hint="A IA vai ler esta página e reescrever o artigo para você."
+            hint="O assistente vai ler esta página e reescrever o artigo para você."
           >
             <Input
               placeholder="https://exemplo.com/materia-original"

@@ -207,7 +207,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
       {adding && (
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Nome *"><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Roberto Mendes" /></Field>
             <Field label="Função">
               <Select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}>
@@ -340,7 +340,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
       {adding && (
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Nome do Produto *"><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="ex: Suíte Deluxe Vista Mar" /></Field>
             <Field label="Tipo">
               <Select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))}>

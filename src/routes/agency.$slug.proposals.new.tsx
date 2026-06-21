@@ -94,14 +94,14 @@ function NewProposal() {
     setOcrLoading(true);
     setOcrStep("Carregando arquivo original...");
     try {
-      setOcrStep("IA lendo PDF e imagens...");
+      setOcrStep("Extraindo informações do arquivo...");
       const data = await processOcrFile(file, undefined, agency.id);
 
       setOcrStep("Estruturando voos, hotéis e roteiro...");
       // Auto-preencher dados gerais
       if (data.destination) {
         setValue("destination", data.destination, { shouldValidate: true });
-        setValue("title", `Cotação inteligente: ${data.destination}`, { shouldValidate: true });
+        setValue("title", `Cotação importada: ${data.destination}`, { shouldValidate: true });
       } else {
         setValue("title", `Cotação importada: ${file.name.replace(/\.[^/.]+$/, "")}`, {
           shouldValidate: true,
@@ -174,9 +174,9 @@ function NewProposal() {
         excludes: data.excludes ?? [],
       });
 
-      toast.success("Orçamento lido pela IA com sucesso!");
+      toast.success("Orçamento importado com sucesso!");
     } catch (e: any) {
-      toast.error(e.message || "Erro ao processar arquivo com IA.");
+      toast.error(e.message || "Erro ao processar arquivo.");
     } finally {
       setOcrLoading(false);
       setOcrStep("");
@@ -311,11 +311,10 @@ function NewProposal() {
               <Upload className="h-6 w-6" />
             </div>
             <h3 className="font-bold text-foreground text-sm flex items-center justify-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento com Inteligência
-              Artificial
+              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento Automaticamente
             </h3>
             <p className="text-xs text-muted-foreground mt-1 max-w-md">
-              Arraste um PDF/Imagem aqui ou clique para selecionar. A IA criará voos, hotéis e o
+              Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos, hotéis e o
               itinerário completo automaticamente.
             </p>
             <input
@@ -362,7 +361,7 @@ function NewProposal() {
         <Field label="Destino" error={errors.destination?.message}>
           <Input {...register("destination")} />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Cliente" error={errors.client_id?.message}>
             <Select {...register("client_id")}>
               <option value="">— selecionar —</option>
@@ -384,7 +383,7 @@ function NewProposal() {
             </Select>
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Início" error={errors.travel_start?.message}>
             <Input type="date" {...register("travel_start")} />
           </Field>
@@ -403,7 +402,7 @@ function NewProposal() {
             <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Moeda" error={errors.currency?.message}>
             <Select {...register("currency")}>
               <option value="BRL">BRL — Real</option>

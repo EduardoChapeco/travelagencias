@@ -510,7 +510,7 @@ function TripConfirmationPage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
             >
               {/* ── Left: tipo + info ── */}
               <div className="flex items-center gap-3 min-w-0">
@@ -549,9 +549,9 @@ function TripConfirmationPage() {
               </div>
 
               {/* ── Right: localizador + status + ações ── */}
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto shrink-0 border-t border-border/40 pt-3 sm:border-t-0 sm:pt-0">
                 {/* Localizador */}
-                <div className="text-right hidden sm:block">
+                <div className="text-left sm:text-right">
                   <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground block">
                     Localizador
                   </span>
@@ -580,7 +580,7 @@ function TripConfirmationPage() {
                 {/* Editar */}
                 <button
                   onClick={() => openEdit(item)}
-                  className="h-7 w-7 inline-flex items-center justify-center border border-border rounded hover:bg-surface-alt text-muted-foreground cursor-pointer transition-colors opacity-0 group-hover:opacity-100"
+                  className="h-7 w-7 inline-flex items-center justify-center border border-border rounded hover:bg-surface-alt text-muted-foreground cursor-pointer transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                   title="Editar"
                 >
                   <Pencil className="h-3 w-3" />

@@ -46,7 +46,7 @@ function CompetitorSpy() {
     setAnalysis(null);
 
     try {
-      toast.loading("Iniciando varredura (Scraping)...", { id: "spy" });
+      toast.loading("Lendo site do concorrente...", { id: "spy" });
       const { data: scrapeData, error: scrapeErr } = await supabase.functions.invoke(
         "ai-orchestrator",
         {
@@ -59,9 +59,9 @@ function CompetitorSpy() {
       const context = scrapeData.result;
       if (!context) throw new Error("Conteúdo não encontrado ou bloqueado.");
 
-      toast.loading("Processando inteligência de mercado...", { id: "spy" });
+      toast.loading("Processando dados de mercado...", { id: "spy" });
 
-      const systemPrompt = `Você é um Estrategista Chefe de Inteligência Competitiva no mercado de Turismo.
+      const systemPrompt = `Você é um estrategista de negócios de turismo.
 Analise os dados extraídos do site/perfil de uma agência de viagens concorrente.
 Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em volta, só o JSON):
 {
@@ -94,12 +94,12 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
       const text = compData.result || "";
       const match = text.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error("A IA não retornou um formato válido de análise.");
+      if (!match) throw new Error("Não foi possível gerar a análise.");
 
       const parsed = JSON.parse(match[0]) as CompetitorAnalysis;
       setAnalysis(parsed);
 
-      toast.success("Análise de Concorrente concluída com sucesso!", { id: "spy" });
+      toast.success("Análise de concorrente concluída!", { id: "spy" });
     } catch (err: any) {
       toast.error(err.message || "Erro ao espiar concorrente.", { id: "spy" });
     } finally {
@@ -115,7 +115,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Forneça a URL do website oficial de uma agência concorrente para receber uma auditoria
-          instantânea de inteligência competitiva.
+          instantânea competitiva.
         </p>
       </header>
 

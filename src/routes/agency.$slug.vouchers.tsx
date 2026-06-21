@@ -521,7 +521,7 @@ function VouchersPage() {
             )}
 
             {flightsQ.data && filteredFlights.length > 0 && (
-              <div className="border border-border rounded-xl bg-surface overflow-hidden">
+              <div className="border border-border rounded-xl bg-surface overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
                   <thead className="bg-surface-alt/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
                     <tr>

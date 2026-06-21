@@ -214,7 +214,7 @@ function CorporatePage() {
                 </StatusBadge>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
                 <div>
                   <div className="text-muted-foreground mb-0.5">Solicitante</div>
                   <div className="font-medium truncate" title={rfp.requester_email}>

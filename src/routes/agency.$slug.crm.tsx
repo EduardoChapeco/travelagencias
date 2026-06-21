@@ -628,7 +628,7 @@ function NewLeadSheet({
           <Field label="Nome Completo *" error={errors.name?.message}>
             <Input {...register("name")} autoFocus />
           </Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="E-mail" error={errors.email?.message}>
               <Input type="email" {...register("email")} />
             </Field>
@@ -644,7 +644,7 @@ function NewLeadSheet({
             2. Detalhes do Interesse
           </h3>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Destino de Interesse" error={errors.destination?.message}>
               <Input {...register("destination")} placeholder="Ex: Paris, Orlando" />
             </Field>
@@ -656,7 +656,7 @@ function NewLeadSheet({
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Orçamento Estimado (R$)" error={errors.estimated_value?.message}>
               <Input
                 type="number"
@@ -677,7 +677,7 @@ function NewLeadSheet({
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Estágio no Funil *" error={errors.stage_id?.message}>
               <Select {...register("stage_id")}>
                 {stages.map((s) => (
@@ -700,7 +700,7 @@ function NewLeadSheet({
           </div>
 
           <div className="pt-3 border-t border-border space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Ida Prevista (Se houver data)" error={errors.travel_start?.message}>
                 <Input type="date" {...register("travel_start")} />
               </Field>

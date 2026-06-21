@@ -1004,7 +1004,7 @@ function PageEditorRoute() {
                   onClick={() => setAiModalOpen(true)}
                   className="w-full flex items-center justify-center gap-1.5 border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                 >
-                  <Sparkles className="h-3.5 w-3.5" /> Auto-gerar com IA
+                  <Sparkles className="h-3.5 w-3.5" /> Estruturar com Inteligência
                 </button>
               </div>
             )}
@@ -1477,7 +1477,7 @@ function PageEditorRoute() {
           });
           setBlocks([...blocks, ...freshBlocks]);
           if (!title) {
-            setTitle("Página Gerada por IA");
+            setTitle("Página Gerada");
           }
         }}
       />

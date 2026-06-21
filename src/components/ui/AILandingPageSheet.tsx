@@ -26,7 +26,7 @@ export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILanding
       return toast.warning("Digite a URL do site que deseja usar como base.");
 
     setLoading(true);
-    toast.loading("O arquiteto IA está construindo sua página...", { id: "ai-lp" });
+    toast.loading("O assistente está estruturando sua página...", { id: "ai-lp" });
 
     try {
       const { data, error } = await supabase.functions.invoke("generate-site-ai", {
@@ -38,9 +38,9 @@ export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILanding
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      if (!data?.blocks || !Array.isArray(data.blocks)) throw new Error("Retorno inválido da IA.");
+      if (!data?.blocks || !Array.isArray(data.blocks)) throw new Error("Retorno inválido do assistente.");
 
-      toast.success("Página mágica gerada com sucesso!", { id: "ai-lp" });
+      toast.success("Página gerada com sucesso!", { id: "ai-lp" });
       onGenerate(data.blocks);
       onOpenChange(false);
     } catch (err: any) {
@@ -54,13 +54,13 @@ export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILanding
     <SheetPage
       isOpen={open}
       onClose={() => onOpenChange(false)}
-      title="Arquiteto de Landing Pages IA"
+      title="Assistente de Criação de Páginas"
       width="clamp(400px, 40vw, 600px)"
     >
       <div className="mb-6 bg-surface-alt/50 p-4 rounded-xl border border-border">
         <p className="text-sm text-muted-foreground flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-brand" />
-          Gere páginas completas em segundos usando Prompts ou clonando o layout de sites
+          Gere páginas completas em segundos usando descrições ou clonando o layout de sites
           existentes.
         </p>
       </div>
@@ -100,7 +100,7 @@ export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILanding
         {mode === "clone" && (
           <Field
             label="URL do site inspiração"
-            hint="A IA lerá o site (via Firecrawl) e construirá os blocos TravelOS com base nele."
+            hint="O assistente lerá o site e estruturará os blocos com base nele."
           >
             <Input
               type="url"

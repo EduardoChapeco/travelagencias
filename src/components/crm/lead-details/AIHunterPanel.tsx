@@ -76,7 +76,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         .eq("lead_id", leadId)
         .maybeSingle();
       if (data) setInsights(data as LeadInsight);
-      toast.success("Análise da IA concluída!");
+      toast.success("Análise de perfil concluída!");
     } catch (e: any) {
       toast.error(e.message || "Falha ao analisar");
     } finally {
@@ -92,7 +92,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         body: { action: "create_proposal", lead_id: leadId, agency_id: agencyId },
       });
       if (error) throw error;
-      if (!data || !data.proposal_id) throw new Error("ID da proposta não retornado pela IA.");
+      if (!data || !data.proposal_id) throw new Error("ID da proposta não retornado.");
 
       setCreatedProposal({
         id: data.proposal_id,
@@ -104,7 +104,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       qc.invalidateQueries({ queryKey: ["proposals", agencyId] });
     } catch (e: any) {
       console.error(e);
-      setErrorMsg(e.message || "Erro ao gerar proposta com IA.");
+      setErrorMsg(e.message || "Erro ao gerar proposta automaticamente.");
       toast.error(e.message || "Erro ao gerar proposta");
     } finally {
       setGeneratingProposal(false);
@@ -166,7 +166,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-brand" />
           <span className="font-bold text-sm text-foreground">
-            Inteligência de Lead — Hunter Sênior
+            Análise de Perfil do Cliente
           </span>
         </div>
         <button
@@ -183,7 +183,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       <div className="rounded-xl border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
-            <Sparkles className="h-4 w-4" /> Geração de Proposta por IA
+            <Sparkles className="h-4 w-4" /> Sugestão de Proposta
           </div>
           {createdProposal && (
             <span className="text-[10px] font-extrabold uppercase bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded">
@@ -193,7 +193,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         </div>
 
         <p className="text-xs text-muted-foreground leading-relaxed">
-          O Copiloto de IA analisa as últimas 30 mensagens deste lead no chat do WhatsApp para
+          O assistente analisa as últimas 30 mensagens deste lead no chat do WhatsApp para
           extrair o roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no
           formato de rascunho com apenas 1 clique.
         </p>
@@ -207,7 +207,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
           >
             <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? "animate-spin" : ""}`} />
-            {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta com IA"}
+            {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta automaticamente"}
           </button>
 
           {createdProposal && (
@@ -253,7 +253,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
           <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
           <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
           <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
-            Quando o lead enviar mensagens via WhatsApp, a IA Hunter mapeará o perfil
+            Quando o lead enviar mensagens via WhatsApp, o assistente mapeará o perfil
             automaticamente.
           </p>
         </div>

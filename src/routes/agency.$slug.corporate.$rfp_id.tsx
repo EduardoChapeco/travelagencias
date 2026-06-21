@@ -292,8 +292,8 @@ function RfpDetailPage() {
 
               {addingOption && (
                 <div className="bg-surface-alt/50 border border-brand/30 p-4 rounded-xl mb-4 space-y-3">
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
                       <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
                         Título da Opção
                       </label>

@@ -268,7 +268,7 @@ export function NewVisaWizard({
                   loading={clientsQ.isLoading}
                 />
               </Field>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="País de Destino *">
                   <Input
                     value={country}
@@ -291,7 +291,7 @@ export function NewVisaWizard({
           {/* STEP 1: Logística */}
           {step === 1 && (
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Data Esperada da Viagem (Opcional)">
                   <Input
                     type="date"

@@ -345,7 +345,7 @@ function TourDetailPage() {
                   className="bg-surface-alt"
                 />
               </Field>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="URL da Imagem de Capa">
                   <Input
                     readOnly
@@ -433,7 +433,7 @@ function TourDetailPage() {
                 </div>
               </div>
               
-              <div className="overflow-hidden rounded border border-border">
+              <div className="overflow-x-auto rounded border border-border">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
                     <tr>
@@ -697,7 +697,7 @@ function TourDetailPage() {
             <Field label="Descrição *">
               <Input name="desc" placeholder="ex: Seguro Viagem Allianz, Lanche Bordo" required />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Valor Unitário (R$) *">
                 <Input name="amount" type="number" step="0.01" required />
               </Field>

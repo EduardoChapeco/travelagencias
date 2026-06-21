@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
-  head: () => ({ meta: [{ title: "Destination Intelligence · TravelOS" }] }),
+  head: () => ({ meta: [{ title: "Informações de Destinos · TravelOS" }] }),
   component: DestinationIntelligencePage,
 });
 
@@ -207,7 +207,7 @@ function DestinationIntelligencePage() {
   async function generateWithAI(destination: string) {
     setGenerating(destination);
     const toastId = "ai-dest";
-    toast.loading(`Gerando inteligência para ${destination}…`, { id: toastId });
+    toast.loading(`Atualizando informações para ${destination}…`, { id: toastId });
     try {
       // Call edge function for AI generation
       const { data, error } = await supabase.functions.invoke("destination-intelligence", {
@@ -223,10 +223,10 @@ function DestinationIntelligencePage() {
           ai_generated_at: new Date().toISOString(),
         }).eq("id", existing.id);
         qc.invalidateQueries({ queryKey: ["destination-info"] });
-        toast.success(`IA atualizou ${destination}!`, { id: toastId });
+        toast.success(`Informações de ${destination} atualizadas!`, { id: toastId });
       }
     } catch (e: any) {
-      toast.error(e.message || "Falha ao gerar com IA", { id: toastId });
+      toast.error(e.message || "Falha ao atualizar dados", { id: toastId });
     } finally {
       setGenerating(null);
     }
@@ -267,7 +267,7 @@ function DestinationIntelligencePage() {
         <div>
           <h1 className="text-sm font-bold text-foreground flex items-center gap-1.5">
             <Globe className="h-4 w-4 text-brand" />
-            Destination Intelligence
+            Informações de Destinos
           </h1>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             Banco de dados curado de destinos — visto, saúde, cultura, segurança.
@@ -386,7 +386,7 @@ function DestinationIntelligencePage() {
                         onClick={() => generateWithAI(dest.destination)}
                         disabled={generating === dest.destination}
                         className="h-6 w-6 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand transition-colors"
-                        title="Atualizar com IA"
+                        title="Atualizar dados automaticamente"
                       >
                         <RefreshCw className={`h-3 w-3 ${generating === dest.destination ? "animate-spin" : ""}`} />
                       </button>
@@ -476,7 +476,7 @@ function DestinationIntelligencePage() {
                   {/* Metadata and Review status */}
                   <div className="text-[9px] text-muted-foreground/60 pt-1 border-t border-border/30 flex flex-wrap gap-x-3 gap-y-1">
                     {dest.ai_generated_at && (
-                      <span>IA: {new Date(dest.ai_generated_at).toLocaleDateString("pt-BR")} · {dest.ai_model ?? "AI"}</span>
+                      <span>Atualizado: {new Date(dest.ai_generated_at).toLocaleDateString("pt-BR")}</span>
                     )}
                     {dest.reviewed_at && (
                       <span className="text-success font-semibold flex items-center gap-0.5">
