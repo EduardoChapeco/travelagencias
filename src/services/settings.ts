@@ -74,6 +74,7 @@ export async function fetchApiKeys(agencyId: string, provider?: string) {
     agency_id: agencyId,
     provider: c.provider_code,
     key_value: c.masked_hint,
+    label: c.label,
     is_active: c.status === "healthy",
     created_at: c.created_at,
   }));
@@ -91,6 +92,10 @@ export async function saveApiKey(agencyId: string, payload: any) {
       agency_id: agencyId,
       provider: payload.provider,
       key_value: payload.key_value,
+      label: payload.label,
+      monthly_limit: payload.monthly_limit,
+      priority: payload.priority,
+      upsert_by: payload.upsert_by,
     }
   });
   if (error) throw error;
@@ -103,6 +108,10 @@ export async function createApiKey(payload: any) {
       agency_id: payload.agency_id,
       provider: payload.provider,
       key_value: payload.key_value,
+      label: payload.label,
+      monthly_limit: payload.monthly_limit,
+      priority: payload.priority,
+      upsert_by: payload.upsert_by,
     }
   });
   if (error) throw error;

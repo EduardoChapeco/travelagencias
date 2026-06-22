@@ -556,6 +556,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
         key_value: form.key_value,
         monthly_limit: form.monthly_limit ? Number(form.monthly_limit) : null,
         is_active: true,
+        upsert_by: "fingerprint",
       });
       toast.success("Chave adicionada");
       setForm({ provider: "", label: "", key_value: "", monthly_limit: "" });

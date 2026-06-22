@@ -880,7 +880,7 @@ Regras de Extração:
 
     // --- Action: SAVE CREDENTIAL (Secure key storage) ---
     if (action === "save-credential") {
-      const { provider, key_value } = body;
+      const { provider, key_value, label, monthly_limit, priority, upsert_by } = body;
       const agencyId = body.agency_id || body.agencyId;
 
       if (!provider || !key_value || !agencyId) {
@@ -890,7 +890,7 @@ Regras de Extração:
       // Resolve provider ID
       const { data: prov, error: provErr } = await supabaseAdmin
         .from("ai_providers")
-        .select("id")
+        .select("id, name")
         .eq("code", provider)
         .single();
       if (provErr || !prov) throw new Error("Unsupported provider: " + provider);
@@ -912,12 +912,17 @@ Regras de Extração:
         : "key_masked";
 
       // Upsert into ai_api_credentials
-      const { data: existing } = await supabaseAdmin
+      let query = supabaseAdmin
         .from("ai_api_credentials")
         .select("id")
         .eq("agency_id", agencyId)
-        .eq("provider_id", prov.id)
-        .maybeSingle();
+        .eq("provider_id", prov.id);
+
+      if (upsert_by === "fingerprint") {
+        query = query.eq("fingerprint", fingerprint);
+      }
+
+      const { data: existing } = await query.maybeSingle();
 
       let result;
       if (existing) {
@@ -927,6 +932,9 @@ Regras de Extração:
             secret_reference: encryptedValue,
             fingerprint,
             masked_hint: maskedHint,
+            label: label || prov.name,
+            monthly_limit: monthly_limit !== undefined ? monthly_limit : null,
+            priority: priority !== undefined ? priority : 0,
             status: "healthy",
             updated_at: new Date().toISOString()
           })
@@ -944,6 +952,9 @@ Regras de Extração:
             secret_reference: encryptedValue,
             fingerprint,
             masked_hint: maskedHint,
+            label: label || prov.name,
+            monthly_limit: monthly_limit !== undefined ? monthly_limit : null,
+            priority: priority !== undefined ? priority : 0,
             status: "healthy"
           })
           .select("id, masked_hint, status")
@@ -964,7 +975,7 @@ Regras de Extração:
 
       const { data: credentials, error } = await supabaseAdmin
         .from("ai_api_credentials")
-        .select("id, provider_id, masked_hint, status, priority, last_used_at, created_at")
+        .select("id, provider_id, masked_hint, status, priority, last_used_at, created_at, label")
         .eq("agency_id", agencyId);
 
       if (error) throw error;
