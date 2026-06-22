@@ -22,7 +22,8 @@ async function getCryptoKey(password: string) {
 
 async function decryptData(encodedBase64: string, password: string) {
   const key = await getCryptoKey(password);
-  const payload = decode(encodedBase64);
+  const cleanBase64 = encodedBase64.startsWith("=====") ? encodedBase64.substring(5) : encodedBase64;
+  const payload = decode(cleanBase64);
   const iv = payload.slice(0, 12);
   const ciphertext = payload.slice(12);
 
