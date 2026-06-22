@@ -212,7 +212,7 @@ function Page() {
       className="mx-auto min-h-screen bg-[#f7f5ef] pb-12 font-sans"
       style={
         {
-          "--color-brand": agency.brand_color || "#ff4f9a",
+          "--color-brand": agency.brand_color || "#151515",
           "--color-brand-foreground": agency.brand_color_fg || "#ffffff",
         } as React.CSSProperties
       }
@@ -260,7 +260,7 @@ function Page() {
         {/* Price Tag & Description */}
         <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-10">
           <div>
-            <div className="text-3xl font-mono font-bold tracking-tight text-[#ff4f9a]">
+            <div className="text-3xl font-mono font-bold tracking-tight text-[var(--color-brand)]">
               {Number(t.base_price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
             </div>
             <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1 font-bold">
@@ -289,9 +289,9 @@ function Page() {
                     {days.map((d: any, i: number) => (
                       <li
                         key={i}
-                        className="rounded-xl border border-gray-200 bg-white p-4 relative overflow-hidden group hover:border-[#ff4f9a]/30 transition-colors shadow-sm"
+                        className="rounded-xl border border-gray-200 bg-white p-4 relative overflow-hidden group hover:border-[var(--color-brand)]/30 transition-colors shadow-sm"
                       >
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-200 group-hover:bg-[#ff4f9a] transition-colors" />
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-200 group-hover:bg-[var(--color-brand)] transition-colors" />
                         <div className="font-bold text-sm text-gray-800 ml-2">
                           Dia {d.day_number} — {d.title}
                         </div>
@@ -380,8 +380,8 @@ function Page() {
                             isAssigned
                               ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50 border-gray-200"
                               : isSelected
-                                ? "border-[#ff4f9a] bg-[#ff4f9a] text-white"
-                                : "border-gray-300 bg-white hover:border-[#ff4f9a]/50 hover:bg-gray-50",
+                                ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-[var(--color-brand-foreground)]"
+                                : "border-gray-300 bg-white hover:border-[var(--color-brand)]/50 hover:bg-gray-50",
                           )}
                         >
                           <span>{cell.label}</span>
@@ -395,7 +395,7 @@ function Page() {
                     <div className="h-3 w-3 rounded bg-white border border-gray-300" /> Livre
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-3 w-3 rounded bg-[#ff4f9a]" /> Selecionada
+                    <div className="h-3 w-3 rounded bg-[var(--color-brand)]" /> Selecionada
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="h-3 w-3 rounded bg-gray-100 border border-gray-200" /> Ocupada
@@ -516,7 +516,7 @@ function Page() {
                     setLgpdConsent(e.target.checked);
                     if (e.target.checked) setLgpdError(false);
                   }}
-                  className="mt-0.5 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-[#ff4f9a] focus:ring-[#ff4f9a] cursor-pointer accent-[#ff4f9a]"
+                  className="mt-0.5 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-[var(--color-brand)] focus:ring-[var(--color-brand)] cursor-pointer accent-[var(--color-brand)]"
                 />
                 <label htmlFor="lgpd_consent" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
                   Li e concordo com o processamento dos meus dados pessoais para fins de cadastro, contato e reserva desta viagem, em conformidade com a{" "}
@@ -525,7 +525,7 @@ function Page() {
                   <a
                     href="#"
                     onClick={(e) => e.preventDefault()}
-                    className="underline text-[#ff4f9a] hover:text-[#e03d80] font-semibold"
+                    className="underline text-[var(--color-brand)] hover:opacity-90 font-semibold"
                   >
                     Política de Privacidade
                   </a>
@@ -541,7 +541,7 @@ function Page() {
               <PrimaryButton
                 type="submit"
                 disabled={!lgpdConsent}
-                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[#ff4f9a] hover:bg-[#e03d80] text-white rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
               >
                 Avançar para Pagamento — {money(totalPrice)}
               </PrimaryButton>
@@ -589,7 +589,7 @@ function Page() {
                   
                   {uploadProgress > 0 && (
                     <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
-                      <div className="bg-[#ff4f9a] h-1.5 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                      <div className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
                     </div>
                   )}
                 </div>

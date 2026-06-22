@@ -23,8 +23,15 @@ export async function processVoucherWithAI(file: File, agencyId?: string): Promi
         const result = reader.result as string;
         const base64 = result.split(",")[1];
 
-        const { data, error } = await supabase.functions.invoke("ai-voucher-ocr", {
-          body: { file_base64: base64, mime: file.type, file_name: file.name, agency_id: agencyId },
+        const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+          body: {
+            action: "completion",
+            feature: "ocr_voucher",
+            file_base64: base64,
+            mime: file.type,
+            file_name: file.name,
+            agency_id: agencyId,
+          },
         });
 
         if (error) {

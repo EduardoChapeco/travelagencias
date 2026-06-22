@@ -65,8 +65,14 @@ function TripFinancial() {
         reader.onerror = rej;
         reader.readAsDataURL(file);
       });
-      const { data, error } = await supabase.functions.invoke("ocr-boleto", {
-        body: { file_base64: b64, mime: file.type, agency_id: agency.id },
+      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+        body: {
+          action: "completion",
+          feature: "ocr_boleto",
+          file_base64: b64,
+          mime: file.type,
+          agency_id: agency.id,
+        },
       });
       if (error) throw new Error(error.message);
       setOcrResult(data?.result ?? data);

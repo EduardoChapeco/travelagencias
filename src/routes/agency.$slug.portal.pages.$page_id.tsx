@@ -1467,6 +1467,7 @@ function PageEditorRoute() {
       <AILandingPageSheet
         open={aiModalOpen}
         onOpenChange={setAiModalOpen}
+        agencyId={agency?.id}
         onGenerate={(newBlocks: any[]) => {
           const freshBlocks = newBlocks.map((b) => {
             const deepCopiedBlock = JSON.parse(JSON.stringify(b));

@@ -35,6 +35,7 @@ function FinancialLayout() {
     { to: "/agency/$slug/financial/reconciliation" as any, label: "Conciliação diária" },
     { to: "/agency/$slug/financial/dre" as any, label: "DRE" },
     { to: "/agency/$slug/financial/invoices" as any, label: "Faturas" },
+    { to: "/agency/$slug/financial/groups" as any, label: "Grupos e Excursões" },
   ] as const;
 
   return (

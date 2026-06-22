@@ -146,8 +146,10 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
     reader.onload = async () => {
       try {
         const base64 = (reader.result as string).split(",")[1];
-        const { data, error } = await supabase.functions.invoke("ocr-proposal", {
+        const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
           body: {
+            action: "completion",
+            feature: "ocr_proposal",
             file_base64: base64,
             mime: file.type,
             file_name: file.name,
@@ -218,6 +220,7 @@ export interface CreateProposalPayload {
   valid_until?: string;
   notes?: string;
   visibility?: "private" | "agency" | "public";
+  group_tour_id?: string | null;
 }
 
 export async function createProposal(
@@ -243,6 +246,7 @@ export async function createProposal(
     visibility: payload.visibility || "private",
     owner_id: ownerId || null,
     is_public_template: false,
+    group_tour_id: payload.group_tour_id || null,
     // Safely enforce defaults for JSONB NOT NULL fields
     flights: [],
     hotels: [],

@@ -51,7 +51,7 @@ const HUB_ITEMS: SlimSidebarItem[] = [
   { label: "daily-tasks", to: "daily-tasks",    icon: CalendarClock,   matchPaths: ["calendar", "omnichannel"] },
   { label: "crm",         to: "crm",            icon: Users,           matchPaths: ["proposals", "contracts"] },
   { label: "trips",       to: "trips",          icon: Luggage,         matchPaths: ["vouchers", "boarding"] },
-  { label: "Grupos & Excursões", to: "group-tours", icon: Bus,         matchPaths: ["bus-layouts", "rooming-list"] },
+  { label: "Grupos & Excursões", to: "group-tours", icon: Bus,         matchPaths: ["bus-layouts", "rooming-list", "financial/groups"] },
   { label: "clients",     to: "clients",        icon: UserRound,       matchPaths: ["corporate", "suppliers"] },
   { label: "financial",   to: "financial",      icon: Wallet },
   { label: "support",     to: "support",        icon: LifeBuoy,        matchPaths: ["visas"] },
@@ -85,6 +85,7 @@ const MOBILE_ITEMS: SlimSidebarItem[] = [
   { label: "group-tours",  to: "group-tours",   icon: Bus },
   { label: "bus-layouts",  to: "bus-layouts",   icon: Bus },
   { label: "Rooming List", to: "rooming-list",  icon: BedDouble },
+  { label: "Financeiro de Grupos", to: "financial/groups", icon: Wallet },
 
 
   { type: "header", label: "Clientes & Parceiros" },
@@ -208,7 +209,8 @@ function buildContext(
   if (
     pathname.includes("/group-tours") ||
     pathname.includes("/bus-layouts") ||
-    pathname.includes("/rooming-list")
+    pathname.includes("/rooming-list") ||
+    pathname.includes("/financial/groups")
   ) {
     return {
       title: "Grupos & Excursões",
@@ -216,6 +218,7 @@ function buildContext(
         { label: "Excursões & Grupos",   to: `${base}/group-tours`,    icon: Bus },
         { label: "Frota & Ônibus",       to: `${base}/bus-layouts`,    icon: Bus },
         { label: "Rooming List Geral",   to: `${base}/rooming-list`,   icon: BedDouble },
+        { label: "Financeiro do Hub",    to: `${base}/financial/groups`, icon: Wallet },
       ],
       aiActions: [
         { label: "Resumir Grupos", prompt: "Liste os grupos de excursão ativos e me dê um resumo de ocupação e status." },

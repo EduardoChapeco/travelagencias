@@ -55,6 +55,8 @@ const safePwaPlugins = (Array.isArray(pwaPlugins) ? pwaPlugins : [pwaPlugins]).m
 export default defineConfig({
   nitro: {
     preset: "cloudflare-pages",
+    // @ts-expect-error: minify is supported by Nitro config
+    minify: false,
     // @ts-ignore: custom property for error handler
     errorHandler: "./src/nitro-error-handler.ts",
   },

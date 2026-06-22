@@ -63,41 +63,65 @@ export async function saveSettings(
 // ─── API Keys ────────────────────────────────────────────────────────────────
 
 export async function fetchApiKeys(agencyId: string, provider?: string) {
-  let q = supabase.from("api_keys").select("*").eq("agency_id", agencyId);
-  if (provider) q = q.eq("provider", provider);
-  const { data, error } = await q;
+  const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: { action: "list-credentials", agency_id: agencyId }
+  });
   if (error) throw error;
-  return data;
+  
+  const credentials = data?.credentials || [];
+  const mapped = credentials.map((c: any) => ({
+    id: c.id,
+    agency_id: agencyId,
+    provider: c.provider_code,
+    key_value: c.masked_hint,
+    is_active: c.status === "healthy",
+    created_at: c.created_at,
+  }));
+
+  if (provider) {
+    return mapped.filter((m: any) => m.provider === provider);
+  }
+  return mapped;
 }
 
 export async function saveApiKey(agencyId: string, payload: any) {
-  const existing = await supabase
-    .from("api_keys")
-    .select("id")
-    .eq("agency_id", agencyId)
-    .eq("provider", payload.provider)
-    .maybeSingle();
-  if (existing.data) {
-    const { error } = await supabase.from("api_keys").update(payload).eq("id", existing.data.id);
-    if (error) throw error;
-  } else {
-    const { error } = await supabase.from("api_keys").insert({ ...payload, agency_id: agencyId });
-    if (error) throw error;
-  }
+  const { error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: {
+      action: "save-credential",
+      agency_id: agencyId,
+      provider: payload.provider,
+      key_value: payload.key_value,
+    }
+  });
+  if (error) throw error;
 }
 
 export async function createApiKey(payload: any) {
-  const { error } = await supabase.from("api_keys").insert(payload);
+  const { error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: {
+      action: "save-credential",
+      agency_id: payload.agency_id,
+      provider: payload.provider,
+      key_value: payload.key_value,
+    }
+  });
   if (error) throw error;
 }
 
 export async function toggleApiKey(id: string, is_active: boolean) {
-  const { error } = await supabase.from("api_keys").update({ is_active }).eq("id", id);
+  const status = is_active ? "healthy" : "disabled";
+  const { error } = await (supabase as any)
+    .from("ai_api_credentials")
+    .update({ status })
+    .eq("id", id);
   if (error) throw error;
 }
 
 export async function deleteApiKey(id: string) {
-  const { error } = await supabase.from("api_keys").delete().eq("id", id);
+  const { error } = await (supabase as any)
+    .from("ai_api_credentials")
+    .delete()
+    .eq("id", id);
   if (error) throw error;
 }
 

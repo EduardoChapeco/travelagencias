@@ -8,14 +8,61 @@ const corsHeaders = {
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") || "";
 
+async function checkMembership(
+  supabaseAdmin: any,
+  userId: string,
+  agencyId?: string | null,
+): Promise<boolean> {
+  const { data: roles, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("role, agency_id")
+    .eq("user_id", userId);
+
+  if (error || !roles) return false;
+
+  const isSuperAdmin = roles.some((r: any) => r.role === "super_admin");
+  if (isSuperAdmin) return true;
+
+  if (!agencyId) return false;
+  return roles.some((r: any) => r.agency_id === agencyId);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false },
+    });
+
+    const authHeader = req.headers.get("Authorization");
+    let isPublic = true;
+    let user = null;
+
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      if (token === serviceRoleKey) {
+        isPublic = false;
+      } else if (token !== supabaseAnonKey) {
+        const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user: authUser }, error: authError } = await supabaseClient.auth.getUser();
+        if (!authError && authUser) {
+          user = authUser;
+          isPublic = false;
+        } else {
+          return new Response(JSON.stringify({ error: "Unauthorized: Invalid JWT token." }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+    }
 
     const { messages, pageContext, sessionId, agencySlug, clientIp } = await req.json();
 
@@ -23,16 +70,30 @@ serve(async (req) => {
       return new Response("Missing parameters", { status: 400, headers: corsHeaders });
     }
 
-    const { data: agency } = await supabase
+    const { data: agency } = await supabaseAdmin
       .from("agencies")
       .select("id, name")
       .eq("slug", agencySlug)
       .single();
     if (!agency) return new Response("Agency not found", { status: 404, headers: corsHeaders });
 
-    // Rate Limiting (Max 7 interações/14 mensagens + 1 system)
+    // Validate membership if authenticated user is making the call
+    if (!isPublic && user) {
+      const hasAccess = await checkMembership(supabaseAdmin, user.id, agency.id);
+      if (!hasAccess) {
+        return new Response(
+          JSON.stringify({ error: "Access denied: User does not belong to the requested agency." }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // Rate Limiting (Max 7 interactions for public, higher or no limit for authenticated members)
     const interactionCount = messages.filter((m: any) => m.role === "user").length;
-    const MUST_CONVERT = interactionCount >= 7;
+    const MUST_CONVERT = isPublic && (interactionCount >= 7);
 
     const systemPrompt = {
       role: "system",
@@ -101,7 +162,7 @@ ${MUST_CONVERT ? "⚠️ URGENTE: O TEMPO DO CHAT ACABOU. VOCÊ NÃO PODE MAIS R
         const args = JSON.parse(toolCall.function.arguments);
 
         // Save to CRM via RPC
-        const { data: leadData, error: leadError } = await (supabase.rpc as any)(
+        const { data: leadData, error: leadError } = await supabaseAdmin.rpc(
           "submit_public_lead",
           {
             _agency_slug: agencySlug,

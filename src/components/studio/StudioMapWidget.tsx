@@ -12,12 +12,14 @@ import { toast } from "sonner";
 import { uploadProposalMedia } from "@/services/proposal-storage";
 
 // Fix leaflet default icon issue
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+if (typeof window !== "undefined") {
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  });
+}
 
 export type Waypoint = {
   id: string;
@@ -53,11 +55,25 @@ export function StudioMapWidget({
   onMapCaptured,
   onWaypointsChange,
 }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [localWaypoints, setLocalWaypoints] = useState<Waypoint[]>(waypoints);
   const [searchQuery, setSearchQuery] = useState("");
   const [capturing, setCapturing] = useState(false);
   const [searching, setSearching] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
+
+  if (!mounted || typeof window === "undefined") {
+    return (
+      <div className="h-[400px] w-full rounded-md border bg-surface-alt/30 flex items-center justify-center text-muted-foreground text-sm">
+        <Loader2 className="h-6 w-6 animate-spin text-brand/60 mr-2" />
+        Carregando mapa interativo...
+      </div>
+    );
+  }
 
   async function handleSearch() {
     if (!searchQuery) return;

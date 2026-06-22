@@ -1,0 +1,22 @@
+# 01. Plano vs. Implementação
+
+Este documento apresenta o mapeamento detalhado de cada fase planejada em confronto com o código realmente implementado, identificando lacunas e divergências técnicas.
+
+## Mapeamento Geral do Plano
+
+| Fase | Entrega Prometida | Arquivo Previsto | Arquivo Real | Banco | UI | Integração | Testes | Status Real | Evidência/Crítica |
+| :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- | :--- |
+| **Fase 1** | Correção de Cores & Design System | `src/styles.css` | `src/styles.css` | N/A | Sim | Sim | Sim | **REAL PONTA A PONTA** | Variáveis CSS `--accent` e `--brand` alteradas para tons neutros. B2C template atualizado. |
+| **Fase 2** | Banco de Dados & RLS | Migrações SQL | `supabase/migrations/20260702000000_group_rooming_list_status.sql` | Sim | N/A | Sim | Sim | **REAL PONTA A PONTA** | Colunas de status adicionadas via DDL. Compatível com RLS. |
+| **Fase 3** | Rooming List Consolidada | `agency.$slug.rooming-list.tsx` | `src/routes/agency.$slug.rooming-list.tsx` | Sim | Sim | Sim | Sim | **REAL PONTA A PONTA** | Interface completa de arrastar e soltar (DndKit) com checklist e exportação Excel. |
+| **Fase 4** | Financeiro de Grupos | `agency.$slug.financial.groups.tsx` | `src/routes/agency.$slug.financial.groups.tsx` | Sim | Sim | Sim | Sim | **REAL PONTA A PONTA** | Métricas financeiras e de ROI consolidadas. Menu lateral e abas configurados. |
+| **Fase 5** | Recibos de Pagamento | `PaymentReceiptModal.tsx` | `src/components/financial/PaymentReceiptModal.tsx` | Sim | Sim | Sim | Sim | **REAL PONTA A PONTA** | Recibo A4 e térmico (80mm) implementado com renderizador de imagem/PDF. |
+| **Fase 6** | Flyers de Divulgação | Canvas e Proposal Studio | `src/routes/agency.$slug.group-tours.$id.tsx` | Sim | Sim | Sim | Sim | **PARCIAL** | O canvas 9:16 funciona bem, mas a clonagem de brochuras gera registros no Proposal Studio sem vincular explicitamente a chave `group_tour_id` (não existe a coluna na tabela `proposals`). |
+| **Fase 7** | Portal do Cliente | Uplink de Viagens de Grupos | `src/routes/client.trips.$id.tsx` | Sim | Sim | Sim | Sim | **PARCIAL (BLOQUEADO POR RLS)** | A UI consome os dados da excursão e tenta ler a Rooming List no frontend. No entanto, a RLS da tabela `boarding_rooming_list` impede que clientes leiam a tabela (apenas `authenticated` que são membros da agência), quebrando a exibição de acomodação para o cliente em produção. |
+| **Fase 8** | Fluxo de Aprovação de Inscrição | Criação de trip/planos/financeiro | `src/routes/agency.$slug.group-tours.$id.tsx` | Sim | Sim | Sim | Sim | **PARCIAL (NÃO ATÔMICA)** | O fluxo de aprovação executa múltiplos inserts sequenciais no frontend em vez de uma transação atômica (RPC). Se um passo intermediário falhar, cria registros órfãos e inconsistência financeira. |
+
+## Detalhamento das Divergências Encontradas
+
+1. **Inscrição Não Atômica (Fase 8)**: Em vez de invocar uma RPC única `approve_group_enrollment`, o frontend executa 5 consultas `supabase.from(...).insert(...)` encadeadas. Isso viola as melhores práticas de integridade transacional de bancos de dados.
+2. **Segurança do Portal do Cliente (Fase 7)**: O portal do cliente tenta ler toda a tabela `boarding_rooming_list` do grupo para buscar o quarto do passageiro logado. Isto é bloqueado pelas políticas de isolamento RLS atuais da tabela, que exigem que o usuário seja membro da agência. Abrir o SELECT da tabela para qualquer cliente autenticado traria falhas graves de privacidade (um passageiro poderia ver os nomes e números de quarto dos demais no DevTools).
+3. **Chave Estrangeira Ausente no Proposal Studio (Fase 6)**: A criação de brochuras cria propostas órfãs na tabela `proposals`, pois não há uma coluna nativa `group_tour_id` em `proposals` para fazer o link reverso estruturado.

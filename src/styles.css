@@ -99,12 +99,12 @@
   --muted: #f2f0ea;
   --muted-foreground: #777168;
   --muted-2: #a39b90;
-  --accent: #ff4f9a;
-  --accent-soft: #fff0f6;
+  --accent: #151515;
+  --accent-soft: #f8f7f4;
 
   /* Brand da agência — sobrescrível em runtime */
   --brand: var(--agency-brand, #151515);
-  --brand-light: var(--agency-brand-light, #fff0f6);
+  --brand-light: var(--agency-brand-light, #f8f7f4);
   --brand-foreground: var(--agency-brand-fg, #ffffff);
 
   --success: #157f3d;
@@ -172,8 +172,8 @@
   --muted: #292825;
   --muted-foreground: #a39b90;
   --muted-2: #777168;
-  --accent: #ff4f9a;
-  --accent-soft: #381a26;
+  --accent: #f8f7f4;
+  --accent-soft: #1f1e1b;
   --border: #2d2b27;
   --border-strong: #3f3c38;
   --input: #151515;

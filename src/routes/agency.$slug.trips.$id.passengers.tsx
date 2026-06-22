@@ -194,9 +194,11 @@ function PassengersPage() {
       let expirationDate = customExpDate || null;
       try {
         const { data: ocrData, error: ocrErr } = await supabase.functions.invoke(
-          "ocr-passenger-document",
+          "ai-orchestrator",
           {
             body: {
+              action: "completion",
+              feature: "ocr_passenger",
               file_base64: fileBase64,
               mime: file.type,
               agency_id: agency.id,

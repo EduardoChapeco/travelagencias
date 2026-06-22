@@ -21,6 +21,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+async function checkMembership(
+  supabaseAdmin: any,
+  userId: string,
+  agencyId?: string | null,
+): Promise<boolean> {
+  const { data: roles, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("role, agency_id")
+    .eq("user_id", userId);
+
+  if (error || !roles) return false;
+
+  const isSuperAdmin = roles.some((r: any) => r.role === "super_admin");
+  if (isSuperAdmin) return true;
+
+  if (!agencyId) return false;
+  return roles.some((r: any) => r.agency_id === agencyId);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -61,14 +80,9 @@ Deno.serve(async (req) => {
     }
 
     // ── Verify membership ─────────────────────────────────────────
-    const { data: member } = await supabase
-      .from("agency_members")
-      .select("role")
-      .eq("agency_id", agency_id)
-      .eq("user_id", user.id)
-      .maybeSingle();
+    const hasAccess = await checkMembership(supabase, user.id, agency_id);
 
-    if (!member) {
+    if (!hasAccess) {
       return new Response(JSON.stringify({ error: "Acesso negado" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

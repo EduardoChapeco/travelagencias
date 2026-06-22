@@ -35,3 +35,11 @@ dist-ssr
 target-repo/
 message_extract.txt
 message_extract_utf8.txt
+
+# Scratch files and patches
+scratch_*
+scratch*.*
+patch_*
+count_routes.cjs
+*.cjs
+

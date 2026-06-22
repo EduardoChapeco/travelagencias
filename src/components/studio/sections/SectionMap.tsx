@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Map } from "lucide-react";
 import { Accordion } from "@/components/proposals/ProposalFormFields";
 import { type Proposal } from "@/services/proposals";
-import { StudioMapWidget, type Waypoint } from "@/components/studio/StudioMapWidget";
+import type { Waypoint } from "@/components/studio/StudioMapWidget";
+
+const StudioMapWidget = lazy(() =>
+  import("@/components/studio/StudioMapWidget").then((m) => ({
+    default: m.StudioMapWidget,
+  }))
+);
 
 interface SectionMapProps {
   draft: Proposal;
@@ -58,19 +64,28 @@ export function SectionMap({ draft, save }: SectionMapProps) {
                 Fechar
               </button>
             </div>
-            <StudioMapWidget
-              agencyId={draft.agency_id}
-              proposalId={draft.id}
-              waypoints={(draft.waypoints as Waypoint[]) ?? []}
-              onWaypointsChange={(waypoints) => save({ waypoints: waypoints as any })}
-              onMapCaptured={(url) => {
-                save({ map_image_url: url });
-                setShowMap(false);
-              }}
-            />
+            <Suspense
+              fallback={
+                <div className="h-[400px] w-full rounded-md border bg-surface-alt/30 flex items-center justify-center text-muted-foreground text-sm animate-pulse">
+                  Carregando mapa interativo...
+                </div>
+              }
+            >
+              <StudioMapWidget
+                agencyId={draft.agency_id}
+                proposalId={draft.id}
+                waypoints={(draft.waypoints as Waypoint[]) ?? []}
+                onWaypointsChange={(waypoints) => save({ waypoints: waypoints as any })}
+                onMapCaptured={(url) => {
+                  save({ map_image_url: url });
+                  setShowMap(false);
+                }}
+              />
+            </Suspense>
           </div>
         )}
       </div>
     </Accordion>
   );
 }
+

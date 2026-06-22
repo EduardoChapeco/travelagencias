@@ -58,7 +58,7 @@ export async function fetchClientTrips() {
 export async function fetchClientTripDetail(tripId: string) {
   const { data, error } = await supabase
     .from("trips")
-    .select("*, agency:agencies(*)")
+    .select("*, agency:agencies(*), group_tour:group_tours(*)")
     .eq("id", tripId)
     .is("deleted_at", null) // ✅ Never show soft-deleted trips to client
     .maybeSingle();

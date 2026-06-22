@@ -1,0 +1,22 @@
+# Matriz de Realidade de Funcionalidades
+
+Esta matriz classifica formalmente cada funcionalidade auditada com base em evidências do código fonte, banco de dados e rotas.
+
+---
+
+## 📊 Matriz de Classificação Forense
+
+| Funcionalidade / Componente | Classificação | Evidência Técnica (Arquivo / Linha) | Detalhe Técnico |
+| :--- | :--- | :--- | :--- |
+| **Orquestrador Central de IA** | `REAL PONTA A PONTA` | [ai-orchestrator/index.ts:L347](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/ai-orchestrator/index.ts#L347) | Centraliza chamadas para Gemini, OpenAI, Groq, com fallbacks dinâmicos. |
+| **Criptografia GCM de Credenciais** | `REAL PONTA A PONTA` | [ai-orchestrator/index.ts:L11-L45](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/ai-orchestrator/index.ts#L11-L45) | Encripta via AES-GCM usando chave interna de servidor antes de persistir chaves. |
+| **Membership Guard em Edge Functions** | `REAL PONTA A PONTA` | [ai-orchestrator/index.ts:L129-L149](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/ai-orchestrator/index.ts#L129-L149) | Bloqueia requisições caso usuário decodificado pelo JWT não pertença à agência. |
+| **Fila Assíncrona de OCR (Jobs)** | `REAL NÃO TESTADA` | [ai-orchestrator/index.ts:L828-L879](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/ai-orchestrator/index.ts#L828-L879) | Implementada via `ai_jobs` e Deno deploy `waitUntil`, mas sem suíte de testes ponta a ponta. |
+| **Scrape de Sites (Firecrawl /v1/)** | `REAL NÃO TESTADA` | [ai-orchestrator/index.ts:L651-L709](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/ai-orchestrator/index.ts#L651-L709) | Alterado para a API real `/v1/scrape` do Firecrawl, mas necessita chave configurada no banco. |
+| **Cadastro de Cotações (InPage)** | `DUPLICADA` | [agency.$slug.proposals.new.tsx](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.proposals.new.tsx) | Página completa para cadastro com OCR, cujo formulário e lógica repetem o drawer. |
+| **Cadastro de Cotações (Drawer)** | `DUPLICADA` | [NewProposalSheet.tsx](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/components/proposals/NewProposalSheet.tsx) | Gaveta lateral para cadastro rápido com OCR, duplicando todos os campos e hooks da rota `/new`. |
+| **OCR do Caixa Financeiro** | `IMPLEMENTADA COM ARQUITETURA INCORRETA` | [financial.cash.tsx:L320](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.financial.cash.tsx#L320) | Chama diretamente `/functions/v1/ocr-boleto` ignorando o Orquestrador Central. |
+| **Extrator OCR de Fornecedores** | `IMPLEMENTADA COM ARQUITETURA INCORRETA` | [suppliers.$id.tsx:L468](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.suppliers.$id.tsx#L468) | Chama diretamente `/functions/v1/supplier-ocr-extractor` ignorando o Orquestrador Central. |
+| **Edge Functions de OCR Legadas** | `ÓRFÃ` | Pastas `/ocr-proposal`, `/ocr-passenger-document`, `/ai-voucher-ocr` | Entradas do frontend migraram para orquestrador unificado, deixando arquivos legados órfãos no disco. |
+| **Contrato TS do Banco (`types.ts`)** | `QUEBRADA` | [types.ts](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/integrations/supabase/types.ts) | Não possui definições de `ai_api_credentials` e tabelas de IA, exigindo casts. |
+| **Gravação de Lead (landing-page-agent)**| `REAL PONTA A PONTA` | [landing-page-agent/index.ts:L165](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/supabase/functions/landing-page-agent/index.ts#L165) | Corrigido para `supabaseAdmin.rpc`. O fluxo de gravação automática de leads via chatbot funciona. |

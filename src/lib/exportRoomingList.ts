@@ -325,3 +325,152 @@ function exportRoomingListCsv(
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Exporta a Rooming List completa para Word (.doc) contendo uma tabela formatada.
+ */
+export async function exportRoomingListDocx(
+  rooms: RoomingExportRoom[],
+  options: RoomingExportOptions = {}
+): Promise<void> {
+  const {
+    filename = "rooming-list",
+    tourTitle = "Excursão",
+    departureDate,
+  } = options;
+
+  const dateStr = departureDate
+    ? new Date(departureDate).toLocaleDateString("pt-BR")
+    : "Não informada";
+
+  let html = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office'
+          xmlns:w='urn:schemas-microsoft-com:office:word'
+          xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+      <title>Rooming List</title>
+      <!--[if gte mso 9]>
+      <xml>
+        <w:WordDocument>
+          <w:View>Print</w:View>
+          <w:Zoom>100</w:Zoom>
+          <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+      </xml>
+      <![endif]-->
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          font-size: 11pt;
+          color: #333333;
+        }
+        h1 {
+          font-size: 18pt;
+          font-weight: bold;
+          color: #0f172a;
+          margin-bottom: 5px;
+        }
+        .meta {
+          font-size: 9pt;
+          color: #64748b;
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 10px;
+        }
+        th {
+          background-color: #f1f5f9;
+          color: #334155;
+          font-weight: bold;
+          text-align: left;
+          padding: 8px;
+          border: 1px solid #cbd5e1;
+        }
+        td {
+          padding: 8px;
+          border: 1px solid #cbd5e1;
+          vertical-align: top;
+        }
+        .room-row {
+          background-color: #f8fafc;
+          font-weight: bold;
+        }
+        .pax-name {
+          padding-left: 15px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Rooming List — ${tourTitle}</h1>
+      <div class="meta">
+        <strong>Data de saída:</strong> ${dateStr} <br/>
+        <strong>Exportado em:</strong> ${new Date().toLocaleString("pt-BR")}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 15%;">Quarto / Apto</th>
+            <th style="width: 20%;">Tipo</th>
+            <th style="width: 25%;">Hotel / Pousada</th>
+            <th style="width: 15%;">Check-in / Check-out</th>
+            <th style="width: 25%;">Passageiros</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  for (const room of rooms) {
+    const roomTypeLabel = ROOM_TYPE_LABEL[room.room_type] || room.room_type;
+    const paxList = room.passengers || [];
+    const checkinStr = room.checkin_date ? new Date(room.checkin_date).toLocaleDateString("pt-BR") : "—";
+    const checkoutStr = room.checkout_date ? new Date(room.checkout_date).toLocaleDateString("pt-BR") : "—";
+
+    html += `
+      <tr class="room-row">
+        <td>Quarto ${room.room_number}</td>
+        <td>${roomTypeLabel}</td>
+        <td>${room.hotel_name || "—"}</td>
+        <td>${checkinStr} até ${checkoutStr}</td>
+        <td>${paxList.length} passageiro(s)</td>
+      </tr>
+    `;
+
+    if (paxList.length > 0) {
+      for (const pax of paxList) {
+        html += `
+          <tr>
+            <td colspan="4" style="color: #64748b; font-size: 10pt; text-align: right; padding-right: 20px;">Passageiro:</td>
+            <td class="pax-name"><strong>${pax.name}</strong></td>
+          </tr>
+        `;
+      }
+    } else {
+      html += `
+        <tr>
+          <td colspan="4"></td>
+          <td style="color: #94a3b8; font-style: italic; padding-left: 15px;">Sem passageiros alocados</td>
+        </tr>
+      `;
+    }
+  }
+
+  html += `
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const docBlob = new Blob([html], { type: "application/msword" });
+  const docUrl = URL.createObjectURL(docBlob);
+  const docLink = document.createElement("a");
+  docLink.href = docUrl;
+  docLink.download = `${filename}.doc`;
+  document.body.appendChild(docLink);
+  docLink.click();
+  document.body.removeChild(docLink);
+  URL.revokeObjectURL(docUrl);
+}

@@ -112,6 +112,7 @@ import { Route as AgencySlugPortalBlogRouteImport } from './routes/agency.$slug.
 import { Route as AgencySlugGroupToursIdRouteImport } from './routes/agency.$slug.group-tours.$id'
 import { Route as AgencySlugFinancialReconciliationRouteImport } from './routes/agency.$slug.financial.reconciliation'
 import { Route as AgencySlugFinancialInvoicesRouteImport } from './routes/agency.$slug.financial.invoices'
+import { Route as AgencySlugFinancialGroupsRouteImport } from './routes/agency.$slug.financial.groups'
 import { Route as AgencySlugFinancialDreRouteImport } from './routes/agency.$slug.financial.dre'
 import { Route as AgencySlugFinancialCashRouteImport } from './routes/agency.$slug.financial.cash'
 import { Route as AgencySlugCrmLead_idRouteImport } from './routes/agency.$slug.crm.$lead_id'
@@ -447,7 +448,9 @@ const AgencySlugOmnichannelRoute = AgencySlugOmnichannelRouteImport.update({
   id: '/omnichannel',
   path: '/omnichannel',
   getParentRoute: () => AgencySlugRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/agency.$slug.omnichannel.lazy').then((d) => d.Route),
+)
 const AgencySlugKnowledgeRoute = AgencySlugKnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',
@@ -643,7 +646,9 @@ const AgencySlugGroupToursIdRoute = AgencySlugGroupToursIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AgencySlugGroupToursRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/agency.$slug.group-tours.$id.lazy').then((d) => d.Route),
+)
 const AgencySlugFinancialReconciliationRoute =
   AgencySlugFinancialReconciliationRouteImport.update({
     id: '/reconciliation',
@@ -654,6 +659,12 @@ const AgencySlugFinancialInvoicesRoute =
   AgencySlugFinancialInvoicesRouteImport.update({
     id: '/invoices',
     path: '/invoices',
+    getParentRoute: () => AgencySlugFinancialRoute,
+  } as any)
+const AgencySlugFinancialGroupsRoute =
+  AgencySlugFinancialGroupsRouteImport.update({
+    id: '/groups',
+    path: '/groups',
     getParentRoute: () => AgencySlugFinancialRoute,
   } as any)
 const AgencySlugFinancialDreRoute = AgencySlugFinancialDreRouteImport.update({
@@ -670,7 +681,9 @@ const AgencySlugCrmLead_idRoute = AgencySlugCrmLead_idRouteImport.update({
   id: '/$lead_id',
   path: '/$lead_id',
   getParentRoute: () => AgencySlugCrmRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/agency.$slug.crm.$lead_id.lazy').then((d) => d.Route),
+)
 const AgencySlugCorporateRfp_idRoute =
   AgencySlugCorporateRfp_idRouteImport.update({
     id: '/$rfp_id',
@@ -860,6 +873,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
+  '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
@@ -978,6 +992,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
+  '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
@@ -1102,6 +1117,7 @@ export interface FileRoutesById {
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
+  '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
@@ -1229,6 +1245,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/crm/$lead_id'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
+    | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
@@ -1347,6 +1364,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/crm/$lead_id'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
+    | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
@@ -1470,6 +1488,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/crm/$lead_id'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
+    | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
@@ -2252,6 +2271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugFinancialInvoicesRouteImport
       parentRoute: typeof AgencySlugFinancialRoute
     }
+    '/agency/$slug/financial/groups': {
+      id: '/agency/$slug/financial/groups'
+      path: '/groups'
+      fullPath: '/agency/$slug/financial/groups'
+      preLoaderRoute: typeof AgencySlugFinancialGroupsRouteImport
+      parentRoute: typeof AgencySlugFinancialRoute
+    }
     '/agency/$slug/financial/dre': {
       id: '/agency/$slug/financial/dre'
       path: '/dre'
@@ -2550,6 +2576,7 @@ const AgencySlugCrmRouteWithChildren = AgencySlugCrmRoute._addFileChildren(
 interface AgencySlugFinancialRouteChildren {
   AgencySlugFinancialCashRoute: typeof AgencySlugFinancialCashRoute
   AgencySlugFinancialDreRoute: typeof AgencySlugFinancialDreRoute
+  AgencySlugFinancialGroupsRoute: typeof AgencySlugFinancialGroupsRoute
   AgencySlugFinancialInvoicesRoute: typeof AgencySlugFinancialInvoicesRoute
   AgencySlugFinancialReconciliationRoute: typeof AgencySlugFinancialReconciliationRoute
 }
@@ -2557,6 +2584,7 @@ interface AgencySlugFinancialRouteChildren {
 const AgencySlugFinancialRouteChildren: AgencySlugFinancialRouteChildren = {
   AgencySlugFinancialCashRoute: AgencySlugFinancialCashRoute,
   AgencySlugFinancialDreRoute: AgencySlugFinancialDreRoute,
+  AgencySlugFinancialGroupsRoute: AgencySlugFinancialGroupsRoute,
   AgencySlugFinancialInvoicesRoute: AgencySlugFinancialInvoicesRoute,
   AgencySlugFinancialReconciliationRoute:
     AgencySlugFinancialReconciliationRoute,

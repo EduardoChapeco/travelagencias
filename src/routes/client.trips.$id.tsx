@@ -79,6 +79,33 @@ function ClientTripDetail() {
   const passengersQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-passengers", id], queryFn: () => fetchClientTripPassengers(id) });
   const memoriesQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-memories", id], queryFn: () => fetchClientTripMemories(id) });
 
+  const enrollmentQ = useQuery({
+    enabled: !!tripQ.data && !!tripQ.data.group_tour_id,
+    queryKey: ["client-enrollment", tripQ.data?.group_tour_id, tripQ.data?.client_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("group_tour_enrollments")
+        .select("*")
+        .eq("group_tour_id", tripQ.data!.group_tour_id!)
+        .eq("client_id", tripQ.data!.client_id!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const clientRoomQ = useQuery({
+    enabled: !!tripQ.data && !!tripQ.data.group_tour_id,
+    queryKey: ["client-rooming-allocation", id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_my_room_allocation", {
+        _trip_id: id,
+      });
+      if (error) throw error;
+      return data && data.length > 0 ? data[0] : null;
+    },
+  });
+
   const destInfoQ = useQuery({
     enabled: !!tripQ.data?.destination,
     queryKey: ["destination-info-client", tripQ.data?.destination],
@@ -219,7 +246,27 @@ function ClientTripDetail() {
   if (tripQ.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground">Carregando Viagem...</div>;
   if (!tripQ.data) return <div className="py-20 text-center text-sm text-muted-foreground">Viagem não encontrada.</div>;
 
-  const trip = tripQ.data as any;
+  const rawTrip = tripQ.data as any;
+  const trip = {
+    ...rawTrip,
+    itinerary: rawTrip.itinerary && Array.isArray(rawTrip.itinerary) && rawTrip.itinerary.length > 0
+      ? rawTrip.itinerary
+      : (Array.isArray(rawTrip.group_tour?.itinerary) ? rawTrip.group_tour.itinerary : []).map((d: any) => ({
+          day: String(d.day_number || d.day || ""),
+          title: d.title || "",
+          description: d.description_md || d.description || "",
+        })),
+    includes: rawTrip.includes && Array.isArray(rawTrip.includes) && rawTrip.includes.length > 0
+      ? rawTrip.includes
+      : rawTrip.group_tour?.includes || [],
+    excludes: rawTrip.excludes && Array.isArray(rawTrip.excludes) && rawTrip.excludes.length > 0
+      ? rawTrip.excludes
+      : rawTrip.group_tour?.excludes || [],
+  };
+
+  const enrollment = enrollmentQ.data;
+  const clientRoom = clientRoomQ.data as any;
+
   const voucher = (voucherQ.data as any)?.[0];
   const contract = (contractQ.data as any)?.[0];
   const installments = installmentsQ.data ?? [];
@@ -232,7 +279,7 @@ function ClientTripDetail() {
   const now = new Date();
   const start = trip.travel_start ? new Date(trip.travel_start) : null;
   const daysToTrip = start ? Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
-  const coverImage = `https://source.unsplash.com/1600x900/?${encodeURIComponent(trip.destination || "travel,resort")}`;
+  const coverImage = trip.cover_image_url || trip.group_tour?.cover_image_url || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80";
 
   return (
     <div className="min-h-screen bg-background pb-32">
@@ -316,6 +363,33 @@ function ClientTripDetail() {
               </div>
 
               <div className="space-y-6">
+                {trip.group_tour && (
+                  <div className="rounded-3xl bg-surface p-6 border border-border space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Compass className="h-5 w-5 text-brand" />
+                      <h3 className="text-sm font-black text-foreground tracking-tight">Informações da Excursão</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="p-3 bg-surface-alt/50 border border-border rounded-xl">
+                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">Sua Poltrona</span>
+                        <strong className="text-sm font-extrabold text-foreground mt-1.5 block">
+                          {enrollment?.seat_number || "A definir"}
+                        </strong>
+                      </div>
+                      <div className="p-3 bg-surface-alt/50 border border-border rounded-xl">
+                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">Acomodação</span>
+                        <strong className="text-sm font-extrabold text-foreground mt-1.5 block truncate">
+                          {clientRoom ? `Quarto ${clientRoom.room_number}` : "A definir"}
+                        </strong>
+                        {clientRoom?.hotel_name && (
+                          <span className="text-[9px] text-muted-foreground mt-1 block truncate">
+                            Hotel: {clientRoom.hotel_name}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {boardingCardQ.data && (
                   <TripBoardingCard
                     boardingCard={boardingCardQ.data}

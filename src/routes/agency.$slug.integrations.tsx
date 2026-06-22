@@ -191,7 +191,7 @@ function ProviderKeysSection({
 
       <div className="space-y-2">
         {providers.map((p) => {
-          const existing = q.data?.find((k) => k.provider === p.key);
+          const existing = q.data?.find((k: any) => k.provider === p.key);
           return (
             <IntegrationRow
               key={p.key}
@@ -295,7 +295,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     }
     if (keysQuery.data) {
       const getVal = (provider: string) =>
-        keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
+        keysQuery.data?.find((k: any) => k.provider === provider)?.key_value || "";
       setConfig((c) => ({
         ...c,
         meta_capi_token: getVal("meta_capi_token"),
@@ -659,7 +659,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
               </tr>
             </thead>
             <tbody>
-              {q.data!.map((k) => (
+              {q.data!.map((k: any) => (
                 <tr key={k.id} className="border-t border-border hover:bg-surface-alt/20">
                   <td className="px-3 py-2.5 font-mono text-xs">{k.provider}</td>
                   <td className="px-3 py-2.5 text-xs">{k.label ?? "—"}</td>
@@ -857,7 +857,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     }
     if (keysQuery.data) {
       const getVal = (provider: string) =>
-        keysQuery.data?.find((k) => k.provider === provider)?.key_value || "";
+        keysQuery.data?.find((k: any) => k.provider === provider)?.key_value || "";
       setConfig((c) => ({
         ...c,
         infotravel_url: getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1",

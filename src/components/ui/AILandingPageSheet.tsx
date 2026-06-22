@@ -10,9 +10,15 @@ type AILandingPageSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGenerate: (blocks: PortalBlock[]) => void;
+  agencyId?: string;
 };
 
-export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILandingPageSheetProps) {
+export function AILandingPageSheet({
+  open,
+  onOpenChange,
+  onGenerate,
+  agencyId,
+}: AILandingPageSheetProps) {
   const [topic, setTopic] = useState("");
   const [urlToClone, setUrlToClone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,6 +39,7 @@ export function AILandingPageSheet({ open, onOpenChange, onGenerate }: AILanding
         body: {
           prompt: mode === "prompt" ? topic : undefined,
           urlToClone: mode === "clone" ? urlToClone : undefined,
+          agency_id: agencyId,
         },
       });
 

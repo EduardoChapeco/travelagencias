@@ -9,12 +9,36 @@ const corsHeaders = {
 const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") || "";
 const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY") || ""; // Chave do Firecrawl
 
+async function checkMembership(
+  supabaseAdmin: any,
+  userId: string,
+  agencyId?: string | null,
+): Promise<boolean> {
+  const { data: roles, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("role, agency_id")
+    .eq("user_id", userId);
+
+  if (error || !roles) return false;
+
+  const isSuperAdmin = roles.some((r: any) => r.role === "super_admin");
+  if (isSuperAdmin) return true;
+
+  if (!agencyId) return false;
+  return roles.some((r: any) => r.agency_id === agencyId);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Missing Authorization header.");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing Authorization header." }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
@@ -29,15 +53,47 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
+    let user: any = null;
     if (!isServiceRole) {
       const {
-        data: { user },
+        data: { user: authUser },
         error: authError,
       } = await supabaseClient.auth.getUser();
-      if (authError || !user) throw new Error("Unauthorized access.");
+      if (authError || !authUser) {
+        return new Response(JSON.stringify({ error: "Unauthorized access." }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      user = authUser;
     }
 
-    const { prompt, urlToClone } = await req.json();
+    const body = await req.json();
+    const { prompt, urlToClone, agency_id } = body;
+
+    if (!agency_id) {
+      return new Response(JSON.stringify({ error: "Missing agency_id parameter." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
+      auth: { persistSession: false },
+    });
+
+    if (!isServiceRole && user) {
+      const hasAccess = await checkMembership(supabaseAdmin, user.id, agency_id);
+      if (!hasAccess) {
+        return new Response(
+          JSON.stringify({ error: "Access denied: User does not belong to the requested agency." }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
 
     if (!prompt && !urlToClone) {
       return new Response("Missing prompt or urlToClone", { status: 400, headers: corsHeaders });

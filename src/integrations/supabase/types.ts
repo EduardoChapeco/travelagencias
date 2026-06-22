@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -3344,6 +3344,9 @@ export type Database = {
           transport_details: string | null
           transport_type: string | null
           updated_at: string
+          rooming_list_status: string
+          rooming_list_sent_hotel: boolean
+          rooming_list_sent_bus: boolean
         }
         Insert: {
           ads_budget?: number
@@ -3379,6 +3382,9 @@ export type Database = {
           transport_details?: string | null
           transport_type?: string | null
           updated_at?: string
+          rooming_list_status?: string
+          rooming_list_sent_hotel?: boolean
+          rooming_list_sent_bus?: boolean
         }
         Update: {
           ads_budget?: number
@@ -3414,6 +3420,9 @@ export type Database = {
           transport_details?: string | null
           transport_type?: string | null
           updated_at?: string
+          rooming_list_status?: string
+          rooming_list_sent_hotel?: boolean
+          rooming_list_sent_bus?: boolean
         }
         Relationships: [
           {
@@ -5265,6 +5274,7 @@ export type Database = {
           lead_id: string | null
           map_image_url: string | null
           notes: string | null
+          group_tour_id: string | null
           number: number
           owner_id: string | null
           pax_adults: number
@@ -5321,6 +5331,7 @@ export type Database = {
           lead_id?: string | null
           map_image_url?: string | null
           notes?: string | null
+          group_tour_id?: string | null
           number?: number
           owner_id?: string | null
           pax_adults?: number
@@ -5377,6 +5388,7 @@ export type Database = {
           lead_id?: string | null
           map_image_url?: string | null
           notes?: string | null
+          group_tour_id?: string | null
           number?: number
           owner_id?: string | null
           pax_adults?: number
@@ -5424,6 +5436,69 @@ export type Database = {
             referencedRelation: "leads"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      payment_receipt_snapshots: {
+        Row: {
+          id: string
+          agency_id: string
+          enrollment_id: string | null
+          receipt_id: string
+          payer_name: string
+          payer_cpf: string | null
+          amount: number
+          payment_method: string | null
+          payment_date: string
+          trip_title: string
+          seat_number: string | null
+          description: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          agency_id: string
+          enrollment_id?: string | null
+          receipt_id: string
+          payer_name: string
+          payer_cpf?: string | null
+          amount: number
+          payment_method?: string | null
+          payment_date?: string
+          trip_title: string
+          seat_number?: string | null
+          description?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          agency_id?: string
+          enrollment_id?: string | null
+          receipt_id?: string
+          payer_name?: string
+          payer_cpf?: string | null
+          amount?: number
+          payment_method?: string | null
+          payment_date?: string
+          trip_title?: string
+          seat_number?: string | null
+          description?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_receipt_snapshots_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_receipt_snapshots_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "group_tour_enrollments"
+            referencedColumns: ["id"]
+          }
         ]
       }
       public_leads: {
@@ -7176,6 +7251,28 @@ export type Database = {
     }
     Functions: {
       accept_agency_invite: { Args: { _token: string }; Returns: string }
+      approve_group_enrollment: {
+        Args: {
+          _enrollment_id: string
+          _agent_id: string
+        }
+        Returns: Json
+      }
+      get_my_room_allocation: {
+        Args: {
+          _trip_id: string
+        }
+        Returns: {
+          id: string
+          room_number: string
+          room_type: string
+          hotel_name: string | null
+          checkin_date: string | null
+          checkout_date: string | null
+          notes: string | null
+          is_confirmed: boolean
+        }[]
+      }
       accept_public_reaccommodation: {
         Args: { p_boarding_card_id: string; p_itinerary_id: string }
         Returns: undefined

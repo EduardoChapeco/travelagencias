@@ -119,7 +119,7 @@ function AISiteBuilder() {
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke(
         "generate-site-ai",
         {
-          body: { prompt: userPrompt },
+          body: { prompt: userPrompt, agency_id: selectedAgencyId },
         },
       );
 
