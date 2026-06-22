@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import type { ComponentType, ReactNode } from "react";
+import { type ComponentType, type ReactNode, useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Loader2, X, ChevronRight } from "lucide-react";
+import { AIChatPanel } from "./AIChatPanel";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -94,6 +95,43 @@ export function SlimSidebar({
 
   const hasContext = contextItems.length > 0;
   const drawerItems = mobileItems ?? items;
+
+  const [topHeight, setTopHeight] = useState(300);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isResizingRef = useRef(false);
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizingRef.current = true;
+    document.body.style.cursor = "row-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizingRef.current || !containerRef.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const newHeight = e.clientY - containerRect.top;
+      // Clamp between 80px and container height - 80px
+      const clampedHeight = Math.max(80, Math.min(newHeight, containerRect.height - 80));
+      setTopHeight(clampedHeight);
+    };
+
+    const handleMouseUp = () => {
+      if (isResizingRef.current) {
+        isResizingRef.current = false;
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
 
   // ── Mobile drawer nav item renderer ──────────────────────────────────────
   const renderMobileItem = (item: SlimSidebarItem, idx: number) => {
@@ -274,44 +312,65 @@ export function SlimSidebar({
                 )}
               </div>
 
-              {/* Context nav items */}
-              <nav className="no-scrollbar flex-1 overflow-y-auto px-2 py-3">
-                <ul className="space-y-0.5">
-                  {contextItems.map((item) => {
-                    const active = isContextItemActive(item, pathname);
-                    const ItemIcon = item.icon;
+              <div ref={containerRef} className="flex-1 flex flex-col min-h-0 relative">
+                {/* Top: Context nav items */}
+                <nav
+                  style={{ height: `${topHeight}px` }}
+                  className="no-scrollbar overflow-y-auto px-2 py-3 shrink-0"
+                >
+                  <ul className="space-y-0.5">
+                    {contextItems.map((item) => {
+                      const active = isContextItemActive(item, pathname);
+                      const ItemIcon = item.icon;
 
-                    return (
-                      <li key={item.to}>
-                        <Link
-                          to={item.to}
-                          className={cn(
-                            "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-md px-2.5 text-muted-foreground transition-all duration-150",
-                            "hover:bg-accent hover:text-accent-foreground",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            active && [
-                              "bg-accent text-accent-foreground font-semibold",
-                              "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-r before:bg-brand",
-                            ],
-                          )}
-                        >
-                          <ItemIcon
+                      return (
+                        <li key={item.to}>
+                          <Link
+                            to={item.to}
                             className={cn(
-                              "h-3.5 w-3.5 shrink-0 transition-colors",
-                              active ? "text-brand" : "text-muted-foreground/70 group-hover/ctx:text-foreground",
+                              "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-md px-2.5 text-muted-foreground transition-all duration-150",
+                              "hover:bg-accent hover:text-accent-foreground",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              active && [
+                                "bg-accent text-accent-foreground font-semibold",
+                                "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-r before:bg-brand",
+                              ],
                             )}
-                            strokeWidth={active ? 2.2 : 1.8}
-                          />
-                          <span className="truncate text-[12px] leading-tight">{item.label}</span>
-                          {active && (
-                            <ChevronRight className="ml-auto h-3 w-3 shrink-0 text-brand/60" strokeWidth={2} />
-                          )}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </nav>
+                          >
+                            <ItemIcon
+                              className={cn(
+                                "h-3.5 w-3.5 shrink-0 transition-colors",
+                                active ? "text-brand" : "text-muted-foreground/70 group-hover/ctx:text-foreground",
+                              )}
+                              strokeWidth={active ? 2.2 : 1.8}
+                            />
+                            <span className="truncate text-[12px] leading-tight">{item.label}</span>
+                            {active && (
+                              <ChevronRight className="ml-auto h-3 w-3 shrink-0 text-brand/60" strokeWidth={2} />
+                            )}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+
+                {/* Resizer Handle */}
+                <div
+                  onMouseDown={startResize}
+                  className="h-1.5 w-full cursor-row-resize bg-border/40 hover:bg-brand/60 active:bg-brand transition-colors shrink-0 flex items-center justify-center"
+                  role="separator"
+                  aria-valuenow={topHeight}
+                  title="Arraste para ajustar"
+                >
+                  <div className="w-6 h-0.5 rounded bg-muted-foreground/30" />
+                </div>
+
+                {/* Bottom: Contextual Chat Panel */}
+                <div className="flex-1 min-h-0 overflow-y-auto border-t border-border/40">
+                  <AIChatPanel isEmbedded={true} />
+                </div>
+              </div>
             </>
           )}
         </div>

@@ -58,7 +58,7 @@ serve(async (req) => {
       const {
         data: { user: authUser },
         error: authError,
-      } = await supabaseClient.auth.getUser();
+      } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
       if (authError || !authUser) {
         return new Response(JSON.stringify({ error: "Unauthorized access." }), {
           status: 401,

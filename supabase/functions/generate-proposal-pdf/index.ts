@@ -26,7 +26,7 @@ serve(async (req) => {
     const {
       data: { user },
       error: authError,
-    } = await supabaseClient.auth.getUser();
+    } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
     const { proposal_id, agency_id, format = "A4", landscape = false } = await req.json();

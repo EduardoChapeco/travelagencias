@@ -31,7 +31,7 @@ function newConversationId(agencyId: string, userKey: string) {
   return id;
 }
 
-export function AIChatPanel({ onClose }: { onClose: () => void }) {
+export function AIChatPanel({ onClose, isEmbedded = false }: { onClose?: () => void; isEmbedded?: boolean }) {
   const { agency } = useAgency();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -131,10 +131,16 @@ export function AIChatPanel({ onClose }: { onClose: () => void }) {
     setMessages([]);
   }
 
+  const Container = isEmbedded ? "div" : "aside";
+
   return (
-    <aside
-      style={{ width: "var(--ai-w)" }}
-      className="flex h-screen shrink-0 flex-col border-l border-border bg-surface"
+    <Container
+      style={isEmbedded ? undefined : { width: "var(--ai-w)" }}
+      className={
+        isEmbedded
+          ? "flex h-full w-full flex-col bg-surface"
+          : "flex h-screen shrink-0 flex-col border-l border-border bg-surface"
+      }
     >
       <header className="flex h-12 items-center justify-between border-b border-border px-3">
         <div className="flex items-center gap-2">
@@ -150,13 +156,15 @@ export function AIChatPanel({ onClose }: { onClose: () => void }) {
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
-          <button
-            onClick={onClose}
-            className="rounded p-1 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
-            aria-label="Fechar"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          {!isEmbedded && onClose && (
+            <button
+              onClick={onClose}
+              className="rounded p-1 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
+              aria-label="Fechar"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </header>
 
@@ -217,6 +225,6 @@ export function AIChatPanel({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </form>
-    </aside>
+    </Container>
   );
 }

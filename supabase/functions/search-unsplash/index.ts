@@ -32,7 +32,7 @@ serve(async (req) => {
       const {
         data: { user },
         error: authError,
-      } = await supabaseClient.auth.getUser();
+      } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
       if (authError || !user) throw new Error("Unauthorized access.");
     }
 

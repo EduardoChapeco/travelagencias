@@ -3,14 +3,7 @@ import { Sparkles, Loader2, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { type Proposal } from "@/services/proposals";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 
 type Props = {
   draft: Proposal;
@@ -73,26 +66,26 @@ Não inclua crases markdown nem texto adicional.`;
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className="flex h-9 items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
-        >
-          <Sparkles className="h-3.5 w-3.5" /> Assistente de Escrita
-        </button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-amber-600">
-            <Sparkles className="h-5 w-5" /> Assistente de Escrita
-          </DialogTitle>
-          <DialogDescription>
-            Deixe o TravelOS reescrever e enriquecer os textos do seu roteiro e proposta para você.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex h-9 items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
+      >
+        <Sparkles className="h-3.5 w-3.5" /> Assistente de Escrita
+      </button>
 
-        <div className="mt-4 space-y-4">
+      <SheetPage
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Assistente de Escrita"
+        width="450px"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Deixe o TravelOS reescrever e enriquecer os textos do seu roteiro e proposta para você.
+          </p>
+
           <div>
             <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-2 block">
               Instruções para o Assistente
@@ -122,7 +115,7 @@ Não inclua crases markdown nem texto adicional.`;
             )}
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetPage>
+    </>
   );
 }

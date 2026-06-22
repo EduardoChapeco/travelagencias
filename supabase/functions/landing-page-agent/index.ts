@@ -51,7 +51,7 @@ serve(async (req) => {
         const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
           global: { headers: { Authorization: authHeader } },
         });
-        const { data: { user: authUser }, error: authError } = await supabaseClient.auth.getUser();
+        const { data: { user: authUser }, error: authError } = await supabaseClient.auth.getUser(token);
         if (!authError && authUser) {
           user = authUser;
           isPublic = false;

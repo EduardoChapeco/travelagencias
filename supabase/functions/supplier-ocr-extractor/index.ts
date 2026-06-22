@@ -101,7 +101,7 @@ serve(async (req) => {
     });
 
     // Validate auth
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) throw new Error("Unauthorized.");
 
     const body = await req.json();

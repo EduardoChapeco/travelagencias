@@ -1445,18 +1445,20 @@ function LeadDetailPage() {
             </Tabs>
           )}
 
-          {/* Confirm Conversao Modal Dialog */}
-          <Dialog open={confirmConvertOpen} onOpenChange={setConfirmConvertOpen}>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Confirmar Conversão de Cliente</DialogTitle>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba serão
-                  vinculados automaticamente no banco de dados.
-                </p>
-              </DialogHeader>
+          {/* Confirm Conversao Sheet */}
+          <SheetPage
+            isOpen={confirmConvertOpen}
+            onClose={() => setConfirmConvertOpen(false)}
+            title="Confirmar Conversão de Cliente"
+            width="500px"
+          >
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground">
+                Preencha os documentos oficiais do cliente. Acompanhantes cadastrados na aba serão
+                vinculados automaticamente no banco de dados.
+              </p>
 
-              <div className="space-y-3 mt-4">
+              <div className="space-y-3">
                 <Field label="Nome Completo *">
                   <Input
                     required
@@ -1609,8 +1611,8 @@ function LeadDetailPage() {
                   Converter Agora
                 </PrimaryButton>
               </div>
-            </DialogContent>
-          </Dialog>
+            </div>
+          </SheetPage>
         </div>
       )}
 

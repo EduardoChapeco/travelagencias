@@ -22,7 +22,7 @@ import {
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/billing")({
   head: () => ({ meta: [{ title: "Assinatura & Planos · TravelOS" }] }),
@@ -474,194 +474,186 @@ function BillingPage() {
         )}
       </div>
 
-      {/* MODAL DE CHECKOUT SIMULADO E PRÓ-RATA */}
-      <Dialog
-        open={!!checkoutPlan}
-        onOpenChange={(o) => {
-          if (!o) setCheckoutPlan(null);
-        }}
+      {/* SHEET DE CHECKOUT SIMULADO E PRÓ-RATA */}
+      <SheetPage
+        isOpen={!!checkoutPlan}
+        onClose={() => setCheckoutPlan(null)}
+        title="Confirmar Upgrade do Plano"
+        width="450px"
       >
-        <DialogContent className="max-w-md rounded-2xl p-6 bg-surface border-border">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-black text-foreground">
-              Confirmar Upgrade do Plano
-            </DialogTitle>
-          </DialogHeader>
-
-          {checkoutPlan && (
-            <div className="space-y-6">
-              {checkoutSuccess ? (
-                /* Success Screen */
-                <div className="text-center py-8 space-y-4">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success border border-success/20">
-                    <CheckCircle2 className="h-8 w-8 animate-bounce" />
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-base font-bold text-foreground">Compra Aprovada!</h4>
-                    <p className="text-xs text-muted-foreground">
-                      Sua assinatura foi atualizada com sucesso.
-                    </p>
-                  </div>
-                  <div className="bg-surface-alt p-4 rounded-xl text-left text-xs font-mono border border-border">
-                    <div className="flex justify-between py-1">
-                      <span>Plano Contratado:</span>
-                      <span className="font-bold text-foreground">{checkoutPlan.name}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Fatura ID:</span>
-                      <span>FT-{checkoutSuccess.invoice_id.split("-")[0].toUpperCase()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Valor Cobrado:</span>
-                      <span className="font-bold text-success">
-                        {brl(checkoutSuccess.amount_paid)}
-                      </span>
-                    </div>
-                  </div>
-                  <PrimaryButton
-                    onClick={() => setCheckoutPlan(null)}
-                    className="w-full h-10 text-xs font-bold rounded-xl mt-4"
-                  >
-                    Concluir e Voltar
-                  </PrimaryButton>
+        {checkoutPlan && (
+          <div className="space-y-6">
+            {checkoutSuccess ? (
+              /* Success Screen */
+              <div className="text-center py-8 space-y-4">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/10 text-success border border-success/20">
+                  <CheckCircle2 className="h-8 w-8 animate-bounce" />
                 </div>
-              ) : (
-                /* Checkout Form & Proration Math */
-                <div className="space-y-5">
-                  <div className="bg-brand/5 border border-brand/10 p-4 rounded-xl space-y-3.5">
-                    <div className="flex items-center justify-between text-xs font-bold text-brand uppercase tracking-wider">
-                      <span>Cálculo Inteligente Pró-rata</span>
-                      <TrendingUp className="h-4 w-4" />
-                    </div>
-                    {prorationQ.isLoading ? (
-                      <div className="h-10 animate-pulse bg-surface-alt rounded" />
-                    ) : (
-                      <div className="text-xs space-y-2 text-muted-foreground">
-                        <div className="flex justify-between">
-                          <span>Preço do Novo Plano ({checkoutPlan.name}):</span>
-                          <span className="text-foreground font-bold">
-                            {brl(prorationQ.data?.new_plan_price ?? 0)}/mês
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>
-                            Crédito do Plano Anterior ({currentPlan?.name || "Essencial"}):
-                          </span>
-                          <span className="text-success font-bold">
-                            -{brl(prorationQ.data?.credit_amount ?? 0)}
-                          </span>
-                        </div>
-                        <hr className="border-border/60" />
-                        <div className="flex justify-between text-sm font-bold text-foreground">
-                          <span>Total a pagar hoje:</span>
-                          <span className="text-brand">
-                            {brl(prorationQ.data?.final_amount_due ?? 0)}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-muted-foreground/80 leading-relaxed mt-1">
-                          * Seu novo ciclo de faturamento mensal de 30 dias começa a valer a partir
-                          de hoje.
-                        </div>
-                      </div>
-                    )}
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-foreground">Compra Aprovada!</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Sua assinatura foi atualizada com sucesso.
+                  </p>
+                </div>
+                <div className="bg-surface-alt p-4 rounded-xl text-left text-xs font-mono border border-border">
+                  <div className="flex justify-between py-1">
+                    <span>Plano Contratado:</span>
+                    <span className="font-bold text-foreground">{checkoutPlan.name}</span>
                   </div>
-
-                  {checkoutError && (
-                    <div className="rounded-xl bg-danger/5 border border-danger/20 p-3 flex gap-2 text-xs font-semibold text-danger leading-relaxed">
-                      <XCircle className="h-4 w-4 shrink-0 text-danger" />
-                      <span>{checkoutError}</span>
-                    </div>
-                  )}
-
-                  {/* Credit Card Details */}
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
-                      Dados de Pagamento
-                    </h4>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
-                          Número do Cartão
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value={cardNumber}
-                            onChange={(e) => setCardNumber(e.target.value)}
-                            placeholder="4000 1234 5678 9010"
-                            className="h-9 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-xs outline-none focus:border-brand text-foreground font-mono"
-                          />
-                          <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        </div>
-                        <span className="text-[9px] text-muted-foreground block mt-1">
-                          * Dica: Digite um número começando com{" "}
-                          <strong className="text-foreground">5</strong> para testar a tela de
-                          compra recusada.
+                  <div className="flex justify-between py-1">
+                    <span>Fatura ID:</span>
+                    <span>FT-{checkoutSuccess.invoice_id.split("-")[0].toUpperCase()}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>Valor Cobrado:</span>
+                    <span className="font-bold text-success">
+                      {brl(checkoutSuccess.amount_paid)}
+                    </span>
+                  </div>
+                </div>
+                <PrimaryButton
+                  onClick={() => setCheckoutPlan(null)}
+                  className="w-full h-10 text-xs font-bold rounded-xl mt-4"
+                >
+                  Concluir e Voltar
+                </PrimaryButton>
+              </div>
+            ) : (
+              /* Checkout Form & Proration Math */
+              <div className="space-y-5">
+                <div className="bg-brand/5 border border-brand/10 p-4 rounded-xl space-y-3.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-brand uppercase tracking-wider">
+                    <span>Cálculo Inteligente Pró-rata</span>
+                    <TrendingUp className="h-4 w-4" />
+                  </div>
+                  {prorationQ.isLoading ? (
+                    <div className="h-10 animate-pulse bg-surface-alt rounded" />
+                  ) : (
+                    <div className="text-xs space-y-2 text-muted-foreground">
+                      <div className="flex justify-between">
+                        <span>Preço do Novo Plano ({checkoutPlan.name}):</span>
+                        <span className="text-foreground font-bold">
+                          {brl(prorationQ.data?.new_plan_price ?? 0)}/mês
                         </span>
                       </div>
+                      <div className="flex justify-between">
+                        <span>
+                          Crédito do Plano Anterior ({currentPlan?.name || "Essencial"}):
+                        </span>
+                        <span className="text-success font-bold">
+                          -{brl(prorationQ.data?.credit_amount ?? 0)}
+                        </span>
+                      </div>
+                      <hr className="border-border/60" />
+                      <div className="flex justify-between text-sm font-bold text-foreground">
+                        <span>Total a pagar hoje:</span>
+                        <span className="text-brand">
+                          {brl(prorationQ.data?.final_amount_due ?? 0)}
+                        </span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground/80 leading-relaxed mt-1">
+                        * Seu novo ciclo de faturamento mensal de 30 dias começa a valer a partir
+                        de hoje.
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {checkoutError && (
+                  <div className="rounded-xl bg-danger/5 border border-danger/20 p-3 flex gap-2 text-xs font-semibold text-danger leading-relaxed">
+                    <XCircle className="h-4 w-4 shrink-0 text-danger" />
+                    <span>{checkoutError}</span>
+                  </div>
+                )}
+
+                {/* Credit Card Details */}
+                <div className="space-y-3 pt-2">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
+                    Dados de Pagamento
+                  </h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                        Número do Cartão
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={cardNumber}
+                          onChange={(e) => setCardNumber(e.target.value)}
+                          placeholder="4000 1234 5678 9010"
+                          className="h-9 w-full rounded-lg border border-border bg-surface pl-9 pr-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                        />
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <span className="text-[9px] text-muted-foreground block mt-1">
+                        * Dica: Digite um número começando com{" "}
+                        <strong className="text-foreground">5</strong> para testar a tela de
+                        compra recusada.
+                      </span>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                        Nome no Cartão
+                      </label>
+                      <input
+                        type="text"
+                        value={cardHolder}
+                        onChange={(e) => setCardHolder(e.target.value)}
+                        placeholder="AGENCIA DE TURISMO LTDA"
+                        className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
-                          Nome no Cartão
+                          Validade
                         </label>
                         <input
                           type="text"
-                          value={cardHolder}
-                          onChange={(e) => setCardHolder(e.target.value)}
-                          placeholder="AGENCIA DE TURISMO LTDA"
-                          className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value)}
+                          placeholder="MM/AA"
+                          className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
-                            Validade
-                          </label>
-                          <input
-                            type="text"
-                            value={cardExpiry}
-                            onChange={(e) => setCardExpiry(e.target.value)}
-                            placeholder="MM/AA"
-                            className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
-                            CVV
-                          </label>
-                          <input
-                            type="text"
-                            value={cardCvc}
-                            onChange={(e) => setCardCvc(e.target.value)}
-                            placeholder="123"
-                            className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
-                          />
-                        </div>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                          CVV
+                        </label>
+                        <input
+                          type="text"
+                          value={cardCvc}
+                          onChange={(e) => setCardCvc(e.target.value)}
+                          placeholder="123"
+                          className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
+                        />
                       </div>
                     </div>
                   </div>
-
-                  <div className="pt-4 flex justify-end gap-2 border-t border-border">
-                    <GhostButton
-                      onClick={() => setCheckoutPlan(null)}
-                      disabled={isProcessing}
-                      className="h-10 text-xs font-bold rounded-xl"
-                    >
-                      Cancelar
-                    </GhostButton>
-                    <PrimaryButton
-                      onClick={() => checkoutMut.mutate()}
-                      disabled={isProcessing}
-                      className="h-10 text-xs font-bold rounded-xl px-6"
-                    >
-                      {isProcessing ? "Processando..." : "Confirmar Upgrade"}
-                    </PrimaryButton>
-                  </div>
                 </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+                <div className="pt-4 flex justify-end gap-2 border-t border-border">
+                  <GhostButton
+                    onClick={() => setCheckoutPlan(null)}
+                    disabled={isProcessing}
+                    className="h-10 text-xs font-bold rounded-xl"
+                  >
+                    Cancelar
+                  </GhostButton>
+                  <PrimaryButton
+                    onClick={() => checkoutMut.mutate()}
+                    disabled={isProcessing}
+                    className="h-10 text-xs font-bold rounded-xl px-6"
+                  >
+                    {isProcessing ? "Processando..." : "Confirmar Upgrade"}
+                  </PrimaryButton>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </SheetPage>
     </div>
   );
 }

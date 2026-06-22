@@ -24,13 +24,7 @@ import {
   StatusBadge,
   GhostButton,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/daily-tasks")({
   head: () => ({ meta: [{ title: "Meu Dia · Tarefas e Embarques" }] }),
@@ -127,46 +121,46 @@ function DailyTasksRoute() {
           Meu Dia · Tarefas e Embarques
         </div>
         <div className="flex items-center gap-2">
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <button
-                className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
-                title="Nova Tarefa"
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            title="Nova Tarefa"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Nova Tarefa</span>
+          </button>
+
+          <SheetPage
+            isOpen={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            title="Nova Tarefa"
+            width="450px"
+          >
+            <div className="space-y-4">
+              <Field label="O que precisa ser feito?">
+                <Input
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  placeholder="Ex: Emitir passagens do João"
+                />
+              </Field>
+              <Field label="Tipo de Tarefa">
+                <Select value={newTaskType} onChange={(e) => setNewTaskType(e.target.value)}>
+                  <option value="manual">Manual / Outros</option>
+                  <option value="lead">Contato Comercial (Lead)</option>
+                  <option value="trip">Gestão de Viagem</option>
+                  <option value="ticket">Resolução de Problema</option>
+                </Select>
+              </Field>
+              <PrimaryButton
+                onClick={() => createTask.mutate()}
+                disabled={!newTaskTitle || createTask.isPending}
+                className="w-full"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Nova Tarefa</span>
-              </button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Nova Tarefa</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <Field label="O que precisa ser feito?">
-                  <Input
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                    placeholder="Ex: Emitir passagens do João"
-                  />
-                </Field>
-                <Field label="Tipo de Tarefa">
-                  <Select value={newTaskType} onChange={(e) => setNewTaskType(e.target.value)}>
-                    <option value="manual">Manual / Outros</option>
-                    <option value="lead">Contato Comercial (Lead)</option>
-                    <option value="trip">Gestão de Viagem</option>
-                    <option value="ticket">Resolução de Problema</option>
-                  </Select>
-                </Field>
-                <PrimaryButton
-                  onClick={() => createTask.mutate()}
-                  disabled={!newTaskTitle || createTask.isPending}
-                  className="w-full"
-                >
-                  {createTask.isPending ? "Criando..." : "Adicionar Tarefa"}
-                </PrimaryButton>
-              </div>
-            </DialogContent>
-          </Dialog>
+                {createTask.isPending ? "Criando..." : "Adicionar Tarefa"}
+              </PrimaryButton>
+            </div>
+          </SheetPage>
 
           {isAgencyAdmin && (
             <button

@@ -40,7 +40,7 @@ serve(async (req) => {
       const {
         data: { user },
         error: authError,
-      } = await supabaseClient.auth.getUser();
+      } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
       if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
       // Check if user is a member of the agency
@@ -189,7 +189,7 @@ Retorne EXATAMENTE e APENAS o objeto JSON. Não inclua blocos de código com mar
     const {
       data: { user },
       error: authError,
-    } = await authClient.auth.getUser();
+    } = await authClient.auth.getUser(authHeader.replace("Bearer ", ""));
 
     // If there is no user, check if it's the service_role key (Webhook)
     const tokenPart = authHeader.replace("Bearer ", "").trim();

@@ -292,7 +292,7 @@ serve(async (req) => {
       const {
         data: { user: authUser },
         error: authError,
-      } = await supabase.auth.getUser();
+      } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
       if (authError || !authUser) {
         return new Response(JSON.stringify({ error: "Unauthorized: Invalid JWT token." }), {
           status: 401,
