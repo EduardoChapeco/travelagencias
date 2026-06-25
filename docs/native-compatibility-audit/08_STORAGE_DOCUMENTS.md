@@ -7,8 +7,9 @@ Este documento avalia se o Motor de Cotações Inteligentes VibeTour faz uso de 
 ## 1. Inventário de Uploads e Buckets Utilizados
 
 O Motor VibeTour na fase atual **não realiza uploads de arquivos físicos** (como arquivos PDF de roteiros, imagens de vouchers ou comprovantes) para o Supabase Storage.
-* **Tabelas Relacionadas**: Nenhuma tabela do módulo possui colunas apontando para chaves de objetos de storage (como `storage_path` ou `bucket_id`).
-* **UI**: As imagens mostradas nas propostas ou alternativas de hotéis são geradas e consumidas como URLs estáticas de terceiros (retornadas no JSON de busca do Infotravel ou geradas dinamicamente).
+
+- **Tabelas Relacionadas**: Nenhuma tabela do módulo possui colunas apontando para chaves de objetos de storage (como `storage_path` ou `bucket_id`).
+- **UI**: As imagens mostradas nas propostas ou alternativas de hotéis são geradas e consumidas como URLs estáticas de terceiros (retornadas no JSON de busca do Infotravel ou geradas dinamicamente).
 
 ---
 

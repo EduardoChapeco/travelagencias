@@ -7,7 +7,7 @@ import type { Waypoint } from "@/components/studio/StudioMapWidget";
 const StudioMapWidget = lazy(() =>
   import("@/components/studio/StudioMapWidget").then((m) => ({
     default: m.StudioMapWidget,
-  }))
+  })),
 );
 
 interface SectionMapProps {
@@ -88,4 +88,3 @@ export function SectionMap({ draft, save }: SectionMapProps) {
     </Accordion>
   );
 }
-

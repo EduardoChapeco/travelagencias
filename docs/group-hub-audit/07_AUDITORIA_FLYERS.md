@@ -1,6 +1,7 @@
 # 07. Auditoria do Construtor de Flyers & Brochuras
 
 ## 1. Quick Flyer (Canvas de Imagem 9:16)
+
 - **Implementação**: O canvas desenha uma imagem do Instagram Story (proporção 9:16) no frontend usando dados reais (`tour.title`, `base_price`, etc.). O download usa a biblioteca `html2canvas` para renderizar o elemento DOM em uma imagem PNG.
 - **Roteamento do QR Code**: O QR Code aponta para o endereço público da excursão: `/p/${agency.slug}/tour/${tour.id}`. A rota é válida e funcional.
 - **Limitação de Rastreabilidade**: O QR Code não anexa parâmetros de campanha ou rastreamento de marketing (como UTMs, ex: `?utm_source=instagram&utm_medium=story_flyer`). Isso impede que a agência mensure se os leads cadastrados vieram de flyers físicos ou virtuais compartilhados.
@@ -10,10 +11,13 @@
 ## 2. Flyer Completo (Clonagem para Proposal Studio)
 
 ### Falta de Idempotência e Bloat de Dados
+
 O método `handleCreateBrochure` é acionado ao clicar no botão "Criar Brochura no Proposal Studio":
+
 - **Problema**: **Não há verificação de duplicidade ou chave de idempotência**. Se o agente clicar no botão 5 vezes, o backend criará 5 propostas comerciais distintas e idênticas no banco de dados. Isso gera lixo eletrônico (linhas órfãs) na tabela `proposals`.
 
 ### Ligação Fraca (Falta de Vinculação Estruturada)
+
 - **Implementação**:
   ```typescript
   const newProp = await createProposal(agency.id, {

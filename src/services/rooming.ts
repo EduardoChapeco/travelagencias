@@ -64,7 +64,7 @@ export async function fetchRoomingListByTour(tourId: string): Promise<RoomRecord
  * Add a new room record.
  */
 export async function createRoomRecord(
-  payload: Omit<InsertRoomRecord, "id" | "created_at" | "updated_at">
+  payload: Omit<InsertRoomRecord, "id" | "created_at" | "updated_at">,
 ): Promise<RoomRecord> {
   const { data, error } = await supabase
     .from("boarding_rooming_list")
@@ -85,7 +85,7 @@ export async function createRoomRecord(
  */
 export async function updateRoomRecord(
   roomId: string,
-  patch: Partial<Omit<RoomRecord, "id" | "created_at" | "updated_at">>
+  patch: Partial<Omit<RoomRecord, "id" | "created_at" | "updated_at">>,
 ): Promise<void> {
   const { error } = await supabase
     .from("boarding_rooming_list")
@@ -99,10 +99,7 @@ export async function updateRoomRecord(
  * Delete a room record.
  */
 export async function deleteRoomRecord(roomId: string): Promise<void> {
-  const { error } = await supabase
-    .from("boarding_rooming_list")
-    .delete()
-    .eq("id", roomId);
+  const { error } = await supabase.from("boarding_rooming_list").delete().eq("id", roomId);
 
   if (error) throw new Error(`Error deleting room: ${error.message}`);
 }

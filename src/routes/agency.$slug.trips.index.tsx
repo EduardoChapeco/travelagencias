@@ -96,7 +96,9 @@ function TripsList() {
         .maybeSingle();
 
       if (existingLink) {
-        throw new Error(`Esta reserva já foi importada anteriormente para a viagem de ID ${existingLink.internal_id}.`);
+        throw new Error(
+          `Esta reserva já foi importada anteriormente para a viagem de ID ${existingLink.internal_id}.`,
+        );
       }
 
       // 1. Procurar ou criar cliente
@@ -161,20 +163,18 @@ function TripsList() {
       const tripId = newTrip.id;
 
       // Gravar o vínculo de entidade externa para auditoria e sincronizações futuras
-      const { error: linkErr } = await supabase
-        .from("external_entity_links")
-        .insert({
-          agency_id: agency.id,
-          provider: "infotravel",
-          entity_type: "trip",
-          external_id: bookingData.locator,
-          internal_id: tripId,
-          sync_status: "synced",
-          metadata: {
-            booking_id: bookingData.booking_id,
-            imported_at: new Date().toISOString()
-          }
-        });
+      const { error: linkErr } = await supabase.from("external_entity_links").insert({
+        agency_id: agency.id,
+        provider: "infotravel",
+        entity_type: "trip",
+        external_id: bookingData.locator,
+        internal_id: tripId,
+        sync_status: "synced",
+        metadata: {
+          booking_id: bookingData.booking_id,
+          imported_at: new Date().toISOString(),
+        },
+      });
 
       if (linkErr) console.error("Erro ao registrar vínculo de entidade externa:", linkErr);
 

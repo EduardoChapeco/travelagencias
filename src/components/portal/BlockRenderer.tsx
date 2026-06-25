@@ -53,7 +53,6 @@ import {
 import type { PortalBlock, LegacyPortalBlock } from "@/lib/cms-types";
 import { BLOCK_CONTEXTS } from "@/lib/cms-types";
 
-
 // Re-export so existing imports from this path continue to work
 export type { PortalBlock };
 
@@ -403,7 +402,11 @@ function BoundBlockWrapper({
         let val = tourData[dbKey];
 
         if (dbKey.includes("date") && val) {
-          val = new Date(val).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+          val = new Date(val).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
         } else if (dbKey === "price" && typeof val === "number") {
           val = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
         }
@@ -420,7 +423,7 @@ function BoundBlockWrapper({
         config: {
           ...resolvedBlock.config,
           ...updatedFields,
-        }
+        },
       };
     }
 

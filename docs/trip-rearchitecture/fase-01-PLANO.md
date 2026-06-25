@@ -35,7 +35,7 @@ Gestão (admin): Produtividade | Empresa | Equipe | Design System | Conexões | 
 
 Visão Geral | Passageiros | Financeiro | Aéreos (NEW) | Hospedagem* | Contrato | Confirmação (NEW) | Voucher | Check-in & Embarque (NEW) | Destino & Segurança (NEW) | Histórico*
 
-*placeholder para fases futuras
+\*placeholder para fases futuras
 
 ## Compatibilidade
 

@@ -8,13 +8,13 @@ Este documento cataloga onde e como as chaves de API, credenciais e secrets de c
 
 A tabela `public.api_keys` no banco de dados operacional é a principal fonte de credenciais configuradas pelas agências (Multi-Tenant).
 
-* **Chaves Armazenadas**:
-  * Chaves de API específicas de cada Agência (`agency_id IS NOT NULL`) para os provedores `gemini`, `groq`, `openai`, `openrouter`.
-  * Chaves globais de plataforma (`agency_id IS NULL`).
-* **Formato**:
-  * Para segurança, as chaves salvas são encriptadas no banco de dados e prefixadas com delimitadores (identificadas pela presença de `=====`).
-* **Secret de Descriptografia**:
-  * Variável de ambiente `API_KEY_SECRET` (configurada nos secrets do Deno / Supabase Edge).
+- **Chaves Armazenadas**:
+  - Chaves de API específicas de cada Agência (`agency_id IS NOT NULL`) para os provedores `gemini`, `groq`, `openai`, `openrouter`.
+  - Chaves globais de plataforma (`agency_id IS NULL`).
+- **Formato**:
+  - Para segurança, as chaves salvas são encriptadas no banco de dados e prefixadas com delimitadores (identificadas pela presença de `=====`).
+- **Secret de Descriptografia**:
+  - Variável de ambiente `API_KEY_SECRET` (configurada nos secrets do Deno / Supabase Edge).
 
 ---
 
@@ -22,15 +22,15 @@ A tabela `public.api_keys` no banco de dados operacional é a principal fonte de
 
 A tabela `public.global_settings` armazena configurações e chaves herdadas do sistema antigo.
 
-* **Chave de Registro**: `integrations_config_encrypted`
-* **Campos do JSON Descriptografado**:
-  * `groq_key`
-  * `gemini_key`
-  * `openai_key`
-  * `openrouter_key`
-  * `firecrawl_key`
-* **Secret de Descriptografia**:
-  * Variável de ambiente `MASTER_ENCRYPTION_KEY` (configurada no Deno / Supabase Edge).
+- **Chave de Registro**: `integrations_config_encrypted`
+- **Campos do JSON Descriptografado**:
+  - `groq_key`
+  - `gemini_key`
+  - `openai_key`
+  - `openrouter_key`
+  - `firecrawl_key`
+- **Secret de Descriptografia**:
+  - Variável de ambiente `MASTER_ENCRYPTION_KEY` (configurada no Deno / Supabase Edge).
 
 ---
 

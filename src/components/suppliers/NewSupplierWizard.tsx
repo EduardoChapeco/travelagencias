@@ -375,7 +375,9 @@ export function NewSupplierWizard({
                     {watchCity && (
                       <div>
                         <span className="text-muted-foreground block">Localização:</span>
-                        <strong className="text-foreground">{watchCity} / {watchState || "—"} ({watchCountry || "—"})</strong>
+                        <strong className="text-foreground">
+                          {watchCity} / {watchState || "—"} ({watchCountry || "—"})
+                        </strong>
                       </div>
                     )}
                     <div>

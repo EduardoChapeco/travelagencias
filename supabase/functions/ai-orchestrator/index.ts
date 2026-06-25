@@ -22,7 +22,9 @@ async function getCryptoKey(password: string) {
 
 async function decryptData(encodedBase64: string, password: string) {
   const key = await getCryptoKey(password);
-  const cleanBase64 = encodedBase64.startsWith("=====") ? encodedBase64.substring(5) : encodedBase64;
+  const cleanBase64 = encodedBase64.startsWith("=====")
+    ? encodedBase64.substring(5)
+    : encodedBase64;
   const payload = decode(cleanBase64);
   const iv = payload.slice(0, 12);
   const ciphertext = payload.slice(12);
@@ -185,13 +187,9 @@ async function processJobInBackground(supabaseAdmin: any, jobId: string) {
     // 4. Run Completion/OCR logic
     let aiResult = null;
     let usedProvider = "";
-    
+
     // Resolve keys for Gemini
-    const { keyValue: geminiKey } = await resolveApiKey(
-      supabaseAdmin,
-      "gemini",
-      job.agency_id
-    );
+    const { keyValue: geminiKey } = await resolveApiKey(supabaseAdmin, "gemini", job.agency_id);
 
     if (geminiKey) {
       const parts: any[] = [{ text: `${systemPrompt || ""}\n\n${prompt || ""}` }];
@@ -244,10 +242,9 @@ async function processJobInBackground(supabaseAdmin: any, jobId: string) {
       .update({
         status: "completed",
         result_payload: parsedResult,
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
       .eq("id", jobId);
-
   } catch (err: any) {
     console.error(`Error processing job ${jobId}:`, err);
     await supabaseAdmin
@@ -255,7 +252,7 @@ async function processJobInBackground(supabaseAdmin: any, jobId: string) {
       .update({
         status: "failed",
         error_payload: { message: err.message },
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
       .eq("id", jobId);
   }
@@ -499,16 +496,16 @@ Regras de Extração:
       if (modelPreference !== "fast" && !aiResult && openaiKey && !isPdf) {
         try {
           const messages: any[] = [
-            { role: "system", content: systemPrompt || "You are a helpful assistant." }
+            { role: "system", content: systemPrompt || "You are a helpful assistant." },
           ];
-          
+
           if (file_base64 && mime && mime.startsWith("image/")) {
             messages.push({
               role: "user",
               content: [
                 { type: "text", text: prompt || "" },
-                { type: "image_url", image_url: { url: `data:${mime};base64,${file_base64}` } }
-              ]
+                { type: "image_url", image_url: { url: `data:${mime};base64,${file_base64}` } },
+              ],
             });
           } else {
             messages.push({ role: "user", content: prompt || "" });
@@ -552,9 +549,9 @@ Regras de Extração:
       if (!aiResult && groqKey && !isPdf) {
         try {
           const messages: any[] = [
-            { role: "system", content: systemPrompt || "You are a helpful assistant." }
+            { role: "system", content: systemPrompt || "You are a helpful assistant." },
           ];
-          
+
           let groqModel = "llama3-70b-8192";
           if (file_base64 && mime && mime.startsWith("image/")) {
             groqModel = "llama-3.2-11b-vision-preview";
@@ -562,8 +559,8 @@ Regras de Extração:
               role: "user",
               content: [
                 { type: "text", text: prompt || "" },
-                { type: "image_url", image_url: { url: `data:${mime};base64,${file_base64}` } }
-              ]
+                { type: "image_url", image_url: { url: `data:${mime};base64,${file_base64}` } },
+              ],
             });
           } else {
             messages.push({ role: "user", content: prompt || "" });
@@ -637,9 +634,9 @@ Regras de Extração:
 
       if (!aiResult) {
         throw new Error(
-          isPdf 
+          isPdf
             ? "Gemini failed to process the PDF and other providers do not support PDF input."
-            : "All AI providers failed or are not configured."
+            : "All AI providers failed or are not configured.",
         );
       }
 
@@ -858,7 +855,7 @@ Regras de Extração:
           input_reference: inputReference,
           status: "queued",
           requested_by: user?.id || null,
-          result_payload: { prompt, systemPrompt, jsonMode, mime }
+          result_payload: { prompt, systemPrompt, jsonMode, mime },
         })
         .select()
         .single();
@@ -904,13 +901,14 @@ Regras de Extração:
       const rawBytes = new TextEncoder().encode(key_value);
       const hashBuffer = await crypto.subtle.digest("SHA-256", rawBytes);
       const fingerprint = Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, "0"))
+        .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
 
       // Mask hint
-      const maskedHint = key_value.length > 12 
-        ? key_value.substring(0, 8) + "..." + key_value.substring(key_value.length - 4)
-        : "key_masked";
+      const maskedHint =
+        key_value.length > 12
+          ? key_value.substring(0, 8) + "..." + key_value.substring(key_value.length - 4)
+          : "key_masked";
 
       // Upsert into ai_api_credentials
       let query = supabaseAdmin
@@ -937,7 +935,7 @@ Regras de Extração:
             monthly_limit: monthly_limit !== undefined ? monthly_limit : null,
             priority: priority !== undefined ? priority : 0,
             status: "healthy",
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("id", existing.id)
           .select("id, masked_hint, status")
@@ -956,7 +954,7 @@ Regras de Extração:
             label: label || prov.name,
             monthly_limit: monthly_limit !== undefined ? monthly_limit : null,
             priority: priority !== undefined ? priority : 0,
-            status: "healthy"
+            status: "healthy",
           })
           .select("id, masked_hint, status")
           .single();
@@ -982,9 +980,7 @@ Regras de Extração:
       if (error) throw error;
 
       // Join with provider details
-      const { data: providers } = await supabaseAdmin
-        .from("ai_providers")
-        .select("id, code, name");
+      const { data: providers } = await supabaseAdmin.from("ai_providers").select("id, code, name");
 
       const provMap = new Map((providers || []).map((p: any) => [p.id, p]));
       const joined = (credentials || []).map((c: any) => {
@@ -992,7 +988,7 @@ Regras de Extração:
         return {
           ...c,
           provider_code: p?.code || "",
-          provider_name: p?.name || ""
+          provider_name: p?.name || "",
         };
       });
 

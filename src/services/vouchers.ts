@@ -4,7 +4,6 @@ import type { Database } from "@/integrations/supabase/types";
 type VoucherInsert = Database["public"]["Tables"]["vouchers"]["Insert"];
 type VoucherUpdate = Database["public"]["Tables"]["vouchers"]["Update"];
 
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type VoucherFlight = {
@@ -139,9 +138,7 @@ export async function saveVoucherData(
       .eq("id", selectedId);
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await supabase
-      .from("vouchers")
-      .insert(payload as VoucherInsert);
+    const { error } = await supabase.from("vouchers").insert(payload as VoucherInsert);
     if (error) throw new Error(error.message);
   }
 }
@@ -242,4 +239,3 @@ export async function uploadVoucherPdf(
 
   return pdfUrl;
 }
-

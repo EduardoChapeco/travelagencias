@@ -10,7 +10,13 @@ export type PageRow = {
   is_published: boolean;
   template: string | null;
   blocks: PortalBlock[];
-  seo: { meta_title?: string; meta_description?: string };
+  seo: {
+    meta_title?: string;
+    meta_description?: string;
+    fb_pixel_id?: string | null;
+    google_analytics_id?: string | null;
+    custom_scripts?: string | null;
+  };
   created_at?: string;
 };
 
@@ -49,7 +55,13 @@ export async function savePortalPageDraft(
   slug: string,
   template: string,
   blocks: PortalBlock[],
-  seo: { meta_title: string; meta_description: string },
+  seo: {
+    meta_title?: string | null;
+    meta_description?: string | null;
+    fb_pixel_id?: string | null;
+    google_analytics_id?: string | null;
+    custom_scripts?: string | null;
+  },
 ): Promise<string> {
   if (!title) throw new Error("O título é obrigatório");
   if (blocks.length > 50) {

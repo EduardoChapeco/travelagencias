@@ -188,10 +188,7 @@ function MobileStageAccordion({
       >
         <div>
           <div className="flex items-center gap-2">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ background: stage.color }}
-            />
+            <span className="h-2 w-2 rounded-full" style={{ background: stage.color }} />
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>

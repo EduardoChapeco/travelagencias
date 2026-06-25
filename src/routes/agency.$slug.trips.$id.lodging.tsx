@@ -49,10 +49,12 @@ function TripLodgingPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("boarding_cards")
-        .select(`
+        .select(
+          `
           id, agency_id, status, hotel_name, hotel_address, hotel_checkin, hotel_checkout, hotel_phone,
           flight_class, notes, hotel_stars
-        `)
+        `,
+        )
         .eq("trip_id", id)
         .not("hotel_name", "is", null);
       if (error) throw error;
@@ -181,7 +183,8 @@ function TripLodgingPage() {
           <div>
             <p className="text-xs font-semibold text-foreground">Hospedagem & Acomodação</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Gerencie a lista de hotéis, estadias e acomodações confirmadas para esta viagem de forma dinâmica.
+              Gerencie a lista de hotéis, estadias e acomodações confirmadas para esta viagem de
+              forma dinâmica.
             </p>
           </div>
         </div>
@@ -214,7 +217,9 @@ function TripLodgingPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Nome do Hotel *</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Nome do Hotel *
+              </label>
               <input
                 type="text"
                 placeholder="Ex: Copacabana Palace"
@@ -225,7 +230,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Telefone do Hotel</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Telefone do Hotel
+              </label>
               <input
                 type="text"
                 placeholder="+55 (21) 2548-7070"
@@ -236,7 +243,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Endereço Completo</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Endereço Completo
+              </label>
               <input
                 type="text"
                 placeholder="Av. Atlântica, 1702 - Copacabana"
@@ -247,7 +256,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Data de Check-in</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Data de Check-in
+              </label>
               <input
                 type="date"
                 value={hotelCheckin}
@@ -257,7 +268,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Data de Check-out</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Data de Check-out
+              </label>
               <input
                 type="date"
                 value={hotelCheckout}
@@ -267,7 +280,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Acomodação / Notas</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Acomodação / Notas
+              </label>
               <input
                 type="text"
                 placeholder="Ex: Quarto Duplo Standard Vista Mar, Café incluso"
@@ -278,7 +293,9 @@ function TripLodgingPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">Classificação (Estrelas)</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                Classificação (Estrelas)
+              </label>
               <select
                 value={stars}
                 onChange={(e) => setStars(Number(e.target.value))}
@@ -324,7 +341,9 @@ function TripLodgingPage() {
       {!isLoading && cards.length === 0 && !showAddForm && (
         <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center max-w-3xl">
           <Bed className="h-10 w-10 text-muted-foreground/30 mb-3" />
-          <p className="text-sm font-semibold text-muted-foreground">Nenhuma hospedagem vinculada</p>
+          <p className="text-sm font-semibold text-muted-foreground">
+            Nenhuma hospedagem vinculada
+          </p>
           <p className="text-xs text-muted-foreground mt-1">
             Clique em "Adicionar Hospedagem" para registrar o hotel desta viagem.
           </p>
@@ -344,11 +363,11 @@ function TripLodgingPage() {
                     Hotel
                   </span>
                   <div className="flex gap-0.5 text-amber-500">
-                    {card.hotel_stars && card.hotel_stars > 0 ? (
-                      [...Array(card.hotel_stars)].map((_, i) => (
-                        <Star key={i} className="h-3 w-3 fill-current" />
-                      ))
-                    ) : null}
+                    {card.hotel_stars && card.hotel_stars > 0
+                      ? [...Array(card.hotel_stars)].map((_, i) => (
+                          <Star key={i} className="h-3 w-3 fill-current" />
+                        ))
+                      : null}
                   </div>
                 </div>
 
@@ -395,7 +414,8 @@ function TripLodgingPage() {
                     </span>
                     <span className="font-medium text-foreground flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                      {card.hotel_checkin ? fmtDate(card.hotel_checkin) : "—"} até {card.hotel_checkout ? fmtDate(card.hotel_checkout) : "—"}
+                      {card.hotel_checkin ? fmtDate(card.hotel_checkin) : "—"} até{" "}
+                      {card.hotel_checkout ? fmtDate(card.hotel_checkout) : "—"}
                     </span>
                   </div>
 

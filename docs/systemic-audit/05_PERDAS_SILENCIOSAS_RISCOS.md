@@ -7,29 +7,33 @@ Este documento identifica pontos de vulnerabilidade técnica do TravelOS, detalh
 ## 1. Mapeamento de Perdas Silenciosas de Dados
 
 ### 1.1 Dupla Fonte de Verdade na Rooming List
-* **Problema:** Conflito de persistência de quartos entre a coluna JSONB `group_tours.rooming_list` e a tabela normalizada `boarding_rooming_list`.
-* **Causa Raiz:** Códigos antigos de admin ainda gravavam no JSONB desnormalizado do grupo, enquanto telas novas de embarque gravavam na tabela relacional. Um agente salvando dados na aba do grupo sobrescrevia silenciosamente as modificações relacionais feitas por outro agente na aba de embarque.
-* **Impacto:** Passageiros perdiam sua alocação de quartos no hotel sem que nenhum erro de banco fosse exibido na tela.
+
+- **Problema:** Conflito de persistência de quartos entre a coluna JSONB `group_tours.rooming_list` e a tabela normalizada `boarding_rooming_list`.
+- **Causa Raiz:** Códigos antigos de admin ainda gravavam no JSONB desnormalizado do grupo, enquanto telas novas de embarque gravavam na tabela relacional. Um agente salvando dados na aba do grupo sobrescrevia silenciosamente as modificações relacionais feitas por outro agente na aba de embarque.
+- **Impacto:** Passageiros perdiam sua alocação de quartos no hotel sem que nenhum erro de banco fosse exibido na tela.
 
 ### 1.2 Gravações Parciais e Ausência de Transações RPC
-* **Problema:** Conversão de propostas em viagem gravando separadamente em múltiplas tabelas no frontend (`trips`, `trip_passengers`, `boarding_cards`) sem bloco transacional unificado.
-* **Causa Raiz:** O frontend executava chamadas sequenciais independentes ao Supabase. Se a terceira chamada (ex: cadastrar passageiros) falhasse por timeout ou perda de rede, a viagem era criada sem nenhum passageiro vinculado.
-* **Impacto:** Registros órfãos de viagens vazias e inconsistência profunda no painel operacional. Resolvido com a criação da RPC `convert_proposal_to_trip`, que deve ser obrigatoriamente utilizada em todas as conversões.
+
+- **Problema:** Conversão de propostas em viagem gravando separadamente em múltiplas tabelas no frontend (`trips`, `trip_passengers`, `boarding_cards`) sem bloco transacional unificado.
+- **Causa Raiz:** O frontend executava chamadas sequenciais independentes ao Supabase. Se a terceira chamada (ex: cadastrar passageiros) falhasse por timeout ou perda de rede, a viagem era criada sem nenhum passageiro vinculado.
+- **Impacto:** Registros órfãos de viagens vazias e inconsistência profunda no painel operacional. Resolvido com a criação da RPC `convert_proposal_to_trip`, que deve ser obrigatoriamente utilizada em todas as conversões.
 
 ### 1.3 Upload Pix B2C Simulado no Checkout
-* **Problema:** Interface de checkout de pacotes públicos finge fazer o upload do comprovante Pix e informa sucesso ao cliente antes de salvar o arquivo no Storage.
-* **Causa Raiz:** Falta de tratamento de erro no endpoint de checkout público. O formulário enviava o comprovante simulado em base64 localmente e gerava o lead no CRM mesmo que a gravação do arquivo no bucket `receipts` falhasse.
-* **Impacto:** Inadimplência indetectável. Clientes mal-intencionados podiam fraudar o pagamento enviando uploads nulos ou falhos e garantindo a vaga no grupo terrestre.
+
+- **Problema:** Interface de checkout de pacotes públicos finge fazer o upload do comprovante Pix e informa sucesso ao cliente antes de salvar o arquivo no Storage.
+- **Causa Raiz:** Falta de tratamento de erro no endpoint de checkout público. O formulário enviava o comprovante simulado em base64 localmente e gerava o lead no CRM mesmo que a gravação do arquivo no bucket `receipts` falhasse.
+- **Impacto:** Inadimplência indetectável. Clientes mal-intencionados podiam fraudar o pagamento enviando uploads nulos ou falhos e garantindo a vaga no grupo terrestre.
 
 ### 1.4 Promises sem `await` e Erros Supabase Ignorados
-* **Problema:** Blocos de código React executando mutações no banco de dados sem verificar o objeto `error` retornado pelo Supabase Client.
-* **Evidência no Código:** Uso frequente do padrão:
+
+- **Problema:** Blocos de código React executando mutações no banco de dados sem verificar o objeto `error` retornado pelo Supabase Client.
+- **Evidência no Código:** Uso frequente do padrão:
   ```typescript
   const { data } = await supabase.from('...').insert(...);
   // ausência de verificação do console.error ou throw error
   toast.success("Salvo com sucesso!");
   ```
-* **Impacto:** O frontend exibe toast verde de sucesso, porém o banco rejeitou o comando por violação de RLS ou Unique Key, deixando o estado do cliente inconsistente com a base.
+- **Impacto:** O frontend exibe toast verde de sucesso, porém o banco rejeitou o comando por violação de RLS ou Unique Key, deixando o estado do cliente inconsistente com a base.
 
 ---
 

@@ -67,7 +67,9 @@ export function SheetPage({
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className={cn("flex-1", contentClassName || "overflow-auto p-6 no-scrollbar")}>{children}</div>
+        <div className={cn("flex-1", contentClassName || "overflow-auto p-6 no-scrollbar")}>
+          {children}
+        </div>
       </div>
     </div>,
     document.body,

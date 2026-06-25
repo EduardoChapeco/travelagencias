@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 try {
-  const filePath = path.join(__dirname, '..', 'deployments.txt');
+  const filePath = path.join(__dirname, "..", "deployments.txt");
   if (fs.existsSync(filePath)) {
-    const content = fs.readFileSync(filePath, 'utf16le');
+    const content = fs.readFileSync(filePath, "utf16le");
     console.log("--- deployments.txt ---");
     console.log(content.substring(0, 2000));
   } else {
@@ -15,9 +15,9 @@ try {
 }
 
 try {
-  const filePath2 = path.join(__dirname, '..', 'wrangler_deployments.txt');
+  const filePath2 = path.join(__dirname, "..", "wrangler_deployments.txt");
   if (fs.existsSync(filePath2)) {
-    const content2 = fs.readFileSync(filePath2, 'utf16le');
+    const content2 = fs.readFileSync(filePath2, "utf16le");
     console.log("--- wrangler_deployments.txt ---");
     console.log(content2.substring(0, 2000));
   } else {

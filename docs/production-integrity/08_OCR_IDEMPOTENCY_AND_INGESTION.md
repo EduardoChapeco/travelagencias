@@ -25,7 +25,7 @@ graph TD
 3. **Ausência de Hashing de Arquivo:** O sistema não calcula o checksum (MD5 ou SHA-256) do arquivo enviado. É possível carregar o mesmo documento (ex: mesma planilha de tarifário) repetidas vezes, gerando custos desnecessários de armazenamento e chamadas redundantes de IA.
 4. **Sem Tratamento de Rollback:** Por não ser uma operação encapsulada em uma transação SQL (ou RPC com controle transacional), qualquer falha de rede ou validação no meio do salvamento de produtos deixará os contatos já salvos gravados no banco. O operador precisará reiniciar a revisão e a nova tentativa duplicará as primeiras inserções bem-sucedidas.
 5. **Falta de Indicadores de Auditoria:** O banco de dados não registra metadados de auditoria do processamento de IA:
-   * Não salva qual modelo foi utilizado (Gemini ou Groq).
-   * Não salva a pontuação de confiança (Confidence Score) da extração de campos estruturados.
-   * Não registra qual operador/agente aprovou os dados finais, apenas atualizando a flag `ocr_reviewed`.
+   - Não salva qual modelo foi utilizado (Gemini ou Groq).
+   - Não salva a pontuação de confiança (Confidence Score) da extração de campos estruturados.
+   - Não registra qual operador/agente aprovou os dados finais, apenas atualizando a flag `ocr_reviewed`.
 6. **Mapeamento de Aliases e Duplicação de Fornecedores:** O OCR tenta extrair dados para o parceiro em que o arquivo foi anexado. Porém, não há lógica de aliases ou validação inteligente para alertar se os contatos inseridos já pertencem a outro fornecedor, ou se o e-mail/WhatsApp extraído está duplicado na base de dados.

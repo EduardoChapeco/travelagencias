@@ -197,7 +197,9 @@ export function SupplierAutocomplete({
                           <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
                             <MapPin className="h-2.5 w-2.5" />
                             {supplier.city}
-                            {supplier.country && supplier.country !== "BR" && `, ${supplier.country}`}
+                            {supplier.country &&
+                              supplier.country !== "BR" &&
+                              `, ${supplier.country}`}
                           </span>
                         )}
                         {supplier.commission_rate > 0 && (

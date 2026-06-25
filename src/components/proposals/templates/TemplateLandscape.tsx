@@ -94,9 +94,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
               Apresentação Exclusiva · Proposta #{p.number}
             </div>
 
-            <h1
-              className="text-7xl font-black tracking-tight leading-none text-white shadow-none"
-            >
+            <h1 className="text-7xl font-black tracking-tight leading-none text-white shadow-none">
               {p.destination || p.title || "Seu Próximo Destino"}
             </h1>
 

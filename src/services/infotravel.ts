@@ -22,7 +22,7 @@ export async function infotravelSearchHotels(
     },
   });
   if (error) throw new Error(error.message || "Erro ao buscar hotéis no Infotravel");
-  
+
   // Se for o GDS real, mapeamos os resultados de disponibilidade
   if (data?.hotelAvail) {
     return (data.hotelAvail as ApiHotelAvail[]).map(mapApiHotelToCanonical);
@@ -42,7 +42,7 @@ export async function infotravelSearchFlights(
     },
   });
   if (error) throw new Error(error.message || "Erro ao buscar voos no Infotravel");
-  
+
   // Se for o GDS real, mapeamos as rotas aéreas
   if (data?.flightAvail) {
     return (data.flightAvail as ApiFlightAvail[]).map(mapApiFlightToCanonical);
@@ -62,12 +62,12 @@ export async function infotravelImportBooking(
     },
   });
   if (error) throw new Error(error.message || "Erro ao importar reserva do Infotravel");
-  
+
   // Se for a reserva crua do GDS real (contém estruturas de hotéis ou voos da API), normalizamos
   if (data && (data.client || data.bookingHotels || data.bookingFlights)) {
     return mapApiBookingToNormalized(data as ApiBooking);
   }
-  
+
   return data as NormalizedBooking; // O mock já retorna no formato NormalizedBooking
 }
 

@@ -8,7 +8,9 @@ export async function logTripAudit(params: {
   metadata?: Record<string, any>;
 }) {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     await supabase.from("audit_log").insert({
       agency_id: params.agencyId,
       actor_id: user?.id || null,

@@ -61,6 +61,7 @@ Ao auditar as entregas programadas no Plano de Implementação, as funcionalidad
 - **Primeira Fase Corretiva Recomendada**: **Fase P0 (Segurança e Integridade)**. Focada em criar a RPC transacional `approve_group_enrollment` no banco de dados e a RPC segura `get_my_room_allocation` com RLS isolado para viabilizar o Portal do Cliente de forma privada.
 
 ## 4. Inventário de Arquivos Criados nesta Auditoria
+
 - `docs/group-hub-audit/00_BASELINE_REPOSITORIO_PRODUCAO.md`
 - `docs/group-hub-audit/01_PLANO_VS_IMPLEMENTACAO.md`
 - `docs/group-hub-audit/02_AUDITORIA_DESIGN_SYSTEM.md`

@@ -17,10 +17,7 @@ import {
   analyzeFlightDifferences,
 } from "@/services/reaccommodation";
 import type { FullChangeCase } from "@/services/reaccommodation";
-import {
-  fetchFlightItineraries,
-  createFlightItinerary,
-} from "@/services/flight-reconciliation";
+import { fetchFlightItineraries, createFlightItinerary } from "@/services/flight-reconciliation";
 import type { FlightItinerary, FlightSegment } from "@/services/flight-reconciliation";
 import {
   Plane,
@@ -49,8 +46,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
@@ -94,7 +105,9 @@ function TripReaccommodationPage() {
 
   // Form states for operator log
   const [operatorId, setOperatorId] = useState("");
-  const [operatorStatus, setOperatorStatus] = useState<"pending" | "notified" | "confirmed" | "rejected">("notified");
+  const [operatorStatus, setOperatorStatus] = useState<
+    "pending" | "notified" | "confirmed" | "rejected"
+  >("notified");
   const [emailThreadId, setEmailThreadId] = useState("");
 
   // Queries
@@ -169,7 +182,7 @@ function TripReaccommodationPage() {
         altSegments.map((seg, idx) => ({
           ...seg,
           segment_order: idx + 1,
-        }))
+        })),
       );
 
       // 2. Add alternative record linking the case and the itinerary
@@ -270,7 +283,15 @@ function TripReaccommodationPage() {
   });
 
   const confirmFinalReaccommodationMut = useMutation({
-    mutationFn: async ({ caseId, origItineraryId, confItineraryId }: { caseId: string; origItineraryId: string | null; confItineraryId: string }) => {
+    mutationFn: async ({
+      caseId,
+      origItineraryId,
+      confItineraryId,
+    }: {
+      caseId: string;
+      origItineraryId: string | null;
+      confItineraryId: string;
+    }) => {
       return resolveChangeCase(caseId, origItineraryId, confItineraryId);
     },
     onSuccess: () => {
@@ -342,9 +363,12 @@ function TripReaccommodationPage() {
     <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Gestão de Reacomodação Aérea</h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Gestão de Reacomodação Aérea
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Gerencie alterações de malha aérea, cadastre alternativas, gere análises de impacto e colete assinaturas jurídicas do cliente.
+            Gerencie alterações de malha aérea, cadastre alternativas, gere análises de impacto e
+            colete assinaturas jurídicas do cliente.
           </p>
         </div>
         <Dialog open={isCreateCaseOpen} onOpenChange={setIsCreateCaseOpen}>
@@ -357,7 +381,8 @@ function TripReaccommodationPage() {
             <DialogHeader>
               <DialogTitle>Registrar Alteração de Voo</DialogTitle>
               <DialogDescription>
-                Abra um caso de reacomodação para iniciar o fluxo de alternativas e aceites com o cliente.
+                Abra um caso de reacomodação para iniciar o fluxo de alternativas e aceites com o
+                cliente.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
@@ -370,11 +395,15 @@ function TripReaccommodationPage() {
                   <SelectContent>
                     {activeItinerariesQ.data?.map((it) => (
                       <SelectItem key={it.id} value={it.id}>
-                        V{it.version} - {it.segments?.[0]?.origin_iata} → {it.segments?.[it.segments.length - 1]?.destination_iata} ({it.segments?.[0]?.flight_number})
+                        V{it.version} - {it.segments?.[0]?.origin_iata} →{" "}
+                        {it.segments?.[it.segments.length - 1]?.destination_iata} (
+                        {it.segments?.[0]?.flight_number})
                       </SelectItem>
                     ))}
                     {activeItinerariesQ.data?.length === 0 && (
-                      <div className="p-2 text-xs text-muted-foreground text-center">Nenhum voo ativo nesta viagem.</div>
+                      <div className="p-2 text-xs text-muted-foreground text-center">
+                        Nenhum voo ativo nesta viagem.
+                      </div>
                     )}
                   </SelectContent>
                 </Select>
@@ -389,7 +418,9 @@ function TripReaccommodationPage() {
                   <SelectContent>
                     <SelectItem value="schedule_change">Alteração de Horário / Malha</SelectItem>
                     <SelectItem value="cancellation">Voo Cancelado</SelectItem>
-                    <SelectItem value="baggage_policy_change">Mudança na Franquia de Bagagem</SelectItem>
+                    <SelectItem value="baggage_policy_change">
+                      Mudança na Franquia de Bagagem
+                    </SelectItem>
                     <SelectItem value="other">Outro Motivo Operacional</SelectItem>
                   </SelectContent>
                 </Select>
@@ -411,7 +442,9 @@ function TripReaccommodationPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateCaseOpen(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setIsCreateCaseOpen(false)}>
+                Cancelar
+              </Button>
               <Button onClick={() => createCaseMut.mutate()} disabled={createCaseMut.isPending}>
                 {createCaseMut.isPending ? "Criando..." : "Criar Caso"}
               </Button>
@@ -423,7 +456,9 @@ function TripReaccommodationPage() {
       {/* Cases List */}
       <div className="space-y-6">
         {casesQ.data?.map((c) => {
-          const statusConfig = WORKFLOW_STATUS_CONFIG[c.workflow_status as FullChangeCase["workflow_status"]] || { label: c.workflow_status, tone: "neutral" };
+          const statusConfig = WORKFLOW_STATUS_CONFIG[
+            c.workflow_status as FullChangeCase["workflow_status"]
+          ] || { label: c.workflow_status, tone: "neutral" };
           const activeDecision = c.decisions?.[0]; // Get latest customer decision
 
           return (
@@ -440,13 +475,22 @@ function TripReaccommodationPage() {
                     <StatusBadge tone={statusConfig.tone}>{statusConfig.label}</StatusBadge>
                   </div>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <div>Prioridade: <span className="font-semibold text-foreground">{PRIORITY_LABELS[c.priority]}</span></div>
-                    <div>Aberto em: <span className="font-semibold text-foreground">{fmtDate(c.detected_at)}</span></div>
+                    <div>
+                      Prioridade:{" "}
+                      <span className="font-semibold text-foreground">
+                        {PRIORITY_LABELS[c.priority]}
+                      </span>
+                    </div>
+                    <div>
+                      Aberto em:{" "}
+                      <span className="font-semibold text-foreground">
+                        {fmtDate(c.detected_at)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
-                
                 {/* 1. Original Flight Info */}
                 <div className="space-y-3">
                   <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -455,26 +499,39 @@ function TripReaccommodationPage() {
                   {c.original_itinerary ? (
                     <div className="rounded-xl border border-border/40 p-4 bg-surface/50 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                       <div>
-                        <div className="text-xs text-muted-foreground">Itinerário Atual (V{c.original_itinerary.version})</div>
+                        <div className="text-xs text-muted-foreground">
+                          Itinerário Atual (V{c.original_itinerary.version})
+                        </div>
                         <div className="font-semibold text-foreground text-sm flex items-center gap-2 mt-1">
-                          {c.original_itinerary.segments?.[0]?.origin_iata} <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" /> {c.original_itinerary.segments?.[c.original_itinerary.segments.length - 1]?.destination_iata}
+                          {c.original_itinerary.segments?.[0]?.origin_iata}{" "}
+                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />{" "}
+                          {
+                            c.original_itinerary.segments?.[
+                              c.original_itinerary.segments.length - 1
+                            ]?.destination_iata
+                          }
                         </div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Partida Original</div>
                         <div className="font-semibold text-foreground text-sm mt-1">
-                          {c.original_itinerary.segments?.[0] ? `${fmtDate(c.original_itinerary.segments[0].departure_at)} às ${new Date(c.original_itinerary.segments[0].departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "-"}
+                          {c.original_itinerary.segments?.[0]
+                            ? `${fmtDate(c.original_itinerary.segments[0].departure_at)} às ${new Date(c.original_itinerary.segments[0].departure_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                            : "-"}
                         </div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Localizador / Cia</div>
                         <div className="font-semibold text-foreground text-sm mt-1">
-                          {c.original_itinerary.segments?.[0]?.record_locator || "N/A"} ({c.original_itinerary.segments?.[0]?.airline_code})
+                          {c.original_itinerary.segments?.[0]?.record_locator || "N/A"} (
+                          {c.original_itinerary.segments?.[0]?.airline_code})
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-muted-foreground italic">Voo original não disponível ou deletado.</div>
+                    <div className="text-sm text-muted-foreground italic">
+                      Voo original não disponível ou deletado.
+                    </div>
                   )}
                 </div>
 
@@ -510,7 +567,10 @@ function TripReaccommodationPage() {
                             : "bg-emerald-500/10 text-emerald-600 border-emerald-200";
 
                       return (
-                        <div key={alt.id} className="rounded-xl border border-border/50 bg-surface/30 overflow-hidden">
+                        <div
+                          key={alt.id}
+                          className="rounded-xl border border-border/50 bg-surface/30 overflow-hidden"
+                        >
                           <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center border-b border-border/30">
                             {/* Route & Segments */}
                             <div className="lg:col-span-4 space-y-2">
@@ -518,17 +578,34 @@ function TripReaccommodationPage() {
                                 <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-surface-alt border border-border/60">
                                   ALT {alt.ranking}
                                 </span>
-                                <span className="text-xs text-muted-foreground font-medium capitalize">Via {alt.source}</span>
+                                <span className="text-xs text-muted-foreground font-medium capitalize">
+                                  Via {alt.source}
+                                </span>
                               </div>
                               <div className="font-semibold text-foreground text-sm flex items-center gap-2">
-                                {alt.itinerary?.segments?.[0]?.origin_iata} <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" /> {alt.itinerary?.segments?.[alt.itinerary.segments.length - 1]?.destination_iata}
+                                {alt.itinerary?.segments?.[0]?.origin_iata}{" "}
+                                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />{" "}
+                                {
+                                  alt.itinerary?.segments?.[alt.itinerary.segments.length - 1]
+                                    ?.destination_iata
+                                }
                               </div>
                               <div className="text-xs text-muted-foreground space-y-1">
                                 {alt.itinerary?.segments?.map((seg: any, idx: number) => (
                                   <div key={seg.id} className="flex items-center gap-1.5">
-                                    <span className="font-semibold text-foreground">{seg.airline_code}{seg.flight_number}</span>
-                                    <span>({seg.origin_iata} → {seg.destination_iata})</span>
-                                    <span>{new Date(seg.departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                    <span className="font-semibold text-foreground">
+                                      {seg.airline_code}
+                                      {seg.flight_number}
+                                    </span>
+                                    <span>
+                                      ({seg.origin_iata} → {seg.destination_iata})
+                                    </span>
+                                    <span>
+                                      {new Date(seg.departure_at).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
                                   </div>
                                 ))}
                               </div>
@@ -558,32 +635,49 @@ function TripReaccommodationPage() {
                               )}
                               {analysis?.total_duration_delta_minutes !== 0 && (
                                 <span className="text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
-                                  Tempo: {analysis.total_duration_delta_minutes > 0 ? `+${Math.round(analysis.total_duration_delta_minutes / 60)}h` : `${Math.round(analysis.total_duration_delta_minutes / 60)}h`}
+                                  Tempo:{" "}
+                                  {analysis.total_duration_delta_minutes > 0
+                                    ? `+${Math.round(analysis.total_duration_delta_minutes / 60)}h`
+                                    : `${Math.round(analysis.total_duration_delta_minutes / 60)}h`}
                                 </span>
                               )}
                               {analysis?.segment_count_delta !== 0 && (
                                 <span className="text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
-                                  Conexões: {analysis.segment_count_delta > 0 ? `+${analysis.segment_count_delta}` : analysis.segment_count_delta}
+                                  Conexões:{" "}
+                                  {analysis.segment_count_delta > 0
+                                    ? `+${analysis.segment_count_delta}`
+                                    : analysis.segment_count_delta}
                                 </span>
                               )}
                             </div>
 
                             {/* Risk Score */}
                             <div className="lg:col-span-3 flex items-center justify-between lg:justify-end gap-4">
-                              <div className={cn("text-xs font-semibold px-2.5 py-1 rounded-lg border", riskColor)}>
+                              <div
+                                className={cn(
+                                  "text-xs font-semibold px-2.5 py-1 rounded-lg border",
+                                  riskColor,
+                                )}
+                              >
                                 Risco: {analysis?.risk_score}/100
                               </div>
-                              
+
                               {c.workflow_status !== "resolved" && (
                                 <div className="flex items-center gap-2">
-                                  <Label htmlFor={`visible-${alt.id}`} className="text-xs text-muted-foreground cursor-pointer">
+                                  <Label
+                                    htmlFor={`visible-${alt.id}`}
+                                    className="text-xs text-muted-foreground cursor-pointer"
+                                  >
                                     Exibir ao cliente
                                   </Label>
                                   <Switch
                                     id={`visible-${alt.id}`}
                                     checked={alt.customer_visible}
                                     onCheckedChange={(checked) => {
-                                      toggleVisibilityMut.mutate({ altId: alt.id, visible: checked });
+                                      toggleVisibilityMut.mutate({
+                                        altId: alt.id,
+                                        visible: checked,
+                                      });
                                     }}
                                   />
                                 </div>
@@ -604,8 +698,18 @@ function TripReaccommodationPage() {
 
                           {/* AI & Deterministic details */}
                           <div className="p-3 bg-surface-alt/10 text-[11px] text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><span className="font-semibold text-foreground">Diferença Determinística:</span> {analysis?.deterministic_summary || "Horários alterados sutilmente."}</div>
-                            <div><span className="font-semibold text-foreground">Resumo de Impacto IA:</span> {analysis?.ai_summary || "Nenhuma análise gerada."}</div>
+                            <div>
+                              <span className="font-semibold text-foreground">
+                                Diferença Determinística:
+                              </span>{" "}
+                              {analysis?.deterministic_summary || "Horários alterados sutilmente."}
+                            </div>
+                            <div>
+                              <span className="font-semibold text-foreground">
+                                Resumo de Impacto IA:
+                              </span>{" "}
+                              {analysis?.ai_summary || "Nenhuma análise gerada."}
+                            </div>
                           </div>
                         </div>
                       );
@@ -613,103 +717,139 @@ function TripReaccommodationPage() {
 
                     {c.alternatives?.length === 0 && (
                       <div className="rounded-xl border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground bg-surface-alt/5">
-                        Nenhuma alternativa proposta ainda. Clique em "Adicionar Alternativa" para cadastrar itinerários e rodar o comparador.
+                        Nenhuma alternativa proposta ainda. Clique em "Adicionar Alternativa" para
+                        cadastrar itinerários e rodar o comparador.
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* 3. Actions / Notifications */}
-                {c.workflow_status !== "resolved" && c.alternatives && c.alternatives.length > 0 && (
-                  <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-4 bg-surface-alt/10 p-4 rounded-xl">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Info className="h-4 w-4 text-brand shrink-0" />
-                      <span>
-                        {c.workflow_status === "alternatives_added"
-                          ? "Envie as propostas de voo para o passageiro avaliar no portal."
-                          : c.workflow_status === "client_notified"
-                            ? "Aguardando o cliente aceitar ou rejeitar a reacomodação."
-                            : "As propostas estão prontas."}
-                      </span>
+                {c.workflow_status !== "resolved" &&
+                  c.alternatives &&
+                  c.alternatives.length > 0 && (
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-4 bg-surface-alt/10 p-4 rounded-xl">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Info className="h-4 w-4 text-brand shrink-0" />
+                        <span>
+                          {c.workflow_status === "alternatives_added"
+                            ? "Envie as propostas de voo para o passageiro avaliar no portal."
+                            : c.workflow_status === "client_notified"
+                              ? "Aguardando o cliente aceitar ou rejeitar a reacomodação."
+                              : "As propostas estão prontas."}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {c.workflow_status === "alternatives_added" && (
+                          <Button
+                            size="sm"
+                            className="cursor-pointer text-xs"
+                            onClick={() => notifyClientMut.mutate(c.id)}
+                            disabled={notifyClientMut.isPending}
+                          >
+                            <Send className="mr-1.5 h-3.5 w-3.5" /> Enviar Notificação ao Passageiro
+                          </Button>
+                        )}
+
+                        {c.workflow_status === "client_notified" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="cursor-pointer text-xs"
+                            onClick={() => notifyClientMut.mutate(c.id)}
+                            disabled={notifyClientMut.isPending}
+                          >
+                            <Send className="mr-1.5 h-3.5 w-3.5" /> Reenviar Notificação
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center gap-3">
-                      {c.workflow_status === "alternatives_added" && (
-                        <Button
-                          size="sm"
-                          className="cursor-pointer text-xs"
-                          onClick={() => notifyClientMut.mutate(c.id)}
-                          disabled={notifyClientMut.isPending}
-                        >
-                          <Send className="mr-1.5 h-3.5 w-3.5" /> Enviar Notificação ao Passageiro
-                        </Button>
-                      )}
-                      
-                      {c.workflow_status === "client_notified" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="cursor-pointer text-xs"
-                          onClick={() => notifyClientMut.mutate(c.id)}
-                          disabled={notifyClientMut.isPending}
-                        >
-                          <Send className="mr-1.5 h-3.5 w-3.5" /> Reenviar Notificação
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 {/* 4. Client Acceptance Audit Certificate */}
                 {activeDecision && (
                   <div className="border border-emerald-200 bg-emerald-500/5 rounded-xl overflow-hidden shadow-sm">
                     <div className="bg-emerald-500/10 border-b border-emerald-200 py-3 px-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wide">
-                        <FileSignature className="h-4 w-4" /> Certificado de Aceite Digital Auditável (Legenda Jurídica)
+                        <FileSignature className="h-4 w-4" /> Certificado de Aceite Digital
+                        Auditável (Legenda Jurídica)
                       </div>
                       <div className="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
-                        Status: {activeDecision.decision_status === "accepted" ? "Aceito" : "Rejeitado"}
+                        Status:{" "}
+                        {activeDecision.decision_status === "accepted" ? "Aceito" : "Rejeitado"}
                       </div>
                     </div>
                     <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       <div className="space-y-2">
                         <div>
-                          <span className="text-muted-foreground font-semibold">Assinatura do Passageiro:</span>{" "}
-                          <span className="font-bold text-foreground font-serif italic text-sm underline">{activeDecision.typed_name || "N/A"}</span>
+                          <span className="text-muted-foreground font-semibold">
+                            Assinatura do Passageiro:
+                          </span>{" "}
+                          <span className="font-bold text-foreground font-serif italic text-sm underline">
+                            {activeDecision.typed_name || "N/A"}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground font-semibold">Data/Hora de Registro:</span>{" "}
-                          <span className="font-medium text-foreground">{fmtDate(activeDecision.accepted_at)}</span>
+                          <span className="text-muted-foreground font-semibold">
+                            Data/Hora de Registro:
+                          </span>{" "}
+                          <span className="font-medium text-foreground">
+                            {fmtDate(activeDecision.accepted_at)}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground font-semibold">IP do Dispositivo:</span>{" "}
-                          <span className="font-mono text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40">{activeDecision.ip_address || "N/A"}</span>
+                          <span className="text-muted-foreground font-semibold">
+                            IP do Dispositivo:
+                          </span>{" "}
+                          <span className="font-mono text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40">
+                            {activeDecision.ip_address || "N/A"}
+                          </span>
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <div>
-                          <span className="text-muted-foreground font-semibold">Assinatura de Integridade (SHA256):</span>{" "}
-                          <span className="font-mono text-[10px] text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40 break-all">{activeDecision.signature_hash || "N/A"}</span>
+                          <span className="text-muted-foreground font-semibold">
+                            Assinatura de Integridade (SHA256):
+                          </span>{" "}
+                          <span className="font-mono text-[10px] text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40 break-all">
+                            {activeDecision.signature_hash || "N/A"}
+                          </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground font-semibold">User Agent:</span>{" "}
-                          <span className="text-foreground text-[11px] truncate block" title={activeDecision.user_agent || ""}>{activeDecision.user_agent || "N/A"}</span>
+                          <span
+                            className="text-foreground text-[11px] truncate block"
+                            title={activeDecision.user_agent || ""}
+                          >
+                            {activeDecision.user_agent || "N/A"}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground font-semibold">ID de Sessão do Portal:</span>{" "}
-                          <span className="font-mono text-foreground">{activeDecision.portal_session_id || "N/A"}</span>
+                          <span className="text-muted-foreground font-semibold">
+                            ID de Sessão do Portal:
+                          </span>{" "}
+                          <span className="font-mono text-foreground">
+                            {activeDecision.portal_session_id || "N/A"}
+                          </span>
                         </div>
                       </div>
-                      
+
                       <div className="col-span-1 md:col-span-2 pt-2 border-t border-emerald-200/40">
-                        <span className="text-muted-foreground font-semibold">Termos e Declarações de Ciência Aceitos:</span>
+                        <span className="text-muted-foreground font-semibold">
+                          Termos e Declarações de Ciência Aceitos:
+                        </span>
                         <ul className="list-disc pl-4 mt-1 text-emerald-800/80 space-y-0.5">
                           {activeDecision.disclosures_snapshot?.map((term: string, i: number) => (
                             <li key={i}>{term}</li>
                           ))}
-                          {(!activeDecision.disclosures_snapshot || activeDecision.disclosures_snapshot.length === 0) && (
-                            <li>Ciência e concordância expressa com as alterações de malha e itinerários anexados.</li>
+                          {(!activeDecision.disclosures_snapshot ||
+                            activeDecision.disclosures_snapshot.length === 0) && (
+                            <li>
+                              Ciência e concordância expressa com as alterações de malha e
+                              itinerários anexados.
+                            </li>
                           )}
                         </ul>
                       </div>
@@ -721,7 +861,8 @@ function TripReaccommodationPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                      <Building className="h-3.5 w-3.5 text-muted-foreground" /> Comunicações e Confirmações com a Operadora
+                      <Building className="h-3.5 w-3.5 text-muted-foreground" /> Comunicações e
+                      Confirmações com a Operadora
                     </h4>
                     {c.workflow_status !== "resolved" && (
                       <Button
@@ -740,55 +881,67 @@ function TripReaccommodationPage() {
 
                   <div className="space-y-2">
                     {c.operator_requests?.map((req: any) => (
-                      <div key={req.id} className="rounded-lg border border-border/40 p-3 text-xs bg-surface-alt/10 flex items-center justify-between">
+                      <div
+                        key={req.id}
+                        className="rounded-lg border border-border/40 p-3 text-xs bg-surface-alt/10 flex items-center justify-between"
+                      >
                         <div>
-                          <span className="font-semibold text-foreground">{req.operator?.name || "Fornecedor / Cia Aérea"}</span>
+                          <span className="font-semibold text-foreground">
+                            {req.operator?.name || "Fornecedor / Cia Aérea"}
+                          </span>
                           <span className="mx-2 text-muted-foreground">|</span>
                           <span className="text-muted-foreground">Thread ID: </span>
-                          <span className="font-mono text-foreground">{req.email_thread_id || "N/A"}</span>
+                          <span className="font-mono text-foreground">
+                            {req.email_thread_id || "N/A"}
+                          </span>
                           <span className="mx-2 text-muted-foreground">|</span>
                           <span className="text-muted-foreground">Enviado em: </span>
                           <span>{fmtDate(req.requested_at)}</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-semibold capitalize text-foreground bg-surface px-2 py-0.5 rounded border border-border/40">
-                            {req.status === "confirmed" ? "Confirmado" : req.status === "rejected" ? "Rejeitado" : "Notificado"}
+                            {req.status === "confirmed"
+                              ? "Confirmado"
+                              : req.status === "rejected"
+                                ? "Rejeitado"
+                                : "Notificado"}
                           </span>
-                          
-                          {c.workflow_status === "client_accepted" && req.status !== "confirmed" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="cursor-pointer text-[10px] h-6 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
-                              onClick={async () => {
-                                const latestDecision = c.decisions?.[0];
-                                const selectedAlt = c.alternatives?.find(
-                                  (a: any) => a.id === latestDecision?.selected_alternative_id
-                                );
-                                
-                                if (!selectedAlt) {
-                                  toast.error("Nenhuma alternativa selecionada pelo cliente!");
-                                  return;
-                                }
 
-                                // 1. Confirm operator request log
-                                await updateOperatorRequest(req.id, {
-                                  status: "confirmed",
-                                  confirmed_at: new Date().toISOString(),
-                                  confirmed_itinerary_id: selectedAlt.itinerary_id,
-                                });
+                          {c.workflow_status === "client_accepted" &&
+                            req.status !== "confirmed" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="cursor-pointer text-[10px] h-6 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                onClick={async () => {
+                                  const latestDecision = c.decisions?.[0];
+                                  const selectedAlt = c.alternatives?.find(
+                                    (a: any) => a.id === latestDecision?.selected_alternative_id,
+                                  );
 
-                                // 2. Perform final resolution in DB
-                                confirmFinalReaccommodationMut.mutate({
-                                  caseId: c.id,
-                                  origItineraryId: c.original_itinerary_id,
-                                  confItineraryId: selectedAlt.itinerary_id,
-                                });
-                              }}
-                            >
-                              Confirmar & Aplicar Voos
-                            </Button>
-                          )}
+                                  if (!selectedAlt) {
+                                    toast.error("Nenhuma alternativa selecionada pelo cliente!");
+                                    return;
+                                  }
+
+                                  // 1. Confirm operator request log
+                                  await updateOperatorRequest(req.id, {
+                                    status: "confirmed",
+                                    confirmed_at: new Date().toISOString(),
+                                    confirmed_itinerary_id: selectedAlt.itinerary_id,
+                                  });
+
+                                  // 2. Perform final resolution in DB
+                                  confirmFinalReaccommodationMut.mutate({
+                                    caseId: c.id,
+                                    origItineraryId: c.original_itinerary_id,
+                                    confItineraryId: selectedAlt.itinerary_id,
+                                  });
+                                }}
+                              >
+                                Confirmar & Aplicar Voos
+                              </Button>
+                            )}
                         </div>
                       </div>
                     ))}
@@ -800,7 +953,6 @@ function TripReaccommodationPage() {
                     )}
                   </div>
                 </div>
-
               </CardContent>
             </Card>
           );
@@ -810,9 +962,12 @@ function TripReaccommodationPage() {
           <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center space-y-4 bg-surface-alt/5">
             <Plane className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
             <div>
-              <h3 className="font-semibold text-foreground text-sm">Nenhuma reacomodação aérea ativa</h3>
+              <h3 className="font-semibold text-foreground text-sm">
+                Nenhuma reacomodação aérea ativa
+              </h3>
               <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-                Não há registros de alterações de malhas ou cancelamentos para esta viagem. Abra um novo caso se a companhia aérea alterou os voos.
+                Não há registros de alterações de malhas ou cancelamentos para esta viagem. Abra um
+                novo caso se a companhia aérea alterou os voos.
               </p>
             </div>
             <Button className="cursor-pointer" onClick={() => setIsCreateCaseOpen(true)}>
@@ -828,10 +983,11 @@ function TripReaccommodationPage() {
           <DialogHeader>
             <DialogTitle>Adicionar Itinerário Alternativo</DialogTitle>
             <DialogDescription>
-              Insira os trechos do novo voo proposto pela companhia aérea ou operadora para rodar a análise determinística.
+              Insira os trechos do novo voo proposto pela companhia aérea ou operadora para rodar a
+              análise determinística.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -851,14 +1007,24 @@ function TripReaccommodationPage() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Trechos de Voo (Conexões)</Label>
-                <Button variant="outline" size="sm" onClick={addSegmentRow} className="cursor-pointer text-[10px]">
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Trechos de Voo (Conexões)
+                </Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addSegmentRow}
+                  className="cursor-pointer text-[10px]"
+                >
                   <Plus className="mr-1 h-3 w-3" /> Adicionar Trecho
                 </Button>
               </div>
 
               {altSegments.map((seg, index) => (
-                <div key={index} className="p-4 rounded-xl border border-border/60 bg-surface-alt/20 space-y-4 relative">
+                <div
+                  key={index}
+                  className="p-4 rounded-xl border border-border/60 bg-surface-alt/20 space-y-4 relative"
+                >
                   {altSegments.length > 1 && (
                     <Button
                       variant="ghost"
@@ -870,14 +1036,16 @@ function TripReaccommodationPage() {
                     </Button>
                   )}
                   <div className="text-xs font-bold text-foreground">Trecho #{index + 1}</div>
-                  
+
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="space-y-1">
                       <Label className="text-[10px] text-muted-foreground">Cia Aérea (IATA)</Label>
                       <Input
                         placeholder="Ex: LA, AD, G3"
                         value={seg.airline_code}
-                        onChange={(e) => updateSegmentField(index, "airline_code", e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          updateSegmentField(index, "airline_code", e.target.value.toUpperCase())
+                        }
                       />
                     </div>
                     <div className="space-y-1">
@@ -893,7 +1061,9 @@ function TripReaccommodationPage() {
                       <Input
                         placeholder="Ex: GRU"
                         value={seg.origin_iata}
-                        onChange={(e) => updateSegmentField(index, "origin_iata", e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          updateSegmentField(index, "origin_iata", e.target.value.toUpperCase())
+                        }
                       />
                     </div>
                     <div className="space-y-1">
@@ -901,14 +1071,22 @@ function TripReaccommodationPage() {
                       <Input
                         placeholder="Ex: FLN"
                         value={seg.destination_iata}
-                        onChange={(e) => updateSegmentField(index, "destination_iata", e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          updateSegmentField(
+                            index,
+                            "destination_iata",
+                            e.target.value.toUpperCase(),
+                          )
+                        }
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Partida (Data e Hora)</Label>
+                      <Label className="text-[10px] text-muted-foreground">
+                        Partida (Data e Hora)
+                      </Label>
                       <Input
                         type="datetime-local"
                         value={seg.departure_at}
@@ -916,7 +1094,9 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Chegada (Data e Hora)</Label>
+                      <Label className="text-[10px] text-muted-foreground">
+                        Chegada (Data e Hora)
+                      </Label>
                       <Input
                         type="datetime-local"
                         value={seg.arrival_at}
@@ -956,7 +1136,9 @@ function TripReaccommodationPage() {
                       <Input
                         placeholder="Ex: XYZW12"
                         value={seg.record_locator}
-                        onChange={(e) => updateSegmentField(index, "record_locator", e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          updateSegmentField(index, "record_locator", e.target.value.toUpperCase())
+                        }
                       />
                     </div>
                   </div>
@@ -966,8 +1148,13 @@ function TripReaccommodationPage() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddAlternativeOpen(false)}>Cancelar</Button>
-            <Button onClick={() => addAlternativeMut.mutate()} disabled={addAlternativeMut.isPending}>
+            <Button variant="outline" onClick={() => setIsAddAlternativeOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => addAlternativeMut.mutate()}
+              disabled={addAlternativeMut.isPending}
+            >
               {addAlternativeMut.isPending ? "Adicionando..." : "Adicionar Alternativa"}
             </Button>
           </DialogFooter>
@@ -980,7 +1167,8 @@ function TripReaccommodationPage() {
           <DialogHeader>
             <DialogTitle>Registrar Log de Comunicação Operadora</DialogTitle>
             <DialogDescription>
-              Registre e-mails, ligações ou chats trocados com o fornecedor/operadora para aprovação da reacomodação.
+              Registre e-mails, ligações ou chats trocados com o fornecedor/operadora para aprovação
+              da reacomodação.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -1026,14 +1214,18 @@ function TripReaccommodationPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOperatorLogOpen(false)}>Cancelar</Button>
-            <Button onClick={() => logOperatorRequestMut.mutate()} disabled={logOperatorRequestMut.isPending}>
+            <Button variant="outline" onClick={() => setIsOperatorLogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => logOperatorRequestMut.mutate()}
+              disabled={logOperatorRequestMut.isPending}
+            >
               {logOperatorRequestMut.isPending ? "Gravando..." : "Salvar Log"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

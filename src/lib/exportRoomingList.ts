@@ -33,42 +33,43 @@ const BOARDING_STATUS_LABEL: Record<string, string> = {
 
 export async function exportBoardingListXlsx(
   cards: BoardingExportCard[],
-  options: { filename?: string; agencyName?: string } = {}
+  options: { filename?: string; agencyName?: string } = {},
 ): Promise<void> {
   const { filename = "lista-embarque", agencyName = "TravelOS" } = options;
 
   const rows = cards.map((card) => {
     const checklistTotal = card.checklist?.length ?? 0;
     const checklistDone = card.checklist?.filter((c) => c.done).length ?? 0;
-    const checklistStr = checklistTotal > 0
-      ? `${checklistDone}/${checklistTotal} (${Math.round((checklistDone / checklistTotal) * 100)}%)`
-      : "—";
+    const checklistStr =
+      checklistTotal > 0
+        ? `${checklistDone}/${checklistTotal} (${Math.round((checklistDone / checklistTotal) * 100)}%)`
+        : "—";
 
     return {
       "Localizador (PNR)": card.pnr ?? "—",
       "Cia Aérea": card.airline ?? "—",
-      "Voo": card.flight_number ?? "—",
-      "Origem": card.departure_airport ?? "—",
-      "Destino": card.arrival_airport ?? "—",
+      Voo: card.flight_number ?? "—",
+      Origem: card.departure_airport ?? "—",
+      Destino: card.arrival_airport ?? "—",
       "Data de Embarque": card.departure_date
         ? new Date(card.departure_date).toLocaleDateString("pt-BR")
         : "—",
-      "Passageiros": card.passengers_count ?? "—",
-      "Viagem": card.trip_title ?? "—",
+      Passageiros: card.passengers_count ?? "—",
+      Viagem: card.trip_title ?? "—",
       "Destino da Viagem": card.trip_destination ?? "—",
-      "Hotel": card.hotel_name ?? "—",
+      Hotel: card.hotel_name ?? "—",
       "Check-in Hotel": card.hotel_checkin
         ? new Date(card.hotel_checkin).toLocaleDateString("pt-BR")
         : "—",
       "Check-out Hotel": card.hotel_checkout
         ? new Date(card.hotel_checkout).toLocaleDateString("pt-BR")
         : "—",
-      "Guia": card.guide_name ?? "—",
+      Guia: card.guide_name ?? "—",
       "Telefone Guia": card.guide_phone ?? "—",
-      "Checklist": checklistStr,
-      "Status": BOARDING_STATUS_LABEL[card.status] ?? card.status,
-      "Alertas": (card.alerts ?? []).join("; ") || "—",
-      "Observações": card.notes ?? "—",
+      Checklist: checklistStr,
+      Status: BOARDING_STATUS_LABEL[card.status] ?? card.status,
+      Alertas: (card.alerts ?? []).join("; ") || "—",
+      Observações: card.notes ?? "—",
     };
   });
 
@@ -107,13 +108,10 @@ export async function exportBoardingListXlsx(
       { wch: 30 }, // Observações
     ];
 
-    ws["!merges"] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 17 } },
-    ];
+    ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 17 } }];
 
     XLSX.utils.book_append_sheet(wb, ws, "Lista de Embarque");
     XLSX.writeFile(wb, `${filename}.xlsx`);
-
   } catch (xlsxError) {
     console.warn("[exportBoardingList] xlsx não disponível, usando CSV:", xlsxError);
     const headers = Object.keys(rows[0] ?? {});
@@ -121,13 +119,15 @@ export async function exportBoardingListXlsx(
       const s = String(v ?? "");
       return s.includes(",") || s.includes('"') ? `"${s.replace(/"/g, '""')}"` : s;
     };
-    const csv = "\uFEFF" + [
-      `# Lista de Embarque — ${agencyName}`,
-      `# ${new Date().toLocaleString("pt-BR")}`,
-      "",
-      headers.map(escape).join(","),
-      ...rows.map((r) => headers.map((h) => escape(r[h as keyof typeof r] ?? "")).join(",")),
-    ].join("\r\n");
+    const csv =
+      "\uFEFF" +
+      [
+        `# Lista de Embarque — ${agencyName}`,
+        `# ${new Date().toLocaleString("pt-BR")}`,
+        "",
+        headers.map(escape).join(","),
+        ...rows.map((r) => headers.map((h) => escape(r[h as keyof typeof r] ?? "")).join(",")),
+      ].join("\r\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -187,13 +187,9 @@ const ROOM_TYPE_LABEL: Record<string, string> = {
  */
 export async function exportRoomingListXlsx(
   rooms: RoomingExportRoom[],
-  options: RoomingExportOptions = {}
+  options: RoomingExportOptions = {},
 ): Promise<void> {
-  const {
-    filename = "rooming-list",
-    tourTitle = "Excursão",
-    departureDate,
-  } = options;
+  const { filename = "rooming-list", tourTitle = "Excursão", departureDate } = options;
 
   // ── Preparar os dados ──────────────────────────────────────────────────────
   // Expandir: uma linha por quarto + uma linha por passageiro do quarto
@@ -208,25 +204,25 @@ export async function exportRoomingListXlsx(
       // Quarto vazio — linha única
       rows.push({
         "Quarto / Apto": room.room_number,
-        "Tipo": roomTypeLabel,
+        Tipo: roomTypeLabel,
         "Hotel / Pousada": room.hotel_name ?? "",
         "Check-in": room.checkin_date ?? "",
         "Check-out": room.checkout_date ?? "",
-        "Passageiro": "(sem alocação)",
-        "Observações": room.notes ?? "",
-        "Status": status,
+        Passageiro: "(sem alocação)",
+        Observações: room.notes ?? "",
+        Status: status,
       });
     } else {
       paxList.forEach((pax, idx) => {
         rows.push({
           "Quarto / Apto": idx === 0 ? room.room_number : "",
-          "Tipo": idx === 0 ? roomTypeLabel : "",
+          Tipo: idx === 0 ? roomTypeLabel : "",
           "Hotel / Pousada": idx === 0 ? (room.hotel_name ?? "") : "",
           "Check-in": idx === 0 ? (room.checkin_date ?? "") : "",
           "Check-out": idx === 0 ? (room.checkout_date ?? "") : "",
-          "Passageiro": pax.name,
-          "Observações": idx === 0 ? (room.notes ?? "") : "",
-          "Status": idx === 0 ? status : "",
+          Passageiro: pax.name,
+          Observações: idx === 0 ? (room.notes ?? "") : "",
+          Status: idx === 0 ? status : "",
         });
       });
     }
@@ -239,7 +235,11 @@ export async function exportRoomingListXlsx(
     // Cabeçalho de metadados acima da tabela
     const headerRows = [
       ["Rooming List — " + tourTitle],
-      [departureDate ? "Data de saída: " + new Date(departureDate).toLocaleDateString("pt-BR") : ""],
+      [
+        departureDate
+          ? "Data de saída: " + new Date(departureDate).toLocaleDateString("pt-BR")
+          : "",
+      ],
       ["Exportado em: " + new Date().toLocaleString("pt-BR")],
       [], // linha em branco
     ];
@@ -266,15 +266,12 @@ export async function exportRoomingListXlsx(
     ws["!cols"] = colWidths;
 
     // Mesclar células da linha de título (A1:H1)
-    ws["!merges"] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } },
-    ];
+    ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
 
     XLSX.utils.book_append_sheet(wb, ws, "Rooming List");
 
     // Download do arquivo
     XLSX.writeFile(wb, `${filename}.xlsx`);
-
   } catch (xlsxError) {
     // ── Fallback: CSV ─────────────────────────────────────────────────────────
     console.warn("[exportRoomingList] xlsx não disponível, usando CSV como fallback:", xlsxError);
@@ -289,7 +286,7 @@ function exportRoomingListCsv(
   rows: Record<string, string | number>[],
   filename: string,
   tourTitle: string,
-  departureDate?: string | null
+  departureDate?: string | null,
 ): void {
   if (rows.length === 0) {
     console.warn("[exportRoomingList] Nenhum dado para exportar.");
@@ -331,13 +328,9 @@ function exportRoomingListCsv(
  */
 export async function exportRoomingListDocx(
   rooms: RoomingExportRoom[],
-  options: RoomingExportOptions = {}
+  options: RoomingExportOptions = {},
 ): Promise<void> {
-  const {
-    filename = "rooming-list",
-    tourTitle = "Excursão",
-    departureDate,
-  } = options;
+  const { filename = "rooming-list", tourTitle = "Excursão", departureDate } = options;
 
   const dateStr = departureDate
     ? new Date(departureDate).toLocaleDateString("pt-BR")
@@ -425,8 +418,12 @@ export async function exportRoomingListDocx(
   for (const room of rooms) {
     const roomTypeLabel = ROOM_TYPE_LABEL[room.room_type] || room.room_type;
     const paxList = room.passengers || [];
-    const checkinStr = room.checkin_date ? new Date(room.checkin_date).toLocaleDateString("pt-BR") : "—";
-    const checkoutStr = room.checkout_date ? new Date(room.checkout_date).toLocaleDateString("pt-BR") : "—";
+    const checkinStr = room.checkin_date
+      ? new Date(room.checkin_date).toLocaleDateString("pt-BR")
+      : "—";
+    const checkoutStr = room.checkout_date
+      ? new Date(room.checkout_date).toLocaleDateString("pt-BR")
+      : "—";
 
     html += `
       <tr class="room-row">
@@ -480,13 +477,9 @@ export async function exportRoomingListDocx(
  */
 export async function exportRoomingListPdf(
   rooms: RoomingExportRoom[],
-  options: RoomingExportOptions = {}
+  options: RoomingExportOptions = {},
 ): Promise<void> {
-  const {
-    filename = "rooming-list",
-    tourTitle = "Excursão",
-    departureDate,
-  } = options;
+  const { filename = "rooming-list", tourTitle = "Excursão", departureDate } = options;
 
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({
@@ -516,7 +509,9 @@ export async function exportRoomingListPdf(
       ? `Data de saída: ${new Date(departureDate).toLocaleDateString("pt-BR")}`
       : "Data de saída: Não informada";
     doc.text(dateStr, margin, 25);
-    doc.text(`Exportado em: ${new Date().toLocaleString("pt-BR")}`, pageWidth - margin, 25, { align: "right" });
+    doc.text(`Exportado em: ${new Date().toLocaleString("pt-BR")}`, pageWidth - margin, 25, {
+      align: "right",
+    });
 
     // Linha divisória
     doc.setDrawColor(226, 232, 240); // slate-200
@@ -551,7 +546,7 @@ export async function exportRoomingListPdf(
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(9);
     doc.setTextColor(71, 85, 105); // slate-600
-    
+
     doc.text("Quarto", colQuarto, startY);
     doc.text("Tipo", colTipo, startY);
     doc.text("Hotel / Pousada", colHotel, startY);
@@ -573,8 +568,12 @@ export async function exportRoomingListPdf(
   for (const room of rooms) {
     const roomTypeLabel = ROOM_TYPE_LABEL[room.room_type] || room.room_type;
     const paxList = room.passengers || [];
-    const checkinStr = room.checkin_date ? new Date(room.checkin_date).toLocaleDateString("pt-BR") : "—";
-    const checkoutStr = room.checkout_date ? new Date(room.checkout_date).toLocaleDateString("pt-BR") : "—";
+    const checkinStr = room.checkin_date
+      ? new Date(room.checkin_date).toLocaleDateString("pt-BR")
+      : "—";
+    const checkoutStr = room.checkout_date
+      ? new Date(room.checkout_date).toLocaleDateString("pt-BR")
+      : "—";
     const periodStr = room.checkin_date ? `${checkinStr} - ${checkoutStr}` : "—";
     const hotelStr = room.hotel_name || "—";
 
@@ -602,7 +601,7 @@ export async function exportRoomingListPdf(
     doc.setFont("Helvetica", "normal");
     doc.setTextColor(51, 65, 85); // slate-700
     doc.text(roomTypeLabel, colTipo, y);
-    
+
     const hotelLines = doc.splitTextToSize(hotelStr, 35);
     doc.text(hotelLines, colHotel, y);
 
@@ -634,4 +633,3 @@ export async function exportRoomingListPdf(
 
   doc.save(`${filename}.pdf`);
 }
-

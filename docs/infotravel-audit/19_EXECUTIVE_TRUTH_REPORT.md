@@ -6,24 +6,26 @@ Este documento apresenta a síntese executiva de prontidão, riscos e conformida
 
 ## 1. Métricas Consolidadas de Prontidão da Integração
 
-* **Quantidade Total de Endpoints na Especificação OpenAPI (api-doc.json)**: 70
-* **Quantidade de Endpoints Críticos Relevantes para a Integração**: 14 (Autenticação, busca de hotéis, busca de voos, busca de reserva, e variações contábeis/operacionais de backoffice).
-* **Quantidade Implementada no TravelOS**: 4 (Login, busca de hotéis, busca de voos, importação de reserva individual pelo ID).
-* **Quantidade Testada**: 0 (Toda a integração opera sem cobertura de testes unitários, integrados ou E2E de barramento).
-* **Quantidade Parcial**: 1 (Importação de reserva via ID do GDS - funcional na UI e no backend, mas sem resolvedor de conflitos no CRM).
-* **Quantidade Quebrada / Stub**: 0.
-* **Quantidade sem Consumidor (Mocks/Stubs de serviço)**: 2 (Busca de hotéis e busca de voos estão declaradas no serviço do frontend, mas não possuem botões ou interfaces de chamada ativos nas telas de propostas ou roteiros).
+- **Quantidade Total de Endpoints na Especificação OpenAPI (api-doc.json)**: 70
+- **Quantidade de Endpoints Críticos Relevantes para a Integração**: 14 (Autenticação, busca de hotéis, busca de voos, busca de reserva, e variações contábeis/operacionais de backoffice).
+- **Quantidade Implementada no TravelOS**: 4 (Login, busca de hotéis, busca de voos, importação de reserva individual pelo ID).
+- **Quantidade Testada**: 0 (Toda a integração opera sem cobertura de testes unitários, integrados ou E2E de barramento).
+- **Quantidade Parcial**: 1 (Importação de reserva via ID do GDS - funcional na UI e no backend, mas sem resolvedor de conflitos no CRM).
+- **Quantidade Quebrada / Stub**: 0.
+- **Quantidade sem Consumidor (Mocks/Stubs de serviço)**: 2 (Busca de hotéis e busca de voos estão declaradas no serviço do frontend, mas não possuem botões ou interfaces de chamada ativos nas telas de propostas ou roteiros).
 
 ---
 
 ## 2. Diagnóstico de Recursos e Divergências
 
 ### Recursos disponíveis no Infotravel, mas ausentes no TravelOS:
+
 1. **Busca de Transfers e Seguros**: A API externa suporta busca e contratação de traslados e seguros, mas não há barramento para essas tabelas no conector local.
 2. **Criação e Confirmação de Novas Reservas (`POST /booking`)**: O TravelOS depende inteiramente da importação de reservas geradas fora do sistema, sem capacidade de emitir reservas programaticamente.
 3. **Check Rate e Validação Tarifária**: Inexistência do fluxo de verificação antes do faturamento, assumindo preços estáticos.
 
 ### Recursos prometidos no TravelOS, mas não suportados pela API:
+
 1. **Sincronização Bilateral em Tempo Real**: A API da Infotera não possui webhooks para notificação de alterações. Qualquer sincronização depende exclusivamente de polling programado e consultas periódicas de backoffice.
 2. **Edição e Cancelamento Autônomo**: A escrita de dados de cancelamento ou alteração de leitos/assentos por API não é suportada nas permissões padrão de barramento, exigindo operação manual direta na interface web do Infotravel.
 

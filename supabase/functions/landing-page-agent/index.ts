@@ -51,7 +51,10 @@ serve(async (req) => {
         const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
           global: { headers: { Authorization: authHeader } },
         });
-        const { data: { user: authUser }, error: authError } = await supabaseClient.auth.getUser(token);
+        const {
+          data: { user: authUser },
+          error: authError,
+        } = await supabaseClient.auth.getUser(token);
         if (!authError && authUser) {
           user = authUser;
           isPublic = false;
@@ -93,7 +96,7 @@ serve(async (req) => {
 
     // Rate Limiting (Max 7 interactions for public, higher or no limit for authenticated members)
     const interactionCount = messages.filter((m: any) => m.role === "user").length;
-    const MUST_CONVERT = isPublic && (interactionCount >= 7);
+    const MUST_CONVERT = isPublic && interactionCount >= 7;
 
     const systemPrompt = {
       role: "system",
@@ -162,22 +165,19 @@ ${MUST_CONVERT ? "⚠️ URGENTE: O TEMPO DO CHAT ACABOU. VOCÊ NÃO PODE MAIS R
         const args = JSON.parse(toolCall.function.arguments);
 
         // Save to CRM via RPC
-        const { data: leadData, error: leadError } = await supabaseAdmin.rpc(
-          "submit_public_lead",
-          {
-            _agency_slug: agencySlug,
-            _name: args.name,
-            _email: args.email || null,
-            _phone: args.phone,
-            _destination: args.insights,
-            _travel_start: null,
-            _travel_end: null,
-            _pax_count: 1,
-            _estimated_value: 0,
-            _source: "ai_landing_agent",
-            _notes: `[AI Capturado] Sessão: ${sessionId} | Resumo: ${args.insights}`,
-          },
-        );
+        const { data: leadData, error: leadError } = await supabaseAdmin.rpc("submit_public_lead", {
+          _agency_slug: agencySlug,
+          _name: args.name,
+          _email: args.email || null,
+          _phone: args.phone,
+          _destination: args.insights,
+          _travel_start: null,
+          _travel_end: null,
+          _pax_count: 1,
+          _estimated_value: 0,
+          _source: "ai_landing_agent",
+          _notes: `[AI Capturado] Sessão: ${sessionId} | Resumo: ${args.insights}`,
+        });
 
         if (leadError) console.error("Lead save error:", leadError);
 

@@ -16,7 +16,10 @@ import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton } from "@/components/ui/form";
 import { Search } from "lucide-react";
-import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
+import {
+  SupplierAutocomplete,
+  type SupplierOption,
+} from "@/components/suppliers/SupplierAutocomplete";
 
 interface Props {
   draft: Proposal;

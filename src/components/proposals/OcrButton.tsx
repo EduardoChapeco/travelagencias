@@ -40,7 +40,11 @@ export function OcrButton({ proposalId, agencyId, onExtracted }: Props) {
       const data = await processOcrFile(files[0], proposalId, agencyId);
       onExtracted(data);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Não foi possível realizar a leitura automática do arquivo. Por favor, tente novamente ou preencha os dados manualmente.");
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : "Não foi possível realizar a leitura automática do arquivo. Por favor, tente novamente ou preencha os dados manualmente.",
+      );
     } finally {
       setBusy(false);
     }

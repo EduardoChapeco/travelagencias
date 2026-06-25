@@ -5,6 +5,7 @@ Este plano descreve as diretrizes técnicas para implantação de mudanças no b
 ---
 
 ## 1. Princípio da Não-Disruptividade (Zero-Downtime)
+
 Qualquer refatoração de banco de dados deve seguir a estratégia **Expand and Contract**:
 
 1. **Expand (Expandir)**: Adicionar as novas tabelas (`financial_ledger_entries`, `seller_adjustments`, `monthly_closing_periods`) e novas colunas sem renomear ou remover os campos legados de `financial_records` ou `payment_installments` usados atualmente pelo frontend.
@@ -15,6 +16,7 @@ Qualquer refatoração de banco de dados deve seguir a estratégia **Expand and 
 ---
 
 ## 2. Roteiro de Migração de Dados Históricos
+
 Criaremos um script de migração transacional (`backfill`) para converter lançamentos existentes em `financial_records` para a tabela contábil de ledger:
 
 ```sql
@@ -23,13 +25,13 @@ DECLARE
   v_rec record;
 BEGIN
   -- Iterar sobre registros financeiros confirmados não cancelados
-  FOR v_rec IN 
-    SELECT * FROM public.financial_records 
+  FOR v_rec IN
+    SELECT * FROM public.financial_records
     WHERE status = 'confirmed' AND deleted_at IS NULL
   LOOP
     -- Verificar se já existe lançamento para evitar duplicações
     IF NOT EXISTS (
-      SELECT 1 FROM public.financial_ledger_entries 
+      SELECT 1 FROM public.financial_ledger_entries
       WHERE source_event = 'financial_records.backfill' AND source_id = v_rec.id
     ) THEN
       -- Inserir débito ou crédito dependendo do tipo de transação
@@ -53,6 +55,7 @@ END $$;
 ---
 
 ## 3. Estratégia de Rollback
+
 Se a nova lógica do ledger contábil introduzir comportamentos indesejados no fechamento mensal ou nas transações diárias:
 
 1. **Passo 1**: Dropar os gatilhos de sincronização automática entre as tabelas operacionais e o ledger.

@@ -39,8 +39,8 @@ export function TabFinanceiro({
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Os pagamentos desta viagem são processados diretamente pela operadora parceira. Seus
-              boletos ou links de pagamento serão enviados via WhatsApp e E-mail nas proximidades
-              do vencimento. Acompanhe a timeline abaixo para conferir o status.
+              boletos ou links de pagamento serão enviados via WhatsApp e E-mail nas proximidades do
+              vencimento. Acompanhe a timeline abaixo para conferir o status.
             </p>
           </div>
         </div>
@@ -97,8 +97,8 @@ export function TabFinanceiro({
                             inst.status === "paid"
                               ? " bg-success-bg text-success"
                               : inst.status === "late"
-                              ? " bg-danger-bg text-danger"
-                              : " bg-surface-alt text-muted-foreground"
+                                ? " bg-danger-bg text-danger"
+                                : " bg-surface-alt text-muted-foreground"
                           }`}
                         >
                           {inst.status === "paid" ? (
@@ -130,8 +130,8 @@ export function TabFinanceiro({
                                 inst.status === "paid"
                                   ? " text-success"
                                   : inst.status === "late"
-                                  ? " text-danger"
-                                  : " text-muted-foreground"
+                                    ? " text-danger"
+                                    : " text-muted-foreground"
                               }`}
                             >
                               {INST_STATUS[inst.status] ?? inst.status}

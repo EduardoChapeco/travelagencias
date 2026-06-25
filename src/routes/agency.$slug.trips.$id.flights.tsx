@@ -42,7 +42,10 @@ export const Route = createFileRoute("/agency/$slug/trips/$id/flights")({
   component: TripFlightsPage,
 });
 
-const BOARDING_STATUS_CONFIG: Record<string, { label: string; tone: "neutral" | "info" | "success" | "warning" | "danger" }> = {
+const BOARDING_STATUS_CONFIG: Record<
+  string,
+  { label: string; tone: "neutral" | "info" | "success" | "warning" | "danger" }
+> = {
   pending: { label: "Pendente", tone: "warning" },
   confirmed: { label: "Confirmado", tone: "success" },
   issued: { label: "Emitido", tone: "info" },
@@ -82,7 +85,9 @@ function TripFlightsPage() {
 
   const [activeTab, setActiveTab] = useState<"itineraries" | "boarding_cards">("itineraries");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [itineraryType, setItineraryType] = useState<"original" | "operator_suggestion" | "customer_selected" | "confirmed">("original");
+  const [itineraryType, setItineraryType] = useState<
+    "original" | "operator_suggestion" | "customer_selected" | "confirmed"
+  >("original");
   const [itineraryStatus, setItineraryStatus] = useState<"draft" | "active">("draft");
   const [segments, setSegments] = useState<NewSegmentForm[]>([{ ...BLANK_SEGMENT }]);
 
@@ -100,11 +105,13 @@ function TripFlightsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("boarding_cards")
-        .select(`
+        .select(
+          `
           id, pnr, airline, status, departure_date, passengers_count,
           departure_airport, arrival_airport, flight_number, flight_date, flight_class,
           notes, tags, alerts
-        `)
+        `,
+        )
         .eq("trip_id", tripId)
         .order("flight_date", { ascending: true });
       if (error) throw error;
@@ -149,17 +156,26 @@ function TripFlightsPage() {
     if (it.status !== "active") return false;
     if (!it.segments || it.segments.length === 0) return false;
     const firstSeg = it.segments[0];
-    
-    const matchedCard = cards.find(c => {
-      const pnrMatch = (c.pnr || "").trim().toUpperCase() === (firstSeg.record_locator || "").trim().toUpperCase();
-      const airlineMatch = (c.airline || "").trim().toUpperCase() === (firstSeg.airline_code || "").trim().toUpperCase();
-      const flightNumMatch = (c.flight_number || "").trim().toUpperCase() === (firstSeg.flight_number || "").trim().toUpperCase();
-      const originMatch = (c.departure_airport || "").trim().toUpperCase() === (firstSeg.origin_iata || "").trim().toUpperCase();
-      const destMatch = (c.arrival_airport || "").trim().toUpperCase() === (firstSeg.destination_iata || "").trim().toUpperCase();
-      
+
+    const matchedCard = cards.find((c) => {
+      const pnrMatch =
+        (c.pnr || "").trim().toUpperCase() === (firstSeg.record_locator || "").trim().toUpperCase();
+      const airlineMatch =
+        (c.airline || "").trim().toUpperCase() ===
+        (firstSeg.airline_code || "").trim().toUpperCase();
+      const flightNumMatch =
+        (c.flight_number || "").trim().toUpperCase() ===
+        (firstSeg.flight_number || "").trim().toUpperCase();
+      const originMatch =
+        (c.departure_airport || "").trim().toUpperCase() ===
+        (firstSeg.origin_iata || "").trim().toUpperCase();
+      const destMatch =
+        (c.arrival_airport || "").trim().toUpperCase() ===
+        (firstSeg.destination_iata || "").trim().toUpperCase();
+
       return pnrMatch && airlineMatch && flightNumMatch && originMatch && destMatch;
     });
-    
+
     return !!matchedCard;
   };
 
@@ -168,7 +184,17 @@ function TripFlightsPage() {
   const addItineraryMut = useMutation({
     mutationFn: async () => {
       // Validate
-      if (segments.some(s => !s.airline_code || !s.flight_number || !s.origin_iata || !s.destination_iata || !s.departure_at || !s.arrival_at)) {
+      if (
+        segments.some(
+          (s) =>
+            !s.airline_code ||
+            !s.flight_number ||
+            !s.origin_iata ||
+            !s.destination_iata ||
+            !s.departure_at ||
+            !s.arrival_at,
+        )
+      ) {
         throw new Error("Preencha todos os campos obrigatórios dos trechos de voo.");
       }
 
@@ -196,7 +222,7 @@ function TripFlightsPage() {
           source: "manual",
           created_by: (await supabase.auth.getUser()).data.user?.id || null,
         },
-        payloadSegments
+        payloadSegments,
       );
     },
     onSuccess: (data) => {
@@ -260,7 +286,8 @@ function TripFlightsPage() {
 
   const itineraryA = itinerariesQ.data?.find((i) => i.id === compareAId);
   const itineraryB = itinerariesQ.data?.find((i) => i.id === compareBId);
-  const diffResult = itineraryA && itineraryB ? compareItineraries(itineraryA.segments, itineraryB.segments) : null;
+  const diffResult =
+    itineraryA && itineraryB ? compareItineraries(itineraryA.segments, itineraryB.segments) : null;
 
   // ────────────────────────────────────────────────────────────────────
   // Render
@@ -268,7 +295,6 @@ function TripFlightsPage() {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-5xl">
-
       {/* Header */}
       <div className="rounded-xl border border-border bg-surface p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
@@ -276,7 +302,8 @@ function TripFlightsPage() {
           <div>
             <p className="text-xs font-semibold text-foreground">Aéreos & Reconciliação</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Versionamento e controle de itinerários de voo. Compare alterações e defina o itinerário vigente.
+              Versionamento e controle de itinerários de voo. Compare alterações e defina o
+              itinerário vigente.
             </p>
           </div>
         </div>
@@ -286,7 +313,9 @@ function TripFlightsPage() {
           <button
             onClick={() => setActiveTab("itineraries")}
             className={`px-3 py-1 text-[11px] font-semibold rounded-md transition-colors cursor-pointer ${
-              activeTab === "itineraries" ? "bg-surface text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              activeTab === "itineraries"
+                ? "bg-surface text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Itinerários & Diff
@@ -294,7 +323,9 @@ function TripFlightsPage() {
           <button
             onClick={() => setActiveTab("boarding_cards")}
             className={`px-3 py-1 text-[11px] font-semibold rounded-md transition-colors cursor-pointer ${
-              activeTab === "boarding_cards" ? "bg-surface text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              activeTab === "boarding_cards"
+                ? "bg-surface text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Bilhetes de Embarque
@@ -307,7 +338,8 @@ function TripFlightsPage() {
           {/* Summary action buttons */}
           <div className="flex justify-between items-center gap-3">
             <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
-              <Layers className="h-3.5 w-3.5" /> Versões de Itinerários ({itinerariesQ.data?.length || 0})
+              <Layers className="h-3.5 w-3.5" /> Versões de Itinerários (
+              {itinerariesQ.data?.length || 0})
             </h2>
 
             <div className="flex gap-2">
@@ -315,8 +347,10 @@ function TripFlightsPage() {
                 <button
                   onClick={() => {
                     // Set defaults for comparison
-                    const activeIt = itinerariesQ.data.find(i => i.status === "active") || itinerariesQ.data[0];
-                    const otherIt = itinerariesQ.data.find(i => i.id !== activeIt.id) || itinerariesQ.data[1];
+                    const activeIt =
+                      itinerariesQ.data.find((i) => i.status === "active") || itinerariesQ.data[0];
+                    const otherIt =
+                      itinerariesQ.data.find((i) => i.id !== activeIt.id) || itinerariesQ.data[1];
                     setCompareAId(activeIt.id);
                     setCompareBId(otherIt.id);
                     setShowDiffModal(true);
@@ -347,27 +381,36 @@ function TripFlightsPage() {
                 <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Registrar Nova Versão de Itinerário
                 </h3>
-                <button onClick={() => setShowAddForm(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
+                <button
+                  onClick={() => setShowAddForm(false)}
+                  className="text-muted-foreground hover:text-foreground cursor-pointer"
+                >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase">Tipo de Versão</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                    Tipo de Versão
+                  </label>
                   <select
                     value={itineraryType}
                     onChange={(e: any) => setItineraryType(e.target.value)}
                     className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
                   >
                     {Object.entries(ITINERARY_TYPE_LABELS).map(([k, v]) => (
-                      <option key={k} value={k}>{v}</option>
+                      <option key={k} value={k}>
+                        {v}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase">Status Inicial</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                    Status Inicial
+                  </label>
                   <select
                     value={itineraryStatus}
                     onChange={(e: any) => setItineraryStatus(e.target.value)}
@@ -386,7 +429,10 @@ function TripFlightsPage() {
                 </h4>
 
                 {segments.map((seg, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border border-border bg-surface-alt/40 space-y-3 relative">
+                  <div
+                    key={idx}
+                    className="p-4 rounded-lg border border-border bg-surface-alt/40 space-y-3 relative"
+                  >
                     {segments.length > 1 && (
                       <button
                         onClick={() => removeSegmentField(idx)}
@@ -403,7 +449,9 @@ function TripFlightsPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Cia Aérea (Cód) *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Cia Aérea (Cód) *
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: LA, AD, G3"
@@ -413,17 +461,23 @@ function TripFlightsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Número do Voo *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Número do Voo *
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: 3412"
                           value={seg.flight_number}
-                          onChange={(e) => handleSegmentChange(idx, "flight_number", e.target.value)}
+                          onChange={(e) =>
+                            handleSegmentChange(idx, "flight_number", e.target.value)
+                          }
                           className="w-full text-xs border border-border rounded p-1.5 bg-surface font-mono"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Origem (IATA) *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Origem (IATA) *
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: GRU"
@@ -433,18 +487,24 @@ function TripFlightsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Destino (IATA) *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Destino (IATA) *
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: MIA"
                           value={seg.destination_iata}
-                          onChange={(e) => handleSegmentChange(idx, "destination_iata", e.target.value)}
+                          onChange={(e) =>
+                            handleSegmentChange(idx, "destination_iata", e.target.value)
+                          }
                           className="w-full text-xs border border-border rounded p-1.5 bg-surface font-mono"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Partida *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Partida *
+                        </label>
                         <input
                           type="datetime-local"
                           value={seg.departure_at}
@@ -453,7 +513,9 @@ function TripFlightsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Chegada *</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Chegada *
+                        </label>
                         <input
                           type="datetime-local"
                           value={seg.arrival_at}
@@ -462,7 +524,9 @@ function TripFlightsPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Cabine</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Cabine
+                        </label>
                         <select
                           value={seg.cabin}
                           onChange={(e) => handleSegmentChange(idx, "cabin", e.target.value)}
@@ -475,7 +539,9 @@ function TripFlightsPage() {
                         </select>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Franquia Bagagem</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Franquia Bagagem
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: 1x 23kg"
@@ -486,22 +552,30 @@ function TripFlightsPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Localizador Trecho</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Localizador Trecho
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: PQLW12"
                           value={seg.record_locator}
-                          onChange={(e) => handleSegmentChange(idx, "record_locator", e.target.value)}
+                          onChange={(e) =>
+                            handleSegmentChange(idx, "record_locator", e.target.value)
+                          }
                           className="w-full text-xs border border-border rounded p-1.5 bg-surface font-mono"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Terminal</label>
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">
+                          Terminal
+                        </label>
                         <input
                           type="text"
                           placeholder="Ex: Terminal 3"
                           value={seg.airport_terminal}
-                          onChange={(e) => handleSegmentChange(idx, "airport_terminal", e.target.value)}
+                          onChange={(e) =>
+                            handleSegmentChange(idx, "airport_terminal", e.target.value)
+                          }
                           className="w-full text-xs border border-border rounded p-1.5 bg-surface"
                         />
                       </div>
@@ -547,9 +621,12 @@ function TripFlightsPage() {
           {!itinerariesQ.isLoading && (!itinerariesQ.data || itinerariesQ.data.length === 0) && (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center">
               <Layers className="h-10 w-10 text-muted-foreground/30 mb-3" />
-              <p className="text-sm font-semibold text-muted-foreground">Nenhum itinerário versionado</p>
+              <p className="text-sm font-semibold text-muted-foreground">
+                Nenhum itinerário versionado
+              </p>
               <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                Registre o itinerário aéreo original ou sugestões de reacomodação clicando em "Nova Versão".
+                Registre o itinerário aéreo original ou sugestões de reacomodação clicando em "Nova
+                Versão".
               </p>
             </div>
           )}
@@ -618,11 +695,16 @@ function TripFlightsPage() {
                   {/* Itinerary segments */}
                   <div className="p-4 space-y-3 bg-surface">
                     {it.segments.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic">Nenhum trecho de voo registrado nesta versão.</p>
+                      <p className="text-xs text-muted-foreground italic">
+                        Nenhum trecho de voo registrado nesta versão.
+                      </p>
                     ) : (
                       <div className="space-y-4">
                         {it.segments.map((seg, idx) => (
-                          <div key={seg.id} className="flex items-start justify-between flex-wrap gap-4 text-xs">
+                          <div
+                            key={seg.id}
+                            className="flex items-start justify-between flex-wrap gap-4 text-xs"
+                          >
                             <div className="flex items-start gap-3 min-w-0">
                               <div className="shrink-0 h-7 w-7 rounded bg-surface-alt border border-border flex items-center justify-center font-bold font-mono text-[10px] text-muted-foreground mt-0.5">
                                 {idx + 1}
@@ -648,7 +730,8 @@ function TripFlightsPage() {
                                 <div className="text-[11px] text-muted-foreground mt-1 flex gap-3 flex-wrap">
                                   {seg.cabin && (
                                     <span className="flex items-center gap-1">
-                                      <Briefcase className="h-3 w-3" /> {seg.cabin === "economy" ? "Econômica" : seg.cabin}
+                                      <Briefcase className="h-3 w-3" />{" "}
+                                      {seg.cabin === "economy" ? "Econômica" : seg.cabin}
                                     </span>
                                   )}
                                   {seg.baggage && (
@@ -664,7 +747,9 @@ function TripFlightsPage() {
                             <div className="text-right shrink-0">
                               <div className="flex items-center gap-1 justify-end font-semibold text-foreground">
                                 <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                                <span>Partida: {new Date(seg.departure_at).toLocaleString("pt-BR")}</span>
+                                <span>
+                                  Partida: {new Date(seg.departure_at).toLocaleString("pt-BR")}
+                                </span>
                               </div>
                               <div className="text-[11px] text-muted-foreground mt-1">
                                 Chegada: {new Date(seg.arrival_at).toLocaleString("pt-BR")}
@@ -698,9 +783,12 @@ function TripFlightsPage() {
           {!boardingQ.isLoading && cards.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center">
               <Plane className="h-10 w-10 text-muted-foreground/30 mb-3" />
-              <p className="text-sm font-semibold text-muted-foreground">Nenhum cartão de embarque cadastrado</p>
+              <p className="text-sm font-semibold text-muted-foreground">
+                Nenhum cartão de embarque cadastrado
+              </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Adicione voos no módulo <span className="text-brand font-medium">Check-in & Embarques</span>.
+                Adicione voos no módulo{" "}
+                <span className="text-brand font-medium">Check-in & Embarques</span>.
               </p>
             </div>
           )}
@@ -712,7 +800,10 @@ function TripFlightsPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cards.map((card: any) => {
-                  const st = BOARDING_STATUS_CONFIG[card.status] ?? { label: card.status, tone: "neutral" as const };
+                  const st = BOARDING_STATUS_CONFIG[card.status] ?? {
+                    label: card.status,
+                    tone: "neutral" as const,
+                  };
                   const cardTickets = tickets.filter((t: any) => t.card_id === card.id);
                   return (
                     <div
@@ -777,7 +868,10 @@ function TripFlightsPage() {
                       {card.alerts && card.alerts.length > 0 && (
                         <div className="space-y-1">
                           {card.alerts.map((a: any, i: any) => (
-                            <div key={i} className="flex items-center gap-1.5 text-[11px] text-warning">
+                            <div
+                              key={i}
+                              className="flex items-center gap-1.5 text-[11px] text-warning"
+                            >
                               <AlertCircle className="h-3 w-3 shrink-0" />
                               {a}
                             </div>
@@ -792,7 +886,10 @@ function TripFlightsPage() {
                             Bilhetes ({cardTickets.length})
                           </p>
                           {cardTickets.map((t: any) => {
-                            const ts = BOARDING_STATUS_CONFIG[t.status] ?? { label: t.status, tone: "neutral" as const };
+                            const ts = BOARDING_STATUS_CONFIG[t.status] ?? {
+                              label: t.status,
+                              tone: "neutral" as const,
+                            };
                             return (
                               <div
                                 key={t.id}
@@ -802,10 +899,14 @@ function TripFlightsPage() {
                                   <User className="h-3 w-3 text-muted-foreground" />
                                   <span className="font-medium">{t.passenger_name}</span>
                                   {t.ticket_code && (
-                                    <span className="font-mono text-muted-foreground">{t.ticket_code}</span>
+                                    <span className="font-mono text-muted-foreground">
+                                      {t.ticket_code}
+                                    </span>
                                   )}
                                   {t.seat && (
-                                    <span className="text-muted-foreground">· Assento {t.seat}</span>
+                                    <span className="text-muted-foreground">
+                                      · Assento {t.seat}
+                                    </span>
                                   )}
                                 </div>
                                 <StatusBadge tone={ts.tone}>{ts.label}</StatusBadge>
@@ -831,9 +932,14 @@ function TripFlightsPage() {
             <div className="p-4 border-b border-border/60 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <GitCompare className="h-5 w-5 text-brand" />
-                <h3 className="text-sm font-bold text-foreground">Comparação de Itinerários Aéreos</h3>
+                <h3 className="text-sm font-bold text-foreground">
+                  Comparação de Itinerários Aéreos
+                </h3>
               </div>
-              <button onClick={() => setShowDiffModal(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
+              <button
+                onClick={() => setShowDiffModal(false)}
+                className="text-muted-foreground hover:text-foreground cursor-pointer"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -841,7 +947,9 @@ function TripFlightsPage() {
             {/* Selects selector */}
             <div className="p-4 bg-surface-alt/20 border-b border-border/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Itinerário A (Referência)</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Itinerário A (Referência)
+                </label>
                 <select
                   value={compareAId || ""}
                   onChange={(e) => setCompareAId(e.target.value || null)}
@@ -850,14 +958,17 @@ function TripFlightsPage() {
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
                     <option key={it.id} value={it.id}>
-                      V{it.version} - {ITINERARY_TYPE_LABELS[it.type]} ({it.status === "active" ? "Vigente" : "Inativo"})
+                      V{it.version} - {ITINERARY_TYPE_LABELS[it.type]} (
+                      {it.status === "active" ? "Vigente" : "Inativo"})
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">Itinerário B (Comparação)</label>
+                <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Itinerário B (Comparação)
+                </label>
                 <select
                   value={compareBId || ""}
                   onChange={(e) => setCompareBId(e.target.value || null)}
@@ -866,7 +977,8 @@ function TripFlightsPage() {
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
                     <option key={it.id} value={it.id}>
-                      V{it.version} - {ITINERARY_TYPE_LABELS[it.type]} ({it.status === "active" ? "Vigente" : "Inativo"})
+                      V{it.version} - {ITINERARY_TYPE_LABELS[it.type]} (
+                      {it.status === "active" ? "Vigente" : "Inativo"})
                     </option>
                   ))}
                 </select>
@@ -877,7 +989,8 @@ function TripFlightsPage() {
             <div className="p-5 overflow-y-auto flex-1 space-y-6">
               {!itineraryA || !itineraryB ? (
                 <div className="text-center py-12 text-sm text-muted-foreground italic">
-                  Selecione os dois itinerários acima para calcular as diferenças de voos automaticamente.
+                  Selecione os dois itinerários acima para calcular as diferenças de voos
+                  automaticamente.
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -913,19 +1026,25 @@ function TripFlightsPage() {
                       const compSeg = itineraryB.segments[index];
 
                       return (
-                        <div key={index} className="rounded-xl border border-border bg-surface overflow-hidden">
+                        <div
+                          key={index}
+                          className="rounded-xl border border-border bg-surface overflow-hidden"
+                        >
                           <div className="p-3 border-b border-border bg-surface-alt/20 flex items-center gap-2">
                             <span className="h-5 w-5 rounded bg-surface-alt border border-border flex items-center justify-center font-bold text-[10px] font-mono text-muted-foreground">
                               {diff.segment_order}
                             </span>
-                            <span className="text-xs font-bold text-foreground">Trecho {diff.segment_order}</span>
+                            <span className="text-xs font-bold text-foreground">
+                              Trecho {diff.segment_order}
+                            </span>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
                             {/* Original Segment A */}
                             <div className="p-4 space-y-3">
                               <span className="text-[9px] font-bold text-muted-foreground uppercase block">
-                                Versão {itineraryA.version} ({ITINERARY_TYPE_LABELS[itineraryA.type]})
+                                Versão {itineraryA.version} (
+                                {ITINERARY_TYPE_LABELS[itineraryA.type]})
                               </span>
                               {origSeg ? (
                                 <div className="space-y-2 text-xs">
@@ -940,74 +1059,124 @@ function TripFlightsPage() {
                                     <span>{origSeg.destination_iata}</span>
                                   </div>
                                   <div className="text-muted-foreground space-y-0.5">
-                                    <p>Partida: {new Date(origSeg.departure_at).toLocaleString("pt-BR")}</p>
-                                    <p>Chegada: {new Date(origSeg.arrival_at).toLocaleString("pt-BR")}</p>
-                                    <p className="text-[10px]">Bagagem: {origSeg.baggage || "Não informada"}</p>
+                                    <p>
+                                      Partida:{" "}
+                                      {new Date(origSeg.departure_at).toLocaleString("pt-BR")}
+                                    </p>
+                                    <p>
+                                      Chegada:{" "}
+                                      {new Date(origSeg.arrival_at).toLocaleString("pt-BR")}
+                                    </p>
+                                    <p className="text-[10px]">
+                                      Bagagem: {origSeg.baggage || "Não informada"}
+                                    </p>
                                   </div>
                                 </div>
                               ) : (
-                                <p className="text-xs text-muted-foreground italic">Este trecho não existia nesta versão.</p>
+                                <p className="text-xs text-muted-foreground italic">
+                                  Este trecho não existia nesta versão.
+                                </p>
                               )}
                             </div>
 
                             {/* Comparison Segment B */}
                             <div className="p-4 space-y-3 bg-surface-alt/10">
                               <span className="text-[9px] font-bold text-muted-foreground uppercase block">
-                                Versão {itineraryB.version} ({ITINERARY_TYPE_LABELS[itineraryB.type]})
+                                Versão {itineraryB.version} (
+                                {ITINERARY_TYPE_LABELS[itineraryB.type]})
                               </span>
                               {compSeg ? (
                                 <div className="space-y-2 text-xs">
                                   {/* Compare and Highlight */}
                                   <div className="flex items-center gap-2">
-                                    <span className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] ${
-                                      diff.airline_changed || diff.flight_number_changed
-                                        ? "bg-amber-100 text-amber-800 border border-amber-300"
-                                        : "bg-surface-alt border border-border"
-                                    }`}>
+                                    <span
+                                      className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] ${
+                                        diff.airline_changed || diff.flight_number_changed
+                                          ? "bg-amber-100 text-amber-800 border border-amber-300"
+                                          : "bg-surface-alt border border-border"
+                                      }`}
+                                    >
                                       {compSeg.airline_code} {compSeg.flight_number}
                                     </span>
                                     {(diff.airline_changed || diff.flight_number_changed) && (
-                                      <span className="text-[9px] font-bold text-amber-600">Voo alterado</span>
+                                      <span className="text-[9px] font-bold text-amber-600">
+                                        Voo alterado
+                                      </span>
                                     )}
                                   </div>
 
                                   <div className="font-bold text-foreground text-sm flex items-center gap-2">
-                                    <span className={diff.origin_changed ? "text-amber-600 bg-amber-50 px-1 rounded" : ""}>
+                                    <span
+                                      className={
+                                        diff.origin_changed
+                                          ? "text-amber-600 bg-amber-50 px-1 rounded"
+                                          : ""
+                                      }
+                                    >
                                       {compSeg.origin_iata}
                                     </span>
                                     <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                                    <span className={diff.destination_changed ? "text-amber-600 bg-amber-50 px-1 rounded" : ""}>
+                                    <span
+                                      className={
+                                        diff.destination_changed
+                                          ? "text-amber-600 bg-amber-50 px-1 rounded"
+                                          : ""
+                                      }
+                                    >
                                       {compSeg.destination_iata}
                                     </span>
                                     {(diff.origin_changed || diff.destination_changed) && (
-                                      <span className="text-[9px] font-bold text-amber-600">Rota alterada</span>
+                                      <span className="text-[9px] font-bold text-amber-600">
+                                        Rota alterada
+                                      </span>
                                     )}
                                   </div>
 
                                   <div className="text-muted-foreground space-y-0.5">
-                                    <p className={diff.departure_changed ? "text-amber-700 font-semibold bg-amber-50/50 p-0.5 rounded" : ""}>
-                                      Partida: {new Date(compSeg.departure_at).toLocaleString("pt-BR")}
-                                      {diff.departure_changed && diff.departure_delta_minutes !== 0 && (
-                                        <span className="text-[10px] font-bold text-amber-600 ml-1.5">
-                                          ({diff.departure_delta_minutes > 0 ? "+" : ""}{diff.departure_delta_minutes} min)
-                                        </span>
-                                      )}
+                                    <p
+                                      className={
+                                        diff.departure_changed
+                                          ? "text-amber-700 font-semibold bg-amber-50/50 p-0.5 rounded"
+                                          : ""
+                                      }
+                                    >
+                                      Partida:{" "}
+                                      {new Date(compSeg.departure_at).toLocaleString("pt-BR")}
+                                      {diff.departure_changed &&
+                                        diff.departure_delta_minutes !== 0 && (
+                                          <span className="text-[10px] font-bold text-amber-600 ml-1.5">
+                                            ({diff.departure_delta_minutes > 0 ? "+" : ""}
+                                            {diff.departure_delta_minutes} min)
+                                          </span>
+                                        )}
                                     </p>
-                                    <p className={diff.arrival_changed ? "text-amber-700 font-semibold bg-amber-50/50 p-0.5 rounded" : ""}>
-                                      Chegada: {new Date(compSeg.arrival_at).toLocaleString("pt-BR")}
+                                    <p
+                                      className={
+                                        diff.arrival_changed
+                                          ? "text-amber-700 font-semibold bg-amber-50/50 p-0.5 rounded"
+                                          : ""
+                                      }
+                                    >
+                                      Chegada:{" "}
+                                      {new Date(compSeg.arrival_at).toLocaleString("pt-BR")}
                                       {diff.arrival_changed && diff.arrival_delta_minutes !== 0 && (
                                         <span className="text-[10px] font-bold text-amber-600 ml-1.5">
-                                          ({diff.arrival_delta_minutes > 0 ? "+" : ""}{diff.arrival_delta_minutes} min)
+                                          ({diff.arrival_delta_minutes > 0 ? "+" : ""}
+                                          {diff.arrival_delta_minutes} min)
                                         </span>
                                       )}
                                     </p>
-                                    <p className={`text-[10px] ${diff.baggage_changed ? "text-amber-600 bg-amber-50 font-bold px-1 rounded inline-block" : ""}`}>
+                                    <p
+                                      className={`text-[10px] ${diff.baggage_changed ? "text-amber-600 bg-amber-50 font-bold px-1 rounded inline-block" : ""}`}
+                                    >
                                       Bagagem: {compSeg.baggage || "Não informada"}
                                     </p>
                                   </div>
                                 </div>
                               ) : (
-                                <p className="text-xs text-rose-600 font-semibold italic">Este trecho foi removido nesta versão.</p>
+                                <p className="text-xs text-rose-600 font-semibold italic">
+                                  Este trecho foi removido nesta versão.
+                                </p>
                               )}
                             </div>
                           </div>

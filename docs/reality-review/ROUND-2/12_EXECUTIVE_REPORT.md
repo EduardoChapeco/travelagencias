@@ -5,10 +5,12 @@ Este relatório apresenta um resumo das principais constatações obtidas na rod
 ---
 
 ## 1. Resumo do Estado Atual
+
 Constatamos um importante avanço na eliminação de simulações e dados mockados na árvore de trabalho local:
-* **Remoção de Mocks no Chat de IA**: As ações estruturadas operadas pelo assistente de IA, como a geração de rascunhos de contratos e vouchers manuais, foram implementadas fisicamente para realizar queries e inserts reais nas tabelas `contracts` e `vouchers`, resolvendo as pendências de simulações da rodada anterior.
-* **Consistência na Conciliação**: O painel de conciliação diária de recibos Pix está operando 100% livre de fallbacks estáticos (`localPending`), gravando lançamentos reais em caixas ativos de bancos cadastrados.
-* **Qualidade de Compilação**: O compilador TypeScript (`tsc --noEmit`) compila a aplicação com sucesso absoluto (0 erros).
+
+- **Remoção de Mocks no Chat de IA**: As ações estruturadas operadas pelo assistente de IA, como a geração de rascunhos de contratos e vouchers manuais, foram implementadas fisicamente para realizar queries e inserts reais nas tabelas `contracts` e `vouchers`, resolvendo as pendências de simulações da rodada anterior.
+- **Consistência na Conciliação**: O painel de conciliação diária de recibos Pix está operando 100% livre de fallbacks estáticos (`localPending`), gravando lançamentos reais em caixas ativos de bancos cadastrados.
+- **Qualidade de Compilação**: O compilador TypeScript (`tsc --noEmit`) compila a aplicação com sucesso absoluto (0 erros).
 
 ---
 
@@ -25,4 +27,5 @@ Constatamos um importante avanço na eliminação de simulações e dados mockad
 ---
 
 ## 3. Próxima Fase Recomendada
+
 Recomendamos prosseguir imediatamente para a **Fase P0 (Correção de Segurança)** do Plano Corretivo, aplicando políticas RLS restritivas sobre o Ledger Contábil e sobre os Ajustes de Vendedores, impedindo exclusões físicas no banco e garantindo a imutabilidade absoluta do Livro-Razão.

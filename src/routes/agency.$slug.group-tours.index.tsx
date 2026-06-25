@@ -126,7 +126,7 @@ function GroupToursPage() {
                   className="rounded border border-border bg-surface p-4 hover:border-border-strong"
                 >
                   <div className="flex items-start justify-between gap-2">
-                     <div>
+                    <div>
                       <div className="ds-card-title text-foreground">{t.title}</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
                         {t.destination ?? "—"}

@@ -78,7 +78,10 @@ type DestinationInfo = {
   updated_at: string;
 };
 
-const SAFETY_LABELS: Record<string, { label: string; tone: "success" | "warning" | "danger" | "info" }> = {
+const SAFETY_LABELS: Record<
+  string,
+  { label: string; tone: "success" | "warning" | "danger" | "info" }
+> = {
   safe: { label: "Seguro", tone: "success" },
   moderate: { label: "Moderado", tone: "warning" },
   caution: { label: "Atenção", tone: "warning" },
@@ -163,10 +166,16 @@ function DestinationIntelligencePage() {
         tourist_tax_amount: form.tourist_tax_amount || null,
         tourist_tax_currency: form.tourist_tax_currency || null,
         vaccinations_required: vacReqText
-          ? vacReqText.split("\n").map((v) => v.trim()).filter(Boolean)
+          ? vacReqText
+              .split("\n")
+              .map((v) => v.trim())
+              .filter(Boolean)
           : [],
         vaccinations_recommended: vacRecText
-          ? vacRecText.split("\n").map((v) => v.trim()).filter(Boolean)
+          ? vacRecText
+              .split("\n")
+              .map((v) => v.trim())
+              .filter(Boolean)
           : [],
         health_notes: form.health_notes || null,
         currency: form.currency || null,
@@ -206,16 +215,16 @@ function DestinationIntelligencePage() {
       }
 
       // Log manual edit or create
-      const { data: { user } } = await supabase.auth.getUser();
-      await supabase
-        .from("destination_review_logs")
-        .insert({
-          destination_id: destinationId,
-          agency_id: agency?.id || null,
-          reviewed_by: user?.id || null,
-          action: editing ? "manual_edit" : "create",
-          details: editing ? "Edição manual de informações" : "Criação manual do destino",
-        });
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      await supabase.from("destination_review_logs").insert({
+        destination_id: destinationId,
+        agency_id: agency?.id || null,
+        reviewed_by: user?.id || null,
+        action: editing ? "manual_edit" : "create",
+        details: editing ? "Edição manual de informações" : "Criação manual do destino",
+      });
     },
     onSuccess: () => {
       toast.success(editing ? "Destino atualizado!" : "Destino criado!");
@@ -251,10 +260,13 @@ function DestinationIntelligencePage() {
       // Update the record with AI-generated data
       const existing = q.data?.find((d) => d.destination === destination);
       if (existing) {
-        await supabase.from("destination_info").update({
-          ...data,
-          ai_generated_at: new Date().toISOString(),
-        }).eq("id", existing.id);
+        await supabase
+          .from("destination_info")
+          .update({
+            ...data,
+            ai_generated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id);
         qc.invalidateQueries({ queryKey: ["destination-info"] });
         toast.success(`Informações de ${destination} atualizadas!`, { id: toastId });
       }
@@ -287,8 +299,8 @@ function DestinationIntelligencePage() {
     setForm(EMPTY_FORM);
   }
 
-  const filtered = (q.data ?? []).filter((d) =>
-    !searchQuery || d.destination.toLowerCase().includes(searchQuery.toLowerCase())
+  const filtered = (q.data ?? []).filter(
+    (d) => !searchQuery || d.destination.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -327,15 +339,29 @@ function DestinationIntelligencePage() {
 
       {/* Stats bar */}
       <div className="flex items-center gap-6 border-b border-border bg-surface/50 px-6 py-2 text-[11px] text-muted-foreground shrink-0">
-        <span><strong className="text-foreground">{q.data?.length ?? 0}</strong> destinos cadastrados</span>
-        <span><strong className="text-foreground">{q.data?.filter(d => d.ai_generated_at).length ?? 0}</strong> com dados de IA</span>
-        <span><strong className="text-foreground">{q.data?.filter(d => d.visa_required).length ?? 0}</strong> exigem visto</span>
+        <span>
+          <strong className="text-foreground">{q.data?.length ?? 0}</strong> destinos cadastrados
+        </span>
+        <span>
+          <strong className="text-foreground">
+            {q.data?.filter((d) => d.ai_generated_at).length ?? 0}
+          </strong>{" "}
+          com dados de IA
+        </span>
+        <span>
+          <strong className="text-foreground">
+            {q.data?.filter((d) => d.visa_required).length ?? 0}
+          </strong>{" "}
+          exigem visto
+        </span>
       </div>
 
       {/* List */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         {q.isLoading ? (
-          <div className="text-center py-12 text-sm text-muted-foreground animate-pulse">Carregando destinos…</div>
+          <div className="text-center py-12 text-sm text-muted-foreground animate-pulse">
+            Carregando destinos…
+          </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border rounded-2xl text-center">
             <Globe className="h-12 w-12 text-muted-foreground/30 mb-4" />
@@ -343,7 +369,10 @@ function DestinationIntelligencePage() {
               {searchQuery ? "Nenhum destino encontrado" : "Nenhum destino cadastrado ainda"}
             </p>
             {!searchQuery && (
-              <button onClick={openCreate} className="mt-3 flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">
+              <button
+                onClick={openCreate}
+                className="mt-3 flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+              >
                 <Plus className="h-3.5 w-3.5" /> Cadastrar primeiro destino
               </button>
             )}
@@ -353,16 +382,21 @@ function DestinationIntelligencePage() {
             {filtered.map((dest) => {
               const safety = dest.safety_level ? SAFETY_LABELS[dest.safety_level] : null;
               return (
-                <div key={dest.id} className="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-border-strong transition-colors">
+                <div
+                  key={dest.id}
+                  className="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-border-strong transition-colors"
+                >
                   {/* Header */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-1.5">
                         {dest.country_code && (
                           <span className="text-lg leading-none">
-                            {dest.country_code.toUpperCase().replace(/./g, (c) =>
-                              String.fromCodePoint(c.codePointAt(0)! + 127397)
-                            )}
+                            {dest.country_code
+                              .toUpperCase()
+                              .replace(/./g, (c) =>
+                                String.fromCodePoint(c.codePointAt(0)! + 127397),
+                              )}
                           </span>
                         )}
                         <h3 className="font-bold text-base text-foreground">{dest.destination}</h3>
@@ -391,29 +425,37 @@ function DestinationIntelligencePage() {
                       <button
                         onClick={async () => {
                           try {
-                            const { data: { user } } = await supabase.auth.getUser();
-                            const nextReviewedAt = dest.reviewed_at ? null : new Date().toISOString();
+                            const {
+                              data: { user },
+                            } = await supabase.auth.getUser();
+                            const nextReviewedAt = dest.reviewed_at
+                              ? null
+                              : new Date().toISOString();
                             const { error } = await supabase
                               .from("destination_info")
                               .update({
                                 reviewed_at: nextReviewedAt,
-                                reviewed_by: dest.reviewed_at ? null : (user?.id || null),
+                                reviewed_by: dest.reviewed_at ? null : user?.id || null,
                               })
                               .eq("id", dest.id);
                             if (error) throw error;
 
                             // Inserir log de auditoria
-                            await supabase
-                              .from("destination_review_logs")
-                              .insert({
-                                destination_id: dest.id,
-                                agency_id: agency?.id || null,
-                                reviewed_by: user?.id || null,
-                                action: dest.reviewed_at ? "unreview" : "review",
-                                details: dest.reviewed_at ? "Destino desmarcado como revisado" : "Destino marcado como revisado",
-                              });
+                            await supabase.from("destination_review_logs").insert({
+                              destination_id: dest.id,
+                              agency_id: agency?.id || null,
+                              reviewed_by: user?.id || null,
+                              action: dest.reviewed_at ? "unreview" : "review",
+                              details: dest.reviewed_at
+                                ? "Destino desmarcado como revisado"
+                                : "Destino marcado como revisado",
+                            });
 
-                            toast.success(dest.reviewed_at ? "Destino desmarcado como revisado!" : "Destino marcado como revisado!");
+                            toast.success(
+                              dest.reviewed_at
+                                ? "Destino desmarcado como revisado!"
+                                : "Destino marcado como revisado!",
+                            );
                             qc.invalidateQueries({ queryKey: ["destination-info"] });
                           } catch (err: any) {
                             toast.error(err.message);
@@ -424,7 +466,11 @@ function DestinationIntelligencePage() {
                             ? "text-success bg-success/10 border-success/30"
                             : "text-muted-foreground hover:text-success hover:border-success border-border"
                         }`}
-                        title={dest.reviewed_at ? "Revisado (Clique para remover revisão)" : "Marcar como Revisado"}
+                        title={
+                          dest.reviewed_at
+                            ? "Revisado (Clique para remover revisão)"
+                            : "Marcar como Revisado"
+                        }
                       >
                         <CheckCircle className="h-3 w-3" />
                       </button>
@@ -434,7 +480,9 @@ function DestinationIntelligencePage() {
                         className="h-6 w-6 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand transition-colors"
                         title="Atualizar dados automaticamente"
                       >
-                        <RefreshCw className={`h-3 w-3 ${generating === dest.destination ? "animate-spin" : ""}`} />
+                        <RefreshCw
+                          className={`h-3 w-3 ${generating === dest.destination ? "animate-spin" : ""}`}
+                        />
                       </button>
                       <button
                         onClick={() => openEdit(dest)}
@@ -464,10 +512,11 @@ function DestinationIntelligencePage() {
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
                     {dest.visa_required !== null && (
                       <div className="flex items-center gap-1 text-muted-foreground">
-                        {dest.visa_required
-                          ? <XCircle className="h-3 w-3 text-danger shrink-0" />
-                          : <CheckCircle className="h-3 w-3 text-success shrink-0" />
-                        }
+                        {dest.visa_required ? (
+                          <XCircle className="h-3 w-3 text-danger shrink-0" />
+                        ) : (
+                          <CheckCircle className="h-3 w-3 text-success shrink-0" />
+                        )}
                         Visto: {dest.visa_required ? "Exigido" : "Livre"}
                       </div>
                     )}
@@ -506,8 +555,12 @@ function DestinationIntelligencePage() {
                   {/* Vaccinations */}
                   {(dest.vaccinations_required ?? []).length > 0 && (
                     <div className="bg-danger/5 border border-danger/20 rounded-lg px-3 py-2 text-[10px]">
-                      <span className="font-bold text-danger uppercase tracking-wide block mb-0.5">Vacinas Obrigatórias</span>
-                      <span className="text-muted-foreground">{(dest.vaccinations_required ?? []).join(" · ")}</span>
+                      <span className="font-bold text-danger uppercase tracking-wide block mb-0.5">
+                        Vacinas Obrigatórias
+                      </span>
+                      <span className="text-muted-foreground">
+                        {(dest.vaccinations_required ?? []).join(" · ")}
+                      </span>
                     </div>
                   )}
 
@@ -522,11 +575,14 @@ function DestinationIntelligencePage() {
                   {/* Metadata and Review status */}
                   <div className="text-[9px] text-muted-foreground/60 pt-1 border-t border-border/30 flex flex-wrap gap-x-3 gap-y-1">
                     {dest.ai_generated_at && (
-                      <span>Atualizado: {new Date(dest.ai_generated_at).toLocaleDateString("pt-BR")}</span>
+                      <span>
+                        Atualizado: {new Date(dest.ai_generated_at).toLocaleDateString("pt-BR")}
+                      </span>
                     )}
                     {dest.reviewed_at && (
                       <span className="text-success font-semibold flex items-center gap-0.5">
-                        <CheckCircle className="h-2 w-2" /> Revisado em {new Date(dest.reviewed_at).toLocaleDateString("pt-BR")}
+                        <CheckCircle className="h-2 w-2" /> Revisado em{" "}
+                        {new Date(dest.reviewed_at).toLocaleDateString("pt-BR")}
                       </span>
                     )}
                   </div>
@@ -548,7 +604,10 @@ function DestinationIntelligencePage() {
               <h2 className="text-sm font-bold text-foreground">
                 {editing ? `Editar: ${editing.destination}` : "Novo Destino"}
               </h2>
-              <button onClick={closeForm} className="rounded border border-border p-1 hover:bg-surface-alt">
+              <button
+                onClick={closeForm}
+                className="rounded border border-border p-1 hover:bg-surface-alt"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -566,7 +625,9 @@ function DestinationIntelligencePage() {
                 <Field label="Código do País (ISO)">
                   <Input
                     value={form.country_code ?? ""}
-                    onChange={(e) => setForm({ ...form, country_code: e.target.value.toUpperCase() })}
+                    onChange={(e) =>
+                      setForm({ ...form, country_code: e.target.value.toUpperCase() })
+                    }
                     placeholder="Ex: MX"
                     maxLength={2}
                   />
@@ -586,7 +647,9 @@ function DestinationIntelligencePage() {
                     onChange={(e) => setForm({ ...form, visa_required: e.target.checked })}
                     className="h-4 w-4"
                   />
-                  <label htmlFor="visa_required" className="text-xs font-semibold">Visto Obrigatório</label>
+                  <label htmlFor="visa_required" className="text-xs font-semibold">
+                    Visto Obrigatório
+                  </label>
                 </div>
                 <Field label="Informações de Visto">
                   <Textarea
@@ -668,22 +731,49 @@ function DestinationIntelligencePage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Moeda">
-                    <Input value={form.currency ?? ""} onChange={(e) => setForm({ ...form, currency: e.target.value })} placeholder="Peso Mexicano" />
+                    <Input
+                      value={form.currency ?? ""}
+                      onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                      placeholder="Peso Mexicano"
+                    />
                   </Field>
                   <Field label="Código Moeda">
-                    <Input value={form.currency_code ?? ""} onChange={(e) => setForm({ ...form, currency_code: e.target.value.toUpperCase() })} placeholder="MXN" maxLength={3} />
+                    <Input
+                      value={form.currency_code ?? ""}
+                      onChange={(e) =>
+                        setForm({ ...form, currency_code: e.target.value.toUpperCase() })
+                      }
+                      placeholder="MXN"
+                      maxLength={3}
+                    />
                   </Field>
                   <Field label="Tomada / Tensão">
-                    <Input value={form.plug_type ?? ""} onChange={(e) => setForm({ ...form, plug_type: e.target.value })} placeholder="Tipo A/B (127V)" />
+                    <Input
+                      value={form.plug_type ?? ""}
+                      onChange={(e) => setForm({ ...form, plug_type: e.target.value })}
+                      placeholder="Tipo A/B (127V)"
+                    />
                   </Field>
                   <Field label="Idioma">
-                    <Input value={form.language ?? ""} onChange={(e) => setForm({ ...form, language: e.target.value })} placeholder="Espanhol" />
+                    <Input
+                      value={form.language ?? ""}
+                      onChange={(e) => setForm({ ...form, language: e.target.value })}
+                      placeholder="Espanhol"
+                    />
                   </Field>
                   <Field label="Fuso Horário">
-                    <Input value={form.time_zone ?? ""} onChange={(e) => setForm({ ...form, time_zone: e.target.value })} placeholder="América/Mexico_City" />
+                    <Input
+                      value={form.time_zone ?? ""}
+                      onChange={(e) => setForm({ ...form, time_zone: e.target.value })}
+                      placeholder="América/Mexico_City"
+                    />
                   </Field>
                   <Field label="UTC Offset">
-                    <Input value={form.utc_offset ?? ""} onChange={(e) => setForm({ ...form, utc_offset: e.target.value })} placeholder="-06:00" />
+                    <Input
+                      value={form.utc_offset ?? ""}
+                      onChange={(e) => setForm({ ...form, utc_offset: e.target.value })}
+                      placeholder="-06:00"
+                    />
                   </Field>
                 </div>
               </div>
@@ -694,27 +784,53 @@ function DestinationIntelligencePage() {
                   <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
                 </div>
                 <Field label="Descrição da Taxa">
-                  <Input value={form.tourist_tax ?? ""} onChange={(e) => setForm({ ...form, tourist_tax: e.target.value })} placeholder="Ex: Visitax — Taxa de Turismo Quintana Roo" />
+                  <Input
+                    value={form.tourist_tax ?? ""}
+                    onChange={(e) => setForm({ ...form, tourist_tax: e.target.value })}
+                    placeholder="Ex: Visitax — Taxa de Turismo Quintana Roo"
+                  />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Valor">
-                    <Input type="number" step="0.01" value={form.tourist_tax_amount ?? ""} onChange={(e) => setForm({ ...form, tourist_tax_amount: parseFloat(e.target.value) || null })} placeholder="42.00" />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={form.tourist_tax_amount ?? ""}
+                      onChange={(e) =>
+                        setForm({ ...form, tourist_tax_amount: parseFloat(e.target.value) || null })
+                      }
+                      placeholder="42.00"
+                    />
                   </Field>
                   <Field label="Moeda">
-                    <Input value={form.tourist_tax_currency ?? "USD"} onChange={(e) => setForm({ ...form, tourist_tax_currency: e.target.value })} placeholder="USD" maxLength={3} />
+                    <Input
+                      value={form.tourist_tax_currency ?? "USD"}
+                      onChange={(e) => setForm({ ...form, tourist_tax_currency: e.target.value })}
+                      placeholder="USD"
+                      maxLength={3}
+                    />
                   </Field>
                 </div>
               </div>
 
               {/* Curadoria e Controle */}
               <div className="border border-border rounded-xl p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Curadoria e Qualidade</div>
+                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Curadoria e Qualidade
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Fonte das Informações">
-                    <Input value={form.source ?? ""} onChange={(e) => setForm({ ...form, source: e.target.value })} placeholder="Ex: AI Engine / Consulado" />
+                    <Input
+                      value={form.source ?? ""}
+                      onChange={(e) => setForm({ ...form, source: e.target.value })}
+                      placeholder="Ex: AI Engine / Consulado"
+                    />
                   </Field>
                   <Field label="Nível de Confiança">
-                    <Select value={form.confidence_level ?? "high"} onChange={(e) => setForm({ ...form, confidence_level: e.target.value })}>
+                    <Select
+                      value={form.confidence_level ?? "high"}
+                      onChange={(e) => setForm({ ...form, confidence_level: e.target.value })}
+                    >
                       <option value="low">Baixo (Rascunho / Não verificado)</option>
                       <option value="medium">Médio (Verificação parcial)</option>
                       <option value="high">Alto (Verificado e revisado)</option>
@@ -722,29 +838,53 @@ function DestinationIntelligencePage() {
                   </Field>
                 </div>
                 <Field label="URL da Fonte">
-                  <Input value={form.source_url ?? ""} onChange={(e) => setForm({ ...form, source_url: e.target.value })} placeholder="https://..." />
+                  <Input
+                    value={form.source_url ?? ""}
+                    onChange={(e) => setForm({ ...form, source_url: e.target.value })}
+                    placeholder="https://..."
+                  />
                 </Field>
                 <Field label="Expira em">
-                  <Input type="date" value={form.expires_at ? String(form.expires_at).slice(0, 10) : ""} onChange={(e) => setForm({ ...form, expires_at: e.target.value || null })} />
+                  <Input
+                    type="date"
+                    value={form.expires_at ? String(form.expires_at).slice(0, 10) : ""}
+                    onChange={(e) => setForm({ ...form, expires_at: e.target.value || null })}
+                  />
                 </Field>
               </div>
 
               {/* Tips */}
               <div className="border border-border rounded-xl p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Dicas e Contexto</div>
+                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Dicas e Contexto
+                </div>
                 <Field label="Dicas Culturais">
-                  <Textarea value={form.cultural_tips ?? ""} onChange={(e) => setForm({ ...form, cultural_tips: e.target.value })} rows={3} />
+                  <Textarea
+                    value={form.cultural_tips ?? ""}
+                    onChange={(e) => setForm({ ...form, cultural_tips: e.target.value })}
+                    rows={3}
+                  />
                 </Field>
                 <Field label="Melhor Época para Visitar">
-                  <Input value={form.best_season ?? ""} onChange={(e) => setForm({ ...form, best_season: e.target.value })} placeholder="Ex: Nov–Mar (seca e quente)" />
+                  <Input
+                    value={form.best_season ?? ""}
+                    onChange={(e) => setForm({ ...form, best_season: e.target.value })}
+                    placeholder="Ex: Nov–Mar (seca e quente)"
+                  />
                 </Field>
                 <Field label="Orçamento Estimado">
-                  <Input value={form.budget_range ?? ""} onChange={(e) => setForm({ ...form, budget_range: e.target.value })} placeholder="Ex: R$ 8.000–15.000 por pessoa (7 dias)" />
+                  <Input
+                    value={form.budget_range ?? ""}
+                    onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
+                    placeholder="Ex: R$ 8.000–15.000 por pessoa (7 dias)"
+                  />
                 </Field>
               </div>
 
               <div className="flex gap-2 pt-2">
-                <GhostButton onClick={closeForm} className="flex-1">Cancelar</GhostButton>
+                <GhostButton onClick={closeForm} className="flex-1">
+                  Cancelar
+                </GhostButton>
                 <PrimaryButton
                   onClick={() => saveMut.mutate()}
                   disabled={saveMut.isPending || !form.destination?.trim()}

@@ -9,7 +9,10 @@ import {
 } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
-import { SupplierAutocomplete, type SupplierOption } from "@/components/suppliers/SupplierAutocomplete";
+import {
+  SupplierAutocomplete,
+  type SupplierOption,
+} from "@/components/suppliers/SupplierAutocomplete";
 
 interface Props {
   draft: Proposal;

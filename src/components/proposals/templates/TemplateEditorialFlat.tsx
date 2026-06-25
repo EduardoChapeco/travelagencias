@@ -18,7 +18,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
   const brandFg = vm.agency.brand_color_fg ?? "#FFFFFF";
 
   return (
-    <div 
+    <div
       className="flex flex-col w-full bg-white text-slate-900"
       style={{ fontFamily: "var(--brand-body-font, sans-serif)" }}
     >

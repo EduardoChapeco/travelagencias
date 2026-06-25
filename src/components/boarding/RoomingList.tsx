@@ -144,10 +144,7 @@ export function RoomingList({
 
   const deleteMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("boarding_rooming_list")
-        .delete()
-        .eq("id", id);
+      const { error } = await supabase.from("boarding_rooming_list").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -233,7 +230,11 @@ export function RoomingList({
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
               {editingId ? "Editar Quarto" : "Novo Quarto"}
             </span>
-            <button type="button" onClick={resetForm} className="text-muted-foreground hover:text-foreground">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-muted-foreground hover:text-foreground"
+            >
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -261,7 +262,9 @@ export function RoomingList({
                 className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
               >
                 {Object.entries(ROOM_TYPE_LABELS).map(([k, v]) => (
-                  <option key={k} value={k}>{v}</option>
+                  <option key={k} value={k}>
+                    {v}
+                  </option>
                 ))}
               </select>
             </div>
@@ -433,7 +436,9 @@ export function RoomingList({
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <BedDouble className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-sm font-bold text-foreground">Quarto {room.room_number}</span>
+                  <span className="text-sm font-bold text-foreground">
+                    Quarto {room.room_number}
+                  </span>
                   <span
                     className={`text-[10px] rounded px-1.5 py-0.5 font-semibold ${
                       ROOM_TYPE_COLORS[room.room_type] ?? "bg-surface-alt text-muted-foreground"
@@ -450,7 +455,9 @@ export function RoomingList({
                 <div className="flex items-center gap-1.5">
                   <button
                     type="button"
-                    onClick={() => confirmMut.mutate({ id: room.id, confirmed: !room.is_confirmed })}
+                    onClick={() =>
+                      confirmMut.mutate({ id: room.id, confirmed: !room.is_confirmed })
+                    }
                     className={`text-[10px] font-semibold px-2 py-1 rounded border transition-colors ${
                       room.is_confirmed
                         ? "border-border text-muted-foreground hover:border-border-strong"
@@ -483,8 +490,7 @@ export function RoomingList({
               {room.hotel_name && (
                 <p className="text-[10px] text-muted-foreground mb-1.5 flex items-center gap-1">
                   <Hotel className="h-2.5 w-2.5" /> {room.hotel_name}
-                  {room.checkin_date &&
-                    ` · ${room.checkin_date} → ${room.checkout_date ?? "?"}`}
+                  {room.checkin_date && ` · ${room.checkin_date} → ${room.checkout_date ?? "?"}`}
                 </p>
               )}
 

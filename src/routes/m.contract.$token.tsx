@@ -105,30 +105,26 @@ function Page() {
 
   const fetchAddendums = () => {
     setLoadingAddendums(true);
-    supabase
-      .rpc("public_addendums_by_token", { _token: token })
-      .then(({ data, error }) => {
-        setLoadingAddendums(false);
-        if (error) {
-          console.error("Error fetching public addendums:", error);
-        } else {
-          setAddendums((data as any) || []);
-        }
-      });
+    supabase.rpc("public_addendums_by_token", { _token: token }).then(({ data, error }) => {
+      setLoadingAddendums(false);
+      if (error) {
+        console.error("Error fetching public addendums:", error);
+      } else {
+        setAddendums((data as any) || []);
+      }
+    });
   };
 
   const fetchAuditTrail = () => {
     setLoadingAudit(true);
-    supabase
-      .rpc("public_audit_chain_by_token", { _token: token })
-      .then(({ data, error }) => {
-        setLoadingAudit(false);
-        if (error) {
-          console.error("Error fetching public audit chain:", error);
-        } else {
-          setAuditTrail((data as any) || []);
-        }
-      });
+    supabase.rpc("public_audit_chain_by_token", { _token: token }).then(({ data, error }) => {
+      setLoadingAudit(false);
+      if (error) {
+        console.error("Error fetching public audit chain:", error);
+      } else {
+        setAuditTrail((data as any) || []);
+      }
+    });
   };
 
   useEffect(() => {
@@ -147,14 +143,20 @@ function Page() {
         supabase.rpc("log_contract_activity", {
           _token: token,
           _action: "CONTRACT_VIEWED",
-          _metadata: { ip: j.ip, user_agent: ua } as unknown as import("@/integrations/supabase/types").Json,
+          _metadata: {
+            ip: j.ip,
+            user_agent: ua,
+          } as unknown as import("@/integrations/supabase/types").Json,
         });
       })
       .catch(() => {
         supabase.rpc("log_contract_activity", {
           _token: token,
           _action: "CONTRACT_VIEWED",
-          _metadata: { ip: "0.0.0.0", user_agent: ua } as unknown as import("@/integrations/supabase/types").Json,
+          _metadata: {
+            ip: "0.0.0.0",
+            user_agent: ua,
+          } as unknown as import("@/integrations/supabase/types").Json,
         });
       });
 
@@ -224,7 +226,10 @@ function Page() {
       supabase.rpc("log_contract_activity", {
         _token: token,
         _action: "CONTRACT_READ",
-        _metadata: { ip: ipAddress, user_agent: userAgent } as unknown as import("@/integrations/supabase/types").Json,
+        _metadata: {
+          ip: ipAddress,
+          user_agent: userAgent,
+        } as unknown as import("@/integrations/supabase/types").Json,
       });
     }
   };

@@ -28,9 +28,7 @@ function TripHistoryPage() {
     enabled: !!agency,
     queryKey: ["agency-profiles", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name");
+      const { data, error } = await supabase.from("profiles").select("id, full_name");
       if (error) throw error;
       return data ?? [];
     },
@@ -83,15 +81,18 @@ function TripHistoryPage() {
     },
   });
 
-  const isLoading = auditLogsQ.isLoading || boardingCardsQ.isLoading || boardingActivitiesQ.isLoading;
+  const isLoading =
+    auditLogsQ.isLoading || boardingCardsQ.isLoading || boardingActivitiesQ.isLoading;
 
   // Combine and sort logs
   const combinedLogs: UnifiedLog[] = [];
 
   // Add audit logs
   (auditLogsQ.data ?? []).forEach((log) => {
-    const actorName = log.actor_id ? profileMap.get(log.actor_id) || `Agente (${log.actor_id.substring(0, 5)})` : "Sistema";
-    
+    const actorName = log.actor_id
+      ? profileMap.get(log.actor_id) || `Agente (${log.actor_id.substring(0, 5)})`
+      : "Sistema";
+
     // Parse details from metadata if available
     let details = "";
     if (log.metadata && typeof log.metadata === "object") {
@@ -111,9 +112,13 @@ function TripHistoryPage() {
 
   // Add boarding card activities
   (boardingActivitiesQ.data ?? []).forEach((act) => {
-    const actorName = act.user_id ? profileMap.get(act.user_id) || `Agente (${act.user_id.substring(0, 5)})` : "Sistema";
+    const actorName = act.user_id
+      ? profileMap.get(act.user_id) || `Agente (${act.user_id.substring(0, 5)})`
+      : "Sistema";
     const card = (boardingCardsQ.data ?? []).find((c) => c.id === act.card_id);
-    const context = card ? ` [Voo: ${card.airline || ""} ${card.flight_number || card.hotel_name || ""}]` : "";
+    const context = card
+      ? ` [Voo: ${card.airline || ""} ${card.flight_number || card.hotel_name || ""}]`
+      : "";
 
     combinedLogs.push({
       id: `boarding-${act.id}`,
@@ -136,7 +141,8 @@ function TripHistoryPage() {
         <div>
           <p className="text-xs font-semibold text-foreground">Histórico de Alterações</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Visualize o log de auditoria em tempo real para ações executadas nesta viagem, incluindo alterações operacionais e de embarque.
+            Visualize o log de auditoria em tempo real para ações executadas nesta viagem, incluindo
+            alterações operacionais e de embarque.
           </p>
         </div>
       </div>
@@ -151,7 +157,9 @@ function TripHistoryPage() {
       {!isLoading && combinedLogs.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center max-w-3xl">
           <Clock className="h-10 w-10 text-muted-foreground/30 mb-3" />
-          <p className="text-sm font-semibold text-muted-foreground">Nenhuma atividade registrada</p>
+          <p className="text-sm font-semibold text-muted-foreground">
+            Nenhuma atividade registrada
+          </p>
           <p className="text-xs text-muted-foreground mt-1">
             As alterações realizadas nas abas operacionais aparecerão listadas aqui automaticamente.
           </p>
@@ -161,7 +169,8 @@ function TripHistoryPage() {
       {!isLoading && combinedLogs.length > 0 && (
         <div className="rounded-xl border border-border bg-surface p-4 max-w-3xl space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
-            <Activity className="h-3.5 w-3.5 text-brand" /> Linha do Tempo da Viagem ({combinedLogs.length} logs)
+            <Activity className="h-3.5 w-3.5 text-brand" /> Linha do Tempo da Viagem (
+            {combinedLogs.length} logs)
           </h3>
 
           <div className="relative border-l border-border pl-4 ml-2 space-y-6">

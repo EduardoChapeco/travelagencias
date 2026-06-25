@@ -317,6 +317,9 @@ export const PortalPagePayloadSchema = z.object({
     .object({
       meta_title: z.string().max(200, "Título SEO muito longo").optional().nullable(),
       meta_description: z.string().max(1000, "Descrição SEO muito longa").optional().nullable(),
+      fb_pixel_id: z.string().max(100).optional().nullable(),
+      google_analytics_id: z.string().max(100).optional().nullable(),
+      custom_scripts: z.string().max(10000).optional().nullable(),
     })
     .optional(),
 });

@@ -29,6 +29,7 @@ c:\Users\eduar\.gemini\antigravity-ide\scratch\travelagencias
 O sistema utiliza o **TanStack Router** com arquivos `.lazy.tsx` para carregar trechos pesados da UI de forma sob demanda.
 
 ### 1. Rotas Principais do Dashboard da Agência (`/agency/$slug/...`)
+
 - **CRM**:
   - [agency.$slug.crm.tsx](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.crm.tsx) - Quadro Kanban de oportunidades.
   - [agency.$slug.crm.$lead_id.tsx](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.crm.$lead_id.tsx) - Rota de entrada leve.

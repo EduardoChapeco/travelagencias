@@ -605,10 +605,10 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
     <div className="mt-5 space-y-4">
       <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
-         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
-         Gerencie livremente qualquer parâmetro de conexão para integrações customizadas. Estas credenciais
-         ficam associadas exclusivamente a esta agência.
-       </div>
+        <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
+        Gerencie livremente qualquer parâmetro de conexão para integrações customizadas. Estas
+        credenciais ficam associadas exclusivamente a esta agência.
+      </div>
 
       <form
         onSubmit={add}
@@ -999,7 +999,10 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       });
 
       if (error) throw error;
-      toast.success("Sincronização Histórica iniciada com sucesso! Acompanhe o progresso no histórico de auditoria abaixo.", { id: toastId });
+      toast.success(
+        "Sincronização Histórica iniciada com sucesso! Acompanhe o progresso no histórico de auditoria abaixo.",
+        { id: toastId },
+      );
       jobsQuery.refetch();
     } catch (err: any) {
       toast.error(err.message || "Erro ao executar sincronização histórica", { id: toastId });
@@ -1132,13 +1135,16 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       </form>
 
       {/* Painel de Controle de Sincronização */}
-      <div className={`border-t border-border/60 pt-8 space-y-6 ${!isConfigured ? "opacity-50 pointer-events-none" : ""}`}>
+      <div
+        className={`border-t border-border/60 pt-8 space-y-6 ${!isConfigured ? "opacity-50 pointer-events-none" : ""}`}
+      >
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Cpu className="h-4 w-4 text-brand" /> Painel de Sincronização de Reservas
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-sans">
-            Com os parâmetros de conexão salvos, você pode importar o histórico de reservas anteriores ou atualizar o status atual.
+            Com os parâmetros de conexão salvos, você pode importar o histórico de reservas
+            anteriores ou atualizar o status atual.
           </p>
         </div>
 
@@ -1150,8 +1156,9 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 <Calendar className="h-4 w-4 text-brand" /> Importar Reservas Anteriores (Lote)
               </span>
               <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Importa de forma automática as reservas criadas na operadora parceira dentro de um período selecionado. 
-                O processamento é realizado de forma segura e direta no banco de dados.
+                Importa de forma automática as reservas criadas na operadora parceira dentro de um
+                período selecionado. O processamento é realizado de forma segura e direta no banco
+                de dados.
               </p>
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <Field label="Período Inicial">
@@ -1187,12 +1194,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas (Atualização)
               </span>
               <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Verifica as viagens com embarque programado para os próximos 30 dias na operadora parceira.
-                Atualiza automaticamente as informações de status, vouchers e bilhetes emitidos.
+                Verifica as viagens com embarque programado para os próximos 30 dias na operadora
+                parceira. Atualiza automaticamente as informações de status, vouchers e bilhetes
+                emitidos.
               </p>
               <div className="rounded-lg bg-surface-alt/40 p-3 border border-border/40 text-[11px] text-muted-foreground leading-normal font-sans">
-                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />
-                O sistema realiza esta atualização de status de forma automática a cada 4 horas.
+                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />O
+                sistema realiza esta atualização de status de forma automática a cada 4 horas.
               </div>
             </div>
             <button
@@ -1201,7 +1209,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               onClick={handleRunPolling}
               className="mt-4 flex h-9 items-center justify-center gap-2 rounded-xl bg-surface-alt hover:bg-surface-alt/80 text-xs font-bold text-foreground border border-border transition-all disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar Viagens Ativas
+              <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar
+              Viagens Ativas
             </button>
           </div>
         </div>
@@ -1210,7 +1219,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
         <div className="space-y-3">
           <div className="flex items-center justify-between border-b border-border/50 pb-2">
             <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de Processamento de Reservas (Últimos 10)
+              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de Processamento
+              de Reservas (Últimos 10)
             </h4>
             {jobsQuery.isFetching && (
               <span className="flex items-center gap-1 text-[10px] text-brand font-bold animate-pulse">
@@ -1221,7 +1231,9 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
           <div className="rounded-xl border border-border bg-surface overflow-x-auto">
             {jobsQuery.isLoading ? (
-              <div className="p-8 text-center text-xs text-muted-foreground font-sans">Buscando histórico...</div>
+              <div className="p-8 text-center text-xs text-muted-foreground font-sans">
+                Buscando histórico...
+              </div>
             ) : !jobsQuery.data || jobsQuery.data.length === 0 ? (
               <div className="p-8 text-center text-xs text-muted-foreground font-sans italic">
                 Nenhuma importação ou atualização realizada recentemente.
@@ -1243,18 +1255,23 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                   {jobsQuery.data.map((job: any) => {
                     const errorCount = Array.isArray(job.errors_log) ? job.errors_log.length : 0;
                     return (
-                      <tr key={job.id} className="border-t border-border/50 hover:bg-surface-alt/20 text-xs">
+                      <tr
+                        key={job.id}
+                        className="border-t border-border/50 hover:bg-surface-alt/20 text-xs"
+                      >
                         <td className="px-4 py-3 text-muted-foreground font-medium">
                           {new Date(job.started_at).toLocaleString("pt-BR")}
                         </td>
                         <td className="px-4 py-3 font-semibold text-foreground">
                           {job.job_type === "backfill" ? (
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação em Lote
+                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação em
+                              Lote
                             </span>
                           ) : (
                             <span className="flex items-center gap-1">
-                              <RefreshCw className="h-3.5 w-3.5 text-amber-500 shrink-0" /> Atualização Geral
+                              <RefreshCw className="h-3.5 w-3.5 text-amber-500 shrink-0" />{" "}
+                              Atualização Geral
                             </span>
                           )}
                         </td>
@@ -1292,9 +1309,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         <td className="px-4 py-3 text-right font-mono text-muted-foreground">
                           {formatDuration(job.started_at, job.finished_at)}
                         </td>
-                        <td className="px-4 py-3 text-right">
-                          {/* Empty spacer */}
-                        </td>
+                        <td className="px-4 py-3 text-right">{/* Empty spacer */}</td>
                       </tr>
                     );
                   })}
@@ -1324,16 +1339,22 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
               <p className="text-xs text-muted-foreground mb-2">
-                Abaixo estão listadas as ocorrências registradas durante o processamento das reservas com a operadora parceira:
+                Abaixo estão listadas as ocorrências registradas durante o processamento das
+                reservas com a operadora parceira:
               </p>
               {Array.isArray(selectedJobForError.errors_log) &&
                 selectedJobForError.errors_log.map((log: any, idx: number) => (
-                  <div key={idx} className="p-3.5 rounded-xl border border-danger/20 bg-danger/5 text-xs font-mono space-y-1">
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl border border-danger/20 bg-danger/5 text-xs font-mono space-y-1"
+                  >
                     <div className="flex justify-between items-center text-[10px] text-danger/80 border-b border-danger/10 pb-1.5 mb-1.5">
                       <span className="font-bold uppercase">
                         {log.booking_id ? `Reserva #${log.booking_id}` : "Ocorrência Geral"}
                       </span>
-                      <span>{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : ""}</span>
+                      <span>
+                        {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : ""}
+                      </span>
                     </div>
                     <div className="text-foreground font-medium whitespace-pre-wrap break-all leading-relaxed">
                       {log.error || JSON.stringify(log)}

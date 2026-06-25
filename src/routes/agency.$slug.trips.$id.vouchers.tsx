@@ -244,7 +244,10 @@ function TripVouchers() {
       }
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Não foi possível enviar o documento de origem.", { id: "ocr" }),
+      toast.error(
+        e instanceof Error ? e.message : "Não foi possível enviar o documento de origem.",
+        { id: "ocr" },
+      ),
   });
 
   // ── Edit existing ─────────────────────────────────────────────────────────────
@@ -333,7 +336,6 @@ function TripVouchers() {
       />
     );
   }
-
 
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (

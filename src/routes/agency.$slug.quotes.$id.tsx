@@ -27,7 +27,16 @@ import {
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { StatusBadge, fmtDate, money, GhostButton, PrimaryButton, Input, Select, Field } from "@/components/ui/form";
+import {
+  StatusBadge,
+  fmtDate,
+  money,
+  GhostButton,
+  PrimaryButton,
+  Input,
+  Select,
+  Field,
+} from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -157,7 +166,7 @@ function QuoteDetailWorkspacePage() {
           },
           priority: 4,
           reason: "Análise de tarifas deslocando o período de viagem em -3 dias.",
-        }
+        },
       ];
 
       return await createSearchPlanAndScenarios(id, defaultScenarios);
@@ -170,7 +179,11 @@ function QuoteDetailWorkspacePage() {
   });
 
   // 4. Run Search Mutation
-  async function handleExecuteSearch(scenarioId: string, productType: "hotel" | "flight", params: any) {
+  async function handleExecuteSearch(
+    scenarioId: string,
+    productType: "hotel" | "flight",
+    params: any,
+  ) {
     if (!agency) return;
     setSearching(scenarioId + "-" + productType);
     try {
@@ -196,10 +209,14 @@ function QuoteDetailWorkspacePage() {
       }
 
       const flights = offers.filter((o) => o.productType === "flight" && o.flights?.length > 0);
-      const hotels = offers.filter((o) => o.productType === "hotel" && o.accommodations?.length > 0);
+      const hotels = offers.filter(
+        (o) => o.productType === "hotel" && o.accommodations?.length > 0,
+      );
 
       if (flights.length === 0 || hotels.length === 0) {
-        toast.error("É necessário ter pelo menos 1 voo e 1 hotel normalizados para gerar combinações.");
+        toast.error(
+          "É necessário ter pelo menos 1 voo e 1 hotel normalizados para gerar combinações.",
+        );
         return;
       }
 
@@ -211,11 +228,15 @@ function QuoteDetailWorkspacePage() {
           const flightOffer = flights[j];
 
           const hotelName = hotelOffer.accommodations[0].name;
-          const flightAir = flightOffer.flights[0].airlineName || flightOffer.flights[0].airlineCode;
+          const flightAir =
+            flightOffer.flights[0].airlineName || flightOffer.flights[0].airlineCode;
           const candidateName = `Pacote ${hotelName} + Voo ${flightAir}`;
 
           // Criar candidato
-          const candidateId = await createPackageCandidate(id, candidateName, [hotelOffer.id, flightOffer.id]);
+          const candidateId = await createPackageCandidate(id, candidateName, [
+            hotelOffer.id,
+            flightOffer.id,
+          ]);
 
           // Calcular score determinístico imediatamente
           await scorePackageCandidate(candidateId);
@@ -234,7 +255,13 @@ function QuoteDetailWorkspacePage() {
   }
 
   // 6. Explain Scorecard using AI
-  async function handleExplainWithAi(candidateId: string, name: string, score: number, explanation: string, warnings: string[]) {
+  async function handleExplainWithAi(
+    candidateId: string,
+    name: string,
+    score: number,
+    explanation: string,
+    warnings: string[],
+  ) {
     setExplaining(candidateId);
     try {
       const prompt = `Analise a alternativa de viagem "${name}" que obteve nota de conforto/logística ${score}/100.
@@ -247,7 +274,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         body: {
           action: "completion",
           prompt,
-          systemPrompt: "Você é o especialista de viagens sênior do TravelOS. Ajude o operador a explicar a cotação.",
+          systemPrompt:
+            "Você é o especialista de viagens sênior do TravelOS. Ajude o operador a explicar a cotação.",
           modelPreference: "smart",
         },
       });
@@ -365,7 +393,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       await rejectPackageCandidate(agency.id, id, candidateId, reason, intent);
     },
     onSuccess: () => {
-      toast.success("Alternativa rejeitada e inválida para cotação. Sugestão de regra gerada no cérebro RAG!");
+      toast.success(
+        "Alternativa rejeitada e inválida para cotação. Sugestão de regra gerada no cérebro RAG!",
+      );
       qc.invalidateQueries({ queryKey: ["quote-candidates", id] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -379,11 +409,11 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       const activeCandidateIds = candidates
         .filter((c: any) => c.status !== "invalid")
         .map((c: any) => c.id);
-      
+
       if (activeCandidateIds.length === 0) {
         throw new Error("Nenhum pacote candidato ativo para simular");
       }
-      
+
       const personas = ["econômico", "conforto", "família", "premium", "aventura"];
       return await runMarketSimulation(id, activeCandidateIds, personas);
     },
@@ -433,11 +463,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             <ArrowLeft className="h-3.5 w-3.5" />
             Cotações
           </Link>
-          <PrimaryButton
-            onClick={handleAutoPackage}
-            disabled={packaging}
-            className="gap-1.5"
-          >
+          <PrimaryButton onClick={handleAutoPackage} disabled={packaging} className="gap-1.5">
             {packaging ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -456,7 +482,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       {/* Header Info */}
       <div className="border-b border-border bg-surface px-4 md:px-6 py-4 shrink-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Destino Alvo</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Destino Alvo
+          </span>
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground mt-0.5">
             <Compass className="h-4 w-4 text-brand shrink-0" />
             {intent?.destinations?.[0]?.name || "Não informado"}
@@ -464,7 +492,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Datas e Período</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Datas e Período
+          </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground mt-0.5">
             <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
             <span>{fmtDate(startStr)}</span>
@@ -474,15 +504,22 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ocupação / Viajantes</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Ocupação / Viajantes
+          </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground mt-0.5">
             <Users className="h-4 w-4 text-muted-foreground shrink-0" />
-            <span>{travelers.adults} adultos {travelers.children > 0 && `+ ${travelers.children} crianças`}</span>
+            <span>
+              {travelers.adults} adultos{" "}
+              {travelers.children > 0 && `+ ${travelers.children} crianças`}
+            </span>
           </div>
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Orçamento Esperado</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Orçamento Esperado
+          </span>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-success mt-0.5">
             <DollarSign className="h-4 w-4 shrink-0" />
             <span>Até R$ {budgetLimit.toLocaleString()}</span>
@@ -495,7 +532,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         {/* Left Side: Scenarios Control */}
         <div className="w-80 border-r border-border bg-surface-alt/25 flex flex-col overflow-y-auto p-4 shrink-0">
           <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">1. Cenários de Busca</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              1. Cenários de Busca
+            </h3>
             {quote.scenarios.length === 0 && (
               <button
                 onClick={() => createScenariosMut.mutate()}
@@ -508,7 +547,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
           {quote.scenarios.length === 0 ? (
             <div className="text-center py-8 px-2 border border-dashed border-border rounded">
-              <p className="text-[11px] text-muted-foreground">Nenhum cenário configurado para esta cotação.</p>
+              <p className="text-[11px] text-muted-foreground">
+                Nenhum cenário configurado para esta cotação.
+              </p>
               <PrimaryButton
                 onClick={() => createScenariosMut.mutate()}
                 className="mt-3 h-8 text-[10px] w-full"
@@ -529,18 +570,22 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="text-xs font-bold text-foreground leading-snug">{sc.name}</h4>
-                        <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{sc.reason}</p>
+                        <h4 className="text-xs font-bold text-foreground leading-snug">
+                          {sc.name}
+                        </h4>
+                        <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                          {sc.reason}
+                        </p>
                       </div>
                       <StatusBadge
                         tone={
                           sc.status === "completed"
                             ? "success"
                             : sc.status === "processing"
-                            ? "warning"
-                            : sc.status === "failed"
-                            ? "danger"
-                            : "neutral"
+                              ? "warning"
+                              : sc.status === "failed"
+                                ? "danger"
+                                : "neutral"
                         }
                       >
                         {sc.status}
@@ -599,7 +644,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           {/* Info Section */}
           <div className="mt-8 bg-info-bg/10 border border-info/20 rounded p-3 text-[11px] leading-relaxed text-info">
             <span className="font-semibold block mb-1">Regras de Validação do Destino</span>
-            Ao salvar ofertas de voos e hotéis, o sistema valida automaticamente conexões apertadas e pernoites logísticos como Jericoacoara via Fortaleza.
+            Ao salvar ofertas de voos e hotéis, o sistema valida automaticamente conexões apertadas
+            e pernoites logísticos como Jericoacoara via Fortaleza.
           </div>
         </div>
 
@@ -635,9 +681,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               {candidates.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
                   <TrendingUp className="h-12 w-12 text-muted-foreground/40 mb-3" />
-                  <h3 className="text-sm font-semibold text-foreground">Ainda não há pacotes qualificados</h3>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Ainda não há pacotes qualificados
+                  </h3>
                   <p className="text-xs text-muted-foreground max-w-sm mt-1">
-                    Realize as buscas dos cenários à esquerda e clique em <strong>Gerar Alternativas Prontas</strong> acima para criar e avaliar opções.
+                    Realize as buscas dos cenários à esquerda e clique em{" "}
+                    <strong>Gerar Alternativas Prontas</strong> acima para criar e avaliar opções.
                   </p>
                 </div>
               ) : (
@@ -655,12 +704,16 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         <div className="bg-surface-alt px-4 py-3 border-b border-border flex items-center justify-between">
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <h3 className="text-xs font-bold text-foreground line-clamp-1">{cand.name}</h3>
+                              <h3 className="text-xs font-bold text-foreground line-clamp-1">
+                                {cand.name}
+                              </h3>
                               {cand.status === "invalid" && (
                                 <StatusBadge tone="danger">Rejeitado</StatusBadge>
                               )}
                             </div>
-                            <span className="text-[10px] font-medium text-muted-foreground">Scorecard v1</span>
+                            <span className="text-[10px] font-medium text-muted-foreground">
+                              Scorecard v1
+                            </span>
                           </div>
                           <div className="flex flex-col items-end">
                             <span
@@ -668,20 +721,26 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                 cand.score >= 80
                                   ? "text-success"
                                   : cand.score >= 50
-                                  ? "text-warning"
-                                  : "text-danger"
+                                    ? "text-warning"
+                                    : "text-danger"
                               }`}
                             >
                               {cand.score}
-                              <span className="text-xs font-normal text-muted-foreground">/100</span>
+                              <span className="text-xs font-normal text-muted-foreground">
+                                /100
+                              </span>
                             </span>
                           </div>
                         </div>
 
                         {/* Price and Overview */}
                         <div className="p-4 border-b border-border flex justify-between items-baseline bg-surface-alt/10">
-                          <span className="text-xs text-muted-foreground">Preço Total Estimado</span>
-                          <span className="text-lg font-bold text-foreground">{money(cand.total_price, cand.currency)}</span>
+                          <span className="text-xs text-muted-foreground">
+                            Preço Total Estimado
+                          </span>
+                          <span className="text-lg font-bold text-foreground">
+                            {money(cand.total_price, cand.currency)}
+                          </span>
                         </div>
 
                         {/* Features list */}
@@ -695,7 +754,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               </span>
                               <ul className="list-disc pl-4 space-y-0.5">
                                 {cand.warnings.map((w: string, idx: number) => (
-                                  <li key={idx} className="leading-snug">{w}</li>
+                                  <li key={idx} className="leading-snug">
+                                    {w}
+                                  </li>
                                 ))}
                               </ul>
                             </div>
@@ -704,19 +765,33 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           {/* Score dimensions */}
                           {card && (
                             <div className="space-y-1.5 border-b border-border/80 pb-3">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Métricas de Conforto</span>
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                                Métricas de Conforto
+                              </span>
                               <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
                                 <div className="bg-surface-alt rounded p-1">
-                                  <span className="block text-muted-foreground font-semibold">Voos</span>
-                                  <span className="font-bold text-foreground">{card.dimensions?.flight_score || 0}</span>
+                                  <span className="block text-muted-foreground font-semibold">
+                                    Voos
+                                  </span>
+                                  <span className="font-bold text-foreground">
+                                    {card.dimensions?.flight_score || 0}
+                                  </span>
                                 </div>
                                 <div className="bg-surface-alt rounded p-1">
-                                  <span className="block text-muted-foreground font-semibold">Hotel</span>
-                                  <span className="font-bold text-foreground">{card.dimensions?.hotel_score || 0}</span>
+                                  <span className="block text-muted-foreground font-semibold">
+                                    Hotel
+                                  </span>
+                                  <span className="font-bold text-foreground">
+                                    {card.dimensions?.hotel_score || 0}
+                                  </span>
                                 </div>
                                 <div className="bg-surface-alt rounded p-1">
-                                  <span className="block text-muted-foreground font-semibold">Logística</span>
-                                  <span className="font-bold text-foreground">{card.dimensions?.logistics_score || 0}</span>
+                                  <span className="block text-muted-foreground font-semibold">
+                                    Logística
+                                  </span>
+                                  <span className="font-bold text-foreground">
+                                    {card.dimensions?.logistics_score || 0}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -729,10 +804,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               Consultoria Digital
                             </span>
                             {aiExplanations[cand.id] ? (
-                              <p className="text-muted-foreground mt-1.5 leading-relaxed">{aiExplanations[cand.id]}</p>
+                              <p className="text-muted-foreground mt-1.5 leading-relaxed">
+                                {aiExplanations[cand.id]}
+                              </p>
                             ) : (
                               <p className="text-muted-foreground mt-1.5 leading-relaxed">
-                                Nenhuma análise gerada. Clique em "Pedir Explicação" para acionar o motor de linguagem natural.
+                                Nenhuma análise gerada. Clique em "Pedir Explicação" para acionar o
+                                motor de linguagem natural.
                               </p>
                             )}
                             <div className="mt-2.5 flex justify-end">
@@ -743,7 +821,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                     cand.name,
                                     cand.score,
                                     card?.explanation || "",
-                                    cand.warnings || []
+                                    cand.warnings || [],
                                   )
                                 }
                                 disabled={explaining === cand.id}
@@ -766,7 +844,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         {cand.status !== "invalid" && (
                           <GhostButton
                             onClick={() => {
-                              const reason = prompt("Por que você deseja rejeitar esta alternativa?");
+                              const reason = prompt(
+                                "Por que você deseja rejeitar esta alternativa?",
+                              );
                               if (reason && reason.trim()) {
                                 rejectMut.mutate({ candidateId: cand.id, reason: reason.trim() });
                               }
@@ -786,10 +866,16 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             if (converting !== null || convertMut.isPending) return;
                             convertMut.mutate(cand);
                           }}
-                          disabled={converting !== null || convertMut.isPending || cand.score < 50 || cand.status === "invalid"}
+                          disabled={
+                            converting !== null ||
+                            convertMut.isPending ||
+                            cand.score < 50 ||
+                            cand.status === "invalid"
+                          }
                           className="flex-1 justify-center text-xs h-9 uppercase tracking-wider"
                         >
-                          {converting === cand.id || (convertMut.isPending && converting === cand.id) ? (
+                          {converting === cand.id ||
+                          (convertMut.isPending && converting === cand.id) ? (
                             <>
                               <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
                               Convertendo...
@@ -814,12 +900,15 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     Simulação Preditiva de Personas
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Simule o comportamento de compra de 5 perfis de clientes contra os pacotes gerados para validar objeções.
+                    Simule o comportamento de compra de 5 perfis de clientes contra os pacotes
+                    gerados para validar objeções.
                   </p>
                 </div>
                 <PrimaryButton
                   onClick={() => runSimulationMut.mutate()}
-                  disabled={simulating || candidates.filter((c: any) => c.status !== "invalid").length === 0}
+                  disabled={
+                    simulating || candidates.filter((c: any) => c.status !== "invalid").length === 0
+                  }
                   className="gap-1.5"
                 >
                   {simulating ? (
@@ -839,9 +928,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               {simulationRuns.length === 0 ? (
                 <div className="flex-1 border border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center p-8 bg-surface">
                   <Sparkles className="h-10 w-10 text-muted-foreground/30 mb-2 animate-pulse" />
-                  <h4 className="text-sm font-semibold text-foreground">Nenhuma Simulação Registrada</h4>
+                  <h4 className="text-sm font-semibold text-foreground">
+                    Nenhuma Simulação Registrada
+                  </h4>
                   <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-                    Para economizar tokens, a simulação de personas é manual. Clique no botão acima para rodar a simulação com as alternativas de pacotes atuais.
+                    Para economizar tokens, a simulação de personas é manual. Clique no botão acima
+                    para rodar a simulação com as alternativas de pacotes atuais.
                   </p>
                 </div>
               ) : (
@@ -853,7 +945,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         Matriz de Calor (Heatmap)
                       </span>
                       <span className="text-[10px] text-muted-foreground font-semibold">
-                        Versão: #{simulationRuns[0].version} ({new Date(simulationRuns[0].createdAt).toLocaleString("pt-BR")})
+                        Versão: #{simulationRuns[0].version} (
+                        {new Date(simulationRuns[0].createdAt).toLocaleString("pt-BR")})
                       </span>
                     </div>
 
@@ -861,58 +954,84 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       <table className="w-full text-left border-collapse">
                         <thead>
                           <tr className="border-b border-border">
-                            <th className="py-3 px-4 text-xs font-bold text-muted-foreground uppercase">Persona</th>
+                            <th className="py-3 px-4 text-xs font-bold text-muted-foreground uppercase">
+                              Persona
+                            </th>
                             {candidates
                               .filter((c: any) => c.status !== "invalid")
                               .map((c: any) => (
-                                <th key={c.id} className="py-3 px-4 text-xs font-bold text-foreground text-center truncate max-w-[150px]" title={c.name}>
+                                <th
+                                  key={c.id}
+                                  className="py-3 px-4 text-xs font-bold text-foreground text-center truncate max-w-[150px]"
+                                  title={c.name}
+                                >
                                   {c.name}
                                 </th>
                               ))}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                          {["econômico", "conforto", "família", "premium", "aventura"].map((persona) => (
-                            <tr key={persona} className="hover:bg-surface-alt/40 transition-colors">
-                              <td className="py-3 px-4 text-xs font-bold text-foreground uppercase tracking-wider">
-                                {persona}
-                              </td>
-                              {candidates
-                                .filter((c: any) => c.status !== "invalid")
-                                .map((c: any) => {
-                                  const result = simulationRuns[0].results.find(
-                                    (r: any) => r.packageCandidateId === c.id && r.persona === persona
-                                  );
-                                  const score = result?.score ?? 0;
-                                  const isSelected = selectedResult?.packageCandidateId === c.id && selectedResult?.persona === persona;
+                          {["econômico", "conforto", "família", "premium", "aventura"].map(
+                            (persona) => (
+                              <tr
+                                key={persona}
+                                className="hover:bg-surface-alt/40 transition-colors"
+                              >
+                                <td className="py-3 px-4 text-xs font-bold text-foreground uppercase tracking-wider">
+                                  {persona}
+                                </td>
+                                {candidates
+                                  .filter((c: any) => c.status !== "invalid")
+                                  .map((c: any) => {
+                                    const result = simulationRuns[0].results.find(
+                                      (r: any) =>
+                                        r.packageCandidateId === c.id && r.persona === persona,
+                                    );
+                                    const score = result?.score ?? 0;
+                                    const isSelected =
+                                      selectedResult?.packageCandidateId === c.id &&
+                                      selectedResult?.persona === persona;
 
-                                  let scoreBg = "bg-neutral text-neutral-foreground";
-                                  if (result) {
-                                    if (score >= 80) scoreBg = "bg-success/10 text-success border-success/30 hover:bg-success/20";
-                                    else if (score >= 50) scoreBg = "bg-warning/10 text-warning border-warning/30 hover:bg-warning/20";
-                                    else scoreBg = "bg-danger/10 text-danger border-danger/30 hover:bg-danger/20";
-                                  }
+                                    let scoreBg = "bg-neutral text-neutral-foreground";
+                                    if (result) {
+                                      if (score >= 80)
+                                        scoreBg =
+                                          "bg-success/10 text-success border-success/30 hover:bg-success/20";
+                                      else if (score >= 50)
+                                        scoreBg =
+                                          "bg-warning/10 text-warning border-warning/30 hover:bg-warning/20";
+                                      else
+                                        scoreBg =
+                                          "bg-danger/10 text-danger border-danger/30 hover:bg-danger/20";
+                                    }
 
-                                  return (
-                                    <td key={c.id} className="py-3 px-4 text-center">
-                                      <button
-                                        onClick={() => result && setSelectedResult({ ...result, candidateName: c.name })}
-                                        className={`inline-flex items-center justify-center font-mono font-bold text-xs w-12 h-8 rounded border transition-all ${scoreBg} ${
-                                          isSelected ? "ring-2 ring-brand ring-offset-2 scale-105" : ""
-                                        }`}
-                                      >
-                                        {score || "—"}
-                                      </button>
-                                    </td>
-                                  );
-                                })}
-                            </tr>
-                          ))}
+                                    return (
+                                      <td key={c.id} className="py-3 px-4 text-center">
+                                        <button
+                                          onClick={() =>
+                                            result &&
+                                            setSelectedResult({ ...result, candidateName: c.name })
+                                          }
+                                          className={`inline-flex items-center justify-center font-mono font-bold text-xs w-12 h-8 rounded border transition-all ${scoreBg} ${
+                                            isSelected
+                                              ? "ring-2 ring-brand ring-offset-2 scale-105"
+                                              : ""
+                                          }`}
+                                        >
+                                          {score || "—"}
+                                        </button>
+                                      </td>
+                                    );
+                                  })}
+                              </tr>
+                            ),
+                          )}
                         </tbody>
                       </table>
                     </div>
                     <span className="text-[10px] text-muted-foreground mt-4 leading-relaxed">
-                      💡 Clique em qualquer nota na matriz para ver os pontos fortes e objeções detalhadas da persona sobre aquele pacote.
+                      💡 Clique em qualquer nota na matriz para ver os pontos fortes e objeções
+                      detalhadas da persona sobre aquele pacote.
                     </span>
                   </div>
 
@@ -925,26 +1044,42 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     {selectedResult ? (
                       <div className="space-y-4">
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Alternativa Selecionada</span>
-                          <p className="text-xs font-semibold text-foreground mt-0.5">{selectedResult.candidateName}</p>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                            Alternativa Selecionada
+                          </span>
+                          <p className="text-xs font-semibold text-foreground mt-0.5">
+                            {selectedResult.candidateName}
+                          </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Persona</span>
-                            <p className="text-xs font-bold text-brand uppercase tracking-wide mt-0.5">{selectedResult.persona}</p>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                              Persona
+                            </span>
+                            <p className="text-xs font-bold text-brand uppercase tracking-wide mt-0.5">
+                              {selectedResult.persona}
+                            </p>
                           </div>
                           <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Nota / Confiança</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                              Nota / Confiança
+                            </span>
                             <div className="flex items-baseline gap-1 mt-0.5">
-                              <span className="text-sm font-bold text-foreground">{selectedResult.score}</span>
-                              <span className="text-[10px] text-muted-foreground">(conf: {(selectedResult.confidence * 100).toFixed(0)}%)</span>
+                              <span className="text-sm font-bold text-foreground">
+                                {selectedResult.score}
+                              </span>
+                              <span className="text-[10px] text-muted-foreground">
+                                (conf: {(selectedResult.confidence * 100).toFixed(0)}%)
+                              </span>
                             </div>
                           </div>
                         </div>
 
                         <div className="border-t border-border/80 pt-3">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-success block mb-1">Pontos Fortes</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-success block mb-1">
+                            Pontos Fortes
+                          </span>
                           {selectedResult.strengths?.length > 0 ? (
                             <ul className="list-disc pl-4 text-xs text-muted-foreground space-y-1">
                               {selectedResult.strengths.map((s: string, i: number) => (
@@ -952,12 +1087,16 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-xs text-muted-foreground italic">Nenhum ponto forte identificado.</p>
+                            <p className="text-xs text-muted-foreground italic">
+                              Nenhum ponto forte identificado.
+                            </p>
                           )}
                         </div>
 
                         <div className="border-t border-border/80 pt-3">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-danger block mb-1">Objeções de Compra</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-danger block mb-1">
+                            Objeções de Compra
+                          </span>
                           {selectedResult.objections?.length > 0 ? (
                             <ul className="list-disc pl-4 text-xs text-muted-foreground space-y-1">
                               {selectedResult.objections.map((o: string, i: number) => (
@@ -965,7 +1104,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-xs text-muted-foreground italic">Nenhuma objeção de compra identificada.</p>
+                            <p className="text-xs text-muted-foreground italic">
+                              Nenhuma objeção de compra identificada.
+                            </p>
                           )}
                         </div>
                       </div>

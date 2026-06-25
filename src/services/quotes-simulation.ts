@@ -23,7 +23,7 @@ export interface SimulationRunDetails {
 export async function runMarketSimulation(
   quoteRequestId: string,
   candidateIds: string[],
-  personas: string[]
+  personas: string[],
 ): Promise<SimulationRunDetails> {
   // 1. Criar registro de simulação
   const { data: run, error: runErr } = await supabase
@@ -47,7 +47,8 @@ export async function runMarketSimulation(
     // 2. Obter candidatos detalhados com ofertas
     const { data: candidates, error: candErr } = await supabase
       .from("package_candidates")
-      .select(`
+      .select(
+        `
         *,
         quote_requests(*),
         components:package_candidate_components(
@@ -55,7 +56,8 @@ export async function runMarketSimulation(
           offer:normalized_offers(*)
         ),
         scorecard:package_scorecards(*)
-      `)
+      `,
+      )
       .in("id", candidateIds);
 
     if (candErr || !candidates || candidates.length === 0) {
@@ -84,10 +86,13 @@ export async function runMarketSimulation(
       let flightDetails = "Não incluído";
       if (flights.length > 0) {
         flightDetails = flights
-          .map((f: any) => 
-            f.flights?.map((opt: any) => 
-              `${opt.airlineName || opt.airlineCode} (${opt.flightNumber}): ${opt.origin} -> ${opt.destination}, conexões: ${opt.stops}, saída: ${opt.departure}`
-            ).join("; ")
+          .map((f: any) =>
+            f.flights
+              ?.map(
+                (opt: any) =>
+                  `${opt.airlineName || opt.airlineCode} (${opt.flightNumber}): ${opt.origin} -> ${opt.destination}, conexões: ${opt.stops}, saída: ${opt.departure}`,
+              )
+              .join("; "),
           )
           .join(" | ");
       }
@@ -95,10 +100,13 @@ export async function runMarketSimulation(
       let hotelDetails = "Não incluído";
       if (hotels.length > 0) {
         hotelDetails = hotels
-          .map((h: any) => 
-            h.accommodations?.map((acc: any) => 
-              `${acc.name} (${acc.cityName}): check-in: ${acc.checkIn}, check-out: ${acc.checkOut}, regime: ${acc.rooms?.[0]?.boardDescription || "Café da manhã"}`
-            ).join("; ")
+          .map((h: any) =>
+            h.accommodations
+              ?.map(
+                (acc: any) =>
+                  `${acc.name} (${acc.cityName}): check-in: ${acc.checkIn}, check-out: ${acc.checkOut}, regime: ${acc.rooms?.[0]?.boardDescription || "Café da manhã"}`,
+              )
+              .join("; "),
           )
           .join(" | ");
       }
@@ -144,23 +152,30 @@ Retorne somente o JSON válido, sem formatação markdown block.`;
     const prompt = `Avalie as seguintes alternativas de pacotes de viagem:
 ${candidatesContext}`;
 
-    const { data: aiResponse, error: aiError } = await supabase.functions.invoke("ai-orchestrator", {
-      body: {
-        action: "completion",
-        prompt,
-        systemPrompt,
-        jsonMode: true,
-        modelPreference: "smart",
+    const { data: aiResponse, error: aiError } = await supabase.functions.invoke(
+      "ai-orchestrator",
+      {
+        body: {
+          action: "completion",
+          prompt,
+          systemPrompt,
+          jsonMode: true,
+          modelPreference: "smart",
+        },
       },
-    });
+    );
 
     if (aiError) throw aiError;
 
     if (aiResponse?.result) {
       try {
-        const cleaned = typeof aiResponse.result === "string"
-          ? aiResponse.result.replace(/```json/g, "").replace(/```/g, "").trim()
-          : aiResponse.result;
+        const cleaned =
+          typeof aiResponse.result === "string"
+            ? aiResponse.result
+                .replace(/```json/g, "")
+                .replace(/```/g, "")
+                .trim()
+            : aiResponse.result;
         const parsed = typeof cleaned === "string" ? JSON.parse(cleaned) : cleaned;
 
         if (Array.isArray(parsed)) {
@@ -201,25 +216,17 @@ ${candidatesContext}`;
 
     // Inserir resultados
     if (resultsToInsert.length > 0) {
-      const { error: insErr } = await supabase
-        .from("simulation_results")
-        .insert(resultsToInsert);
+      const { error: insErr } = await supabase.from("simulation_results").insert(resultsToInsert);
       if (insErr) throw insErr;
     }
 
     // Atualizar status da simulação
-    await supabase
-      .from("simulation_runs")
-      .update({ status: "completed" })
-      .eq("id", runId);
+    await supabase.from("simulation_runs").update({ status: "completed" }).eq("id", runId);
 
     // Buscar e retornar estrutura completa
     return await fetchSimulationRunDetails(runId);
   } catch (err: any) {
-    await supabase
-      .from("simulation_runs")
-      .update({ status: "failed" })
-      .eq("id", runId);
+    await supabase.from("simulation_runs").update({ status: "failed" }).eq("id", runId);
     throw err;
   }
 }
@@ -227,10 +234,12 @@ ${candidatesContext}`;
 export async function fetchSimulationRunDetails(runId: string): Promise<SimulationRunDetails> {
   const { data: run, error: runErr } = await supabase
     .from("simulation_runs")
-    .select(`
+    .select(
+      `
       *,
       results:simulation_results(*)
-    `)
+    `,
+    )
     .eq("id", runId)
     .single();
 
@@ -254,13 +263,17 @@ export async function fetchSimulationRunDetails(runId: string): Promise<Simulati
   };
 }
 
-export async function fetchSimulationRunsForQuote(quoteRequestId: string): Promise<SimulationRunDetails[]> {
+export async function fetchSimulationRunsForQuote(
+  quoteRequestId: string,
+): Promise<SimulationRunDetails[]> {
   const { data: runs, error } = await supabase
     .from("simulation_runs")
-    .select(`
+    .select(
+      `
       *,
       results:simulation_results(*)
-    `)
+    `,
+    )
     .eq("quote_request_id", quoteRequestId)
     .order("created_at", { ascending: false });
 

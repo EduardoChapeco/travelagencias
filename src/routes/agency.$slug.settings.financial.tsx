@@ -16,7 +16,14 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { Field, Input, Select, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+} from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/settings/financial")({
   head: () => ({ meta: [{ title: "Fechamentos & Comissões · TravelOS" }] }),
@@ -75,7 +82,17 @@ function FinancialSettingsPage() {
   });
 
   const togglePeriodStatus = useMutation({
-    mutationFn: async ({ periodId, year, month, close }: { periodId?: string; year: number; month: number; close: boolean }) => {
+    mutationFn: async ({
+      periodId,
+      year,
+      month,
+      close,
+    }: {
+      periodId?: string;
+      year: number;
+      month: number;
+      close: boolean;
+    }) => {
       if (periodId) {
         // Update existing period
         const { error } = await (supabase as any)
@@ -88,15 +105,13 @@ function FinancialSettingsPage() {
         if (error) throw error;
       } else {
         // Insert new period control
-        const { error } = await (supabase as any)
-          .from("monthly_closing_periods")
-          .insert({
-            agency_id: agency!.id,
-            year,
-            month,
-            status: close ? "closed" : "open",
-            closed_at: close ? new Date().toISOString() : null,
-          });
+        const { error } = await (supabase as any).from("monthly_closing_periods").insert({
+          agency_id: agency!.id,
+          year,
+          month,
+          status: close ? "closed" : "open",
+          closed_at: close ? new Date().toISOString() : null,
+        });
         if (error) throw error;
       }
     },
@@ -155,7 +170,7 @@ function FinancialSettingsPage() {
           .select("*")
           .eq("plan_id", p.id)
           .order("minimum_volume");
-        
+
         resolvedPlans.push({
           id: p.id,
           seller_id: p.seller_id,
@@ -195,19 +210,17 @@ function FinancialSettingsPage() {
         })
         .select("id")
         .single();
-      
+
       if (planErr) throw planErr;
 
       // 2. Create base default tier
-      const { error: tierErr } = await (supabase as any)
-        .from("seller_commission_tiers")
-        .insert({
-          plan_id: newPlan.id,
-          minimum_volume: 0,
-          maximum_volume: null,
-          commission_rate: 3.0,
-          bonus_amount: 0,
-        });
+      const { error: tierErr } = await (supabase as any).from("seller_commission_tiers").insert({
+        plan_id: newPlan.id,
+        minimum_volume: 0,
+        maximum_volume: null,
+        commission_rate: 3.0,
+        bonus_amount: 0,
+      });
 
       if (tierErr) throw tierErr;
     },
@@ -247,7 +260,10 @@ function FinancialSettingsPage() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {activeTab === "commissions" && (
-            <PrimaryButton onClick={() => setShowPlanModal(true)} className="flex items-center gap-1.5 h-8 text-xs font-semibold">
+            <PrimaryButton
+              onClick={() => setShowPlanModal(true)}
+              className="flex items-center gap-1.5 h-8 text-xs font-semibold"
+            >
               <Plus className="w-3.5 h-3.5" /> Novo Plano
             </PrimaryButton>
           )}
@@ -291,11 +307,15 @@ function FinancialSettingsPage() {
                 <Calendar className="h-4 w-4 text-brand" /> Períodos Contábeis Recentes
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Fechar um período contábil bloqueia qualquer alteração, exclusão ou inserção retroativa em movimentações financeiras, caixas e parcelas correspondentes àquele mês.
+                Fechar um período contábil bloqueia qualquer alteração, exclusão ou inserção
+                retroativa em movimentações financeiras, caixas e parcelas correspondentes àquele
+                mês.
               </p>
 
               {periodsQ.isLoading ? (
-                <div className="text-center py-6 text-xs text-muted-foreground animate-pulse">Carregando períodos contábeis...</div>
+                <div className="text-center py-6 text-xs text-muted-foreground animate-pulse">
+                  Carregando períodos contábeis...
+                </div>
               ) : (
                 <div className="overflow-hidden rounded-xl border border-border bg-white">
                   <table className="w-full text-xs text-left">
@@ -315,7 +335,9 @@ function FinancialSettingsPage() {
                         const y = date.getFullYear();
                         const m = date.getMonth() + 1;
 
-                        const savedPeriod = periodsQ.data?.find((p) => p.year === y && p.month === m);
+                        const savedPeriod = periodsQ.data?.find(
+                          (p) => p.year === y && p.month === m,
+                        );
                         const isClosed = savedPeriod?.status === "closed";
 
                         return (
@@ -329,19 +351,35 @@ function FinancialSettingsPage() {
                               </StatusBadge>
                             </td>
                             <td className="px-4 py-3.5 text-muted-foreground font-mono">
-                              {savedPeriod?.closed_at ? new Date(savedPeriod.closed_at).toLocaleDateString("pt-BR") : "—"}
+                              {savedPeriod?.closed_at
+                                ? new Date(savedPeriod.closed_at).toLocaleDateString("pt-BR")
+                                : "—"}
                             </td>
                             <td className="px-4 py-3.5 text-right">
                               {isClosed ? (
                                 <button
-                                  onClick={() => togglePeriodStatus.mutate({ periodId: savedPeriod.id, year: y, month: m, close: false })}
+                                  onClick={() =>
+                                    togglePeriodStatus.mutate({
+                                      periodId: savedPeriod.id,
+                                      year: y,
+                                      month: m,
+                                      close: false,
+                                    })
+                                  }
                                   className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-md cursor-pointer transition-colors"
                                 >
                                   <Unlock className="w-3 h-3" /> Reabrir
                                 </button>
                               ) : (
                                 <button
-                                  onClick={() => togglePeriodStatus.mutate({ periodId: savedPeriod?.id, year: y, month: m, close: true })}
+                                  onClick={() =>
+                                    togglePeriodStatus.mutate({
+                                      periodId: savedPeriod?.id,
+                                      year: y,
+                                      month: m,
+                                      close: true,
+                                    })
+                                  }
                                   className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-md cursor-pointer transition-colors"
                                 >
                                   <Lock className="w-3 h-3" /> Travar Mês
@@ -366,27 +404,38 @@ function FinancialSettingsPage() {
           <div className="max-w-4xl space-y-6">
             <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
-                <TrendingUp className="h-4 w-4 text-brand" /> Regras de Comissionamento de Vendedores
+                <TrendingUp className="h-4 w-4 text-brand" /> Regras de Comissionamento de
+                Vendedores
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Configure as políticas de comissões por vendedor. Os planos podem ser integrais (com base no faturamento total) ou progressivos por fatias (onde a comissão aumenta marginalmente com base no volume batido no mês).
+                Configure as políticas de comissões por vendedor. Os planos podem ser integrais (com
+                base no faturamento total) ou progressivos por fatias (onde a comissão aumenta
+                marginalmente com base no volume batido no mês).
               </p>
 
               {plansQ.isLoading ? (
-                <div className="text-center py-6 text-xs text-muted-foreground animate-pulse">Carregando planos de comissão...</div>
+                <div className="text-center py-6 text-xs text-muted-foreground animate-pulse">
+                  Carregando planos de comissão...
+                </div>
               ) : (plansQ.data || []).length === 0 ? (
                 <div className="text-center py-10 border border-dashed border-border rounded-xl text-xs text-muted-foreground bg-white">
-                  Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para parametrizar.
+                  Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para
+                  parametrizar.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {(plansQ.data || []).map((plan) => (
-                    <div key={plan.id} className="border border-border bg-white rounded-xl overflow-hidden shadow-xs">
+                    <div
+                      key={plan.id}
+                      className="border border-border bg-white rounded-xl overflow-hidden shadow-xs"
+                    >
                       {/* Card header */}
                       <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-b border-border">
                         <div>
                           <strong className="text-xs text-gray-900 block">{plan.name}</strong>
-                          <span className="text-[10px] text-muted-foreground">Vendedor: <strong>{plan.seller_name}</strong></span>
+                          <span className="text-[10px] text-muted-foreground">
+                            Vendedor: <strong>{plan.seller_name}</strong>
+                          </span>
                         </div>
                         <div className="flex items-center gap-3">
                           <StatusBadge tone={plan.status === "active" ? "success" : "neutral"}>
@@ -408,8 +457,20 @@ function FinancialSettingsPage() {
                       {/* Details & Tiers */}
                       <div className="p-4 space-y-3">
                         <div className="flex items-center gap-6 text-[11px] text-muted-foreground">
-                          <span>Modo de Escala: <strong className="text-gray-800 capitalize">{plan.tier_mode === "progressive" ? "Progressiva (Por fatias)" : "Integral (Banda inteira)"}</strong></span>
-                          <span>Vigência: <strong className="text-gray-800">A partir de {new Date(plan.valid_from).toLocaleDateString("pt-BR")}</strong></span>
+                          <span>
+                            Modo de Escala:{" "}
+                            <strong className="text-gray-800 capitalize">
+                              {plan.tier_mode === "progressive"
+                                ? "Progressiva (Por fatias)"
+                                : "Integral (Banda inteira)"}
+                            </strong>
+                          </span>
+                          <span>
+                            Vigência:{" "}
+                            <strong className="text-gray-800">
+                              A partir de {new Date(plan.valid_from).toLocaleDateString("pt-BR")}
+                            </strong>
+                          </span>
                         </div>
 
                         {/* List tiers */}
@@ -426,10 +487,26 @@ function FinancialSettingsPage() {
                             <tbody className="divide-y divide-border font-mono text-gray-700">
                               {plan.tiers?.map((t) => (
                                 <tr key={t.id} className="hover:bg-gray-50/20">
-                                  <td className="px-3 py-1.5">R$ {t.minimum_volume.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
-                                  <td className="px-3 py-1.5">{t.maximum_volume ? `R$ ${t.maximum_volume.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "Sem limite"}</td>
-                                  <td className="px-3 py-1.5 text-right font-bold text-gray-900">{t.commission_rate.toFixed(2)} %</td>
-                                  <td className="px-3 py-1.5 text-right">R$ {t.bonus_amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td>
+                                  <td className="px-3 py-1.5">
+                                    R${" "}
+                                    {t.minimum_volume.toLocaleString("pt-BR", {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                  </td>
+                                  <td className="px-3 py-1.5">
+                                    {t.maximum_volume
+                                      ? `R$ ${t.maximum_volume.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                                      : "Sem limite"}
+                                  </td>
+                                  <td className="px-3 py-1.5 text-right font-bold text-gray-900">
+                                    {t.commission_rate.toFixed(2)} %
+                                  </td>
+                                  <td className="px-3 py-1.5 text-right">
+                                    R${" "}
+                                    {t.bonus_amount.toLocaleString("pt-BR", {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -452,11 +529,18 @@ function FinancialSettingsPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <Percent className="w-5 h-5 text-brand" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Criar Novo Plano de Comissão</h3>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                  Criar Novo Plano de Comissão
+                </h3>
               </div>
-              <button onClick={() => setShowPlanModal(false)} className="p-1 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
+              <button
+                onClick={() => setShowPlanModal(false)}
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            
+
             <div className="p-5 space-y-4 text-xs">
               <Field label="Nome do Plano *">
                 <Input
@@ -476,7 +560,9 @@ function FinancialSettingsPage() {
                 >
                   <option value="">Selecione o vendedor...</option>
                   {sellersQ.data?.map((s: any) => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
                   ))}
                 </select>
               </Field>
@@ -505,7 +591,12 @@ function FinancialSettingsPage() {
               </div>
 
               <div className="flex gap-2.5 pt-2 border-t border-border mt-3">
-                <GhostButton onClick={() => setShowPlanModal(false)} className="flex-1 h-10 text-xs">Cancelar</GhostButton>
+                <GhostButton
+                  onClick={() => setShowPlanModal(false)}
+                  className="flex-1 h-10 text-xs"
+                >
+                  Cancelar
+                </GhostButton>
                 <PrimaryButton
                   onClick={() => createPlan.mutate()}
                   disabled={createPlan.isPending || !newPlanName || !selectedSeller}

@@ -319,7 +319,7 @@ function PublicProposalView() {
   // ─── Export Mode (Puppeteer headless server-side print) ─────────────────────
   if (isExport) {
     return (
-      <div 
+      <div
         className="w-full flex flex-col items-center bg-white print:bg-transparent"
         style={brandStyles}
       >
@@ -332,7 +332,7 @@ function PublicProposalView() {
 
   // ─── Standard Client Interactive View ───────────────────────────────────────
   return (
-    <div 
+    <div
       className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f19] text-foreground font-sans pb-20"
       style={brandStyles}
     >

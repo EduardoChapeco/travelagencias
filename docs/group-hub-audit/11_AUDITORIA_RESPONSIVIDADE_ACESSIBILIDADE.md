@@ -15,7 +15,7 @@
 
 ## 2. Acessibilidade (WCAG Compliance)
 
-- **Contraste de Cores**: 
+- **Contraste de Cores**:
   - A paleta neutra "Flat Premium" (slate, charcoal, preto sólido, cinzas claros) provê excelente contraste de texto sob fundos brancos/claros (`15.8:1`).
   - **Alerta de Acessibilidade**: O uso de cores dinâmicas de agências (`--agency-brand`) em botões sem fallback ou sem cálculo dinâmico de luminância para texto (fg) representa um risco AAA (WCAG) se a agência configurar cores primárias muito claras, gerando textos brancos ilegíveis sobre fundos amarelos/claros.
 - **Navegação por Teclado e Foco**:

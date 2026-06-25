@@ -153,9 +153,7 @@ function LoginPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-base font-black tracking-tight text-foreground">
-            TravelOS
-          </span>
+          <span className="text-base font-black tracking-tight text-foreground">TravelOS</span>
         </Link>
 
         {/* Center content: Premium Editorial Typography */}
@@ -218,7 +216,9 @@ function LoginPage() {
           </div>
 
           <div className="space-y-2.5">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Acessar Painel</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+              Acessar Painel
+            </h1>
             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
               Insira seus dados de acesso para gerenciar sua agência.
             </p>

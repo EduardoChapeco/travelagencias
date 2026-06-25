@@ -4,7 +4,7 @@ export interface PageTemplate {
   id: string;
   name: string;
   description: string;
-  category: "site" | "biolink";
+  category: "site" | "biolink" | "mobile-landing";
   thumbnailUrl?: string;
   blocks: PortalBlock[];
 }
@@ -1289,6 +1289,80 @@ export const CMS_TEMPLATES: PageTemplate[] = [
         type: "support_ticket_form",
         title: "Abrir Chamado / Reportar Imprevisto",
         subtitle: "Canal direto para atrasos de voo, perdas de conexão ou problemas com hotel.",
+      },
+    ],
+  },
+  {
+    id: "mobile-leads",
+    name: "Landing Page Mobile - Captação de Leads (Ads)",
+    description: "Layout limpo de alta conversão, focado em dispositivos móveis e Meta Ads.",
+    category: "mobile-landing",
+    blocks: [
+      {
+        id: "m-hero-1",
+        type: "hero",
+        title: "Garanta Sua Viagem dos Sonhos com Condições Especiais",
+        subtitle:
+          "Aproveite descontos exclusivos e suporte personalizado para o seu próximo destino. Fale conosco agora!",
+        bg_image_url:
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+        cta_label: "Falar no WhatsApp",
+        cta_link: "https://wa.me/5549999999999",
+        layout: "minimal",
+      },
+      {
+        id: "m-features-1",
+        type: "features",
+        title: "Por Que Viajar Conosco?",
+        layout: "list",
+        items: [
+          {
+            icon: "check",
+            title: "Roteiros Planejados",
+            description: "Curadoria especializada de passeios e hospedagens.",
+          },
+          {
+            icon: "safe",
+            title: "Segurança 24 Horas",
+            description: "Suporte operacional completo durante toda a sua viagem.",
+          },
+          {
+            icon: "coins",
+            title: "Condições Facilitadas",
+            description: "Parcelamento sem juros no cartão ou boleto.",
+          },
+        ],
+      },
+      {
+        id: "m-testimonials-1",
+        type: "testimonials",
+        title: "Quem Já Viajou Comprova",
+        layout: "grid",
+        items: [
+          {
+            author: "Aline Souza",
+            role: "Viajou para Gramado",
+            text: "Foi tudo perfeito, atendimento impecável do início ao fim!",
+            avatar_url:
+              "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
+            stars: 5,
+          },
+        ],
+      },
+      {
+        id: "m-newsletter-1",
+        type: "newsletter",
+        title: "Fique por Dentro das Novidades",
+        subtitle: "Assine nossa lista VIP para receber lançamentos e cupons de desconto.",
+        placeholder: "Seu melhor e-mail",
+        button_label: "Quero Receber Cupons",
+      },
+      {
+        id: "m-socials-1",
+        type: "social_links",
+        title: "Siga Nossas Redes Sociais",
+        instagram: "https://instagram.com",
+        whatsapp: "5549999999999",
       },
     ],
   },

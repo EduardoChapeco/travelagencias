@@ -74,7 +74,15 @@ type ReviewWithJoins = Database["public"]["Tables"]["supplier_reviews"]["Row"] &
   trip: { destination: string | null } | null;
 };
 import { PageHeader } from "@/components/shell/PageHeader";
-import { StatusBadge, GhostButton, PrimaryButton, Field, Input, Select, Textarea } from "@/components/ui/form";
+import {
+  StatusBadge,
+  GhostButton,
+  PrimaryButton,
+  Field,
+  Input,
+  Select,
+  Textarea,
+} from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -86,29 +94,37 @@ export const Route = createFileRoute("/agency/$slug/suppliers/$id")({
 });
 
 const KIND_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  airline:   { label: "Cia Aérea",   icon: Plane,      color: "text-blue-600" },
-  hotel:     { label: "Hotel",        icon: Hotel,      color: "text-amber-600" },
-  operator:  { label: "Operadora",    icon: Building2,  color: "text-violet-600" },
-  car_rental:{ label: "Locadora",     icon: Car,        color: "text-orange-600" },
-  insurance: { label: "Seguro",       icon: Shield,     color: "text-green-600" },
-  transfer:  { label: "Transfer",     icon: Bus,        color: "text-teal-600" },
-  cruise:    { label: "Cruzeiro",     icon: Ship,       color: "text-cyan-600" },
-  visa:      { label: "Vistos",       icon: TicketCheck,color: "text-pink-600" },
-  other:     { label: "Outros",       icon: Building2,  color: "text-muted-foreground" },
+  airline: { label: "Cia Aérea", icon: Plane, color: "text-blue-600" },
+  hotel: { label: "Hotel", icon: Hotel, color: "text-amber-600" },
+  operator: { label: "Operadora", icon: Building2, color: "text-violet-600" },
+  car_rental: { label: "Locadora", icon: Car, color: "text-orange-600" },
+  insurance: { label: "Seguro", icon: Shield, color: "text-green-600" },
+  transfer: { label: "Transfer", icon: Bus, color: "text-teal-600" },
+  cruise: { label: "Cruzeiro", icon: Ship, color: "text-cyan-600" },
+  visa: { label: "Vistos", icon: TicketCheck, color: "text-pink-600" },
+  other: { label: "Outros", icon: Building2, color: "text-muted-foreground" },
 };
 
 const PRODUCT_KINDS = [
-  { value: "hotel",     label: "Hotel / Acomodação" },
+  { value: "hotel", label: "Hotel / Acomodação" },
   { value: "room_type", label: "Tipo de Quarto" },
-  { value: "tour",      label: "Passeio / Tour" },
-  { value: "transfer",  label: "Transfer" },
+  { value: "tour", label: "Passeio / Tour" },
+  { value: "transfer", label: "Transfer" },
   { value: "insurance", label: "Seguro Viagem" },
-  { value: "ticket",    label: "Ingresso / Evento" },
-  { value: "cruise",    label: "Cruzeiro" },
-  { value: "other",     label: "Outros" },
+  { value: "ticket", label: "Ingresso / Evento" },
+  { value: "cruise", label: "Cruzeiro" },
+  { value: "other", label: "Outros" },
 ];
 
-const CONTACT_ROLES = ["Reservas", "Financeiro", "Emergência", "Comercial", "Suporte", "Grupos", "Outro"];
+const CONTACT_ROLES = [
+  "Reservas",
+  "Financeiro",
+  "Emergência",
+  "Comercial",
+  "Suporte",
+  "Grupos",
+  "Outro",
+];
 
 function StarRatingInput({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const [hover, setHover] = useState(0);
@@ -126,7 +142,7 @@ function StarRatingInput({ value, onChange }: { value: number; onChange: (v: num
           <Star
             className={cn(
               "h-5 w-5 transition-colors",
-              i < (hover || value) ? "fill-amber-400 text-amber-400" : "text-border"
+              i < (hover || value) ? "fill-amber-400 text-amber-400" : "text-border",
             )}
           />
         </button>
@@ -140,7 +156,13 @@ function StarRatingDisplay({ rating }: { rating: number | null }) {
   return (
     <span className="flex items-center gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={cn("h-4 w-4", i < Math.round(rating) ? "fill-amber-400 text-amber-400" : "text-border")} />
+        <Star
+          key={i}
+          className={cn(
+            "h-4 w-4",
+            i < Math.round(rating) ? "fill-amber-400 text-amber-400" : "text-border",
+          )}
+        />
       ))}
       <span className="ml-1 font-mono text-sm font-semibold">{Number(rating).toFixed(1)}</span>
     </span>
@@ -153,7 +175,14 @@ function StarRatingDisplay({ rating }: { rating: number | null }) {
 function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: string }) {
   const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ name: "", role: "Reservas", email: "", phone: "", whatsapp: "", is_primary: false });
+  const [form, setForm] = useState({
+    name: "",
+    role: "Reservas",
+    email: "",
+    phone: "",
+    whatsapp: "",
+    is_primary: false,
+  });
 
   const q = useQuery({
     queryKey: ["supplier_contacts", supplierId],
@@ -171,14 +200,23 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
   const addMut = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("supplier_contacts").insert({
-        supplier_id: supplierId, agency_id: agencyId, ...form,
+        supplier_id: supplierId,
+        agency_id: agencyId,
+        ...form,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Contato adicionado");
       setAdding(false);
-      setForm({ name: "", role: "Reservas", email: "", phone: "", whatsapp: "", is_primary: false });
+      setForm({
+        name: "",
+        role: "Reservas",
+        email: "",
+        phone: "",
+        whatsapp: "",
+        is_primary: false,
+      });
       qc.invalidateQueries({ queryKey: ["supplier_contacts", supplierId] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -208,27 +246,75 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       {adding && (
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Nome *"><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Roberto Mendes" /></Field>
+            <Field label="Nome *">
+              <Input
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="Roberto Mendes"
+              />
+            </Field>
             <Field label="Função">
-              <Select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}>
-                {CONTACT_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+              <Select
+                value={form.role}
+                onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+              >
+                {CONTACT_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
               </Select>
             </Field>
-            <Field label="E-mail"><Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="reservas@parceiro.com" /></Field>
-            <Field label="Telefone"><Input value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} placeholder="11 99999-0000" /></Field>
-            <Field label="WhatsApp"><Input value={form.whatsapp} onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))} placeholder="11 99999-0000" /></Field>
+            <Field label="E-mail">
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                placeholder="reservas@parceiro.com"
+              />
+            </Field>
+            <Field label="Telefone">
+              <Input
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                placeholder="11 99999-0000"
+              />
+            </Field>
+            <Field label="WhatsApp">
+              <Input
+                value={form.whatsapp}
+                onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
+                placeholder="11 99999-0000"
+              />
+            </Field>
             <Field label="Contato principal">
               <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_primary} onChange={(e) => setForm((f) => ({ ...f, is_primary: e.target.checked }))} className="accent-pink-500 h-4 w-4" />
+                <input
+                  type="checkbox"
+                  checked={form.is_primary}
+                  onChange={(e) => setForm((f) => ({ ...f, is_primary: e.target.checked }))}
+                  className="accent-pink-500 h-4 w-4"
+                />
                 <span className="text-xs">Sim, é o contato principal</span>
               </label>
             </Field>
           </div>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton className="h-8 text-xs" onClick={() => addMut.mutate()} disabled={!form.name || addMut.isPending}>
-              {addMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Salvar
+            <PrimaryButton
+              className="h-8 text-xs"
+              onClick={() => addMut.mutate()}
+              disabled={!form.name || addMut.isPending}
+            >
+              {addMut.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}{" "}
+              Salvar
             </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>Cancelar</GhostButton>
+            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+              Cancelar
+            </GhostButton>
           </div>
         </div>
       )}
@@ -241,7 +327,10 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 
       <div className="space-y-3">
         {q.data?.map((c: any) => (
-          <div key={c.id} className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4">
+          <div
+            key={c.id}
+            className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4"
+          >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-alt border border-border">
               <Users className="h-4 w-4 text-muted-foreground" />
             </div>
@@ -251,15 +340,43 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                 <span className="text-[10px] uppercase tracking-widest font-semibold text-[--brand-primary,theme(colors.pink.500)] border border-[--brand-primary,theme(colors.pink.400)]/30 bg-[--brand-primary,theme(colors.pink.500)]/5 rounded px-1.5 py-0.5">
                   {c.role}
                 </span>
-                {c.is_primary && <span className="text-[10px] font-semibold text-green-600 bg-green-50 border border-green-200 rounded px-1.5 py-0.5">Principal</span>}
+                {c.is_primary && (
+                  <span className="text-[10px] font-semibold text-green-600 bg-green-50 border border-green-200 rounded px-1.5 py-0.5">
+                    Principal
+                  </span>
+                )}
               </div>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                {c.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{c.email}</span>}
-                {c.phone && <span className="flex items-center gap-1"><PhoneCall className="h-3 w-3" />{c.phone}</span>}
-                {c.whatsapp && <a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-green-600 hover:underline"><MessageCircle className="h-3 w-3" />{c.whatsapp}</a>}
+                {c.email && (
+                  <span className="flex items-center gap-1">
+                    <Mail className="h-3 w-3" />
+                    {c.email}
+                  </span>
+                )}
+                {c.phone && (
+                  <span className="flex items-center gap-1">
+                    <PhoneCall className="h-3 w-3" />
+                    {c.phone}
+                  </span>
+                )}
+                {c.whatsapp && (
+                  <a
+                    href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 text-green-600 hover:underline"
+                  >
+                    <MessageCircle className="h-3 w-3" />
+                    {c.whatsapp}
+                  </a>
+                )}
               </div>
             </div>
-            <button onClick={() => deleteMut.mutate(c.id)} className="text-muted-foreground hover:text-danger transition-colors p-1" title="Remover">
+            <button
+              onClick={() => deleteMut.mutate(c.id)}
+              className="text-muted-foreground hover:text-danger transition-colors p-1"
+              title="Remover"
+            >
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
@@ -275,7 +392,18 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
 function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: string }) {
   const qc = useQueryClient();
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ name: "", kind: "hotel", destination: "", country: "", city: "", description: "", price_from: "", currency: "BRL", duration_days: "", capacity: "" });
+  const [form, setForm] = useState({
+    name: "",
+    kind: "hotel",
+    destination: "",
+    country: "",
+    city: "",
+    description: "",
+    price_from: "",
+    currency: "BRL",
+    duration_days: "",
+    capacity: "",
+  });
 
   const q = useQuery({
     queryKey: ["supplier_products", supplierId],
@@ -311,7 +439,18 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
     onSuccess: () => {
       toast.success("Produto adicionado ao catálogo");
       setAdding(false);
-      setForm({ name: "", kind: "hotel", destination: "", country: "", city: "", description: "", price_from: "", currency: "BRL", duration_days: "", capacity: "" });
+      setForm({
+        name: "",
+        kind: "hotel",
+        destination: "",
+        country: "",
+        city: "",
+        description: "",
+        price_from: "",
+        currency: "BRL",
+        duration_days: "",
+        capacity: "",
+      });
       qc.invalidateQueries({ queryKey: ["supplier_products", supplierId] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -341,34 +480,91 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       {adding && (
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Nome do Produto *"><Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="ex: Suíte Deluxe Vista Mar" /></Field>
+            <Field label="Nome do Produto *">
+              <Input
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="ex: Suíte Deluxe Vista Mar"
+              />
+            </Field>
             <Field label="Tipo">
-              <Select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))}>
-                {PRODUCT_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+              <Select
+                value={form.kind}
+                onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value }))}
+              >
+                {PRODUCT_KINDS.map((k) => (
+                  <option key={k.value} value={k.value}>
+                    {k.label}
+                  </option>
+                ))}
               </Select>
             </Field>
-            <Field label="Destino / Local"><Input value={form.destination} onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))} placeholder="ex: Gramado, RS" /></Field>
-            <Field label="País"><Input value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} placeholder="Brasil" /></Field>
+            <Field label="Destino / Local">
+              <Input
+                value={form.destination}
+                onChange={(e) => setForm((f) => ({ ...f, destination: e.target.value }))}
+                placeholder="ex: Gramado, RS"
+              />
+            </Field>
+            <Field label="País">
+              <Input
+                value={form.country}
+                onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
+                placeholder="Brasil"
+              />
+            </Field>
             <Field label="Preço A Partir de">
               <div className="flex gap-2">
-                <Select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="w-20 shrink-0">
+                <Select
+                  value={form.currency}
+                  onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))}
+                  className="w-20 shrink-0"
+                >
                   <option value="BRL">BRL</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
                 </Select>
-                <Input type="number" value={form.price_from} onChange={(e) => setForm((f) => ({ ...f, price_from: e.target.value }))} placeholder="0.00" />
+                <Input
+                  type="number"
+                  value={form.price_from}
+                  onChange={(e) => setForm((f) => ({ ...f, price_from: e.target.value }))}
+                  placeholder="0.00"
+                />
               </div>
             </Field>
-            <Field label="Duração (dias)"><Input type="number" value={form.duration_days} onChange={(e) => setForm((f) => ({ ...f, duration_days: e.target.value }))} placeholder="ex: 3" /></Field>
+            <Field label="Duração (dias)">
+              <Input
+                type="number"
+                value={form.duration_days}
+                onChange={(e) => setForm((f) => ({ ...f, duration_days: e.target.value }))}
+                placeholder="ex: 3"
+              />
+            </Field>
           </div>
           <Field label="Descrição">
-            <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={2} placeholder="Inclui, horários, observações..." />
+            <Textarea
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              rows={2}
+              placeholder="Inclui, horários, observações..."
+            />
           </Field>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton className="h-8 text-xs" onClick={() => addMut.mutate()} disabled={!form.name || addMut.isPending}>
-              {addMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Salvar
+            <PrimaryButton
+              className="h-8 text-xs"
+              onClick={() => addMut.mutate()}
+              disabled={!form.name || addMut.isPending}
+            >
+              {addMut.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}{" "}
+              Salvar
             </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>Cancelar</GhostButton>
+            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+              Cancelar
+            </GhostButton>
           </div>
         </div>
       )}
@@ -383,7 +579,10 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
         {q.data?.map((p: any) => {
           const pkind = PRODUCT_KINDS.find((k) => k.value === p.kind);
           return (
-            <div key={p.id} className="flex items-start gap-3 rounded-xl border border-border bg-white p-4 hover:bg-surface transition-colors">
+            <div
+              key={p.id}
+              className="flex items-start gap-3 rounded-xl border border-border bg-white p-4 hover:bg-surface transition-colors"
+            >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-sm">{p.name}</span>
@@ -392,13 +591,35 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                   </span>
                 </div>
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
-                  {p.destination && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{p.destination}</span>}
-                  {p.price_from && <span className="flex items-center gap-1 font-mono font-semibold text-foreground">{p.currency} {Number(p.price_from).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>}
-                  {p.duration_days && <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{p.duration_days}d</span>}
+                  {p.destination && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {p.destination}
+                    </span>
+                  )}
+                  {p.price_from && (
+                    <span className="flex items-center gap-1 font-mono font-semibold text-foreground">
+                      {p.currency}{" "}
+                      {Number(p.price_from).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    </span>
+                  )}
+                  {p.duration_days && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {p.duration_days}d
+                    </span>
+                  )}
                 </div>
-                {p.description && <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{p.description}</p>}
+                {p.description && (
+                  <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">
+                    {p.description}
+                  </p>
+                )}
               </div>
-              <button onClick={() => deleteMut.mutate(p.id)} className="text-muted-foreground hover:text-danger transition-colors p-1 shrink-0">
+              <button
+                onClick={() => deleteMut.mutate(p.id)}
+                className="text-muted-foreground hover:text-danger transition-colors p-1 shrink-0"
+              >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -422,7 +643,11 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
   const q = useQuery({
     queryKey: ["supplier_files", supplierId],
     queryFn: async () => {
-      const { data, error } = await supabase.from("supplier_files").select("*").eq("supplier_id", supplierId).order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("supplier_files")
+        .select("*")
+        .eq("supplier_id", supplierId)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -433,7 +658,10 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
       const { error } = await supabase.from("supplier_files").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Arquivo removido"); qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] }); },
+    onSuccess: () => {
+      toast.success("Arquivo removido");
+      qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -443,12 +671,20 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
     try {
       const ext = file.name.split(".").pop();
       const path = `${agencyId}/${supplierId}/${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("supplier-files").upload(path, file, { upsert: true });
+      const { error: upErr } = await supabase.storage
+        .from("supplier-files")
+        .upload(path, file, { upsert: true });
       if (upErr) throw upErr;
-      const { data: { publicUrl } } = supabase.storage.from("supplier-files").getPublicUrl(path);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("supplier-files").getPublicUrl(path);
       const { error: dbErr } = await supabase.from("supplier_files").insert({
-        supplier_id: supplierId, agency_id: agencyId,
-        name: file.name, kind: "other", file_url: publicUrl, file_path: path,
+        supplier_id: supplierId,
+        agency_id: agencyId,
+        name: file.name,
+        kind: "other",
+        file_url: publicUrl,
+        file_path: path,
       });
       if (dbErr) throw dbErr;
       toast.success("Arquivo enviado");
@@ -463,13 +699,21 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
   const handleOCR = async (fileId: string, fileUrl: string) => {
     setRunning(fileId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("Sem sessão");
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/supplier-ocr-extractor`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ supplier_id: supplierId, file_id: fileId, file_url: fileUrl }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/supplier-ocr-extractor`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ supplier_id: supplierId, file_id: fileId, file_url: fileUrl }),
+        },
+      );
       if (!res.ok) throw new Error(await res.text());
       const { result } = await res.json();
       await supabase.from("supplier_files").update({ ocr_data: result }).eq("id", fileId);
@@ -482,16 +726,40 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
     }
   };
 
-  const KIND_LABELS: Record<string, string> = { contract: "Contrato", rate_table: "Tarifário", policy: "Política", certification: "Certificado", ocr_extracted: "Extraído por IA", other: "Outro" };
+  const KIND_LABELS: Record<string, string> = {
+    contract: "Contrato",
+    rate_table: "Tarifário",
+    policy: "Política",
+    certification: "Certificado",
+    ocr_extracted: "Extraído por IA",
+    other: "Outro",
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Arquivos & Documentos</h3>
-        <GhostButton className="h-7 text-xs gap-1.5" onClick={() => fileRef.current?.click()} disabled={uploading}>
-          {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />} Upload
+        <GhostButton
+          className="h-7 text-xs gap-1.5"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Upload className="h-3.5 w-3.5" />
+          )}{" "}
+          Upload
         </GhostButton>
-        <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) handleUpload(e.target.files[0]); }} />
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.docx"
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files?.[0]) handleUpload(e.target.files[0]);
+          }}
+        />
       </div>
 
       {q.data?.length === 0 && (
@@ -511,11 +779,18 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                 <div className="font-semibold text-sm truncate">{f.name}</div>
                 <div className="text-xs text-muted-foreground">
                   {KIND_LABELS[f.kind] ?? f.kind}
-                  {f.expires_at && <> · Expira {new Date(f.expires_at).toLocaleDateString("pt-BR")}</>}
+                  {f.expires_at && (
+                    <> · Expira {new Date(f.expires_at).toLocaleDateString("pt-BR")}</>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <a href={f.file_url} target="_blank" rel="noreferrer" className="text-xs text-muted-foreground hover:text-foreground border border-border rounded px-2 py-1 transition-colors">
+                <a
+                  href={f.file_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-muted-foreground hover:text-foreground border border-border rounded px-2 py-1 transition-colors"
+                >
                   Ver
                 </a>
                 {!f.ocr_reviewed && (
@@ -525,12 +800,23 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                     className="flex items-center gap-1 text-xs border border-[--brand-primary,theme(colors.pink.400)] text-[--brand-primary,theme(colors.pink.600)] bg-[--brand-primary,theme(colors.pink.500)]/5 hover:bg-[--brand-primary,theme(colors.pink.500)]/10 rounded px-2 py-1 transition-colors"
                     title="Extrair dados com IA"
                   >
-                    {running === f.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Brain className="h-3 w-3" />}
+                    {running === f.id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Brain className="h-3 w-3" />
+                    )}
                     <span className="hidden sm:inline">Extrair com IA</span>
                   </button>
                 )}
-                {f.ocr_reviewed && <span className="text-[10px] text-green-600 border border-green-200 bg-green-50 rounded px-1.5 py-0.5 font-semibold">✓ Revisado</span>}
-                <button onClick={() => deleteMut.mutate(f.id)} className="text-muted-foreground hover:text-danger p-1">
+                {f.ocr_reviewed && (
+                  <span className="text-[10px] text-green-600 border border-green-200 bg-green-50 rounded px-1.5 py-0.5 font-semibold">
+                    ✓ Revisado
+                  </span>
+                )}
+                <button
+                  onClick={() => deleteMut.mutate(f.id)}
+                  className="text-muted-foreground hover:text-danger p-1"
+                >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -538,9 +824,12 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
             {f.ocr_data && !f.ocr_reviewed && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs">
                 <div className="flex items-center gap-1.5 font-semibold text-amber-700 mb-2">
-                  <AlertCircle className="h-3.5 w-3.5" /> Dados Extraídos por IA — Aguardando revisão
+                  <AlertCircle className="h-3.5 w-3.5" /> Dados Extraídos por IA — Aguardando
+                  revisão
                 </div>
-                <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">{JSON.stringify(f.ocr_data, null, 2)}</pre>
+                <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">
+                  {JSON.stringify(f.ocr_data, null, 2)}
+                </pre>
                 <button
                   disabled={isPersisting === f.id}
                   onClick={async () => {
@@ -559,12 +848,17 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                         _email: ocr?.email || "",
                         _website: ocr?.website || "",
                         _payment_terms: ocr?.payment_terms || "",
-                        _commission_rate: ocr?.commission_rate != null ? Number(ocr.commission_rate) : (null as any),
+                        _commission_rate:
+                          ocr?.commission_rate != null
+                            ? Number(ocr.commission_rate)
+                            : (null as any),
                       });
 
                       if (error) throw error;
 
-                      toast.success("Dados confirmados e persistidos com sucesso!", { id: toastId });
+                      toast.success("Dados confirmados e persistidos com sucesso!", {
+                        id: toastId,
+                      });
                       qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
                       qc.invalidateQueries({ queryKey: ["supplier_contacts", supplierId] });
                       qc.invalidateQueries({ queryKey: ["supplier_products", supplierId] });
@@ -611,10 +905,16 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
 
   const addMut = useMutation({
     mutationFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const tags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const tags = form.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
       const { error } = await supabase.from("supplier_reviews").insert({
-        supplier_id: supplierId, agency_id: agencyId,
+        supplier_id: supplierId,
+        agency_id: agencyId,
         user_id: user?.id,
         rating: form.rating,
         comment: form.comment || null,
@@ -657,26 +957,50 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
       {adding && (
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
           <Field label="Nota">
-            <StarRatingInput value={form.rating} onChange={(v) => setForm((f) => ({ ...f, rating: v }))} />
+            <StarRatingInput
+              value={form.rating}
+              onChange={(v) => setForm((f) => ({ ...f, rating: v }))}
+            />
           </Field>
           <Field label="Comentário">
-            <Textarea value={form.comment} onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))} rows={2} placeholder="O que achou do atendimento, pontualidade, qualidade...?" />
+            <Textarea
+              value={form.comment}
+              onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
+              rows={2}
+              placeholder="O que achou do atendimento, pontualidade, qualidade...?"
+            />
           </Field>
           <Field label="Tags (separadas por vírgula)">
-            <Input value={form.tags} onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))} placeholder="pontual, bem atendimento, preço bom" />
+            <Input
+              value={form.tags}
+              onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
+              placeholder="pontual, bem atendimento, preço bom"
+            />
           </Field>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton className="h-8 text-xs" onClick={() => addMut.mutate()} disabled={addMut.isPending}>
-              {addMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Salvar
+            <PrimaryButton
+              className="h-8 text-xs"
+              onClick={() => addMut.mutate()}
+              disabled={addMut.isPending}
+            >
+              {addMut.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}{" "}
+              Salvar
             </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>Cancelar</GhostButton>
+            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+              Cancelar
+            </GhostButton>
           </div>
         </div>
       )}
 
       {q.data?.length === 0 && !adding && (
         <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
-          Nenhuma avaliação registrada. Avalie este parceiro após viagens para construir inteligência interna.
+          Nenhuma avaliação registrada. Avalie este parceiro após viagens para construir
+          inteligência interna.
         </div>
       )}
 
@@ -687,20 +1011,34 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
               <div className="space-y-1">
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={cn("h-4 w-4", i < r.rating ? "fill-amber-400 text-amber-400" : "text-border")} />
+                    <Star
+                      key={i}
+                      className={cn(
+                        "h-4 w-4",
+                        i < r.rating ? "fill-amber-400 text-amber-400" : "text-border",
+                      )}
+                    />
                   ))}
                 </div>
                 {r.comment && <p className="text-sm text-foreground">{r.comment}</p>}
                 <div className="flex flex-wrap gap-1 mt-1">
                   {r.tags?.map((t: string) => (
-                    <span key={t} className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground">{t}</span>
+                    <span
+                      key={t}
+                      className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
                 <div className="text-[11px] text-muted-foreground mt-1">
                   {new Date(r.created_at).toLocaleDateString("pt-BR")} · {r.user?.email ?? "—"}
                 </div>
               </div>
-              <button onClick={() => deleteMut.mutate(r.id)} className="text-muted-foreground hover:text-danger p-1">
+              <button
+                onClick={() => deleteMut.mutate(r.id)}
+                className="text-muted-foreground hover:text-danger p-1"
+              >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -769,14 +1107,25 @@ function SupplierDetailsPage() {
           {/* Header com logo / cover */}
           <div className="rounded-xl border border-border overflow-hidden mb-6">
             {supplier.cover_url ? (
-              <div className="h-28 bg-cover bg-center" style={{ backgroundImage: `url(${supplier.cover_url})` }} />
+              <div
+                className="h-28 bg-cover bg-center"
+                style={{ backgroundImage: `url(${supplier.cover_url})` }}
+              />
             ) : (
               <div className="h-16 bg-gradient-to-r from-surface to-surface-alt border-b border-border" />
             )}
             <div className="px-5 pb-5 -mt-5 flex items-end gap-4">
-              <div className={cn("flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white bg-white shadow-none border border-border/40")}>
+              <div
+                className={cn(
+                  "flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border-2 border-white bg-white shadow-none border border-border/40",
+                )}
+              >
                 {supplier.logo_url ? (
-                  <img src={supplier.logo_url} alt={supplier.name} className="h-12 w-12 object-contain rounded-xl" />
+                  <img
+                    src={supplier.logo_url}
+                    alt={supplier.name}
+                    className="h-12 w-12 object-contain rounded-xl"
+                  />
                 ) : (
                   <Icon className={cn("h-8 w-8", cfg.color)} />
                 )}
@@ -784,7 +1133,9 @@ function SupplierDetailsPage() {
               <div className="pb-1">
                 <h1 className="text-xl font-bold text-foreground leading-tight">{supplier.name}</h1>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">{cfg.label}</span>
+                  <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                    {cfg.label}
+                  </span>
                   {(supplier.city || supplier.country) && (
                     <>
                       <span className="text-muted-foreground/30">·</span>
@@ -803,11 +1154,11 @@ function SupplierDetailsPage() {
           <Tabs defaultValue="geral" className="w-full">
             <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0 mb-6">
               {[
-                { value: "geral",    label: "Geral",      icon: Building2 },
-                { value: "catalogo", label: "Catálogo",   icon: Package },
-                { value: "contatos", label: "Contatos",   icon: Users },
-                { value: "arquivos", label: "Arquivos",   icon: FileText },
-                { value: "reviews",  label: "Avaliações", icon: Star },
+                { value: "geral", label: "Geral", icon: Building2 },
+                { value: "catalogo", label: "Catálogo", icon: Package },
+                { value: "contatos", label: "Contatos", icon: Users },
+                { value: "arquivos", label: "Arquivos", icon: FileText },
+                { value: "reviews", label: "Avaliações", icon: Star },
               ].map(({ value, label, icon: TIcon }) => (
                 <TabsTrigger
                   key={value}
@@ -829,15 +1180,23 @@ function SupplierDetailsPage() {
                     { label: "Razão Social", value: supplier.legal_name },
                     { label: "CNPJ / Tax ID", value: supplier.document, mono: true },
                     { label: "País", value: supplier.country },
-                    { label: "Cidade / Estado", value: [supplier.city, supplier.state].filter(Boolean).join(", ") },
+                    {
+                      label: "Cidade / Estado",
+                      value: [supplier.city, supplier.state].filter(Boolean).join(", "),
+                    },
                     { label: "Endereço", value: supplier.address },
                     { label: "CEP / ZIP", value: supplier.zip },
-                    { label: "SLA de Atendimento", value: supplier.sla_hours ? `${supplier.sla_hours}h` : null },
+                    {
+                      label: "SLA de Atendimento",
+                      value: supplier.sla_hours ? `${supplier.sla_hours}h` : null,
+                    },
                     { label: "Condições de Pagamento", value: supplier.payment_terms },
                   ].map(({ label, value, mono }) => (
                     <div key={label}>
                       <div className="text-xs text-muted-foreground mb-0.5">{label}</div>
-                      <div className={cn("text-sm font-medium", mono && "font-mono")}>{value || "—"}</div>
+                      <div className={cn("text-sm font-medium", mono && "font-mono")}>
+                        {value || "—"}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -848,22 +1207,40 @@ function SupplierDetailsPage() {
                 <h3 className="mb-4 text-sm font-semibold">Links & Redes</h3>
                 <div className="flex flex-wrap gap-3">
                   {supplier.website && (
-                    <a href={supplier.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface">
+                    <a
+                      href={supplier.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                    >
                       <Globe className="h-3.5 w-3.5" /> Portal B2B
                     </a>
                   )}
                   {supplier.instagram && (
-                    <a href={`https://instagram.com/${supplier.instagram.replace("@", "")}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-pink-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface">
+                    <a
+                      href={`https://instagram.com/${supplier.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-xs text-pink-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                    >
                       <Instagram className="h-3.5 w-3.5" /> Instagram
                     </a>
                   )}
                   {supplier.whatsapp && (
-                    <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs text-green-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface">
+                    <a
+                      href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-xs text-green-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                    >
                       <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                     </a>
                   )}
                   {supplier.email && (
-                    <a href={`mailto:${supplier.email}`} className="flex items-center gap-1.5 text-xs text-foreground hover:underline border border-border rounded-lg px-3 py-2 bg-surface">
+                    <a
+                      href={`mailto:${supplier.email}`}
+                      className="flex items-center gap-1.5 text-xs text-foreground hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                    >
                       <Mail className="h-3.5 w-3.5" /> {supplier.email}
                     </a>
                   )}
@@ -873,18 +1250,29 @@ function SupplierDetailsPage() {
               {/* Notas */}
               {supplier.notes && (
                 <div className="rounded-xl border border-border bg-white p-5">
-                  <h3 className="mb-2 text-sm font-semibold">Observações & Política de Comissionamento</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{supplier.notes}</p>
+                  <h3 className="mb-2 text-sm font-semibold">
+                    Observações & Política de Comissionamento
+                  </h3>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {supplier.notes}
+                  </p>
                 </div>
               )}
 
               {/* Tags */}
               {supplier.tags && supplier.tags.length > 0 && (
                 <div className="rounded-xl border border-border bg-white p-5">
-                  <h3 className="mb-3 text-sm font-semibold flex items-center gap-1.5"><Tag className="h-3.5 w-3.5" /> Tags</h3>
+                  <h3 className="mb-3 text-sm font-semibold flex items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5" /> Tags
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {supplier.tags.map((t: string) => (
-                      <span key={t} className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground">{t}</span>
+                      <span
+                        key={t}
+                        className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground"
+                      >
+                        {t}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -921,7 +1309,9 @@ function SupplierDetailsPage() {
           <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-[--brand-primary,theme(colors.pink.600)]">
             <Percent className="h-3.5 w-3.5" /> Markup / Comissão Base
           </div>
-          <div className="text-4xl font-bold text-foreground font-mono">{Number(supplier.commission_rate).toFixed(2)}%</div>
+          <div className="text-4xl font-bold text-foreground font-mono">
+            {Number(supplier.commission_rate).toFixed(2)}%
+          </div>
           {supplier.payment_terms && (
             <p className="mt-2 text-xs text-muted-foreground">{supplier.payment_terms}</p>
           )}
@@ -929,13 +1319,17 @@ function SupplierDetailsPage() {
 
         {/* Rating */}
         <div className="border-b border-border p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">Avaliação</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+            Avaliação
+          </div>
           <StarRatingDisplay rating={supplier.rating} />
         </div>
 
         {/* SLA */}
         <div className="border-b border-border p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">SLA de Resposta</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+            SLA de Resposta
+          </div>
           <div className="flex items-center gap-1.5 text-sm font-semibold">
             <Clock className="h-4 w-4 text-muted-foreground" />
             {supplier.sla_hours ? `${supplier.sla_hours}h` : "Não informado"}
@@ -945,22 +1339,41 @@ function SupplierDetailsPage() {
         {/* Contato rápido */}
         {(supplier.phone || supplier.email || supplier.whatsapp) && (
           <div className="border-b border-border p-5 space-y-3">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Contato Rápido</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Contato Rápido
+            </div>
             {supplier.phone && (
-              <a href={`tel:${supplier.phone}`} className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white"><PhoneCall className="h-3.5 w-3.5" /></div>
+              <a
+                href={`tel:${supplier.phone}`}
+                className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white">
+                  <PhoneCall className="h-3.5 w-3.5" />
+                </div>
                 {supplier.phone}
               </a>
             )}
             {supplier.whatsapp && (
-              <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 text-sm text-green-700 hover:underline">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white"><MessageCircle className="h-3.5 w-3.5 text-green-600" /></div>
+              <a
+                href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2.5 text-sm text-green-700 hover:underline"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white">
+                  <MessageCircle className="h-3.5 w-3.5 text-green-600" />
+                </div>
                 WhatsApp
               </a>
             )}
             {supplier.email && (
-              <a href={`mailto:${supplier.email}`} className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors truncate">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white shrink-0"><Mail className="h-3.5 w-3.5" /></div>
+              <a
+                href={`mailto:${supplier.email}`}
+                className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors truncate"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white shrink-0">
+                  <Mail className="h-3.5 w-3.5" />
+                </div>
                 <span className="truncate">{supplier.email}</span>
               </a>
             )}
@@ -969,12 +1382,16 @@ function SupplierDetailsPage() {
 
         {/* Stats placeholder (sem dados ainda) */}
         <div className="p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Uso no Sistema</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+            Uso no Sistema
+          </div>
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <BarChart3 className="h-4 w-4" />
             Inteligência em breve
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Após usar este fornecedor em viagens, as estatísticas aparecerão aqui.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Após usar este fornecedor em viagens, as estatísticas aparecerão aqui.
+          </p>
         </div>
       </aside>
     </div>

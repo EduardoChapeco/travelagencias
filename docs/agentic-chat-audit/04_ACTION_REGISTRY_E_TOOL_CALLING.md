@@ -7,15 +7,17 @@ Este documento audita o registro central de ações da IA, os esquemas de valida
 ## 1. Catálogo e Registro de Ações
 
 O TravelOS possui um registro central de ferramentas declarativas que impede lógica difusa ou espalhada em prompts textuais:
-* **Arquivo**: [ActionRegistry.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionRegistry.ts)
-* **Estrutura**: Define a interface `ActionDefinition` e exporta o objeto `ActionRegistry` contendo as **23 ações de negócio** mapeadas.
-* **Campos Obrigatórios**: Cada ação possui `code`, `name`, `description`, `domain`, `inputSchema` (Zod), `allowedRoles`, `requiresConfirmation` e `riskLevel`.
+
+- **Arquivo**: [ActionRegistry.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionRegistry.ts)
+- **Estrutura**: Define a interface `ActionDefinition` e exporta o objeto `ActionRegistry` contendo as **23 ações de negócio** mapeadas.
+- **Campos Obrigatórios**: Cada ação possui `code`, `name`, `description`, `domain`, `inputSchema` (Zod), `allowedRoles`, `requiresConfirmation` e `riskLevel`.
 
 ---
 
 ## 2. Inventário de Ferramentas Registradas
 
 O catálogo mapeia exatamente as seguintes ferramentas de negócio:
+
 1. `create_lead` (CRM): Cadastra lead com nome e destino.
 2. `update_lead` (CRM): Atualiza telefone, e-mail ou notas.
 3. `change_lead_stage` (CRM): Altera o estágio do funil do CRM.
@@ -45,14 +47,15 @@ O catálogo mapeia exatamente as seguintes ferramentas de negócio:
 ## 3. Integração com a Requisição de IA (Tool Calling)
 
 No arquivo [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts):
-* **Conversor de Schemas**: A função `zodToOpenAiSchema` lê as propriedades do schema Zod de entrada e converte para o formato JSON Schema suportado pela API de chat da OpenAI/Gemini.
-* **Mapeamento de Ferramentas**: Converte o catálogo `ActionRegistry` em ferramentas nativas (`type: "function"`).
-* **Parâmetro de Envio**: As ferramentas mapeadas são enviadas na propriedade `tools` da requisição HTTP do LLM.
-* **Leitura de Retorno**: Lê a propriedade `tool_calls` da resposta da IA, faz o parse de `arguments` em JSON e retorna o objeto estruturado.
+
+- **Conversor de Schemas**: A função `zodToOpenAiSchema` lê as propriedades do schema Zod de entrada e converte para o formato JSON Schema suportado pela API de chat da OpenAI/Gemini.
+- **Mapeamento de Ferramentas**: Converte o catálogo `ActionRegistry` em ferramentas nativas (`type: "function"`).
+- **Parâmetro de Envio**: As ferramentas mapeadas são enviadas na propriedade `tools` da requisição HTTP do LLM.
+- **Leitura de Retorno**: Lê a propriedade `tool_calls` da resposta da IA, faz o parse de `arguments` em JSON e retorna o objeto estruturado.
 
 ---
 
 ## 4. Classificação das Entregas
 
-* **Action Registry Central**: **REAL PONTA A PONTA**
-* **Integração de Tool Calling com API**: **REAL, MAS NÃO TESTADA** (depende de chave de API em ambiente de homologação, mas o código está 100% implementado e tipado).
+- **Action Registry Central**: **REAL PONTA A PONTA**
+- **Integração de Tool Calling com API**: **REAL, MAS NÃO TESTADA** (depende de chave de API em ambiente de homologação, mas o código está 100% implementado e tipado).

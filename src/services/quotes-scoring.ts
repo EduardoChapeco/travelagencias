@@ -1,5 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
-import { type NormalizedOffer, type ScoreProfile, type PackageScorecard, type TravelIntent } from "@/types/quotes";
+import {
+  type NormalizedOffer,
+  type ScoreProfile,
+  type PackageScorecard,
+  type TravelIntent,
+} from "@/types/quotes";
 import { searchKnowledgeRAG } from "./quotes-rag";
 
 // Gateway rule definition interface
@@ -16,25 +21,25 @@ export const DEFAULT_GATEWAY_RULES: GatewayRule[] = [
     destination: "Jericocoara",
     gateway: "Fortaleza",
     lastDirectTransferTime: "18:00", // Não viaja à noite por segurança nas dunas
-    transferDurationMinutes: 240
+    transferDurationMinutes: 240,
   },
   {
     destination: "São Miguel dos Milagres",
     gateway: "Maceió",
     lastDirectTransferTime: "20:00",
-    transferDurationMinutes: 120
+    transferDurationMinutes: 120,
   },
   {
     destination: "Morro de São Paulo",
     gateway: "Salvador",
     lastDirectTransferTime: "16:30", // Último catamarã do dia
-    transferDurationMinutes: 150
-  }
+    transferDurationMinutes: 150,
+  },
 ];
 
 export async function scorePackageCandidate(
   candidateId: string,
-  scoreProfileId?: string
+  scoreProfileId?: string,
 ): Promise<PackageScorecard> {
   // 1. Obter informações do candidato, componentes e ofertas
   const { data: candidate, error: candErr } = await supabase
@@ -52,7 +57,7 @@ export async function scorePackageCandidate(
 
   if (compsErr || !components) throw new Error("Componentes do pacote não encontrados");
 
-  const offers = components.map(c => c.offer.normalized_data as unknown as NormalizedOffer);
+  const offers = components.map((c) => c.offer.normalized_data as unknown as NormalizedOffer);
 
   // 2. Obter ou criar o score profile
   let profile: ScoreProfile;
@@ -75,16 +80,16 @@ export async function scorePackageCandidate(
         comfort: 0.2,
         connections: 0.1,
         logistics: 0.1,
-        hotelRating: 0.1
+        hotelRating: 0.1,
       },
       constraints: {
         maxLayovers: 2,
         maxConnectionTimeMinutes: 360,
         avoidEarlyFlights: true,
-        avoidLateArrivals: true
+        avoidLateArrivals: true,
       },
       version: 1,
-      status: "active"
+      status: "active",
     };
   }
 
@@ -103,7 +108,7 @@ export async function scorePackageCandidate(
   const hasChildren = (travelers.children || 0) > 0;
 
   // A. SCORING DE AÉREOS
-  const flights = offers.filter(o => o.productType === "flight");
+  const flights = offers.filter((o) => o.productType === "flight");
   for (const f of flights) {
     for (const opt of f.flights) {
       // 1. Conexões / Paradas
@@ -112,7 +117,7 @@ export async function scorePackageCandidate(
           dimension: "flight",
           ruleCode: "FLIGHT_HAS_CONNECTIONS",
           points: opt.stops * 10,
-          reason: `Voo com ${opt.stops} conexão(ões).`
+          reason: `Voo com ${opt.stops} conexão(ões).`,
         });
       }
 
@@ -124,14 +129,14 @@ export async function scorePackageCandidate(
             dimension: "flight",
             ruleCode: "EARLY_DEPARTURE_WITH_CHILDREN",
             points: 20,
-            reason: `Voo de madrugada (${depHour}h) viajando com criança.`
+            reason: `Voo de madrugada (${depHour}h) viajando com criança.`,
           });
         } else if (profile.constraints.avoidEarlyFlights) {
           penalties.push({
             dimension: "flight",
             ruleCode: "EARLY_DEPARTURE_COMFORT",
             points: 10,
-            reason: `Voo partindo cedo de manhã (${depHour}h).`
+            reason: `Voo partindo cedo de manhã (${depHour}h).`,
           });
         }
       }
@@ -143,48 +148,51 @@ export async function scorePackageCandidate(
           dimension: "flight",
           ruleCode: "LATE_ARRIVAL_COMFORT",
           points: 15,
-          reason: `Voo chegando tarde da noite / de madrugada (${arrHour}h).`
+          reason: `Voo chegando tarde da noite / de madrugada (${arrHour}h).`,
         });
       }
     }
   }
 
   // B. SCORING DE HOTÉIS
-  const hotels = offers.filter(o => o.productType === "hotel");
+  const hotels = offers.filter((o) => o.productType === "hotel");
   for (const h of hotels) {
     for (const opt of h.accommodations) {
       // 1. Políticas de Cancelamento
-      const hasFreeCancellation = h.policies?.some(p => p.type === "cancellation" && !p.isPenaltyActive) || false;
+      const hasFreeCancellation =
+        h.policies?.some((p) => p.type === "cancellation" && !p.isPenaltyActive) || false;
       if (hasFreeCancellation) {
         bonuses.push({
           dimension: "hotel",
           ruleCode: "HOTEL_FREE_CANCELLATION",
           points: 10,
-          reason: `Hotel com cancelamento gratuito.`
+          reason: `Hotel com cancelamento gratuito.`,
         });
       } else {
         penalties.push({
           dimension: "hotel",
           ruleCode: "HOTEL_NON_REFUNDABLE",
           points: 15,
-          reason: `Hotel tarifa não reembolsável.`
+          reason: `Hotel tarifa não reembolsável.`,
         });
       }
 
       // 2. Regime Alimentar
-      if (opt.rooms?.some(r => r.boardDescription?.toLowerCase().includes("all inclusive"))) {
+      if (opt.rooms?.some((r) => r.boardDescription?.toLowerCase().includes("all inclusive"))) {
         bonuses.push({
           dimension: "hotel",
           ruleCode: "HOTEL_ALL_INCLUSIVE",
           points: 15,
-          reason: `Hospedagem All Inclusive.`
+          reason: `Hospedagem All Inclusive.`,
         });
-      } else if (opt.rooms?.some(r => r.boardDescription?.toLowerCase().includes("café da manhã"))) {
+      } else if (
+        opt.rooms?.some((r) => r.boardDescription?.toLowerCase().includes("café da manhã"))
+      ) {
         bonuses.push({
           dimension: "hotel",
           ruleCode: "HOTEL_WITH_BREAKFAST",
           points: 5,
-          reason: `Hospedagem com café da manhã.`
+          reason: `Hospedagem com café da manhã.`,
         });
       }
     }
@@ -193,19 +201,25 @@ export async function scorePackageCandidate(
   // C. SCORING LOGÍSTICO (GATEWAY RULES)
   const destination = intent?.destinations?.[0]?.name || "";
   const agencyId = (candidate.quote_requests as any)?.agency_id;
-  const rule = DEFAULT_GATEWAY_RULES.find(r => destination.toLowerCase().includes(r.destination.toLowerCase()));
-  
+  const rule = DEFAULT_GATEWAY_RULES.find((r) =>
+    destination.toLowerCase().includes(r.destination.toLowerCase()),
+  );
+
   if (rule) {
-    const gatewayArrivals = flights.filter(o => o.destination.some(d => d.name?.toLowerCase().includes(rule.gateway.toLowerCase())));
-    const transfers = offers.filter(o => o.productType === "transfer");
+    const gatewayArrivals = flights.filter((o) =>
+      o.destination.some((d) => d.name?.toLowerCase().includes(rule.gateway.toLowerCase())),
+    );
+    const transfers = offers.filter((o) => o.productType === "transfer");
 
     for (const arr of gatewayArrivals) {
       const arrTimeStr = arr.endAt.split("T")[1]?.substring(0, 5) || "12:00";
-      
+
       // Se a chegada for após o horário máximo do transfer direto
       if (arrTimeStr > rule.lastDirectTransferTime) {
-        const nextDayCheckin = hotels.some(h => 
-          h.accommodations.some(acc => acc.cityName?.toLowerCase().includes(rule.gateway.toLowerCase()))
+        const nextDayCheckin = hotels.some((h) =>
+          h.accommodations.some((acc) =>
+            acc.cityName?.toLowerCase().includes(rule.gateway.toLowerCase()),
+          ),
         );
 
         if (!nextDayCheckin) {
@@ -213,14 +227,14 @@ export async function scorePackageCandidate(
             dimension: "logistics",
             ruleCode: "GATEWAY_OVERNIGHT_REQUIRED",
             points: 60,
-            reason: `Chegada às ${arrTimeStr} em ${rule.gateway} exige pernoite intermediário antes do transfer para ${rule.destination}.`
+            reason: `Chegada às ${arrTimeStr} em ${rule.gateway} exige pernoite intermediário antes do transfer para ${rule.destination}.`,
           });
         } else {
           bonuses.push({
             dimension: "logistics",
             ruleCode: "GATEWAY_OVERNIGHT_COMPLIED",
             points: 10,
-            reason: `Pernoite em ${rule.gateway} devidamente incluído para conexão terrestre de manhã.`
+            reason: `Pernoite em ${rule.gateway} devidamente incluído para conexão terrestre de manhã.`,
           });
         }
       }
@@ -233,28 +247,35 @@ export async function scorePackageCandidate(
       const ragRules = await searchKnowledgeRAG(agencyId, destination, "gateway_rules");
       for (const r of ragRules) {
         const contentLower = r.content.toLowerCase();
-        
+
         // Se a diretriz contiver restrições de horário ou transfer
-        if (contentLower.includes("pernoite") || contentLower.includes("overnight") || contentLower.includes("limite") || contentLower.includes("transfer")) {
+        if (
+          contentLower.includes("pernoite") ||
+          contentLower.includes("overnight") ||
+          contentLower.includes("limite") ||
+          contentLower.includes("transfer")
+        ) {
           const timeMatch = r.content.match(/([0-1]?[0-9]|2[0-3]):[0-5][0-9]/);
           if (timeMatch) {
             const limitTime = timeMatch[0];
             // Encontra voos chegando no gateway citado
-            const gatewayArrivals = flights.filter(o => 
-              o.destination.some(d => contentLower.includes(d.name?.toLowerCase() || "___"))
+            const gatewayArrivals = flights.filter((o) =>
+              o.destination.some((d) => contentLower.includes(d.name?.toLowerCase() || "___")),
             );
             for (const arr of gatewayArrivals) {
               const arrTimeStr = arr.endAt.split("T")[1]?.substring(0, 5) || "12:00";
               if (arrTimeStr > limitTime) {
-                const nextDayCheckin = hotels.some(h => 
-                  h.accommodations.some(acc => contentLower.includes(acc.cityName?.toLowerCase() || "___"))
+                const nextDayCheckin = hotels.some((h) =>
+                  h.accommodations.some((acc) =>
+                    contentLower.includes(acc.cityName?.toLowerCase() || "___"),
+                  ),
                 );
                 if (!nextDayCheckin) {
                   penalties.push({
                     dimension: "logistics",
                     ruleCode: "RAG_GATEWAY_OVERNIGHT_REQUIRED",
                     points: 50,
-                    reason: `Diretriz Semântica (${r.document_title}): Chegada tardia (${arrTimeStr}) no gateway exige pernoite intermediário antes do limite (${limitTime}).`
+                    reason: `Diretriz Semântica (${r.document_title}): Chegada tardia (${arrTimeStr}) no gateway exige pernoite intermediário antes do limite (${limitTime}).`,
                   });
                 }
               }
@@ -265,7 +286,7 @@ export async function scorePackageCandidate(
               dimension: "logistics",
               ruleCode: "RAG_GUIDELINE_INFO",
               points: 0,
-              reason: `Diretriz de Atenção (${r.document_title}): ${r.content}`
+              reason: `Diretriz de Atenção (${r.document_title}): ${r.content}`,
             });
           }
         } else {
@@ -274,7 +295,7 @@ export async function scorePackageCandidate(
             dimension: "logistics",
             ruleCode: "RAG_GUIDELINE_INFO",
             points: 0,
-            reason: `Diretriz de Atenção (${r.document_title}): ${r.content}`
+            reason: `Diretriz de Atenção (${r.document_title}): ${r.content}`,
           });
         }
       }
@@ -284,31 +305,43 @@ export async function scorePackageCandidate(
   }
 
   // Calcular sub-scores finais
-  const sumFlightPenalties = penalties.filter(p => p.dimension === "flight").reduce((a, c) => a + c.points, 0);
-  const sumFlightBonuses = bonuses.filter(b => b.dimension === "flight").reduce((a, c) => a + c.points, 0);
+  const sumFlightPenalties = penalties
+    .filter((p) => p.dimension === "flight")
+    .reduce((a, c) => a + c.points, 0);
+  const sumFlightBonuses = bonuses
+    .filter((b) => b.dimension === "flight")
+    .reduce((a, c) => a + c.points, 0);
   flightScore = Math.max(0, Math.min(100, 100 - sumFlightPenalties + sumFlightBonuses));
 
-  const sumHotelPenalties = penalties.filter(p => p.dimension === "hotel").reduce((a, c) => a + c.points, 0);
-  const sumHotelBonuses = bonuses.filter(b => b.dimension === "hotel").reduce((a, c) => a + c.points, 0);
+  const sumHotelPenalties = penalties
+    .filter((p) => p.dimension === "hotel")
+    .reduce((a, c) => a + c.points, 0);
+  const sumHotelBonuses = bonuses
+    .filter((b) => b.dimension === "hotel")
+    .reduce((a, c) => a + c.points, 0);
   hotelScore = Math.max(0, Math.min(100, 100 - sumHotelPenalties + sumHotelBonuses));
 
-  const sumLogPenalties = penalties.filter(p => p.dimension === "logistics").reduce((a, c) => a + c.points, 0);
-  const sumLogBonuses = bonuses.filter(b => b.dimension === "logistics").reduce((a, c) => a + c.points, 0);
+  const sumLogPenalties = penalties
+    .filter((p) => p.dimension === "logistics")
+    .reduce((a, c) => a + c.points, 0);
+  const sumLogBonuses = bonuses
+    .filter((b) => b.dimension === "logistics")
+    .reduce((a, c) => a + c.points, 0);
   logisticsScore = Math.max(0, Math.min(100, 100 - sumLogPenalties + sumLogBonuses));
 
   // Ponderação final de acordo com pesos do perfil
   const weights = profile.weights;
   const finalScore = Math.round(
     flightScore * (weights.comfort + weights.connections) +
-    hotelScore * (weights.hotelRating) +
-    logisticsScore * (weights.logistics) +
-    experienceScore * ((weights as any).experience || 0.1) +
-    80 * (weights.price) // score preço estimado
+      hotelScore * weights.hotelRating +
+      logisticsScore * weights.logistics +
+      experienceScore * ((weights as any).experience || 0.1) +
+      80 * weights.price, // score preço estimado
   );
 
   // 4. Salvar scorecard em banco de dados
   const explanation = `Este pacote obteve pontuação ${finalScore}/100. Fatores de Voo: ${flightScore}. Fatores de Hotel: ${hotelScore}. Logística Gateway: ${logisticsScore}.`;
-  
+
   const scorecardInsert = {
     package_candidate_id: candidateId,
     rule_version_set: `v${profile.version}`,
@@ -317,13 +350,13 @@ export async function scorePackageCandidate(
       hotel_score: hotelScore,
       logistics_score: logisticsScore,
       experience_score: experienceScore,
-      cost_benefit_score: 80
+      cost_benefit_score: 80,
     },
     penalties: penalties as any,
     bonuses: bonuses as any,
     final_score: finalScore,
     explanation,
-    confidence: 1.00
+    confidence: 1.0,
   };
 
   // Upsert scorecard
@@ -334,24 +367,19 @@ export async function scorePackageCandidate(
     .maybeSingle();
 
   if (existingCard) {
-    await supabase
-      .from("package_scorecards")
-      .update(scorecardInsert)
-      .eq("id", existingCard.id);
+    await supabase.from("package_scorecards").update(scorecardInsert).eq("id", existingCard.id);
   } else {
-    await supabase
-      .from("package_scorecards")
-      .insert(scorecardInsert);
+    await supabase.from("package_scorecards").insert(scorecardInsert);
   }
 
   // Atualizar score na tabela package_candidates
   const candidateStatus = logisticsScore < 50 ? "invalid" : "valid";
   await supabase
     .from("package_candidates")
-    .update({ 
+    .update({
       score: finalScore,
       status: candidateStatus,
-      warnings: penalties.map(p => p.reason) as any
+      warnings: penalties.map((p) => p.reason) as any,
     })
     .eq("id", candidateId);
 
@@ -364,12 +392,12 @@ export async function scorePackageCandidate(
       hotelScore,
       logisticsScore,
       experienceScore,
-      costBenefitScore: 80
+      costBenefitScore: 80,
     },
     penalties,
     bonuses,
     finalScore,
     explanation,
-    confidence: 1.00
+    confidence: 1.0,
   };
 }

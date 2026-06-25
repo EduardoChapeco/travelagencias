@@ -16,19 +16,20 @@ Não faremos uma reescrita simultânea ("Big Bang") de todas as conexões do sis
 
 ## 2. Matriz de Migração e Equivalência
 
-| Função Antiga | Novo Componente / Adaptador | Chamadores no Frontend | Estratégia de Compatibilidade | Status da Migração |
-| :--- | :--- | :--- | :--- | :--- |
-| `ocr-proposal` | Central `AIOrchestrator` (`ocr_proposal`) | `src/services/proposals.ts` | O adapter encapsula e devolve a estrutura JSON exata esperada pelo editor de propostas. | PENDENTE |
-| `ocr-passenger-document`| Central `AIOrchestrator` (`ocr_passenger`) | `src/routes/agency.$slug.trips.$id.passengers.tsx` | Retorna o payload plano com os campos (`document_number`, `full_name`, etc). | PENDENTE |
-| `ocr-boleto` | Central `AIOrchestrator` (`ocr_boleto`) | `src/routes/agency.$slug.trips.$id.financial.tsx` | Devolve a linha digitável parseada e os dados de pagamento identificados. | PENDENTE |
-| `ai-voucher-ocr` | Central `AIOrchestrator` (`ocr_voucher`) | `src/lib/ocr-ai.ts` | Converte o retorno estruturado na tipagem `VoucherAIResult` no front-end. | PENDENTE |
-| `supplier-ocr-extractor` | Central `AIOrchestrator` (`ocr_supplier`) | Interface de tarifário | Mapeia tabelas de custos do fornecedor para os campos de rateio. | PENDENTE |
-| `ai-message-processor` | Central `AIOrchestrator` (`chat_suggestion`) | `AIHunterPanel.tsx`, `OmnichannelChat.tsx` | Retorna texto plano e tags sugeridas. | PENDENTE |
+| Função Antiga            | Novo Componente / Adaptador                  | Chamadores no Frontend                             | Estratégia de Compatibilidade                                                           | Status da Migração |
+| :----------------------- | :------------------------------------------- | :------------------------------------------------- | :-------------------------------------------------------------------------------------- | :----------------- |
+| `ocr-proposal`           | Central `AIOrchestrator` (`ocr_proposal`)    | `src/services/proposals.ts`                        | O adapter encapsula e devolve a estrutura JSON exata esperada pelo editor de propostas. | PENDENTE           |
+| `ocr-passenger-document` | Central `AIOrchestrator` (`ocr_passenger`)   | `src/routes/agency.$slug.trips.$id.passengers.tsx` | Retorna o payload plano com os campos (`document_number`, `full_name`, etc).            | PENDENTE           |
+| `ocr-boleto`             | Central `AIOrchestrator` (`ocr_boleto`)      | `src/routes/agency.$slug.trips.$id.financial.tsx`  | Devolve a linha digitável parseada e os dados de pagamento identificados.               | PENDENTE           |
+| `ai-voucher-ocr`         | Central `AIOrchestrator` (`ocr_voucher`)     | `src/lib/ocr-ai.ts`                                | Converte o retorno estruturado na tipagem `VoucherAIResult` no front-end.               | PENDENTE           |
+| `supplier-ocr-extractor` | Central `AIOrchestrator` (`ocr_supplier`)    | Interface de tarifário                             | Mapeia tabelas de custos do fornecedor para os campos de rateio.                        | PENDENTE           |
+| `ai-message-processor`   | Central `AIOrchestrator` (`chat_suggestion`) | `AIHunterPanel.tsx`, `OmnichannelChat.tsx`         | Retorna texto plano e tags sugeridas.                                                   | PENDENTE           |
 
 ---
 
 ## 3. Garantia de Retrocompatibilidade de Contratos
 
 Para evitar quebras no frontend durante o deploy:
-* **Garantia de Assinatura**: O endpoint antigo deve receber os mesmos parâmetros (`file_base64`, `mime`, `text`, `agency_id`) e retornar o mesmo contrato de resposta (`{ result: { ... } }`).
-* **Fallback Local em Caso de Erro de Rede**: Se a comunicação interna entre a função antiga e o orquestrador falhar, a função antiga deve conter uma lógica de fallback autônoma mínima usando `Deno.env` direto para evitar interrupções de serviço.
+
+- **Garantia de Assinatura**: O endpoint antigo deve receber os mesmos parâmetros (`file_base64`, `mime`, `text`, `agency_id`) e retornar o mesmo contrato de resposta (`{ result: { ... } }`).
+- **Fallback Local em Caso de Erro de Rede**: Se a comunicação interna entre a função antiga e o orquestrador falhar, a função antiga deve conter uma lógica de fallback autônoma mínima usando `Deno.env` direto para evitar interrupções de serviço.

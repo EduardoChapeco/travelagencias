@@ -64,7 +64,9 @@ function Page() {
     // Validação LGPD: bloqueio explícito via estado React, não apenas HTML required
     if (!lgpdConsent) {
       setLgpdError(true);
-      document.getElementById("lgpd_passenger_consent")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document
+        .getElementById("lgpd_passenger_consent")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
       toast.error("Você precisa aceitar o consentimento LGPD para enviar seus dados.");
       return;
     }
@@ -215,8 +217,14 @@ function Page() {
               htmlFor="lgpd_passenger_check"
               className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
             >
-              Li e concordo com o tratamento dos meus dados pessoais (nome, CPF, passaporte, data de nascimento, contatos) para fins exclusivos de gestão desta viagem, em conformidade com a{" "}
-              <strong className="text-foreground">Lei Geral de Proteção de Dados — LGPD (Lei n.º 13.709/2018)</strong>. Esses dados não serão compartilhados com terceiros sem o meu consentimento expresso. *
+              Li e concordo com o tratamento dos meus dados pessoais (nome, CPF, passaporte, data de
+              nascimento, contatos) para fins exclusivos de gestão desta viagem, em conformidade com
+              a{" "}
+              <strong className="text-foreground">
+                Lei Geral de Proteção de Dados — LGPD (Lei n.º 13.709/2018)
+              </strong>
+              . Esses dados não serão compartilhados com terceiros sem o meu consentimento expresso.
+              *
             </label>
           </div>
           {lgpdError && (
@@ -226,9 +234,7 @@ function Page() {
           )}
           <PrimaryButton
             disabled={saving || !lgpdConsent}
-            className={`w-full ${
-              !lgpdConsent ? "opacity-40 cursor-not-allowed" : ""
-            }`}
+            className={`w-full ${!lgpdConsent ? "opacity-40 cursor-not-allowed" : ""}`}
           >
             {saving ? "Enviando…" : "Enviar dados"}
           </PrimaryButton>

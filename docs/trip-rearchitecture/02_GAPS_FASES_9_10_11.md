@@ -34,18 +34,18 @@ Rooming List deve suportar:
 
 ### 1.2 Gaps identificados
 
-| Gap | Detalhe | Impacto |
-|-----|---------|---------|
-| **Estrutura dual/conflitante** | Existem `group_tours.rooming_list jsonb` E `boarding_rooming_list` (tabela). Qual é definitiva? | Alto — dados inconsistentes |
-| **Sem histórico** | JSONB é sobrescrito sem versionamento. Uma alocação errada não é rastreável | Alto |
-| **Sem auditoria** | Nenhum log de quem alocou quem e quando | Alto |
-| **Sem exportação** | Não há geração de PDF/XLS da rooming list | Médio |
-| **Sem hotéis múltiplos como entidade** | `hotel_name` é texto livre por quarto, não vincula a um fornecedor | Médio |
-| **Sem roommate desconhecido** | Não há suporte a quarto parcialmente alocado com "TBD" | Baixo |
-| **Sem DnD entre quartos** | Passageiros são alocados por select dropdown, não por drag | Baixo |
-| **Sem concorrência segura** | JSONB inteiro sobrescrito = risco de race condition | Alto |
-| **`boarding_rooming_list` sem UI** | Tabela normalizada criada mas nunca usada | Desperdício |
-| **Sem vínculo com `trips`** | `group_tours` não é uma especialização de `trips` — são entidades separadas | Arquitetural |
+| Gap                                    | Detalhe                                                                                         | Impacto                     |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------- |
+| **Estrutura dual/conflitante**         | Existem `group_tours.rooming_list jsonb` E `boarding_rooming_list` (tabela). Qual é definitiva? | Alto — dados inconsistentes |
+| **Sem histórico**                      | JSONB é sobrescrito sem versionamento. Uma alocação errada não é rastreável                     | Alto                        |
+| **Sem auditoria**                      | Nenhum log de quem alocou quem e quando                                                         | Alto                        |
+| **Sem exportação**                     | Não há geração de PDF/XLS da rooming list                                                       | Médio                       |
+| **Sem hotéis múltiplos como entidade** | `hotel_name` é texto livre por quarto, não vincula a um fornecedor                              | Médio                       |
+| **Sem roommate desconhecido**          | Não há suporte a quarto parcialmente alocado com "TBD"                                          | Baixo                       |
+| **Sem DnD entre quartos**              | Passageiros são alocados por select dropdown, não por drag                                      | Baixo                       |
+| **Sem concorrência segura**            | JSONB inteiro sobrescrito = risco de race condition                                             | Alto                        |
+| **`boarding_rooming_list` sem UI**     | Tabela normalizada criada mas nunca usada                                                       | Desperdício                 |
+| **Sem vínculo com `trips`**            | `group_tours` não é uma especialização de `trips` — são entidades separadas                     | Arquitetural                |
 
 ### 1.3 O que precisa ser feito (sem implementar agora)
 
@@ -75,16 +75,16 @@ Destination Intelligence deve:
 
 ### 2.2 Gaps identificados
 
-| Gap | Detalhe | Impacto |
-|-----|---------|---------|
-| **Portal não consome destination_info** | `client.trips.$id.tsx` não faz nenhuma query para `destination_info` | Alto — a feature principal não funciona ponta a ponta |
-| **Sem vínculo com trips.destination** | `destination_info.destination` é texto livre, não há FK para trips | Alto |
-| **Sem source/expires_at** | Informação de IA pode ficar desatualizada indefinidamente | Alto |
-| **Sem histórico de revisão** | `reviewed_at` é timestamp único — sem log de quem revisou o quê e quando | Médio |
-| **Sem escopo por agência** | `destination_info` parece ser global, não por agência | Médio — auditoria necessária de RLS |
-| **Sem alimentação do Guia de Embarque** | Destino não alimenta documento de embarque | Médio |
-| **Sem alimentação de Confirmação de Reserva** | Destino não alimenta documento de confirmação | Médio |
-| **Edge function não auditada** | Não verificamos se `destination-intelligence` realmente persiste dados corretos | Pendente |
+| Gap                                           | Detalhe                                                                         | Impacto                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Portal não consome destination_info**       | `client.trips.$id.tsx` não faz nenhuma query para `destination_info`            | Alto — a feature principal não funciona ponta a ponta |
+| **Sem vínculo com trips.destination**         | `destination_info.destination` é texto livre, não há FK para trips              | Alto                                                  |
+| **Sem source/expires_at**                     | Informação de IA pode ficar desatualizada indefinidamente                       | Alto                                                  |
+| **Sem histórico de revisão**                  | `reviewed_at` é timestamp único — sem log de quem revisou o quê e quando        | Médio                                                 |
+| **Sem escopo por agência**                    | `destination_info` parece ser global, não por agência                           | Médio — auditoria necessária de RLS                   |
+| **Sem alimentação do Guia de Embarque**       | Destino não alimenta documento de embarque                                      | Médio                                                 |
+| **Sem alimentação de Confirmação de Reserva** | Destino não alimenta documento de confirmação                                   | Médio                                                 |
+| **Edge function não auditada**                | Não verificamos se `destination-intelligence` realmente persiste dados corretos | Pendente                                              |
 
 ### 2.3 O que precisa ser feito
 
@@ -116,37 +116,37 @@ Conferência real deve incluir:
 
 ### 3.2 Gaps identificados — tabelas
 
-| Tabela PRD | Existe? | Gap |
-|-----------|---------|-----|
-| `flight_itineraries` | ❌ | Criar |
-| `flight_segments` | ❌ | Criar |
-| `flight_change_cases` | ❌ | Criar |
-| `flight_alternatives` | ❌ | Criar |
-| `flight_difference_analysis` | ❌ | Criar |
-| `customer_travel_decisions` | ❌ | Criar |
-| `operator_reaccommodation_requests` | ❌ | Criar |
-| `contract_amendments` | ⚠️ | `contract_addendums` existe mas sem campos de itinerário/diff |
-| `checkin_links` (AirlineDeepLinkRegistry) | ❌ | Criar |
-| `boarding_events` | ❌ | Criar |
+| Tabela PRD                                | Existe? | Gap                                                           |
+| ----------------------------------------- | ------- | ------------------------------------------------------------- |
+| `flight_itineraries`                      | ❌      | Criar                                                         |
+| `flight_segments`                         | ❌      | Criar                                                         |
+| `flight_change_cases`                     | ❌      | Criar                                                         |
+| `flight_alternatives`                     | ❌      | Criar                                                         |
+| `flight_difference_analysis`              | ❌      | Criar                                                         |
+| `customer_travel_decisions`               | ❌      | Criar                                                         |
+| `operator_reaccommodation_requests`       | ❌      | Criar                                                         |
+| `contract_amendments`                     | ⚠️      | `contract_addendums` existe mas sem campos de itinerário/diff |
+| `checkin_links` (AirlineDeepLinkRegistry) | ❌      | Criar                                                         |
+| `boarding_events`                         | ❌      | Criar                                                         |
 
 ### 3.3 Gaps identificados — UI e fluxo
 
-| Item do Fluxo PRD | Existe? | Detalhe |
-|-------------------|---------|---------|
-| Upload de e-mail/print/PDF com horários | ❌ | |
-| OCR para extrair itinerários | ❌ | |
-| Formulário de entrada de alternativas | ❌ | |
-| Engine de diff determinístico | ❌ | |
-| Badges de risco (pernoite, etc.) | ❌ | |
-| Recomendações contextuais (VIP lounge, hotel) | ❌ | |
-| UI de revisão interna pelo agente | ❌ | |
-| Seleção de alternativas visíveis ao cliente | ❌ | |
-| Portal de escolha do cliente | ❌ | |
-| Aceite com evidências (nome, OTP, IP, hash) | ❌ | |
-| Geração de adendo contratual | ❌ | |
-| Rascunho de e-mail para operadora | ❌ | |
-| Thread de confirmação da operadora | ❌ | |
-| Propagação para portal/voucher/guia | ❌ | |
+| Item do Fluxo PRD                             | Existe? | Detalhe |
+| --------------------------------------------- | ------- | ------- |
+| Upload de e-mail/print/PDF com horários       | ❌      |         |
+| OCR para extrair itinerários                  | ❌      |         |
+| Formulário de entrada de alternativas         | ❌      |         |
+| Engine de diff determinístico                 | ❌      |         |
+| Badges de risco (pernoite, etc.)              | ❌      |         |
+| Recomendações contextuais (VIP lounge, hotel) | ❌      |         |
+| UI de revisão interna pelo agente             | ❌      |         |
+| Seleção de alternativas visíveis ao cliente   | ❌      |         |
+| Portal de escolha do cliente                  | ❌      |         |
+| Aceite com evidências (nome, OTP, IP, hash)   | ❌      |         |
+| Geração de adendo contratual                  | ❌      |         |
+| Rascunho de e-mail para operadora             | ❌      |         |
+| Thread de confirmação da operadora            | ❌      |         |
+| Propagação para portal/voucher/guia           | ❌      |         |
 
 ### 3.4 O que deve ser desfeito/movido (arquitetura)
 
@@ -165,20 +165,20 @@ Ambos coexistem — não se substituem — mas pertencem a domínios diferentes 
 
 ### 4.1 Domínios paralelos a convergir
 
-| Domínio Atual | Deve Virar |
-|--------------|-----------|
-| `group_tours` | `trips` com `trip_type = 'group'` (ou adaptador) |
-| `boarding` (global) | Views globais de `trips.flights` + Embarque como etapa |
-| `vouchers` (global) | Artefato da viagem + listagem global via pesquisa |
-| `destination-intelligence` | Seção "Segurança & Destino" da viagem |
-| `contracts` (global) | Artefato da viagem + listagem global |
+| Domínio Atual              | Deve Virar                                             |
+| -------------------------- | ------------------------------------------------------ |
+| `group_tours`              | `trips` com `trip_type = 'group'` (ou adaptador)       |
+| `boarding` (global)        | Views globais de `trips.flights` + Embarque como etapa |
+| `vouchers` (global)        | Artefato da viagem + listagem global via pesquisa      |
+| `destination-intelligence` | Seção "Segurança & Destino" da viagem                  |
+| `contracts` (global)       | Artefato da viagem + listagem global                   |
 
 ### 4.2 Sidebar — itens globais que devem ser contextuais
 
-| Item Atual | Nova Localização |
-|-----------|-----------------|
-| Embarques | Etapa dentro de `/trips/:id/boarding` + fila global `/trips/boarding` |
-| Vouchers | Documento dentro de `/trips/:id/voucher` + busca global |
+| Item Atual               | Nova Localização                                                               |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| Embarques                | Etapa dentro de `/trips/:id/boarding` + fila global `/trips/boarding`          |
+| Vouchers                 | Documento dentro de `/trips/:id/voucher` + busca global                        |
 | Destination Intelligence | Admin dentro de Configurações/Identidade + consumo em `/trips/:id/destination` |
 
 ### 4.3 Sub-navegação da viagem — abas a adicionar
@@ -186,6 +186,7 @@ Ambos coexistem — não se substituem — mas pertencem a domínios diferentes 
 Abas atuais: Visão Geral, Financeiro, Passageiros, Vouchers, Contrato
 
 Abas a adicionar (por prioridade):
+
 1. **Aéreos** (itinerários, tickets, check-in links)
 2. **Reacomodações** (change cases)
 3. **Confirmação de Reserva** (novo artefato)
@@ -201,6 +202,7 @@ Abas a adicionar (por prioridade):
 Existem hoje: Voos (boarding pass visual), Contrato, Localizadores
 
 A adicionar:
+
 - Alterações de Voo (reacomodação em andamento)
 - Status público inteligível (sem jargão interno)
 - Aceite de alternativa aérea
@@ -214,6 +216,7 @@ A adicionar:
 > **Lembrete:** Este documento não autoriza implementação. Serve de base para o Plano Master.
 
 ### Fase 9 — Rooming List
+
 - [ ] Decidir: manter JSONB ou migrar para tabela normalizada
 - [ ] Se migrar: criar migration de preservação de dados + plano de rollback
 - [ ] Criar service `rooming.ts` tipado
@@ -222,6 +225,7 @@ A adicionar:
 - [ ] Unificar `boarding_rooming_list` (ociosa) ou deprecar
 
 ### Fase 10 — Destination Intelligence
+
 - [ ] Conectar `destination_info` ao portal do cliente
 - [ ] Filtrar por `reviewed_at IS NOT NULL` no portal
 - [ ] Adicionar `source`, `expires_at`, `agency_id` à tabela
@@ -230,6 +234,7 @@ A adicionar:
 - [ ] Alimentar Confirmação de Reserva e Guia de Embarque
 
 ### Fase 11 — Conferência de Voos
+
 - [ ] Criar domínio de itinerários aéreos (fora de Vouchers)
 - [ ] Criar tabelas: `flight_itineraries`, `flight_segments`, `flight_change_cases`, etc.
 - [ ] Mover `boarding_tickets (kind=flight)` para nova rota `/trips/:id/flights`

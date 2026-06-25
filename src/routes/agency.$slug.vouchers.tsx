@@ -74,9 +74,10 @@ function VouchersPage() {
   const qc = useQueryClient();
 
   // Tabs management
-  const queryTab = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("tab") : null;
+  const queryTab =
+    typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("tab") : null;
   const [activeTab, setActiveTab] = useState<"vouchers" | "flight_audit">(
-    queryTab === "flight_audit" ? "flight_audit" : "vouchers"
+    queryTab === "flight_audit" ? "flight_audit" : "vouchers",
   );
 
   const [page, setPage] = useState(1);
@@ -124,7 +125,8 @@ function VouchersPage() {
       const limitDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
       const { data, error } = await supabase
         .from("boarding_tickets")
-        .select(`
+        .select(
+          `
           id,
           card_id,
           passenger_name,
@@ -142,7 +144,8 @@ function VouchersPage() {
               title
             )
           )
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id)
         .eq("kind", "flight")
         .gte("date_time", now.toISOString())
@@ -156,7 +159,13 @@ function VouchersPage() {
 
   // Update Flight Ticket Mutation
   const updateTicketMut = useMutation({
-    mutationFn: async (payload: { id: string; ticket_code?: string | null; status?: string; notes?: string | null; seat?: string | null }) => {
+    mutationFn: async (payload: {
+      id: string;
+      ticket_code?: string | null;
+      status?: string;
+      notes?: string | null;
+      seat?: string | null;
+    }) => {
       const { error } = await supabase
         .from("boarding_tickets")
         .update(payload)
@@ -243,7 +252,7 @@ function VouchersPage() {
             "px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer",
             activeTab === "vouchers"
               ? "border-brand text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
           🎫 Vouchers Emitidos
@@ -261,7 +270,7 @@ function VouchersPage() {
             "px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5",
             activeTab === "flight_audit"
               ? "border-brand text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
           ✈️ Conferência de Voos
@@ -431,28 +440,37 @@ function VouchersPage() {
           {/* Audit top KPIs */}
           <div className="border-b border-border bg-surface px-4 md:px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
             <div className="rounded-xl border border-border bg-surface-alt/20 p-3 text-center">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">Total de Voos</span>
-              <strong className="text-lg font-black text-foreground">{flightsQ.data?.length ?? 0}</strong>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
+                Total de Voos
+              </span>
+              <strong className="text-lg font-black text-foreground">
+                {flightsQ.data?.length ?? 0}
+              </strong>
             </div>
             <div className="rounded-xl border border-success/20 bg-success/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">Conferidos</span>
+              <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
+                Conferidos
+              </span>
               <strong className="text-lg font-black text-success">
-                {(flightsQ.data || []).filter(f => f.status === "confirmed").length}
+                {(flightsQ.data || []).filter((f) => f.status === "confirmed").length}
               </strong>
             </div>
             <div className="rounded-xl border border-warning/20 bg-warning/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">Pendentes</span>
+              <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
+                Pendentes
+              </span>
               <strong className="text-lg font-black text-warning">
-                {(flightsQ.data || []).filter(f => f.status !== "confirmed").length}
+                {(flightsQ.data || []).filter((f) => f.status !== "confirmed").length}
               </strong>
             </div>
             <div className="rounded-xl border border-brand/20 bg-brand/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">Taxa de Sucesso</span>
+              <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
+                Taxa de Sucesso
+              </span>
               <strong className="text-lg font-black text-brand">
                 {flightsQ.data && flightsQ.data.length > 0
-                  ? `${Math.round(((flightsQ.data || []).filter(f => f.status === "confirmed").length / flightsQ.data.length) * 100)}%`
-                  : "0%"
-                }
+                  ? `${Math.round(((flightsQ.data || []).filter((f) => f.status === "confirmed").length / flightsQ.data.length) * 100)}%`
+                  : "0%"}
               </strong>
             </div>
           </div>
@@ -485,7 +503,7 @@ function VouchersPage() {
                       "px-3 py-1 rounded-md text-xs font-semibold cursor-pointer transition-all",
                       statusFilter === btn.id
                         ? "bg-surface text-foreground border border-border shadow-sm"
-                        : "text-muted-foreground hover:text-foreground border border-transparent"
+                        : "text-muted-foreground hover:text-foreground border border-transparent",
                     )}
                   >
                     {btn.label}
@@ -501,15 +519,20 @@ function VouchersPage() {
           {/* Fila list table */}
           <div className="flex-1 overflow-auto p-4 md:p-6 min-h-0">
             {flightsQ.isLoading && (
-              <div className="text-sm text-muted-foreground p-4 animate-pulse">Carregando fila operacional de voos…</div>
+              <div className="text-sm text-muted-foreground p-4 animate-pulse">
+                Carregando fila operacional de voos…
+              </div>
             )}
 
             {flightsQ.data && flightsQ.data.length === 0 && (
               <div className="text-center py-20 bg-surface border border-dashed border-border rounded-2xl max-w-2xl mx-auto p-8">
                 <Plane className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
-                <h3 className="font-bold text-sm text-foreground mb-1">Nenhum voo nos próximos 60 dias</h3>
+                <h3 className="font-bold text-sm text-foreground mb-1">
+                  Nenhum voo nos próximos 60 dias
+                </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Os voos são criados automaticamente a partir dos cartões de embarque vinculados aos roteiros de viagem.
+                  Os voos são criados automaticamente a partir dos cartões de embarque vinculados
+                  aos roteiros de viagem.
                 </p>
               </div>
             )}
@@ -546,15 +569,19 @@ function VouchersPage() {
                           key={f.id}
                           className={cn(
                             "hover:bg-surface-alt/25 transition-colors",
-                            f.status === "confirmed" ? "bg-success/5" : "bg-transparent"
+                            f.status === "confirmed" ? "bg-success/5" : "bg-transparent",
                           )}
                         >
                           {/* Passenger & Trip */}
                           <td className="px-4 py-3.5">
-                            <div className="font-bold text-foreground text-sm">{f.passenger_name}</div>
+                            <div className="font-bold text-foreground text-sm">
+                              {f.passenger_name}
+                            </div>
                             {tripTitle && (
                               <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span>Viagem: <strong>{tripTitle}</strong></span>
+                                <span>
+                                  Viagem: <strong>{tripTitle}</strong>
+                                </span>
                                 {tripId && (
                                   <Link
                                     to="/agency/$slug/trips/$id"
@@ -580,11 +607,16 @@ function VouchersPage() {
                           {/* Date and time */}
                           <td className="px-4 py-3.5">
                             <div className="font-semibold text-foreground">
-                              {f.date_time ? new Date(f.date_time).toLocaleDateString("pt-BR") : "—"}
+                              {f.date_time
+                                ? new Date(f.date_time).toLocaleDateString("pt-BR")
+                                : "—"}
                             </div>
                             {f.date_time && (
                               <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                                {new Date(f.date_time).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                                {new Date(f.date_time).toLocaleTimeString("pt-BR", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
                               </div>
                             )}
                           </td>
@@ -594,7 +626,9 @@ function VouchersPage() {
                             {isEditing ? (
                               <input
                                 value={editForm.ticket_code}
-                                onChange={(e) => setEditForm({ ...editForm, ticket_code: e.target.value })}
+                                onChange={(e) =>
+                                  setEditForm({ ...editForm, ticket_code: e.target.value })
+                                }
                                 className="h-8 w-24 rounded border border-border bg-surface px-2 text-xs font-mono font-bold focus:border-brand"
                                 placeholder="Loc..."
                               />
@@ -637,7 +671,9 @@ function VouchersPage() {
                             {isEditing ? (
                               <select
                                 value={editForm.status}
-                                onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                                onChange={(e) =>
+                                  setEditForm({ ...editForm, status: e.target.value })
+                                }
                                 className="h-8 rounded border border-border bg-surface px-2 text-xs focus:border-brand cursor-pointer"
                               >
                                 <option value="pending">Pendente</option>
@@ -654,7 +690,11 @@ function VouchersPage() {
                                       : "warning"
                                 }
                               >
-                                {f.status === "confirmed" ? "Conferido" : f.status === "action_needed" ? "Atenção" : "Pendente"}
+                                {f.status === "confirmed"
+                                  ? "Conferido"
+                                  : f.status === "action_needed"
+                                    ? "Atenção"
+                                    : "Pendente"}
                               </StatusBadge>
                             )}
                           </td>
@@ -664,7 +704,9 @@ function VouchersPage() {
                             {isEditing ? (
                               <input
                                 value={editForm.notes}
-                                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                                onChange={(e) =>
+                                  setEditForm({ ...editForm, notes: e.target.value })
+                                }
                                 className="h-8 w-full rounded border border-border bg-surface px-2 text-xs focus:border-brand"
                                 placeholder="Notas..."
                               />
@@ -718,9 +760,13 @@ function VouchersPage() {
                                       "p-1.5 rounded border transition-colors cursor-pointer",
                                       f.status === "confirmed"
                                         ? "text-success border-success/35 bg-success/10 hover:bg-success/20"
-                                        : "text-muted-foreground border-border hover:border-success hover:text-success"
+                                        : "text-muted-foreground border-border hover:border-success hover:text-success",
                                     )}
-                                    title={f.status === "confirmed" ? "Marcar como pendente" : "Conferir e confirmar voo"}
+                                    title={
+                                      f.status === "confirmed"
+                                        ? "Marcar como pendente"
+                                        : "Conferir e confirmar voo"
+                                    }
                                   >
                                     <CheckCircle2 className="h-3.5 w-3.5" />
                                   </button>

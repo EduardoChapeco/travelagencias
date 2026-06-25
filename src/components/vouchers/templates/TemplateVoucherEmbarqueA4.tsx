@@ -35,7 +35,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div className="mb-5">
       <div className="flex items-center gap-2 mb-2">
         <div className="h-px flex-1 bg-slate-200" />
-        <span 
+        <span
           className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400"
           style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
         >
@@ -48,8 +48,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit, companyProfile }: Props) {
-  const primaryColor = brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#1a56db";
+export default function TemplateVoucherEmbarqueA4({
+  voucher: v,
+  agency,
+  brandKit,
+  companyProfile,
+}: Props) {
+  const primaryColor =
+    brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#1a56db";
   const secondaryColor = brandKit?.secondary_color || "#D4AF37";
   const bgColor = brandKit?.background_color || "#FFFFFF";
   const textColor = brandKit?.text_color || "#111827";
@@ -66,7 +72,7 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
       addr.complement ? `${addr.complement}` : "",
       addr.neighborhood ? `${addr.neighborhood}` : "",
       addr.city ? `${addr.city} - ${addr.state || ""}` : "",
-      addr.zip ? `CEP ${addr.zip}` : ""
+      addr.zip ? `CEP ${addr.zip}` : "",
     ].filter(Boolean);
     return parts.join(" — ");
   };
@@ -86,10 +92,10 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
   return (
     <div
       className="w-full min-h-full bg-white text-slate-900 p-8 flex flex-col"
-      style={{ 
+      style={{
         ...styleVars,
         fontSize: "12px",
-        fontFamily: "var(--brand-body-font, sans-serif)"
+        fontFamily: "var(--brand-body-font, sans-serif)",
       }}
     >
       <link
@@ -110,8 +116,8 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
               crossOrigin="anonymous"
             />
           ) : (
-            <div 
-              className="text-xl font-black tracking-tighter" 
+            <div
+              className="text-xl font-black tracking-tighter"
               style={{ color: brand, fontFamily: "var(--brand-heading-font, sans-serif)" }}
             >
               {agency.name}
@@ -120,7 +126,7 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
           <div className="text-[10px] text-slate-400 mt-0.5">Guia de Embarque</div>
         </div>
         <div className="text-right">
-          <div 
+          <div
             className="text-2xl font-black tracking-tighter text-slate-800"
             style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
           >
@@ -140,7 +146,7 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {v.passengers.map((p, i) => (
               <div key={i} className="flex flex-col border border-slate-100 rounded-md px-3 py-2">
-                <span 
+                <span
                   className="font-bold text-[12px] text-slate-800"
                   style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
                 >
@@ -162,7 +168,7 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
           {v.flights.map((f, i) => (
             <div key={i} className="mb-2 bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
               <div className="flex items-center justify-between mb-1">
-                <span 
+                <span
                   className="font-black text-base tracking-tighter"
                   style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
                 >
@@ -191,7 +197,7 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
         <Section title="Hospedagem">
           {v.accommodation.map((a, i) => (
             <div key={i} className="mb-2 bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
-              <div 
+              <div
                 className="font-bold text-[13px]"
                 style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
               >
@@ -266,8 +272,12 @@ export default function TemplateVoucherEmbarqueA4({ voucher: v, agency, brandKit
             {companyProfile.cnpj && <div>CNPJ: {companyProfile.cnpj}</div>}
             {companyProfile.phone && <div>Tel: {companyProfile.phone}</div>}
             {companyProfile.email && <div>E-mail: {companyProfile.email}</div>}
-            {companyProfile.website && <div className="col-span-2">Site: {companyProfile.website}</div>}
-            {agencyAddress && <div className="col-span-2 md:col-span-3">Endereço: {agencyAddress}</div>}
+            {companyProfile.website && (
+              <div className="col-span-2">Site: {companyProfile.website}</div>
+            )}
+            {agencyAddress && (
+              <div className="col-span-2 md:col-span-3">Endereço: {agencyAddress}</div>
+            )}
           </div>
         )}
         <div className="flex items-center justify-between text-[9px] text-slate-400">

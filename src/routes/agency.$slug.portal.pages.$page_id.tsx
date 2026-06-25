@@ -72,7 +72,13 @@ import {
   revertPortalPageVersion,
 } from "@/services/portal";
 import { useBlockEditor } from "@/hooks/use-block-editor";
-import { BLOCK_LABELS, BLOCK_DEFAULTS, PortalBlockType, BLOCK_CONTEXTS, BLOCK_CATEGORIES } from "@/lib/cms-types";
+import {
+  BLOCK_LABELS,
+  BLOCK_DEFAULTS,
+  PortalBlockType,
+  BLOCK_CONTEXTS,
+  BLOCK_CATEGORIES,
+} from "@/lib/cms-types";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -198,6 +204,9 @@ function PageEditorRoute() {
   const [template, setTemplate] = useState("default");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDesc, setMetaDesc] = useState("");
+  const [fbPixelId, setFbPixelId] = useState("");
+  const [googleAnalyticsId, setGoogleAnalyticsId] = useState("");
+  const [customScripts, setCustomScripts] = useState("");
 
   const {
     blocks,
@@ -217,7 +226,7 @@ function PageEditorRoute() {
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [leftTab, setLeftTab] = useState<"sections" | "templates" | "layers">("sections");
 
-  const mode: "site" | "package" | "biolink" | "document" = 
+  const mode: "site" | "package" | "biolink" | "document" =
     template === "biolink" || template?.startsWith("hopp-")
       ? "biolink"
       : template === "roteiros-landing"
@@ -287,10 +296,23 @@ function PageEditorRoute() {
     if (initialData && !isNew && !hasInitialized) {
       setTitle(initialData.title || "");
       setPageSlug(initialData.slug || "");
-      setTemplate(initialData.template || "default");
+      const currentTemplate = initialData.template || "default";
+      setTemplate(currentTemplate);
       setInitialBlocks(initialData.blocks || []);
       setMetaTitle(initialData.seo?.meta_title || "");
       setMetaDesc(initialData.seo?.meta_description || "");
+      setFbPixelId((initialData.seo as any)?.fb_pixel_id || "");
+      setGoogleAnalyticsId((initialData.seo as any)?.google_analytics_id || "");
+      setCustomScripts((initialData.seo as any)?.custom_scripts || "");
+
+      const isMobileLP =
+        currentTemplate === "mobile-landing" || currentTemplate?.startsWith("mobile-");
+      if (isMobileLP) {
+        setViewport("mobile");
+      } else if (currentTemplate === "biolink" || currentTemplate?.startsWith("hopp-")) {
+        setViewport("mobile");
+      }
+
       setHasInitialized(true);
     }
   }, [initialData, isNew, hasInitialized, setInitialBlocks]);
@@ -458,12 +480,16 @@ function PageEditorRoute() {
   useEffect(() => {
     if (!hasInitialized || isNew || isLoading || !agency || !initialData) return;
 
+    const initialSeo = initialData?.seo as any;
     const hasChanged =
       title !== (initialData?.title || "") ||
       pageSlug !== (initialData?.slug || "") ||
       template !== (initialData?.template || "default") ||
-      metaTitle !== (initialData?.seo?.meta_title || "") ||
-      metaDesc !== (initialData?.seo?.meta_description || "") ||
+      metaTitle !== (initialSeo?.meta_title || "") ||
+      metaDesc !== (initialSeo?.meta_description || "") ||
+      fbPixelId !== (initialSeo?.fb_pixel_id || "") ||
+      googleAnalyticsId !== (initialSeo?.google_analytics_id || "") ||
+      customScripts !== (initialSeo?.custom_scripts || "") ||
       JSON.stringify(blocks) !== JSON.stringify(initialData?.blocks || []);
 
     if (!hasChanged) return;
@@ -481,7 +507,13 @@ function PageEditorRoute() {
           finalSlug,
           template,
           blocks,
-          { meta_title: metaTitle, meta_description: metaDesc },
+          {
+            meta_title: metaTitle,
+            meta_description: metaDesc,
+            fb_pixel_id: fbPixelId || null,
+            google_analytics_id: googleAnalyticsId || null,
+            custom_scripts: customScripts || null,
+          },
         );
         setSaveStatus("saved");
         qc.invalidateQueries({ queryKey: ["portal-page", page_id] });
@@ -494,7 +526,20 @@ function PageEditorRoute() {
     }, 1500);
 
     return () => clearTimeout(delayDebounce);
-  }, [blocks, title, pageSlug, template, metaTitle, metaDesc, hasInitialized, isNew, agency]);
+  }, [
+    blocks,
+    title,
+    pageSlug,
+    template,
+    metaTitle,
+    metaDesc,
+    fbPixelId,
+    googleAnalyticsId,
+    customScripts,
+    hasInitialized,
+    isNew,
+    agency,
+  ]);
 
   if (isLoading) {
     return <div className="p-8 text-sm text-muted-foreground">Carregando editor...</div>;
@@ -513,7 +558,13 @@ function PageEditorRoute() {
       finalSlug,
       template,
       blocks,
-      { meta_title: metaTitle, meta_description: metaDesc },
+      {
+        meta_title: metaTitle,
+        meta_description: metaDesc,
+        fb_pixel_id: fbPixelId || null,
+        google_analytics_id: googleAnalyticsId || null,
+        custom_scripts: customScripts || null,
+      },
     );
   }
 
@@ -736,7 +787,9 @@ function PageEditorRoute() {
 
         <div className="hidden sm:flex items-center gap-2">
           {saveStatus === "saving" && (
-            <span className="text-[10px] text-muted-foreground animate-pulse mr-1">Salvando...</span>
+            <span className="text-[10px] text-muted-foreground animate-pulse mr-1">
+              Salvando...
+            </span>
           )}
           {saveStatus === "saved" && (
             <span className="text-[10px] text-green-600 font-bold mr-1">✓ Salvo</span>
@@ -757,10 +810,20 @@ function PageEditorRoute() {
             </a>
           )}
 
-          <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting} className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider">
+          <GhostButton
+            type="button"
+            onClick={saveDraftOnly}
+            disabled={submitting}
+            className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider"
+          >
             Salvar Rascunho
           </GhostButton>
-          <PrimaryButton type="button" onClick={publishPage} disabled={submitting} className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider">
+          <PrimaryButton
+            type="button"
+            onClick={publishPage}
+            disabled={submitting}
+            className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider"
+          >
             {submitting ? "Salvando..." : "Publicar"}
           </PrimaryButton>
         </div>
@@ -908,7 +971,9 @@ function PageEditorRoute() {
             {leftTab === "sections" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Biblioteca de Seções</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+                    Biblioteca de Seções
+                  </h4>
                   <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
                     Adicione novos blocos ao layout.
                   </p>
@@ -935,28 +1000,63 @@ function PageEditorRoute() {
                         {visibleTypes.map((type) => {
                           let IconComponent: React.ComponentType<any> = LayoutTemplate;
                           if (type === "text") IconComponent = Type;
-                          else if (type === "gallery" || type === "biolink_header") IconComponent = ImageIcon;
+                          else if (type === "gallery" || type === "biolink_header")
+                            IconComponent = ImageIcon;
                           else if (type === "contact") IconComponent = PhoneCall;
-                          else if (type === "features" || type === "biolink_links") IconComponent = ListPlus;
-                          else if (type === "cta" || type === "promotional_banner" || type === "news_announcements_ticker") IconComponent = Megaphone;
-                          else if (type === "faq" || type === "support_ticket_form" || type === "travel_tips_faq" || type === "faq_category_accordion") IconComponent = HelpCircle;
-                          else if (type === "testimonials" || type === "live_reviews" || type === "reviews_submission_form") IconComponent = Quote;
-                          else if (type === "tours_grid" || type === "tours_carousel") IconComponent = Bus;
+                          else if (type === "features" || type === "biolink_links")
+                            IconComponent = ListPlus;
+                          else if (
+                            type === "cta" ||
+                            type === "promotional_banner" ||
+                            type === "news_announcements_ticker"
+                          )
+                            IconComponent = Megaphone;
+                          else if (
+                            type === "faq" ||
+                            type === "support_ticket_form" ||
+                            type === "travel_tips_faq" ||
+                            type === "faq_category_accordion"
+                          )
+                            IconComponent = HelpCircle;
+                          else if (
+                            type === "testimonials" ||
+                            type === "live_reviews" ||
+                            type === "reviews_submission_form"
+                          )
+                            IconComponent = Quote;
+                          else if (type === "tours_grid" || type === "tours_carousel")
+                            IconComponent = Bus;
                           else if (type === "stats") IconComponent = BarChart2;
                           else if (type === "video") IconComponent = Play;
-                          else if (type === "map" || type === "dynamic_map_route") IconComponent = Map;
+                          else if (type === "map" || type === "dynamic_map_route")
+                            IconComponent = Map;
                           else if (type === "blog_feed") IconComponent = Rss;
                           else if (type === "featured_destination_filter") IconComponent = Globe;
-                          else if (type === "team_widget" || type === "agent_profile_card") IconComponent = Users;
-                          else if (type === "whatsapp_departments" || type === "whatsapp_floating_bubble") IconComponent = MessageSquare;
-                          else if (type === "countdown_tour" || type === "live_sales_counter" || type === "client_boarding_timeline") IconComponent = Clock;
-                          else if (type === "exchange_rates" || type === "currency_calculator") IconComponent = Coins;
+                          else if (type === "team_widget" || type === "agent_profile_card")
+                            IconComponent = Users;
+                          else if (
+                            type === "whatsapp_departments" ||
+                            type === "whatsapp_floating_bubble"
+                          )
+                            IconComponent = MessageSquare;
+                          else if (
+                            type === "countdown_tour" ||
+                            type === "live_sales_counter" ||
+                            type === "client_boarding_timeline"
+                          )
+                            IconComponent = Clock;
+                          else if (type === "exchange_rates" || type === "currency_calculator")
+                            IconComponent = Coins;
                           else if (type === "agency_vouchers") IconComponent = Ticket;
                           else if (type === "weather_forecast") IconComponent = CloudSun;
                           else if (type === "itinerary_timeline") IconComponent = Calendar;
                           else if (type === "lead_capture_callback") IconComponent = PhoneCall;
                           else if (type === "payment_gateways_display") IconComponent = CreditCard;
-                          else if (type === "live_tours_map" || type === "custom_package_lead_builder") IconComponent = Compass;
+                          else if (
+                            type === "live_tours_map" ||
+                            type === "custom_package_lead_builder"
+                          )
+                            IconComponent = Compass;
                           else if (type === "gift_cards_store") IconComponent = Gift;
                           else if (type === "corporate_rfp_form") IconComponent = Building;
                           else if (type === "client_document_upload") IconComponent = Upload;
@@ -1013,7 +1113,9 @@ function PageEditorRoute() {
             {leftTab === "templates" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Designs Prontos</h4>
+                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+                    Designs Prontos
+                  </h4>
                   <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
                     Selecione um template pronto.
                   </p>
@@ -1095,16 +1197,15 @@ function PageEditorRoute() {
           </div>
         )}
 
-
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
         <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
-
           {/* ── Canvas Ruler: device indicator ── */}
           <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-border bg-white/70">
             <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">
               {viewport === "desktop" && "Desktop · 1200px"}
               {viewport === "tablet" && "Tablet · 768px"}
-              {viewport === "mobile" && (mode === "biolink" ? "Biolink Mobile · 390px" : "Mobile · 390px")}
+              {viewport === "mobile" &&
+                (mode === "biolink" ? "Biolink Mobile · 390px" : "Mobile · 390px")}
             </span>
             {mode === "biolink" && (
               <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-brand/10 text-brand border border-brand/20 rounded-sm">
@@ -1160,66 +1261,70 @@ function PageEditorRoute() {
         </div>
 
         {/* ── 3. RIGHT SIDEBAR: Block Properties Editor (360px) ── */}
-        {selectedBlockId && (() => {
-          const activeBlock = blocks.find((b) => b.id === selectedBlockId);
-          const blockLabel = BLOCK_LABELS[activeBlock?.type as keyof typeof BLOCK_LABELS] ?? "Seção";
-          return (
-            <div className="w-[360px] flex-shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
-              {/* Header */}
-              <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-border shrink-0">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-brand">
-                    Propriedades
-                  </span>
-                  <h3 className="font-bold text-sm text-foreground leading-tight">{blockLabel}</h3>
+        {selectedBlockId &&
+          (() => {
+            const activeBlock = blocks.find((b) => b.id === selectedBlockId);
+            const blockLabel =
+              BLOCK_LABELS[activeBlock?.type as keyof typeof BLOCK_LABELS] ?? "Seção";
+            return (
+              <div className="w-[360px] flex-shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-border shrink-0">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-brand">
+                      Propriedades
+                    </span>
+                    <h3 className="font-bold text-sm text-foreground leading-tight">
+                      {blockLabel}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBlockId(null)}
+                    title="Fechar painel"
+                    className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-sm transition-colors mt-0.5"
+                  >
+                    <PanelLeft className="w-4 h-4" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedBlockId(null)}
-                  title="Fechar painel"
-                  className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-sm transition-colors mt-0.5"
-                >
-                  <PanelLeft className="w-4 h-4" />
-                </button>
-              </div>
 
-              {/* Scrollable form area */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-thin">
-                {blocks.map((block) =>
-                  block.id === selectedBlockId ? (
-                    <BlockFormEditor
-                      key={block.id}
-                      block={block}
-                      updateBlock={updateBlock}
-                      agencyId={agency.id}
-                    />
-                  ) : null,
-                )}
-              </div>
+                {/* Scrollable form area */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-thin">
+                  {blocks.map((block) =>
+                    block.id === selectedBlockId ? (
+                      <BlockFormEditor
+                        key={block.id}
+                        block={block}
+                        updateBlock={updateBlock}
+                        agencyId={agency.id}
+                      />
+                    ) : null,
+                  )}
+                </div>
 
-              {/* Footer actions */}
-              <div className="px-5 py-3 border-t border-border shrink-0 flex gap-2">
-                <GhostButton
-                  type="button"
-                  onClick={() => {
-                    removeBlock(selectedBlockId);
-                    setSelectedBlockId(null);
-                  }}
-                  className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 text-[10px] uppercase tracking-wider font-bold"
-                >
-                  <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
-                </GhostButton>
-                <PrimaryButton
-                  type="button"
-                  onClick={() => setSelectedBlockId(null)}
-                  className="flex-1 justify-center text-[10px] uppercase tracking-wider font-bold"
-                >
-                  Concluído
-                </PrimaryButton>
+                {/* Footer actions */}
+                <div className="px-5 py-3 border-t border-border shrink-0 flex gap-2">
+                  <GhostButton
+                    type="button"
+                    onClick={() => {
+                      removeBlock(selectedBlockId);
+                      setSelectedBlockId(null);
+                    }}
+                    className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 text-[10px] uppercase tracking-wider font-bold"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
+                  </GhostButton>
+                  <PrimaryButton
+                    type="button"
+                    onClick={() => setSelectedBlockId(null)}
+                    className="flex-1 justify-center text-[10px] uppercase tracking-wider font-bold"
+                  >
+                    Concluído
+                  </PrimaryButton>
+                </div>
               </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
       </div>
 
       {/* Visual template application confirm Sheet */}
@@ -1358,6 +1463,8 @@ function PageEditorRoute() {
                 <option value="roteiros-landing">Template Roteiro Premium</option>
                 <option value="sobre-nos">Template Sobre Nós Estético</option>
                 <option value="contato-suporte">Template Contato Integrado</option>
+                <option value="mobile-landing">Landing Page Mobile (Branco)</option>
+                <option value="mobile-leads">Landing Mobile: Captação de Leads (Ads)</option>
                 <option value="hopp-clean">Hopp Wix: Clean Light</option>
                 <option value="hopp-dark">Hopp Wix: Dark Premium</option>
                 <option value="hopp-vibrant">Hopp Wix: Vibrant Color</option>
@@ -1400,6 +1507,42 @@ function PageEditorRoute() {
                 onChange={(e) => setMetaDesc(e.target.value)}
                 rows={5}
                 placeholder="Ex: Conheça os melhores destinos..."
+              />
+            </Field>
+
+            <hr className="my-4 border-border" />
+            <div className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+              Rastreamento & Pixels (Ads)
+            </div>
+
+            <Field label="Facebook Pixel ID" hint="ID numérico do pixel do Facebook / Meta Ads">
+              <Input
+                value={fbPixelId}
+                onChange={(e) => setFbPixelId(e.target.value)}
+                placeholder="Ex: 123456789012345"
+              />
+            </Field>
+
+            <Field
+              label="Google Analytics ID"
+              hint="ID de medição do Google Analytics (G-XXXXXXXXXX)"
+            >
+              <Input
+                value={googleAnalyticsId}
+                onChange={(e) => setGoogleAnalyticsId(e.target.value)}
+                placeholder="Ex: G-XXXXXXXXXX"
+              />
+            </Field>
+
+            <Field
+              label="Scripts de Rastreamento Customizados"
+              hint="Injete códigos HTML/JS adicionais na página (tags <script>, hotjar, etc)"
+            >
+              <Textarea
+                value={customScripts}
+                onChange={(e) => setCustomScripts(e.target.value)}
+                rows={4}
+                placeholder="<!-- Insira seus scripts de rastreamento aqui -->"
               />
             </Field>
           </div>
@@ -1561,7 +1704,9 @@ function PageEditorRoute() {
       <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-md border border-border/85 p-2.5 rounded-xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           {saveStatus === "saving" && (
-            <span className="text-[10px] text-muted-foreground animate-pulse truncate">Salvando...</span>
+            <span className="text-[10px] text-muted-foreground animate-pulse truncate">
+              Salvando...
+            </span>
           )}
           {saveStatus === "saved" && (
             <span className="text-[10px] text-green-600 font-bold">✓ Salvo</span>
@@ -1571,10 +1716,20 @@ function PageEditorRoute() {
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <GhostButton type="button" onClick={saveDraftOnly} disabled={submitting} className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg">
+          <GhostButton
+            type="button"
+            onClick={saveDraftOnly}
+            disabled={submitting}
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg"
+          >
             Salvar
           </GhostButton>
-          <PrimaryButton type="button" onClick={publishPage} disabled={submitting} className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg">
+          <PrimaryButton
+            type="button"
+            onClick={publishPage}
+            disabled={submitting}
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg"
+          >
             {submitting ? "..." : "Publicar"}
           </PrimaryButton>
         </div>

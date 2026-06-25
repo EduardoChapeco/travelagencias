@@ -537,9 +537,7 @@ function BillingPage() {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span>
-                          Crédito do Plano Anterior ({currentPlan?.name || "Essencial"}):
-                        </span>
+                        <span>Crédito do Plano Anterior ({currentPlan?.name || "Essencial"}):</span>
                         <span className="text-success font-bold">
                           -{brl(prorationQ.data?.credit_amount ?? 0)}
                         </span>
@@ -552,8 +550,8 @@ function BillingPage() {
                         </span>
                       </div>
                       <div className="text-[10px] text-muted-foreground/80 leading-relaxed mt-1">
-                        * Seu novo ciclo de faturamento mensal de 30 dias começa a valer a partir
-                        de hoje.
+                        * Seu novo ciclo de faturamento mensal de 30 dias começa a valer a partir de
+                        hoje.
                       </div>
                     </div>
                   )}
@@ -588,8 +586,8 @@ function BillingPage() {
                       </div>
                       <span className="text-[9px] text-muted-foreground block mt-1">
                         * Dica: Digite um número começando com{" "}
-                        <strong className="text-foreground">5</strong> para testar a tela de
-                        compra recusada.
+                        <strong className="text-foreground">5</strong> para testar a tela de compra
+                        recusada.
                       </span>
                     </div>
                     <div>

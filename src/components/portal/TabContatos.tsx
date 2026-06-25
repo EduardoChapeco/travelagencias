@@ -29,7 +29,8 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
         body: {
           action: "completion",
           prompt: `Viajante brasileiro indo para: ${uniqueDests}. Retorne JSON array com dados de cada pais (incluindo conexoes): [{"country": "Nome", "flag": "Emoji", "emergency": "Numero", "police": "Numero", "ambulance": "Numero", "consulate": {"name": "Consulado Brasileiro", "phone": "+XX...", "address": "Endereco"}, "key_rules": ["Regra 1", "Regra 2"], "mandatory_taxes": ["Taxa 1"], "currency": "Moeda local", "voltage": "V", "timezone": "UTC+/-X"}]. Retorne APENAS JSON valido, sem markdown.`,
-          systemPrompt: "Voce e especialista em viagens internacionais. Retorne APENAS JSON valido.",
+          systemPrompt:
+            "Voce e especialista em viagens internacionais. Retorne APENAS JSON valido.",
           modelPreference: "smart",
         },
       });
@@ -153,7 +154,9 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
                           href={`tel:${country.emergency}`}
                           className="flex flex-col items-center py-3 hover:bg-danger/5 transition-colors"
                         >
-                          <span className="text-xs font-black text-danger">{country.emergency}</span>
+                          <span className="text-xs font-black text-danger">
+                            {country.emergency}
+                          </span>
                           <span className="text-[9px] text-muted-foreground uppercase tracking-wide">
                             Emergência
                           </span>

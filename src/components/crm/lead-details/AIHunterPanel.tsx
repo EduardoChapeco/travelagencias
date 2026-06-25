@@ -165,9 +165,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-brand" />
-          <span className="font-bold text-sm text-foreground">
-            Análise de Perfil do Cliente
-          </span>
+          <span className="font-bold text-sm text-foreground">Análise de Perfil do Cliente</span>
         </div>
         <button
           onClick={triggerAnalysis}
@@ -193,9 +191,9 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         </div>
 
         <p className="text-xs text-muted-foreground leading-relaxed">
-          O assistente analisa as últimas 30 mensagens deste lead no chat do WhatsApp para
-          extrair o roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no
-          formato de rascunho com apenas 1 clique.
+          O assistente analisa as últimas 30 mensagens deste lead no chat do WhatsApp para extrair o
+          roteiro, voos, hotéis e passeios citados, e cria uma proposta completa no formato de
+          rascunho com apenas 1 clique.
         </p>
 
         {errorMsg && <p className="text-xs text-danger font-medium">{errorMsg}</p>}

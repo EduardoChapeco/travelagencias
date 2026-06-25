@@ -71,7 +71,7 @@ BEGIN
   UPDATE public.external_entity_links
   SET status = 'orphaned', last_synced_at = now()
   WHERE internal_entity_type = TG_TABLE_NAME AND internal_id = OLD.id;
-  
+
   RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
@@ -86,4 +86,5 @@ CREATE TRIGGER protect_trips_links_trg
 ---
 
 ## 3. Diretrizes de Segurança Contábil
+
 A tabela de auditoria `sync_attempts` e a fila de entrada `sync_inbox` só podem ser lidas por administradores ou pelo papel interno de sistema (`service_role`). Isso impede que operadores comuns acessem payloads contendo margens brutas da agência, valores de comissão acordados com a Infotravel ou logs de handshake financeiro de faturamento da empresa.

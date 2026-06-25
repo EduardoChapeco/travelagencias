@@ -18,7 +18,16 @@ import {
   Building,
   DollarSign,
 } from "lucide-react";
-import { Field, Input, Select, PrimaryButton, GhostButton, StatusBadge, money, fmtDate } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+  money,
+  fmtDate,
+} from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
   head: () => ({ meta: [{ title: "Conciliação Diária · TravelOS" }] }),
@@ -70,9 +79,9 @@ function ReconciliationPage() {
         .select("*, payment_plans(*, trips(*, clients(*)))")
         .eq("receipt_status", "pending")
         .order("receipt_uploaded_at", { ascending: true });
-      
+
       if (error) throw error;
-      
+
       return (data || []).map((pi: any) => ({
         id: pi.id,
         number: pi.number,
@@ -81,20 +90,26 @@ function ReconciliationPage() {
         receipt_url: pi.receipt_url,
         receipt_uploaded_at: pi.receipt_uploaded_at,
         payment_method: pi.payment_method || "pix",
-        payment_plan: pi.payment_plans ? {
-          id: pi.payment_plans.id,
-          trip: pi.payment_plans.trips ? {
-            id: pi.payment_plans.trips.id,
-            code: pi.payment_plans.trips.code,
-            title: pi.payment_plans.trips.title,
-            client: pi.payment_plans.trips.clients ? {
-              id: pi.payment_plans.trips.clients.id,
-              full_name: pi.payment_plans.trips.clients.full_name,
-            } : null
-          } : null
-        } : null
+        payment_plan: pi.payment_plans
+          ? {
+              id: pi.payment_plans.id,
+              trip: pi.payment_plans.trips
+                ? {
+                    id: pi.payment_plans.trips.id,
+                    code: pi.payment_plans.trips.code,
+                    title: pi.payment_plans.trips.title,
+                    client: pi.payment_plans.trips.clients
+                      ? {
+                          id: pi.payment_plans.trips.clients.id,
+                          full_name: pi.payment_plans.trips.clients.full_name,
+                        }
+                      : null,
+                  }
+                : null,
+            }
+          : null,
       })) as PendingReceipt[];
-    }
+    },
   });
 
   // 2. Query active registers & sessions
@@ -108,7 +123,7 @@ function ReconciliationPage() {
         .eq("is_active", true);
       if (error) throw error;
       return (data || []) as { id: string; name: string; type: string }[];
-    }
+    },
   });
 
   const sessionsQ = useQuery({
@@ -120,16 +135,29 @@ function ReconciliationPage() {
         .select("*")
         .eq("status", "open");
       if (error) throw error;
-      return (data || []) as { id: string; cash_register_id: string; status: string; opened_at: string }[];
-    }
+      return (data || []) as {
+        id: string;
+        cash_register_id: string;
+        status: string;
+        opened_at: string;
+      }[];
+    },
   });
 
   // 3. Approval mutation
   const approveReceipt = useMutation({
-    mutationFn: async ({ receiptId, regId, sessId }: { receiptId: string; regId: string; sessId: string }) => {
+    mutationFn: async ({
+      receiptId,
+      regId,
+      sessId,
+    }: {
+      receiptId: string;
+      regId: string;
+      sessId: string;
+    }) => {
       setActionBusy(true);
       try {
-        const target = (receiptsQ.data || []).find(r => r.id === receiptId);
+        const target = (receiptsQ.data || []).find((r) => r.id === receiptId);
         if (!target) throw new Error("Recibo não localizado");
 
         // DB Update
@@ -138,27 +166,24 @@ function ReconciliationPage() {
           .update({
             status: "paid",
             paid_at: new Date().toISOString(),
-            receipt_status: "approved"
+            receipt_status: "approved",
           })
           .eq("id", receiptId);
 
         if (piErr) throw piErr;
 
         // DB Transaction Register entry
-        const { error: txErr } = await (supabase as any)
-          .from("financial_transactions")
-          .insert({
-            agency_id: agency!.id,
-            cash_register_id: regId || null,
-            cash_session_id: sessId || null,
-            amount: target.amount,
-            type: "receipt",
-            payment_method: target.payment_method || "pix",
-            notes: `Conciliação Parcela #${target.number} - Viagem ${target.payment_plan?.trip?.code || "S/N"}`
-          });
+        const { error: txErr } = await (supabase as any).from("financial_transactions").insert({
+          agency_id: agency!.id,
+          cash_register_id: regId || null,
+          cash_session_id: sessId || null,
+          amount: target.amount,
+          type: "receipt",
+          payment_method: target.payment_method || "pix",
+          notes: `Conciliação Parcela #${target.number} - Viagem ${target.payment_plan?.trip?.code || "S/N"}`,
+        });
 
         if (txErr) console.warn("Could not insert transaction, continuing:", txErr.message);
-
       } catch (err: any) {
         console.error("Approval DB write failed:", err.message);
         throw err;
@@ -173,7 +198,7 @@ function ReconciliationPage() {
     },
     onError: (err: any) => {
       toast.error("Erro ao aprovar comprovante: " + err.message);
-    }
+    },
   });
 
   // 4. Rejection mutation
@@ -185,10 +210,10 @@ function ReconciliationPage() {
           .from("payment_installments")
           .update({
             receipt_status: "rejected",
-            rejection_reason: reason
+            rejection_reason: reason,
           })
           .eq("id", receiptId);
-        
+
         if (error) throw error;
       } catch (err: any) {
         console.error("Rejection DB write failed:", err.message);
@@ -205,7 +230,7 @@ function ReconciliationPage() {
     },
     onError: (err: any) => {
       toast.error("Erro ao recusar comprovante: " + err.message);
-    }
+    },
   });
 
   const list = receiptsQ.data || [];
@@ -222,7 +247,9 @@ function ReconciliationPage() {
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-foreground">Conciliação Diária de Recibos</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">Audite, aprove ou recuse comprovantes Pix e depósitos enviados pelos viajantes.</p>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Audite, aprove ou recuse comprovantes Pix e depósitos enviados pelos viajantes.
+        </p>
       </div>
 
       {/* Filter and stats banner */}
@@ -236,13 +263,17 @@ function ReconciliationPage() {
 
         <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-xl text-xs text-amber-800">
           <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-          <span><strong>{list.length}</strong> comprovantes pendentes de validação hoje.</span>
+          <span>
+            <strong>{list.length}</strong> comprovantes pendentes de validação hoje.
+          </span>
         </div>
       </div>
 
       {/* Main List */}
       {receiptsQ.isLoading ? (
-        <div className="text-center py-10 text-xs text-muted-foreground animate-pulse">Carregando comprovantes...</div>
+        <div className="text-center py-10 text-xs text-muted-foreground animate-pulse">
+          Carregando comprovantes...
+        </div>
       ) : filtered.length === 0 ? (
         <div className="border border-dashed border-border rounded-2xl py-12 text-center text-xs text-muted-foreground bg-surface">
           <CheckCircle className="w-8 h-8 mx-auto text-emerald-600 mb-2.5 opacity-60" />
@@ -254,82 +285,92 @@ function ReconciliationPage() {
             <table className="w-full text-xs">
               <thead className="bg-gray-50 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-gray-500">
                 <tr>
-                <th className="px-4 py-3">Código/Viagem</th>
-                <th className="px-4 py-3">Passageiro</th>
-                <th className="px-4 py-3">Parcela</th>
-                <th className="px-4 py-3 text-right">Valor</th>
-                <th className="px-4 py-3">Método</th>
-                <th className="px-4 py-3">Enviado em</th>
-                <th className="px-4 py-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filtered.map((rec) => (
-                <tr key={rec.id} className="hover:bg-gray-50/60 transition-colors">
-                  <td className="px-4 py-3.5">
-                    <div className="font-mono font-bold text-gray-700">{rec.payment_plan?.trip?.code}</div>
-                    <div className="text-[10px] text-muted-foreground truncate max-w-[220px] mt-0.5">{rec.payment_plan?.trip?.title}</div>
-                  </td>
-                  <td className="px-4 py-3.5 font-semibold text-gray-900">
-                    {rec.payment_plan?.trip?.client?.full_name || "—"}
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <span className="font-mono text-gray-600">Parcela #{rec.number}</span>
-                    <div className="text-[9px] text-muted-foreground mt-0.5">Vencimento: {fmtDate(rec.due_date)}</div>
-                  </td>
-                  <td className="px-4 py-3.5 text-right font-mono font-bold text-gray-900">
-                    {money(rec.amount)}
-                  </td>
-                  <td className="px-4 py-3.5 capitalize">
-                    <span className="inline-flex items-center gap-1">
-                      <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
-                      {rec.payment_method === "bank_transfer" ? "T. Bancária" : rec.payment_method}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3.5 text-muted-foreground font-mono">
-                    {new Date(rec.receipt_uploaded_at).toLocaleString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                  </td>
-                  <td className="px-4 py-3.5 text-right">
-                    <div className="inline-flex items-center gap-1.5">
-                      <button
-                        onClick={() => handleViewReceipt(rec.receipt_url)}
-                        className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
-                        title="Ver Comprovante"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedReceipt(rec);
-                          const matchingSession = sessionsQ.data?.find(s => s.status === "open");
-                          if (matchingSession) {
-                            setSelectedSessionId(matchingSession.id);
-                            setSelectedRegisterId(matchingSession.cash_register_id);
-                          }
-                        }}
-                        className="h-7 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <Check className="w-3.5 h-3.5" /> Conciliar
-                      </button>
-                      <button
-                        onClick={() => setRejectReceipt(rec)}
-                        className="h-7 px-2.5 rounded-lg border border-border hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <X className="w-3.5 h-3.5" /> Recusar
-                      </button>
-                    </div>
-                  </td>
+                  <th className="px-4 py-3">Código/Viagem</th>
+                  <th className="px-4 py-3">Passageiro</th>
+                  <th className="px-4 py-3">Parcela</th>
+                  <th className="px-4 py-3 text-right">Valor</th>
+                  <th className="px-4 py-3">Método</th>
+                  <th className="px-4 py-3">Enviado em</th>
+                  <th className="px-4 py-3 text-right">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.map((rec) => (
+                  <tr key={rec.id} className="hover:bg-gray-50/60 transition-colors">
+                    <td className="px-4 py-3.5">
+                      <div className="font-mono font-bold text-gray-700">
+                        {rec.payment_plan?.trip?.code}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground truncate max-w-[220px] mt-0.5">
+                        {rec.payment_plan?.trip?.title}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 font-semibold text-gray-900">
+                      {rec.payment_plan?.trip?.client?.full_name || "—"}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className="font-mono text-gray-600">Parcela #{rec.number}</span>
+                      <div className="text-[9px] text-muted-foreground mt-0.5">
+                        Vencimento: {fmtDate(rec.due_date)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 text-right font-mono font-bold text-gray-900">
+                      {money(rec.amount)}
+                    </td>
+                    <td className="px-4 py-3.5 capitalize">
+                      <span className="inline-flex items-center gap-1">
+                        <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
+                        {rec.payment_method === "bank_transfer"
+                          ? "T. Bancária"
+                          : rec.payment_method}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground font-mono">
+                      {new Date(rec.receipt_uploaded_at).toLocaleString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                    <td className="px-4 py-3.5 text-right">
+                      <div className="inline-flex items-center gap-1.5">
+                        <button
+                          onClick={() => handleViewReceipt(rec.receipt_url)}
+                          className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
+                          title="Ver Comprovante"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedReceipt(rec);
+                            const matchingSession = sessionsQ.data?.find(
+                              (s) => s.status === "open",
+                            );
+                            if (matchingSession) {
+                              setSelectedSessionId(matchingSession.id);
+                              setSelectedRegisterId(matchingSession.cash_register_id);
+                            }
+                          }}
+                          className="h-7 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <Check className="w-3.5 h-3.5" /> Conciliar
+                        </button>
+                        <button
+                          onClick={() => setRejectReceipt(rec)}
+                          className="h-7 px-2.5 rounded-lg border border-border hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" /> Recusar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
       )}
 
       {/* Approve / Conciliation Drawer Modal */}
@@ -339,16 +380,25 @@ function ReconciliationPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Aprovar Comprovante</h3>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                  Aprovar Comprovante
+                </h3>
               </div>
-              <button onClick={() => setSelectedReceipt(null)} className="p-1 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
+              <button
+                onClick={() => setSelectedReceipt(null)}
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            
+
             <div className="p-5 space-y-4">
               <div className="bg-gray-50 border border-border rounded-xl p-4 text-xs space-y-2 font-mono">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Passageiro:</span>
-                  <strong className="text-gray-800">{selectedReceipt.payment_plan?.trip?.client?.full_name}</strong>
+                  <strong className="text-gray-800">
+                    {selectedReceipt.payment_plan?.trip?.client?.full_name}
+                  </strong>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Valor a Ratear:</span>
@@ -366,14 +416,18 @@ function ReconciliationPage() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">Destinar ao Caixa / Conta Bancária *</label>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
+                  Destinar ao Caixa / Conta Bancária *
+                </label>
                 <select
                   value={selectedRegisterId}
                   onChange={(e) => {
                     const regId = e.target.value;
                     setSelectedRegisterId(regId);
                     // Match corresponding session
-                    const sess = sessionsQ.data?.find(s => s.cash_register_id === regId && s.status === "open");
+                    const sess = sessionsQ.data?.find(
+                      (s) => s.cash_register_id === regId && s.status === "open",
+                    );
                     setSelectedSessionId(sess ? String(sess.id) : "");
                   }}
                   className="w-full h-10 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
@@ -391,18 +445,28 @@ function ReconciliationPage() {
               {selectedRegisterId && !selectedSessionId && (
                 <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-start gap-1.5">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o caixa físico exige uma sessão aberta. Registrando como depósito direto na conta.</span>
+                  <span>
+                    A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
+                    caixa físico exige uma sessão aberta. Registrando como depósito direto na conta.
+                  </span>
                 </div>
               )}
 
               <div className="flex gap-2.5 pt-2 border-t border-border">
-                <GhostButton onClick={() => setSelectedReceipt(null)} className="flex-1 h-10 text-xs">Cancelar</GhostButton>
+                <GhostButton
+                  onClick={() => setSelectedReceipt(null)}
+                  className="flex-1 h-10 text-xs"
+                >
+                  Cancelar
+                </GhostButton>
                 <PrimaryButton
-                  onClick={() => approveReceipt.mutate({
-                    receiptId: selectedReceipt.id,
-                    regId: selectedRegisterId,
-                    sessId: selectedSessionId
-                  })}
+                  onClick={() =>
+                    approveReceipt.mutate({
+                      receiptId: selectedReceipt.id,
+                      regId: selectedRegisterId,
+                      sessId: selectedSessionId,
+                    })
+                  }
                   disabled={actionBusy || !selectedRegisterId}
                   className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
                 >
@@ -421,14 +485,25 @@ function ReconciliationPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-rose-600" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Recusar Comprovante</h3>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                  Recusar Comprovante
+                </h3>
               </div>
-              <button onClick={() => setRejectReceipt(null)} className="p-1 rounded hover:bg-gray-100"><X className="w-4 h-4" /></button>
+              <button
+                onClick={() => setRejectReceipt(null)}
+                className="p-1 rounded hover:bg-gray-100"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            
+
             <div className="p-5 space-y-4">
-              <p className="text-xs text-muted-foreground leading-relaxed">O cliente será alertado no portal sobre a recusa do comprovante da Parcela #{rejectReceipt.number} (Valor: {money(rejectReceipt.amount)}) e poderá enviar um novo arquivo.</p>
-              
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                O cliente será alertado no portal sobre a recusa do comprovante da Parcela #
+                {rejectReceipt.number} (Valor: {money(rejectReceipt.amount)}) e poderá enviar um
+                novo arquivo.
+              </p>
+
               <Field label="Justificativa / Motivo da Recusa *">
                 <textarea
                   value={rejectionReason}
@@ -440,9 +515,16 @@ function ReconciliationPage() {
               </Field>
 
               <div className="flex gap-2.5 pt-2 border-t border-border">
-                <GhostButton onClick={() => setRejectReceipt(null)} className="flex-1 h-10 text-xs">Voltar</GhostButton>
+                <GhostButton onClick={() => setRejectReceipt(null)} className="flex-1 h-10 text-xs">
+                  Voltar
+                </GhostButton>
                 <PrimaryButton
-                  onClick={() => rejectReceiptMutation.mutate({ receiptId: rejectReceipt.id, reason: rejectionReason })}
+                  onClick={() =>
+                    rejectReceiptMutation.mutate({
+                      receiptId: rejectReceipt.id,
+                      reason: rejectionReason,
+                    })
+                  }
                   disabled={actionBusy || !rejectionReason.trim()}
                   className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-xl"
                 >

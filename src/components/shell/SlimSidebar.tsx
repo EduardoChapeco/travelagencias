@@ -42,9 +42,7 @@ function isItemActive(item: SlimSidebarItem, pathname: string): boolean {
     : pathname === normalized || pathname.startsWith(`${normalized}/`);
   if (directMatch) return true;
   if (item.matchPaths) {
-    return item.matchPaths.some(
-      (p) => pathname === p || pathname.startsWith(`${p}/`),
-    );
+    return item.matchPaths.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   }
   return false;
 }
@@ -103,7 +101,7 @@ export function SlimSidebar({
     }
     return 300;
   });
-  
+
   const [isNavCollapsed, setIsNavCollapsed] = useState(() => {
     if (typeof window !== "undefined") {
       return window.localStorage.getItem("travelos.sidebar.nav.collapsed") === "true";
@@ -138,7 +136,6 @@ export function SlimSidebar({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const isResizingRef = useRef(false);
-
 
   const startResize = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -206,13 +203,12 @@ export function SlimSidebar({
             active && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
           )}
         >
-          {ItemIcon && (
-            isPending ? (
+          {ItemIcon &&
+            (isPending ? (
               <Loader2 className="h-[15px] w-[15px] shrink-0 animate-spin" strokeWidth={1.8} />
             ) : (
               <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
-            )
-          )}
+            ))}
           <span className="truncate text-xs font-medium">{item.label}</span>
         </Link>
       </li>
@@ -253,16 +249,17 @@ export function SlimSidebar({
         </div>
 
         {/* Nav */}
-        <nav className="no-scrollbar flex-1 overflow-y-auto px-2 py-3" aria-label="Navegação principal">
+        <nav
+          className="no-scrollbar flex-1 overflow-y-auto px-2 py-3"
+          aria-label="Navegação principal"
+        >
           <ul className="space-y-0.5">
             {drawerItems.map((item, idx) => renderMobileItem(item, idx))}
           </ul>
         </nav>
 
         {footer && (
-          <div className="border-t border-sidebar-border p-2 flex justify-start">
-            {footer}
-          </div>
+          <div className="border-t border-sidebar-border p-2 flex justify-start">{footer}</div>
         )}
       </aside>
 
@@ -307,8 +304,8 @@ export function SlimSidebar({
                       ],
                     )}
                   >
-                    {ItemIcon && (
-                      isPending ? (
+                    {ItemIcon &&
+                      (isPending ? (
                         <Loader2 className="h-4 w-4 shrink-0 animate-spin" strokeWidth={1.8} />
                       ) : (
                         <ItemIcon
@@ -318,8 +315,7 @@ export function SlimSidebar({
                           )}
                           strokeWidth={active ? 2.2 : 1.8}
                         />
-                      )
-                    )}
+                      ))}
                   </Link>
                 );
               })}
@@ -395,13 +391,20 @@ export function SlimSidebar({
                               <ItemIcon
                                 className={cn(
                                   "h-3.5 w-3.5 shrink-0 transition-colors",
-                                  active ? "text-brand" : "text-muted-foreground/70 group-hover/ctx:text-foreground",
+                                  active
+                                    ? "text-brand"
+                                    : "text-muted-foreground/70 group-hover/ctx:text-foreground",
                                 )}
                                 strokeWidth={active ? 2.2 : 1.8}
                               />
-                              <span className="truncate text-[12px] leading-tight">{item.label}</span>
+                              <span className="truncate text-[12px] leading-tight">
+                                {item.label}
+                              </span>
                               {active && (
-                                <ChevronRight className="ml-auto h-3 w-3 shrink-0 text-brand/60" strokeWidth={2} />
+                                <ChevronRight
+                                  className="ml-auto h-3 w-3 shrink-0 text-brand/60"
+                                  strokeWidth={2}
+                                />
                               )}
                             </Link>
                           </li>
@@ -425,10 +428,12 @@ export function SlimSidebar({
                 )}
 
                 {/* Bottom: Contextual Chat Panel */}
-                <div className={cn(
-                  "min-h-0 border-t border-border/40",
-                  isChatCollapsed ? "shrink-0" : "flex-1 overflow-y-auto"
-                )}>
+                <div
+                  className={cn(
+                    "min-h-0 border-t border-border/40",
+                    isChatCollapsed ? "shrink-0" : "flex-1 overflow-y-auto",
+                  )}
+                >
                   <AIChatPanel
                     isEmbedded={true}
                     isCollapsed={isChatCollapsed}

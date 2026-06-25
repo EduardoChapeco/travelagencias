@@ -32,10 +32,10 @@ export function CancelModal({
         <div className="p-6 space-y-6">
           <div className="bg-danger/10 border border-danger/20 rounded-2xl p-4">
             <p className="text-xs text-danger font-medium leading-relaxed">
-              <strong>Atenção:</strong> O cancelamento da viagem está sujeito às políticas de
-              quebra de contrato, multas de fornecedores e da operadora. Ao prosseguir, um ticket
-              de nível de emergência será gerado para seu consultor, que entrará em contato para
-              apresentar as condições de reembolso.
+              <strong>Atenção:</strong> O cancelamento da viagem está sujeito às políticas de quebra
+              de contrato, multas de fornecedores e da operadora. Ao prosseguir, um ticket de nível
+              de emergência será gerado para seu consultor, que entrará em contato para apresentar
+              as condições de reembolso.
             </p>
           </div>
 

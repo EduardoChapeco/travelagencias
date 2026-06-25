@@ -48,7 +48,7 @@ export async function getOpenAIEmbedding(text: string): Promise<number[] | null>
       });
 
       if (res.ok) {
-        const json = await res.json() as any;
+        const json = (await res.json()) as any;
         return json.data?.[0]?.embedding || null;
       }
     }
@@ -76,12 +76,14 @@ export async function getOpenAIEmbedding(text: string): Promise<number[] | null>
       });
 
       if (res.ok) {
-        const json = await res.json() as any;
+        const json = (await res.json()) as any;
         return json.data?.[0]?.embedding || null;
       }
     }
 
-    console.warn("Nenhuma chave OpenAI ou OpenRouter disponível ou a chamada de embeddings falhou.");
+    console.warn(
+      "Nenhuma chave OpenAI ou OpenRouter disponível ou a chamada de embeddings falhou.",
+    );
     return null;
   } catch (e) {
     console.error("Erro RAG getOpenAIEmbedding:", e);
@@ -97,8 +99,16 @@ export async function searchKnowledgeRAG(
   queryText: string,
   category: string = "gateway_rules",
   limit: number = 3,
-  threshold: number = 0.6
-): Promise<Array<{ document_title: string; content: string; category: string; scope: string; similarity: number }>> {
+  threshold: number = 0.6,
+): Promise<
+  Array<{
+    document_title: string;
+    content: string;
+    category: string;
+    scope: string;
+    similarity: number;
+  }>
+> {
   const embedding = await getOpenAIEmbedding(queryText);
   if (!embedding) {
     console.warn("Não foi possível gerar embedding para a busca. RAG inativo.");
@@ -131,7 +141,7 @@ export async function ingestKnowledgeDocument(
   content: string,
   category: string = "gateway_rules",
   scope: "global" | "agency" = "agency",
-  sourceUrl?: string
+  sourceUrl?: string,
 ): Promise<{ documentId: string }> {
   // 1. Criar knowledge_source
   const { data: source, error: sourceErr } = await supabase
@@ -197,9 +207,7 @@ export async function ingestKnowledgeDocument(
   }
 
   if (embeddingInserts.length > 0) {
-    const { error: embErr } = await supabase
-      .from("knowledge_embeddings")
-      .insert(embeddingInserts);
+    const { error: embErr } = await supabase.from("knowledge_embeddings").insert(embeddingInserts);
     if (embErr) {
       console.error("Falha ao salvar embeddings dos chunks do RAG:", embErr.message);
     }

@@ -71,10 +71,12 @@ Este plano de ação implementa a estruturação de controle de check-in, geraç
 ## Verification Plan
 
 ### Automated Tests
+
 - Executar `npm run typecheck` para garantir que as alterações no frontend e definições de banco de dados se integram sem erros de tipo.
 - Executar `npm run build` para garantir a geração correta do pacote de produção.
 
 ### Manual Verification
+
 1. Aplicar a nova migração via script remoto.
 2. Atualizar o arquivo local `src/integrations/supabase/types.ts` com a nova estrutura de tabelas e funções.
 3. Simular o fluxo de acesso do passageiro com token móvel:

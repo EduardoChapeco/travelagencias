@@ -38,6 +38,7 @@ O motor estruturado é desenhado em camadas isoladas para garantir determinismo 
 ---
 
 ## 2. Abordagem Híbrida: Determinismo vs. IA
-*   **Determinismo**: Cálculos matemáticos, soma de tarifas, cálculo de conexões aéreas, e cruzamento de horários de check-in são programados de forma puramente matemática e rígida. A IA nunca é a fonte do cálculo ou da disponibilidade.
-*   **IA Generativa**: Usada exclusivamente para traduzir a intenção inicial do cliente, resumir as diferenças chaves na comparação de ofertas, explicar o score e sugerir novas regras de negócio baseadas em decisões de rejeição/aceitação anteriores.
-*   **Isolamento de Tenants**: Toda query e inserção carrega obrigatoriamente o identificador `agency_id`, garantindo RLS em nível de linha em todas as tabelas de cotação e de memória.
+
+- **Determinismo**: Cálculos matemáticos, soma de tarifas, cálculo de conexões aéreas, e cruzamento de horários de check-in são programados de forma puramente matemática e rígida. A IA nunca é a fonte do cálculo ou da disponibilidade.
+- **IA Generativa**: Usada exclusivamente para traduzir a intenção inicial do cliente, resumir as diferenças chaves na comparação de ofertas, explicar o score e sugerir novas regras de negócio baseadas em decisões de rejeição/aceitação anteriores.
+- **Isolamento de Tenants**: Toda query e inserção carrega obrigatoriamente o identificador `agency_id`, garantindo RLS em nível de linha em todas as tabelas de cotação e de memória.

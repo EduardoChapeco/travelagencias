@@ -64,10 +64,10 @@ export async function saveSettings(
 
 export async function fetchApiKeys(agencyId: string, provider?: string) {
   const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-    body: { action: "list-credentials", agency_id: agencyId }
+    body: { action: "list-credentials", agency_id: agencyId },
   });
   if (error) throw error;
-  
+
   const credentials = data?.credentials || [];
   const mapped = credentials.map((c: any) => ({
     id: c.id,
@@ -96,7 +96,7 @@ export async function saveApiKey(agencyId: string, payload: any) {
       monthly_limit: payload.monthly_limit,
       priority: payload.priority,
       upsert_by: payload.upsert_by,
-    }
+    },
   });
   if (error) throw error;
 }
@@ -112,7 +112,7 @@ export async function createApiKey(payload: any) {
       monthly_limit: payload.monthly_limit,
       priority: payload.priority,
       upsert_by: payload.upsert_by,
-    }
+    },
   });
   if (error) throw error;
 }
@@ -127,10 +127,7 @@ export async function toggleApiKey(id: string, is_active: boolean) {
 }
 
 export async function deleteApiKey(id: string) {
-  const { error } = await (supabase as any)
-    .from("ai_api_credentials")
-    .delete()
-    .eq("id", id);
+  const { error } = await (supabase as any).from("ai_api_credentials").delete().eq("id", id);
   if (error) throw error;
 }
 

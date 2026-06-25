@@ -9,48 +9,48 @@
 
 ### 1.1 Domínio Operacional de Viagens (fragmentado)
 
-| Rota | Arquivo | Tabela(s) principal(is) | Domínio Lógico |
-|------|---------|------------------------|----------------|
-| `/agency/:slug/trips` | `agency.$slug.trips.index.tsx` | `trips` | Viagens |
-| `/agency/:slug/trips/:id` | `agency.$slug.trips.$id.tsx` | `trips` | Viagens (layout) |
-| `/agency/:slug/trips/:id/` | `agency.$slug.trips.$id.index.tsx` | `trips` | Visão Geral |
-| `/agency/:slug/trips/:id/financial` | `agency.$slug.trips.$id.financial.tsx` | `financial_records`, `payment_plans`, `payment_installments` | Financeiro da Viagem |
-| `/agency/:slug/trips/:id/passengers` | `agency.$slug.trips.$id.passengers.tsx` | `trip_passengers` | Passageiros |
-| `/agency/:slug/trips/:id/vouchers` | `agency.$slug.trips.$id.vouchers.tsx` | `vouchers` | Voucher da Viagem |
-| `/agency/:slug/trips/:id/contract` | `agency.$slug.trips.$id.contract.tsx` | `contracts` | Contrato da Viagem |
-| `/agency/:slug/group-tours` | `agency.$slug.group-tours.tsx` | `group_tours` | **Domínio paralelo a Trips** |
-| `/agency/:slug/group-tours/:id` | `agency.$slug.group-tours.$id.tsx` | `group_tours`, `group_tour_enrollments` | Excursão |
-| `/agency/:slug/boarding` | `agency.$slug.boarding.tsx` | `boarding_cards`, `boarding_tickets` | **Módulo isolado** |
-| `/agency/:slug/vouchers` | `agency.$slug.vouchers.tsx` | `vouchers`, `boarding_tickets` | **Módulo isolado** |
-| `/agency/:slug/destination-intelligence` | `agency.$slug.destination-intelligence.tsx` | `destination_info` | **Módulo isolado (admin)** |
+| Rota                                     | Arquivo                                     | Tabela(s) principal(is)                                      | Domínio Lógico               |
+| ---------------------------------------- | ------------------------------------------- | ------------------------------------------------------------ | ---------------------------- |
+| `/agency/:slug/trips`                    | `agency.$slug.trips.index.tsx`              | `trips`                                                      | Viagens                      |
+| `/agency/:slug/trips/:id`                | `agency.$slug.trips.$id.tsx`                | `trips`                                                      | Viagens (layout)             |
+| `/agency/:slug/trips/:id/`               | `agency.$slug.trips.$id.index.tsx`          | `trips`                                                      | Visão Geral                  |
+| `/agency/:slug/trips/:id/financial`      | `agency.$slug.trips.$id.financial.tsx`      | `financial_records`, `payment_plans`, `payment_installments` | Financeiro da Viagem         |
+| `/agency/:slug/trips/:id/passengers`     | `agency.$slug.trips.$id.passengers.tsx`     | `trip_passengers`                                            | Passageiros                  |
+| `/agency/:slug/trips/:id/vouchers`       | `agency.$slug.trips.$id.vouchers.tsx`       | `vouchers`                                                   | Voucher da Viagem            |
+| `/agency/:slug/trips/:id/contract`       | `agency.$slug.trips.$id.contract.tsx`       | `contracts`                                                  | Contrato da Viagem           |
+| `/agency/:slug/group-tours`              | `agency.$slug.group-tours.tsx`              | `group_tours`                                                | **Domínio paralelo a Trips** |
+| `/agency/:slug/group-tours/:id`          | `agency.$slug.group-tours.$id.tsx`          | `group_tours`, `group_tour_enrollments`                      | Excursão                     |
+| `/agency/:slug/boarding`                 | `agency.$slug.boarding.tsx`                 | `boarding_cards`, `boarding_tickets`                         | **Módulo isolado**           |
+| `/agency/:slug/vouchers`                 | `agency.$slug.vouchers.tsx`                 | `vouchers`, `boarding_tickets`                               | **Módulo isolado**           |
+| `/agency/:slug/destination-intelligence` | `agency.$slug.destination-intelligence.tsx` | `destination_info`                                           | **Módulo isolado (admin)**   |
 
 ### 1.2 Domínio CRM e Vendas
 
-| Rota | Arquivo | Tabela(s) |
-|------|---------|-----------|
-| `/agency/:slug/crm` | `agency.$slug.crm.tsx` | `leads`, `lead_activities` |
-| `/agency/:slug/crm/:lead_id` | `agency.$slug.crm.$lead_id.tsx` | `leads`, etc |
-| `/agency/:slug/proposals` | `agency.$slug.proposals.index.tsx` | `proposals` |
-| `/agency/:slug/proposals/:id` | `agency.$slug.proposals.$id.tsx` | `proposals`, `trips` |
-| `/agency/:slug/contracts` | `agency.$slug.contracts.tsx` | `contracts` |
+| Rota                          | Arquivo                            | Tabela(s)                  |
+| ----------------------------- | ---------------------------------- | -------------------------- |
+| `/agency/:slug/crm`           | `agency.$slug.crm.tsx`             | `leads`, `lead_activities` |
+| `/agency/:slug/crm/:lead_id`  | `agency.$slug.crm.$lead_id.tsx`    | `leads`, etc               |
+| `/agency/:slug/proposals`     | `agency.$slug.proposals.index.tsx` | `proposals`                |
+| `/agency/:slug/proposals/:id` | `agency.$slug.proposals.$id.tsx`   | `proposals`, `trips`       |
+| `/agency/:slug/contracts`     | `agency.$slug.contracts.tsx`       | `contracts`                |
 
 ### 1.3 Portal do Cliente
 
-| Rota | Arquivo | Tabela(s) |
-|------|---------|-----------|
-| `/client/trips` | `client.trips.tsx` | `trips` |
+| Rota                | Arquivo                | Tabela(s)                                                 |
+| ------------------- | ---------------------- | --------------------------------------------------------- |
+| `/client/trips`     | `client.trips.tsx`     | `trips`                                                   |
 | `/client/trips/:id` | `client.trips.$id.tsx` | `trips`, `trip_passengers`, `contracts`, `boarding_cards` |
 
 ### 1.4 Rotas de Documentos Públicos (magic links)
 
-| Rota | Propósito |
-|------|-----------|
-| `/m/contract/:token` | Assinatura de contrato |
-| `/m/proposal/:token` | Visualização de proposta |
+| Rota                  | Propósito                          |
+| --------------------- | ---------------------------------- |
+| `/m/contract/:token`  | Assinatura de contrato             |
+| `/m/proposal/:token`  | Visualização de proposta           |
 | `/m/passenger/:token` | Upload de documentos de passageiro |
-| `/m/payment/:token` | Página de pagamento |
-| `/m/checkin/:token` | Check-in público |
-| `/m/lead/:lead_id` | Lead capture pública |
+| `/m/payment/:token`   | Página de pagamento                |
+| `/m/checkin/:token`   | Check-in público                   |
+| `/m/lead/:lead_id`    | Lead capture pública               |
 
 ---
 
@@ -140,7 +140,7 @@ contracts
   id, agency_id, trip_id, client_id, status
   content (texto do contrato), signed_at, signature_data
   public_token, template_id
-  
+
 contract_addendums
   id, contract_id, agency_id, type, content, status
   signed_at, public_token
@@ -166,6 +166,7 @@ destination_info
 ### 2.7 Tabelas que suportam reconciliação/reacomodação
 
 **NENHUMA** — As seguintes tabelas definidas no PRD §5.1 não existem:
+
 - `flight_itineraries`
 - `flight_segments`
 - `flight_change_cases`
@@ -182,17 +183,18 @@ destination_info
 
 ## 3. Mapa de Services
 
-| Service | Arquivo | Cobre |
-|---------|---------|-------|
-| `boarding.ts` | `src/services/boarding.ts` | `boarding_cards`, `boarding_tickets` — queries e mutações |
-| `trips.ts` | `src/services/trips.ts` | `financial_records`, `payment_plans`, `payment_installments` |
-| `proposals.ts` | `src/services/proposals.ts` | `proposals` |
-| `crm.ts` | `src/services/crm.ts` | `leads`, `lead_activities` |
-| `vouchers.ts` | `src/services/vouchers.ts` | `vouchers` |
-| `clients.ts` | `src/services/clients.ts` | `clients` |
-| `settings.ts` | `src/services/settings.ts` | `agency_settings` |
+| Service        | Arquivo                     | Cobre                                                        |
+| -------------- | --------------------------- | ------------------------------------------------------------ |
+| `boarding.ts`  | `src/services/boarding.ts`  | `boarding_cards`, `boarding_tickets` — queries e mutações    |
+| `trips.ts`     | `src/services/trips.ts`     | `financial_records`, `payment_plans`, `payment_installments` |
+| `proposals.ts` | `src/services/proposals.ts` | `proposals`                                                  |
+| `crm.ts`       | `src/services/crm.ts`       | `leads`, `lead_activities`                                   |
+| `vouchers.ts`  | `src/services/vouchers.ts`  | `vouchers`                                                   |
+| `clients.ts`   | `src/services/clients.ts`   | `clients`                                                    |
+| `settings.ts`  | `src/services/settings.ts`  | `agency_settings`                                            |
 
 **Services ausentes** (acesso direto ao Supabase nos componentes):
+
 - Nenhum service para `destination_info`
 - Nenhum service para `contracts` (usado inline)
 - Nenhum service para `group_tours` / `group_tour_enrollments`
@@ -203,13 +205,14 @@ destination_info
 
 ## 4. Mapa de Edge Functions
 
-| Edge Function | Propósito |
-|--------------|-----------|
-| `ai-message-processor` | Processamento de mensagens do omnichannel com IA |
-| `destination-intelligence` | Geração de dados de destino via IA |
-| `infotravel-connector` | Integração com Infotravel GDS |
+| Edge Function              | Propósito                                        |
+| -------------------------- | ------------------------------------------------ |
+| `ai-message-processor`     | Processamento de mensagens do omnichannel com IA |
+| `destination-intelligence` | Geração de dados de destino via IA               |
+| `infotravel-connector`     | Integração com Infotravel GDS                    |
 
 **Edge functions ausentes** (necessárias para PRD):
+
 - Reconciliação de itinerários aéreos
 - OCR de documentos/e-mails de alteração
 - Geração de adendos contratuais
@@ -222,42 +225,42 @@ destination_info
 
 ### 5.1 Navegação
 
-| PRD Exige | Existe? |
-|-----------|---------|
-| Sidebar: Viagens como domínio central | ❌ Viagens existe mas Grupos, Embarques e Vouchers são separados |
-| Sidebar: sem Embarques/Vouchers/Check-in isolados | ❌ Embarques e Vouchers são itens globais |
-| Sidebar contextual da viagem (19 seções) | ❌ Apenas 5 abas no trip layout |
-| Views globais de Viagens (filas, pendências, aéreos) | ❌ Não existe |
+| PRD Exige                                            | Existe?                                                          |
+| ---------------------------------------------------- | ---------------------------------------------------------------- |
+| Sidebar: Viagens como domínio central                | ❌ Viagens existe mas Grupos, Embarques e Vouchers são separados |
+| Sidebar: sem Embarques/Vouchers/Check-in isolados    | ❌ Embarques e Vouchers são itens globais                        |
+| Sidebar contextual da viagem (19 seções)             | ❌ Apenas 5 abas no trip layout                                  |
+| Views globais de Viagens (filas, pendências, aéreos) | ❌ Não existe                                                    |
 
 ### 5.2 Entidades
 
-| PRD Exige | Existe? |
-|-----------|---------|
-| `TripLifecycleStatus` (14 estados) | ❌ Apenas 5 estados manuais |
-| `flight_itineraries` | ❌ |
-| `flight_change_cases` | ❌ |
-| `customer_travel_decisions` | ❌ |
-| `operator_reaccommodation_requests` | ❌ |
-| `contract_amendments` | ⚠️ Existe `contract_addendums` sem UI completa |
-| `trip_documents` (unificada) | ❌ Documentos espalhados em várias tabelas |
-| `checkin_links` (registry) | ❌ |
-| `boarding_events` | ❌ |
-| Confirmação de Reserva | ❌ |
+| PRD Exige                           | Existe?                                        |
+| ----------------------------------- | ---------------------------------------------- |
+| `TripLifecycleStatus` (14 estados)  | ❌ Apenas 5 estados manuais                    |
+| `flight_itineraries`                | ❌                                             |
+| `flight_change_cases`               | ❌                                             |
+| `customer_travel_decisions`         | ❌                                             |
+| `operator_reaccommodation_requests` | ❌                                             |
+| `contract_amendments`               | ⚠️ Existe `contract_addendums` sem UI completa |
+| `trip_documents` (unificada)        | ❌ Documentos espalhados em várias tabelas     |
+| `checkin_links` (registry)          | ❌                                             |
+| `boarding_events`                   | ❌                                             |
+| Confirmação de Reserva              | ❌                                             |
 
 ### 5.3 Fluxos
 
-| PRD Exige | Existe? |
-|-----------|---------|
-| Conversão de proposta → viagem | ✅ (RPC `convert_proposal_to_trip`) |
-| Confirmação de Reserva gerada automaticamente | ❌ |
-| Upload de alternativas aéreas | ❌ |
-| OCR de documentos de alteração | ❌ |
-| Diff determinístico entre itinerários | ❌ |
-| Portal de escolha do cliente | ❌ |
-| Aceite auditável | ❌ |
-| Adendo contratual automático | ❌ |
-| Comunicação com operadora | ❌ |
-| Propagação de confirmação para portal/documentos | ❌ |
-| Deep links versionados de check-in | ❌ |
-| Guia de embarque (documento) | ❌ |
-| Boarding events (log por passageiro) | ❌ |
+| PRD Exige                                        | Existe?                             |
+| ------------------------------------------------ | ----------------------------------- |
+| Conversão de proposta → viagem                   | ✅ (RPC `convert_proposal_to_trip`) |
+| Confirmação de Reserva gerada automaticamente    | ❌                                  |
+| Upload de alternativas aéreas                    | ❌                                  |
+| OCR de documentos de alteração                   | ❌                                  |
+| Diff determinístico entre itinerários            | ❌                                  |
+| Portal de escolha do cliente                     | ❌                                  |
+| Aceite auditável                                 | ❌                                  |
+| Adendo contratual automático                     | ❌                                  |
+| Comunicação com operadora                        | ❌                                  |
+| Propagação de confirmação para portal/documentos | ❌                                  |
+| Deep links versionados de check-in               | ❌                                  |
+| Guia de embarque (documento)                     | ❌                                  |
+| Boarding events (log por passageiro)             | ❌                                  |

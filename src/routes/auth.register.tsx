@@ -101,10 +101,7 @@ function RegisterPage() {
             Enviamos um e-mail de confirmação. Clique no link da mensagem para ativar sua conta.
           </p>
           <div className="mt-8 space-y-3">
-            <Link
-              to="/auth/login"
-              className="block text-sm font-bold text-accent hover:underline"
-            >
+            <Link to="/auth/login" className="block text-sm font-bold text-accent hover:underline">
               Ir para o Login
             </Link>
           </div>
@@ -125,9 +122,7 @@ function RegisterPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-base font-black tracking-tight text-foreground">
-            TravelOS
-          </span>
+          <span className="text-base font-black tracking-tight text-foreground">TravelOS</span>
         </Link>
 
         {/* Center content: Premium Editorial Typography */}
@@ -190,7 +185,9 @@ function RegisterPage() {
           </div>
 
           <div className="space-y-2.5">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Criar sua conta</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+              Criar sua conta
+            </h1>
             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
               Preencha seus dados para começar a gerenciar sua agência.
             </p>
@@ -260,7 +257,9 @@ function RegisterPage() {
                 </label>
               </div>
               {errors.acceptedTerms && (
-                <p className="mt-1 text-[11px] text-danger font-bold">{errors.acceptedTerms.message}</p>
+                <p className="mt-1 text-[11px] text-danger font-bold">
+                  {errors.acceptedTerms.message}
+                </p>
               )}
             </div>
 
@@ -275,7 +274,10 @@ function RegisterPage() {
 
           <p className="mt-6 text-center text-xs text-muted-foreground font-semibold">
             Já tem conta?{" "}
-            <Link to="/auth/login" className="font-bold text-accent hover:text-accent/90 hover:underline">
+            <Link
+              to="/auth/login"
+              className="font-bold text-accent hover:text-accent/90 hover:underline"
+            >
               Entrar
             </Link>
           </p>

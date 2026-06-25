@@ -1,10 +1,24 @@
-import { Send, Sparkles, X, RefreshCw, ChevronDown, Loader2, ThumbsUp, ThumbsDown } from "lucide-react";
+import {
+  Send,
+  Sparkles,
+  X,
+  RefreshCw,
+  ChevronDown,
+  Loader2,
+  ThumbsUp,
+  ThumbsDown,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
-import { listAIChatMessages, sendAIChatMessage, submitAIChatFeedback, checkAIStatus } from "@/lib/api/ai-chat.functions";
+import {
+  listAIChatMessages,
+  sendAIChatMessage,
+  submitAIChatFeedback,
+  checkAIStatus,
+} from "@/lib/api/ai-chat.functions";
 import { ChatBlockRenderer } from "./ChatBlockRenderer";
 import { cn } from "@/lib/utils";
 
@@ -176,14 +190,15 @@ export function AIChatPanel({
     } catch (err: any) {
       toast.error(err?.message ?? "Falha ao enviar mensagem.");
       setAiStatus("offline"); // Set status to offline/manual on failure
-      
+
       // Remove optimistic and append structured contingency message
       setMessages((m) => [
         ...m.filter((x) => x.id !== optimistic.id),
         {
           id: `err-${Date.now()}`,
           role: "system",
-          content: "A IA está temporariamente indisponível (Modo Contingência). Você pode prosseguir executando qualquer ação ou cadastro manualmente através dos formulários das páginas.",
+          content:
+            "A IA está temporariamente indisponível (Modo Contingência). Você pode prosseguir executando qualquer ação ou cadastro manualmente através dos formulários das páginas.",
           created_at: new Date().toISOString(),
         },
       ]);
@@ -213,17 +228,27 @@ export function AIChatPanel({
         <>
           <header className="flex h-12 items-center justify-between border-b border-border px-3 shrink-0">
             <div className="flex items-center gap-2">
-              <Sparkles className={cn(
-                "h-4 w-4",
-                aiStatus === "online" ? "text-emerald-500" : aiStatus === "offline" ? "text-amber-500 animate-pulse" : "text-muted-foreground"
-              )} />
+              <Sparkles
+                className={cn(
+                  "h-4 w-4",
+                  aiStatus === "online"
+                    ? "text-emerald-500"
+                    : aiStatus === "offline"
+                      ? "text-amber-500 animate-pulse"
+                      : "text-muted-foreground",
+                )}
+              />
               <span className="text-sm font-semibold">Assistente TravelOS</span>
-              <span className={cn(
-                "inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium transition-colors",
-                aiStatus === "online" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" :
-                aiStatus === "offline" ? "bg-amber-50 text-amber-700 border border-amber-200" :
-                "bg-gray-50 text-gray-700 border border-gray-200"
-              )}>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+                  aiStatus === "online"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : aiStatus === "offline"
+                      ? "bg-amber-50 text-amber-700 border border-amber-200"
+                      : "bg-gray-50 text-gray-700 border border-gray-200",
+                )}
+              >
                 {aiStatus === "online" ? "IA" : aiStatus === "offline" ? "Manual" : "Verificando"}
               </span>
             </div>
@@ -267,12 +292,15 @@ export function AIChatPanel({
               <div className="space-y-3">
                 {aiStatus === "offline" && (
                   <div className="rounded-md border border-amber-200 bg-amber-50/50 p-3 text-xs text-amber-800">
-                    <span className="font-semibold block mb-1">Aviso de Contingência</span>
-                    O motor de IA está temporariamente offline ou sem chaves configuradas. Você pode realizar qualquer cadastro ou alteração de forma totalmente funcional utilizando os formulários e campos das páginas do sistema.
+                    <span className="font-semibold block mb-1">Aviso de Contingência</span>O motor
+                    de IA está temporariamente offline ou sem chaves configuradas. Você pode
+                    realizar qualquer cadastro ou alteração de forma totalmente funcional utilizando
+                    os formulários e campos das páginas do sistema.
                   </div>
                 )}
                 <p className="text-foreground">
-                  Olá. Posso ajudar com leads, cotações, vouchers, contratos ou financeiro desta página.
+                  Olá. Posso ajudar com leads, cotações, vouchers, contratos ou financeiro desta
+                  página.
                 </p>
                 <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
                   Rota atual: <code className="font-mono">{pathname}</code>
@@ -280,17 +308,13 @@ export function AIChatPanel({
               </div>
             ) : (
               <div className="space-y-4">
-                 {messages.map((m) => (
+                {messages.map((m) => (
                   <div key={m.id}>
                     <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
                       {m.role === "user" ? "Você" : "Assistente"}
                     </div>
                     <div className="mt-1 relative group">
-                      <ChatBlockRenderer
-                        messageId={m.id}
-                        content={m.content}
-                        context={m.context}
-                      />
+                      <ChatBlockRenderer messageId={m.id} content={m.content} context={m.context} />
                       {m.role === "assistant" && m.id && !m.id.startsWith("tmp-") && (
                         <div className="mt-1 flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
@@ -298,7 +322,9 @@ export function AIChatPanel({
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
                               "rounded p-1 hover:bg-surface-alt transition-colors cursor-pointer",
-                              feedbacks[m.id] === 1 ? "text-emerald-500 hover:text-emerald-600" : "text-muted-foreground hover:text-foreground"
+                              feedbacks[m.id] === 1
+                                ? "text-emerald-500 hover:text-emerald-600"
+                                : "text-muted-foreground hover:text-foreground",
                             )}
                             title="Resposta útil"
                           >
@@ -309,7 +335,9 @@ export function AIChatPanel({
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
                               "rounded p-1 hover:bg-surface-alt transition-colors cursor-pointer",
-                              feedbacks[m.id] === -1 ? "text-rose-500 hover:text-rose-600" : "text-muted-foreground hover:text-foreground"
+                              feedbacks[m.id] === -1
+                                ? "text-rose-500 hover:text-rose-600"
+                                : "text-muted-foreground hover:text-foreground",
                             )}
                             title="Resposta não útil"
                           >
@@ -343,7 +371,13 @@ export function AIChatPanel({
                 handleSend(e as unknown as React.FormEvent);
               }
             }}
-            placeholder={agency?.id ? (isCollapsed ? "Clique para falar com IA..." : "Pergunte alguma coisa…") : "Indisponível"}
+            placeholder={
+              agency?.id
+                ? isCollapsed
+                  ? "Clique para falar com IA..."
+                  : "Pergunte alguma coisa…"
+                : "Indisponível"
+            }
             rows={1}
             disabled={!agency?.id || sending}
             onFocus={() => {

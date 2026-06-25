@@ -8,14 +8,14 @@ Identificamos uma divisão de arquitetura no frontend: coexistem os componentes 
 
 A tabela abaixo mapeia as divergências estruturais encontradas:
 
-| Padrão de UI | Componente Canônico | Componente Divergente Utilizado | Override Global Utilizado | Correção Estrutural Recomendada |
-| :--- | :--- | :--- | :--- | :--- |
-| **Botões** | `src/components/ui/button.tsx` (Shadcn/Tailwind) | `PrimaryButton`, `GhostButton` em `src/components/ui/form.tsx` | N/A | Substituir chamadas pelo botão canônico, portando as classes Flat Editorial. |
-| **Campos de Texto** | `src/components/ui/input.tsx` | `Input`, `Select`, `Textarea` em `src/components/ui/form.tsx` | N/A | Padronizar no input canônico, eliminando a folha de estilo estática local. |
-| **Slide Over (Sheet)** | `src/components/ui/sheet.tsx` (Radix) | `Sheet` em `src/components/ui/form.tsx` | N/A | Remover o div overlay mock de `form.tsx` e unificar no Sheet baseado no Radix. |
-| **Modais e Menus** | Radix Dialog / Radix Menu | N/A | `.shadow-lg { box-shadow: none !important; border: 1px solid var(--color-border-strong) !important; }` | Remover o reset forçado de sombra global no `styles.css` e estilizar via tokens. |
+| Padrão de UI           | Componente Canônico                              | Componente Divergente Utilizado                                | Override Global Utilizado                                                                              | Correção Estrutural Recomendada                                                  |
+| :--------------------- | :----------------------------------------------- | :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| **Botões**             | `src/components/ui/button.tsx` (Shadcn/Tailwind) | `PrimaryButton`, `GhostButton` em `src/components/ui/form.tsx` | N/A                                                                                                    | Substituir chamadas pelo botão canônico, portando as classes Flat Editorial.     |
+| **Campos de Texto**    | `src/components/ui/input.tsx`                    | `Input`, `Select`, `Textarea` em `src/components/ui/form.tsx`  | N/A                                                                                                    | Padronizar no input canônico, eliminando a folha de estilo estática local.       |
+| **Slide Over (Sheet)** | `src/components/ui/sheet.tsx` (Radix)            | `Sheet` em `src/components/ui/form.tsx`                        | N/A                                                                                                    | Remover o div overlay mock de `form.tsx` e unificar no Sheet baseado no Radix.   |
+| **Modais e Menus**     | Radix Dialog / Radix Menu                        | N/A                                                            | `.shadow-lg { box-shadow: none !important; border: 1px solid var(--color-border-strong) !important; }` | Remover o reset forçado de sombra global no `styles.css` e estilizar via tokens. |
 
-* **Nota sobre Shadow Overrides:** O uso de reset global com `!important` para ocultar sombrasRadix/Dialog cria um visual consistente na shell do app, mas força um contorno rígido de bordas sólidas em popovers e menus, prejudicando a profundidade do layout e impedindo o uso de sombras legítimas em componentes que eventualmente necessitem de legibilidade.
+- **Nota sobre Shadow Overrides:** O uso de reset global com `!important` para ocultar sombrasRadix/Dialog cria um visual consistente na shell do app, mas força um contorno rígido de bordas sólidas em popovers e menus, prejudicando a profundidade do layout e impedindo o uso de sombras legítimas em componentes que eventualmente necessitem de legibilidade.
 
 ## 2. Responsividade e Adaptação de Viewports
 
@@ -28,9 +28,9 @@ Testamos a renderização das rotas em múltiplos viewports, avaliando quebras o
 
 ### Matriz de Viewports e Integridade
 
-| Rota / Tela | 360x800 (Mobile) | 768x1024 (Tablet) | 1280x720 (Notebook) | 1920x1080 (Desktop) | Risco de Quebra |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **CRM Kanban** | Funcional (Accordion) | Funcional (Accordion) | Funcional (Colunas) | Excelente | Baixo |
-| **Financeiro** | Funcional (Scroll) | Funcional (Scroll) | Excelente | Excelente | Baixo |
-| **VoucherStudio**| Funcional (Drawer) | Funcional (Drawer) | Excelente | Excelente | Médio (Corte de menus) |
-| **Páginas CMS** | Funcional (Header/Float)| Excelente | Excelente | Excelente | Baixo |
+| Rota / Tela       | 360x800 (Mobile)         | 768x1024 (Tablet)     | 1280x720 (Notebook) | 1920x1080 (Desktop) | Risco de Quebra        |
+| :---------------- | :----------------------- | :-------------------- | :------------------ | :------------------ | :--------------------- |
+| **CRM Kanban**    | Funcional (Accordion)    | Funcional (Accordion) | Funcional (Colunas) | Excelente           | Baixo                  |
+| **Financeiro**    | Funcional (Scroll)       | Funcional (Scroll)    | Excelente           | Excelente           | Baixo                  |
+| **VoucherStudio** | Funcional (Drawer)       | Funcional (Drawer)    | Excelente           | Excelente           | Médio (Corte de menus) |
+| **Páginas CMS**   | Funcional (Header/Float) | Excelente             | Excelente           | Excelente           | Baixo                  |

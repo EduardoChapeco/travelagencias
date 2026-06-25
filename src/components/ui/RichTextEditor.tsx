@@ -3,7 +3,7 @@ import { lazy, Suspense } from "react";
 const RichTextEditorInner = lazy(() =>
   import("./RichTextEditorInner").then((m) => ({
     default: m.RichTextEditorInner,
-  }))
+  })),
 );
 
 export function RichTextEditor({

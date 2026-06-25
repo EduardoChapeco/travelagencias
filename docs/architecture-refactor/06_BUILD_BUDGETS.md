@@ -8,13 +8,13 @@ Este documento estabelece metas numéricas rígidas para o tamanho dos chunks e 
 
 A tabela abaixo define os limites atuais (baseline) versus os limites finais exigidos para aprovação da refatoração:
 
-| Métrica | Baseline Atual | Limite Alvo (Budget) | Objetivo |
-| ------- | -------------: | -------------------: | -------- |
-| **Consumo de Heap no Build** | Falha em 2GB e 4GB (Exige 8GB) | **Sucesso com <2.0 GB (Padrão)** | Permitir compilação em instâncias CI de baixa memória e agilizar o ciclo local. |
-| **Chunk Inicial do Cliente (`index.js`)** | **1.211,48 kB** (1.21 MB) | **< 600 kB** | Reduzir o tempo de download do JavaScript inicial (FCP / TBT) na primeira visita. |
-| **Chunk do Editor WYSIWYG (`RichTextEditor.js`)** | 418,11 kB | **< 450 kB** | Garantir que o Tiptap permaneça isolado e carregado apenas em modo de edição. |
-| **Módulos Server-only no Cliente** | 0 (Preservado) | **0 (Estrito)** | Garantir segurança de chaves e performance. |
-| **Tempo de Execução do Build** | ~54 segundos (8GB) | **< 35 segundos** | Acelerar deploys de produção e integração contínua. |
+| Métrica                                           |                 Baseline Atual |             Limite Alvo (Budget) | Objetivo                                                                          |
+| ------------------------------------------------- | -----------------------------: | -------------------------------: | --------------------------------------------------------------------------------- |
+| **Consumo de Heap no Build**                      | Falha em 2GB e 4GB (Exige 8GB) | **Sucesso com <2.0 GB (Padrão)** | Permitir compilação em instâncias CI de baixa memória e agilizar o ciclo local.   |
+| **Chunk Inicial do Cliente (`index.js`)**         |      **1.211,48 kB** (1.21 MB) |                     **< 600 kB** | Reduzir o tempo de download do JavaScript inicial (FCP / TBT) na primeira visita. |
+| **Chunk do Editor WYSIWYG (`RichTextEditor.js`)** |                      418,11 kB |                     **< 450 kB** | Garantir que o Tiptap permaneça isolado e carregado apenas em modo de edição.     |
+| **Módulos Server-only no Cliente**                |                 0 (Preservado) |                  **0 (Estrito)** | Garantir segurança de chaves e performance.                                       |
+| **Tempo de Execução do Build**                    |             ~54 segundos (8GB) |                **< 35 segundos** | Acelerar deploys de produção e integração contínua.                               |
 
 ---
 

@@ -1,5 +1,7 @@
 if (typeof window !== "undefined") {
-  throw new Error("This module ('client.server.ts') can only be imported in server-side environments.");
+  throw new Error(
+    "This module ('client.server.ts') can only be imported in server-side environments.",
+  );
 }
 
 // Server-side Supabase client with service role key - bypasses RLS.

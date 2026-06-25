@@ -32,10 +32,9 @@ export function TabMemorias({
             Autorização de Uso de Imagem (LGPD)
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Para poder salvar fotos das suas viagens no portal, precisamos do seu consentimento
-            para armazenar estas mídias de forma segura. A agência poderá visualizar as imagens e,
-            com a sua permissão, utilizá-las em comunicações ou divulgações institucionais de
-            marketing.
+            Para poder salvar fotos das suas viagens no portal, precisamos do seu consentimento para
+            armazenar estas mídias de forma segura. A agência poderá visualizar as imagens e, com a
+            sua permissão, utilizá-las em comunicações ou divulgações institucionais de marketing.
           </p>
           <div className="pt-2">
             <button

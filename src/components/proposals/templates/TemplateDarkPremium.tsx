@@ -17,7 +17,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
   const brand = "var(--brand-primary, " + (vm.agency.brand_color || "#1E3A5F") + ")";
 
   return (
-    <div 
+    <div
       className="flex flex-col w-full bg-white text-slate-900 pb-16"
       style={{ fontFamily: "var(--brand-body-font, sans-serif)" }}
     >
@@ -270,7 +270,10 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
           <div className="bg-[#1E293B] rounded-[40px] p-12 text-white text-center border border-slate-700 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
-            <h2 className="text-3xl mb-8" style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}>
+            <h2
+              className="text-3xl mb-8"
+              style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)" }}
+            >
               Resumo do Investimento
             </h2>
 

@@ -187,7 +187,6 @@ function TripContract() {
     },
   });
 
-
   const clientQ = useQuery({
     enabled: !!tripQ.data?.client_id,
     queryKey: ["client", tripQ.data?.client_id],
@@ -365,7 +364,6 @@ function TripContract() {
         })
         .select("*")
         .single();
-
 
       if (error) throw error;
       return data;

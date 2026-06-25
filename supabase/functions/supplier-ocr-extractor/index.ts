@@ -20,7 +20,9 @@ async function getCryptoKey(password: string) {
 
 async function decryptData(encodedBase64: string, password: string) {
   const key = await getCryptoKey(password);
-  const cleanBase64 = encodedBase64.startsWith("=====") ? encodedBase64.substring(5) : encodedBase64;
+  const cleanBase64 = encodedBase64.startsWith("=====")
+    ? encodedBase64.substring(5)
+    : encodedBase64;
   const payload = decode(cleanBase64);
   const iv = payload.slice(0, 12);
   const ciphertext = payload.slice(12);
@@ -43,7 +45,9 @@ async function resolveGeminiKey(supabaseAdmin: any, agencyId?: string): Promise<
       }
       return keyValue;
     }
-  } catch (_e) { /* continue */ }
+  } catch (_e) {
+    /* continue */
+  }
 
   // 2. Try global_settings legacy encrypted store
   try {
@@ -58,7 +62,9 @@ async function resolveGeminiKey(supabaseAdmin: any, agencyId?: string): Promise<
       const keys = JSON.parse(decrypted);
       if (keys.gemini_key) return keys.gemini_key;
     }
-  } catch (_e) { /* continue */ }
+  } catch (_e) {
+    /* continue */
+  }
 
   // 3. Env fallback
   return Deno.env.get("GEMINI_API_KEY") || null;
@@ -77,7 +83,9 @@ async function resolveGroqKey(supabaseAdmin: any): Promise<string | null> {
       const keys = JSON.parse(decrypted);
       return keys.groq_key || null;
     }
-  } catch (_e) { /* continue */ }
+  } catch (_e) {
+    /* continue */
+  }
   return Deno.env.get("GROQ_API_KEY") || null;
 }
 
@@ -102,7 +110,10 @@ serve(async (req) => {
     });
 
     // Validate auth
-    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) throw new Error("Unauthorized.");
 
     const body = await req.json();
@@ -214,7 +225,12 @@ Para produtos, extraia todos os itens identificáveis (quartos, tours, pacotes, 
               content: [
                 { type: "text", text: systemPrompt },
                 ...(file_base64
-                  ? [{ type: "image_url", image_url: { url: `data:${mime || "image/jpeg"};base64,${file_base64}` } }]
+                  ? [
+                      {
+                        type: "image_url",
+                        image_url: { url: `data:${mime || "image/jpeg"};base64,${file_base64}` },
+                      },
+                    ]
                   : []),
               ],
             },

@@ -8,12 +8,12 @@ No arquivo [agency.$slug.suppliers.$id.tsx](file:///c:/Users/eduar/.gemini/antig
 
 1. **Botão sem Estado de Loading:** A tag `<button>` de confirmação não recebe o atributo `disabled` enquanto a mutação está em andamento. O usuário pode clicar várias vezes no botão se a conexão estiver lenta ou se houver um delay de processamento.
 2. **Ausência de Transação e Rollback Parcial:** O manipulador executa três chamadas assíncronas separadas para o Supabase:
-   * `supabase.from("supplier_contacts").insert(contactRows)`
-   * `supabase.from("supplier_products").insert(productRows)`
-   * `supabase.from("suppliers").update(supplierPatch)`
+   - `supabase.from("supplier_contacts").insert(contactRows)`
+   - `supabase.from("supplier_products").insert(productRows)`
+   - `supabase.from("suppliers").update(supplierPatch)`
 3. **Inconsistência de Dados e Duplicação:**
-   * Se o usuário clicar duas vezes, os contatos e produtos serão inseridos duas vezes, duplicando os registros na base, pois não há chaves de idempotência (Idempotency Key) nem constraints de unicidade na tabela baseadas em hashes do arquivo.
-   * Se a inserção de produtos falhar no meio do processo por erro de validação, os contatos que já foram inseridos com sucesso na chamada anterior permanecerão salvos no banco. Não há rollback, deixando registros órfãos e dados corrompidos.
+   - Se o usuário clicar duas vezes, os contatos e produtos serão inseridos duas vezes, duplicando os registros na base, pois não há chaves de idempotência (Idempotency Key) nem constraints de unicidade na tabela baseadas em hashes do arquivo.
+   - Se a inserção de produtos falhar no meio do processo por erro de validação, os contatos que já foram inseridos com sucesso na chamada anterior permanecerão salvos no banco. Não há rollback, deixando registros órfãos e dados corrompidos.
 
 ## 2. Invalidação de Cache e Sessão do Brand Kit
 
@@ -21,8 +21,8 @@ A persistência do Brand Kit em `localStorage` para evitar flicker visual (linha
 
 1. **Ausência de Limpeza no Logout:** Não há chamadas de limpeza (`localStorage.removeItem` ou `clear`) no fluxo de logout da aplicação. Os dados visuais e identidades das agências (logos, paletas de cores, fontes) permanecem gravados no navegador por tempo indeterminado.
 2. **Ressalva Visual (Flash de Tenant Anterior):**
-   * Ao abrir a agência A, o Brand Kit é carregado e salvo no cache.
-   * Ao deslogar e logar na agência B, se a agência B não tiver cache prévio, a tela renderizará inicialmente com o design da agência A devido à execução síncrona do cache no topo do componente, antes de a query buscar o brand kit correto da agência B do servidor no `useEffect`.
+   - Ao abrir a agência A, o Brand Kit é carregado e salvo no cache.
+   - Ao deslogar e logar na agência B, se a agência B não tiver cache prévio, a tela renderizará inicialmente com o design da agência A devido à execução síncrona do cache no topo do componente, antes de a query buscar o brand kit correto da agência B do servidor no `useEffect`.
 
 ## 3. Integridade do Exportador de PDF/PNG do VoucherStudio
 

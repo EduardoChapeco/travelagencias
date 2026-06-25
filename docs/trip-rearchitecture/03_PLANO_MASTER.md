@@ -643,9 +643,11 @@ Nenhuma fase é considerada concluída se:
 > ✅ **Todas as decisões respondidas. Plano pronto para execução mediante autorização.**
 
 ### Decisão 1 — Grupos vs Trips
+
 **Decisão: Grupos permanecem como domínio próprio e rico (não convergem para `trips`).**
 
 Grupos são complexos (terrestre, aéreo, cruzeiro, combinado) e possuem:
+
 - Financeiro próprio
 - Contratos próprios (gestão coletiva)
 - Rooming List exclusiva para grupos (para enviar ao hotel, gerir quem fica com quem em qual quarto)
@@ -653,6 +655,7 @@ Grupos são complexos (terrestre, aéreo, cruzeiro, combinado) e possuem:
 A Rooming List é **exclusiva de Grupos** — não existe em viagens individuais.
 
 Arquitetura resultante:
+
 - `group_tours` permanece como entidade separada e rica
 - Sidebar: "Grupos" como item próprio com sub-navegação contextual completa
 - Viagens individuais e grupos compartilham componentes de financeiro e contratos, mas são entidades distintas
@@ -661,6 +664,7 @@ Arquitetura resultante:
 ---
 
 ### Decisão 2 — Rooming List: Normalizado
+
 **Decisão: Migrar para tabela normalizada. Requisito mínimo: edição e geração de PDF da Rooming List.**
 
 - Tabelas `group_rooming_rooms` + `group_rooming_occupants` (exclusivo de Grupos)
@@ -671,6 +675,7 @@ Arquitetura resultante:
 ---
 
 ### Decisão 3 — Sidebar: Refatoração Completa
+
 **Decisão: Opção A — Refatoração total em uma única fase.**
 
 A sidebar será reorganizada completamente com a nova arquitetura de domínios.
@@ -678,9 +683,11 @@ A sidebar será reorganizada completamente com a nova arquitetura de domínios.
 ---
 
 ### Decisão 4 — Prioridade de Execução
+
 **Decisão: A fase mais crítica primeiro.**
 
 Ordem de execução confirmada:
+
 1. **Fase 1 — Navegação** (pré-requisito para tudo)
 2. **Fase 4 — Reconciliação Aérea** (classificada como Fake, maior gap crítico de negócio)
 3. **Fase 9-Rooming e Fase 10-Destination** em seguida (estrutura parcial existente, gaps claros)
@@ -688,9 +695,11 @@ Ordem de execução confirmada:
 ---
 
 ### Decisão 5 — Adendos Jurídicos
+
 **Decisão: Adendos automáticos gerados pelo sistema quando cliente aceita reacomodação. Conteúdo configurável por agência.**
 
 Conteúdo do adendo automático:
+
 - Confirmação de que o cliente entendeu as regras declaradas
 - Política de reembolso e crédito aplicável
 - Multas e taxas aplicáveis ao caso
@@ -699,6 +708,7 @@ Conteúdo do adendo automático:
 - Impactos identificados (hotel, transfer, outros serviços)
 
 Regras de implementação:
+
 - Texto base gerado pelo sistema com placeholders de dados reais da viagem
 - Campo de upload para texto revisado por jurídico (cada agência cadastra sua versão)
 - Versionamento obrigatório de toda cláusula jurídica

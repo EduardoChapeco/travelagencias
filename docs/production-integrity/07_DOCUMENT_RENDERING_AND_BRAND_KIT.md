@@ -6,12 +6,12 @@ Este relatório detalha a auditoria dos renderizadores visuais de documentos (PD
 
 Auditamos todos os pontos onde bibliotecas de conversão HTML para Canvas (`html2canvas`) e PDF (`jsPDF`) são utilizadas para gerar documentos oficiais:
 
-| Renderer / Local | Fontes (`fonts.ready`) | Aguarda Imagens? | CORS Tratado? | Loader na Interface? | Tratamento de Erro? | Suporta A4? | Suporta Story 9:16? | Código Testado? |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **VoucherStudio** (Voucher Studio) | SIM | **NÃO** | SIM (`useCORS: true`) | SIM | SIM | SIM | SIM | SIM |
-| **pdf-generator.ts** (Módulo Viagens) | SIM | **NÃO** | SIM (`useCORS: true`) | SIM | SIM | SIM | **NÃO** | SIM |
-| **ExportPdfButton** (Orçamentos/Propostas) | SIM | **NÃO** | SIM (`useCORS: true`) | SIM | SIM | SIM | **NÃO** | SIM |
-| **CardDetailPanel** (Cartão de Embarque) | SIM | **NÃO** | SIM (`useCORS: true`) | SIM | SIM | SIM | **NÃO** | SIM |
+| Renderer / Local                           | Fontes (`fonts.ready`) | Aguarda Imagens? |     CORS Tratado?     | Loader na Interface? | Tratamento de Erro? | Suporta A4? | Suporta Story 9:16? | Código Testado? |
+| :----------------------------------------- | :--------------------: | :--------------: | :-------------------: | :------------------: | :-----------------: | :---------: | :-----------------: | :-------------: |
+| **VoucherStudio** (Voucher Studio)         |          SIM           |     **NÃO**      | SIM (`useCORS: true`) |         SIM          |         SIM         |     SIM     |         SIM         |       SIM       |
+| **pdf-generator.ts** (Módulo Viagens)      |          SIM           |     **NÃO**      | SIM (`useCORS: true`) |         SIM          |         SIM         |     SIM     |       **NÃO**       |       SIM       |
+| **ExportPdfButton** (Orçamentos/Propostas) |          SIM           |     **NÃO**      | SIM (`useCORS: true`) |         SIM          |         SIM         |     SIM     |       **NÃO**       |       SIM       |
+| **CardDetailPanel** (Cartão de Embarque)   |          SIM           |     **NÃO**      | SIM (`useCORS: true`) |         SIM          |         SIM         |     SIM     |       **NÃO**       |       SIM       |
 
 ## 2. Detalhes Críticos de Renderização
 

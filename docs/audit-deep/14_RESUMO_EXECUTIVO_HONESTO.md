@@ -14,11 +14,11 @@ A boa notícia é que a Fase 3 (OCR Ingestion) e a Fase 10 (Destination Intellig
 
 ## 2. Métricas de Status das Funcionalidades
 
-* **Funcionalidades Reais:** **4** (Brand Kit Cache, OCR Ingestion, Destination Intelligence, Confirmação de Reserva).
-* **Funcionalidades Parciais:** **10** (Design System Flat, Vitrine B2C Checkout, Catálogo Fornecedores, Clause Library, PDF/PNG Exports, Omnichannel Inbox, Rooming List, Conferência de Voos, Reacomodação Aérea, Site Builder).
-* **Funcionalidades Mockadas/Simuladas:** **2** (Pix Upload de Comprovante no Checkout, Deep Links/Checkin Links de Cias Aéreas).
-* **Funcionalidades Ausentes:** **0** (Todos os stubs foram inicializados).
-* **Funcionalidades Órfãs:** **1** (`boarding_rooming_list` do modelo antigo de card, substituída por lógica contextual).
+- **Funcionalidades Reais:** **4** (Brand Kit Cache, OCR Ingestion, Destination Intelligence, Confirmação de Reserva).
+- **Funcionalidades Parciais:** **10** (Design System Flat, Vitrine B2C Checkout, Catálogo Fornecedores, Clause Library, PDF/PNG Exports, Omnichannel Inbox, Rooming List, Conferência de Voos, Reacomodação Aérea, Site Builder).
+- **Funcionalidades Mockadas/Simuladas:** **2** (Pix Upload de Comprovante no Checkout, Deep Links/Checkin Links de Cias Aéreas).
+- **Funcionalidades Ausentes:** **0** (Todos os stubs foram inicializados).
+- **Funcionalidades Órfãs:** **1** (`boarding_rooming_list` do modelo antigo de card, substituída por lógica contextual).
 
 ---
 
@@ -65,19 +65,21 @@ A boa notícia é que a Fase 3 (OCR Ingestion) e a Fase 10 (Destination Intellig
 ## 5. Status de Conclusão de Fases
 
 ### Fases Falsamente Consideradas Concluídas:
-* **Fase 7 (Check-in / Cias Aéreas):** Mockada (faltam tabelas estruturais de checkin_links, links são estáticos no front).
-* **Fase 8 (Tickets / Gmail / Resend):** Partial/UI Fake (mensagens gravam localmente mas não há envio real).
-* **Fase 9 (Rooming List):** Parcial (CRUD relacional funciona, mas não há Drag and Drop ou Excel).
-* **Fase 11 (Conferência de Voos):** Parcial (é apenas uma lista de edição inline de bilhetes de voo).
+
+- **Fase 7 (Check-in / Cias Aéreas):** Mockada (faltam tabelas estruturais de checkin_links, links são estáticos no front).
+- **Fase 8 (Tickets / Gmail / Resend):** Partial/UI Fake (mensagens gravam localmente mas não há envio real).
+- **Fase 9 (Rooming List):** Parcial (CRUD relacional funciona, mas não há Drag and Drop ou Excel).
+- **Fase 11 (Conferência de Voos):** Parcial (é apenas uma lista de edição inline de bilhetes de voo).
 
 ### Fases Realmente Concluídas:
-* **Fase 1 (Design System Flat & Estabilização):** REAL.
-* **Fase 2 (Compatibilização Banco/Front types):** REAL.
-* **Fase 3 (OCR Ingestion):** REAL.
-* **Fase 10 (Destination Intelligence no portal):** REAL.
+
+- **Fase 1 (Design System Flat & Estabilização):** REAL.
+- **Fase 2 (Compatibilização Banco/Front types):** REAL.
+- **Fase 3 (OCR Ingestion):** REAL.
+- **Fase 10 (Destination Intelligence no portal):** REAL.
 
 ---
 
 ## 6. Recomendação Corretiva Imediata
 
-* **Fase A (Estabilização Git & Migrations):** Commitar as migrations locais untracked `20260624*` e os arquivos de navegação modificados para alinhar o repositório Git local com o banco Supabase de produção.
+- **Fase A (Estabilização Git & Migrations):** Commitar as migrations locais untracked `20260624*` e os arquivos de navegação modificados para alinhar o repositório Git local com o banco Supabase de produção.

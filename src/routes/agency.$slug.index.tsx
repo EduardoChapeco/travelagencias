@@ -352,15 +352,19 @@ function Dashboard() {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2 text-center text-[10px] pb-3 border-b border-border/50">
                   <div className="bg-success/5 border border-success/15 rounded p-2">
-                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">Conferidos</span>
+                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">
+                      Conferidos
+                    </span>
                     <strong className="text-success text-sm font-black">
-                      {(s?.upcomingFlights ?? []).filter(f => f.status === "confirmed").length}
+                      {(s?.upcomingFlights ?? []).filter((f) => f.status === "confirmed").length}
                     </strong>
                   </div>
                   <div className="bg-warning/5 border border-warning/15 rounded p-2">
-                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">Pendentes</span>
+                    <span className="text-muted-foreground uppercase text-[9px] font-bold block">
+                      Pendentes
+                    </span>
                     <strong className="text-warning text-sm font-black">
-                      {(s?.upcomingFlights ?? []).filter(f => f.status !== "confirmed").length}
+                      {(s?.upcomingFlights ?? []).filter((f) => f.status !== "confirmed").length}
                     </strong>
                   </div>
                 </div>
@@ -368,9 +372,12 @@ function Dashboard() {
                   {(s?.upcomingFlights ?? []).slice(0, 3).map((f) => (
                     <div key={f.id} className="py-2 flex items-center justify-between text-xs">
                       <div className="min-w-0">
-                        <div className="font-semibold text-foreground truncate">{f.passenger_name}</div>
+                        <div className="font-semibold text-foreground truncate">
+                          {f.passenger_name}
+                        </div>
                         <div className="text-[10px] text-muted-foreground truncate mt-0.5">
-                          ✈️ {f.venue || "Rota não especificada"} · Loc: <span className="font-mono">{f.ticket_code || "—"}</span>
+                          ✈️ {f.venue || "Rota não especificada"} · Loc:{" "}
+                          <span className="font-mono">{f.ticket_code || "—"}</span>
                         </div>
                       </div>
                       <div className="text-right shrink-0 ml-3">

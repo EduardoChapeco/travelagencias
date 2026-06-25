@@ -30,11 +30,7 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import {
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-} from "@/components/ui/form";
+import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 
@@ -64,28 +60,28 @@ type Supplier = {
 };
 
 const KIND_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  airline:      { label: "Cia Aérea",      icon: Plane,        color: "text-blue-600" },
-  hotel:        { label: "Hotel",           icon: Hotel,        color: "text-amber-600" },
-  operator:     { label: "Operadora",       icon: Building2,    color: "text-violet-600" },
-  car_rental:   { label: "Locadora",        icon: Car,          color: "text-orange-600" },
-  insurance:    { label: "Seguro",          icon: Shield,       color: "text-green-600" },
-  transfer:     { label: "Transfer",        icon: Bus,          color: "text-teal-600" },
-  cruise:       { label: "Cruzeiro",        icon: Ship,         color: "text-cyan-600" },
-  visa:         { label: "Vistos",          icon: TicketCheck,  color: "text-pink-600" },
-  other:        { label: "Outros",          icon: Building2,    color: "text-muted-foreground" },
+  airline: { label: "Cia Aérea", icon: Plane, color: "text-blue-600" },
+  hotel: { label: "Hotel", icon: Hotel, color: "text-amber-600" },
+  operator: { label: "Operadora", icon: Building2, color: "text-violet-600" },
+  car_rental: { label: "Locadora", icon: Car, color: "text-orange-600" },
+  insurance: { label: "Seguro", icon: Shield, color: "text-green-600" },
+  transfer: { label: "Transfer", icon: Bus, color: "text-teal-600" },
+  cruise: { label: "Cruzeiro", icon: Ship, color: "text-cyan-600" },
+  visa: { label: "Vistos", icon: TicketCheck, color: "text-pink-600" },
+  other: { label: "Outros", icon: Building2, color: "text-muted-foreground" },
 };
 
 const KIND_FILTERS = [
-  { value: "all",       label: "Todos" },
-  { value: "airline",   label: "Cias Aéreas" },
-  { value: "hotel",     label: "Hotéis" },
-  { value: "operator",  label: "Operadoras" },
-  { value: "transfer",  label: "Transfers" },
+  { value: "all", label: "Todos" },
+  { value: "airline", label: "Cias Aéreas" },
+  { value: "hotel", label: "Hotéis" },
+  { value: "operator", label: "Operadoras" },
+  { value: "transfer", label: "Transfers" },
   { value: "insurance", label: "Seguros" },
-  { value: "car_rental",label: "Locadoras" },
-  { value: "cruise",    label: "Cruzeiros" },
-  { value: "visa",      label: "Vistos" },
-  { value: "other",     label: "Outros" },
+  { value: "car_rental", label: "Locadoras" },
+  { value: "cruise", label: "Cruzeiros" },
+  { value: "visa", label: "Vistos" },
+  { value: "other", label: "Outros" },
 ];
 
 function StarRating({ rating }: { rating: number | null }) {
@@ -97,7 +93,7 @@ function StarRating({ rating }: { rating: number | null }) {
           key={i}
           className={cn(
             "h-3 w-3",
-            i < Math.round(rating) ? "fill-amber-400 text-amber-400" : "text-border"
+            i < Math.round(rating) ? "fill-amber-400 text-amber-400" : "text-border",
           )}
         />
       ))}
@@ -122,7 +118,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       className={cn(
         "group flex flex-col rounded-xl border border-border bg-white p-5 transition-all duration-200",
         "hover:border-[--brand-primary,theme(colors.pink.400)] hover:bg-gray-50/40",
-        !s.is_active && "opacity-60"
+        !s.is_active && "opacity-60",
       )}
     >
       {/* Header */}
@@ -182,7 +178,10 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       {s.tags && s.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
           {s.tags.slice(0, 3).map((t) => (
-            <span key={t} className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide">
+            <span
+              key={t}
+              className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
+            >
               {t}
             </span>
           ))}
@@ -212,7 +211,7 @@ function SupplierRow({ s, slug }: { s: Supplier; slug: string }) {
       className={cn(
         "group flex items-center gap-4 border-b border-border bg-white px-5 py-3 transition-colors",
         "hover:bg-surface last:border-0",
-        !s.is_active && "opacity-60"
+        !s.is_active && "opacity-60",
       )}
     >
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
@@ -264,7 +263,7 @@ function SuppliersPage() {
       let query = supabase
         .from("suppliers")
         .select(
-          "id, name, legal_name, kind, document, email, phone, whatsapp, commission_rate, is_active, city, country, state, rating, logo_url, sla_hours, tags"
+          "id, name, legal_name, kind, document, email, phone, whatsapp, commission_rate, is_active, city, country, state, rating, logo_url, sla_hours, tags",
         )
         .eq("agency_id", agency!.id);
 
@@ -282,7 +281,7 @@ function SuppliersPage() {
       ? s.name.toLowerCase().includes(search.toLowerCase()) ||
         (s.city ?? "").toLowerCase().includes(search.toLowerCase()) ||
         (s.country ?? "").toLowerCase().includes(search.toLowerCase())
-      : true
+      : true,
   );
 
   // Stats summary
@@ -336,7 +335,7 @@ function SuppliersPage() {
                     "w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors text-left",
                     kindFilter === f.value
                       ? "bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)] font-semibold"
-                      : "text-foreground hover:bg-surface-alt"
+                      : "text-foreground hover:bg-surface-alt",
                   )}
                 >
                   {f.value !== "all" && <KindIcon kind={f.value} />}
@@ -399,7 +398,9 @@ function SuppliersPage() {
                 className="h-8 w-full appearance-none rounded-md border border-border bg-white pl-8 pr-8 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground"
               >
                 {KIND_FILTERS.map((f) => (
-                  <option key={f.value} value={f.value}>{f.label}</option>
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
                 ))}
               </select>
               <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
@@ -413,7 +414,7 @@ function SuppliersPage() {
                   "flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
                   viewMode === "grid"
                     ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
-                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt"
+                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
                 )}
                 title="Grid"
               >
@@ -425,7 +426,7 @@ function SuppliersPage() {
                   "flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
                   viewMode === "list"
                     ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
-                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt"
+                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
                 )}
                 title="Lista"
               >
@@ -464,11 +465,21 @@ function SuppliersPage() {
                 {/* List header */}
                 <div className="flex items-center gap-4 bg-surface px-5 py-2 border-b border-border">
                   <div className="w-8 shrink-0" />
-                  <div className="flex-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Parceiro</div>
-                  <div className="hidden md:block w-28 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Avaliação</div>
-                  <div className="hidden sm:block w-24 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Telefone</div>
-                  <div className="w-16 text-right text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">Markup</div>
-                  <div className="w-14 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">Status</div>
+                  <div className="flex-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Parceiro
+                  </div>
+                  <div className="hidden md:block w-28 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Avaliação
+                  </div>
+                  <div className="hidden sm:block w-24 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Telefone
+                  </div>
+                  <div className="w-16 text-right text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+                    Markup
+                  </div>
+                  <div className="w-14 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+                    Status
+                  </div>
                 </div>
                 {filtered.map((s) => (
                   <SupplierRow key={s.id} s={s} slug={slug} />

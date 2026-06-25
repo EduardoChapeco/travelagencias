@@ -1,18 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Plane, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Square, 
-  CheckSquare, 
-  Loader2, 
+import {
+  Plane,
+  AlertTriangle,
+  CheckCircle2,
+  Square,
+  CheckSquare,
+  Loader2,
   ExternalLink,
   Users,
   AlertOctagon,
   Clock,
-  Send
+  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 import { getLastName, getAirlineCheckinUrl } from "@/utils/airline-deeplinks";
@@ -90,7 +90,7 @@ function MobileCheckinPage() {
   const [saving, setSaving] = useState(false);
   const [checklist, setChecklist] = useState<Item[]>([]);
   const [selectedPassengerId, setSelectedPassengerId] = useState<string>("");
-  
+
   // Reaccommodation state
   const [acceptingReac, setAcceptingReac] = useState(false);
 
@@ -100,10 +100,10 @@ function MobileCheckinPage() {
   const [submittingEmergency, setSubmittingEmergency] = useState(false);
 
   async function loadDetails() {
-    const { data, error } = await supabase.rpc("get_public_boarding_card_details", { 
-      p_id: token 
+    const { data, error } = await supabase.rpc("get_public_boarding_card_details", {
+      p_id: token,
     });
-    
+
     if (error) {
       setErr(error.message);
     } else if (!data || !(data as unknown as BoardingCardDetails)?.card) {
@@ -112,7 +112,7 @@ function MobileCheckinPage() {
       const d = data as unknown as BoardingCardDetails;
       setDetails(d);
       setChecklist(d.card.checklist || []);
-      
+
       // Auto-select first passenger if none selected
       if (d.passengers && d.passengers.length > 0 && !selectedPassengerId) {
         setSelectedPassengerId(d.passengers[0].id);
@@ -143,14 +143,17 @@ function MobileCheckinPage() {
 
   async function handleCheckinClick(segment: Segment, url: string) {
     window.open(url, "_blank");
-    
+
     // Log event in database
     await supabase.rpc("create_public_boarding_event", {
       p_boarding_card_id: token,
       p_traveler_id: selectedPassengerId || "",
       p_flight_segment_id: segment.id,
       p_event_type: "checkin_link_clicked",
-      p_metadata: { segment_id: segment.id, url } as unknown as import("@/integrations/supabase/types").Json,
+      p_metadata: {
+        segment_id: segment.id,
+        url,
+      } as unknown as import("@/integrations/supabase/types").Json,
     });
   }
 
@@ -161,7 +164,7 @@ function MobileCheckinPage() {
       p_itinerary_id: itineraryId,
     });
     setAcceptingReac(false);
-    
+
     if (error) {
       toast.error("Erro ao aceitar reacomodação. Tente novamente ou fale com o agente.");
     } else {
@@ -173,14 +176,14 @@ function MobileCheckinPage() {
   async function handleSubmitEmergency() {
     if (!emergencyType) return;
     setSubmittingEmergency(true);
-    
+
     const { error } = await supabase.rpc("submit_emergency_flight_issue", {
       p_boarding_card_id: token,
       p_issue_type: emergencyType,
       p_description: emergencyComment,
     });
     setSubmittingEmergency(false);
-    
+
     if (error) {
       toast.error("Erro ao enviar notificação. Tente novamente.");
     } else {
@@ -209,7 +212,7 @@ function MobileCheckinPage() {
   const doneCount = checklist.filter((c) => c.done).length;
   const isAllDone = doneCount === checklist.length && checklist.length > 0;
 
-  const activePassenger = details.passengers.find(p => p.id === selectedPassengerId);
+  const activePassenger = details.passengers.find((p) => p.id === selectedPassengerId);
   const passengerLastName = activePassenger ? getLastName(activePassenger.full_name) : "";
 
   return (
@@ -226,7 +229,6 @@ function MobileCheckinPage() {
       </div>
 
       <div className="px-6 py-6 space-y-6">
-        
         {/* Passenger Selector */}
         {details.passengers.length > 1 && (
           <div className="bg-background border border-border/60 rounded-2xl p-4 space-y-2">
@@ -238,8 +240,10 @@ function MobileCheckinPage() {
               onChange={(e) => setSelectedPassengerId(e.target.value)}
               className="w-full text-sm border border-border rounded-xl px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
             >
-              {details.passengers.map(p => (
-                <option key={p.id} value={p.id}>{p.full_name}</option>
+              {details.passengers.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.full_name}
+                </option>
               ))}
             </select>
           </div>
@@ -253,11 +257,15 @@ function MobileCheckinPage() {
               <span>Aviso de Reacomodação de Voo</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              A agência disponibilizou uma alternativa para os seus voos. Verifique e confirme o aceite abaixo:
+              A agência disponibilizou uma alternativa para os seus voos. Verifique e confirme o
+              aceite abaixo:
             </p>
-            
+
             {details.reaccommodations.map((reac, rIdx) => (
-              <div key={reac.itinerary_id} className="space-y-3 bg-surface border border-border/40 rounded-xl p-3">
+              <div
+                key={reac.itinerary_id}
+                className="space-y-3 bg-surface border border-border/40 rounded-xl p-3"
+              >
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Proposta Alternativa (V{reac.version})
                 </div>
@@ -265,8 +273,12 @@ function MobileCheckinPage() {
                   {reac.segments.map((seg, sIdx) => (
                     <div key={seg.id} className="text-xs space-y-1 border-l-2 border-brand/40 pl-2">
                       <div className="font-semibold flex items-center gap-1">
-                        <span className="font-mono text-[10px] bg-brand/10 text-brand px-1 py-0.5 rounded">{seg.airline_code} {seg.flight_number}</span>
-                        <span>{seg.origin_iata} → {seg.destination_iata}</span>
+                        <span className="font-mono text-[10px] bg-brand/10 text-brand px-1 py-0.5 rounded">
+                          {seg.airline_code} {seg.flight_number}
+                        </span>
+                        <span>
+                          {seg.origin_iata} → {seg.destination_iata}
+                        </span>
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         Partida: {new Date(seg.departure_at).toLocaleString("pt-BR")}
@@ -274,7 +286,7 @@ function MobileCheckinPage() {
                     </div>
                   ))}
                 </div>
-                
+
                 <button
                   onClick={() => handleAcceptReaccommodation(reac.itinerary_id)}
                   disabled={acceptingReac}
@@ -297,7 +309,7 @@ function MobileCheckinPage() {
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Voos & e-Check-in
           </h2>
-          
+
           {details.segments.length === 0 ? (
             <div className="bg-background border border-border/60 rounded-2xl p-5 text-center text-xs text-muted-foreground">
               Nenhum trecho de voo confirmado ativo para esta viagem.
@@ -314,12 +326,15 @@ function MobileCheckinPage() {
                     seg.airline_code || details.card.airline || "",
                     seg.record_locator || details.card.pnr || "",
                     passengerLastName || "Passageiro",
-                    seg.origin_iata
+                    seg.origin_iata,
                   );
                 }
 
                 return (
-                  <div key={seg.id} className="bg-background border border-border/60 rounded-2xl p-5 space-y-4">
+                  <div
+                    key={seg.id}
+                    className="bg-background border border-border/60 rounded-2xl p-5 space-y-4"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Plane className="w-4 h-4 text-brand" />
@@ -332,30 +347,62 @@ function MobileCheckinPage() {
 
                     <div className="grid grid-cols-2 gap-4 border-y border-border/40 py-3">
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Origem</div>
+                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                          Origem
+                        </div>
                         <div className="font-bold text-sm">{seg.origin_iata}</div>
                         <div className="text-[10px] text-muted-foreground">
-                          {new Date(seg.departure_at).toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'})} ({new Date(seg.departure_at).toLocaleDateString("pt-BR", {day: 'numeric', month: 'short'})})
+                          {new Date(seg.departure_at).toLocaleTimeString("pt-BR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}{" "}
+                          (
+                          {new Date(seg.departure_at).toLocaleDateString("pt-BR", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                          )
                         </div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Destino</div>
+                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                          Destino
+                        </div>
                         <div className="font-bold text-sm">{seg.destination_iata}</div>
                         <div className="text-[10px] text-muted-foreground">
-                          {new Date(seg.arrival_at).toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'})} ({new Date(seg.arrival_at).toLocaleDateString("pt-BR", {day: 'numeric', month: 'short'})})
+                          {new Date(seg.arrival_at).toLocaleTimeString("pt-BR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}{" "}
+                          (
+                          {new Date(seg.arrival_at).toLocaleDateString("pt-BR", {
+                            day: "numeric",
+                            month: "short",
+                          })}
+                          )
                         </div>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
                       {seg.record_locator && (
-                        <div>Loc: <span className="font-mono font-bold text-foreground">{seg.record_locator}</span></div>
+                        <div>
+                          Loc:{" "}
+                          <span className="font-mono font-bold text-foreground">
+                            {seg.record_locator}
+                          </span>
+                        </div>
                       )}
                       {seg.airport_terminal && (
-                        <div>Terminal: <span className="font-bold text-foreground">{seg.airport_terminal}</span></div>
+                        <div>
+                          Terminal:{" "}
+                          <span className="font-bold text-foreground">{seg.airport_terminal}</span>
+                        </div>
                       )}
                       {seg.cabin && (
-                        <div>Cabine: <span className="font-bold text-foreground">{seg.cabin}</span></div>
+                        <div>
+                          Cabine: <span className="font-bold text-foreground">{seg.cabin}</span>
+                        </div>
                       )}
                     </div>
 
@@ -363,7 +410,8 @@ function MobileCheckinPage() {
                       onClick={() => handleCheckinClick(seg, checkinUrl)}
                       className="w-full bg-brand text-brand-foreground hover:bg-brand/90 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
                     >
-                      Iniciar Check-in na {seg.airline_code} <ExternalLink className="w-3.5 h-3.5" />
+                      Iniciar Check-in na {seg.airline_code}{" "}
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 );
@@ -444,16 +492,17 @@ function MobileCheckinPage() {
             <span>Precisa de Ajuda Urgente?</span>
           </div>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            Se o seu voo sofreu alterações no aeroporto, reporte à agência imediatamente para assistência operacional rápida.
+            Se o seu voo sofreu alterações no aeroporto, reporte à agência imediatamente para
+            assistência operacional rápida.
           </p>
-          
+
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => {
                 setEmergencyType("delayed");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-xl text-xs font-bold border transition-colors ${emergencyType === 'delayed' ? 'bg-amber-500 text-white border-amber-600' : 'bg-surface border-border text-foreground hover:bg-surface-alt'}`}
+              className={`py-2 rounded-xl text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
             >
               Voo Atrasou
             </button>
@@ -462,7 +511,7 @@ function MobileCheckinPage() {
                 setEmergencyType("cancelled");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-xl text-xs font-bold border transition-colors ${emergencyType === 'cancelled' ? 'bg-rose-600 text-white border-rose-700' : 'bg-surface border-border text-foreground hover:bg-surface-alt'}`}
+              className={`py-2 rounded-xl text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
             >
               Voo Cancelado
             </button>
@@ -503,7 +552,6 @@ function MobileCheckinPage() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

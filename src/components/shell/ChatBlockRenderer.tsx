@@ -40,7 +40,9 @@ export function LeadCard({ data }: { data: any }) {
         )}
         {data.notes && (
           <div className="col-span-2 border-t border-border/40 pt-1.5 mt-1">
-            <span className="text-[10px] text-muted-foreground block uppercase">Notas de Viagem</span>
+            <span className="text-[10px] text-muted-foreground block uppercase">
+              Notas de Viagem
+            </span>
             <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{data.notes}</p>
           </div>
         )}
@@ -61,7 +63,9 @@ export function ConfirmationCard({
 }) {
   const { agency } = useAgency();
   const executeFn = useServerFn(executeAIChatAction);
-  const [status, setStatus] = useState<"pending" | "confirmed" | "cancelled" | "executing">("pending");
+  const [status, setStatus] = useState<"pending" | "confirmed" | "cancelled" | "executing">(
+    "pending",
+  );
   const [outcomeMessage, setOutcomeMessage] = useState("");
 
   const actionDef = ActionRegistry[toolCall.code];
@@ -131,12 +135,16 @@ export function ConfirmationCard({
           <Sparkles className="h-3.5 w-3.5 text-brand" />
           <span className="text-xs font-bold text-foreground">{actionDef.name}</span>
         </div>
-        <span className={cn(
-          "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm tracking-wider",
-          actionDef.riskLevel === "high" ? "bg-rose-500/10 text-rose-500" :
-          actionDef.riskLevel === "medium" ? "bg-amber-500/10 text-amber-500" :
-          "bg-emerald-500/10 text-emerald-500"
-        )}>
+        <span
+          className={cn(
+            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm tracking-wider",
+            actionDef.riskLevel === "high"
+              ? "bg-rose-500/10 text-rose-500"
+              : actionDef.riskLevel === "medium"
+                ? "bg-amber-500/10 text-amber-500"
+                : "bg-emerald-500/10 text-emerald-500",
+          )}
+        >
           {actionDef.riskLevel} risco
         </span>
       </div>
@@ -144,7 +152,8 @@ export function ConfirmationCard({
       {/* Render parameters values */}
       <div className="space-y-1.5 text-xs text-muted-foreground bg-surface-alt p-2 rounded-md border border-border/40">
         {Object.entries(toolCall.payload).map(([k, v]) => {
-          if (v === null || v === undefined || k === "leadId" || k === "clientId" || k === "tripId") return null;
+          if (v === null || v === undefined || k === "leadId" || k === "clientId" || k === "tripId")
+            return null;
           let label = k.charAt(0).toUpperCase() + k.slice(1);
           if (k === "name") label = "Nome";
           if (k === "destination") label = "Destino";
@@ -154,7 +163,10 @@ export function ConfirmationCard({
           if (k === "totalAmount") label = "Valor Total";
 
           return (
-            <div key={k} className="flex justify-between gap-2 border-b border-border/20 last:border-b-0 pb-1 last:pb-0">
+            <div
+              key={k}
+              className="flex justify-between gap-2 border-b border-border/20 last:border-b-0 pb-1 last:pb-0"
+            >
               <span className="font-semibold text-muted-foreground/80">{label}:</span>
               <span className="text-foreground text-right truncate max-w-[140px]">
                 {typeof v === "object" ? JSON.stringify(v) : String(v)}
@@ -193,7 +205,9 @@ export function ConfirmationCard({
         {status === "confirmed" && (
           <div className="flex w-full items-center gap-1.5 rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 text-[11px] text-emerald-600 font-medium">
             <Check className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{outcomeMessage || "Ação confirmada e registrada com sucesso."}</span>
+            <span className="truncate">
+              {outcomeMessage || "Ação confirmada e registrada com sucesso."}
+            </span>
           </div>
         )}
         {status === "cancelled" && (
@@ -227,9 +241,7 @@ export function ChatBlockRenderer({
       <div className="whitespace-pre-wrap text-foreground font-light">{content}</div>
 
       {/* 2. Structured interactive block cards depending on execution context */}
-      {toolCall && (
-        <ConfirmationCard messageId={messageId} toolCall={toolCall} />
-      )}
+      {toolCall && <ConfirmationCard messageId={messageId} toolCall={toolCall} />}
     </div>
   );
 }

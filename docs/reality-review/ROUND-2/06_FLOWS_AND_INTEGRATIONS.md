@@ -25,10 +25,10 @@ sequenceDiagram
     UI->>UI: Invalida caches do React Query e atualiza saldos em tempo real
 ```
 
-* **Rastreabilidade**:
-  * **Visualização**: Rota `/agency/$slug/financial/reconciliation`.
-  * **Persistência**: `approveReceipt.mutate` no frontend -> executa updates em `payment_installments` e inserts em `financial_transactions`.
-  * **Conclusão**: **REAL PONTA A PONTA**.
+- **Rastreabilidade**:
+  - **Visualização**: Rota `/agency/$slug/financial/reconciliation`.
+  - **Persistência**: `approveReceipt.mutate` no frontend -> executa updates em `payment_installments` e inserts em `financial_transactions`.
+  - **Conclusão**: **REAL PONTA A PONTA**.
 
 ---
 
@@ -57,8 +57,8 @@ sequenceDiagram
     Exec-->>O: Retorna sucesso e exibe resultado verde no Card do chat
 ```
 
-* **Rastreabilidade**:
-  * **Chamador**: `AIChatPanel.tsx` -> `sendAIChatMessage` em `ai-chat.functions.ts`.
-  * **Card de Consentimento**: `ChatBlockRenderer.tsx` (`ConfirmationCard`).
-  * **Execução Contábil/Operacional**: `executeAIChatAction` em `ActionExecutor.ts`.
-  * **Conclusão**: **REAL PONTA A PONTA** (As ações de geração de rascunhos de contratos e vouchers agora inserem dados físicos no banco local nas tabelas `contracts` e `vouchers`, em vez de simularem com UUIDs aleatórios em memória).
+- **Rastreabilidade**:
+  - **Chamador**: `AIChatPanel.tsx` -> `sendAIChatMessage` em `ai-chat.functions.ts`.
+  - **Card de Consentimento**: `ChatBlockRenderer.tsx` (`ConfirmationCard`).
+  - **Execução Contábil/Operacional**: `executeAIChatAction` em `ActionExecutor.ts`.
+  - **Conclusão**: **REAL PONTA A PONTA** (As ações de geração de rascunhos de contratos e vouchers agora inserem dados físicos no banco local nas tabelas `contracts` e `vouchers`, em vez de simularem com UUIDs aleatórios em memória).

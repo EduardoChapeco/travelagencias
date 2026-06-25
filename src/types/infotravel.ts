@@ -162,28 +162,30 @@ export interface ApiBooking {
  * Converte um resultado de busca de hotel da Infotravel para o modelo de Hotel do TravelOS
  */
 export function mapApiHotelToCanonical(avail: ApiHotelAvail): Hotel {
-  const hotelId = avail.hotel?.id?.toString() || `info-h-${Math.random().toString(36).substr(2, 9)}`;
+  const hotelId =
+    avail.hotel?.id?.toString() || `info-h-${Math.random().toString(36).substr(2, 9)}`;
   const hotelName = avail.hotel?.name || "Hotel Sem Nome";
   const hotelCity = avail.hotel?.city?.name || "Destino Desconhecido";
-  
+
   // Formatar datas ISO (2026-07-01T00:00:00) para YYYY-MM-DD
   const checkin = avail.checkIn ? avail.checkIn.split("T")[0] : "";
   const checkout = avail.checkOut ? avail.checkOut.split("T")[0] : "";
-  
+
   const roomGroup = avail.roomGroups?.[0];
   const primaryRoom = roomGroup?.rooms?.[0];
   const mealPlan = primaryRoom?.boardType?.description || "Somente Hospedagem";
-  
+
   const rooms = roomGroup?.rooms?.map((r) => ({
     type: r.description || r.name || "Quarto Standard",
     qty: 1,
   })) || [{ type: "Quarto Standard", qty: 1 }];
-  
-  const images = avail.hotel?.images?.map((img) => img.url || img.path || "")
+
+  const images = avail.hotel?.images
+    ?.map((img) => img.url || img.path || "")
     .filter((url) => url !== "") || [
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80"
-    ];
-    
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+  ];
+
   const price = avail.lowestFare?.price?.amount || avail.lowestFare?.amount || 0;
 
   return {
@@ -205,23 +207,23 @@ export function mapApiHotelToCanonical(avail: ApiHotelAvail): Hotel {
 export function mapApiFlightToCanonical(avail: ApiFlightAvail): Flight {
   const primaryRoute = avail.routes?.[0];
   const primaryFlight = primaryRoute?.flights?.[0];
-  
+
   const flightId = primaryFlight?.key || `info-f-${Math.random().toString(36).substr(2, 9)}`;
   const origin = primaryFlight?.origin?.code || "GRU";
   const destination = primaryFlight?.destination?.code || "MIA";
-  
+
   const date = primaryFlight?.departure ? primaryFlight.departure.split("T")[0] : "";
-  const departure_time = primaryFlight?.departure 
-    ? primaryFlight.departure.split("T")[1]?.substring(0, 5) 
+  const departure_time = primaryFlight?.departure
+    ? primaryFlight.departure.split("T")[1]?.substring(0, 5)
     : "00:00";
-  const arrival_time = primaryFlight?.arrival 
-    ? primaryFlight.arrival.split("T")[1]?.substring(0, 5) 
+  const arrival_time = primaryFlight?.arrival
+    ? primaryFlight.arrival.split("T")[1]?.substring(0, 5)
     : "00:00";
-    
+
   const airline = primaryFlight?.airline?.name || primaryFlight?.airline?.code || "Companhia Aérea";
   const flight_number = primaryFlight?.number || "0000";
   const stops = primaryFlight?.stopsCount || 0;
-  
+
   const primaryFare = primaryFlight?.fares?.[0];
   const baggage_rules = primaryFare?.description || "Baggage rules subject to airline terms";
   const price = primaryFare?.price?.amount || 0;
@@ -266,9 +268,10 @@ export interface NormalizedBooking {
 }
 
 export function mapApiBookingToNormalized(booking: ApiBooking): NormalizedBooking {
-  const bookingId = booking.id?.toString() || `B-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+  const bookingId =
+    booking.id?.toString() || `B-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   const locator = booking.locator || "Localizador-Operadora";
-  
+
   // Encontrar destino com base nos hotéis ou voos
   let destination = "Destino Internacional";
   if (booking.bookingHotels?.[0]?.hotel?.city?.name) {
@@ -276,49 +279,52 @@ export function mapApiBookingToNormalized(booking: ApiBooking): NormalizedBookin
   } else if (booking.bookingFlights?.[0]?.flights?.[0]?.destination?.city?.name) {
     destination = booking.bookingFlights[0].flights[0].destination.city.name;
   }
-  
+
   const firstName = booking.client?.name || "";
   const lastName = booking.client?.lastName || "";
   const clientName = `${firstName} ${lastName}`.trim() || "Cliente da Proposta";
-  
+
   const clientCpfObj = booking.client?.documents?.find((doc) => doc.type?.toUpperCase() === "CPF");
   const clientCpf = clientCpfObj?.number || "";
-  
+
   const clientEmail = booking.client?.email || "";
   const clientPhone = booking.client?.telephones?.[0]?.number || "";
   const totalSale = booking.bookingAmount?.amount || 0;
-  
+
   // Mapear hotéis
-  const hotels = booking.bookingHotels?.map((h) => {
-    const primaryRoom = h.rooms?.[0];
-    const canonicalHotel = mapApiHotelToCanonical({
-      checkIn: primaryRoom?.checkIn || booking.createdAt,
-      checkOut: primaryRoom?.checkOut || booking.createdAt,
-      hotel: h.hotel,
-      lowestFare: { amount: 0 },
-      roomGroups: [{ rooms: h.rooms }],
-    });
-    return canonicalHotel;
-  }) || [];
-  
+  const hotels =
+    booking.bookingHotels?.map((h) => {
+      const primaryRoom = h.rooms?.[0];
+      const canonicalHotel = mapApiHotelToCanonical({
+        checkIn: primaryRoom?.checkIn || booking.createdAt,
+        checkOut: primaryRoom?.checkOut || booking.createdAt,
+        hotel: h.hotel,
+        lowestFare: { amount: 0 },
+        roomGroups: [{ rooms: h.rooms }],
+      });
+      return canonicalHotel;
+    }) || [];
+
   // Mapear voos
-  const flights = booking.bookingFlights?.map((f) => {
-    const canonicalFlight = mapApiFlightToCanonical({
-      routes: [{ flights: f.flights }],
-    });
-    return canonicalFlight;
-  }) || [];
-  
+  const flights =
+    booking.bookingFlights?.map((f) => {
+      const canonicalFlight = mapApiFlightToCanonical({
+        routes: [{ flights: f.flights }],
+      });
+      return canonicalFlight;
+    }) || [];
+
   // Mapear passageiros a partir dos nomes na reserva aérea ou hotel
   const passengers: NormalizedBooking["passengers"] = [];
   const passengerNames = booking.bookingFlights?.[0]?.names || [];
-  
+
   passengerNames.forEach((n) => {
     const docNumber = n.document?.number || n.documents?.[0]?.number || "";
-    const docType = n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
+    const docType =
+      n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
     const birthDate = n.birth ? n.birth.split("T")[0] : "";
     const fullName = `${n.firstName} ${n.lastName}`.trim();
-    
+
     if (fullName) {
       passengers.push({
         full_name: fullName,
@@ -334,12 +340,15 @@ export function mapApiBookingToNormalized(booking: ApiBooking): NormalizedBookin
     bh.rooms?.forEach((r) => {
       r.names?.forEach((n) => {
         const docNumber = n.document?.number || n.documents?.[0]?.number || "";
-        const docType = n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
+        const docType =
+          n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
         const birthDate = n.birth ? n.birth.split("T")[0] : "";
         const fullName = `${n.firstName} ${n.lastName}`.trim();
 
         if (fullName) {
-          const exists = passengers.some(p => p.full_name.toLowerCase() === fullName.toLowerCase());
+          const exists = passengers.some(
+            (p) => p.full_name.toLowerCase() === fullName.toLowerCase(),
+          );
           if (!exists) {
             passengers.push({
               full_name: fullName,
@@ -352,7 +361,7 @@ export function mapApiBookingToNormalized(booking: ApiBooking): NormalizedBookin
       });
     });
   });
-  
+
   // Se não houver passageiros listados, cadastrar o cliente principal como passageiro
   if (passengers.length === 0) {
     passengers.push({

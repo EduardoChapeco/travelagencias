@@ -93,7 +93,7 @@ serve(async (req) => {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${resendKey}`,
+          Authorization: `Bearer ${resendKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -107,7 +107,7 @@ serve(async (req) => {
       if (!res.ok) {
         throw new Error("Falha ao enviar e-mail via Resend: " + (await res.text()));
       }
-      
+
       const sentData = await res.json();
       threadId = sentData.id;
     }

@@ -19,7 +19,16 @@ import {
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, fmtDate, GhostButton, PrimaryButton, Input, Select, Textarea, Field } from "@/components/ui/form";
+import {
+  StatusBadge,
+  fmtDate,
+  GhostButton,
+  PrimaryButton,
+  Input,
+  Select,
+  Textarea,
+  Field,
+} from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -117,7 +126,9 @@ function QuotesIndexPage() {
     enabled: !!agency,
     queryKey: ["user-role", agency?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return "agent";
       const { data } = await supabase
         .from("user_roles")
@@ -126,7 +137,7 @@ function QuotesIndexPage() {
         .eq("agency_id", agency!.id)
         .maybeSingle();
       return data?.role || "agent";
-    }
+    },
   });
   const isSuperAdmin = userRole === "super_admin";
 
@@ -141,7 +152,7 @@ function QuotesIndexPage() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data || [];
-    }
+    },
   });
 
   const filteredQuotes = quotes.filter((q) => {
@@ -196,7 +207,8 @@ Texto: "${aiText}"`;
         body: {
           action: "completion",
           prompt,
-          systemPrompt: "Você é o assistente inteligente de viagens do TravelOS. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
+          systemPrompt:
+            "Você é o assistente inteligente de viagens do TravelOS. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
           modelPreference: "smart",
         },
       });
@@ -271,12 +283,14 @@ Texto: "${aiText}"`;
         },
         [
           { traveler_type: "adult", age: 30 },
-          ...(children > 0 ? Array.from({ length: children }).map(() => ({ traveler_type: "child", age: 8 })) : []),
+          ...(children > 0
+            ? Array.from({ length: children }).map(() => ({ traveler_type: "child", age: 8 }))
+            : []),
         ],
         [
           { key: "comfort", value: "high", priority: 1 },
           { key: "stops", value: "0", priority: 2 },
-        ]
+        ],
       );
       return result;
     },
@@ -302,7 +316,7 @@ Texto: "${aiText}"`;
         knowledgeTitle.trim(),
         knowledgeContent.trim(),
         knowledgeCategory,
-        knowledgeScope
+        knowledgeScope,
       );
       toast.success("Diretriz indexada e auto-alimentada com embeddings RAG!");
       qc.invalidateQueries({ queryKey: ["knowledge-documents", agency.id] });
@@ -324,31 +338,28 @@ Texto: "${aiText}"`;
       const defaults = [
         {
           title: "Diretrizes Logísticas: Jericoacoara via Fortaleza",
-          content: "Fortaleza (FOR) para Jericoacoara (JJD): O último horário de transfer direto por dunas seguro é 18:00. O percurso dura 240 minutos (4 horas). Chegadas em Fortaleza após as 18:00 exigem pernoite intermediário no gateway para segurança.",
-          category: "gateway_rules"
+          content:
+            "Fortaleza (FOR) para Jericoacoara (JJD): O último horário de transfer direto por dunas seguro é 18:00. O percurso dura 240 minutos (4 horas). Chegadas em Fortaleza após as 18:00 exigem pernoite intermediário no gateway para segurança.",
+          category: "gateway_rules",
         },
         {
           title: "Diretrizes Logísticas: São Miguel dos Milagres via Maceió",
-          content: "Maceió (MCZ) para São Miguel dos Milagres: O último horário de transfer direto seguro é 20:00. O percurso dura 120 minutos (2 horas). Chegadas em Maceió após as 20:00 exigem pernoite intermediário no gateway.",
-          category: "gateway_rules"
+          content:
+            "Maceió (MCZ) para São Miguel dos Milagres: O último horário de transfer direto seguro é 20:00. O percurso dura 120 minutos (2 horas). Chegadas em Maceió após as 20:00 exigem pernoite intermediário no gateway.",
+          category: "gateway_rules",
         },
         {
           title: "Diretrizes Logísticas: Morro de São Paulo via Salvador",
-          content: "Salvador (SSA) para Morro de São Paulo: O último catamarã do dia parte às 16:30. O percurso dura 150 minutos (2,5 horas). Chegadas em Salvador após as 16:30 exigem pernoite intermediário no gateway.",
-          category: "gateway_rules"
-        }
+          content:
+            "Salvador (SSA) para Morro de São Paulo: O último catamarã do dia parte às 16:30. O percurso dura 150 minutos (2,5 horas). Chegadas em Salvador após as 16:30 exigem pernoite intermediário no gateway.",
+          category: "gateway_rules",
+        },
       ];
 
       const scope = isSuperAdmin ? "global" : "agency";
 
       for (const item of defaults) {
-        await ingestKnowledgeDocument(
-          agency.id,
-          item.title,
-          item.content,
-          item.category,
-          scope
-        );
+        await ingestKnowledgeDocument(agency.id, item.title, item.content, item.category, scope);
       }
 
       toast.success("Diretrizes padrão indexadas e alimentadas com sucesso!");
@@ -376,7 +387,10 @@ Texto: "${aiText}"`;
   // Delete Knowledge Mutation
   const deleteKnowledgeMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("knowledge_documents" as any).delete().eq("id", id);
+      const { error } = await supabase
+        .from("knowledge_documents" as any)
+        .delete()
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -409,7 +423,10 @@ Texto: "${aiText}"`;
                 )}
                 Carregar Regras Padrão
               </GhostButton>
-              <PrimaryButton onClick={() => setNewKnowledgeOpen(true)} className="gap-1.5 bg-brand text-brand-foreground hover:bg-brand/90">
+              <PrimaryButton
+                onClick={() => setNewKnowledgeOpen(true)}
+                className="gap-1.5 bg-brand text-brand-foreground hover:bg-brand/90"
+              >
                 <Sparkles className="h-3.5 w-3.5" />
                 Auto-Alimentar Diretriz (IA)
               </PrimaryButton>
@@ -459,7 +476,11 @@ Texto: "${aiText}"`;
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
             className="w-full h-8 pl-8 pr-3 rounded border border-border bg-surface text-xs outline-none focus:border-brand"
-            placeholder={activeTab === "quotes" ? "Buscar por cliente, lead ou destino..." : "Buscar nas memórias e diretrizes..."}
+            placeholder={
+              activeTab === "quotes"
+                ? "Buscar por cliente, lead ou destino..."
+                : "Buscar nas memórias e diretrizes..."
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -509,7 +530,11 @@ Texto: "${aiText}"`;
                             {q.client?.full_name || q.lead?.name || "Sem contato vinculado"}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
-                            {q.client ? "Cliente cadastrado" : q.lead ? "Lead/Oportunidade" : "Apenas pesquisa"}
+                            {q.client
+                              ? "Cliente cadastrado"
+                              : q.lead
+                                ? "Lead/Oportunidade"
+                                : "Apenas pesquisa"}
                           </div>
                         </td>
                         <td className="px-4 py-3.5">
@@ -549,7 +574,11 @@ Texto: "${aiText}"`;
                             </Link>
                             <button
                               onClick={() => {
-                                if (confirm("Deseja realmente excluir esta cotação e todos os cenários associados?")) {
+                                if (
+                                  confirm(
+                                    "Deseja realmente excluir esta cotação e todos os cenários associados?",
+                                  )
+                                ) {
                                   deleteMut.mutate(q.id);
                                 }
                               }}
@@ -566,91 +595,103 @@ Texto: "${aiText}"`;
               </table>
             </div>
           )
+        ) : /* Tab: RAG Knowledge Management */
+        isDocsLoading ? (
+          <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando cérebro semântico...
+          </div>
+        ) : filteredDocs.length === 0 ? (
+          <EmptyState
+            title="Cérebro semântico vazio"
+            description="Escreva diretrizes logísticas ou revisões de hotéis para alimentar o RAG e o validador."
+            action={
+              <div className="flex gap-2 justify-center">
+                <GhostButton
+                  onClick={handleFeedDefaultGuidelines}
+                  disabled={feedingDefaults}
+                  className="border border-border"
+                >
+                  {feedingDefaults ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Plus className="mr-2 h-4 w-4" />
+                  )}
+                  Carregar Regras Padrão
+                </GhostButton>
+                <PrimaryButton onClick={() => setNewKnowledgeOpen(true)}>
+                  Adicionar Diretriz
+                </PrimaryButton>
+              </div>
+            }
+          />
         ) : (
-          /* Tab: RAG Knowledge Management */
-          isDocsLoading ? (
-            <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando cérebro semântico...
-            </div>
-          ) : filteredDocs.length === 0 ? (
-            <EmptyState
-              title="Cérebro semântico vazio"
-              description="Escreva diretrizes logísticas ou revisões de hotéis para alimentar o RAG e o validador."
-              action={
-                <div className="flex gap-2 justify-center">
-                  <GhostButton
-                    onClick={handleFeedDefaultGuidelines}
-                    disabled={feedingDefaults}
-                    className="border border-border"
-                  >
-                    {feedingDefaults ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Plus className="mr-2 h-4 w-4" />
-                    )}
-                    Carregar Regras Padrão
-                  </GhostButton>
-                  <PrimaryButton onClick={() => setNewKnowledgeOpen(true)}>Adicionar Diretriz</PrimaryButton>
-                </div>
-              }
-            />
-          ) : (
-            <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredDocs.map((doc: any) => (
-                <div key={doc.id} className="rounded border border-border bg-surface p-4 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-colors">
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <h4 className="text-xs font-bold text-foreground line-clamp-1">{doc.title}</h4>
-                      <StatusBadge tone={doc.scope === "global" ? "success" : "info"}>
-                        {doc.scope === "global" ? "Global" : "Agência"}
-                      </StatusBadge>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground block mb-3 font-semibold uppercase tracking-wider">
-                      {CATEGORY_LABEL[doc.category] || doc.category}
-                    </span>
-                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">{doc.content}</p>
+          <div className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDocs.map((doc: any) => (
+              <div
+                key={doc.id}
+                className="rounded border border-border bg-surface p-4 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <h4 className="text-xs font-bold text-foreground line-clamp-1">{doc.title}</h4>
+                    <StatusBadge tone={doc.scope === "global" ? "success" : "info"}>
+                      {doc.scope === "global" ? "Global" : "Agência"}
+                    </StatusBadge>
                   </div>
+                  <span className="text-[10px] text-muted-foreground block mb-3 font-semibold uppercase tracking-wider">
+                    {CATEGORY_LABEL[doc.category] || doc.category}
+                  </span>
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">
+                    {doc.content}
+                  </p>
+                </div>
 
-                  <div className="border-t border-border mt-4 pt-3 flex items-center justify-between shrink-0">
-                    <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                      {doc.scope === "global" ? (
-                        <>
-                          <ShieldCheck className="h-3.5 w-3.5 text-success shrink-0" />
-                          Curadoria VibeTour
-                        </>
-                      ) : (
-                        <>
-                          <UserCheck className="h-3.5 w-3.5 text-brand shrink-0" />
-                          Customizado Agência
-                        </>
-                      )}
-                    </span>
-                    
-                    {/* Delete button (only super admins can delete global rules; agency members can delete agency ones) */}
-                    {(doc.scope === "agency" || isSuperAdmin) && (
-                      <button
-                        onClick={() => {
-                          if (confirm("Deseja realmente excluir esta diretriz e remover seus embeddings RAG?")) {
-                            deleteKnowledgeMut.mutate(doc.id);
-                          }
-                        }}
-                        className="p-1 rounded text-danger hover:bg-danger-bg hover:text-danger transition-colors cursor-pointer"
-                        title="Excluir diretriz"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                <div className="border-t border-border mt-4 pt-3 flex items-center justify-between shrink-0">
+                  <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    {doc.scope === "global" ? (
+                      <>
+                        <ShieldCheck className="h-3.5 w-3.5 text-success shrink-0" />
+                        Curadoria VibeTour
+                      </>
+                    ) : (
+                      <>
+                        <UserCheck className="h-3.5 w-3.5 text-brand shrink-0" />
+                        Customizado Agência
+                      </>
                     )}
-                  </div>
+                  </span>
+
+                  {/* Delete button (only super admins can delete global rules; agency members can delete agency ones) */}
+                  {(doc.scope === "agency" || isSuperAdmin) && (
+                    <button
+                      onClick={() => {
+                        if (
+                          confirm(
+                            "Deseja realmente excluir esta diretriz e remover seus embeddings RAG?",
+                          )
+                        ) {
+                          deleteKnowledgeMut.mutate(doc.id);
+                        }
+                      }}
+                      className="p-1 rounded text-danger hover:bg-danger-bg hover:text-danger transition-colors cursor-pointer"
+                      title="Excluir diretriz"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          )
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
       {/* New Quote Sheet */}
       {newOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs" onClick={() => setNewOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs"
+          onClick={() => setNewOpen(false)}
+        >
           <div
             className="h-full w-full max-w-2xl overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
@@ -663,7 +704,8 @@ Texto: "${aiText}"`;
                     Criar Cotação Inteligente VibeTour
                   </h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Escreva o roteiro desejado ou insira os parâmetros manualmente para rodar a pesquisa GDS.
+                    Escreva o roteiro desejado ou insira os parâmetros manualmente para rodar a
+                    pesquisa GDS.
                   </p>
                 </div>
                 <button
@@ -733,15 +775,28 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Origem (IATA)">
-                  <Input value={origin} onChange={(e) => setOrigin(e.target.value)} placeholder="CXP" maxLength={3} />
+                  <Input
+                    value={origin}
+                    onChange={(e) => setOrigin(e.target.value)}
+                    placeholder="CXP"
+                    maxLength={3}
+                  />
                 </Field>
 
                 <Field label="Destino">
-                  <Input value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="Ex: Jericoacoara ou Fortaleza" />
+                  <Input
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    placeholder="Ex: Jericoacoara ou Fortaleza"
+                  />
                 </Field>
 
                 <Field label="Data de Ida">
-                  <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
                 </Field>
 
                 <Field label="Data de Volta">
@@ -750,15 +805,30 @@ Texto: "${aiText}"`;
 
                 <div className="grid grid-cols-3 gap-2 col-span-2">
                   <Field label="Adultos">
-                    <Input type="number" min={1} value={adults} onChange={(e) => setAdults(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={1}
+                      value={adults}
+                      onChange={(e) => setAdults(Number(e.target.value))}
+                    />
                   </Field>
 
                   <Field label="Crianças">
-                    <Input type="number" min={0} value={children} onChange={(e) => setChildren(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      value={children}
+                      onChange={(e) => setChildren(Number(e.target.value))}
+                    />
                   </Field>
 
                   <Field label="Orçamento Limite (R$)">
-                    <Input type="number" min={0} value={budget} onChange={(e) => setBudget(Number(e.target.value))} />
+                    <Input
+                      type="number"
+                      min={0}
+                      value={budget}
+                      onChange={(e) => setBudget(Number(e.target.value))}
+                    />
                   </Field>
                 </div>
               </div>
@@ -782,7 +852,10 @@ Texto: "${aiText}"`;
 
       {/* New Knowledge Guideline Sheet */}
       {newKnowledgeOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs" onClick={() => setNewKnowledgeOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs"
+          onClick={() => setNewKnowledgeOpen(false)}
+        >
           <div
             className="h-full w-full max-w-2xl overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
@@ -795,7 +868,8 @@ Texto: "${aiText}"`;
                     Auto-Alimentar Cérebro RAG (IA)
                   </h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Insira diretrizes operacionais de destinos. O sistema as segmentará e gerará embeddings de 1536 dimensões automaticamente.
+                    Insira diretrizes operacionais de destinos. O sistema as segmentará e gerará
+                    embeddings de 1536 dimensões automaticamente.
                   </p>
                 </div>
                 <button
@@ -816,7 +890,10 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Categoria de Conhecimento">
-                  <Select value={knowledgeCategory} onChange={(e) => setKnowledgeCategory(e.target.value)}>
+                  <Select
+                    value={knowledgeCategory}
+                    onChange={(e) => setKnowledgeCategory(e.target.value)}
+                  >
                     <option value="gateway_rules">Regras de Conexão (Gateway)</option>
                     <option value="destinations">Informações de Destino</option>
                     <option value="guidelines">Políticas Internas / Agência</option>
@@ -825,7 +902,10 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Escopo de Distribuição">
-                  <Select value={knowledgeScope} onChange={(e) => setKnowledgeScope(e.target.value as any)}>
+                  <Select
+                    value={knowledgeScope}
+                    onChange={(e) => setKnowledgeScope(e.target.value as any)}
+                  >
                     <option value="agency">Minha Agência (Isolado)</option>
                     {isSuperAdmin ? (
                       <option value="global">Cérebro Global VibeTour (Sistema Inteiro)</option>

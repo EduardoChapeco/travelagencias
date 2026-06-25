@@ -48,7 +48,9 @@ function ClientConsentsPage() {
         .select("id, document_id, accepted_at, ip_address, policy_documents(kind, version)")
         .eq("user_id", u.user.id);
 
-      const accMap = new Set((acceptances as { document_id: string }[] | null)?.map((a) => a.document_id));
+      const accMap = new Set(
+        (acceptances as { document_id: string }[] | null)?.map((a) => a.document_id),
+      );
 
       // Todos os publicados são obrigatórios para os clientes
       const missing = ((policies as any[]) || []).filter((p) => !accMap.has(p.id));

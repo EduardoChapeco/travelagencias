@@ -14,7 +14,12 @@ export async function createQuoteRequest(
   agencyId: string,
   payload: CreateQuotePayload,
   travelers: Array<{ traveler_type: string; age?: number; attributes?: any }> = [],
-  preferences: Array<{ key: string; value: string; priority?: number; hard_constraint?: boolean }> = []
+  preferences: Array<{
+    key: string;
+    value: string;
+    priority?: number;
+    hard_constraint?: boolean;
+  }> = [],
 ): Promise<{ id: string }> {
   // 1. Inserir quote_request
   const { data: quote, error: quoteErr } = await supabase
@@ -26,7 +31,7 @@ export async function createQuoteRequest(
       source: payload.source || "manual",
       status: "draft",
       raw_request: payload.raw_request || null,
-      normalized_intent: payload.normalized_intent as any || null,
+      normalized_intent: (payload.normalized_intent as any) || null,
       assigned_agent_id: payload.assigned_agent_id || null,
     })
     .select("id")
@@ -38,27 +43,25 @@ export async function createQuoteRequest(
 
   // 2. Inserir passageiros/viajantes da cotação se houver
   if (travelers.length > 0) {
-    const travelerInserts = travelers.map(t => ({
+    const travelerInserts = travelers.map((t) => ({
       quote_request_id: quoteId,
       traveler_type: t.traveler_type,
       age: t.age ?? null,
-      attributes: t.attributes || {}
+      attributes: t.attributes || {},
     }));
-    const { error: travelersErr } = await supabase
-      .from("quote_travelers")
-      .insert(travelerInserts);
+    const { error: travelersErr } = await supabase.from("quote_travelers").insert(travelerInserts);
     if (travelersErr) throw new Error(travelersErr.message);
   }
 
   // 3. Inserir preferências da cotação se houver
   if (preferences.length > 0) {
-    const preferenceInserts = preferences.map(p => ({
+    const preferenceInserts = preferences.map((p) => ({
       quote_request_id: quoteId,
       preference_key: p.key,
       preference_value: p.value,
       priority: p.priority ?? 0,
       hard_constraint: p.hard_constraint ?? false,
-      source: "manual"
+      source: "manual",
     }));
     const { error: prefsErr } = await supabase
       .from("quote_preferences")
@@ -72,11 +75,13 @@ export async function createQuoteRequest(
 export async function fetchQuoteRequestDetails(id: string) {
   const { data: quote, error: quoteErr } = await supabase
     .from("quote_requests")
-    .select(`
+    .select(
+      `
       *,
       lead:leads(id, name),
       client:clients(id, full_name, email, phone)
-    `)
+    `,
+    )
     .eq("id", id)
     .maybeSingle();
 
@@ -118,14 +123,15 @@ export async function fetchQuoteRequestDetails(id: string) {
     travelers: travelers || [],
     preferences: preferences || [],
     searchPlan: activePlan || null,
-    scenarios
+    scenarios,
   };
 }
 
 export async function fetchQuoteRequestsList(agencyId: string) {
   const { data, error } = await supabase
     .from("quote_requests")
-    .select(`
+    .select(
+      `
       id,
       source,
       status,
@@ -133,7 +139,8 @@ export async function fetchQuoteRequestsList(agencyId: string) {
       normalized_intent,
       lead:leads(id, name),
       client:clients(id, full_name)
-    `)
+    `,
+    )
     .eq("agency_id", agencyId)
     .order("created_at", { ascending: false });
 
@@ -143,7 +150,13 @@ export async function fetchQuoteRequestsList(agencyId: string) {
 
 export async function createSearchPlanAndScenarios(
   quoteRequestId: string,
-  scenarios: Array<{ name: string; scenario_type: string; parameters?: any; priority?: number; reason?: string }>
+  scenarios: Array<{
+    name: string;
+    scenario_type: string;
+    parameters?: any;
+    priority?: number;
+    reason?: string;
+  }>,
 ) {
   // 1. Criar plano de busca
   const { data: plan, error: planErr } = await supabase
@@ -151,7 +164,7 @@ export async function createSearchPlanAndScenarios(
     .insert({
       quote_request_id: quoteRequestId,
       version: 1,
-      status: "approved"
+      status: "approved",
     })
     .select("id")
     .single();
@@ -161,19 +174,17 @@ export async function createSearchPlanAndScenarios(
   const planId = plan.id;
 
   // 2. Criar cenários de busca
-  const scenarioInserts = scenarios.map(s => ({
+  const scenarioInserts = scenarios.map((s) => ({
     search_plan_id: planId,
     name: s.name,
     scenario_type: s.scenario_type,
     parameters: s.parameters || {},
     priority: s.priority ?? 0,
     reason: s.reason || null,
-    status: "pending"
+    status: "pending",
   }));
 
-  const { error: scenErr } = await supabase
-    .from("quote_scenarios")
-    .insert(scenarioInserts);
+  const { error: scenErr } = await supabase.from("quote_scenarios").insert(scenarioInserts);
 
   if (scenErr) throw new Error(scenErr.message);
 
@@ -188,13 +199,18 @@ export async function executeScenarioSearch(
   quoteRequestId: string,
   scenarioId: string,
   productType: "hotel" | "flight",
-  params: { origin?: string; destination?: string; date?: string; city?: string; checkin?: string; checkout?: string; rooms?: number }
+  params: {
+    origin?: string;
+    destination?: string;
+    date?: string;
+    city?: string;
+    checkin?: string;
+    checkout?: string;
+    rooms?: number;
+  },
 ): Promise<NormalizedOffer[]> {
   // Atualizar status do cenário para processando
-  await supabase
-    .from("quote_scenarios")
-    .update({ status: "processing" })
-    .eq("id", scenarioId);
+  await supabase.from("quote_scenarios").update({ status: "processing" }).eq("id", scenarioId);
 
   try {
     const { data, error } = await supabase.functions.invoke("infotravel-connector", {
@@ -204,45 +220,41 @@ export async function executeScenarioSearch(
         params: {
           ...params,
           quoteRequestId,
-          scenarioId
-        }
-      }
+          scenarioId,
+        },
+      },
     });
 
     if (error) throw new Error(error.message || "Erro na pesquisa no Infotravel");
 
     // Marcar como concluído
-    await supabase
-      .from("quote_scenarios")
-      .update({ status: "completed" })
-      .eq("id", scenarioId);
+    await supabase.from("quote_scenarios").update({ status: "completed" }).eq("id", scenarioId);
 
     return (data?.offers as NormalizedOffer[]) || [];
   } catch (err: any) {
     // Marcar como falho
-    await supabase
-      .from("quote_scenarios")
-      .update({ status: "failed" })
-      .eq("id", scenarioId);
+    await supabase.from("quote_scenarios").update({ status: "failed" }).eq("id", scenarioId);
     throw err;
   }
 }
 
-export async function fetchNormalizedOffersForQuote(quoteRequestId: string): Promise<NormalizedOffer[]> {
+export async function fetchNormalizedOffersForQuote(
+  quoteRequestId: string,
+): Promise<NormalizedOffer[]> {
   const { data, error } = await supabase
     .from("normalized_offers")
     .select("*")
     .eq("quote_request_id", quoteRequestId);
 
   if (error) throw error;
-  return (data as any[] || []).map(row => row.normalized_data as NormalizedOffer);
+  return ((data as any[]) || []).map((row) => row.normalized_data as NormalizedOffer);
 }
 
 export async function createPackageCandidate(
   quoteRequestId: string,
   name: string,
   offerIds: string[],
-  scoreProfileId?: string
+  scoreProfileId?: string,
 ): Promise<string> {
   // 1. Buscar ofertas para somar preço total
   const { data: offers, error: offersErr } = await supabase
@@ -265,7 +277,7 @@ export async function createPackageCandidate(
       total_price: totalPrice,
       currency,
       score: 0, // será recalculado no motor de regras
-      score_profile_id: scoreProfileId || null
+      score_profile_id: scoreProfileId || null,
     })
     .select("id")
     .single();
@@ -281,7 +293,7 @@ export async function createPackageCandidate(
     component_type: o.product_type,
     sort_order: idx,
     price_allocation: o.price_total,
-    metadata: {}
+    metadata: {},
   }));
 
   const { error: compsErr } = await supabase
@@ -296,10 +308,12 @@ export async function createPackageCandidate(
 export async function fetchPackageCandidates(quoteRequestId: string) {
   const { data: candidates, error } = await supabase
     .from("package_candidates")
-    .select(`
+    .select(
+      `
       *,
       scorecard:package_scorecards(*)
-    `)
+    `,
+    )
     .eq("quote_request_id", quoteRequestId)
     .order("score", { ascending: false });
 
@@ -312,7 +326,7 @@ export async function rejectPackageCandidate(
   quoteRequestId: string,
   candidateId: string,
   reason: string,
-  travelIntent?: TravelIntent
+  travelIntent?: TravelIntent,
 ): Promise<void> {
   // 1. Inserir na tabela decision_records
   const { data: record, error: recErr } = await supabase
@@ -322,7 +336,7 @@ export async function rejectPackageCandidate(
       rejected_packages: [candidateId] as any,
       decision_source: "agent",
       reason,
-      outcome: "rejected"
+      outcome: "rejected",
     })
     .select("id")
     .single();
@@ -332,50 +346,55 @@ export async function rejectPackageCandidate(
   // 2. Analisar o motivo da rejeição para gerar uma sugestão em rule_candidates
   let pattern = `Rejeição do pacote ${candidateId}: ${reason}`;
   let proposedRule: any = {};
-  let confidence = 0.50;
+  let confidence = 0.5;
 
   const reasonLower = reason.toLowerCase();
   const hasChildren = travelIntent?.travelers?.children && travelIntent.travelers.children > 0;
 
-  if (reasonLower.includes("voo") && (reasonLower.includes("cedo") || reasonLower.includes("madrugada"))) {
-    pattern = hasChildren 
+  if (
+    reasonLower.includes("voo") &&
+    (reasonLower.includes("cedo") || reasonLower.includes("madrugada"))
+  ) {
+    pattern = hasChildren
       ? "Evitar voos de madrugada/muito cedo quando há crianças na viagem"
       : "Evitar voos com partidas antes das 08:00h por conforto";
     proposedRule = { constraints: { avoidEarlyFlights: true } };
     confidence = 0.85;
-  } else if (reasonLower.includes("conexão") || reasonLower.includes("conexao") || reasonLower.includes("escala")) {
+  } else if (
+    reasonLower.includes("conexão") ||
+    reasonLower.includes("conexao") ||
+    reasonLower.includes("escala")
+  ) {
     pattern = "Limitar tempo máximo de conexão a 180 minutos";
     proposedRule = { constraints: { maxConnectionTimeMinutes: 180 } };
     confidence = 0.75;
-  } else if (reasonLower.includes("hotel") && (reasonLower.includes("reembolso") || reasonLower.includes("cancelamento"))) {
+  } else if (
+    reasonLower.includes("hotel") &&
+    (reasonLower.includes("reembolso") || reasonLower.includes("cancelamento"))
+  ) {
     pattern = "Preferir hotéis com tarifa reembolsável e cancelamento gratuito";
     proposedRule = { constraints: { requireFreeCancellation: true } };
-    confidence = 0.80;
+    confidence = 0.8;
   } else if (reasonLower.includes("pernoite") || reasonLower.includes("gateway")) {
     pattern = "Exigir pernoite na cidade gateway para chegadas tardias";
     proposedRule = { constraints: { enforceGatewayOvernight: true } };
-    confidence = 0.90;
+    confidence = 0.9;
   } else {
     pattern = `Ajustar pesos de cotações para: ${reason}`;
     proposedRule = { reason_feedback: reason };
-    confidence = 0.60;
+    confidence = 0.6;
   }
 
   // Inserir em rule_candidates
-  await supabase
-    .from("rule_candidates")
-    .insert({
-      agency_id: agencyId,
-      pattern,
-      proposed_rule: proposedRule,
-      sample_size: 1,
-      confidence,
-      status: "pending"
-    });
+  await supabase.from("rule_candidates").insert({
+    agency_id: agencyId,
+    pattern,
+    proposed_rule: proposedRule,
+    sample_size: 1,
+    confidence,
+    status: "pending",
+  });
 
   // 3. Atualizar status do package_candidates para "invalid"
-  await supabase
-    .from("package_candidates")
-    .update({ status: "invalid" })
-    .eq("id", candidateId);
+  await supabase.from("package_candidates").update({ status: "invalid" }).eq("id", candidateId);
 }

@@ -6,11 +6,11 @@ Este documento analisa a integridade do sistema de chamados (tickets) e a veraci
 
 O chat de suporte no arquivo [support.$ticket_id.tsx](file:///c:/Users/eduar/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.support.$ticket_id.tsx) faz requisições para a Edge Function `gmail-send` ao disparar mensagens externas.
 
-* **Fluxo de Saída (Outbox):**
-  * Caso a agência possua tokens configurados em `integrations_config.gmail_tokens`, a Edge Function realiza uma chamada POST para `https://gmail.googleapis.com/gmail/v1/users/me/messages/send`.
-  * Se não houver tokens do Gmail, ela tenta recuperar a chave `resend` da tabela `api_keys` e faz o disparo via API do Resend.
-  * O ID do e-mail retornado (`threadId` ou `id` do Resend) é salvo no campo `email_thread_id` da tabela `support_tickets`.
-  * *Ponto de Falha no Envio:* O construtor MIME na Edge Function não injeta os cabeçalhos de email `In-Reply-To` ou `References`. As respostas enviadas não se agrupam corretamente em threads na caixa de entrada do destinatário se o cliente de e-mail dele exigir essas tags, enviando e-mails soltos com o assunto alterado.
+- **Fluxo de Saída (Outbox):**
+  - Caso a agência possua tokens configurados em `integrations_config.gmail_tokens`, a Edge Function realiza uma chamada POST para `https://gmail.googleapis.com/gmail/v1/users/me/messages/send`.
+  - Se não houver tokens do Gmail, ela tenta recuperar a chave `resend` da tabela `api_keys` e faz o disparo via API do Resend.
+  - O ID do e-mail retornado (`threadId` ou `id` do Resend) é salvo no campo `email_thread_id` da tabela `support_tickets`.
+  - _Ponto de Falha no Envio:_ O construtor MIME na Edge Function não injeta os cabeçalhos de email `In-Reply-To` ou `References`. As respostas enviadas não se agrupam corretamente em threads na caixa de entrada do destinatário se o cliente de e-mail dele exigir essas tags, enviando e-mails soltos com o assunto alterado.
 
 ## 2. Auditoria da Sincronização Reversa (Recepção de E-mails)
 

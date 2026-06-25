@@ -14,7 +14,8 @@ interface Props {
 }
 
 export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: Props) {
-  const primaryColor = brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#4f46e5";
+  const primaryColor =
+    brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#4f46e5";
   const secondaryColor = brandKit?.secondary_color || "#ec4899";
   const bgColor = brandKit?.background_color || "#FFFFFF";
   const textColor = brandKit?.text_color || "#111827";
@@ -37,10 +38,10 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
   return (
     <div
       className="relative flex flex-col w-full h-full overflow-hidden text-white"
-      style={{ 
+      style={{
         ...styleVars,
         background: `linear-gradient(135deg, ${primaryColor}4D, #030712)`,
-        fontFamily: "var(--brand-body-font, sans-serif)"
+        fontFamily: "var(--brand-body-font, sans-serif)",
       }}
     >
       <link
@@ -52,8 +53,8 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
         className="absolute top-[-80px] right-[-80px] w-64 h-64 rounded-full opacity-25 blur-[80px]"
         style={{ backgroundColor: primaryColor }}
       />
-      <div 
-        className="absolute bottom-[-80px] left-[-80px] w-64 h-64 rounded-full opacity-20 blur-[80px]" 
+      <div
+        className="absolute bottom-[-80px] left-[-80px] w-64 h-64 rounded-full opacity-20 blur-[80px]"
         style={{ backgroundColor: secondaryColor }}
       />
 
@@ -69,7 +70,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
               className="h-10 w-auto object-contain bg-white/5 backdrop-blur-sm rounded-md p-1"
             />
           ) : (
-            <span 
+            <span
               className="font-black text-xl tracking-tighter"
               style={{ fontFamily: "var(--brand-heading-font, sans-serif)", color: primaryColor }}
             >
@@ -86,7 +87,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
               Próximo destino
             </span>
           </div>
-          <h1 
+          <h1
             className="text-4xl font-black leading-none tracking-tighter"
             style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
           >
@@ -107,7 +108,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
                 <span>Voo Confirmado</span>
                 <Plane className="w-4 h-4" />
               </div>
-              <div 
+              <div
                 className="flex justify-between items-center text-lg font-bold"
                 style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
               >
@@ -133,7 +134,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
                 <span>Hospedagem</span>
                 <Hotel className="w-4 h-4" />
               </div>
-              <div 
+              <div
                 className="text-base font-bold truncate"
                 style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
               >

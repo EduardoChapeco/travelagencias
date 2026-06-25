@@ -443,11 +443,7 @@ function PlaybookSheet({
         }
       }
 
-      toast.info(
-        initialData
-          ? "Playbook atualizado com sucesso"
-          : "Playbook criado com sucesso",
-      );
+      toast.info(initialData ? "Playbook atualizado com sucesso" : "Playbook criado com sucesso");
       onSaved();
     } catch (err: any) {
       toast.error(err?.message ?? "Erro ao salvar playbook");

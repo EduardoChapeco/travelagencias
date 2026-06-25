@@ -27,12 +27,14 @@ Antes de mexer em um componente ou service legado, devemos criar um **teste de c
 Após cada mudança de code-splitting ou isolamento de código:
 
 ### 1. Verificação de Regressão Visual
-* **Ação**: Utilizar testes visuais manuais no navegador (ou ferramentas de snapshot de tela) para garantir que:
+
+- **Ação**: Utilizar testes visuais manuais no navegador (ou ferramentas de snapshot de tela) para garantir que:
   - O layout A4 de recibo mantenha proporções timbradas e caixas de assinatura alinhadas.
   - O flyer 9:16 de divulgação mantenha margens limpas, QR code legível e fontes consistentes em celulares e desktop.
   - O drag-and-drop de quartos apresente transição suave no cursor do mouse e arraste com delay adequado no touch de smartphones.
 
 ### 2. Auditoria de Segurança RLS (Multi-tenant)
-* **Ação**: Rodar consultas com usuários simulados contendo diferentes papéis de acesso (ex: `agent` de outra agência e `client` final):
+
+- **Ação**: Rodar consultas com usuários simulados contendo diferentes papéis de acesso (ex: `agent` de outra agência e `client` final):
   - Certificar que qualquer tentativa de ler quartos da Rooming List de outra agência via RPC retorne erro de autorização ou conjunto vazio de resultados.
   - Testar chamadas diretas com a biblioteca `@supabase/supabase-js` fingindo ser um cliente final acessando tabelas internas.

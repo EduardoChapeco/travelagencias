@@ -24,6 +24,7 @@ graph TD
 ## ✅ Fases Concluídas (Prontas para Produção)
 
 ### 1. Fase A — Estabilização Git & Migrations
+
 - **Objetivo:** Rastrear todas as migrações paralelas criadas, limpar o diretório git e validar o typecheck geral.
 - **Entregas:**
   - Inclusão das migrações `20260624*` no controle de versão.
@@ -31,6 +32,7 @@ graph TD
   - Typecheck e build de produção normalizados.
 
 ### 2. Fase B — Consolidação da Rooming List
+
 - **Objetivo:** Unificar as informações de acomodação de grupos em uma tabela normalizada (`boarding_rooming_list`), removendo a coluna JSONB instável em `group_tours`.
 - **Entregas:**
   - Migration `20260625000001_rooming_list_consolidation.sql` com migração automática de dados históricos.
@@ -38,6 +40,7 @@ graph TD
   - Refatoração da UI Drag and Drop de quartos para realizar chamadas CRUD no banco relacional.
 
 ### 3. Fase C — Checkout B2C Pix Real
+
 - **Objetivo:** Acabar com o mock do comprovante Pix no formulário público de checkout, implementar upload real e consentimento LGPD.
 - **Entregas:**
   - Criação do bucket público de Storage `payment-receipts` com RLS seguro.
@@ -46,6 +49,7 @@ graph TD
   - Checkbox de LGPD obrigatório e chave Pix dinâmica da agência.
 
 ### 4. Fase D — Ativação Omnichannel
+
 - **Objetivo:** Solucionar a consulta quebrada por coluna inexistente nas Edge Functions de sincronia do Gmail e prover envio transacional seguro via Resend API.
 - **Entregas:**
   - Edge Functions `gmail-send` e `gmail-sync` corrigidas para usar a coluna real `integrations_config` da tabela `agencies`.
@@ -54,6 +58,7 @@ graph TD
   - Deploy remoto das Edge Functions realizado.
 
 ### 5. Fase E — Check-in Links & Reacomodação
+
 - **Objetivo:** Prover uma central e-checkin para o passageiro com links oficiais de companhias aéreas, canal de emergência e widget de confirmação de voos alternativos.
 - **Entregas:**
   - Tabelas `checkin_links` e `boarding_events` criadas via migração `20260625000003_checkin_links_and_boarding_events.sql` com RLS isolado.
@@ -67,6 +72,7 @@ graph TD
 ## ⏳ Fases Pendentes (Próximos Passos)
 
 ### 6. Fase F — Refatoração de Monolitos (Prioridade Baixa)
+
 - **Problema Detectado:** O arquivo da rota `client.trips.$id.tsx` (Portal do Cliente para desktop) está excessivamente grande, contendo mais de 1900 linhas de código e acumulando múltiplas responsabilidades (abas, modais de confirmação, layouts, tabelas de voo).
 - **Ações Planejadas:**
   - Decompor o arquivo principal em sub-componentes modulares e reutilizáveis organizados em `src/components/portal/`.

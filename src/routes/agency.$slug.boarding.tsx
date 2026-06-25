@@ -179,19 +179,29 @@ function BoardingKanbanPage() {
     if (fromStage === toStage) {
       const currentIndex = stagesById[fromStage].findIndex((c) => c.id === activeIdStr);
       const overIndex = destList.findIndex((c) => c.id === overIdStr);
-      destList = arrayMove(stagesById[fromStage], currentIndex, overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1);
+      destList = arrayMove(
+        stagesById[fromStage],
+        currentIndex,
+        overIndex >= 0 ? overIndex : stagesById[fromStage].length - 1,
+      );
     } else {
       destList.splice(insertIndex, 0, { ...movedCard, status: toStage });
     }
 
     const newCards: Card[] = [];
     Object.keys(stagesById).forEach((sid) => {
-      if (sid === fromStage && fromStage !== toStage) sourceList.forEach((c, i) => newCards.push({ ...c, position: i }));
-      else if (sid === toStage) destList.forEach((c, i) => newCards.push({ ...c, status: toStage, position: i }));
+      if (sid === fromStage && fromStage !== toStage)
+        sourceList.forEach((c, i) => newCards.push({ ...c, position: i }));
+      else if (sid === toStage)
+        destList.forEach((c, i) => newCards.push({ ...c, status: toStage, position: i }));
       else stagesById[sid].forEach((c, i) => newCards.push({ ...c, position: i }));
     });
     setLocalCards(newCards);
-    persistMove.mutate({ cardId: activeIdStr, toStatus: toStage, reorderedIds: destList.map((c) => c.id) });
+    persistMove.mutate({
+      cardId: activeIdStr,
+      toStatus: toStage,
+      reorderedIds: destList.map((c) => c.id),
+    });
   }
 
   const activeCard = activeId ? (localCards ?? []).find((c) => c.id === activeId) : null;
@@ -289,7 +299,9 @@ function BoardingKanbanPage() {
               title="Exportar Lista de Embarque (.xlsx)"
             >
               <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{exporting ? "Exportando..." : "Exportar Excel"}</span>
+              <span className="hidden sm:inline">
+                {exporting ? "Exportando..." : "Exportar Excel"}
+              </span>
             </button>
           )}
         </div>
@@ -346,7 +358,9 @@ function BoardingKanbanPage() {
                   })}
                 </div>
               </div>
-              <DragOverlay>{activeCard ? <CardView card={activeCard} dragging /> : null}</DragOverlay>
+              <DragOverlay>
+                {activeCard ? <CardView card={activeCard} dragging /> : null}
+              </DragOverlay>
             </DndContext>
           )}
 
@@ -372,7 +386,8 @@ function BoardingKanbanPage() {
                     </thead>
                     <tbody className="divide-y divide-border">
                       {localCards.map((card) => {
-                        const stage = BOARDING_STAGES.find((s) => s.id === card.status) ?? BOARDING_STAGES[0];
+                        const stage =
+                          BOARDING_STAGES.find((s) => s.id === card.status) ?? BOARDING_STAGES[0];
                         const checklistDone = card.checklist.filter((c) => c.done).length;
                         const checklistTotal = card.checklist.length;
                         return (
@@ -394,9 +409,7 @@ function BoardingKanbanPage() {
                                 </div>
                               )}
                             </td>
-                            <td className="p-4 text-muted-foreground">
-                              {card.airline || "—"}
-                            </td>
+                            <td className="p-4 text-muted-foreground">{card.airline || "—"}</td>
                             <td className="p-4 text-muted-foreground">
                               {card.passengers_count ?? "—"}
                             </td>
@@ -409,14 +422,16 @@ function BoardingKanbanPage() {
                                   {checklistDone}/{checklistTotal}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground">
-                                  ({checklistTotal > 0 ? Math.round((checklistDone / checklistTotal) * 100) : 0}%)
+                                  (
+                                  {checklistTotal > 0
+                                    ? Math.round((checklistDone / checklistTotal) * 100)
+                                    : 0}
+                                  %)
                                 </span>
                               </div>
                             </td>
                             <td className="p-4">
-                              <StatusBadge tone={stage.tone}>
-                                {stage.name}
-                              </StatusBadge>
+                              <StatusBadge tone={stage.tone}>{stage.name}</StatusBadge>
                             </td>
                           </tr>
                         );
@@ -458,7 +473,10 @@ function BoardingKanbanPage() {
 
               <div className="grid grid-cols-7 border border-b-0 border-border bg-surface-alt">
                 {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((d) => (
-                  <div key={d} className="py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <div
+                    key={d}
+                    className="py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                  >
                     {d}
                   </div>
                 ))}
@@ -486,7 +504,8 @@ function BoardingKanbanPage() {
                       </span>
                       <div className="flex-1 overflow-y-auto mt-1 space-y-1 no-scrollbar min-h-0">
                         {dayCards.map((card) => {
-                          const stage = BOARDING_STAGES.find((s) => s.id === card.status) ?? BOARDING_STAGES[0];
+                          const stage =
+                            BOARDING_STAGES.find((s) => s.id === card.status) ?? BOARDING_STAGES[0];
                           return (
                             <button
                               key={card.id}

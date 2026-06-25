@@ -101,7 +101,7 @@ function TripFinancial() {
         if (attempt < maxRetries && !isTimeout) {
           const backoff = attempt * 2000;
           console.log(`Retrying OCR in ${backoff}ms...`);
-          await new Promise(r => setTimeout(r, backoff));
+          await new Promise((r) => setTimeout(r, backoff));
           return executeOcrWithRetry(attempt + 1);
         } else {
           toast.error("Erro no OCR: " + errorMessage);

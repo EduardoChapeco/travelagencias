@@ -45,7 +45,8 @@ export function AILandingPageSheet({
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      if (!data?.blocks || !Array.isArray(data.blocks)) throw new Error("Retorno inválido do assistente.");
+      if (!data?.blocks || !Array.isArray(data.blocks))
+        throw new Error("Retorno inválido do assistente.");
 
       toast.success("Página gerada com sucesso!", { id: "ai-lp" });
       onGenerate(data.blocks);

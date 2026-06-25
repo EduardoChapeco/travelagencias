@@ -15,7 +15,10 @@ export interface VoucherAIResult {
  * Processa um arquivo (PDF ou Imagem) enviando o conteúdo binário em base64
  * para a Edge Function, que fará a extração e análise usando IA.
  */
-export async function processVoucherWithAI(file: File, agencyId?: string): Promise<VoucherAIResult> {
+export async function processVoucherWithAI(
+  file: File,
+  agencyId?: string,
+): Promise<VoucherAIResult> {
   return new Promise<VoucherAIResult>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async () => {

@@ -6,15 +6,21 @@ export type FlightChangeCase = Database["public"]["Tables"]["flight_change_cases
 export type FlightAlternative = Database["public"]["Tables"]["flight_alternatives"]["Row"] & {
   itinerary?: FlightItinerary;
 };
-export type FlightDifferenceAnalysis = Database["public"]["Tables"]["flight_difference_analysis"]["Row"];
-export type CustomerTravelDecision = Database["public"]["Tables"]["customer_travel_decisions"]["Row"];
-export type OperatorReaccommodationRequest = Database["public"]["Tables"]["operator_reaccommodation_requests"]["Row"];
+export type FlightDifferenceAnalysis =
+  Database["public"]["Tables"]["flight_difference_analysis"]["Row"];
+export type CustomerTravelDecision =
+  Database["public"]["Tables"]["customer_travel_decisions"]["Row"];
+export type OperatorReaccommodationRequest =
+  Database["public"]["Tables"]["operator_reaccommodation_requests"]["Row"];
 
 export type InsertChangeCase = Database["public"]["Tables"]["flight_change_cases"]["Insert"];
 export type InsertAlternative = Database["public"]["Tables"]["flight_alternatives"]["Insert"];
-export type InsertDifferenceAnalysis = Database["public"]["Tables"]["flight_difference_analysis"]["Insert"];
-export type InsertCustomerDecision = Database["public"]["Tables"]["customer_travel_decisions"]["Insert"];
-export type InsertOperatorRequest = Database["public"]["Tables"]["operator_reaccommodation_requests"]["Insert"];
+export type InsertDifferenceAnalysis =
+  Database["public"]["Tables"]["flight_difference_analysis"]["Insert"];
+export type InsertCustomerDecision =
+  Database["public"]["Tables"]["customer_travel_decisions"]["Insert"];
+export type InsertOperatorRequest =
+  Database["public"]["Tables"]["operator_reaccommodation_requests"]["Insert"];
 
 export type FullChangeCase = FlightChangeCase & {
   alternatives: (FlightAlternative & {
@@ -34,7 +40,8 @@ export type FullChangeCase = FlightChangeCase & {
 export async function fetchChangeCases(tripId: string): Promise<FullChangeCase[]> {
   const { data: cases, error } = await supabase
     .from("flight_change_cases")
-    .select(`
+    .select(
+      `
       *,
       original_itinerary:flight_itineraries!flight_change_cases_original_itinerary_id_fkey(
         *,
@@ -52,7 +59,8 @@ export async function fetchChangeCases(tripId: string): Promise<FullChangeCase[]
         *,
         operator:suppliers(id, name)
       )
-    `)
+    `,
+    )
     .eq("trip_id", tripId)
     .order("created_at", { ascending: false });
 
@@ -63,24 +71,24 @@ export async function fetchChangeCases(tripId: string): Promise<FullChangeCase[]
   // Ordenar segmentos de cada itinerário e associar análises de diferenças
   const fullCases: FullChangeCase[] = [];
 
-  for (const c of (cases ?? [])) {
+  for (const c of cases ?? []) {
     const originalItinerary = c.original_itinerary
       ? {
           ...c.original_itinerary,
           segments: (c.original_itinerary.segments ?? []).sort(
-            (a: any, b: any) => a.segment_order - b.segment_order
+            (a: any, b: any) => a.segment_order - b.segment_order,
           ),
         }
       : null;
 
     const alternativesWithDiff: any[] = [];
-    
-    for (const alt of (c.alternatives ?? [])) {
+
+    for (const alt of c.alternatives ?? []) {
       const it = alt.itinerary
         ? {
             ...alt.itinerary,
             segments: (alt.itinerary.segments ?? []).sort(
-              (a: any, b: any) => a.segment_order - b.segment_order
+              (a: any, b: any) => a.segment_order - b.segment_order,
             ),
           }
         : null;
@@ -94,7 +102,7 @@ export async function fetchChangeCases(tripId: string): Promise<FullChangeCase[]
           .eq("original_itinerary_id", c.original_itinerary_id)
           .eq("alternative_itinerary_id", alt.itinerary_id)
           .maybeSingle();
-        
+
         if (diff) differenceAnalysis = diff;
       }
 
@@ -139,7 +147,7 @@ export async function createChangeCase(changeCase: InsertChangeCase): Promise<Fl
  */
 export async function updateChangeCaseStatus(
   caseId: string,
-  status: FlightChangeCase["workflow_status"]
+  status: FlightChangeCase["workflow_status"],
 ): Promise<FlightChangeCase> {
   const { data, error } = await supabase
     .from("flight_change_cases")
@@ -158,7 +166,9 @@ export async function updateChangeCaseStatus(
 /**
  * Cria uma alternativa de voo associada a um caso
  */
-export async function createFlightAlternative(alternative: InsertAlternative): Promise<FlightAlternative> {
+export async function createFlightAlternative(
+  alternative: InsertAlternative,
+): Promise<FlightAlternative> {
   const { data, error } = await supabase
     .from("flight_alternatives")
     .insert(alternative)
@@ -177,7 +187,7 @@ export async function createFlightAlternative(alternative: InsertAlternative): P
  */
 export async function updateAlternativeSettings(
   alternativeId: string,
-  updates: { customer_visible?: boolean; ranking?: number }
+  updates: { customer_visible?: boolean; ranking?: number },
 ): Promise<FlightAlternative> {
   const { data, error } = await supabase
     .from("flight_alternatives")
@@ -197,7 +207,7 @@ export async function updateAlternativeSettings(
  * Cria ou atualiza a análise determinística de diferenças entre dois itinerários
  */
 export async function upsertDifferenceAnalysis(
-  analysis: InsertDifferenceAnalysis
+  analysis: InsertDifferenceAnalysis,
 ): Promise<FlightDifferenceAnalysis> {
   const { data, error } = await supabase
     .from("flight_difference_analysis")
@@ -219,7 +229,7 @@ export async function upsertDifferenceAnalysis(
  */
 export async function saveCustomerDecision(
   decision: InsertCustomerDecision,
-  workflowStatus: "client_accepted" | "client_rejected"
+  workflowStatus: "client_accepted" | "client_rejected",
 ): Promise<CustomerTravelDecision> {
   // Salva a decisão
   const { data, error } = await supabase
@@ -249,7 +259,7 @@ export async function saveCustomerDecision(
  * Cria uma solicitação ou registro de comunicação com a operadora
  */
 export async function createOperatorRequest(
-  request: InsertOperatorRequest
+  request: InsertOperatorRequest,
 ): Promise<OperatorReaccommodationRequest> {
   const { data, error } = await supabase
     .from("operator_reaccommodation_requests")
@@ -275,7 +285,7 @@ export async function createOperatorRequest(
  */
 export async function updateOperatorRequest(
   requestId: string,
-  updates: Partial<OperatorReaccommodationRequest>
+  updates: Partial<OperatorReaccommodationRequest>,
 ): Promise<OperatorReaccommodationRequest> {
   const { data, error } = await supabase
     .from("operator_reaccommodation_requests")
@@ -300,7 +310,7 @@ export async function updateOperatorRequest(
 export async function resolveChangeCase(
   caseId: string,
   originalItineraryId: string | null,
-  confirmedItineraryId: string
+  confirmedItineraryId: string,
 ): Promise<void> {
   // 1. Arquivar itinerário original
   if (originalItineraryId) {
@@ -308,7 +318,7 @@ export async function resolveChangeCase(
       .from("flight_itineraries")
       .update({ status: "archived" })
       .eq("id", originalItineraryId);
-    
+
     if (origError) {
       throw new Error(`Erro ao arquivar itinerário original: ${origError.message}`);
     }
@@ -346,7 +356,7 @@ export async function resolveChangeCase(
  */
 export function analyzeFlightDifferences(
   original: FlightItinerary,
-  alternative: FlightItinerary
+  alternative: FlightItinerary,
 ): Omit<InsertDifferenceAnalysis, "original_itinerary_id" | "alternative_itinerary_id"> {
   const origSegments = original.segments || [];
   const altSegments = alternative.segments || [];
@@ -417,11 +427,13 @@ export function analyzeFlightDifferences(
     const arr = new Date(altSegments[i].arrival_at).getTime();
     const dep = new Date(altSegments[i + 1].departure_at).getTime();
     const layover = Math.round((dep - arr) / (1000 * 60));
-    
+
     // Se layover passar de 8 horas (480 minutos) ou cruzar a noite, consideramos risco/pernoite
     if (layover > 480) {
       overnightConnection = true;
-      warnings.push(`Conexão longa em ${altSegments[i].destination_iata}: ${Math.round(layover / 60)}h`);
+      warnings.push(
+        `Conexão longa em ${altSegments[i].destination_iata}: ${Math.round(layover / 60)}h`,
+      );
     }
 
     // Checar se cruza meia-noite
@@ -462,7 +474,9 @@ export function analyzeFlightDifferences(
   }
   if (totalDurationDeltaMinutes > 120) {
     riskScore += 15;
-    warnings.push(`Aumento do tempo total de viagem em ${Math.round(totalDurationDeltaMinutes / 60)}h`);
+    warnings.push(
+      `Aumento do tempo total de viagem em ${Math.round(totalDurationDeltaMinutes / 60)}h`,
+    );
   }
   if (baggageChanged) {
     riskScore += 10;
@@ -478,10 +492,11 @@ export function analyzeFlightDifferences(
   if (airportChanged) summaryParts.push("Mudança de aeroporto");
   if (segmentCountDelta > 0) summaryParts.push("Mais conexões");
   if (overnightConnection) summaryParts.push("Pernoite necessário");
-  
-  const deterministicSummary = summaryParts.length > 0 
-    ? `Identificado: ${summaryParts.join(", ")}.` 
-    : "Alteração menor de horários.";
+
+  const deterministicSummary =
+    summaryParts.length > 0
+      ? `Identificado: ${summaryParts.join(", ")}.`
+      : "Alteração menor de horários.";
 
   return {
     date_changed: dateChanged,

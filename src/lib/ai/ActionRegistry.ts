@@ -371,11 +371,13 @@ export const ActionRegistry: Record<string, ActionDefinition<any>> = {
     riskLevel: "medium",
     inputSchema: z.object({
       groupId: z.string().uuid("ID do grupo inválido"),
-      roomingData: z.array(z.object({
-        roomNumber: z.number().int(),
-        passengerIds: z.array(z.string().uuid()),
-        roomType: z.string(),
-      })),
+      roomingData: z.array(
+        z.object({
+          roomNumber: z.number().int(),
+          passengerIds: z.array(z.string().uuid()),
+          roomType: z.string(),
+        }),
+      ),
     }),
   },
   generate_report: {

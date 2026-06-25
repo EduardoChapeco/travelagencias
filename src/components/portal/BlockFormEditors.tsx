@@ -159,10 +159,7 @@ function GroupTourSelector({
           Nenhuma viagem aberta/confirmada ativa para vincular.
         </div>
       ) : (
-        <Select
-          value={selectedTourId}
-          onChange={(e) => onChange(e.target.value)}
-        >
+        <Select value={selectedTourId} onChange={(e) => onChange(e.target.value)}>
           <option value="">Nenhum (Manter manual/estático)</option>
           {tours.map((t) => (
             <option key={t.id} value={t.id}>
@@ -177,9 +174,9 @@ function GroupTourSelector({
 
 export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Props) {
   const block = blockItem as LegacyPortalBlock;
-  const [activeTab, setActiveTab] = useState<"content" | "style" | "animation" | "responsive" | "bindings">(
-    "content",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "content" | "style" | "animation" | "responsive" | "bindings"
+  >("content");
   const [brandColors, setBrandColors] = useState<{
     primary?: string;
     secondary?: string;
@@ -2225,9 +2222,12 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         {activeTab === "bindings" && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">Vincular Dados Dinâmicos</h4>
+              <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+                Vincular Dados Dinâmicos
+              </h4>
               <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
-                Substitua textos ou imagens estáticas por campos vindos de um Pacote / Roteiro da agência.
+                Substitua textos ou imagens estáticas por campos vindos de um Pacote / Roteiro da
+                agência.
               </p>
             </div>
 
@@ -2259,10 +2259,20 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 {(() => {
                   // Let's identify the editable text/image fields of the block
                   const mappableKeys = Object.keys(block)
-                    .filter((k) => k !== "id" && k !== "type" && k !== "styles" && k !== "animation" && k !== "responsive" && k !== "bindings" && typeof block[k as keyof typeof block] === "string")
+                    .filter(
+                      (k) =>
+                        k !== "id" &&
+                        k !== "type" &&
+                        k !== "styles" &&
+                        k !== "animation" &&
+                        k !== "responsive" &&
+                        k !== "bindings" &&
+                        typeof block[k as keyof typeof block] === "string",
+                    )
                     .concat(
-                      Object.keys((block as any).config || {})
-                        .filter((k) => typeof (block as any).config[k] === "string")
+                      Object.keys((block as any).config || {}).filter(
+                        (k) => typeof (block as any).config[k] === "string",
+                      ),
                     );
 
                   const uniqueMappableKeys = Array.from(new Set(mappableKeys));
@@ -2304,11 +2314,19 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                           <option value="">-- Manter Estático --</option>
                           <option value="package.title">Título da Viagem (package.title)</option>
                           <option value="package.destination">Destino (package.destination)</option>
-                          <option value="package.description">Descrição / Resumo (package.description)</option>
-                          <option value="package.cover_image_url">Imagem de Capa (package.cover_image_url)</option>
+                          <option value="package.description">
+                            Descrição / Resumo (package.description)
+                          </option>
+                          <option value="package.cover_image_url">
+                            Imagem de Capa (package.cover_image_url)
+                          </option>
                           <option value="package.price">Preço Vigorante (package.price)</option>
-                          <option value="package.departure_date">Data de Saída (package.departure_date)</option>
-                          <option value="package.return_date">Data de Retorno (package.return_date)</option>
+                          <option value="package.departure_date">
+                            Data de Saída (package.departure_date)
+                          </option>
+                          <option value="package.return_date">
+                            Data de Retorno (package.return_date)
+                          </option>
                         </Select>
                       </div>
                     );

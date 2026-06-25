@@ -58,9 +58,7 @@ export function IframeSandbox({ children, title, className, simulatedWidth }: If
       headNode.appendChild(meta);
 
       // 3. Copy all stylesheets from the host page
-      const elems = Array.from(
-        document.head.querySelectorAll("style, link[rel='stylesheet']"),
-      );
+      const elems = Array.from(document.head.querySelectorAll("style, link[rel='stylesheet']"));
       elems.forEach((el) => headNode.appendChild(el.cloneNode(true)));
 
       // 4. Copy design-system CSS custom properties onto the iframe <html> element

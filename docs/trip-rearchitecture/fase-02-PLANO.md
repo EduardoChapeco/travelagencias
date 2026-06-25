@@ -6,6 +6,7 @@
 ## Alterações de Banco (Migration SQL)
 
 Criar a migração `supabase/migrations/20260624000000_trip_lifecycle_extensions.sql` contendo:
+
 - Coluna `trip_type` (individual | group | corporate) em `trips` com valor padrão `individual`.
 - Coluna `lifecycle_status` em `trips` com valor padrão `draft`.
 - Coluna `group_tour_id` em `trips` como chave estrangeira de `group_tours(id)`.

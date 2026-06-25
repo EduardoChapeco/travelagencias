@@ -275,8 +275,12 @@ function AISiteBuilder() {
             </Link>
           )}
           <div>
-            <h1 className="text-xs font-bold uppercase tracking-wider text-brand">Criador de Sites</h1>
-            <p className="text-[10px] text-muted-foreground">Gerador automático de portal e páginas</p>
+            <h1 className="text-xs font-bold uppercase tracking-wider text-brand">
+              Criador de Sites
+            </h1>
+            <p className="text-[10px] text-muted-foreground">
+              Gerador automático de portal e páginas
+            </p>
           </div>
         </div>
 

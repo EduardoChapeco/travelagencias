@@ -33,13 +33,19 @@ export function cleanupBrandKit(agencyId?: string) {
   if (linkEl) linkEl.remove();
   // Clear localStorage cache for this agency (or all brand-kit caches)
   if (agencyId) {
-    try { localStorage.removeItem(`brand-kit-${agencyId}`); } catch { /* noop */ }
+    try {
+      localStorage.removeItem(`brand-kit-${agencyId}`);
+    } catch {
+      /* noop */
+    }
   } else {
     try {
       Object.keys(localStorage)
         .filter((k) => k.startsWith("brand-kit-"))
         .forEach((k) => localStorage.removeItem(k));
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }
 }
 
@@ -255,7 +261,12 @@ export function AgencyProvider({
   useEffect(() => {
     const el = document.documentElement;
 
-    const applyStyling = (color: string | null, light: string | null, fg: string | null, bk: any) => {
+    const applyStyling = (
+      color: string | null,
+      light: string | null,
+      fg: string | null,
+      bk: any,
+    ) => {
       if (color) el.style.setProperty("--agency-brand", color);
       if (light) el.style.setProperty("--agency-brand-light", light);
       if (fg) el.style.setProperty("--agency-brand-fg", fg);
@@ -307,7 +318,7 @@ export function AgencyProvider({
       agency?.brand_color || preloadedAgency?.brand_color,
       agency?.brand_color_light || preloadedAgency?.brand_color_light,
       agency?.brand_color_fg || preloadedAgency?.brand_color_fg,
-      brandKit
+      brandKit,
     );
 
     // Save to cache when brandKit changes

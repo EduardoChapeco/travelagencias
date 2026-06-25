@@ -55,10 +55,9 @@ async function fetchMessage(
   accessToken: string,
 ): Promise<{ from: string; subject: string; body: string; threadId: string } | null> {
   try {
-    const res = await fetch(
-      `${GMAIL_API_BASE}/messages/${messageId}?format=full`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    );
+    const res = await fetch(`${GMAIL_API_BASE}/messages/${messageId}?format=full`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     if (!res.ok) return null;
     const msg = await res.json();
 
@@ -69,7 +68,8 @@ async function fetchMessage(
     // Extract text body (plain text preferred over html)
     let body = "";
     const parts: any[] = msg.payload?.parts ?? [];
-    const textPart = parts.find((p: any) => p.mimeType === "text/plain") ??
+    const textPart =
+      parts.find((p: any) => p.mimeType === "text/plain") ??
       parts.find((p: any) => p.mimeType === "text/html");
     if (textPart?.body?.data) {
       body = new TextDecoder().decode(
@@ -79,9 +79,8 @@ async function fetchMessage(
       );
     } else if (msg.payload?.body?.data) {
       body = new TextDecoder().decode(
-        Uint8Array.from(
-          atob(msg.payload.body.data.replace(/-/g, "+").replace(/_/g, "/")),
-          (c) => c.charCodeAt(0),
+        Uint8Array.from(atob(msg.payload.body.data.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+          c.charCodeAt(0),
         ),
       );
     }
@@ -180,8 +179,8 @@ serve(async (req) => {
     }
 
     const historyData = await historyRes.json();
-    const newMessageIds: string[] = (historyData.history ?? []).flatMap(
-      (h: any) => (h.messagesAdded ?? []).map((m: any) => m.message.id as string),
+    const newMessageIds: string[] = (historyData.history ?? []).flatMap((h: any) =>
+      (h.messagesAdded ?? []).map((m: any) => m.message.id as string),
     );
 
     // 4. Process each new inbound message
@@ -256,13 +255,10 @@ serve(async (req) => {
       })
       .eq("id", agency.id);
 
-    return new Response(
-      JSON.stringify({ success: true, processed: processedCount, historyId }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      },
-    );
+    return new Response(JSON.stringify({ success: true, processed: processedCount, historyId }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
   } catch (error: any) {
     console.error("Gmail Sync Error:", error);
     // Return 200 to avoid infinite PubSub retries for unrecoverable errors

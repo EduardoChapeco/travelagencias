@@ -5,9 +5,7 @@
     "summary": "Hotel  rebooking Availbility",
     "description": "This method is used to request room rebooking availability",
     "operationId": "searchHotelRebooking",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -73,9 +71,7 @@
     "summary": "Experience Availbility",
     "description": "This method is used to request experience availability",
     "operationId": "experienceAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -153,9 +149,7 @@
     "summary": "Insurance Availbility",
     "description": "This method is used to request insurance availability",
     "operationId": "insuranceAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -233,9 +227,7 @@
     "summary": "Service Package Availbility",
     "description": "This method is used to request service package availability",
     "operationId": "servicePackageAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -313,9 +305,7 @@
     "summary": "Service Other",
     "description": "This method is used to request activity availability",
     "operationId": "serviceOtheravailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -393,9 +383,7 @@
     "summary": "Transfers Availbility",
     "description": "This method is used to request service transfers availability",
     "operationId": "transferAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -509,9 +497,7 @@
     "summary": "Hotel Availbility",
     "description": "This method is used to request room availability",
     "operationId": "hotelAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -625,9 +611,7 @@
     "summary": "Hotel Availbility",
     "description": "This method is used to request room availability",
     "operationId": "hotelAvailbilityGiata",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -705,9 +689,7 @@
     "summary": "Flight Availability",
     "description": "This method is used to request flight availability",
     "operationId": "flightAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -809,9 +791,7 @@
     "summary": "Activity detail",
     "description": "This method is used to request activity detail",
     "operationId": "activityDetail",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "key",
@@ -835,9 +815,7 @@
     "summary": "Activity Availbility",
     "description": "This method is used to request activity availability",
     "operationId": "toursAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -921,9 +899,7 @@
     "summary": "Package Availbility",
     "description": "This method is used to request package availability",
     "operationId": "packageAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "packageType",
@@ -1055,9 +1031,7 @@
     "summary": "Ticket Availbility",
     "description": "This method is used to request service ticket availability",
     "operationId": "ticketAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -1153,9 +1127,7 @@
     "summary": "Chip Availbility",
     "description": "This method is used to request chip availability",
     "operationId": "chipAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -1233,9 +1205,7 @@
     "summary": "Vehicle Availbility",
     "description": "This method is used to request vehicle availability",
     "operationId": "vehicleAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "pickUpDate",
@@ -1343,9 +1313,7 @@
     "summary": "Circuit Availability",
     "description": "Search for available circuits based on destination, date, occupancy, and other filters.<br/>This is the first step to check which circuits are available for booking.<br/><br/>**Flow:** First, call `/circuit` to check availability, then `/circuit/calendar` to view monthly tariffs, and finally `/circuit/daily-details` to get detailed pricing for a specific day.",
     "operationId": "circuitAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "integrationId",
@@ -1417,9 +1385,7 @@
     "summary": "Get Circuit Tariff Calendar",
     "description": "Retrieve the monthly tariff calendar for a selected circuit. Use this after checking availability to view prices across different dates within a month.",
     "operationId": "tariffMonth",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [],
     "requestBodyRef": "#/components/schemas/BookingRQ",
     "responseBodyRef": "#/components/schemas/TariffMonthRS"
@@ -1430,9 +1396,7 @@
     "summary": "Bus Availability",
     "description": "This method is used to request bus availability",
     "operationId": "busAvailbility",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [
       {
         "name": "start",
@@ -1498,9 +1462,7 @@
     "summary": "Get Circuit Daily Tariff Details",
     "description": "Retrieve detailed tariff information for a specific day of a selected circuit. This is used after viewing the calendar to get precise pricing and conditions for booking on a chosen date.",
     "operationId": "tariffDay",
-    "tags": [
-      "Availability"
-    ],
+    "tags": ["Availability"],
     "parameters": [],
     "requestBodyRef": "#/components/schemas/BookingRQ",
     "responseBodyRef": "#/components/schemas/CircuitDailyDetailRS"
@@ -1511,9 +1473,7 @@
     "summary": "List all B2C entries",
     "description": "Returns all B2C configurations",
     "operationId": "listarTodos",
-    "tags": [
-      "B2C"
-    ],
+    "tags": ["B2C"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1537,9 +1497,7 @@
     "summary": "Update B2C Config by domain URL",
     "description": "Overwrites the B2C configuration JSON for the given domain. Only users listed in the config's adminUsers array may call this endpoint.",
     "operationId": "updateB2cConfigByDomain",
-    "tags": [
-      "B2C"
-    ],
+    "tags": ["B2C"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1569,9 +1527,7 @@
     "summary": "Get B2C Config by domain URL",
     "description": "Returns the B2C configuration JSON for a given domain URL (ds_url_b2c)",
     "operationId": "getB2cConfigByDomain",
-    "tags": [
-      "B2C"
-    ],
+    "tags": ["B2C"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1601,9 +1557,7 @@
     "summary": "Reservation Search",
     "description": "This method is used to search for reservations.",
     "operationId": "search",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1669,9 +1623,7 @@
     "summary": "Search by booking",
     "description": "This method is used to search for reservations.",
     "operationId": "booking",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1701,9 +1653,7 @@
     "summary": "Reservation Check Search",
     "description": "This method is used to search for reservations unchecked.",
     "operationId": "checkbooking",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1733,9 +1683,7 @@
     "summary": "Reservation Check Search",
     "description": "This method is used to search for reservations unchecked.",
     "operationId": "searchUncheckedBooking",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1759,9 +1707,7 @@
     "summary": "Find Client External Code",
     "description": "This method is used to query the data referring to the Client",
     "operationId": "buscarClientePorIdExterno",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1791,9 +1737,7 @@
     "summary": "Hotel Detail",
     "description": "This method is used to query the data referring to the  hotel",
     "operationId": "buscarHotelPorIdInterno",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1823,9 +1767,7 @@
     "summary": "Person Detail",
     "description": "This method is used to query the data referring to the person",
     "operationId": "buscarPessoaPorId",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1867,9 +1809,7 @@
     "summary": "Person Detail",
     "description": "This method is used to query the data referring to the person",
     "operationId": "buscarPessoaPorId_1",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1899,9 +1839,7 @@
     "summary": "Reservation Search Rebooking",
     "description": "This method is used to search for reservations that have gone through the rebooking process. ",
     "operationId": "searchRebooking",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1937,9 +1875,7 @@
     "summary": "Update id externo by booking ",
     "description": "This method is used to update id externo by reserva.",
     "operationId": "atualizarIdExterno",
-    "tags": [
-      "Backoffice"
-    ],
+    "tags": ["Backoffice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1963,9 +1899,7 @@
     "summary": "Import Billing",
     "description": "This method receives a byte array of an image, the file name and the credential id to which the billing will be imported to",
     "operationId": "importBilling",
-    "tags": [
-      "Billing"
-    ],
+    "tags": ["Billing"],
     "parameters": [
       {
         "name": "Authorization",
@@ -1989,9 +1923,7 @@
     "summary": "Booking Detail",
     "description": "The BookingDetail operation allows to retrieve a booking with all its details from the booking reference locator.",
     "operationId": "find",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2039,9 +1971,7 @@
     "summary": "Booking Cancelation",
     "description": "BookingCancellation is used either to simulate a cancellation or to perform the actual cancellation.",
     "operationId": "cancel",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2077,9 +2007,7 @@
     "summary": "Booking Reservation",
     "description": "This method is used to make a reservation.",
     "operationId": "booking_1",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2109,9 +2037,7 @@
     "summary": "Rebooking",
     "description": "This method is used to change an existing hotel reservation.",
     "operationId": "rebooking",
-    "tags": [
-      "Rebooking"
-    ],
+    "tags": ["Rebooking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2141,9 +2067,7 @@
     "summary": "Booking Confirmation",
     "description": "This method is used to request a booking confirmation.",
     "operationId": "confirm",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2173,9 +2097,7 @@
     "summary": "Apply coupon",
     "description": "This method is used to apply a coupon to a reservation.",
     "operationId": "applyCoupon",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2211,9 +2133,7 @@
     "summary": "Check Rate",
     "description": "This method is used to check rates before booking.",
     "operationId": "checkRate",
-    "tags": [
-      "CheckRate"
-    ],
+    "tags": ["CheckRate"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2255,9 +2175,7 @@
     "summary": "Search Booking by User",
     "description": "Search booking by period and by logged in user",
     "operationId": "bookingSearch",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2335,9 +2253,7 @@
     "summary": "Company Search",
     "description": "This method is used to search company details",
     "operationId": "searchCompany",
-    "tags": [
-      "Company"
-    ],
+    "tags": ["Company"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2367,9 +2283,7 @@
     "summary": "Company Search",
     "description": "This method is used to search company details",
     "operationId": "searchCompany_1",
-    "tags": [
-      "Company"
-    ],
+    "tags": ["Company"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2393,9 +2307,7 @@
     "summary": "Company Search",
     "description": "This method is used to search company details",
     "operationId": "searchCompanySgEmpresa",
-    "tags": [
-      "Company"
-    ],
+    "tags": ["Company"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2425,9 +2337,7 @@
     "summary": "Cash register Search",
     "description": "This method is used to search for cash Registers.",
     "operationId": "searchCashRegister",
-    "tags": [
-      "Financial"
-    ],
+    "tags": ["Financial"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2481,9 +2391,7 @@
     "summary": "Search Credit Letter",
     "description": "This method is used to search a Credit Letter.",
     "operationId": "searchCreditLetter",
-    "tags": [
-      "Financial"
-    ],
+    "tags": ["Financial"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2537,9 +2445,7 @@
     "summary": "Create Credit Letter",
     "description": "This method is used to make a Credit Letter.",
     "operationId": "createCreditLetter",
-    "tags": [
-      "Financial"
-    ],
+    "tags": ["Financial"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2563,9 +2469,7 @@
     "summary": "Financial Posting Approval",
     "description": "This method receives the product id and confirms the payment of the  Financial Posting",
     "operationId": "financialLaunchesApproval",
-    "tags": [
-      "FinancialPosting"
-    ],
+    "tags": ["FinancialPosting"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2595,9 +2499,7 @@
     "summary": "Generate Invoice",
     "description": "This method generates and closes an invoice.",
     "operationId": "generateInvoice",
-    "tags": [
-      "Invoice"
-    ],
+    "tags": ["Invoice"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2627,9 +2529,7 @@
     "summary": "Package Search",
     "description": "This method is used to search package.",
     "operationId": "buscarPacote",
-    "tags": [
-      "Package"
-    ],
+    "tags": ["Package"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2659,9 +2559,7 @@
     "summary": "Pix Consult",
     "description": "This method validates if the pix payment was made",
     "operationId": "find_1",
-    "tags": [
-      "Payment"
-    ],
+    "tags": ["Payment"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2691,9 +2589,7 @@
     "summary": "Point Rule Search",
     "description": "This method is used to search for point rules.",
     "operationId": "buscarRegras",
-    "tags": [
-      "PointRule"
-    ],
+    "tags": ["PointRule"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2717,9 +2613,7 @@
     "summary": "Update transfer ",
     "description": "Updates the observation of a specific product ",
     "operationId": "updateObservationProduct",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "id",
@@ -2737,9 +2631,7 @@
     "summary": "Update transfer ",
     "description": "Updates the transfer data of a specific service ",
     "operationId": "updateTransfer",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "id",
@@ -2757,9 +2649,7 @@
     "summary": "Update circuit service data",
     "description": "Updates the service data of a specific circuit, such as setting flight information on a transfer service.",
     "operationId": "updateCircuitService",
-    "tags": [
-      "Booking"
-    ],
+    "tags": ["Booking"],
     "parameters": [
       {
         "name": "id",
@@ -2819,9 +2709,7 @@
     "summary": "Package Periods",
     "description": "This method is used to request package periods",
     "operationId": "packagePeriod",
-    "tags": [
-      "Search Engine"
-    ],
+    "tags": ["Search Engine"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2905,9 +2793,7 @@
     "summary": "Package Destination",
     "description": "This method is used to request package destinations",
     "operationId": "packageDestination",
-    "tags": [
-      "Search Engine"
-    ],
+    "tags": ["Search Engine"],
     "parameters": [
       {
         "name": "Authorization",
@@ -2973,9 +2859,7 @@
     "summary": "Package Origin",
     "description": "This method is used to request package origins",
     "operationId": "packageOrigin",
-    "tags": [
-      "Search Engine"
-    ],
+    "tags": ["Search Engine"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3047,9 +2931,7 @@
     "summary": "Import Service Fare",
     "description": "This method is used to generate a new Service Fare",
     "operationId": "importServiceFare",
-    "tags": [
-      "Service"
-    ],
+    "tags": ["Service"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3073,9 +2955,7 @@
     "summary": "Register",
     "description": "",
     "operationId": "register",
-    "tags": [
-      "User"
-    ],
+    "tags": ["User"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3099,9 +2979,7 @@
     "summary": "Recover Password",
     "description": "",
     "operationId": "recoveryPassword",
-    "tags": [
-      "User"
-    ],
+    "tags": ["User"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3125,9 +3003,7 @@
     "summary": "Update User",
     "description": "",
     "operationId": "updateUser",
-    "tags": [
-      "User"
-    ],
+    "tags": ["User"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3157,9 +3033,7 @@
     "summary": "LogIn",
     "description": "",
     "operationId": "login",
-    "tags": [
-      "User"
-    ],
+    "tags": ["User"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3183,9 +3057,7 @@
     "summary": "Hotel Detail",
     "description": "This method is used to request room availability",
     "operationId": "montaDetalheHotel",
-    "tags": [
-      "Utility"
-    ],
+    "tags": ["Utility"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3215,9 +3087,7 @@
     "summary": "County Search",
     "description": "This method is used to search coounty by name.",
     "operationId": "buscarMunicipio",
-    "tags": [
-      "Utility"
-    ],
+    "tags": ["Utility"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3247,9 +3117,7 @@
     "summary": "Hotel Reviews",
     "description": "This method is used to request hotel reviews",
     "operationId": "montaAvaliacaoHotel",
-    "tags": [
-      "Utility"
-    ],
+    "tags": ["Utility"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3279,9 +3147,7 @@
     "summary": "Zipcode Search",
     "description": "This method is used to search zipcode.",
     "operationId": "buscaEndereco",
-    "tags": [
-      "Utility"
-    ],
+    "tags": ["Utility"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3311,9 +3177,7 @@
     "summary": "Find coupon",
     "description": "This method is used to search for a specific coupon",
     "operationId": "validarCupom",
-    "tags": [
-      "Utility"
-    ],
+    "tags": ["Utility"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3343,9 +3207,7 @@
     "summary": "Contracts Search",
     "description": "This method is used to search for contracts and terms of use.",
     "operationId": "buscarContratosPreReservar",
-    "tags": [
-      "CheckRate"
-    ],
+    "tags": ["CheckRate"],
     "parameters": [
       {
         "name": "Authorization",
@@ -3375,9 +3237,7 @@
     "summary": "Search",
     "description": "",
     "operationId": "login_1",
-    "tags": [
-      "Whitelabel"
-    ],
+    "tags": ["Whitelabel"],
     "parameters": [
       {
         "name": "Authorization",

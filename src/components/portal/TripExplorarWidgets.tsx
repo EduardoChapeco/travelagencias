@@ -22,7 +22,9 @@ export function TripFlightCard({ flight, pnr }: { flight: any; pnr?: string }) {
           <div className="h-6 w-6 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black">
             ✈
           </div>
-          <span className="text-xs font-bold text-foreground">{f.airline || "Companhia Aérea"}</span>
+          <span className="text-xs font-bold text-foreground">
+            {f.airline || "Companhia Aérea"}
+          </span>
           <span className="text-xs font-mono text-muted-foreground">
             · Voo {f.flight_number || "—"}
           </span>
@@ -113,19 +115,15 @@ export function DestinationIntelligenceBlock({
   destination?: string;
 }) {
   const safetyColor =
-    di.safety_level === "safe"
-      ? "success"
-      : di.safety_level === "moderate"
-      ? "warning"
-      : "danger";
+    di.safety_level === "safe" ? "success" : di.safety_level === "moderate" ? "warning" : "danger";
   const safetyLabel =
     di.safety_level === "safe"
       ? "Seguro"
       : di.safety_level === "moderate"
-      ? "Moderado"
-      : di.safety_level === "caution"
-      ? "Atenção"
-      : "Alto Risco";
+        ? "Moderado"
+        : di.safety_level === "caution"
+          ? "Atenção"
+          : "Alto Risco";
 
   return (
     <div className="space-y-4">
@@ -137,8 +135,8 @@ export function DestinationIntelligenceBlock({
               safetyColor === "success"
                 ? "bg-success/5 border-success/20"
                 : safetyColor === "warning"
-                ? "bg-warning/5 border-warning/20"
-                : "bg-danger/5 border-danger/20"
+                  ? "bg-warning/5 border-warning/20"
+                  : "bg-danger/5 border-danger/20"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
@@ -147,13 +145,11 @@ export function DestinationIntelligenceBlock({
                   safetyColor === "success"
                     ? "text-success"
                     : safetyColor === "warning"
-                    ? "text-warning"
-                    : "text-danger"
+                      ? "text-warning"
+                      : "text-danger"
                 }`}
               />
-              <span className="text-sm font-bold text-foreground">
-                Segurança: {safetyLabel}
-              </span>
+              <span className="text-sm font-bold text-foreground">Segurança: {safetyLabel}</span>
             </div>
             {di.safety_notes && (
               <p className="text-xs text-muted-foreground leading-relaxed">{di.safety_notes}</p>
@@ -164,15 +160,11 @@ export function DestinationIntelligenceBlock({
         {di.visa_required !== null && (
           <div
             className={`rounded-2xl border p-5 ${
-              di.visa_required
-                ? "bg-danger/5 border-danger/20"
-                : "bg-success/5 border-success/20"
+              di.visa_required ? "bg-danger/5 border-danger/20" : "bg-success/5 border-success/20"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Globe
-                className={`h-5 w-5 ${di.visa_required ? "text-danger" : "text-success"}`}
-              />
+              <Globe className={`h-5 w-5 ${di.visa_required ? "text-danger" : "text-success"}`} />
               <span className="text-sm font-bold text-foreground">
                 Visto: {di.visa_required ? "Exigido" : "Não Exigido"}
               </span>
@@ -292,10 +284,7 @@ export function DestinationIntelligenceBlock({
           </AppWidget>
 
           {di.cultural_tips && (
-            <AppWidget
-              title="Dicas Culturais"
-              icon={<Map className="w-5 h-5 text-info" />}
-            >
+            <AppWidget title="Dicas Culturais" icon={<Map className="w-5 h-5 text-info" />}>
               <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                 {di.cultural_tips}
               </p>
@@ -349,8 +338,8 @@ export function DestinationFallbackBlock({ destination }: { destination?: string
             <div className="bg-warning/10 p-4 rounded-2xl border border-warning/20">
               <div className="text-sm font-bold text-warning mb-1">Recomendações Gerais</div>
               <div className="text-xs text-muted-foreground leading-relaxed">
-                Sempre ande com cópia do documento. Evite áreas não turísticas após as 22h.
-                Mantenha contato com a agência em caso de imprevistos.
+                Sempre ande com cópia do documento. Evite áreas não turísticas após as 22h. Mantenha
+                contato com a agência em caso de imprevistos.
               </div>
             </div>
           </div>

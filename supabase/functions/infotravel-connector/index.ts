@@ -79,7 +79,9 @@ serve(async (req) => {
       username.toLowerCase() === "sandbox";
 
     if (isMock) {
-      throw new Error("Ambiente de Simulação Desativado. As credenciais do Infotravel não foram configuradas ou são inválidas. Insira credenciais reais de produção no painel de integrações da agência para realizar transações e buscas de verdade.");
+      throw new Error(
+        "Ambiente de Simulação Desativado. As credenciais do Infotravel não foram configuradas ou são inválidas. Insira credenciais reais de produção no painel de integrações da agência para realizar transações e buscas de verdade.",
+      );
     }
 
     // Se houver credenciais reais, efetuar a chamada HTTP real
@@ -93,7 +95,7 @@ serve(async (req) => {
       if (params.quoteRequestId && params.scenarioId) {
         const hotelAvails = rawData?.hotelAvail || [];
         const offers = hotelAvails.map((avail: any) =>
-          mapApiHotelToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId)
+          mapApiHotelToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
         result = { success: true, offers };
@@ -105,7 +107,7 @@ serve(async (req) => {
       if (params.quoteRequestId && params.scenarioId) {
         const flightAvails = rawData?.flightAvail || [];
         const offers = flightAvails.map((avail: any) =>
-          mapApiFlightToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId)
+          mapApiFlightToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
         result = { success: true, offers };
@@ -247,7 +249,8 @@ async function fetchRealBooking(url: string, token: string, params: any) {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error(`Erro ao buscar a reserva #${bookingId} no Infotravel: HTTP ${res.status}`);
+  if (!res.ok)
+    throw new Error(`Erro ao buscar a reserva #${bookingId} no Infotravel: HTTP ${res.status}`);
   return await res.json();
 }
 
@@ -317,7 +320,11 @@ async function executeBackfill(
           finished_at: new Date().toISOString(),
         })
         .eq("id", jobId);
-      return { success: true, message: "Nenhum intervalo novo para sincronizar.", records_processed: 0 };
+      return {
+        success: true,
+        message: "Nenhum intervalo novo para sincronizar.",
+        records_processed: 0,
+      };
     }
 
     const current = new Date(start);
@@ -341,7 +348,9 @@ async function executeBackfill(
         });
 
         if (!searchRes.ok) {
-          throw new Error(`Erro na busca de reservas para o dia ${dateStr}: HTTP ${searchRes.status}`);
+          throw new Error(
+            `Erro na busca de reservas para o dia ${dateStr}: HTTP ${searchRes.status}`,
+          );
         }
 
         const searchData = await searchRes.json();
@@ -361,7 +370,10 @@ async function executeBackfill(
               .maybeSingle();
 
             const localTripStatus = existingLink?.trips?.status;
-            if (existingLink && (localTripStatus === "completed" || localTripStatus === "cancelled")) {
+            if (
+              existingLink &&
+              (localTripStatus === "completed" || localTripStatus === "cancelled")
+            ) {
               continue;
             }
 
@@ -375,7 +387,9 @@ async function executeBackfill(
             });
 
             if (!detailRes.ok) {
-              throw new Error(`Erro ao obter detalhes da reserva #${bookingIdStr}: HTTP ${detailRes.status}`);
+              throw new Error(
+                `Erro ao obter detalhes da reserva #${bookingIdStr}: HTTP ${detailRes.status}`,
+              );
             }
 
             const rawBooking = await detailRes.json();
@@ -388,7 +402,6 @@ async function executeBackfill(
               .from("sync_jobs")
               .update({ records_processed: recordsProcessed })
               .eq("id", jobId);
-
           } catch (bErr: any) {
             console.error(`Erro ao processar reserva #${bookingIdStr}:`, bErr);
             errorsLog.push({
@@ -397,25 +410,22 @@ async function executeBackfill(
               error: bErr.message,
               timestamp: new Date().toISOString(),
             });
-            await supabaseAdmin
-              .from("sync_jobs")
-              .update({ errors_log: errorsLog })
-              .eq("id", jobId);
+            await supabaseAdmin.from("sync_jobs").update({ errors_log: errorsLog }).eq("id", jobId);
           }
         }
 
         // Salvar checkpoint diário
-        await supabaseAdmin
-          .from("sync_checkpoints")
-          .upsert({
+        await supabaseAdmin.from("sync_checkpoints").upsert(
+          {
             agency_id: agencyId,
             provider: "infotravel",
             cursor_value: dateStr,
             last_run_at: new Date().toISOString(),
-          }, {
-            onConflict: "agency_id,provider"
-          });
-
+          },
+          {
+            onConflict: "agency_id,provider",
+          },
+        );
       } catch (dayErr: any) {
         console.error(`Erro ao processar o dia ${dateStr}:`, dayErr);
         errorsLog.push({
@@ -423,10 +433,7 @@ async function executeBackfill(
           error: dayErr.message,
           timestamp: new Date().toISOString(),
         });
-        await supabaseAdmin
-          .from("sync_jobs")
-          .update({ errors_log: errorsLog })
-          .eq("id", jobId);
+        await supabaseAdmin.from("sync_jobs").update({ errors_log: errorsLog }).eq("id", jobId);
       }
 
       current.setDate(current.getDate() + 1);
@@ -449,7 +456,6 @@ async function executeBackfill(
       records_processed: recordsProcessed,
       errors: errorsLog.length,
     };
-
   } catch (globalErr: any) {
     console.error("Erro global no executeBackfill:", globalErr);
     errorsLog.push({
@@ -532,7 +538,9 @@ async function executePeriodicSync(
           });
 
           if (!detailRes.ok) {
-            throw new Error(`Erro ao consultar status da reserva #${bookingIdStr}: HTTP ${detailRes.status}`);
+            throw new Error(
+              `Erro ao consultar status da reserva #${bookingIdStr}: HTTP ${detailRes.status}`,
+            );
           }
 
           const rawBooking = await detailRes.json();
@@ -555,7 +563,6 @@ async function executePeriodicSync(
             .from("sync_jobs")
             .update({ records_processed: recordsProcessed })
             .eq("id", jobId);
-
         } catch (bErr: any) {
           console.error(`Erro na sincronização periódica da reserva #${bookingIdStr}:`, bErr);
           errorsLog.push({
@@ -563,10 +570,7 @@ async function executePeriodicSync(
             error: bErr.message,
             timestamp: new Date().toISOString(),
           });
-          await supabaseAdmin
-            .from("sync_jobs")
-            .update({ errors_log: errorsLog })
-            .eq("id", jobId);
+          await supabaseAdmin.from("sync_jobs").update({ errors_log: errorsLog }).eq("id", jobId);
         }
       }
     }
@@ -588,7 +592,6 @@ async function executePeriodicSync(
       records_processed: recordsProcessed,
       errors: errorsLog.length,
     };
-
   } catch (globalErr: any) {
     console.error("Erro global no executePeriodicSync:", globalErr);
     errorsLog.push({
@@ -640,7 +643,9 @@ async function executeCreateBooking(
 
   if (passErr) throw new Error(`Erro ao buscar passageiros: ${passErr.message}`);
   if (!passengers || passengers.length === 0) {
-    throw new Error("Esta viagem não possui passageiros cadastrados. É necessário pelo menos um passageiro para realizar a reserva no GDS.");
+    throw new Error(
+      "Esta viagem não possui passageiros cadastrados. É necessário pelo menos um passageiro para realizar a reserva no GDS.",
+    );
   }
 
   // 3. Obter voucher (itinerário)
@@ -654,10 +659,13 @@ async function executeCreateBooking(
   if (voucherErr) throw new Error(`Erro ao obter voucher: ${voucherErr.message}`);
 
   const hasFlights = voucher && Array.isArray(voucher.flights) && voucher.flights.length > 0;
-  const hasHotels = voucher && Array.isArray(voucher.accommodation) && voucher.accommodation.length > 0;
+  const hasHotels =
+    voucher && Array.isArray(voucher.accommodation) && voucher.accommodation.length > 0;
 
   if (!hasFlights && !hasHotels) {
-    throw new Error("Esta viagem não possui voos ou hotéis no voucher. Insira pelo menos um serviço de aéreo ou hospedagem para reservar no GDS.");
+    throw new Error(
+      "Esta viagem não possui voos ou hotéis no voucher. Insira pelo menos um serviço de aéreo ou hospedagem para reservar no GDS.",
+    );
   }
 
   // 4. Montar o payload do ApiBooking para a GDS
@@ -684,12 +692,19 @@ async function executeCreateBooking(
   // Mapear voos se houver
   if (hasFlights) {
     const flightsPayload = voucher.flights.map((f: any) => {
-      const departureDate = f.date ? `${f.date}T${f.departure_time || "12:00"}:00` : new Date().toISOString();
-      const arrivalDate = f.date ? `${f.date}T${f.arrival_time || "14:00"}:00` : new Date().toISOString();
+      const departureDate = f.date
+        ? `${f.date}T${f.departure_time || "12:00"}:00`
+        : new Date().toISOString();
+      const arrivalDate = f.date
+        ? `${f.date}T${f.arrival_time || "14:00"}:00`
+        : new Date().toISOString();
 
       return {
         number: f.flight_number || "0000",
-        airline: { code: f.airline?.substring(0, 2).toUpperCase() || "XX", name: f.airline || "Companhia" },
+        airline: {
+          code: f.airline?.substring(0, 2).toUpperCase() || "XX",
+          name: f.airline || "Companhia",
+        },
         origin: { code: f.origin?.substring(0, 3).toUpperCase() || "GRU" },
         destination: { code: f.destination?.substring(0, 3).toUpperCase() || "MIA" },
         departure: departureDate,
@@ -714,7 +729,9 @@ async function executeCreateBooking(
         birth: p.birth_date ? `${p.birth_date}T00:00:00` : undefined,
         type: p.kind === "child" ? "CHD" : p.kind === "infant" ? "INF" : "ADT",
         gender: "MALE",
-        document: p.document ? { number: p.document, type: p.document_type?.toUpperCase() || "RG" } : undefined,
+        document: p.document
+          ? { number: p.document, type: p.document_type?.toUpperCase() || "RG" }
+          : undefined,
         isMain: p.is_lead_passenger || false,
       };
     });
@@ -788,7 +805,9 @@ async function executeCreateBooking(
 }
 
 // ─── Tradutor de Status GDS -> Local ────────────────────────────────────────
-function mapGDSStatusToLocal(gdsStatus?: string): "planning" | "confirmed" | "in_progress" | "completed" | "cancelled" {
+function mapGDSStatusToLocal(
+  gdsStatus?: string,
+): "planning" | "confirmed" | "in_progress" | "completed" | "cancelled" {
   if (!gdsStatus) return "planning";
   const status = gdsStatus.toUpperCase();
   switch (status) {
@@ -819,45 +838,48 @@ function mapGDSStatusToLocal(gdsStatus?: string): "planning" | "confirmed" | "in
 
 // ─── Normalizador de Reserva GDS ────────────────────────────────────────────
 function normalizeBooking(booking: any) {
-  const bookingId = booking.id?.toString() || `B-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+  const bookingId =
+    booking.id?.toString() || `B-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
   const locator = booking.locator || "PNR-GDS";
-  
+
   let destination = "Destino Internacional";
   if (booking.bookingHotels?.[0]?.hotel?.city?.name) {
     destination = booking.bookingHotels[0].hotel.city.name;
   } else if (booking.bookingFlights?.[0]?.flights?.[0]?.destination?.city?.name) {
     destination = booking.bookingFlights[0].flights[0].destination.city.name;
   }
-  
+
   const firstName = booking.client?.name || "";
   const lastName = booking.client?.lastName || "";
   const clientName = `${firstName} ${lastName}`.trim() || "Cliente GDS";
-  
-  const clientCpfObj = booking.client?.documents?.find((doc: any) => doc.type?.toUpperCase() === "CPF");
+
+  const clientCpfObj = booking.client?.documents?.find(
+    (doc: any) => doc.type?.toUpperCase() === "CPF",
+  );
   const clientCpf = clientCpfObj?.number || "";
-  
+
   const clientEmail = booking.client?.email || "";
   const clientPhone = booking.client?.telephones?.[0]?.number || "";
   const totalSale = booking.bookingAmount?.amount || 0;
-  
+
   const hotels = (booking.bookingHotels || []).map((h: any) => {
     const hotelId = h.hotel?.id?.toString() || `info-h-${Math.random().toString(36).substr(2, 9)}`;
     const hotelName = h.hotel?.name || "Hotel Sem Nome";
     const hotelCity = h.hotel?.city?.name || "Destino Desconhecido";
-    
+
     const primaryRoom = h.rooms?.[0];
     const rawCheckin = primaryRoom?.checkIn || booking.createdAt || "";
     const rawCheckout = primaryRoom?.checkOut || booking.createdAt || "";
     const checkin = rawCheckin ? rawCheckin.split("T")[0] : "";
     const checkout = rawCheckout ? rawCheckout.split("T")[0] : "";
-    
+
     const mealPlan = primaryRoom?.boardType?.description || "Somente Hospedagem";
     const rooms = (h.rooms || []).map((r: any) => ({
       type: r.description || r.name || "Quarto Standard",
       qty: r.quantity || 1,
     }));
     if (rooms.length === 0) rooms.push({ type: "Quarto Standard", qty: 1 });
-    
+
     return {
       id: hotelId,
       name: hotelName,
@@ -868,21 +890,26 @@ function normalizeBooking(booking: any) {
       rooms,
     };
   });
-  
+
   const flights = (booking.bookingFlights || []).map((bf: any) => {
     const primaryFlight = bf.flights?.[0];
     const flightId = primaryFlight?.key || `info-f-${Math.random().toString(36).substr(2, 9)}`;
     const origin = primaryFlight?.origin?.code || "GRU";
     const destinationCode = primaryFlight?.destination?.code || "MIA";
     const date = primaryFlight?.departure ? primaryFlight.departure.split("T")[0] : "";
-    const departure_time = primaryFlight?.departure ? primaryFlight.departure.split("T")[1]?.substring(0, 5) : "00:00";
-    const arrival_time = primaryFlight?.arrival ? primaryFlight.arrival.split("T")[1]?.substring(0, 5) : "00:00";
-    const airline = primaryFlight?.airline?.name || primaryFlight?.airline?.code || "Companhia Aérea";
+    const departure_time = primaryFlight?.departure
+      ? primaryFlight.departure.split("T")[1]?.substring(0, 5)
+      : "00:00";
+    const arrival_time = primaryFlight?.arrival
+      ? primaryFlight.arrival.split("T")[1]?.substring(0, 5)
+      : "00:00";
+    const airline =
+      primaryFlight?.airline?.name || primaryFlight?.airline?.code || "Companhia Aérea";
     const flight_number = primaryFlight?.number || "0000";
     const primaryFare = primaryFlight?.fares?.[0];
     const baggage_rules = primaryFare?.description || "Baggage rules subject to airline terms";
     const price = primaryFare?.price?.amount || 0;
-    
+
     return {
       id: flightId,
       origin,
@@ -896,16 +923,17 @@ function normalizeBooking(booking: any) {
       price,
     };
   });
-  
+
   const passengers: any[] = [];
   const passengerNames = booking.bookingFlights?.[0]?.names || [];
-  
+
   passengerNames.forEach((n: any) => {
     const docNumber = n.document?.number || n.documents?.[0]?.number || "";
-    const docType = n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
+    const docType =
+      n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
     const birthDate = n.birth ? n.birth.split("T")[0] : "";
     const fullName = `${n.firstName} ${n.lastName}`.trim();
-    
+
     if (fullName) {
       passengers.push({
         full_name: fullName,
@@ -915,17 +943,20 @@ function normalizeBooking(booking: any) {
       });
     }
   });
-  
+
   (booking.bookingHotels || []).forEach((bh: any) => {
     (bh.rooms || []).forEach((r: any) => {
       (r.names || []).forEach((n: any) => {
         const docNumber = n.document?.number || n.documents?.[0]?.number || "";
-        const docType = n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
+        const docType =
+          n.document?.type?.toLowerCase() || n.documents?.[0]?.type?.toLowerCase() || "rg";
         const birthDate = n.birth ? n.birth.split("T")[0] : "";
         const fullName = `${n.firstName} ${n.lastName}`.trim();
-        
+
         if (fullName) {
-          const exists = passengers.some(p => p.full_name.toLowerCase() === fullName.toLowerCase());
+          const exists = passengers.some(
+            (p) => p.full_name.toLowerCase() === fullName.toLowerCase(),
+          );
           if (!exists) {
             passengers.push({
               full_name: fullName,
@@ -938,7 +969,7 @@ function normalizeBooking(booking: any) {
       });
     });
   });
-  
+
   if (passengers.length === 0) {
     passengers.push({
       full_name: clientName,
@@ -949,7 +980,7 @@ function normalizeBooking(booking: any) {
       phone: clientPhone,
     });
   }
-  
+
   return {
     booking_id: bookingId,
     locator,
@@ -966,15 +997,23 @@ function normalizeBooking(booking: any) {
   };
 }
 
-async function saveBookingToDatabase(supabaseAdmin: any, agencyId: string, booking: any, overrideTripId?: string): Promise<string> {
+async function saveBookingToDatabase(
+  supabaseAdmin: any,
+  agencyId: string,
+  booking: any,
+  overrideTripId?: string,
+): Promise<string> {
   const normalized = normalizeBooking(booking);
 
-  console.log("Chamando RPC save_infotravel_booking_normalized com dados da reserva:", normalized.locator);
-  
+  console.log(
+    "Chamando RPC save_infotravel_booking_normalized com dados da reserva:",
+    normalized.locator,
+  );
+
   const { data: tripId, error } = await supabaseAdmin.rpc("save_infotravel_booking_normalized", {
     p_agency_id: agencyId,
     p_normalized: normalized,
-    p_override_trip_id: overrideTripId || null
+    p_override_trip_id: overrideTripId || null,
   });
 
   if (error) {
@@ -995,21 +1034,22 @@ function mapApiHotelToNormalizedOffer(
   avail: any,
   agencyId: string,
   quoteRequestId: string,
-  scenarioId: string
+  scenarioId: string,
 ) {
   const hotelId = avail.hotel?.id?.toString() || `h-${Math.random().toString(36).substr(2, 9)}`;
   const checkin = avail.checkIn ? avail.checkIn.split("T")[0] : "";
   const checkout = avail.checkOut ? avail.checkOut.split("T")[0] : "";
-  
+
   const roomGroup = avail.roomGroups?.[0];
   const rooms = roomGroup?.rooms?.map((r: any) => ({
     description: r.description || r.name || "Quarto Standard",
     quantity: r.quantity || 1,
-    boardDescription: r.boardType?.description || "Somente Hospedagem"
+    boardDescription: r.boardType?.description || "Somente Hospedagem",
   })) || [{ description: "Quarto Standard", quantity: 1, boardDescription: "Somente Hospedagem" }];
 
   const lowestPrice = avail.lowestFare?.price?.amount || avail.lowestFare?.amount || 0;
-  const images = avail.hotel?.images?.map((img: any) => img.url || img.path || "").filter(Boolean) || [];
+  const images =
+    avail.hotel?.images?.map((img: any) => img.url || img.path || "").filter(Boolean) || [];
 
   return {
     id: crypto.randomUUID(),
@@ -1019,21 +1059,25 @@ function mapApiHotelToNormalizedOffer(
     searchScenarioId: scenarioId,
     productType: "hotel",
     origin: [],
-    destination: [{ code: avail.hotel?.city?.code?.toString() || "", name: avail.hotel?.city?.name || "" }],
+    destination: [
+      { code: avail.hotel?.city?.code?.toString() || "", name: avail.hotel?.city?.name || "" },
+    ],
     startAt: avail.checkIn || "",
     endAt: avail.checkOut || "",
     travelers: { adults: 2 },
     flights: [],
-    accommodations: [{
-      id: hotelId,
-      name: avail.hotel?.name || "Hotel Sem Nome",
-      cityName: avail.hotel?.city?.name,
-      checkIn: checkin,
-      checkOut: checkout,
-      rooms,
-      lowestPrice,
-      images
-    }],
+    accommodations: [
+      {
+        id: hotelId,
+        name: avail.hotel?.name || "Hotel Sem Nome",
+        cityName: avail.hotel?.city?.name,
+        checkIn: checkin,
+        checkOut: checkout,
+        rooms,
+        lowestPrice,
+        images,
+      },
+    ],
     transfers: [],
     experiences: [],
     insurances: [],
@@ -1044,14 +1088,14 @@ function mapApiHotelToNormalizedOffer(
       markup: 0,
       taxes: 0,
       totalPrice: lowestPrice,
-      currency: avail.lowestFare?.price?.currency || "BRL"
+      currency: avail.lowestFare?.price?.currency || "BRL",
     },
     policies: [],
     availability: {
-      isAvailable: true
+      isAvailable: true,
     },
     fetchedAt: new Date().toISOString(),
-    status: "available"
+    status: "available",
   };
 }
 
@@ -1059,11 +1103,11 @@ function mapApiFlightToNormalizedOffer(
   avail: any,
   agencyId: string,
   quoteRequestId: string,
-  scenarioId: string
+  scenarioId: string,
 ) {
   const primaryRoute = avail.routes?.[0];
   const primaryFlight = primaryRoute?.flights?.[0];
-  
+
   const flightId = primaryFlight?.key || `f-${Math.random().toString(36).substr(2, 9)}`;
   const originCode = primaryFlight?.origin?.code || "GRU";
   const destCode = primaryFlight?.destination?.code || "MIA";
@@ -1080,7 +1124,7 @@ function mapApiFlightToNormalizedOffer(
     departure: f.departure || "",
     arrival: f.arrival || "",
     stops: f.stopsCount || 0,
-    baggageAllowance: f.fares?.[0]?.description || ""
+    baggageAllowance: f.fares?.[0]?.description || "",
   }));
 
   return {
@@ -1107,14 +1151,14 @@ function mapApiFlightToNormalizedOffer(
       markup: 0,
       taxes: 0,
       totalPrice: totalPrice,
-      currency: primaryFare?.price?.currency || "BRL"
+      currency: primaryFare?.price?.currency || "BRL",
     },
     policies: [],
     availability: {
-      isAvailable: true
+      isAvailable: true,
     },
     fetchedAt: new Date().toISOString(),
-    status: "available"
+    status: "available",
   };
 }
 
@@ -1122,10 +1166,10 @@ async function saveNormalizedOffers(
   supabaseAdmin: any,
   quoteRequestId: string,
   scenarioId: string,
-  offers: any[]
+  offers: any[],
 ) {
   if (offers.length === 0) return;
-  const inserts = offers.map(o => ({
+  const inserts = offers.map((o) => ({
     quote_request_id: quoteRequestId,
     scenario_id: scenarioId,
     provider: o.providerCode,
@@ -1134,12 +1178,10 @@ async function saveNormalizedOffers(
     normalized_data: o,
     price_total: o.pricing.totalPrice,
     currency: o.pricing.currency,
-    status: o.status
+    status: o.status,
   }));
 
-  const { error } = await supabaseAdmin
-    .from("normalized_offers")
-    .insert(inserts);
+  const { error } = await supabaseAdmin.from("normalized_offers").insert(inserts);
 
   if (error) {
     console.error("Erro ao salvar ofertas normalizadas:", error);

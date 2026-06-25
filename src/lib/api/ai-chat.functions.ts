@@ -4,7 +4,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { ActionRegistry } from "../ai/ActionRegistry";
 import { routeToSpecialist } from "../ai/AgentRouter";
 
-
 const RATE_LIMIT_PER_HOUR = 50;
 const OPENROUTER_MODEL = "google/gemini-2.5-flash";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
@@ -34,7 +33,9 @@ function zodToOpenAiSchema(zodSchema: any): any {
 
   const shape = zodSchema._def?.shape?.() || {};
   for (const [key, value] of Object.entries(shape)) {
-    const isOptional = (value as any)._def?.typeName === "ZodOptional" || (value as any)._def?.typeName === "ZodNullable";
+    const isOptional =
+      (value as any)._def?.typeName === "ZodOptional" ||
+      (value as any)._def?.typeName === "ZodNullable";
     let type = "string";
     let innerSchema = value;
     if (isOptional) {
@@ -58,7 +59,7 @@ function zodToOpenAiSchema(zodSchema: any): any {
       type = "array";
       properties[key] = {
         type,
-        items: { type: "string" }
+        items: { type: "string" },
       };
       if (!isOptional) required.push(key);
       continue;
@@ -130,11 +131,15 @@ export const listAIChatMessages = createServerFn({ method: "POST" })
     return { messages: rows ?? [] };
   });
 
-async function getEmbedding(text: string, apiKey: string, isOpenRouter: boolean): Promise<number[] | null> {
+async function getEmbedding(
+  text: string,
+  apiKey: string,
+  isOpenRouter: boolean,
+): Promise<number[] | null> {
   try {
     const _processEnv = typeof process !== "undefined" ? process.env : {};
     const openaiApiKey = _processEnv.OPENAI_API_KEY || apiKey;
-    const url = isOpenRouter 
+    const url = isOpenRouter
       ? "https://api.openai.com/v1/embeddings"
       : "https://ai.gateway.lovable.dev/v1/embeddings";
 
@@ -151,7 +156,7 @@ async function getEmbedding(text: string, apiKey: string, isOpenRouter: boolean)
     });
 
     if (res.ok) {
-      const json = await res.json() as any;
+      const json = (await res.json()) as any;
       return json.data?.[0]?.embedding || null;
     } else {
       console.warn("Embeddings API response not ok, status:", res.status);
@@ -243,14 +248,16 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
     if (apiKey) {
       const embedding = await getEmbedding(data.message, apiKey, isOpenRouter);
       if (embedding && embedding.length === 1536) {
-        const { data: matchedMemories, error: matchErr } = await (supabase as any)
-          .rpc("match_memories", {
+        const { data: matchedMemories, error: matchErr } = await (supabase as any).rpc(
+          "match_memories",
+          {
             query_embedding: embedding,
             match_threshold: 0.3,
             match_count: 5,
-            _agency_id: data.agencyId
-          });
-        
+            _agency_id: data.agencyId,
+          },
+        );
+
         if (!matchErr && matchedMemories) {
           memories = matchedMemories;
         } else if (matchErr) {
@@ -270,7 +277,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
 
     let memoryContext = "";
     if (memories && memories.length > 0) {
-      memoryContext = "\n\n[MEMÓRIAS E INSTRUÇÕES ESPECÍFICAS DA AGÊNCIA]:\n" +
+      memoryContext =
+        "\n\n[MEMÓRIAS E INSTRUÇÕES ESPECÍFICAS DA AGÊNCIA]:\n" +
         memories.map((m: any) => `- [${m.category.toUpperCase()}]: ${m.content}`).join("\n");
     }
 
@@ -383,7 +391,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
             notes: "Interessada em viajar para Cancun em setembro.",
           },
         };
-        assistantText = "Entendido! Identifiquei a intenção de cadastrar **Maria Silva** como lead para o destino **Cancun**. Confirme os detalhes da operação abaixo:";
+        assistantText =
+          "Entendido! Identifiquei a intenção de cadastrar **Maria Silva** como lead para o destino **Cancun**. Confirme os detalhes da operação abaixo:";
       } else if (lower.includes("altere o telefone") || lower.includes("telefone do lead")) {
         toolCall = {
           code: "update_lead",
@@ -393,7 +402,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
             phone: "+55 11 98888-8888",
           },
         };
-        assistantText = "Entendido. Preparei a atualização do telefone de **Maria Silva**. Por favor, confirme as alterações:";
+        assistantText =
+          "Entendido. Preparei a atualização do telefone de **Maria Silva**. Por favor, confirme as alterações:";
       } else if (lower.includes("inicie uma cotação") || lower.includes("cotação")) {
         toolCall = {
           code: "start_quote",
@@ -405,7 +415,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
             travelDate: "2026-09-10",
           },
         };
-        assistantText = "Certo! Vamos criar uma cotação de viagem para **Cancun** para **2 pessoas**. Deseja confirmar?";
+        assistantText =
+          "Certo! Vamos criar uma cotação de viagem para **Cancun** para **2 pessoas**. Deseja confirmar?";
       } else if (lower.includes("viajante") || lower.includes("cliente")) {
         toolCall = {
           code: "create_client",
@@ -416,7 +427,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
             phone: "+55 11 99999-9999",
           },
         };
-        assistantText = "Tudo certo! Preenchi os dados cadastrais para o novo cliente. Confirma a operação?";
+        assistantText =
+          "Tudo certo! Preenchi os dados cadastrais para o novo cliente. Confirma a operação?";
       } else {
         assistantText = `Olá! Recebi sua mensagem: "${data.message}". Posso ajudar a automatizar ações operacionais na agência. Digite algo como "Cadastre Maria Silva como lead interessada em Cancun" para testar o Motor de Ações!`;
       }
@@ -430,7 +442,10 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       try {
         const reviewerMessages = [
           { role: "system" as const, content: REVIEWER_PROMPT },
-          { role: "user" as const, content: `Pergunta do operador: "${data.message}"\n\nResposta do assistente: "${assistantText}"` }
+          {
+            role: "user" as const,
+            content: `Pergunta do operador: "${data.message}"\n\nResposta do assistente: "${assistantText}"`,
+          },
         ];
 
         const reviewerRes = await fetch(url, {
@@ -447,7 +462,10 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
           }
         }
       } catch (auditErr) {
-        console.error("Auditoria da IA revisora falhou, usando resposta do especialista:", auditErr);
+        console.error(
+          "Auditoria da IA revisora falhou, usando resposta do especialista:",
+          auditErr,
+        );
       }
     }
 
@@ -457,18 +475,20 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
       tool_call: toolCall,
     };
 
-    const { data: insertedMsg, error: insertAssistantErr } = await supabase.from("ai_chat_messages").insert({
-      agency_id: data.agencyId,
-      user_id: userId,
-      conversation_id: data.conversationId,
-      role: "assistant",
-      content: finalResponse,
-      context: finalCtxPayload,
-      provider: isOpenRouter ? "openrouter" : "lovable-ai",
-      model: model,
-    })
-    .select("id")
-    .maybeSingle();
+    const { data: insertedMsg, error: insertAssistantErr } = await supabase
+      .from("ai_chat_messages")
+      .insert({
+        agency_id: data.agencyId,
+        user_id: userId,
+        conversation_id: data.conversationId,
+        role: "assistant",
+        content: finalResponse,
+        context: finalCtxPayload,
+        provider: isOpenRouter ? "openrouter" : "lovable-ai",
+        model: model,
+      })
+      .select("id")
+      .maybeSingle();
     if (insertAssistantErr) throw new Error(insertAssistantErr.message);
 
     // Save transactional audit log
@@ -636,4 +656,3 @@ export const checkAIStatus = createServerFn({ method: "GET" })
     const apiKey = _processEnv.OPENROUTER_API_KEY || _processEnv.LOVABLE_API_KEY;
     return { online: !!apiKey };
   });
-

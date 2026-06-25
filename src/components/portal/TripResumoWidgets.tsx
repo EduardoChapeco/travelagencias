@@ -56,20 +56,24 @@ export function TripConfirmationItems({ items }: { items: ConfirmationItem[] }) 
                   {item.item_type === "flight"
                     ? "Voo"
                     : item.item_type === "hotel"
-                    ? "Hospedagem"
-                    : item.item_type === "transfer"
-                    ? "Transfer"
-                    : item.item_type === "insurance"
-                    ? "Seguro Viagem"
-                    : item.item_type === "cruise"
-                    ? "Cruzeiro"
-                    : item.item_type === "tour"
-                    ? "Passeio"
-                    : "Outro"}
+                      ? "Hospedagem"
+                      : item.item_type === "transfer"
+                        ? "Transfer"
+                        : item.item_type === "insurance"
+                          ? "Seguro Viagem"
+                          : item.item_type === "cruise"
+                            ? "Cruzeiro"
+                            : item.item_type === "tour"
+                              ? "Passeio"
+                              : "Outro"}
                 </div>
-                <div className="font-bold text-foreground text-sm truncate">{item.provider_name}</div>
+                <div className="font-bold text-foreground text-sm truncate">
+                  {item.provider_name}
+                </div>
                 {item.details && (
-                  <div className="text-xs text-muted-foreground mt-0.5 truncate">{item.details}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                    {item.details}
+                  </div>
                 )}
               </div>
             </div>
@@ -120,9 +124,7 @@ export function TripCheckinWidget({
   onEmergencyCancellation,
   emergencyPending,
 }: CheckinWidgetProps) {
-  const lastName = passengers?.[0]
-    ? passengers[0].full_name.trim().split(" ").pop()
-    : "";
+  const lastName = passengers?.[0] ? passengers[0].full_name.trim().split(" ").pop() : "";
 
   // Check if check-in is open
   let isCheckinOpen = true;
@@ -132,7 +134,7 @@ export function TripCheckinWidget({
     opensAtDate = new Date(checkinOpensAt);
   } else if (flights && flights.length > 0 && flights[0].date) {
     const f = flights[0];
-    const flightDateTimeStr = f.date + (f.departure_time ? `T${f.departure_time}` : 'T00:00:00');
+    const flightDateTimeStr = f.date + (f.departure_time ? `T${f.departure_time}` : "T00:00:00");
     const flightDate = new Date(flightDateTimeStr);
     if (!isNaN(flightDate.getTime())) {
       opensAtDate = new Date(flightDate.getTime() - 48 * 60 * 60 * 1000);
@@ -143,92 +145,97 @@ export function TripCheckinWidget({
     isCheckinOpen = new Date().getTime() >= opensAtDate.getTime();
   }
 
-  const checkinButtons = (checkinLinks && checkinLinks.length > 0)
-    ? checkinLinks.map((cl, idx) => {
-        const url = cl.raw_url;
-        const providerName = cl.provider.toUpperCase();
-        let color = "bg-slate-700 hover:bg-slate-800 text-white";
-        if (providerName.includes("LATAM")) color = "bg-red-600 hover:bg-red-700 text-white";
-        else if (providerName.includes("GOL")) color = "bg-orange-500 hover:bg-orange-600 text-white";
-        else if (providerName.includes("AZUL")) color = "bg-blue-600 hover:bg-blue-700 text-white";
+  const checkinButtons =
+    checkinLinks && checkinLinks.length > 0
+      ? checkinLinks.map((cl, idx) => {
+          const url = cl.raw_url;
+          const providerName = cl.provider.toUpperCase();
+          let color = "bg-slate-700 hover:bg-slate-800 text-white";
+          if (providerName.includes("LATAM")) color = "bg-red-600 hover:bg-red-700 text-white";
+          else if (providerName.includes("GOL"))
+            color = "bg-orange-500 hover:bg-orange-600 text-white";
+          else if (providerName.includes("AZUL"))
+            color = "bg-blue-600 hover:bg-blue-700 text-white";
 
-        return (
-          <a
-            key={idx}
-            href={isCheckinOpen ? url : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              if (!isCheckinOpen) {
-                e.preventDefault();
-              }
-            }}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all shadow-none text-center ${
-              isCheckinOpen 
-                ? `${color} cursor-pointer` 
-                : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
-            }`}
-          >
-            {isCheckinOpen ? <ExternalLink className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-            {isCheckinOpen ? `Check-in ${providerName}` : `Check-in ${providerName} (Indisponível)`}
-          </a>
-        );
-      })
-    : flights?.map((f, idx) => {
-        const airlineNorm = (f.airline || "").toLowerCase();
-        const isLatam = airlineNorm.includes("latam") || airlineNorm.includes("la");
-        const isGol = airlineNorm.includes("gol") || airlineNorm.includes("g3");
-        const isAzul = airlineNorm.includes("azul") || airlineNorm.includes("ad");
+          return (
+            <a
+              key={idx}
+              href={isCheckinOpen ? url : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (!isCheckinOpen) {
+                  e.preventDefault();
+                }
+              }}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all shadow-none text-center ${
+                isCheckinOpen
+                  ? `${color} cursor-pointer`
+                  : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
+              }`}
+            >
+              {isCheckinOpen ? <ExternalLink className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+              {isCheckinOpen
+                ? `Check-in ${providerName}`
+                : `Check-in ${providerName} (Indisponível)`}
+            </a>
+          );
+        })
+      : flights?.map((f, idx) => {
+          const airlineNorm = (f.airline || "").toLowerCase();
+          const isLatam = airlineNorm.includes("latam") || airlineNorm.includes("la");
+          const isGol = airlineNorm.includes("gol") || airlineNorm.includes("g3");
+          const isAzul = airlineNorm.includes("azul") || airlineNorm.includes("ad");
 
-        let checkinUrl = "";
-        let label = "";
-        let color = "";
+          let checkinUrl = "";
+          let label = "";
+          let color = "";
 
-        if (isLatam) {
-          label = `Check-in LATAM (Voo ${f.flight_number || ""})`;
-          checkinUrl = `https://www.latamairlines.com/br/pt/check-in?recordLocator=${encodeURIComponent(pnr)}`;
-          if (lastName) checkinUrl += `&lastName=${encodeURIComponent(lastName)}`;
-          color = "bg-red-600 hover:bg-red-700 text-white";
-        } else if (isGol) {
-          label = `Check-in GOL (Voo ${f.flight_number || ""})`;
-          checkinUrl = `https://www.voegol.com.br/check-in?pnr=${encodeURIComponent(pnr)}`;
-          if (f.origin) checkinUrl += `&departureAirport=${encodeURIComponent(f.origin)}`;
-          color = "bg-orange-500 hover:bg-orange-600 text-white";
-        } else if (isAzul) {
-          label = `Check-in Azul (Voo ${f.flight_number || ""})`;
-          checkinUrl = `https://www.voeazul.com.br/check-in?locator=${encodeURIComponent(pnr)}`;
-          if (f.origin) checkinUrl += `&origin=${encodeURIComponent(f.origin)}`;
-          color = "bg-blue-600 hover:bg-blue-700 text-white";
-        } else {
-          label = `Check-in ${f.airline || "Voo"} ${f.flight_number || ""}`;
-          checkinUrl = `https://www.google.com/search?q=${encodeURIComponent(
-            (f.airline || "") + " check-in " + pnr
-          )}`;
-          color = "bg-slate-700 hover:bg-slate-800 text-white";
-        }
+          if (isLatam) {
+            label = `Check-in LATAM (Voo ${f.flight_number || ""})`;
+            checkinUrl = `https://www.latamairlines.com/br/pt/check-in?recordLocator=${encodeURIComponent(pnr)}`;
+            if (lastName) checkinUrl += `&lastName=${encodeURIComponent(lastName)}`;
+            color = "bg-red-600 hover:bg-red-700 text-white";
+          } else if (isGol) {
+            label = `Check-in GOL (Voo ${f.flight_number || ""})`;
+            checkinUrl = `https://www.voegol.com.br/check-in?pnr=${encodeURIComponent(pnr)}`;
+            if (f.origin) checkinUrl += `&departureAirport=${encodeURIComponent(f.origin)}`;
+            color = "bg-orange-500 hover:bg-orange-600 text-white";
+          } else if (isAzul) {
+            label = `Check-in Azul (Voo ${f.flight_number || ""})`;
+            checkinUrl = `https://www.voeazul.com.br/check-in?locator=${encodeURIComponent(pnr)}`;
+            if (f.origin) checkinUrl += `&origin=${encodeURIComponent(f.origin)}`;
+            color = "bg-blue-600 hover:bg-blue-700 text-white";
+          } else {
+            label = `Check-in ${f.airline || "Voo"} ${f.flight_number || ""}`;
+            checkinUrl = `https://www.google.com/search?q=${encodeURIComponent(
+              (f.airline || "") + " check-in " + pnr,
+            )}`;
+            color = "bg-slate-700 hover:bg-slate-800 text-white";
+          }
 
-        return (
-          <a
-            key={idx}
-            href={isCheckinOpen ? checkinUrl : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              if (!isCheckinOpen) {
-                e.preventDefault();
-              }
-            }}
-            className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all shadow-none text-center ${
-              isCheckinOpen 
-                ? `${color} cursor-pointer` 
-                : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
-            }`}
-          >
-            {isCheckinOpen ? <ExternalLink className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-            {isCheckinOpen ? label : `${label} (Indisponível)`}
-          </a>
-        );
-      });
+          return (
+            <a
+              key={idx}
+              href={isCheckinOpen ? checkinUrl : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (!isCheckinOpen) {
+                  e.preventDefault();
+                }
+              }}
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl text-xs font-bold transition-all shadow-none text-center ${
+                isCheckinOpen
+                  ? `${color} cursor-pointer`
+                  : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
+              }`}
+            >
+              {isCheckinOpen ? <ExternalLink className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+              {isCheckinOpen ? label : `${label} (Indisponível)`}
+            </a>
+          );
+        });
 
   return (
     <div className="mt-5 border-t border-border/50 pt-4 space-y-4">
@@ -291,13 +298,7 @@ export function TripCheckinWidget({
 }
 
 // ─── Voucher Flights Timeline ─────────────────────────────────────────────────
-export function TripVoucherFlights({
-  pnr,
-  flights,
-}: {
-  pnr?: string;
-  flights: any[];
-}) {
+export function TripVoucherFlights({ pnr, flights }: { pnr?: string; flights: any[] }) {
   return (
     <div className="rounded-2xl bg-surface p-5 border border-border">
       {pnr && (
@@ -355,10 +356,7 @@ export function TripBoardingCard({
   onToggle,
 }: BoardingCardWidgetProps) {
   return (
-    <AppWidget
-      title="Preparação e Pré-embarque"
-      icon={<Plane className="h-5 w-5 text-brand" />}
-    >
+    <AppWidget title="Preparação e Pré-embarque" icon={<Plane className="h-5 w-5 text-brand" />}>
       <div className="space-y-4">
         {(boardingCard.briefing_date || boardingCard.briefing_url) && (
           <div className="rounded-2xl border border-brand/20 bg-brand/5 p-4 text-sm">
@@ -503,8 +501,7 @@ export function TripDocuments({
 
 // ─── Logistics/Itinerary Widget ───────────────────────────────────────────────
 export function TripItinerary({ trip }: { trip: any }) {
-  const hasContent =
-    trip.itinerary || trip.includes || trip.excludes || trip.insurance;
+  const hasContent = trip.itinerary || trip.includes || trip.excludes || trip.insurance;
   if (!hasContent) return null;
 
   return (
@@ -568,8 +565,7 @@ export function TripItinerary({ trip }: { trip: any }) {
                 )}
                 {(trip.insurance as any).policy && (
                   <div>
-                    <span className="font-semibold">Apólice:</span>{" "}
-                    {(trip.insurance as any).policy}
+                    <span className="font-semibold">Apólice:</span> {(trip.insurance as any).policy}
                   </div>
                 )}
                 {(trip.insurance as any).coverage && (
@@ -688,12 +684,16 @@ export function TripVoucherAccommodation({ hotels }: { hotels: any[] }) {
               </p>
               <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-xl p-3 border border-border">
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Check-in</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    Check-in
+                  </div>
                   <div>{fmtDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Check-out</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                    Check-out
+                  </div>
                   <div>{fmtDate(h.checkout)}</div>
                 </div>
               </div>

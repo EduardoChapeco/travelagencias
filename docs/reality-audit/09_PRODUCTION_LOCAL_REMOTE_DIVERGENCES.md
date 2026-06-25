@@ -7,7 +7,7 @@ Este documento detalha o desalinhamento de estados entre o repositório git loca
 ## 🔀 Divergências no Repositório (Git)
 
 1. **Commits Locais à Frente**:
-   - O repositório local está **3 commits à frente** da branch `origin/main` remota. 
+   - O repositório local está **3 commits à frente** da branch `origin/main` remota.
    - Commits pendentes de push incluem correções fundamentais de rooming list (`2ac19cc`), scripts de aumento de heap de memória (`60240f4`) e a nova estrutura de sidebar contextual (`c594808`).
 2. **Modificações Locais Não Comitadas**:
    - Existem **31 arquivos modificados** de forma ativa no diretório de trabalho. As alterações incluem refatorações estruturais de code-splitting das rotas principais (CRM, Omnichannel, Excursões) e o orquestrador de IA.

@@ -53,7 +53,11 @@ import {
   type RoomRecord,
   type RoomingPassenger,
 } from "@/services/rooming";
-import { exportRoomingListXlsx, exportRoomingListDocx, exportRoomingListPdf } from "@/lib/exportRoomingList";
+import {
+  exportRoomingListXlsx,
+  exportRoomingListDocx,
+  exportRoomingListPdf,
+} from "@/lib/exportRoomingList";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/$slug/rooming-list")({
@@ -107,7 +111,7 @@ function DraggablePassenger({
         isDragging && "opacity-45 border-dashed border-brand",
         isCompact
           ? "text-xs font-semibold py-1 px-2.5 bg-brand/5 border-brand/10 text-foreground"
-          : "text-xs font-semibold text-foreground bg-surface"
+          : "text-xs font-semibold text-foreground bg-surface",
       )}
     >
       <div className="flex items-center gap-1.5 min-w-0">
@@ -151,7 +155,7 @@ function DroppableRoom({
         "rounded-xl border bg-surface overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
-        isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5"
+        isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
       )}
     >
       {children}
@@ -169,7 +173,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
       ref={setNodeRef}
       className={cn(
         "rounded-xl border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
-        isOver && "ring-2 ring-brand border-brand bg-brand/5"
+        isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
       {children}
@@ -222,15 +226,15 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
   const allocatedIds = new Set(
     rooms.flatMap((r) =>
-      ((r.passengers ?? []) as unknown as RoomingPassenger[]).map((p) => p.passenger_id)
-    )
+      ((r.passengers ?? []) as unknown as RoomingPassenger[]).map((p) => p.passenger_id),
+    ),
   );
 
   const unallocated = passengers.filter((p: any) => !allocatedIds.has(p.id));
   const totalBeds = rooms.reduce((sum, r) => sum + (ROOM_CAPACITY[r.room_type] ?? 2), 0);
   const totalOccupied = rooms.reduce(
     (sum, r) => sum + ((r.passengers as unknown as RoomingPassenger[]) ?? []).length,
-    0
+    0,
   );
 
   const invalidate = () => {
@@ -246,7 +250,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       .update({ rooming_list_sent_hotel: nextVal } as any)
       .eq("id", tour.id);
     if (error) return toast.error(error.message);
-    toast.success(nextVal ? "Marcado como enviado para hotel" : "Marcado como não enviado para hotel");
+    toast.success(
+      nextVal ? "Marcado como enviado para hotel" : "Marcado como não enviado para hotel",
+    );
     qc.invalidateQueries({ queryKey: ["group-tours"] });
   };
 
@@ -257,7 +263,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       .update({ rooming_list_sent_bus: nextVal } as any)
       .eq("id", tour.id);
     if (error) return toast.error(error.message);
-    toast.success(nextVal ? "Marcado como enviado para ônibus" : "Marcado como não enviado para ônibus");
+    toast.success(
+      nextVal ? "Marcado como enviado para ônibus" : "Marcado como não enviado para ônibus",
+    );
     qc.invalidateQueries({ queryKey: ["group-tours"] });
   };
 
@@ -358,8 +366,8 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
     const currentRoom = rooms.find((r) =>
       ((r.passengers as unknown as RoomingPassenger[]) ?? []).some(
-        (p) => p.passenger_id === passengerId
-      )
+        (p) => p.passenger_id === passengerId,
+      ),
     );
 
     if (currentRoom && currentRoom.id === roomId) return;
@@ -371,7 +379,12 @@ function TourPanel({ tour, slug }: TourPanelProps) {
     try {
       if (currentRoom) {
         const curRoomPax = (currentRoom.passengers as unknown as RoomingPassenger[]) ?? [];
-        await deallocatePassengerFromRoom(currentRoom.id, curRoomPax, passengerId, (currentRoom as any).version ?? 1);
+        await deallocatePassengerFromRoom(
+          currentRoom.id,
+          curRoomPax,
+          passengerId,
+          (currentRoom as any).version ?? 1,
+        );
       }
 
       await allocatePassengerToRoom(
@@ -381,7 +394,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           passenger_id: passengerId,
           name: pax.passenger_name,
         },
-        (room as any).version ?? 1
+        (room as any).version ?? 1,
       );
       toast.success(`${pax.passenger_name} alocado no quarto ${room.room_number}.`);
       invalidate();
@@ -464,7 +477,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   // DND Handlers
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
   );
 
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
@@ -490,8 +503,8 @@ function TourPanel({ tour, slug }: TourPanelProps) {
     } else if (over.id === "unallocated") {
       const currentRoom = rooms.find((r) =>
         ((r.passengers as unknown as RoomingPassenger[]) ?? []).some(
-          (p) => p.passenger_id === passengerId
-        )
+          (p) => p.passenger_id === passengerId,
+        ),
       );
       if (currentRoom) {
         removePassengerFromRoom(currentRoom.id, passengerId);
@@ -533,7 +546,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 "px-2 py-0.5 rounded cursor-pointer transition-colors",
                 tour.rooming_list_status === "closed"
                   ? "bg-slate-900 text-white"
-                  : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                  : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20",
               )}
             >
               Rooming: {tour.rooming_list_status === "closed" ? "Fechado" : "Aberto"}
@@ -546,7 +559,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
                 tour.rooming_list_sent_hotel
                   ? "bg-green-600 text-white"
-                  : "text-muted-foreground hover:bg-surface-alt"
+                  : "text-muted-foreground hover:bg-surface-alt",
               )}
             >
               {tour.rooming_list_sent_hotel && <Check className="h-2.5 w-2.5" />}
@@ -560,7 +573,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
                 tour.rooming_list_sent_bus
                   ? "bg-blue-600 text-white"
-                  : "text-muted-foreground hover:bg-surface-alt"
+                  : "text-muted-foreground hover:bg-surface-alt",
               )}
             >
               {tour.rooming_list_sent_bus && <Check className="h-2.5 w-2.5" />}
@@ -569,8 +582,15 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           </div>
 
           <div className="text-[10px] text-muted-foreground font-semibold flex gap-2">
-            <span>Quartos: <strong className="text-foreground">{rooms.length}</strong></span>
-            <span>Alocados: <strong className="text-brand">{totalOccupied}/{passengers.length}</strong></span>
+            <span>
+              Quartos: <strong className="text-foreground">{rooms.length}</strong>
+            </span>
+            <span>
+              Alocados:{" "}
+              <strong className="text-brand">
+                {totalOccupied}/{passengers.length}
+              </strong>
+            </span>
           </div>
 
           <button
@@ -590,14 +610,19 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             <DroppableUnallocated>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Users className="h-3.5 w-3.5 text-brand" /> Passageiros Confirmados Sem Quarto ({unallocated.length})
+                  <Users className="h-3.5 w-3.5 text-brand" /> Passageiros Confirmados Sem Quarto (
+                  {unallocated.length})
                 </h4>
                 {unallocated.length > 0 && (
-                  <span className="text-[9px] text-muted-foreground font-semibold">Arrastar passageiro para o quarto desejado</span>
+                  <span className="text-[9px] text-muted-foreground font-semibold">
+                    Arrastar passageiro para o quarto desejado
+                  </span>
                 )}
               </div>
               {unallocated.length === 0 ? (
-                <p className="text-xs text-success font-semibold py-1">✓ Todos os passageiros da excursão foram alocados!</p>
+                <p className="text-xs text-success font-semibold py-1">
+                  ✓ Todos os passageiros da excursão foram alocados!
+                </p>
               ) : (
                 <div className="flex flex-wrap gap-2 pt-1">
                   {unallocated.map((p: any) => (
@@ -669,7 +694,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
-                          <option key={v} value={v}>{l}</option>
+                          <option key={v} value={v}>
+                            {l}
+                          </option>
                         ))}
                       </select>
                     </Field>
@@ -707,8 +734,20 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     </Field>
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <GhostButton type="button" onClick={() => setAddOpen(false)} className="h-8 text-xs">Cancelar</GhostButton>
-                    <PrimaryButton type="submit" disabled={addRoomMutation.isPending} className="h-8 text-xs">Salvar</PrimaryButton>
+                    <GhostButton
+                      type="button"
+                      onClick={() => setAddOpen(false)}
+                      className="h-8 text-xs"
+                    >
+                      Cancelar
+                    </GhostButton>
+                    <PrimaryButton
+                      type="submit"
+                      disabled={addRoomMutation.isPending}
+                      className="h-8 text-xs"
+                    >
+                      Salvar
+                    </PrimaryButton>
                   </div>
                 </form>
               </div>
@@ -730,13 +769,18 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   return (
                     <DroppableRoom key={room.id} room={room} isFull={isFull}>
                       {/* Room Card Title */}
-                      <div className={cn(
-                        "flex items-center justify-between px-3 py-2 border-b border-border bg-surface/50",
-                        room.is_confirmed && "bg-success/5 border-success/20 text-success-foreground"
-                      )}>
+                      <div
+                        className={cn(
+                          "flex items-center justify-between px-3 py-2 border-b border-border bg-surface/50",
+                          room.is_confirmed &&
+                            "bg-success/5 border-success/20 text-success-foreground",
+                        )}
+                      >
                         <div className="flex items-center gap-1.5 min-w-0">
                           <BedDouble className="h-3.5 w-3.5 text-brand shrink-0" />
-                          <span className="font-bold text-xs truncate">Quarto {room.room_number}</span>
+                          <span className="font-bold text-xs truncate">
+                            Quarto {room.room_number}
+                          </span>
                           <span className="text-[9px] text-muted-foreground shrink-0 bg-surface px-1.5 py-0.5 rounded border border-border">
                             {ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}
                           </span>
@@ -748,7 +792,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                             title={room.is_confirmed ? "Confirmado" : "Confirmar com hotel"}
                             className={cn(
                               "p-1 rounded cursor-pointer",
-                              room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"
+                              room.is_confirmed
+                                ? "text-success"
+                                : "text-muted-foreground hover:text-success",
                             )}
                           >
                             <CheckCircle2 className="h-3.5 w-3.5" />
@@ -774,13 +820,19 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <div className="px-3 pt-2">
                         <div className="flex items-center justify-between text-[9px] font-bold text-muted-foreground uppercase mb-1">
                           <span>Ocupação</span>
-                          <span>{roomPax.length}/{cap}</span>
+                          <span>
+                            {roomPax.length}/{cap}
+                          </span>
                         </div>
                         <div className="h-1 bg-surface-alt rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full transition-all",
-                              isFull ? "bg-success" : pct >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"
+                              isFull
+                                ? "bg-success"
+                                : pct >= 0.5
+                                  ? "bg-brand"
+                                  : "bg-muted-foreground/30",
                             )}
                             style={{ width: `${Math.min(100, pct * 100)}%` }}
                           />
@@ -813,7 +865,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                           >
                             <option value="">+ Alocar Passageiro...</option>
                             {unallocated.map((p: any) => (
-                              <option key={p.id} value={p.id}>{p.passenger_name}</option>
+                              <option key={p.id} value={p.id}>
+                                {p.passenger_name}
+                              </option>
                             ))}
                           </select>
                         )}
@@ -846,10 +900,22 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 </h5>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-bold">
                   {[
-                    { ok: unallocated.length === 0, label: `Todos os passageiros alocados (${allocatedIds.size}/${passengers.length})` },
-                    { ok: rooms.every((r) => r.is_confirmed), label: `Quartos confirmados pelo hotel (${rooms.filter((r) => r.is_confirmed).length}/${rooms.length})` },
-                    { ok: rooms.every((r) => !!r.hotel_name), label: "Hotéis informados em todos os quartos" },
-                    { ok: rooms.every((r) => !!r.checkin_date), label: "Datas de check-in / check-out preenchidas" },
+                    {
+                      ok: unallocated.length === 0,
+                      label: `Todos os passageiros alocados (${allocatedIds.size}/${passengers.length})`,
+                    },
+                    {
+                      ok: rooms.every((r) => r.is_confirmed),
+                      label: `Quartos confirmados pelo hotel (${rooms.filter((r) => r.is_confirmed).length}/${rooms.length})`,
+                    },
+                    {
+                      ok: rooms.every((r) => !!r.hotel_name),
+                      label: "Hotéis informados em todos os quartos",
+                    },
+                    {
+                      ok: rooms.every((r) => !!r.checkin_date),
+                      label: "Datas de check-in / check-out preenchidas",
+                    },
                   ].map((check, i) => (
                     <div
                       key={i}
@@ -857,10 +923,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         "flex items-center gap-2 p-2 rounded-lg border",
                         check.ok
                           ? "bg-success/5 text-success border-success/10"
-                          : "bg-warning/5 text-warning border-warning/10"
+                          : "bg-warning/5 text-warning border-warning/10",
                       )}
                     >
-                      {check.ok ? <Check className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
+                      {check.ok ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                      )}
                       <span>{check.label}</span>
                     </div>
                   ))}
@@ -883,12 +953,16 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {editingRoom && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
               <div className="w-full max-w-md rounded-xl bg-background p-6 border border-border shadow-lg">
-                <h4 className="text-sm font-bold text-foreground mb-4">Editar Quarto {editingRoom.room_number}</h4>
+                <h4 className="text-sm font-bold text-foreground mb-4">
+                  Editar Quarto {editingRoom.room_number}
+                </h4>
                 <form onSubmit={(e) => updateRoomMutation.mutate(e)} className="space-y-4">
                   <Field label="Número / Nome *">
                     <input
                       value={editingRoom.room_number}
-                      onChange={(e) => setEditingRoom({ ...editingRoom, room_number: e.target.value })}
+                      onChange={(e) =>
+                        setEditingRoom({ ...editingRoom, room_number: e.target.value })
+                      }
                       className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       required
                     />
@@ -897,18 +971,24 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     <Field label="Tipo *">
                       <select
                         value={editingRoom.room_type}
-                        onChange={(e) => setEditingRoom({ ...editingRoom, room_type: e.target.value })}
+                        onChange={(e) =>
+                          setEditingRoom({ ...editingRoom, room_type: e.target.value })
+                        }
                         className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
-                          <option key={v} value={v}>{l}</option>
+                          <option key={v} value={v}>
+                            {l}
+                          </option>
                         ))}
                       </select>
                     </Field>
                     <Field label="Hotel/Pousada">
                       <input
                         value={editingRoom.hotel_name || ""}
-                        onChange={(e) => setEditingRoom({ ...editingRoom, hotel_name: e.target.value })}
+                        onChange={(e) =>
+                          setEditingRoom({ ...editingRoom, hotel_name: e.target.value })
+                        }
                         className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
@@ -918,7 +998,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <input
                         type="date"
                         value={editingRoom.checkin_date || ""}
-                        onChange={(e) => setEditingRoom({ ...editingRoom, checkin_date: e.target.value })}
+                        onChange={(e) =>
+                          setEditingRoom({ ...editingRoom, checkin_date: e.target.value })
+                        }
                         className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
@@ -926,7 +1008,9 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <input
                         type="date"
                         value={editingRoom.checkout_date || ""}
-                        onChange={(e) => setEditingRoom({ ...editingRoom, checkout_date: e.target.value })}
+                        onChange={(e) =>
+                          setEditingRoom({ ...editingRoom, checkout_date: e.target.value })
+                        }
                         className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
@@ -940,8 +1024,20 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     />
                   </Field>
                   <div className="flex gap-2 justify-end pt-2">
-                    <GhostButton type="button" onClick={() => setEditingRoom(null)} className="h-9 text-xs">Cancelar</GhostButton>
-                    <PrimaryButton type="submit" disabled={updateRoomMutation.isPending} className="h-9 text-xs">Salvar Alterações</PrimaryButton>
+                    <GhostButton
+                      type="button"
+                      onClick={() => setEditingRoom(null)}
+                      className="h-9 text-xs"
+                    >
+                      Cancelar
+                    </GhostButton>
+                    <PrimaryButton
+                      type="submit"
+                      disabled={updateRoomMutation.isPending}
+                      className="h-9 text-xs"
+                    >
+                      Salvar Alterações
+                    </PrimaryButton>
                   </div>
                 </form>
               </div>
@@ -968,7 +1064,9 @@ function RoomingListDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("group_tours")
-        .select("id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id")
+        .select(
+          "id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id",
+        )
         .eq("agency_id", agency!.id)
         .order("departure_date", { ascending: true });
       if (error) throw error;
@@ -981,9 +1079,7 @@ function RoomingListDashboard() {
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
-        (t) =>
-          t.title.toLowerCase().includes(q) ||
-          (t.destination ?? "").toLowerCase().includes(q)
+        (t) => t.title.toLowerCase().includes(q) || (t.destination ?? "").toLowerCase().includes(q),
       );
     }
     if (statusFilter !== "all") {
@@ -1005,12 +1101,16 @@ function RoomingListDashboard() {
           <div>
             <h1 className="text-lg font-bold leading-tight">Rooming List Geral</h1>
             <p className="text-xs text-muted-foreground">
-              Monitore a alocação de quartos em {filteredTours.length} grupo{filteredTours.length !== 1 ? "s" : ""}
+              Monitore a alocação de quartos em {filteredTours.length} grupo
+              {filteredTours.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <GhostButton onClick={handlePrint} className="gap-1.5 h-8 text-xs border border-border bg-surface">
+          <GhostButton
+            onClick={handlePrint}
+            className="gap-1.5 h-8 text-xs border border-border bg-surface"
+          >
             <Printer className="h-3.5 w-3.5" />
             Imprimir Dashboard
           </GhostButton>
@@ -1069,9 +1169,7 @@ function RoomingListDashboard() {
         )}
 
         {!toursQ.isLoading &&
-          filteredTours.map((tour) => (
-            <TourPanel key={tour.id} tour={tour} slug={slug} />
-          ))}
+          filteredTours.map((tour) => <TourPanel key={tour.id} tour={tour} slug={slug} />)}
       </div>
     </div>
   );

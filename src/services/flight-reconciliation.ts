@@ -27,10 +27,12 @@ export const ITINERARY_STATUS_LABELS: Record<string, string> = {
 export async function fetchFlightItineraries(tripId: string): Promise<FlightItinerary[]> {
   const { data: itineraries, error } = await supabase
     .from("flight_itineraries")
-    .select(`
+    .select(
+      `
       *,
       segments:flight_segments(*)
-    `)
+    `,
+    )
     .eq("trip_id", tripId)
     .order("version", { ascending: false });
 
@@ -39,14 +41,16 @@ export async function fetchFlightItineraries(tripId: string): Promise<FlightItin
   // Sort segments inside each itinerary by segment_order
   return (itineraries ?? []).map((it) => ({
     ...it,
-    segments: ((it.segments as FlightSegment[]) ?? []).sort((a, b) => a.segment_order - b.segment_order),
+    segments: ((it.segments as FlightSegment[]) ?? []).sort(
+      (a, b) => a.segment_order - b.segment_order,
+    ),
   }));
 }
 
 /** Cria um novo itinerário com seus respectivos segmentos de voo */
 export async function createFlightItinerary(
   itinerary: Omit<InsertFlightItinerary, "id" | "created_at" | "updated_at">,
-  segments: Omit<InsertFlightSegment, "id" | "itinerary_id" | "created_at" | "updated_at">[]
+  segments: Omit<InsertFlightSegment, "id" | "itinerary_id" | "created_at" | "updated_at">[],
 ): Promise<FlightItinerary> {
   // Get current max version for the trip
   const { data: existing } = await supabase
@@ -78,9 +82,7 @@ export async function createFlightItinerary(
       segment_order: seg.segment_order || index + 1,
     }));
 
-    const { error: segError } = await supabase
-      .from("flight_segments")
-      .insert(segmentsToInsert);
+    const { error: segError } = await supabase.from("flight_segments").insert(segmentsToInsert);
 
     if (segError) {
       // Rollback itinerary if segments fail
@@ -92,17 +94,21 @@ export async function createFlightItinerary(
   // Fetch full aggregate
   const { data: fullItinerary, error: fetchError } = await supabase
     .from("flight_itineraries")
-    .select(`
+    .select(
+      `
       *,
       segments:flight_segments(*)
-    `)
+    `,
+    )
     .eq("id", newItinerary.id)
     .single();
 
   if (fetchError) throw fetchError;
   return {
     ...fullItinerary,
-    segments: ((fullItinerary.segments as FlightSegment[]) ?? []).sort((a, b) => a.segment_order - b.segment_order),
+    segments: ((fullItinerary.segments as FlightSegment[]) ?? []).sort(
+      (a, b) => a.segment_order - b.segment_order,
+    ),
   };
 }
 
@@ -128,10 +134,7 @@ export async function setItineraryActive(itineraryId: string, tripId: string): P
 
 /** Remove um itinerário */
 export async function deleteFlightItinerary(itineraryId: string): Promise<void> {
-  const { error } = await supabase
-    .from("flight_itineraries")
-    .delete()
-    .eq("id", itineraryId);
+  const { error } = await supabase.from("flight_itineraries").delete().eq("id", itineraryId);
 
   if (error) throw new Error(`Erro ao remover itinerário: ${error.message}`);
 }
@@ -161,7 +164,7 @@ export interface ItineraryDiff {
 
 export function compareItineraries(
   original: FlightSegment[],
-  comparison: FlightSegment[]
+  comparison: FlightSegment[],
 ): ItineraryDiff {
   const sortedOrig = [...original].sort((a, b) => a.segment_order - b.segment_order);
   const sortedComp = [...comparison].sort((a, b) => a.segment_order - b.segment_order);

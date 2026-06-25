@@ -29,11 +29,13 @@ Proposta (accepted)
 ---
 
 ## 2. Relação com Supplier Intelligence
-*   **Supplier Link**: Cada componente de hotel ou trecho aéreo pode referenciar um fornecedor cadastrado na tabela de inteligência de fornecedores.
-*   **Controle de Unicidade**: A tabela `external_entity_links` mapeia reservas físicas geradas no conector (como o Infotravel) com a agência e a viagem correspondente, servindo de barreira contra faturamentos e importações redundantes.
+
+- **Supplier Link**: Cada componente de hotel ou trecho aéreo pode referenciar um fornecedor cadastrado na tabela de inteligência de fornecedores.
+- **Controle de Unicidade**: A tabela `external_entity_links` mapeia reservas físicas geradas no conector (como o Infotravel) com a agência e a viagem correspondente, servindo de barreira contra faturamentos e importações redundantes.
 
 ---
 
 ## 3. Segurança de Documentos e Uploads
-*   **Buckets Privados**: Faturas de fornecedores e contratos assinados são alocados no bucket `passenger-documents`, com políticas de RLS no Supabase restringindo acesso apenas a usuários associados à agência detentora do registro (`auth.jwt()->>'agency_id'`).
-*   **Links Assinados**: Toda URL visualizada pelo operador na interface ou pelo cliente no Portal é temporária (Signed URL) com validade padrão de 15 minutos.
+
+- **Buckets Privados**: Faturas de fornecedores e contratos assinados são alocados no bucket `passenger-documents`, com políticas de RLS no Supabase restringindo acesso apenas a usuários associados à agência detentora do registro (`auth.jwt()->>'agency_id'`).
+- **Links Assinados**: Toda URL visualizada pelo operador na interface ou pelo cliente no Portal é temporária (Signed URL) com validade padrão de 15 minutos.

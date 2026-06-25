@@ -100,7 +100,8 @@ function TicketDetailRoute() {
       // 2. Se for reply externo (cliente ou fornecedor), chamar gmail-send
       if (isExternal && agency) {
         // Determinar email de destino
-        const toEmail = replyType === "supplier" ? supplierEmail : (ticket as any)?.client?.email ?? null;
+        const toEmail =
+          replyType === "supplier" ? supplierEmail : ((ticket as any)?.client?.email ?? null);
 
         if (toEmail) {
           try {
@@ -128,7 +129,7 @@ function TicketDetailRoute() {
           toast.warning(
             replyType === "supplier"
               ? "Mensagem salva. Fornecedor não possui e-mail informado."
-              : "Mensagem salva. Cliente não possui e-mail cadastrado."
+              : "Mensagem salva. Cliente não possui e-mail cadastrado.",
           );
           return;
         }
@@ -145,7 +146,6 @@ function TicketDetailRoute() {
       }
     },
   });
-
 
   if (isLoading || !ticket) return <div className="p-8">Carregando...</div>;
 

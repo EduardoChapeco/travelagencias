@@ -65,7 +65,7 @@ export async function fetchTripAggregate(tripId: string): Promise<TripAggregate>
 export async function updateTripLifecycleStatus(
   tripId: string,
   lifecycleStatus: string,
-  operationalStatus?: Database["public"]["Enums"]["trip_status"]
+  operationalStatus?: Database["public"]["Enums"]["trip_status"],
 ): Promise<void> {
   const updatePayload: Partial<Trip> = {
     lifecycle_status: lifecycleStatus,

@@ -114,7 +114,12 @@ function TripConfirmationPage() {
 
   // ── Queries ──────────────────────────────────────────────────────────
 
-  const { data: items = [], isLoading, isError, error } = useQuery({
+  const {
+    data: items = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     enabled: !!agency && !!tripId,
     queryKey: ["trip-confirmation-items", tripId],
     queryFn: () => fetchConfirmationItems(tripId),
@@ -122,8 +127,7 @@ function TripConfirmationPage() {
 
   // ── Mutations ────────────────────────────────────────────────────────
 
-  const invalidate = () =>
-    qc.invalidateQueries({ queryKey: ["trip-confirmation-items", tripId] });
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["trip-confirmation-items", tripId] });
 
   const addMut = useMutation({
     mutationFn: () => {
@@ -153,8 +157,7 @@ function TripConfirmationPage() {
       closeForm();
       invalidate();
     },
-    onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Erro ao adicionar."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao adicionar."),
   });
 
   const updateMut = useMutation({
@@ -182,8 +185,7 @@ function TripConfirmationPage() {
       closeForm();
       invalidate();
     },
-    onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Erro ao atualizar."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao atualizar."),
   });
 
   const cycleMut = useMutation({
@@ -200,8 +202,7 @@ function TripConfirmationPage() {
       });
       invalidate();
     },
-    onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Erro ao alterar status."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao alterar status."),
   });
 
   const deleteMut = useMutation({
@@ -216,8 +217,7 @@ function TripConfirmationPage() {
       toast.success("Item removido.");
       invalidate();
     },
-    onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Erro ao remover."),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover."),
   });
 
   // ── Form helpers ──────────────────────────────────────────────────────
@@ -269,18 +269,15 @@ function TripConfirmationPage() {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-4xl">
-
       {/* ── Header ── */}
       <div className="rounded-xl border border-border bg-surface p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
-            <p className="text-xs font-semibold text-foreground">
-              Confirmação de Reserva
-            </p>
+            <p className="text-xs font-semibold text-foreground">Confirmação de Reserva</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Registre os códigos localizadores e status de confirmação de cada
-              serviço contratado nesta viagem. Dados persistidos em banco.
+              Registre os códigos localizadores e status de confirmação de cada serviço contratado
+              nesta viagem. Dados persistidos em banco.
             </p>
           </div>
         </div>
@@ -355,9 +352,7 @@ function TripConfirmationPage() {
               </label>
               <select
                 value={form.item_type}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, item_type: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, item_type: e.target.value }))}
                 className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               >
                 {Object.entries(ITEM_TYPE_LABELS).map(([k, v]) => (
@@ -377,9 +372,7 @@ function TripConfirmationPage() {
                 type="text"
                 placeholder="Ex: LATAM Airlines, Sheraton"
                 value={form.provider_name}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, provider_name: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, provider_name: e.target.value }))}
                 className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
@@ -412,9 +405,7 @@ function TripConfirmationPage() {
                 type="text"
                 placeholder="Ex: Apartamento Duplo Vista Mar — Check-in 15h"
                 value={form.details}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, details: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, details: e.target.value }))}
                 className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
@@ -427,9 +418,7 @@ function TripConfirmationPage() {
               <input
                 type="date"
                 value={form.service_date}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, service_date: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, service_date: e.target.value }))}
                 className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
@@ -443,9 +432,7 @@ function TripConfirmationPage() {
                 type="text"
                 placeholder="Observações internas para a equipe da agência"
                 value={form.notes}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, notes: e.target.value }))
-                }
+                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                 className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
@@ -491,8 +478,8 @@ function TripConfirmationPage() {
             Nenhum localizador cadastrado
           </p>
           <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-            Adicione os códigos de confirmação para cada serviço desta viagem
-            (voos, hotéis, transfers, etc.).
+            Adicione os códigos de confirmação para cada serviço desta viagem (voos, hotéis,
+            transfers, etc.).
           </p>
           <button
             onClick={openAdd}
@@ -536,9 +523,7 @@ function TripConfirmationPage() {
                     {item.provider_name}
                   </p>
                   {item.details && (
-                    <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {item.details}
-                    </p>
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">{item.details}</p>
                   )}
                   {item.notes && (
                     <p className="text-[10px] text-muted-foreground/60 italic mt-0.5 truncate">

@@ -60,6 +60,26 @@ function PageMiniPreview({ template }: { template: string | null }) {
     template === "hopp-dark" ||
     template === "hopp-vibrant";
 
+  const isMobileLanding = template === "mobile-landing" || template?.startsWith("mobile-");
+
+  if (isMobileLanding) {
+    return (
+      <div className="w-full h-28 rounded-sm bg-slate-900 border border-slate-800 flex flex-col items-center p-3 gap-2 overflow-hidden transition-all duration-300 relative group-hover:scale-[1.02] select-none">
+        {/* Phone Notch/Header indicator */}
+        <div className="w-10 h-1.5 bg-slate-800 rounded-full shrink-0"></div>
+        {/* Mock LP Hero image */}
+        <div className="w-4/5 h-8 bg-indigo-500/20 border border-indigo-500/30 rounded-xs flex flex-col justify-center items-center gap-1 p-1">
+          <div className="w-10 h-1.5 bg-indigo-400 rounded-full"></div>
+          <div className="w-16 h-1 bg-slate-400/40 rounded-full"></div>
+        </div>
+        {/* CTA Button */}
+        <div className="w-4/5 h-3 rounded-xs bg-indigo-600"></div>
+        {/* Blocks */}
+        <div className="w-4/5 h-2 rounded-xs bg-slate-800"></div>
+      </div>
+    );
+  }
+
   if (isBiolink) {
     const isDark = template === "hopp-dark";
     const isVibrant = template === "hopp-vibrant";
@@ -142,7 +162,9 @@ function PagesPage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState<"all" | "sites" | "biolinks" | "templates">("all");
+  const [activeTab, setActiveTab] = useState<
+    "all" | "sites" | "biolinks" | "mobile_landings" | "templates"
+  >("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Create modal states
@@ -271,7 +293,10 @@ function PagesPage() {
       let templateName = "default";
       let metaDescription = "Minha página institucional.";
 
-      if (selectedTemplateId !== "empty") {
+      if (selectedTemplateId === "mobile-landing") {
+        templateName = "mobile-landing";
+        metaDescription = "Minha Landing Page Mobile.";
+      } else if (selectedTemplateId !== "empty") {
         const selectedTpl = getTemplateById(selectedTemplateId);
         if (selectedTpl) {
           initialBlocks = JSON.parse(JSON.stringify(selectedTpl.blocks)); // Deep copy
@@ -333,8 +358,11 @@ function PagesPage() {
       p.template === "hopp-dark" ||
       p.template === "hopp-vibrant";
 
-    if (activeTab === "sites") return !isBiolink;
+    const isMobileLanding = p.template === "mobile-landing" || p.template?.startsWith("mobile-");
+
+    if (activeTab === "sites") return !isBiolink && !isMobileLanding;
     if (activeTab === "biolinks") return isBiolink;
+    if (activeTab === "mobile_landings") return isMobileLanding;
     return true;
   });
 
@@ -364,11 +392,12 @@ function PagesPage() {
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
         <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-sm border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
-          {(["all", "sites", "biolinks", "templates"] as const).map((tabId) => {
+          {(["all", "sites", "biolinks", "mobile_landings", "templates"] as const).map((tabId) => {
             const labels = {
               all: "Todas as Páginas",
               sites: "Websites & Landing Pages",
               biolinks: "Links na Bio",
+              mobile_landings: "Landing Pages Mobile (Ads)",
               templates: "Biblioteca de Templates",
             };
             return (
@@ -484,7 +513,11 @@ function PagesPage() {
                       <div className="relative overflow-hidden rounded-sm">
                         <PageMiniPreview template={tpl.id} />
                         <div className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] uppercase font-black font-mono tracking-wider bg-background border text-foreground">
-                          {isBiolink ? "Biolink" : "Website"}
+                          {isBiolink
+                            ? "Biolink"
+                            : tpl.category === "mobile-landing"
+                              ? "Landing Mobile"
+                              : "Website"}
                         </div>
                       </div>
 
@@ -560,6 +593,9 @@ function PagesPage() {
                     p.template === "hopp-dark" ||
                     p.template === "hopp-vibrant";
 
+                  const isMobileLanding =
+                    p.template === "mobile-landing" || p.template?.startsWith("mobile-");
+
                   const pageStats = analyticsQ.data?.stats[p.id] || { views: 0, clicks: 0 };
 
                   return (
@@ -591,7 +627,11 @@ function PagesPage() {
                         <div className="space-y-1">
                           <div className="flex items-center justify-between w-full">
                             <span className="text-[10px] uppercase font-black font-mono tracking-wider text-muted-foreground">
-                              {isBiolink ? "Link na Bio" : "Website / Landing"}
+                              {isBiolink
+                                ? "Link na Bio"
+                                : isMobileLanding
+                                  ? "Landing Mobile (Ads)"
+                                  : "Website / Landing"}
                             </span>
                             <StatusBadge tone={p.is_published ? "success" : "neutral"}>
                               {p.is_published ? "Publicada" : "Rascunho"}
@@ -717,9 +757,17 @@ function PagesPage() {
                 value={selectedTemplateId}
                 onChange={(e) => setSelectedTemplateId(e.target.value)}
               >
-                <option value="empty">Em Branco (Vazia)</option>
+                <option value="empty">Em Branco (Página Institucional)</option>
+                <option value="mobile-landing">Em Branco (Landing Page Mobile)</option>
                 <optgroup label="Websites & Landing Pages">
                   {CMS_TEMPLATES.filter((t) => t.category === "site").map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Landing Pages Mobile (Ads)">
+                  {CMS_TEMPLATES.filter((t) => t.category === "mobile-landing").map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name}
                     </option>

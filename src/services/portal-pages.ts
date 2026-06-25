@@ -9,7 +9,13 @@ export type PortalPage = {
   is_published: boolean;
   template: string | null;
   blocks: PortalBlock[];
-  seo: { meta_title?: string; meta_description?: string } | null;
+  seo: {
+    meta_title?: string;
+    meta_description?: string;
+    fb_pixel_id?: string | null;
+    google_analytics_id?: string | null;
+    custom_scripts?: string | null;
+  } | null;
   description?: string | null;
   cover_image_url?: string | null;
   category?: string;

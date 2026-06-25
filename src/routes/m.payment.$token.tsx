@@ -49,19 +49,21 @@ function Page() {
       if (rpcError) throw rpcError;
 
       toast.success("Comprovante enviado com sucesso!");
-      
-      setInstallments(prev => prev.map(inst => {
-        if (inst.id === instId) {
-          return {
-            ...inst,
-            status: "paid" as const,
-            paid_at: new Date().toISOString(),
-            payment_method: "pix",
-          };
-        }
-        return inst;
-      }));
-      
+
+      setInstallments((prev) =>
+        prev.map((inst) => {
+          if (inst.id === instId) {
+            return {
+              ...inst,
+              status: "paid" as const,
+              paid_at: new Date().toISOString(),
+              payment_method: "pix",
+            };
+          }
+          return inst;
+        }),
+      );
+
       setSelectedInst(null);
     } catch (err: any) {
       console.error(err);

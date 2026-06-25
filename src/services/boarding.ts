@@ -108,7 +108,6 @@ export async function fetchBoardingCards(agencyId: string): Promise<BoardingCard
     .order("position");
   if (error) throw new Error(error.message);
 
-
   const tripIds = [...new Set((data ?? []).map((c: any) => c.trip_id))];
   const tripMap: Record<
     string,

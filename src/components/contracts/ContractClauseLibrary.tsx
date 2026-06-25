@@ -15,7 +15,15 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { SheetPage } from "@/components/ui/sheet";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import {
+  Field,
+  Input,
+  Select,
+  Textarea,
+  PrimaryButton,
+  GhostButton,
+  StatusBadge,
+} from "@/components/ui/form";
 import { toast } from "sonner";
 
 const CLAUSE_KIND_LABELS: Record<string, string> = {
@@ -213,7 +221,10 @@ export function ContractClauseLibrary({
           </p>
         </div>
         {!formOpen && (
-          <PrimaryButton onClick={() => setFormOpen(true)} className="gap-1.5 h-8 text-xs font-semibold">
+          <PrimaryButton
+            onClick={() => setFormOpen(true)}
+            className="gap-1.5 h-8 text-xs font-semibold"
+          >
             <Plus className="h-3.5 w-3.5" /> Adicionar Cláusula
           </PrimaryButton>
         )}
@@ -222,12 +233,21 @@ export function ContractClauseLibrary({
       <div className="flex-1 overflow-y-auto p-6 min-h-0 relative bg-surface/30">
         {formOpen ? (
           /* Form to Add/Edit */
-          <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-5 border border-border rounded-xl p-5 bg-surface animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto max-w-xl space-y-5 border border-border rounded-xl p-5 bg-surface animate-in fade-in slide-in-from-bottom-2 duration-300"
+          >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                {editingClause ? `Editar Cláusula: ${editingClause.title}` : "Nova Cláusula Customizada"}
+                {editingClause
+                  ? `Editar Cláusula: ${editingClause.title}`
+                  : "Nova Cláusula Customizada"}
               </h3>
-              <button type="button" onClick={resetForm} className="text-muted-foreground hover:text-foreground">
+              <button
+                type="button"
+                onClick={resetForm}
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -255,7 +275,10 @@ export function ContractClauseLibrary({
               </Field>
 
               <Field label="Status da Cláusula">
-                <Select value={isActive ? "true" : "false"} onChange={(e) => setIsActive(e.target.value === "true")}>
+                <Select
+                  value={isActive ? "true" : "false"}
+                  onChange={(e) => setIsActive(e.target.value === "true")}
+                >
                   <option value="true">Ativa (Usar nos contratos)</option>
                   <option value="false">Inativa (Ocultar nos contratos)</option>
                 </Select>
@@ -276,7 +299,11 @@ export function ContractClauseLibrary({
               <GhostButton type="button" onClick={resetForm} className="h-9 text-xs">
                 Cancelar
               </GhostButton>
-              <PrimaryButton type="submit" disabled={createMut.isPending || updateMut.isPending} className="h-9 text-xs">
+              <PrimaryButton
+                type="submit"
+                disabled={createMut.isPending || updateMut.isPending}
+                className="h-9 text-xs"
+              >
                 {editingClause ? "Salvar Alterações" : "Salvar Cláusula"}
               </PrimaryButton>
             </div>
@@ -334,7 +361,8 @@ export function ContractClauseLibrary({
                                 )}
                               </h4>
                               <p className="text-[10px] text-muted-foreground font-mono mt-0.5">
-                                Versão {clause.version} · Classificação: {CLAUSE_KIND_LABELS[clause.kind]}
+                                Versão {clause.version} · Classificação:{" "}
+                                {CLAUSE_KIND_LABELS[clause.kind]}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
@@ -357,7 +385,11 @@ export function ContractClauseLibrary({
                                   </button>
                                   <button
                                     onClick={() => {
-                                      if (confirm(`Deseja realmente excluir a cláusula "${clause.title}"?`)) {
+                                      if (
+                                        confirm(
+                                          `Deseja realmente excluir a cláusula "${clause.title}"?`,
+                                        )
+                                      ) {
                                         deleteMut.mutate(clause.id);
                                       }
                                     }}

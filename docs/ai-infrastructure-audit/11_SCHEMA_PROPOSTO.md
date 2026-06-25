@@ -26,7 +26,9 @@ Este documento define o schema das tabelas necessárias para suportar a infraest
 ## 2. Estrutura DDL Proposta
 
 ### ai_providers
+
 Tabela de catálogo contendo os provedores homologados de IA.
+
 ```sql
 CREATE TABLE public.ai_providers (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -40,7 +42,9 @@ CREATE TABLE public.ai_providers (
 ```
 
 ### ai_models
+
 Catálogo de modelos associados aos provedores e suas capacidades.
+
 ```sql
 CREATE TABLE public.ai_models (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -56,7 +60,9 @@ CREATE TABLE public.ai_models (
 ```
 
 ### ai_api_credentials
+
 Armazena referências mascaradas de credenciais e status de saúde de forma segura (substitui/evolui a tabela `api_keys`).
+
 ```sql
 CREATE TABLE public.ai_api_credentials (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -81,7 +87,9 @@ CREATE TABLE public.ai_api_credentials (
 ```
 
 ### ai_jobs
+
 Fila de processamento assíncrono para OCR e tarefas de IA pesadas.
+
 ```sql
 CREATE TABLE public.ai_jobs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -101,7 +109,9 @@ CREATE TABLE public.ai_jobs (
 ```
 
 ### ai_job_attempts
+
 Registro de tentativas de execução de cada Job.
+
 ```sql
 CREATE TABLE public.ai_job_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

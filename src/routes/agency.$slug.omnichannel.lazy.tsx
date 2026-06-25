@@ -152,7 +152,9 @@ function OmnichannelPage() {
         filter += `,phone.ilike.%${cleanContactId}%`;
       }
       // Check if contactId is a valid UUID before searching by ID
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(contactId);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        contactId,
+      );
       if (isUuid) {
         filter += `,id.eq.${contactId}`;
       }
@@ -182,7 +184,9 @@ function OmnichannelPage() {
       if (cleanContactId) {
         filter += `,phone.ilike.%${cleanContactId}%`;
       }
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(contactId);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        contactId,
+      );
       if (isUuid) {
         filter += `,id.eq.${contactId}`;
       }
@@ -616,7 +620,12 @@ function OmnichannelPage() {
     <>
       <div className="flex h-[calc(100vh-var(--header-h))] w-full p-0 m-0 border-0 rounded-none overflow-hidden bg-background">
         {/* ── SIDEBAR: Session List ─────────────────────────────── */}
-        <aside className={cn("shrink-0 flex-col border-r border-border bg-surface", selectedId ? "hidden md:flex md:w-80" : "flex w-full md:w-80")}>
+        <aside
+          className={cn(
+            "shrink-0 flex-col border-r border-border bg-surface",
+            selectedId ? "hidden md:flex md:w-80" : "flex w-full md:w-80",
+          )}
+        >
           {/* Search + Filter */}
           <div className="space-y-2 p-3 border-b border-border">
             <div className="relative">
@@ -754,7 +763,12 @@ function OmnichannelPage() {
 
         {/* ── MAIN: Conversation ───────────────────────────────── */}
         {selectedId ? (
-          <div className={cn("flex flex-1 flex-col bg-surface border-r border-border", selectedId ? "flex" : "hidden md:flex")}>
+          <div
+            className={cn(
+              "flex flex-1 flex-col bg-surface border-r border-border",
+              selectedId ? "flex" : "hidden md:flex",
+            )}
+          >
             {/* Conversation header */}
             <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-surface">
               <button

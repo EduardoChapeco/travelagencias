@@ -5,16 +5,17 @@ Este documento projeta a nova arquitetura do subsistema financeiro do TravelOS, 
 ---
 
 ## 1. Topologia da Nova Arquitetura Financeira
+
 A nova proposta separa as operações do sistema em duas grandes camadas:
 
 1. **Camada de Negócios (Operacional)**: Viagens, Inscrições em Grupos, Notas Fiscais e Planos de Parcelamento. São manipuláveis pelos usuários respeitando permissões RBAC.
-2. **Camada de Ledger Financeiro (Razão Imutável)**: Livro-razão do tipo *append-only* que armazena lançamentos de débito e crédito gerados a partir de eventos operacionais aprovados. Uma transação nesta camada não pode ser editada ou removida, apenas neutralizada por um lançamento de estorno de sinal oposto.
+2. **Camada de Ledger Financeiro (Razão Imutável)**: Livro-razão do tipo _append-only_ que armazena lançamentos de débito e crédito gerados a partir de eventos operacionais aprovados. Uma transação nesta camada não pode ser editada ou removida, apenas neutralizada por um lançamento de estorno de sinal oposto.
 
 ```mermaid
 flowchart LR
     Event[Evento Operacional: Ex. Venda Aprovada] -->|Gera Lançamento| Ledger[Ledger Financeiro Append-only]
     Ledger -->|Atualiza Saldo| AccountBalance[Saldos por Conta / Caixa]
-    
+
     subgraph Travas de Período
         ClosePeriod[Fechamento Mensal: Closed] -.->|Bloqueia Escrita| Ledger
     end
@@ -42,6 +43,7 @@ CREATE TABLE public.financial_ledger_entries (
 ---
 
 ## 3. Lógica Backend de Comissionamento Progressivo
+
 Para suportar o comissionamento escalonado progressivo exigido na Seção 3.7 do PRD, implementaremos a seguinte fórmula no banco de dados:
 
 ```sql
@@ -83,5 +85,6 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 ---
 
 ## 4. Isolamento Multi-tenant Avançado (RLS)
+
 Todas as novas tabelas adotarão RLS atreladas a funções `SECURITY DEFINER` do banco de dados que validam se o `auth.uid()` pertence à agência informada (`agency_id`) e se o escopo de atuação do usuário condiz com o seu nível de acesso.
 No caso de documentos de comprovantes e arquivos sensíveis, as buscas serão realizadas de maneira estrita, impedindo download direto sem assinatura da URL de expiração curta.

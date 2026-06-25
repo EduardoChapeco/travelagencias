@@ -26,9 +26,11 @@ UI (React Component)
 ## 2. Regras de Segurança e Hardening de Credenciais
 
 ### 2.1. Credenciais Estritamente Server-Side
+
 As chaves `infotravel_username`, `infotravel_password`, `infotravel_client` e `infotravel_agency` devem ser armazenadas exclusivamente no banco de dados e lidas apenas no runtime do servidor (Edge Function) sob o papel `service_role`. **Nenhuma credencial ou token de acesso JWT da Infotravel pode ser retornado para o navegador do operador em nenhuma circunstância.**
 
 ### 2.2. Prevenção de Invasão de Tenant (Multi-Tenant Isolation)
+
 O conector na Edge Function deve sempre realizar a validação cruzada do usuário logado contra a tabela `user_roles` antes de ler as credenciais na tabela `api_keys`:
 
 ```typescript
@@ -43,9 +45,11 @@ if (roleError || !roleData) {
   throw new Error("Acesso não autorizado para esta agência.");
 }
 ```
+
 Isso impede fisicamente que um operador mal-intencionado da Agência A passe o `agencyId` da Agência B no payload da requisição para ler ou usar as credenciais da concorrente.
 
 ### 2.3. Gestão e Renovação de Tokens JWT da API
-* **Expiração**: Os tokens retornados pela API do Infotravel possuem tempo de vida limitado (tipicamente 1 hora a 12 horas).
-* **Estratégia de Cache**: Para evitar chamadas excessivas de login a cada busca (o que causaria throttling e lentidão na UI), os tokens devem ser cacheados localmente no servidor de forma associada à agência (`infotravel_token_${agencyId}`) utilizando tempo de expiração (`TTL`) igual a 90% do tempo de vida do token.
-* **Sanitização de Logs**: Todas as Edge Functions devem filtrar os objetos de log para remover quaisquer propriedades contendo `password`, `key_value` ou `token` antes de gravar no log do console ou no banco de dados, garantindo conformidade com a LGPD e políticas de segurança de dados.
+
+- **Expiração**: Os tokens retornados pela API do Infotravel possuem tempo de vida limitado (tipicamente 1 hora a 12 horas).
+- **Estratégia de Cache**: Para evitar chamadas excessivas de login a cada busca (o que causaria throttling e lentidão na UI), os tokens devem ser cacheados localmente no servidor de forma associada à agência (`infotravel_token_${agencyId}`) utilizando tempo de expiração (`TTL`) igual a 90% do tempo de vida do token.
+- **Sanitização de Logs**: Todas as Edge Functions devem filtrar os objetos de log para remover quaisquer propriedades contendo `password`, `key_value` ou `token` antes de gravar no log do console ou no banco de dados, garantindo conformidade com a LGPD e políticas de segurança de dados.

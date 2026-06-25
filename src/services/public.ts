@@ -16,11 +16,13 @@ export async function fetchPublicAgencyLayout(slug: string) {
     supabase.from("portal_settings").select("*").eq("agency_id", agency.id).maybeSingle(),
   ]);
 
-  const settings = settingsRes.data ? {
-    ...settingsRes.data,
-    nav_links: (settingsRes.data.nav_links as unknown as any[]) || [],
-    footer_links: (settingsRes.data.footer_links as unknown as any[]) || [],
-  } : null;
+  const settings = settingsRes.data
+    ? {
+        ...settingsRes.data,
+        nav_links: (settingsRes.data.nav_links as unknown as any[]) || [],
+        footer_links: (settingsRes.data.footer_links as unknown as any[]) || [],
+      }
+    : null;
 
   return {
     agency,
@@ -61,13 +63,15 @@ export async function fetchPublicAgencyHome(slug: string) {
       .maybeSingle(),
   ]);
 
-  const homePageData = homePage.data ? {
-    id: homePage.data.id,
-    title: homePage.data.title,
-    template: homePage.data.template,
-    blocks: (homePage.data.blocks as unknown as any[]) || [],
-    seo: (homePage.data.seo as any) || {}
-  } : null;
+  const homePageData = homePage.data
+    ? {
+        id: homePage.data.id,
+        title: homePage.data.title,
+        template: homePage.data.template,
+        blocks: (homePage.data.blocks as unknown as any[]) || [],
+        seo: (homePage.data.seo as any) || {},
+      }
+    : null;
 
   return {
     agency,
@@ -143,13 +147,15 @@ export async function fetchPublicDynamicPage(agencySlug: string, pageSlug: strin
     .eq("is_published", true)
     .maybeSingle();
 
-  const pageData = page ? {
-    id: page.id,
-    title: page.title,
-    template: page.template,
-    blocks: (page.blocks as unknown as any[]) || [],
-    seo: (page.seo as any) || {}
-  } : null;
+  const pageData = page
+    ? {
+        id: page.id,
+        title: page.title,
+        template: page.template,
+        blocks: (page.blocks as unknown as any[]) || [],
+        seo: (page.seo as any) || {},
+      }
+    : null;
 
   return { agency, page: pageData };
 }
@@ -241,11 +247,7 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
       .eq("id", tourId)
       .eq("agency_id", agency.id)
       .maybeSingle(),
-    supabase
-      .from("portal_settings")
-      .select("pix_key")
-      .eq("agency_id", agency.id)
-      .maybeSingle()
+    supabase.from("portal_settings").select("pix_key").eq("agency_id", agency.id).maybeSingle(),
   ]);
 
   const tour = tourDataRes.data as any;
@@ -315,9 +317,7 @@ export async function enrollPublicTour(
 
 // ─── Knowledge Base ──────────────────────────────────────────────────────────
 export async function fetchPublicAgencyForKb(slug: string) {
-  const { data } = await supabase
-    .rpc("get_public_agency_by_slug", { _slug: slug })
-    .maybeSingle();
+  const { data } = await supabase.rpc("get_public_agency_by_slug", { _slug: slug }).maybeSingle();
   return data as {
     id: string;
     name: string;

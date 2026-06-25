@@ -33,13 +33,13 @@ export interface NormalizedOffer {
   searchSessionId: string;
   externalOfferKey: string; // ID único retornado pela API para re-cotar ou reservar
   productType: "hotel" | "flight" | "transfer" | "package" | "activity";
-  
+
   origin?: string; // ex: GRU
   destination: string; // ex: Lisboa
   startDate: string;
   endDate: string;
   travelersCount: number;
-  
+
   hotel?: {
     id: string;
     name: string;
@@ -49,7 +49,7 @@ export interface NormalizedOffer {
     images: string[];
     address?: string;
   };
-  
+
   flights?: Array<{
     id: string;
     airline: string;
@@ -59,30 +59,31 @@ export interface NormalizedOffer {
     stops: number;
     baggageRules: string;
   }>;
-  
+
   pricing: {
     basePrice: number; // Preço líquido do fornecedor
-    taxes: number;     // Taxas de embarque / turismo
-    markup: number;    // Acréscimo configurado pela agência
+    taxes: number; // Taxas de embarque / turismo
+    markup: number; // Acréscimo configurado pela agência
     commission: number; // Comissão estimada retornada pelo GDS
     totalPrice: number; // Preço final de venda exibido ao cliente (basePrice + taxes + markup)
-    currency: string;   // ex: BRL, USD
+    currency: string; // ex: BRL, USD
   };
-  
+
   policies: {
     cancellationDeadline?: string;
     isRefundable: boolean;
     terms: string;
   };
-  
+
   availabilityStatus: "available" | "on_request" | "sold_out";
   expiresAt: string; // Timestamp limite de retenção da cotação
-  rawSnapshot: any;  // Payload original para auditoria e log forense
+  rawSnapshot: any; // Payload original para auditoria e log forense
 }
 ```
 
 ---
 
 ## 3. Benefícios da Camada de Normalização
-* **Agnosticidade de UI**: O frontend do TravelOS torna-se 100% agnóstico em relação à API do Infotravel. Se a agência decidir integrar outro consolidador futuramente, basta escrever um novo mapeador para o tipo `NormalizedOffer`, mantendo as telas de busca, carrinho e propostas intocadas.
-* **Segurança na Margem de Lucro**: O cálculo de markup e comissões é feito exclusivamente no lado do servidor, impedindo a manipulação de preços via ferramentas de inspeção do navegador pelo cliente final.
+
+- **Agnosticidade de UI**: O frontend do TravelOS torna-se 100% agnóstico em relação à API do Infotravel. Se a agência decidir integrar outro consolidador futuramente, basta escrever um novo mapeador para o tipo `NormalizedOffer`, mantendo as telas de busca, carrinho e propostas intocadas.
+- **Segurança na Margem de Lucro**: O cálculo de markup e comissões é feito exclusivamente no lado do servidor, impedindo a manipulação de preços via ferramentas de inspeção do navegador pelo cliente final.

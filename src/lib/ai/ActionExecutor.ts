@@ -32,10 +32,12 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
 
     if (roleError) throw new Error("Erro ao validar credenciais da agência.");
     const activeRole = roleRecord?.role || "agent";
-    
+
     const isAllowed = action.allowedRoles.includes(activeRole) || activeRole === "super_admin";
     if (!isAllowed) {
-      throw new Error(`Acesso negado. Seu papel atual (${activeRole}) não tem permissão para a ação '${action.name}'.`);
+      throw new Error(
+        `Acesso negado. Seu papel atual (${activeRole}) não tem permissão para a ação '${action.name}'.`,
+      );
     }
 
     // 3. Parse input payload against Zod schema
@@ -114,18 +116,30 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           if (s === "new") {
             targetStageId = stages[0].id;
           } else if (s === "won") {
-            targetStageId = stages.find((x: any) => x.is_won)?.id || stages[stages.length - 2]?.id || stages[0].id;
+            targetStageId =
+              stages.find((x: any) => x.is_won)?.id ||
+              stages[stages.length - 2]?.id ||
+              stages[0].id;
           } else if (s === "lost") {
-            targetStageId = stages.find((x: any) => x.is_lost)?.id || stages[stages.length - 1]?.id || stages[0].id;
+            targetStageId =
+              stages.find((x: any) => x.is_lost)?.id ||
+              stages[stages.length - 1]?.id ||
+              stages[0].id;
           } else {
-            const searchKeyword = s === "contacted" ? "contato" : s === "proposal" || s === "negotiation" ? "cota" : "";
-            const matched = searchKeyword ? stages.find((x: any) => x.name.toLowerCase().includes(searchKeyword)) : null;
-            targetStageId = matched?.id || stages[Math.min(stages.length - 1, s === "contacted" ? 1 : 2)].id;
+            const searchKeyword =
+              s === "contacted" ? "contato" : s === "proposal" || s === "negotiation" ? "cota" : "";
+            const matched = searchKeyword
+              ? stages.find((x: any) => x.name.toLowerCase().includes(searchKeyword))
+              : null;
+            targetStageId =
+              matched?.id || stages[Math.min(stages.length - 1, s === "contacted" ? 1 : 2)].id;
           }
         }
 
         if (!targetStageId) {
-          throw new Error("Nenhum estágio do funil de vendas correspondente foi encontrado para a agência.");
+          throw new Error(
+            "Nenhum estágio do funil de vendas correspondente foi encontrado para a agência.",
+          );
         }
 
         const { error } = await supabase
@@ -232,11 +246,23 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           clientId: validatedData.clientId || null,
           leadId: validatedData.leadId || null,
           requestedBy: "chat",
-          origin: [{ code: validatedData.origin, name: validatedData.origin === "CXP" ? "Chapecó" : validatedData.origin }],
-          destinations: [{ code: validatedData.destination.substring(0, 3).toUpperCase(), name: validatedData.destination }],
+          origin: [
+            {
+              code: validatedData.origin,
+              name: validatedData.origin === "CXP" ? "Chapecó" : validatedData.origin,
+            },
+          ],
+          destinations: [
+            {
+              code: validatedData.destination.substring(0, 3).toUpperCase(),
+              name: validatedData.destination,
+            },
+          ],
           dateWindow: {
             start: validatedData.startDate || new Date().toISOString().split("T")[0],
-            end: validatedData.endDate || new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
+            end:
+              validatedData.endDate ||
+              new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
             flexDays: 3,
           },
           duration: {
@@ -288,7 +314,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         const { error: travelersErr } = await supabase
           .from("quote_travelers")
           .insert(travelerInserts);
-        
+
         if (travelersErr) throw travelersErr;
 
         entityId = quote.id;
@@ -428,9 +454,10 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
 
         entityId = trips && trips.length > 0 ? trips[0].id : null;
         entityType = "trip";
-        resultMessage = trips && trips.length > 0
-          ? `Viagens encontradas: ${trips.map((t: any) => `${t.title} (Início: ${t.travel_start})`).join(", ")}.`
-          : `Nenhuma viagem encontrada para '${validatedData.query}'.`;
+        resultMessage =
+          trips && trips.length > 0
+            ? `Viagens encontradas: ${trips.map((t: any) => `${t.title} (Início: ${t.travel_start})`).join(", ")}.`
+            : `Nenhuma viagem encontrada para '${validatedData.query}'.`;
       } else if (actionCode === "create_task") {
         const { data: task, error } = await supabase
           .from("agent_tasks")
@@ -508,9 +535,10 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
 
         entityId = plan?.id || null;
         entityType = "payment_plan";
-        resultMessage = installmentsList.length > 0
-          ? `Parcelas da viagem: ${installmentsList.map((i: any) => `Parc ${i.number} - R$ ${i.amount} (${i.status})`).join(", ")}.`
-          : `Nenhum plano de parcelamento encontrado para esta viagem.`;
+        resultMessage =
+          installmentsList.length > 0
+            ? `Parcelas da viagem: ${installmentsList.map((i: any) => `Parc ${i.number} - R$ ${i.amount} (${i.status})`).join(", ")}.`
+            : `Nenhum plano de parcelamento encontrado para esta viagem.`;
       } else if (actionCode === "generate_contract") {
         const { data: tripRecord } = await supabase
           .from("trips")
@@ -576,9 +604,10 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
 
         entityId = sups && sups.length > 0 ? sups[0].id : null;
         entityType = "supplier";
-        resultMessage = sups && sups.length > 0
-          ? `Fornecedores: ${sups.map((s: any) => `${s.name} (${s.kind})`).join(", ")}.`
-          : `Nenhum fornecedor encontrado para '${validatedData.query}'.`;
+        resultMessage =
+          sups && sups.length > 0
+            ? `Fornecedores: ${sups.map((s: any) => `${s.name} (${s.kind})`).join(", ")}.`
+            : `Nenhum fornecedor encontrado para '${validatedData.query}'.`;
       } else if (actionCode === "start_ocr") {
         const { data: job, error } = await (supabase as any)
           .from("ai_jobs")
@@ -605,9 +634,10 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
 
         entityId = groups && groups.length > 0 ? groups[0].id : null;
         entityType = "group_tour";
-        resultMessage = groups && groups.length > 0
-          ? `Grupos encontrados: ${groups.map((g: any) => `${g.title} (${g.status})`).join(", ")}.`
-          : `Nenhum grupo encontrado para '${validatedData.query}'.`;
+        resultMessage =
+          groups && groups.length > 0
+            ? `Grupos encontrados: ${groups.map((g: any) => `${g.title} (${g.status})`).join(", ")}.`
+            : `Nenhum grupo encontrado para '${validatedData.query}'.`;
       } else if (actionCode === "update_rooming") {
         const { error } = await supabase
           .from("group_tours")
@@ -756,7 +786,9 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           payment_receipt: `Olá! Confirmamos o recebimento do seu pagamento. Obrigado pela preferência!`,
           contract_sign: `Olá! Seu contrato de viagem foi gerado. Por favor, acesse o link enviado para assinar digitalmente.`,
         };
-        const contentText = templateTexts[validatedData.templateName] || `Template [${validatedData.templateName}] disparado via WhatsApp.`;
+        const contentText =
+          templateTexts[validatedData.templateName] ||
+          `Template [${validatedData.templateName}] disparado via WhatsApp.`;
 
         const { data: message, error: mErr } = await supabase
           .from("omnichannel_messages")

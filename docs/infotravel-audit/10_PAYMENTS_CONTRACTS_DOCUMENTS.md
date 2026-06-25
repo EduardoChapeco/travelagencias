@@ -8,9 +8,9 @@ Este documento detalha o mapeamento e a sincronização de cobranças, recebimen
 
 A API do Infotravel expõe endpoints específicos para gerenciar e validar a cadeia de custódia e recebimentos das viagens:
 
-* **Contratos da Reserva**: A chamada `GET /api/v1/utility/contract/{idReserva}` retorna o contrato e as políticas anexadas à reserva pela operadora.
-* **Nota Fiscal / Invoice**: A chamada `GET /api/v1/invoice/generate/{idPayment}` retorna os dados estruturados da nota gerada (`ApiInvoice`) e o link físico do documento.
-* **Consulta PIX**: A chamada `GET /api/v1/payment/pix/consult/{id}` retorna o status do pagamento via Pix (`ApiPaymentPix`) para validação e liquidação automática.
+- **Contratos da Reserva**: A chamada `GET /api/v1/utility/contract/{idReserva}` retorna o contrato e as políticas anexadas à reserva pela operadora.
+- **Nota Fiscal / Invoice**: A chamada `GET /api/v1/invoice/generate/{idPayment}` retorna os dados estruturados da nota gerada (`ApiInvoice`) e o link físico do documento.
+- **Consulta PIX**: A chamada `GET /api/v1/payment/pix/consult/{id}` retorna o status do pagamento via Pix (`ApiPaymentPix`) para validação e liquidação automática.
 
 ---
 
@@ -40,6 +40,8 @@ Handshake de Pagamento (PIX / Cartão de Crédito) no Infotravel
 ---
 
 ## 3. Segurança e Armazenamento Privado de Documentos
+
 Os termos contratuais e notas fiscais de operadoras contêm informações sensíveis de tarifas corporativas, comissões internas e dados pessoais dos viajantes (PII).
-* **Armazenamento Seguro**: Todos os PDFs de contratos e invoices baixados da API da Infotravel devem ser armazenados em um bucket privado do Supabase Storage (`supplier-files` ou `invoice-vault`) com acesso restritivo.
-* **Proibição de Links Públicos de Longo Prazo**: O sistema nunca deve expor ou salvar no banco de dados a URL crua e pública do documento. O acesso na UI do operador ou do cliente B2C deve ser concedido exclusivamente por meio de links assinados temporários (`Signed URLs`) com tempo de expiração máximo de 15 minutos, gerados dinamicamente mediante comprovação de permissão do usuário.
+
+- **Armazenamento Seguro**: Todos os PDFs de contratos e invoices baixados da API da Infotravel devem ser armazenados em um bucket privado do Supabase Storage (`supplier-files` ou `invoice-vault`) com acesso restritivo.
+- **Proibição de Links Públicos de Longo Prazo**: O sistema nunca deve expor ou salvar no banco de dados a URL crua e pública do documento. O acesso na UI do operador ou do cliente B2C deve ser concedido exclusivamente por meio de links assinados temporários (`Signed URLs`) com tempo de expiração máximo de 15 minutos, gerados dinamicamente mediante comprovação de permissão do usuário.

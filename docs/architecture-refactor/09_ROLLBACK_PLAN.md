@@ -22,12 +22,12 @@ Para garantir reversibilidade instantânea de código:
 
 Embora as alterações arquiteturais desta refatoração foquem majoritariamente na camada de código e organização de rotas/front-end, a Fase 4 prevê a criação de novas RPCs e views de otimização contábil.
 
-* **Procedimento de Backup**:
+- **Procedimento de Backup**:
   - Antes de aplicar qualquer migração SQL nova na base de dados de teste ou staging, execute uma exportação do schema do banco de dados e dados críticos:
     ```bash
     supabase db dump --local -f schema_backup.sql
     ```
-* **Procedimento de Reversão SQL**:
+- **Procedimento de Reversão SQL**:
   - Toda migração adicionada na pasta `supabase/migrations/` deve acompanhar instruções de reversão claras (bloco `DOWN`) comentadas no próprio arquivo ou em script local de reversão.
   - Para reverter alterações locais em banco de dados:
     ```bash
@@ -54,6 +54,7 @@ flowchart TD
 ```
 
 ### Comandos Rápidos de Emergência (Git):
+
 - **Descartar todas as modificações não commitadas**:
   ```bash
   git reset --hard HEAD

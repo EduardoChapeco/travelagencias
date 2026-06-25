@@ -4,7 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { Sparkles, Calendar, User, Search, RefreshCw, BarChart2, Shield, Eye, ShieldAlert, Cpu } from "lucide-react";
+import {
+  Sparkles,
+  Calendar,
+  User,
+  Search,
+  RefreshCw,
+  BarChart2,
+  Shield,
+  Eye,
+  ShieldAlert,
+  Cpu,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ActionRegistry } from "@/lib/ai/ActionRegistry";
 
@@ -81,7 +92,9 @@ function Page() {
   // Compute metrics
   const totalCalls = logs.length;
   const toolExecutions = logs.filter((l) => l.action !== "ai_chat_message").length;
-  const failedCalls = logs.filter((l) => l.metadata?.result === "failed" || l.metadata?.error).length;
+  const failedCalls = logs.filter(
+    (l) => l.metadata?.result === "failed" || l.metadata?.error,
+  ).length;
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
@@ -104,37 +117,53 @@ function Page() {
             <Shield className="h-5 w-5 text-brand" /> Painel de Auditoria de IA
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Monitore o uso das ferramentas de inteligência artificial, logs de tool calling e ações comerciais executadas.
+            Monitore o uso das ferramentas de inteligência artificial, logs de tool calling e ações
+            comerciais executadas.
           </p>
         </div>
 
         {/* 1. Metrics Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total de Interações</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+              Total de Interações
+            </span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalCalls}</span>
               <span className="text-[10px] text-muted-foreground">mensagens/ações</span>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Ferramentas Executadas</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+              Ferramentas Executadas
+            </span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-2xl font-bold text-foreground text-brand">{toolExecutions}</span>
+              <span className="text-2xl font-bold text-foreground text-brand">
+                {toolExecutions}
+              </span>
               <span className="text-[10px] text-muted-foreground">actions</span>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Falhas / Erros</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+              Falhas / Erros
+            </span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className={cn("text-2xl font-bold", failedCalls > 0 ? "text-rose-500" : "text-foreground")}>
+              <span
+                className={cn(
+                  "text-2xl font-bold",
+                  failedCalls > 0 ? "text-rose-500" : "text-foreground",
+                )}
+              >
                 {failedCalls}
               </span>
               <span className="text-[10px] text-muted-foreground">exceções</span>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Isolamento Multi-Tenant</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+              Isolamento Multi-Tenant
+            </span>
             <div className="flex items-baseline gap-1 mt-2 text-emerald-600">
               <Shield className="h-5 w-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Ativo (RLS)</span>
@@ -182,31 +211,47 @@ function Page() {
         <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-xs">
           <div className="border-b border-border bg-surface-alt px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
-            <span className="text-[10px] text-muted-foreground">Mostrando os últimos 100 registros</span>
+            <span className="text-[10px] text-muted-foreground">
+              Mostrando os últimos 100 registros
+            </span>
           </div>
 
           {auditQuery.isLoading ? (
-            <div className="p-8 text-center text-xs text-muted-foreground">Carregando auditoria...</div>
+            <div className="p-8 text-center text-xs text-muted-foreground">
+              Carregando auditoria...
+            </div>
           ) : logs.length === 0 ? (
-            <div className="p-8 text-center text-xs text-muted-foreground">Nenhum evento registrado com esses filtros.</div>
+            <div className="p-8 text-center text-xs text-muted-foreground">
+              Nenhum evento registrado com esses filtros.
+            </div>
           ) : (
             <div className="divide-y divide-border/60">
               {logs.map((log: any) => {
                 const isMsg = log.action === "ai_chat_message";
                 const isFailed = log.metadata?.result === "failed" || log.metadata?.error;
                 const userObj: any = memberMap.get(log.actor_id);
-                const operatorName = userObj ? (userObj.name || userObj.email) : "Sistema/Desconhecido";
+                const operatorName = userObj
+                  ? userObj.name || userObj.email
+                  : "Sistema/Desconhecido";
                 const isExpanded = expandedLog === log.id;
 
                 return (
-                  <div key={log.id} className={cn("p-4 transition-colors hover:bg-surface-alt/40", isFailed && "bg-rose-500/[0.01]")}>
+                  <div
+                    key={log.id}
+                    className={cn(
+                      "p-4 transition-colors hover:bg-surface-alt/40",
+                      isFailed && "bg-rose-500/[0.01]",
+                    )}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                       {/* Left: action details */}
                       <div className="flex items-center gap-2">
-                        <span className={cn(
-                          "px-2 py-0.5 rounded-sm font-mono text-[10px] font-bold uppercase",
-                          isMsg ? "bg-muted text-muted-foreground" : "bg-brand/10 text-brand"
-                        )}>
+                        <span
+                          className={cn(
+                            "px-2 py-0.5 rounded-sm font-mono text-[10px] font-bold uppercase",
+                            isMsg ? "bg-muted text-muted-foreground" : "bg-brand/10 text-brand",
+                          )}
+                        >
                           {log.action}
                         </span>
                         <span className="font-semibold text-foreground">{operatorName}</span>
@@ -239,10 +284,14 @@ function Page() {
                     {/* Explanatory text */}
                     <div className="mt-2 text-xs text-muted-foreground pl-1 border-l border-border/80">
                       {isMsg ? (
-                        <span>Enviou mensagem de chat (Conexão: {log.metadata?.model || "Gemini 2.5 Flash"})</span>
+                        <span>
+                          Enviou mensagem de chat (Conexão:{" "}
+                          {log.metadata?.model || "Gemini 2.5 Flash"})
+                        </span>
                       ) : (
                         <span>
-                          Executou ferramenta de negócio: {log.metadata?.message || `Simulação de ${log.action}`}
+                          Executou ferramenta de negócio:{" "}
+                          {log.metadata?.message || `Simulação de ${log.action}`}
                         </span>
                       )}
                     </div>
@@ -251,12 +300,18 @@ function Page() {
                     {isExpanded && (
                       <div className="mt-3 rounded border border-border/60 bg-surface-muted p-3 font-mono text-[10px] text-muted-foreground overflow-x-auto space-y-2">
                         <div>
-                          <span className="text-foreground font-semibold block uppercase text-[9px] mb-1">Metadados e Payload da Ação:</span>
-                          <pre className="text-foreground-muted">{JSON.stringify(log.metadata, null, 2)}</pre>
+                          <span className="text-foreground font-semibold block uppercase text-[9px] mb-1">
+                            Metadados e Payload da Ação:
+                          </span>
+                          <pre className="text-foreground-muted">
+                            {JSON.stringify(log.metadata, null, 2)}
+                          </pre>
                         </div>
                         <div className="border-t border-border/40 pt-2 flex items-center justify-between text-[9px]">
                           <span>ID do Log: {log.id}</span>
-                          <span>Entidade: {log.entity_type} ({log.entity_id || "null"})</span>
+                          <span>
+                            Entidade: {log.entity_type} ({log.entity_id || "null"})
+                          </span>
                         </div>
                       </div>
                     )}

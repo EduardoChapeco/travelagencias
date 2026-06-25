@@ -34,7 +34,14 @@ import {
 } from "@/services/client-area";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,7 +61,11 @@ import {
   TripVoucherAccommodation,
   TripCancelTrigger,
 } from "@/components/portal/TripResumoWidgets";
-import { TripFlightCard, DestinationIntelligenceBlock, DestinationFallbackBlock } from "@/components/portal/TripExplorarWidgets";
+import {
+  TripFlightCard,
+  DestinationIntelligenceBlock,
+  DestinationFallbackBlock,
+} from "@/components/portal/TripExplorarWidgets";
 import { TabFinanceiro } from "@/components/portal/TabFinanceiro";
 import { TabContatos } from "@/components/portal/TabContatos";
 import { TabMemorias } from "@/components/portal/TabMemorias";
@@ -94,12 +105,35 @@ function ClientTripDetail() {
   const [consent3, setConsent3] = useState(false);
 
   // ── Queries ──────────────────────────────────────────────────────────────
-  const tripQ = useQuery({ queryKey: ["client-trip", id], queryFn: () => fetchClientTripDetail(id) });
-  const voucherQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-voucher", id], queryFn: () => fetchClientVouchers(id) });
-  const contractQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-contract", id], queryFn: () => fetchClientContracts(id) });
-  const installmentsQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-installments", id], queryFn: () => fetchClientPaymentPlans(id) });
-  const passengersQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-passengers", id], queryFn: () => fetchClientTripPassengers(id) });
-  const memoriesQ = useQuery({ enabled: !!tripQ.data, queryKey: ["client-memories", id], queryFn: () => fetchClientTripMemories(id) });
+  const tripQ = useQuery({
+    queryKey: ["client-trip", id],
+    queryFn: () => fetchClientTripDetail(id),
+  });
+  const voucherQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-voucher", id],
+    queryFn: () => fetchClientVouchers(id),
+  });
+  const contractQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-contract", id],
+    queryFn: () => fetchClientContracts(id),
+  });
+  const installmentsQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-installments", id],
+    queryFn: () => fetchClientPaymentPlans(id),
+  });
+  const passengersQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-passengers", id],
+    queryFn: () => fetchClientTripPassengers(id),
+  });
+  const memoriesQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-memories", id],
+    queryFn: () => fetchClientTripMemories(id),
+  });
 
   const enrollmentQ = useQuery({
     enabled: !!tripQ.data && !!tripQ.data.group_tour_id,
@@ -158,7 +192,11 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-trip-confirmation-items", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("trip_confirmation_items").select("*").eq("trip_id", id).order("sort_order", { ascending: true });
+      const { data, error } = await supabase
+        .from("trip_confirmation_items")
+        .select("*")
+        .eq("trip_id", id)
+        .order("sort_order", { ascending: true });
       if (error) throw error;
       return data ?? [];
     },
@@ -168,7 +206,12 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-lgpd-acceptance", tripQ.data?.client_id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("legal_acceptances" as any).select("*").eq("client_id", tripQ.data!.client_id).eq("terms_type", "lgpd_memories").maybeSingle();
+      const { data, error } = await supabase
+        .from("legal_acceptances" as any)
+        .select("*")
+        .eq("client_id", tripQ.data!.client_id)
+        .eq("terms_type", "lgpd_memories")
+        .maybeSingle();
       if (error) return null;
       return data;
     },
@@ -180,7 +223,8 @@ function ClientTripDetail() {
     queryFn: async () => {
       const { data: cases, error } = await supabase
         .from("flight_change_cases")
-        .select(`
+        .select(
+          `
           *,
           original_itinerary:flight_itineraries!flight_change_cases_original_itinerary_id_fkey(
             *,
@@ -194,30 +238,31 @@ function ClientTripDetail() {
             )
           ),
           decisions:customer_travel_decisions(*)
-        `)
+        `,
+        )
         .eq("trip_id", id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
 
       const mergedCases = [];
-      for (const c of (cases ?? [])) {
+      for (const c of cases ?? []) {
         const originalItinerary = c.original_itinerary
           ? {
               ...c.original_itinerary,
               segments: (c.original_itinerary.segments ?? []).sort(
-                (a: any, b: any) => a.segment_order - b.segment_order
+                (a: any, b: any) => a.segment_order - b.segment_order,
               ),
             }
           : null;
 
         const alternativesWithDiff = [];
-        for (const alt of (c.alternatives ?? [])) {
+        for (const alt of c.alternatives ?? []) {
           const it = alt.itinerary
             ? {
                 ...alt.itinerary,
                 segments: (alt.itinerary.segments ?? []).sort(
-                  (a: any, b: any) => a.segment_order - b.segment_order
+                  (a: any, b: any) => a.segment_order - b.segment_order,
                 ),
               }
             : null;
@@ -254,15 +299,21 @@ function ClientTripDetail() {
     (c) =>
       c.workflow_status === "client_notified" ||
       c.workflow_status === "client_accepted" ||
-      c.workflow_status === "client_rejected"
+      c.workflow_status === "client_rejected",
   );
 
   useEffect(() => {
-    if (boardingCardQ.data?.checklist) setLocalChecklist(boardingCardQ.data.checklist as unknown as any[]);
+    if (boardingCardQ.data?.checklist)
+      setLocalChecklist(boardingCardQ.data.checklist as unknown as any[]);
   }, [boardingCardQ.data]);
 
   useEffect(() => {
-    if (activeCase && activeCase.alternatives && activeCase.alternatives.length > 0 && !selectedAltId) {
+    if (
+      activeCase &&
+      activeCase.alternatives &&
+      activeCase.alternatives.length > 0 &&
+      !selectedAltId
+    ) {
       setSelectedAltId(activeCase.alternatives[0].id);
     }
   }, [activeCase, selectedAltId]);
@@ -272,11 +323,15 @@ function ClientTripDetail() {
     mutationFn: async (payload: { cardId: string; nextChecklist: any[] }) => {
       const { error } = await supabase.rpc("update_client_boarding_checklist", {
         p_boarding_card_id: payload.cardId,
-        p_checklist: payload.nextChecklist as unknown as import("@/integrations/supabase/types").Json,
+        p_checklist:
+          payload.nextChecklist as unknown as import("@/integrations/supabase/types").Json,
       });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["client-boarding-card", id] }); toast.success("Progresso do embarque atualizado!"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-boarding-card", id] });
+      toast.success("Progresso do embarque atualizado!");
+    },
     onError: (err: any) => toast.error("Erro ao atualizar progresso: " + err.message),
   });
 
@@ -293,18 +348,41 @@ function ClientTripDetail() {
   const triggerEmergency = useMutation({
     mutationFn: async (kind: "delay" | "cancellation") => {
       const pnr = trip.pnr || boardingCardQ.data?.pnr || "";
-      const title = kind === "delay" ? `EMERGÊNCIA: Voo Atrasado (PNR: ${pnr || "Pendente"})` : `EMERGÊNCIA: Voo Cancelado (PNR: ${pnr || "Pendente"})`;
+      const title =
+        kind === "delay"
+          ? `EMERGÊNCIA: Voo Atrasado (PNR: ${pnr || "Pendente"})`
+          : `EMERGÊNCIA: Voo Cancelado (PNR: ${pnr || "Pendente"})`;
       const description = `Alerta gerado automaticamente pelo passageiro no portal de autoatendimento.\nRef: ${trip.title} — Relatou: ${kind === "delay" ? "Atraso no Voo" : "Voo Cancelado"}.`;
-      const { data, error } = await supabase.from("support_tickets").insert({ agency_id: trip.agency_id!, trip_id: id, title, description, priority: "urgent", type: "trip", status: "open" }).select("*").single();
+      const { data, error } = await supabase
+        .from("support_tickets")
+        .insert({
+          agency_id: trip.agency_id!,
+          trip_id: id,
+          title,
+          description,
+          priority: "urgent",
+          type: "trip",
+          status: "open",
+        })
+        .select("*")
+        .single();
       if (error) throw error;
       return data;
     },
-    onSuccess: (_, kind) => toast.success(kind === "delay" ? "Notificação de atraso enviada!" : "Notificação de cancelamento enviada!", { description: "Nossa equipe de suporte foi alertada em caráter de urgência." }),
+    onSuccess: (_, kind) =>
+      toast.success(
+        kind === "delay"
+          ? "Notificação de atraso enviada!"
+          : "Notificação de cancelamento enviada!",
+        { description: "Nossa equipe de suporte foi alertada em caráter de urgência." },
+      ),
     onError: (e: any) => toast.error(e.message || "Erro ao gerar alerta de emergência"),
   });
 
   const uploadMemory = useMutation({
-    mutationFn: async (urls: string[]) => { await addTripMemories(id, urls, tripQ.data?.agency_id ?? ""); },
+    mutationFn: async (urls: string[]) => {
+      await addTripMemories(id, urls, tripQ.data?.agency_id ?? "");
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["client-memories", id] }),
   });
 
@@ -332,16 +410,29 @@ function ClientTripDetail() {
         .eq("id", instId);
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Comprovante enviado! Aguardando verificação da agência."); qc.invalidateQueries({ queryKey: ["client-installments", id] }); },
+    onSuccess: () => {
+      toast.success("Comprovante enviado! Aguardando verificação da agência.");
+      qc.invalidateQueries({ queryKey: ["client-installments", id] });
+    },
     onError: (err: any) => toast.error("Erro ao enviar comprovante: " + err.message),
   });
 
   const acceptLgpd = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("legal_acceptances" as any).insert({ client_id: tripQ.data!.client_id, agency_id: tripQ.data!.agency_id, terms_type: "lgpd_memories", user_agent: navigator.userAgent });
+      const { error } = await supabase
+        .from("legal_acceptances" as any)
+        .insert({
+          client_id: tripQ.data!.client_id,
+          agency_id: tripQ.data!.agency_id,
+          terms_type: "lgpd_memories",
+          user_agent: navigator.userAgent,
+        });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["client-lgpd-acceptance", tripQ.data!.client_id] }); toast.success("Termos LGPD aceitos com sucesso!"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client-lgpd-acceptance", tripQ.data!.client_id] });
+      toast.success("Termos LGPD aceitos com sucesso!");
+    },
     onError: (err: any) => toast.error("Erro ao registrar consentimento: " + err.message),
   });
 
@@ -384,9 +475,10 @@ function ClientTripDetail() {
           user_agent: userAgent,
           signature_hash: signatureHash,
           portal_session_id: portalSessionId,
-          decision_text_snapshot: payload.status === "accepted"
-            ? `Eu, ${payload.typedName}, aceito expressamente a reacomodação do voo conforme proposta apresentada.`
-            : `Eu, ${payload.typedName}, recuso a reacomodação proposta e solicito novas opções.`,
+          decision_text_snapshot:
+            payload.status === "accepted"
+              ? `Eu, ${payload.typedName}, aceito expressamente a reacomodação do voo conforme proposta apresentada.`
+              : `Eu, ${payload.typedName}, recuso a reacomodação proposta e solicito novas opções.`,
         })
         .select()
         .single();
@@ -416,31 +508,44 @@ function ClientTripDetail() {
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleToggleChecklist = (index: number) => {
     if (!boardingCardQ.data) return;
-    const updated = localChecklist.map((item, idx) => idx === index ? { ...item, done: !item.done } : item);
+    const updated = localChecklist.map((item, idx) =>
+      idx === index ? { ...item, done: !item.done } : item,
+    );
     setLocalChecklist(updated);
     toggleBoardingItem.mutate({ cardId: boardingCardQ.data.id, nextChecklist: updated });
   };
 
   // ── Early returns ─────────────────────────────────────────────────────────
-  if (tripQ.isLoading) return <div className="py-20 text-center text-sm text-muted-foreground">Carregando Viagem...</div>;
-  if (!tripQ.data) return <div className="py-20 text-center text-sm text-muted-foreground">Viagem não encontrada.</div>;
+  if (tripQ.isLoading)
+    return (
+      <div className="py-20 text-center text-sm text-muted-foreground">Carregando Viagem...</div>
+    );
+  if (!tripQ.data)
+    return (
+      <div className="py-20 text-center text-sm text-muted-foreground">Viagem não encontrada.</div>
+    );
 
   const rawTrip = tripQ.data as any;
   const trip = {
     ...rawTrip,
-    itinerary: rawTrip.itinerary && Array.isArray(rawTrip.itinerary) && rawTrip.itinerary.length > 0
-      ? rawTrip.itinerary
-      : (Array.isArray(rawTrip.group_tour?.itinerary) ? rawTrip.group_tour.itinerary : []).map((d: any) => ({
-          day: String(d.day_number || d.day || ""),
-          title: d.title || "",
-          description: d.description_md || d.description || "",
-        })),
-    includes: rawTrip.includes && Array.isArray(rawTrip.includes) && rawTrip.includes.length > 0
-      ? rawTrip.includes
-      : rawTrip.group_tour?.includes || [],
-    excludes: rawTrip.excludes && Array.isArray(rawTrip.excludes) && rawTrip.excludes.length > 0
-      ? rawTrip.excludes
-      : rawTrip.group_tour?.excludes || [],
+    itinerary:
+      rawTrip.itinerary && Array.isArray(rawTrip.itinerary) && rawTrip.itinerary.length > 0
+        ? rawTrip.itinerary
+        : (Array.isArray(rawTrip.group_tour?.itinerary) ? rawTrip.group_tour.itinerary : []).map(
+            (d: any) => ({
+              day: String(d.day_number || d.day || ""),
+              title: d.title || "",
+              description: d.description_md || d.description || "",
+            }),
+          ),
+    includes:
+      rawTrip.includes && Array.isArray(rawTrip.includes) && rawTrip.includes.length > 0
+        ? rawTrip.includes
+        : rawTrip.group_tour?.includes || [],
+    excludes:
+      rawTrip.excludes && Array.isArray(rawTrip.excludes) && rawTrip.excludes.length > 0
+        ? rawTrip.excludes
+        : rawTrip.group_tour?.excludes || [],
   };
 
   const enrollment = enrollmentQ.data;
@@ -457,32 +562,67 @@ function ClientTripDetail() {
 
   const now = new Date();
   const start = trip.travel_start ? new Date(trip.travel_start) : null;
-  const daysToTrip = start ? Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null;
-  const coverImage = trip.cover_image_url || trip.group_tour?.cover_image_url || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80";
+  const daysToTrip = start
+    ? Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+  const coverImage =
+    trip.cover_image_url ||
+    trip.group_tour?.cover_image_url ||
+    "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80";
 
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* ── Immersive Header ────────────────────────────────────────────── */}
       <div className="relative h-[45vh] min-h-[350px] w-full bg-foreground">
-        <img src={coverImage} alt="Destino" className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-overlay" />
+        <img
+          src={coverImage}
+          alt="Destino"
+          className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-overlay"
+        />
         <div className="absolute inset-0 bg-background/60" />
         <div className="absolute top-6 left-6">
-          <Link to="/client/trips" className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/30 transition-all">
+          <Link
+            to="/client/trips"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/30 transition-all"
+          >
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </div>
         <div className="absolute bottom-6 left-6 right-6 z-10">
           <div className="flex items-center gap-2 text-white/80 mb-2">
             <Plane className="h-4 w-4" />
-            <span className="text-xs uppercase tracking-widest font-bold">{trip.code ?? "VIAGEM"}</span>
-            <StatusBadge tone={trip.status === "confirmed" ? "success" : trip.status === "in_progress" ? "info" : trip.status === "cancelled" ? "danger" : "neutral"}>
+            <span className="text-xs uppercase tracking-widest font-bold">
+              {trip.code ?? "VIAGEM"}
+            </span>
+            <StatusBadge
+              tone={
+                trip.status === "confirmed"
+                  ? "success"
+                  : trip.status === "in_progress"
+                    ? "info"
+                    : trip.status === "cancelled"
+                      ? "danger"
+                      : "neutral"
+              }
+            >
               {TRIP_STATUS[trip.status] ?? trip.status}
             </StatusBadge>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">{trip.title}</h1>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+            {trip.title}
+          </h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm font-semibold text-white/90">
-            {trip.destination && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4 text-brand-light" /> {trip.destination}</span>}
-            {trip.travel_start && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4 text-brand-light" /> {fmtDate(trip.travel_start)} → {fmtDate(trip.travel_end)}</span>}
+            {trip.destination && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-brand-light" /> {trip.destination}
+              </span>
+            )}
+            {trip.travel_start && (
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-brand-light" /> {fmtDate(trip.travel_start)} →{" "}
+                {fmtDate(trip.travel_end)}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -490,33 +630,66 @@ function ClientTripDetail() {
       {/* ── Tab Bar ─────────────────────────────────────────────────────── */}
       <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border px-6">
         <div className="flex overflow-x-auto custom-scrollbar gap-8">
-          <TabButton label="Resumo" icon={<FileText className="w-4 h-4" />} active={activeTab === "resumo"} onClick={() => setActiveTab("resumo")} />
-          <TabButton label="Explorar (IA)" icon={<Compass className="w-4 h-4" />} active={activeTab === "explorar"} onClick={() => setActiveTab("explorar")} />
-          <TabButton label="Financeiro" icon={<CreditCard className="w-4 h-4" />} active={activeTab === "financeiro"} onClick={() => setActiveTab("financeiro")} />
-          <TabButton label="Contatos" icon={<Phone className="w-4 h-4" />} active={activeTab === "contatos"} onClick={() => setActiveTab("contatos")} />
-          <TabButton label="Memórias" icon={<Camera className="w-4 h-4" />} active={activeTab === "memorias"} onClick={() => setActiveTab("memorias")} />
+          <TabButton
+            label="Resumo"
+            icon={<FileText className="w-4 h-4" />}
+            active={activeTab === "resumo"}
+            onClick={() => setActiveTab("resumo")}
+          />
+          <TabButton
+            label="Explorar (IA)"
+            icon={<Compass className="w-4 h-4" />}
+            active={activeTab === "explorar"}
+            onClick={() => setActiveTab("explorar")}
+          />
+          <TabButton
+            label="Financeiro"
+            icon={<CreditCard className="w-4 h-4" />}
+            active={activeTab === "financeiro"}
+            onClick={() => setActiveTab("financeiro")}
+          />
+          <TabButton
+            label="Contatos"
+            icon={<Phone className="w-4 h-4" />}
+            active={activeTab === "contatos"}
+            onClick={() => setActiveTab("contatos")}
+          />
+          <TabButton
+            label="Memórias"
+            icon={<Camera className="w-4 h-4" />}
+            active={activeTab === "memorias"}
+            onClick={() => setActiveTab("memorias")}
+          />
         </div>
       </div>
 
       {/* ── Tab Content ─────────────────────────────────────────────────── */}
       <div className="max-w-5xl mx-auto px-6 py-8">
-
         {/* ── RESUMO ───────────────────────────────────────────────────── */}
         {activeTab === "resumo" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Reacomodação Alert Banner */}
             {activeCase && (
-              <div className={cn(
-                "rounded-3xl border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm",
-                activeCase.workflow_status === "client_notified"
-                  ? "bg-rose-500/10 border-rose-200 text-rose-950 animate-pulse"
-                  : activeCase.workflow_status === "client_accepted"
-                    ? "bg-emerald-500/10 border-emerald-200 text-emerald-950"
-                    : "bg-amber-500/10 border-amber-200 text-amber-950"
-              )}>
+              <div
+                className={cn(
+                  "rounded-3xl border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm",
+                  activeCase.workflow_status === "client_notified"
+                    ? "bg-rose-500/10 border-rose-200 text-rose-950 animate-pulse"
+                    : activeCase.workflow_status === "client_accepted"
+                      ? "bg-emerald-500/10 border-emerald-200 text-emerald-950"
+                      : "bg-amber-500/10 border-amber-200 text-amber-950",
+                )}
+              >
                 <div className="space-y-1">
                   <div className="text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 opacity-80">
-                    <AlertTriangle className={cn("h-4 w-4", activeCase.workflow_status === "client_notified" ? "text-rose-600 animate-bounce" : "text-emerald-600")} />
+                    <AlertTriangle
+                      className={cn(
+                        "h-4 w-4",
+                        activeCase.workflow_status === "client_notified"
+                          ? "text-rose-600 animate-bounce"
+                          : "text-emerald-600",
+                      )}
+                    />
                     Aviso de Alteração de Voo
                   </div>
                   <h3 className="text-base font-black tracking-tight mt-1">
@@ -548,10 +721,16 @@ function ClientTripDetail() {
             {daysToTrip !== null && daysToTrip > 0 && (
               <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-widest opacity-80">Contagem Regressiva</div>
-                  <div className="text-sm font-medium mt-1">Sua viagem se aproxima! Prepare as malas.</div>
+                  <div className="text-xs font-bold uppercase tracking-widest opacity-80">
+                    Contagem Regressiva
+                  </div>
+                  <div className="text-sm font-medium mt-1">
+                    Sua viagem se aproxima! Prepare as malas.
+                  </div>
                 </div>
-                <div className="text-4xl font-black tracking-tighter">{daysToTrip} <span className="text-lg font-bold opacity-80">Dias</span></div>
+                <div className="text-4xl font-black tracking-tighter">
+                  {daysToTrip} <span className="text-lg font-bold opacity-80">Dias</span>
+                </div>
               </div>
             )}
 
@@ -563,9 +742,13 @@ function ClientTripDetail() {
                   <div className="rounded-3xl bg-surface p-6 border border-border">
                     <div className="mb-5 flex items-center gap-3">
                       <Plane className="h-5 w-5 text-info" />
-                      <h3 className="text-sm font-black text-foreground tracking-tight">Localizador e Voos</h3>
+                      <h3 className="text-sm font-black text-foreground tracking-tight">
+                        Localizador e Voos
+                      </h3>
                     </div>
-                    {voucher?.flights?.length > 0 && <TripVoucherFlights pnr={pnr} flights={voucher.flights} />}
+                    {voucher?.flights?.length > 0 && (
+                      <TripVoucherFlights pnr={pnr} flights={voucher.flights} />
+                    )}
                     <TripCheckinWidget
                       pnr={pnr}
                       passengers={passengers}
@@ -587,17 +770,23 @@ function ClientTripDetail() {
                   <div className="rounded-3xl bg-surface p-6 border border-border space-y-4">
                     <div className="flex items-center gap-3">
                       <Compass className="h-5 w-5 text-brand" />
-                      <h3 className="text-sm font-black text-foreground tracking-tight">Informações da Excursão</h3>
+                      <h3 className="text-sm font-black text-foreground tracking-tight">
+                        Informações da Excursão
+                      </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       <div className="p-3 bg-surface-alt/50 border border-border rounded-xl">
-                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">Sua Poltrona</span>
+                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                          Sua Poltrona
+                        </span>
                         <strong className="text-sm font-extrabold text-foreground mt-1.5 block">
                           {enrollment?.seat_number || "A definir"}
                         </strong>
                       </div>
                       <div className="p-3 bg-surface-alt/50 border border-border rounded-xl">
-                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">Acomodação</span>
+                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                          Acomodação
+                        </span>
                         <strong className="text-sm font-extrabold text-foreground mt-1.5 block truncate">
                           {clientRoom ? `Quarto ${clientRoom.room_number}` : "A definir"}
                         </strong>
@@ -635,7 +824,8 @@ function ClientTripDetail() {
               <Compass className="w-10 h-10 mb-4 opacity-90" />
               <h2 className="text-3xl font-black tracking-tight mb-2">Seu Guia Inteligente</h2>
               <p className="text-white/80 font-medium max-w-lg leading-relaxed">
-                Reunimos automaticamente as melhores dicas, alertas de segurança e mapas do seu destino para você aproveitar sem preocupações.
+                Reunimos automaticamente as melhores dicas, alertas de segurança e mapas do seu
+                destino para você aproveitar sem preocupações.
               </p>
             </div>
 
@@ -645,7 +835,9 @@ function ClientTripDetail() {
                   <h3 className="text-base font-extrabold tracking-tight text-foreground flex items-center gap-2">
                     <Plane className="h-5 w-5 text-brand" /> Passagens e Detalhes dos Voos
                   </h3>
-                  <span className="text-xs font-semibold text-muted-foreground">{trip.flights.length} voo(s)</span>
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    {trip.flights.length} voo(s)
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {trip.flights.map((f: any, idx: number) => (
@@ -655,8 +847,12 @@ function ClientTripDetail() {
               </div>
             )}
 
-            {destInfoQ.data && <DestinationIntelligenceBlock di={destInfoQ.data} destination={trip.destination} />}
-            {!destInfoQ.data && !destInfoQ.isLoading && <DestinationFallbackBlock destination={trip.destination} />}
+            {destInfoQ.data && (
+              <DestinationIntelligenceBlock di={destInfoQ.data} destination={trip.destination} />
+            )}
+            {!destInfoQ.data && !destInfoQ.isLoading && (
+              <DestinationFallbackBlock destination={trip.destination} />
+            )}
           </div>
         )}
 
@@ -709,19 +905,24 @@ function ClientTripDetail() {
               <AlertTriangle className="h-5 w-5 animate-pulse" />
               Notificação de Alteração de Voo
             </div>
-            <DialogTitle className="text-xl font-bold mt-1">Revisão de Reacomodação Aérea</DialogTitle>
+            <DialogTitle className="text-xl font-bold mt-1">
+              Revisão de Reacomodação Aérea
+            </DialogTitle>
             <DialogDescription className="text-xs">
-              A companhia aérea realizou alterações no seu itinerário original. Por favor, analise a nova proposta de voo abaixo e assine eletronicamente para confirmar suas novas passagens.
+              A companhia aérea realizou alterações no seu itinerário original. Por favor, analise a
+              nova proposta de voo abaixo e assine eletronicamente para confirmar suas novas
+              passagens.
             </DialogDescription>
           </DialogHeader>
 
           {activeCase && activeCase.original_itinerary && (
             <div className="space-y-6 py-4">
-              
               {/* Opções de escolha se houver mais de uma */}
               {activeCase.alternatives && activeCase.alternatives.length > 1 && (
                 <div className="space-y-2 bg-surface-alt/10 p-3 rounded-xl border border-border/60">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase block">Selecione a opção de voo preferida:</span>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase block">
+                    Selecione a opção de voo preferida:
+                  </span>
                   <div className="grid grid-cols-2 gap-3">
                     {activeCase.alternatives.map((alt: any, i: number) => (
                       <button
@@ -732,12 +933,18 @@ function ClientTripDetail() {
                           "p-3 rounded-xl border text-left transition-all text-xs flex flex-col gap-1 cursor-pointer",
                           selectedAltId === alt.id
                             ? "border-brand bg-brand/5 text-foreground font-bold shadow-sm"
-                            : "border-border bg-surface text-muted-foreground hover:text-foreground"
+                            : "border-border bg-surface text-muted-foreground hover:text-foreground",
                         )}
                       >
-                        <span>Opção {i + 1} (Via {alt.source})</span>
+                        <span>
+                          Opção {i + 1} (Via {alt.source})
+                        </span>
                         <span className="font-semibold">
-                          {alt.itinerary?.segments?.[0]?.origin_iata} → {alt.itinerary?.segments?.[alt.itinerary.segments.length - 1]?.destination_iata}
+                          {alt.itinerary?.segments?.[0]?.origin_iata} →{" "}
+                          {
+                            alt.itinerary?.segments?.[alt.itinerary.segments.length - 1]
+                              ?.destination_iata
+                          }
                         </span>
                       </button>
                     ))}
@@ -747,7 +954,9 @@ function ClientTripDetail() {
 
               {/* Visual Segment Diff Viewer */}
               {(() => {
-                const selectedAlt = activeCase.alternatives?.find((a: any) => a.id === selectedAltId);
+                const selectedAlt = activeCase.alternatives?.find(
+                  (a: any) => a.id === selectedAltId,
+                );
                 const originalIt = activeCase.original_itinerary;
                 const alternativeIt = selectedAlt?.itinerary;
                 const analysis = selectedAlt?.difference_analysis;
@@ -762,14 +971,47 @@ function ClientTripDetail() {
                         </div>
                         <div className="space-y-3">
                           {originalIt.segments?.map((seg: any, idx: number) => (
-                            <div key={seg.id || idx} className="text-xs border-l-2 border-slate-300 pl-3 py-1 space-y-1">
-                              <div className="font-bold text-foreground">{seg.airline_code} {seg.flight_number}</div>
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <span className="font-semibold text-foreground">{seg.origin_iata}</span> → <span className="font-semibold text-foreground">{seg.destination_iata}</span>
+                            <div
+                              key={seg.id || idx}
+                              className="text-xs border-l-2 border-slate-300 pl-3 py-1 space-y-1"
+                            >
+                              <div className="font-bold text-foreground">
+                                {seg.airline_code} {seg.flight_number}
                               </div>
-                              <div>Partida: <span className="font-medium text-foreground">{fmtDate(seg.departure_at)} às {new Date(seg.departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
-                              <div>Chegada: <span className="font-medium text-foreground">{fmtDate(seg.arrival_at)} às {new Date(seg.arrival_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
-                              {seg.baggage && <div className="text-[10px] text-muted-foreground">Bagagem: {seg.baggage}</div>}
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <span className="font-semibold text-foreground">
+                                  {seg.origin_iata}
+                                </span>{" "}
+                                →{" "}
+                                <span className="font-semibold text-foreground">
+                                  {seg.destination_iata}
+                                </span>
+                              </div>
+                              <div>
+                                Partida:{" "}
+                                <span className="font-medium text-foreground">
+                                  {fmtDate(seg.departure_at)} às{" "}
+                                  {new Date(seg.departure_at).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+                              <div>
+                                Chegada:{" "}
+                                <span className="font-medium text-foreground">
+                                  {fmtDate(seg.arrival_at)} às{" "}
+                                  {new Date(seg.arrival_at).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+                              {seg.baggage && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  Bagagem: {seg.baggage}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -782,14 +1024,47 @@ function ClientTripDetail() {
                         </div>
                         <div className="space-y-3">
                           {alternativeIt?.segments?.map((seg: any, idx: number) => (
-                            <div key={seg.id || idx} className="text-xs border-l-2 border-rose-400 pl-3 py-1 space-y-1">
-                              <div className="font-bold text-foreground">{seg.airline_code} {seg.flight_number}</div>
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <span className="font-semibold text-rose-700">{seg.origin_iata}</span> → <span className="font-semibold text-rose-700">{seg.destination_iata}</span>
+                            <div
+                              key={seg.id || idx}
+                              className="text-xs border-l-2 border-rose-400 pl-3 py-1 space-y-1"
+                            >
+                              <div className="font-bold text-foreground">
+                                {seg.airline_code} {seg.flight_number}
                               </div>
-                              <div>Partida: <span className="font-medium text-foreground">{fmtDate(seg.departure_at)} às {new Date(seg.departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
-                              <div>Chegada: <span className="font-medium text-foreground">{fmtDate(seg.arrival_at)} às {new Date(seg.arrival_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
-                              {seg.baggage && <div className="text-[10px] text-muted-foreground">Bagagem: {seg.baggage}</div>}
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <span className="font-semibold text-rose-700">
+                                  {seg.origin_iata}
+                                </span>{" "}
+                                →{" "}
+                                <span className="font-semibold text-rose-700">
+                                  {seg.destination_iata}
+                                </span>
+                              </div>
+                              <div>
+                                Partida:{" "}
+                                <span className="font-medium text-foreground">
+                                  {fmtDate(seg.departure_at)} às{" "}
+                                  {new Date(seg.departure_at).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+                              <div>
+                                Chegada:{" "}
+                                <span className="font-medium text-foreground">
+                                  {fmtDate(seg.arrival_at)} às{" "}
+                                  {new Date(seg.arrival_at).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </span>
+                              </div>
+                              {seg.baggage && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  Bagagem: {seg.baggage}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -803,7 +1078,8 @@ function ClientTripDetail() {
                           <Shield className="h-4 w-4" /> Análise de Impacto de Viagem
                         </div>
                         <p className="text-xs text-amber-900 leading-relaxed">
-                          {analysis.deterministic_summary} Nosso comparador de voo atribuiu uma pontuação de alteração de <strong>{analysis.risk_score}/100</strong>.
+                          {analysis.deterministic_summary} Nosso comparador de voo atribuiu uma
+                          pontuação de alteração de <strong>{analysis.risk_score}/100</strong>.
                         </p>
                         {analysis.warnings && analysis.warnings.length > 0 && (
                           <div className="text-[11px] text-amber-800 space-y-1 mt-1 pl-4 list-disc">
@@ -822,30 +1098,58 @@ function ClientTripDetail() {
 
               {/* Digital Signature Disclosures */}
               <div className="space-y-3.5 border-t border-border/40 pt-4">
-                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Declarações de Ciência e Consentimento Jurídico</h4>
-                
+                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Declarações de Ciência e Consentimento Jurídico
+                </h4>
+
                 <div className="space-y-3">
                   <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
-                    <Checkbox checked={consent1} onCheckedChange={(c: any) => setConsent1(c)} className="mt-0.5" />
-                    <span>Estou ciente de que as alterações acima foram determinadas exclusivamente pela companhia aérea e que a agência atuou na facilitação da reacomodação.</span>
+                    <Checkbox
+                      checked={consent1}
+                      onCheckedChange={(c: any) => setConsent1(c)}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      Estou ciente de que as alterações acima foram determinadas exclusivamente pela
+                      companhia aérea e que a agência atuou na facilitação da reacomodação.
+                    </span>
                   </label>
 
                   <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
-                    <Checkbox checked={consent2} onCheckedChange={(c: any) => setConsent2(c)} className="mt-0.5" />
-                    <span>Compreendo e aceito as diferenças de horários, escalas ou conexões conforme apresentadas no painel comparativo acima.</span>
+                    <Checkbox
+                      checked={consent2}
+                      onCheckedChange={(c: any) => setConsent2(c)}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      Compreendo e aceito as diferenças de horários, escalas ou conexões conforme
+                      apresentadas no painel comparativo acima.
+                    </span>
                   </label>
 
                   <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
-                    <Checkbox checked={consent3} onCheckedChange={(c: any) => setConsent3(c)} className="mt-0.5" />
-                    <span>Concordo com a alteração do contrato de prestação de serviços turísticos para contemplar este novo itinerário de voo de forma definitiva.</span>
+                    <Checkbox
+                      checked={consent3}
+                      onCheckedChange={(c: any) => setConsent3(c)}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      Concordo com a alteração do contrato de prestação de serviços turísticos para
+                      contemplar este novo itinerário de voo de forma definitiva.
+                    </span>
                   </label>
                 </div>
               </div>
 
               {/* Signature Input */}
               <div className="space-y-2 bg-surface-alt/10 p-4 rounded-2xl border border-border/60">
-                <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">Assinatura Eletrônica do Passageiro</Label>
-                <p className="text-[10px] text-muted-foreground mb-2">Digite seu nome completo exatamente como consta no seu documento para gerar a chave de integridade criptográfica.</p>
+                <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">
+                  Assinatura Eletrônica do Passageiro
+                </Label>
+                <p className="text-[10px] text-muted-foreground mb-2">
+                  Digite seu nome completo exatamente como consta no seu documento para gerar a
+                  chave de integridade criptográfica.
+                </p>
                 <Input
                   id="sig-name"
                   placeholder="Seu Nome Completo"
@@ -854,7 +1158,6 @@ function ClientTripDetail() {
                   className="bg-surface font-serif italic text-sm border-border focus:border-brand rounded-xl"
                 />
               </div>
-
             </div>
           )}
 
@@ -881,7 +1184,13 @@ function ClientTripDetail() {
               Recusar Proposta
             </Button>
             <div className="flex gap-2 w-full sm:w-auto order-1 sm:order-2">
-              <Button variant="ghost" onClick={() => setIsClientReviewOpen(false)} className="rounded-2xl text-xs">Voltar</Button>
+              <Button
+                variant="ghost"
+                onClick={() => setIsClientReviewOpen(false)}
+                className="rounded-2xl text-xs"
+              >
+                Voltar
+              </Button>
               <Button
                 className="cursor-pointer bg-brand hover:bg-brand-dark text-brand-foreground rounded-2xl text-xs px-6 py-3 shadow-sm"
                 onClick={() => {

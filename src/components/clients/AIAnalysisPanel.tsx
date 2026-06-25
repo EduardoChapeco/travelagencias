@@ -124,8 +124,8 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
             <div className="pt-4 text-center">
               <Sparkles className="h-8 w-8 text-brand mx-auto mb-3 opacity-60" />
               <p className="text-sm text-muted-foreground mb-4">
-                O assistente analisará o histórico de viagens, cotações e padrões de comportamento do
-                cliente.
+                O assistente analisará o histórico de viagens, cotações e padrões de comportamento
+                do cliente.
               </p>
               <button
                 onClick={runAnalysis}

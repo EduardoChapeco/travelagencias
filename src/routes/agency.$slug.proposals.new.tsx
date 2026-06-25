@@ -314,8 +314,8 @@ function NewProposal() {
               <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento Automaticamente
             </h3>
             <p className="text-xs text-muted-foreground mt-1 max-w-md">
-              Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos, hotéis e o
-              itinerário completo automaticamente.
+              Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos, hotéis
+              e o itinerário completo automaticamente.
             </p>
             <input
               type="file"

@@ -5,6 +5,7 @@ Concluímos com sucesso as implementações e refatorações de todas as fases p
 ---
 
 ## Fase B: Consolidação da Rooming List
+
 - **Banco de Dados (Migration `20260625000001_rooming_list_consolidation.sql`):** Adicionada a coluna `group_tour_id uuid references public.group_tours(id)` na tabela normalizada `boarding_rooming_list`. Tornada a coluna `card_id` nullable (para suportar quartos de grupos sem a necessidade de um cartão de embarque avulso associado).
 - **Migração de Dados (JSONB → Relacional):** Criada lógica SQL que converteu todos os registros configurados no JSONB `group_tours.rooming_list` em linhas normalizadas na tabela `boarding_rooming_list` sem perda de dados históricos. Removida por completo a coluna obsoleta `rooming_list` de `group_tours`.
 - **Frontend (`agency.$slug.group-tours.$id.tsx`):** Substituída a lógica de escrita e leitura em massa (bulk) do blob JSONB antigo no `RoomingListManager` por operações CRUD reais e normalizadas (`createRoomRecord`, `updateRoomRecord`, `deleteRoomRecord`) que interagem individualmente com a tabela `boarding_rooming_list`.
@@ -12,6 +13,7 @@ Concluímos com sucesso as implementações e refatorações de todas as fases p
 ---
 
 ## Fase C: Checkout B2C Pix Real
+
 - **Banco de Dados (Migration `20260625000002_checkout_pix_storage_integration.sql`):** Adicionadas as colunas `receipt_url`, `email` e `phone` na tabela `group_tour_enrollments` para documentação direta dos contatos e do link do comprovante físico de pagamento. Adicionada a coluna `pix_key` na tabela `portal_settings` para que cada agência configure dinamicamente seu canal ou chave de recebimento.
 - **Bucket de Storage Público/Protegido (`payment-receipts`):** Criado o bucket de storage com RLS permitindo uploads por usuários não autenticados (`anon`) e leitura geral (`public`).
 - **RPC de Transação Segura (`enroll_public_tour`):** Criada a função de banco com `SECURITY DEFINER` que executa todas as etapas de cadastro de leads, inserção de inscrições com poltronas e incremento do contador de assentos da excursão de forma atômica e segura.
@@ -20,6 +22,7 @@ Concluímos com sucesso as implementações e refatorações de todas as fases p
 ---
 
 ## Fase D: Ativação Omnichannel
+
 - **Correção de Banco de Dados nas Edge Functions:** Atualizadas as Edge Functions `gmail-send` e `gmail-sync` locais para consultar `integrations_config` em vez da coluna inexistente `settings` na tabela `agencies`.
 - **Fallback para Resend API:** Adicionado fluxo de fallback automático para envio de e-mails via Resend API dentro do `gmail-send` quando os tokens do Gmail OAuth estiverem ausentes.
 - **Frontend de Tickets (`agency.$slug.support.$ticket_id.tsx`):** Injetado o estado `supplierEmail` e input de e-mail do fornecedor quando o tipo de resposta for "supplier".
@@ -28,6 +31,7 @@ Concluímos com sucesso as implementações e refatorações de todas as fases p
 ---
 
 ## Fase E: Check-in Links & Reacomodação
+
 - **Banco de Dados (Migration `20260625000003_checkin_links_and_boarding_events.sql`):**
   - Criada a tabela `checkin_links` para armazenar overrides manuais de check-in vinculados a trechos de voos e agências.
   - Criada a tabela `boarding_events` para documentação da linha de tempo do passageiro (`checkin_link_clicked`, `reaccommodation_accepted`, `flight_issue`, etc.).
@@ -53,5 +57,6 @@ Concluímos com sucesso as implementações e refatorações de todas as fases p
 ---
 
 ## Validação e Compilação
+
 - **TypeScript Check (`npm run typecheck`):** Executado e validado com **0 erros**.
 - **Production Build (`npm run build`):** Executado com sucesso e empacotamento completo do Nitro e Workers em **36.32s** (utilizando `--max-old-space-size=4096`).

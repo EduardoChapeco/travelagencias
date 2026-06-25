@@ -130,7 +130,9 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
   const maxRetries = 2;
   const timeoutMs = 45000; // 45 seconds timeout for heavy Vision OCR files
 
-  const executeOcrWithRetry = async (attempt: number = 1): Promise<{
+  const executeOcrWithRetry = async (
+    attempt: number = 1,
+  ): Promise<{
     flights?: Flight[];
     hotels?: Hotel[];
     transfers?: Transfer[];

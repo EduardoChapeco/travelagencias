@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Download, FileText, Image as ImageIcon, Server, ExternalLink, AlertCircle } from "lucide-react";
+import {
+  Download,
+  FileText,
+  Image as ImageIcon,
+  Server,
+  ExternalLink,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   type Proposal,
@@ -41,7 +48,9 @@ function validateProposalForExport(proposal: Proposal): ValidationResult {
   const hasIncludes = (proposal.includes ?? []).length > 0;
 
   if (!hasFlights && !hasHotels && !hasTransfers && !hasTours && !hasItinerary && !hasIncludes) {
-    errors.push("Adicione pelo menos uma seção de conteúdo (voo, hotel, transfer, passeio ou roteiro) antes de exportar.");
+    errors.push(
+      "Adicione pelo menos uma seção de conteúdo (voo, hotel, transfer, passeio ou roteiro) antes de exportar.",
+    );
   }
 
   // Must have a total value > 0 if it's a commercial proposal
@@ -51,7 +60,6 @@ function validateProposalForExport(proposal: Proposal): ValidationResult {
 
   return { ok: errors.length === 0, errors };
 }
-
 
 export function ExportPdfButton({ proposal }: Props) {
   const [busy, setBusy] = useState(false);

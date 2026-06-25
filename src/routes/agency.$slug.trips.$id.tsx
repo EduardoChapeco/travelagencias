@@ -197,7 +197,10 @@ function TripLayout() {
     enabled: !!agency,
     queryKey: ["passengers", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("trip_passengers").select("id, full_name, document").eq("trip_id", id);
+      const { data, error } = await supabase
+        .from("trip_passengers")
+        .select("id, full_name, document")
+        .eq("trip_id", id);
       if (error) throw error;
       return data ?? [];
     },
@@ -290,7 +293,7 @@ function TripLayout() {
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <ConfirmDialog />
-      
+
       {/* ── Sticky Trip Header Bar ─────────────────────────────────── */}
       <div className="px-4 md:px-6 pt-4 md:pt-4 flex flex-col gap-4 bg-surface border-b border-border shrink-0">
         {/* Nav + Ações */}
@@ -616,12 +619,16 @@ function TripLayout() {
                 <Download className="h-5 w-5 text-brand" /> Vincular Localizador de Reserva
               </h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Insira o código localizador da reserva da operadora parceira para vincular a esta viagem. As informações de passageiros e vouchers serão importadas de forma automática.
+                Insira o código localizador da reserva da operadora parceira para vincular a esta
+                viagem. As informações de passageiros e vouchers serão importadas de forma
+                automática.
               </p>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Localizador da Reserva</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Localizador da Reserva
+              </label>
               <input
                 type="text"
                 placeholder="Ex: 849372"
@@ -668,24 +675,33 @@ function TripLayout() {
               <>
                 <div>
                   <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                    <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros & Tarifas
+                    <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros &
+                    Tarifas
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    Antes de solicitar a emissão, confirme se todos os passageiros da viagem estão listados corretamente abaixo e se seus documentos estão preenchidos.
+                    Antes de solicitar a emissão, confirme se todos os passageiros da viagem estão
+                    listados corretamente abaixo e se seus documentos estão preenchidos.
                   </p>
                 </div>
 
                 <div className="max-h-40 overflow-y-auto border border-border rounded-xl p-3 bg-surface-alt space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Passageiros Vinculados</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                    Passageiros Vinculados
+                  </span>
                   {paxQ.isLoading ? (
                     <div className="text-xs text-muted-foreground py-2 flex items-center gap-1.5">
                       <Loader2 className="h-3 w-3 animate-spin" /> Carregando passageiros...
                     </div>
                   ) : paxQ.data && paxQ.data.length > 0 ? (
                     paxQ.data.map((p: any) => (
-                      <div key={p.id} className="text-xs text-foreground flex justify-between items-center py-1 border-b border-border last:border-0">
+                      <div
+                        key={p.id}
+                        className="text-xs text-foreground flex justify-between items-center py-1 border-b border-border last:border-0"
+                      >
                         <span className="font-semibold">{p.full_name}</span>
-                        <span className="text-muted-foreground font-mono text-[10px]">{p.document || "Sem Documento"}</span>
+                        <span className="text-muted-foreground font-mono text-[10px]">
+                          {p.document || "Sem Documento"}
+                        </span>
                       </div>
                     ))
                   ) : (
@@ -696,7 +712,8 @@ function TripLayout() {
                 </div>
 
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-700 leading-relaxed">
-                  <strong>Aviso de Tarifas:</strong> Esta etapa fará a verificação em tempo real da disponibilidade e tarifas vigentes junto à operadora parceira.
+                  <strong>Aviso de Tarifas:</strong> Esta etapa fará a verificação em tempo real da
+                  disponibilidade e tarifas vigentes junto à operadora parceira.
                 </div>
 
                 <div className="flex gap-3 pt-2">
@@ -724,15 +741,19 @@ function TripLayout() {
               <>
                 <div>
                   <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão Oficial
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão
+                    Oficial
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    Tarifas e disponibilidade confirmadas com sucesso junto à operadora parceira. Deseja realizar a emissão oficial dos bilhetes/vouchers?
+                    Tarifas e disponibilidade confirmadas com sucesso junto à operadora parceira.
+                    Deseja realizar a emissão oficial dos bilhetes/vouchers?
                   </p>
                 </div>
 
                 <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-700 leading-relaxed font-medium">
-                  ⚠️ <strong>Atenção:</strong> A emissão gera cobranças reais e passará a constar no faturamento junto à operadora parceira. Esta ação é definitiva e não poderá ser desfeita pelo painel.
+                  ⚠️ <strong>Atenção:</strong> A emissão gera cobranças reais e passará a constar no
+                  faturamento junto à operadora parceira. Esta ação é definitiva e não poderá ser
+                  desfeita pelo painel.
                 </div>
 
                 <div className="flex gap-3 pt-2">

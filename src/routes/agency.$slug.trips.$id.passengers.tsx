@@ -302,8 +302,8 @@ function PassengersPage() {
                   list.data.filter((p: any) => p.notes?.includes("Importado automaticamente"))
                     .length
                 }{" "}
-                passageiro(s) foram associados a partir da proposta.
-                Por favor, revise as informações e confirme os dados dos documentos antes do embarque.
+                passageiro(s) foram associados a partir da proposta. Por favor, revise as
+                informações e confirme os dados dos documentos antes do embarque.
               </p>
             </div>
           </div>
@@ -671,8 +671,8 @@ function DataConferencePanel({
   onClose,
   onSaved,
 }: DataConferencePanelProps) {
-  const passenger = passengers.find(p => p.id === passengerId);
-  const doc = documents?.find(d => d.passenger_id === passengerId);
+  const passenger = passengers.find((p) => p.id === passengerId);
+  const doc = documents?.find((d) => d.passenger_id === passengerId);
 
   const [fullName, setFullName] = useState(passenger?.full_name || "");
   const [kind, setKind] = useState(passenger?.kind || "adult");
@@ -764,7 +764,9 @@ function DataConferencePanel({
           toast.success("Documento anexado com sucesso.", { id: toastId });
         }
       } catch (ocrErr) {
-        toast.success("Documento anexado com sucesso. (Leitura automática indisponível)", { id: toastId });
+        toast.success("Documento anexado com sucesso. (Leitura automática indisponível)", {
+          id: toastId,
+        });
       }
 
       const { error: insertErr } = await supabase.from("passenger_documents").insert({
@@ -843,14 +845,19 @@ function DataConferencePanel({
               doc?.file_path?.toLowerCase().endsWith(".pdf") ? (
                 <iframe src={signedUrl} className="w-full h-full rounded-lg border border-border" />
               ) : (
-                <img src={signedUrl} className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-sm" alt="Documento" />
+                <img
+                  src={signedUrl}
+                  className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-sm"
+                  alt="Documento"
+                />
               )
             ) : (
               <div className="flex flex-col items-center justify-center text-center p-6">
                 <Upload className="h-10 w-10 text-muted-foreground/50 mb-3" />
                 <h4 className="text-sm font-bold text-foreground">Nenhum documento anexado</h4>
                 <p className="text-xs text-muted-foreground max-w-xs mt-1 mb-4">
-                  Anexe o Passaporte, RG ou Visto do passageiro para visualizar aqui durante a conferência.
+                  Anexe o Passaporte, RG ou Visto do passageiro para visualizar aqui durante a
+                  conferência.
                 </p>
                 <label className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
                   <Upload className="h-4 w-4" /> Anexar Documento
@@ -873,12 +880,15 @@ function DataConferencePanel({
           {doc?.extracted_metadata && Object.keys(doc.extracted_metadata).length > 0 && (
             <div className="mt-4 p-4 rounded-xl border border-border bg-surface text-xs">
               <h4 className="font-bold text-foreground mb-2 flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela Inteligência Artificial
+                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela
+                Inteligência Artificial
               </h4>
               <div className="grid grid-cols-2 gap-3 text-[11px]">
                 {Object.entries(doc.extracted_metadata).map(([key, val]) => (
                   <div key={key} className="bg-surface-alt/50 p-2 rounded border border-border/40">
-                    <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">{key.replace('_', ' ')}</span>
+                    <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">
+                      {key.replace("_", " ")}
+                    </span>
                     <span className="font-mono text-foreground text-xs">{String(val)}</span>
                   </div>
                 ))}
@@ -892,7 +902,9 @@ function DataConferencePanel({
           <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
             <div>
               <h3 className="text-lg font-bold text-foreground">Conferência de Cadastro</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Revise e corrija os dados cadastrais do passageiro.</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Revise e corrija os dados cadastrais do passageiro.
+              </p>
             </div>
             <button
               onClick={onClose}
@@ -904,7 +916,9 @@ function DataConferencePanel({
 
           <div className="space-y-4 flex-1">
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nome Completo</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                Nome Completo
+              </label>
               <input
                 type="text"
                 value={fullName}
@@ -914,7 +928,9 @@ function DataConferencePanel({
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo de Passageiro</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                Tipo de Passageiro
+              </label>
               <select
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
@@ -928,7 +944,9 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo Documento</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Tipo Documento
+                </label>
                 <select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
@@ -942,7 +960,9 @@ function DataConferencePanel({
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Número Documento</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Número Documento
+                </label>
                 <input
                   type="text"
                   value={docNumber}
@@ -954,7 +974,9 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nascimento</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Nascimento
+                </label>
                 <input
                   type="date"
                   value={birthDate}
@@ -963,7 +985,9 @@ function DataConferencePanel({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nacionalidade</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Nacionalidade
+                </label>
                 <input
                   type="text"
                   value={nationality}
@@ -976,7 +1000,9 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Email</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   value={email}
@@ -985,7 +1011,9 @@ function DataConferencePanel({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Telefone</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  Telefone
+                </label>
                 <input
                   type="text"
                   value={phone}
@@ -996,7 +1024,9 @@ function DataConferencePanel({
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Observações Operacionais</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                Observações Operacionais
+              </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -1018,7 +1048,11 @@ function DataConferencePanel({
               disabled={saving || uploading}
               className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              {saving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ShieldCheck className="h-4 w-4" />
+              )}
               Salvar & Confirmar
             </button>
           </div>

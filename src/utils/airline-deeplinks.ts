@@ -13,7 +13,7 @@ export function getAirlineCheckinUrl(
   airline: string,
   pnr: string,
   passengerLastName: string,
-  originIata: string
+  originIata: string,
 ): string {
   const code = airline.toLowerCase().trim();
   const cleanedPnr = pnr.trim().toUpperCase();
@@ -21,28 +21,17 @@ export function getAirlineCheckinUrl(
   const cleanedOrigin = originIata.trim().toUpperCase();
 
   // LATAM (LA, JJ, TAM)
-  if (
-    code.includes("latam") || 
-    code.includes("tam") || 
-    code === "la" || 
-    code === "jj"
-  ) {
+  if (code.includes("latam") || code.includes("tam") || code === "la" || code === "jj") {
     return `https://www.latamairlines.com/br/pt/check-in?orderId=${encodeURIComponent(cleanedPnr)}&lastName=${encodeURIComponent(cleanedLastName)}`;
   }
 
   // GOL (G3)
-  if (
-    code.includes("gol") || 
-    code === "g3"
-  ) {
+  if (code.includes("gol") || code === "g3") {
     return `https://b2c.voegol.com.br/check-in/dados-voo?recordLocator=${encodeURIComponent(cleanedPnr)}&departureAirport=${encodeURIComponent(cleanedOrigin)}`;
   }
 
   // Azul (AD)
-  if (
-    code.includes("azul") || 
-    code === "ad"
-  ) {
+  if (code.includes("azul") || code === "ad") {
     return `https://checkin.voeazul.com.br/?pnr=${encodeURIComponent(cleanedPnr)}&origin=${encodeURIComponent(cleanedOrigin)}`;
   }
 
