@@ -1,7 +1,7 @@
 import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download, FileText } from "lucide-react";
+import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download, FileText, Layers } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,7 +154,7 @@ function TourDetailPage() {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("group_tour_enrollments")
-        .select("id, passenger_name, passenger_cpf, status, seat_number, total_paid, room_type, created_at, segment_type, payment_routing, email, phone, client_id")
+        .select("id, passenger_name, passenger_cpf, status, seat_number, total_paid, room_type, created_at, segment_type, payment_routing, email, phone, client_id, selected_pricing_tier, selected_extras")
         .eq("group_tour_id", id)
         .order("created_at");
       if (error) throw error;
@@ -302,7 +302,17 @@ function TourDetailPage() {
 
   const pCount = enrolQ.data?.length || 0;
   const basePrice = Number(t.base_price) || 0;
-  const totalRevenue = pCount * basePrice;
+  const totalRevenue = enrolQ.data
+    ? enrolQ.data.reduce((sum: number, e: any) => {
+        const tierPrice = e.selected_pricing_tier && typeof e.selected_pricing_tier === "object" && "price" in e.selected_pricing_tier
+          ? Number(e.selected_pricing_tier.price)
+          : basePrice;
+        const extrasSum = Array.isArray(e.selected_extras)
+          ? e.selected_extras.reduce((s: number, ext: any) => s + (Number(ext.price) || 0), 0)
+          : 0;
+        return sum + tierPrice + extrasSum;
+      }, 0)
+    : pCount * basePrice;
 
   // Calculate costs from real DB
   const fixedSum = tourCosts.filter(c => c.type === "fixed").reduce((sum, c) => sum + Number(c.amount), 0) + (Number((t as any).ads_budget) || 0);
@@ -379,6 +389,12 @@ function TourDetailPage() {
             className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
           >
             Financeiro & ROI
+          </TabsTrigger>
+          <TabsTrigger
+            value="hotel_pricing"
+            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+          >
+            Hospedagem & Tarifas
           </TabsTrigger>
           <TabsTrigger
             value="rooming"
@@ -468,6 +484,17 @@ function TourDetailPage() {
             tourId={id}
             days={itinerary}
             onUpdate={() => qc.invalidateQueries({ queryKey: ["group-tour", id] })}
+          />
+        </TabsContent>
+
+        {/* Hotel & Pricing */}
+        <TabsContent value="hotel_pricing">
+          <HotelPricingTabContent
+            tour={t}
+            onUpdate={() => {
+              qc.invalidateQueries({ queryKey: ["group-tour", id] });
+              qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
+            }}
           />
         </TabsContent>
 
@@ -911,6 +938,11 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
   const [creatingBrochure, setCreatingBrochure] = useState(false);
   const flyerRef = useRef<HTMLDivElement>(null);
 
+  // Customization States
+  const [selectedTheme, setSelectedTheme] = useState<"dark" | "sunset" | "gold" | "teal">("dark");
+  const [ctaTitle, setCtaTitle] = useState("GARANTA SUA VAGA");
+  const [ctaSubtitle, setCtaSubtitle] = useState("Escaneie o QR Code ao lado para ver roteiro completo e reservar.");
+
   const publicUrl = typeof window !== "undefined"
     ? `${window.location.origin}/p/${agency?.slug}/tour/${tour.id}`
     : `/p/${agency?.slug}/tour/${tour.id}`;
@@ -1004,14 +1036,40 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
     }
   };
 
+  const themeStyles = {
+    dark: {
+      gradient: "bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30",
+      accentText: "text-amber-400",
+      accentBg: "bg-amber-400 text-slate-950",
+    },
+    sunset: {
+      gradient: "bg-gradient-to-t from-indigo-950 via-purple-900/60 to-orange-500/30",
+      accentText: "text-orange-400",
+      accentBg: "bg-orange-400 text-slate-950",
+    },
+    gold: {
+      gradient: "bg-gradient-to-t from-black via-slate-950/70 to-amber-950/40",
+      accentText: "text-yellow-400",
+      accentBg: "bg-yellow-400 text-slate-950",
+    },
+    teal: {
+      gradient: "bg-gradient-to-t from-teal-950 via-teal-900/60 to-emerald-950/30",
+      accentText: "text-emerald-400",
+      accentBg: "bg-emerald-400 text-slate-950",
+    }
+  };
+
+  const currentTheme = themeStyles[selectedTheme];
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 p-1">
-      <div className="lg:col-span-1 flex flex-col items-center space-y-4">
-        <h4 className="text-sm font-bold text-slate-800 self-start">Flyer da Oferta (Instagram Story 9:16)</h4>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-1">
+      {/* Col 1: Preview */}
+      <div className="flex flex-col items-center space-y-4">
+        <h4 className="text-xs font-bold text-slate-800 self-start uppercase tracking-wider">Visualização do Flyer</h4>
         
         <div
           ref={flyerRef}
-          className="relative w-[320px] h-[568px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col justify-between p-5 select-none shadow-xl text-white font-sans"
+          className="relative w-[300px] h-[533px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col justify-between p-4.5 select-none shadow-xl text-white font-sans"
           style={{ aspectRatio: "9/16" }}
         >
           {/* Cover image as full-bleed background */}
@@ -1025,12 +1083,12 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             <div className="absolute inset-0 bg-slate-900 z-0" />
           )}
           
-          {/* Linear gradient to make text highly readable */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30 z-[1]" />
+          {/* Linear gradient overlay based on selected theme */}
+          <div className={`absolute inset-0 ${currentTheme.gradient} z-[1]`} />
 
           {/* Top header row */}
           <div className="flex items-center justify-between z-10 relative">
-            <span className="text-[8px] font-extrabold uppercase tracking-widest bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-sm">
+            <span className={`text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded shadow-sm ${currentTheme.accentBg}`}>
               Vagas Limitadas
             </span>
             <div className="text-[9px] font-black uppercase tracking-wider text-white bg-slate-950/40 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
@@ -1039,12 +1097,12 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           </div>
 
           {/* Main info card pushed to the bottom */}
-          <div className="z-10 relative mt-auto flex flex-col space-y-3.5">
+          <div className="z-10 relative mt-auto flex flex-col space-y-3">
             <div>
-              <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest block">
+              <span className={`text-[8px] font-extrabold uppercase tracking-widest block ${currentTheme.accentText}`}>
                 Excursão em Grupo
               </span>
-              <h2 className="text-base font-black leading-tight tracking-tight text-white uppercase mt-0.5 line-clamp-2 drop-shadow-md">
+              <h2 className="text-sm font-black leading-tight tracking-tight text-white uppercase mt-0.5 line-clamp-2 drop-shadow-md">
                 {tour.title}
               </h2>
               
@@ -1070,14 +1128,14 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
 
             {tour.includes && tour.includes.length > 0 && (
               <div className="space-y-1">
-                <span className="text-[8px] text-white/50 font-bold uppercase tracking-wider block">
+                <span className="text-[7.5px] text-white/50 font-bold uppercase tracking-wider block">
                   Incluso no Pacote:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {tour.includes.slice(0, 3).map((inc: string, idx: number) => (
                     <span
                       key={idx}
-                      className="bg-slate-950/60 backdrop-blur-xs border border-white/10 text-white rounded px-1.5 py-0.5 text-[8px] font-medium max-w-[90px] truncate"
+                      className="bg-slate-950/60 backdrop-blur-xs border border-white/10 text-white rounded px-1.5 py-0.5 text-[7.5px] font-medium max-w-[85px] truncate"
                     >
                       ✓ {inc}
                     </span>
@@ -1087,28 +1145,28 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             )}
 
             <div>
-              <span className="text-[8px] text-white/50 font-bold uppercase tracking-wider block">
+              <span className="text-[7.5px] text-white/50 font-bold uppercase tracking-wider block">
                 Valor por Pessoa:
               </span>
-              <strong className="text-xl font-black font-mono text-amber-400 mt-0.5 block drop-shadow-sm">
+              <strong className={`text-lg font-black font-mono mt-0.5 block drop-shadow-sm ${currentTheme.accentText}`}>
                 {money(Number(tour.base_price))}
               </strong>
             </div>
 
             {/* Premium QR Code scanning card */}
-            <div className="bg-white text-slate-950 rounded-xl p-2.5 flex items-center justify-between gap-3 shadow-lg border border-white/10">
+            <div className="bg-white text-slate-950 rounded-xl p-2 flex items-center justify-between gap-2.5 shadow-lg border border-white/10">
               <div className="flex-1 min-w-0">
-                <span className="text-[9px] font-black uppercase tracking-wider block text-slate-900 leading-none">
-                  GARANTA SUA VAGA
+                <span className="text-[8px] font-black uppercase tracking-wider block text-slate-900 leading-none">
+                  {ctaTitle}
                 </span>
-                <span className="text-[7.5px] text-slate-500 block leading-tight mt-1 font-semibold">
-                  Escaneie o QR Code ao lado para ver roteiro completo e reservar.
+                <span className="text-[7px] text-slate-500 block leading-tight mt-1 font-semibold">
+                  {ctaSubtitle}
                 </span>
               </div>
               <img
                 src={qrCodeUrl}
                 alt="Inscrições"
-                className="h-11 w-11 border border-slate-200 p-0.5 bg-white shrink-0 rounded-lg shadow-sm"
+                className="h-10 w-10 border border-slate-200 p-0.5 bg-white shrink-0 rounded-lg shadow-sm"
               />
             </div>
           </div>
@@ -1117,49 +1175,436 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         <button
           onClick={handleDownloadFlyer}
           disabled={downloading}
-          className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-brand text-xs font-bold text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 h-9 w-[300px] rounded-lg bg-brand text-xs font-bold text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
         >
           <Download className="h-3.5 w-3.5" /> Baixar Flyer (PNG)
         </button>
       </div>
 
-      <div className="lg:col-span-2 space-y-5 bg-white border border-border rounded-xl p-6 self-start">
-        <h4 className="text-sm font-bold text-foreground">Brochura Comercial Completa (Studio)</h4>
+      {/* Col 2: Customization Controls */}
+      <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">Personalizar Flyer</h4>
+        
+        <div className="space-y-3">
+          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Tema de Cores</label>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: "dark", label: "Midnight Dark", bg: "bg-slate-950 border-slate-800" },
+              { id: "sunset", label: "Sunset Glow", bg: "bg-gradient-to-r from-orange-500 to-indigo-950 border-orange-400" },
+              { id: "gold", label: "Gold Prestige", bg: "bg-gradient-to-r from-yellow-500 to-black border-yellow-400" },
+              { id: "teal", label: "Teal Oasis", bg: "bg-gradient-to-r from-teal-700 to-slate-950 border-teal-400" },
+            ].map((th) => (
+              <button
+                key={th.id}
+                type="button"
+                onClick={() => setSelectedTheme(th.id as any)}
+                className={`p-2 rounded-lg border text-[11px] font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
+                  selectedTheme === th.id
+                    ? "border-brand bg-brand/5 font-bold shadow-xs"
+                    : "border-border hover:bg-slate-50 text-slate-650"
+                }`}
+              >
+                <span className={`h-3 w-3 rounded-full border shrink-0 ${th.bg}`} />
+                {th.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-2 border-t border-border">
+          <Field label="Título de Chamada (CTA)">
+            <Input
+              value={ctaTitle}
+              onChange={(e) => setCtaTitle(e.target.value.toUpperCase())}
+              placeholder="Ex: GARANTA SUA VAGA"
+              maxLength={22}
+            />
+          </Field>
+          <Field label="Subtítulo de Instrução">
+            <Textarea
+              value={ctaSubtitle}
+              onChange={(e) => setCtaSubtitle(e.target.value)}
+              placeholder="Ex: Escaneie o QR Code..."
+              rows={3}
+              maxLength={100}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Col 3: Brochura Comercial */}
+      <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">Brochura do Studio</h4>
         <p className="text-xs text-muted-foreground leading-relaxed">
           Crie um folheto comercial multipáginas interativo no Proposal Studio para enviar em PDF ou apresentar online. 
           O sistema preencherá automaticamente todos os dados existentes da excursão:
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="h-2 w-2 rounded-full bg-brand" />
-            <span>Roteiro de dias integrado</span>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="h-2 w-2 rounded-full bg-brand" />
-            <span>Itens inclusos e excluídos</span>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="h-2 w-2 rounded-full bg-brand" />
-            <span>Valor base e acomodações</span>
-          </div>
-          <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg">
-            <span className="h-2 w-2 rounded-full bg-brand" />
-            <span>Datas e imagem de capa</span>
-          </div>
+        <div className="grid grid-cols-1 gap-2 text-xs">
+          {[
+            "Roteiro de dias integrado",
+            "Itens inclusos e excluídos",
+            "Valor base e acomodações",
+            "Datas e imagem de capa",
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg">
+              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+              <span>{item}</span>
+            </div>
+          ))}
         </div>
 
-        <div className="border-t border-border pt-4">
+        <div className="pt-2 border-t border-border">
           <button
             onClick={handleCreateBrochure}
             disabled={creatingBrochure}
-            className="flex items-center gap-2 h-10 px-5 rounded-lg bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex items-center justify-center gap-2 h-10 w-full rounded-lg bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
           >
-            <Sparkles className="h-4 w-4 text-brand" /> Criar Brochura no Proposal Studio
+            <Sparkles className="h-4 w-4 text-brand" /> Criar Brochura no Studio
           </button>
-          <span className="text-[10px] text-muted-foreground block mt-2">
-            Após criar, você será redirecionado para o Studio onde poderá diagramar novos slides e exportar em PDF comercial premium.
+          <span className="text-[10px] text-muted-foreground block mt-2 text-center">
+            Será gerada uma brochura onde poderá diagramar novos slides e exportar em PDF.
           </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () => void }) {
+  const hotel = tour.hotel_details && typeof tour.hotel_details === "object" ? tour.hotel_details : {};
+  const promo = tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {};
+
+  // Hotel details form states
+  const [hotelName, setHotelName] = useState(hotel.name || "");
+  const [hotelStars, setHotelStars] = useState(Number(hotel.stars) || 3);
+  const [checkIn, setCheckIn] = useState(hotel.check_in || "14:00");
+  const [checkOut, setCheckOut] = useState(hotel.check_out || "12:00");
+  const [description, setDescription] = useState(hotel.description || "");
+  const [amenities, setAmenities] = useState<string[]>(Array.isArray(hotel.amenities) ? hotel.amenities : []);
+  const [youtubeUrl, setYoutubeUrl] = useState(promo.youtube_url || "");
+  const [savingHotel, setSavingHotel] = useState(false);
+
+  // New pricing/extra states
+  const [tierName, setTierName] = useState("");
+  const [tierPrice, setTierPrice] = useState<number | "">("");
+  const [tierDesc, setTierDesc] = useState("");
+  const [extraName, setExtraName] = useState("");
+  const [extraPrice, setExtraPrice] = useState<number | "">("");
+  const [extraDesc, setExtraDesc] = useState("");
+
+  const pricingTiers = Array.isArray(tour.pricing_tiers) ? tour.pricing_tiers : [];
+  const extraOptions = Array.isArray(tour.extra_options) ? tour.extra_options : [];
+
+  const AMENITIES_LIST = ["Wi-Fi", "Piscina", "Ar-condicionado", "Café da manhã", "Restaurante", "Academia", "Estacionamento", "Spa", "Pet Friendly", "Serviço de Quarto"];
+
+  const handleSaveHotel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingHotel(true);
+    try {
+      const nextHotel = {
+        name: hotelName.trim(),
+        stars: Number(hotelStars),
+        check_in: checkIn.trim(),
+        check_out: checkOut.trim(),
+        description: description.trim(),
+        amenities,
+        gallery: hotel.gallery || [],
+      };
+      const nextPromo = {
+        youtube_url: youtubeUrl.trim(),
+      };
+
+      const { error } = await supabase
+        .from("group_tours")
+        .update({
+          hotel_details: nextHotel,
+          promo_media: nextPromo,
+        })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Informações do hotel salvas!");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao salvar hotel: " + err.message);
+    } finally {
+      setSavingHotel(false);
+    }
+  };
+
+  const handleAddTier = async () => {
+    if (!tierName.trim() || tierPrice === "") {
+      toast.error("Preencha nome e valor da acomodação");
+      return;
+    }
+    try {
+      const nextTiers = [...pricingTiers, { name: tierName.trim(), price: Number(tierPrice), description: tierDesc.trim() }];
+      const { error } = await supabase
+        .from("group_tours")
+        .update({ pricing_tiers: nextTiers })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Tarifa adicionada!");
+      setTierName("");
+      setTierPrice("");
+      setTierDesc("");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao adicionar tarifa: " + err.message);
+    }
+  };
+
+  const handleDeleteTier = async (idx: number) => {
+    try {
+      const nextTiers = pricingTiers.filter((_: any, i: number) => i !== idx);
+      const { error } = await supabase
+        .from("group_tours")
+        .update({ pricing_tiers: nextTiers })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Tarifa removida!");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao remover tarifa: " + err.message);
+    }
+  };
+
+  const handlePopulateDefaultTiers = async () => {
+    const baseVal = Number(tour.base_price) || 1000;
+    const defaults = [
+      { name: "Quarto Duplo (Double) - por pessoa", price: baseVal, description: "Acomodação compartilhada para 2 adultos" },
+      { name: "Quarto Individual (Single)", price: Math.round(baseVal * 1.4), description: "Acomodação privativa em quarto individual" },
+      { name: "Quarto Triplo (Triple) - por pessoa", price: Math.round(baseVal * 0.9), description: "Acomodação compartilhada para 3 adultos" },
+      { name: "Tarifa Infantil (Child)", price: Math.round(baseVal * 0.5), description: "Para crianças de 2 a 11 anos no mesmo quarto" }
+    ];
+    try {
+      const { error } = await supabase
+        .from("group_tours")
+        .update({ pricing_tiers: defaults })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Tarifas sugeridas geradas!");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao gerar tarifas: " + err.message);
+    }
+  };
+
+  const handleAddExtra = async () => {
+    if (!extraName.trim() || extraPrice === "") {
+      toast.error("Preencha nome e valor do opcional");
+      return;
+    }
+    try {
+      const nextExtras = [...extraOptions, { name: extraName.trim(), price: Number(extraPrice), description: extraDesc.trim() }];
+      const { error } = await supabase
+        .from("group_tours")
+        .update({ extra_options: nextExtras })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Opcional adicionado!");
+      setExtraName("");
+      setExtraPrice("");
+      setExtraDesc("");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao adicionar opcional: " + err.message);
+    }
+  };
+
+  const handleDeleteExtra = async (idx: number) => {
+    try {
+      const nextExtras = extraOptions.filter((_: any, i: number) => i !== idx);
+      const { error } = await supabase
+        .from("group_tours")
+        .update({ extra_options: nextExtras })
+        .eq("id", tour.id);
+
+      if (error) throw error;
+      toast.success("Opcional removido!");
+      onUpdate();
+    } catch (err: any) {
+      toast.error("Erro ao remover opcional: " + err.message);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Hotel & Video Column */}
+      <div className="lg:col-span-1 bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+        <div className="flex items-center gap-2 border-b border-border pb-3">
+          <Hotel className="h-5 w-5 text-brand" />
+          <h3 className="font-bold text-sm text-foreground">Hospedagem & Mídia</h3>
+        </div>
+        <form onSubmit={handleSaveHotel} className="space-y-4">
+          <Field label="Nome do Hotel/Pousada">
+            <Input value={hotelName} onChange={(e) => setHotelName(e.target.value)} placeholder="Ex: Hotel Majestic Gramado" />
+          </Field>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Estrelas (Categoria)">
+              <Select value={hotelStars} onChange={(e) => setHotelStars(Number(e.target.value))}>
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <option key={s} value={s}>{s} {s === 1 ? "Estrela" : "Estrelas"}</option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Vídeo YouTube (URL)">
+              <Input value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="Ex: https://..." />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Check-in">
+              <Input value={checkIn} onChange={(e) => setCheckIn(e.target.value)} placeholder="14:00" />
+            </Field>
+            <Field label="Check-out">
+              <Input value={checkOut} onChange={(e) => setCheckOut(e.target.value)} placeholder="12:00" />
+            </Field>
+          </div>
+
+          <Field label="Descrição da Hospedagem">
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Descreva os diferenciais, instalações e localização..." rows={3} />
+          </Field>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Amenidades</label>
+            <div className="flex flex-wrap gap-1.5">
+              {AMENITIES_LIST.map((am) => {
+                const isSel = amenities.includes(am);
+                return (
+                  <button
+                    key={am}
+                    type="button"
+                    onClick={() => {
+                      const next = isSel ? amenities.filter(x => x !== am) : [...amenities, am];
+                      setAmenities(next);
+                    }}
+                    className={`px-2 py-1 rounded-full text-[10px] font-semibold border transition-all cursor-pointer ${
+                      isSel ? "bg-brand/10 border-brand text-brand" : "bg-slate-50 border-border text-muted-foreground hover:border-slate-350"
+                    }`}
+                  >
+                    {am}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <PrimaryButton type="submit" disabled={savingHotel} className="w-full h-10 text-xs">
+            {savingHotel ? "Salvando..." : "Salvar Hospedagem"}
+          </PrimaryButton>
+        </form>
+      </div>
+
+      {/* Pricing & Extras Columns */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* pricing card */}
+        <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <div className="flex items-center gap-2">
+              <BedDouble className="h-5 w-5 text-brand" />
+              <h3 className="font-bold text-sm text-foreground">Acomodações & Tarifas Diferenciadas</h3>
+            </div>
+            <GhostButton onClick={handlePopulateDefaultTiers} className="h-7 text-[10px] border border-brand/20 text-brand">
+              Gerar Padrão
+            </GhostButton>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* CRUD form */}
+            <div className="p-4 border border-border rounded-lg bg-slate-50/50 space-y-3 self-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Cadastrar Tarifa</span>
+              <Field label="Nome do quarto *">
+                <Input value={tierName} onChange={(e) => setTierName(e.target.value)} placeholder="Ex: Quarto Casal Premium" className="h-8 text-xs" />
+              </Field>
+              <Field label="Preço por pessoa *">
+                <Input type="number" value={tierPrice} onChange={(e) => setTierPrice(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Valor em R$" className="h-8 text-xs font-mono" />
+              </Field>
+              <Field label="Descrição (Opcional)">
+                <Input value={tierDesc} onChange={(e) => setTierDesc(e.target.value)} placeholder="Ex: Vista para a montanha" className="h-8 text-xs" />
+              </Field>
+              <PrimaryButton onClick={handleAddTier} className="w-full h-8 text-xs">Adicionar</PrimaryButton>
+            </div>
+
+            {/* List */}
+            <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+              {pricingTiers.length > 0 ? (
+                pricingTiers.map((t: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-white text-xs">
+                    <div className="min-w-0 flex-1">
+                      <strong className="font-semibold block truncate text-slate-800">{t.name}</strong>
+                      {t.description && <span className="text-[10px] text-muted-foreground truncate block">{t.description}</span>}
+                    </div>
+                    <div className="flex items-center gap-2.5 shrink-0 ml-2">
+                      <span className="font-mono font-bold text-brand">{money(t.price)}</span>
+                      <button onClick={() => handleDeleteTier(i)} className="text-muted-foreground hover:text-danger p-1">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-lg bg-slate-50/50">
+                  Nenhuma acomodação cadastrada. Clientes usarão o preço base do pacote.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Extras card */}
+        <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center border-b border-border pb-3">
+            <Layers className="h-5 w-5 text-brand mr-2" />
+            <h3 className="font-bold text-sm text-foreground">Serviços Extras & Upgrades Opcionais</h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* CRUD form */}
+            <div className="p-4 border border-border rounded-lg bg-slate-50/50 space-y-3 self-start">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Cadastrar Opcional</span>
+              <Field label="Nome do serviço *">
+                <Input value={extraName} onChange={(e) => setExtraName(e.target.value)} placeholder="Ex: Passeio de Maria Fumaça" className="h-8 text-xs" />
+              </Field>
+              <Field label="Valor do serviço *">
+                <Input type="number" value={extraPrice} onChange={(e) => setExtraPrice(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Valor em R$" className="h-8 text-xs font-mono" />
+              </Field>
+              <Field label="Descrição (Opcional)">
+                <Input value={extraDesc} onChange={(e) => setExtraDesc(e.target.value)} placeholder="Ex: Inclui transfer + ingresso" className="h-8 text-xs" />
+              </Field>
+              <PrimaryButton onClick={handleAddExtra} className="w-full h-8 text-xs">Adicionar</PrimaryButton>
+            </div>
+
+            {/* List */}
+            <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+              {extraOptions.length > 0 ? (
+                extraOptions.map((e: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-white text-xs">
+                    <div className="min-w-0 flex-1">
+                      <strong className="font-semibold block truncate text-slate-800">{e.name}</strong>
+                      {e.description && <span className="text-[10px] text-muted-foreground truncate block">{e.description}</span>}
+                    </div>
+                    <div className="flex items-center gap-2.5 shrink-0 ml-2">
+                      <span className="font-mono font-bold text-success">+{money(e.price)}</span>
+                      <button onClick={() => handleDeleteExtra(i)} className="text-muted-foreground hover:text-danger p-1">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-lg bg-slate-50/50">
+                  Nenhum opcional cadastrado.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1644,6 +2089,9 @@ function EditTour({
   onClose: () => void;
   onUpdated: () => void;
 }) {
+  const hotelDetails = tour.hotel_details && typeof tour.hotel_details === "object" ? tour.hotel_details : {};
+  const promoMedia = tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {};
+
   const [f, setF] = useState({
     title: tour.title,
     slug: tour.slug,
@@ -1656,6 +2104,12 @@ function EditTour({
     destination: tour.destination || "",
     transport_type: tour.transport_type || "air",
     transport_details: tour.transport_details || "",
+    hotel_name: hotelDetails.name || "",
+    hotel_stars: hotelDetails.stars || 3,
+    hotel_check_in: hotelDetails.check_in || "14:00",
+    hotel_check_out: hotelDetails.check_out || "12:00",
+    hotel_description: hotelDetails.description || "",
+    youtube_url: promoMedia.youtube_url || "",
   });
   const [includes, setIncludes] = useState<string[]>(Array.isArray(tour.includes) ? tour.includes : []);
   const [excludes, setExcludes] = useState<string[]>(Array.isArray(tour.excludes) ? tour.excludes : []);
@@ -1666,6 +2120,19 @@ function EditTour({
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+    const nextHotelDetails = {
+      ...(tour.hotel_details && typeof tour.hotel_details === "object" ? tour.hotel_details : {}),
+      name: f.hotel_name.trim(),
+      stars: Number(f.hotel_stars),
+      check_in: f.hotel_check_in.trim(),
+      check_out: f.hotel_check_out.trim(),
+      description: f.hotel_description.trim(),
+    };
+    const nextPromoMedia = {
+      ...(tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {}),
+      youtube_url: f.youtube_url.trim(),
+    };
+
     const { error } = await supabase
       .from("group_tours")
       .update({
@@ -1682,6 +2149,8 @@ function EditTour({
         transport_details: f.transport_details || null,
         includes: includes,
         excludes: excludes,
+        hotel_details: nextHotelDetails,
+        promo_media: nextPromoMedia,
       })
       .eq("id", tour.id);
     setBusy(false);
@@ -1779,6 +2248,62 @@ function EditTour({
             onChange={(e) => setF({ ...f, important_notes: e.target.value })}
           />
         </Field>
+
+        <div className="space-y-4 pt-3 border-t border-border">
+          <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Hospedagem & Vídeo (Básico)</h4>
+          <Field label="Nome da Hospedagem">
+            <Input
+              value={f.hotel_name}
+              onChange={(e) => setF({ ...f, hotel_name: e.target.value })}
+              placeholder="Ex: Hotel Majestic Gramado"
+            />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Categoria (Estrelas)">
+              <Select
+                value={f.hotel_stars}
+                onChange={(e) => setF({ ...f, hotel_stars: Number(e.target.value) })}
+              >
+                <option value={1}>1 Estrela</option>
+                <option value={2}>2 Estrelas</option>
+                <option value={3}>3 Estrelas</option>
+                <option value={4}>4 Estrelas</option>
+                <option value={5}>5 Estrelas</option>
+              </Select>
+            </Field>
+            <Field label="Link do Vídeo (YouTube)">
+              <Input
+                value={f.youtube_url}
+                onChange={(e) => setF({ ...f, youtube_url: e.target.value })}
+                placeholder="Ex: https://..."
+              />
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Check-in">
+              <Input
+                value={f.hotel_check_in}
+                onChange={(e) => setF({ ...f, hotel_check_in: e.target.value })}
+                placeholder="14:00"
+              />
+            </Field>
+            <Field label="Check-out">
+              <Input
+                value={f.hotel_check_out}
+                onChange={(e) => setF({ ...f, hotel_check_out: e.target.value })}
+                placeholder="12:00"
+              />
+            </Field>
+          </div>
+          <Field label="Descrição do Hotel">
+            <Textarea
+              value={f.hotel_description}
+              onChange={(e) => setF({ ...f, hotel_description: e.target.value })}
+              placeholder="Descreva a acomodação..."
+              rows={2}
+            />
+          </Field>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border">
           {/* Includes */}

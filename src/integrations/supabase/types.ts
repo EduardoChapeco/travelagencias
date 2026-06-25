@@ -4332,6 +4332,8 @@ export type Database = {
           room_type: string | null
           seat_number: string | null
           segment_type: string
+          selected_extras: Json
+          selected_pricing_tier: Json
           status: string
           total_paid: number
           updated_at: string
@@ -4353,6 +4355,8 @@ export type Database = {
           room_type?: string | null
           seat_number?: string | null
           segment_type?: string
+          selected_extras?: Json
+          selected_pricing_tier?: Json
           status?: string
           total_paid?: number
           updated_at?: string
@@ -4374,6 +4378,8 @@ export type Database = {
           room_type?: string | null
           seat_number?: string | null
           segment_type?: string
+          selected_extras?: Json
+          selected_pricing_tier?: Json
           status?: string
           total_paid?: number
           updated_at?: string
@@ -4414,6 +4420,10 @@ export type Database = {
           status: string
           target_poupanca_balance: number
           title: string
+          hotel_details: Json
+          extra_options: Json
+          pricing_tiers: Json
+          promo_media: Json
           total_seats: number
           transport_details: string | null
           transport_type: string | null
@@ -4452,6 +4462,10 @@ export type Database = {
           status?: string
           target_poupanca_balance?: number
           title: string
+          hotel_details?: Json
+          extra_options?: Json
+          pricing_tiers?: Json
+          promo_media?: Json
           total_seats?: number
           transport_details?: string | null
           transport_type?: string | null
@@ -4490,6 +4504,10 @@ export type Database = {
           status?: string
           target_poupanca_balance?: number
           title?: string
+          hotel_details?: Json
+          extra_options?: Json
+          pricing_tiers?: Json
+          promo_media?: Json
           total_seats?: number
           transport_details?: string | null
           transport_type?: string | null

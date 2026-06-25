@@ -11,6 +11,13 @@ import {
   Plus,
   Trash2,
   Upload,
+  Hotel,
+  Star,
+  Video,
+  BedDouble,
+  DollarSign,
+  Info,
+  Layers,
 } from "lucide-react";
 import {
   Field,
@@ -38,7 +45,7 @@ function slugify(s: string) {
     .replace(/^-|-$/g, "");
 }
 
-const STEPS = ["Essencial", "Data & Vagas", "Valores & Inclusos", "Itinerário & Mídia", "Revisão"];
+const STEPS = ["Essencial", "Data & Vagas", "Hospedagem & Vídeo", "Tarifas & Opcionais", "Valores & Inclusos", "Itinerário", "Revisão"];
 
 type ItineraryDay = { day_number: number; title: string; description: string };
 
@@ -71,6 +78,33 @@ const tourWizardSchema = z
       .default([]),
     isPublic: z.boolean().default(false),
     status: z.string().default("draft"),
+    // Novos campos premium:
+    hotelName: z.string().optional(),
+    hotelStars: z.number().min(1).max(5).default(3),
+    hotelCheckIn: z.string().optional(),
+    hotelCheckOut: z.string().optional(),
+    hotelAmenities: z.array(z.string()).default([]),
+    hotelDescription: z.string().optional(),
+    hotelGallery: z.array(z.string()).default([]),
+    youtubeUrl: z.string().optional(),
+    pricingTiers: z
+      .array(
+        z.object({
+          name: z.string().min(1, "Nome da tarifa é obrigatório"),
+          price: z.number().min(0, "Preço inválido"),
+          description: z.string().optional(),
+        }),
+      )
+      .default([]),
+    extraOptions: z
+      .array(
+        z.object({
+          name: z.string().min(1, "Nome do opcional é obrigatório"),
+          price: z.number().min(0, "Preço inválido"),
+          description: z.string().optional(),
+        }),
+      )
+      .default([]),
   })
   .refine(
     (data) => {
@@ -116,6 +150,14 @@ export function NewGroupTourWizard({
   // Aux state for adding elements
   const [newInclude, setNewInclude] = useState("");
   const [newExclude, setNewExclude] = useState("");
+  
+  // Aux states for new pricing & extras
+  const [newTierName, setNewTierName] = useState("");
+  const [newTierPrice, setNewTierPrice] = useState<number | "">("");
+  const [newTierDesc, setNewTierDesc] = useState("");
+  const [newExtraName, setNewExtraName] = useState("");
+  const [newExtraPrice, setNewExtraPrice] = useState<number | "">("");
+  const [newExtraDesc, setNewExtraDesc] = useState("");
 
   const {
     register,
@@ -144,6 +186,16 @@ export function NewGroupTourWizard({
       itinerary: [],
       isPublic: false,
       status: "draft",
+      hotelName: "",
+      hotelStars: 3,
+      hotelCheckIn: "14:00",
+      hotelCheckOut: "12:00",
+      hotelAmenities: [],
+      hotelDescription: "",
+      hotelGallery: [],
+      youtubeUrl: "",
+      pricingTiers: [],
+      extraOptions: [],
     },
   });
 
@@ -164,6 +216,15 @@ export function NewGroupTourWizard({
   const watchItinerary = watch("itinerary");
   const watchIsPublic = watch("isPublic");
   const watchStatus = watch("status");
+  const watchHotelName = watch("hotelName");
+  const watchHotelStars = watch("hotelStars");
+  const watchHotelCheckIn = watch("hotelCheckIn");
+  const watchHotelCheckOut = watch("hotelCheckOut");
+  const watchHotelAmenities = watch("hotelAmenities");
+  const watchHotelDescription = watch("hotelDescription");
+  const watchYoutubeUrl = watch("youtubeUrl");
+  const watchPricingTiers = watch("pricingTiers");
+  const watchExtraOptions = watch("extraOptions");
 
   const busesQ = useQuery({
     queryKey: ["bus-layouts", agencyId],
@@ -191,8 +252,12 @@ export function NewGroupTourWizard({
     } else if (step === 1) {
       fieldsToValidate = ["departure", "ret", "regDeadline", "seats", "busLayout"];
     } else if (step === 2) {
-      fieldsToValidate = ["price", "includes", "excludes", "hasFlights"];
+      fieldsToValidate = ["hotelName", "hotelStars", "hotelCheckIn", "hotelCheckOut", "youtubeUrl", "hotelDescription", "hotelAmenities"];
     } else if (step === 3) {
+      fieldsToValidate = ["pricingTiers", "extraOptions"];
+    } else if (step === 4) {
+      fieldsToValidate = ["price", "includes", "excludes", "hasFlights"];
+    } else if (step === 5) {
       fieldsToValidate = ["coverUrl", "itinerary"];
     }
 
@@ -249,12 +314,28 @@ export function NewGroupTourWizard({
         excludes: data.excludes,
         itinerary: data.itinerary.map(item => ({
           ...item,
-          description_md: item.description
+          description_md: item.description,
+          description: item.description,
         })),
         cover_image_url: data.coverUrl || null,
         is_public: data.isPublic,
         status: data.status,
         bus_layout_id: data.busLayout || null,
+        // Premium Fields Mapping
+        hotel_details: {
+          name: data.hotelName || "",
+          stars: Number(data.hotelStars),
+          check_in: data.hotelCheckIn || "14:00",
+          check_out: data.hotelCheckOut || "12:00",
+          amenities: data.hotelAmenities || [],
+          description: data.hotelDescription || "",
+          gallery: data.hotelGallery || []
+        },
+        promo_media: {
+          youtube_url: data.youtubeUrl || ""
+        },
+        pricing_tiers: data.pricingTiers || [],
+        extra_options: data.extraOptions || []
       };
 
       const { error } = await supabase.from("group_tours").insert(payload);
@@ -269,6 +350,20 @@ export function NewGroupTourWizard({
       setSubmitting(false);
     }
   }
+
+  const populateDefaultPricingTiers = () => {
+    const baseVal = watchPrice || 1000;
+    const defaults = [
+      { name: "Quarto Duplo (Double) - por pessoa", price: baseVal, description: "Acomodação compartilhada para 2 adultos" },
+      { name: "Quarto Individual (Single)", price: Math.round(baseVal * 1.4), description: "Acomodação privativa em quarto individual" },
+      { name: "Quarto Triplo (Triple) - por pessoa", price: Math.round(baseVal * 0.9), description: "Acomodação compartilhada para 3 adultos" },
+      { name: "Tarifa Infantil (Child)", price: Math.round(baseVal * 0.5), description: "Para crianças de 2 a 11 anos no mesmo quarto" }
+    ];
+    setValue("pricingTiers", defaults, { shouldValidate: true });
+    toast.success("Tarifas sugeridas adicionadas!");
+  };
+
+  const AMENITIES_LIST = ["Wi-Fi", "Piscina", "Ar-condicionado", "Café da manhã", "Restaurante", "Academia", "Estacionamento", "Spa", "Pet Friendly", "Serviço de Quarto"];
 
   return (
     <SheetPage
@@ -316,7 +411,7 @@ export function NewGroupTourWizard({
       </div>
 
       {/* Content Area */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto p-6 bg-surface/30 min-h-0">
           <div className="mx-auto max-w-2xl space-y-6">
             {/* STEP 0: ESSENTIALS */}
@@ -398,8 +493,291 @@ export function NewGroupTourWizard({
               </div>
             )}
 
-            {/* STEP 2: PRICING & INCLUSIONS */}
+            {/* STEP 2: HOTEL & PROMO VIDEO */}
             {step === 2 && (
+              <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="flex items-center gap-2 pb-2 border-b border-border">
+                  <Hotel className="h-5 w-5 text-brand" />
+                  <h3 className="font-semibold text-base">Hospedagem Principal</h3>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <Field label="Nome da Hospedagem (Hotel / Pousada)" error={errors.hotelName?.message}>
+                      <Input {...register("hotelName")} placeholder="Ex: Hotel Majestic Gramado" />
+                    </Field>
+                  </div>
+                  <div>
+                    <Field label="Categoria (Estrelas)" error={errors.hotelStars?.message}>
+                      <Select {...register("hotelStars", { valueAsNumber: true })}>
+                        <option value={1}>1 Estrela</option>
+                        <option value={2}>2 Estrelas</option>
+                        <option value={3}>3 Estrelas</option>
+                        <option value={4}>4 Estrelas</option>
+                        <option value={5}>5 Estrelas</option>
+                      </Select>
+                    </Field>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Horário de Check-in" error={errors.hotelCheckIn?.message}>
+                    <Input {...register("hotelCheckIn")} placeholder="Ex: 14:00" />
+                  </Field>
+                  <Field label="Horário de Check-out" error={errors.hotelCheckOut?.message}>
+                    <Input {...register("hotelCheckOut")} placeholder="Ex: 12:00" />
+                  </Field>
+                </div>
+
+                <Field label="Descrição da Hospedagem" error={errors.hotelDescription?.message}>
+                  <Textarea
+                    {...register("hotelDescription")}
+                    placeholder="Descreva a acomodação, sua localização, diferenciais e quartos..."
+                    rows={3}
+                  />
+                </Field>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-muted-foreground block">Facilidades / Amenidades</label>
+                  <div className="flex flex-wrap gap-2">
+                    {AMENITIES_LIST.map((amenity) => {
+                      const selected = watchHotelAmenities?.includes(amenity);
+                      return (
+                        <button
+                          key={amenity}
+                          type="button"
+                          onClick={() => {
+                            const current = watchHotelAmenities || [];
+                            const next = selected
+                              ? current.filter((x) => x !== amenity)
+                              : [...current, amenity];
+                            setValue("hotelAmenities", next, { shouldValidate: true });
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 cursor-pointer ${
+                            selected
+                              ? "bg-brand/10 border-brand text-brand shadow-sm shadow-brand/10"
+                              : "bg-surface-alt/55 border-border text-muted-foreground hover:border-muted-foreground/30"
+                          }`}
+                        >
+                          {amenity}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-3 pb-2 border-b border-border">
+                  <Video className="h-5 w-5 text-brand" />
+                  <h3 className="font-semibold text-base">Vídeo Promocional</h3>
+                </div>
+
+                <Field label="Link do Vídeo (YouTube)" error={errors.youtubeUrl?.message}>
+                  <Input {...register("youtubeUrl")} placeholder="Ex: https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Insira a URL de um vídeo promocional para ser incorporado na página de vendas B2C.
+                  </p>
+                </Field>
+              </div>
+            )}
+
+            {/* STEP 3: PRICING TIERS & EXTRA OPTIONS */}
+            {step === 3 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="flex items-center justify-between pb-2 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <BedDouble className="h-5 w-5 text-brand" />
+                    <h3 className="font-semibold text-base">Acomodações & Tarifas</h3>
+                  </div>
+                  <GhostButton
+                    type="button"
+                    onClick={populateDefaultPricingTiers}
+                    className="h-8 text-xs text-brand border border-brand/20 hover:bg-brand/5"
+                  >
+                    Gerar Tarifas Padrão
+                  </GhostButton>
+                </div>
+
+                {/* Form to add a new pricing tier */}
+                <div className="p-4 rounded-xl border border-border bg-surface-alt/10 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Nova Tarifa</h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2">
+                      <Input
+                        placeholder="Nome da acomodação (ex: Quarto Individual)"
+                        value={newTierName}
+                        onChange={(e) => setNewTierName(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="number"
+                        placeholder="Preço (R$)"
+                        value={newTierPrice}
+                        onChange={(e) => setNewTierPrice(e.target.value === "" ? "" : Number(e.target.value))}
+                        className="text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Descrição complementar (ex: Privativo para 1 adulto)"
+                      value={newTierDesc}
+                      onChange={(e) => setNewTierDesc(e.target.value)}
+                      className="text-xs flex-1"
+                    />
+                    <GhostButton
+                      type="button"
+                      onClick={() => {
+                        if (!newTierName.trim() || newTierPrice === "") {
+                          toast.error("Preencha nome e preço da tarifa.");
+                          return;
+                        }
+                        const current = watchPricingTiers || [];
+                        setValue(
+                          "pricingTiers",
+                          [...current, { name: newTierName.trim(), price: Number(newTierPrice), description: newTierDesc.trim() }],
+                          { shouldValidate: true }
+                        );
+                        setNewTierName("");
+                        setNewTierPrice("");
+                        setNewTierDesc("");
+                        toast.success("Tarifa adicionada!");
+                      }}
+                      className="h-9 text-xs border border-border px-3 shrink-0"
+                    >
+                      <Plus className="h-4 w-4 mr-1" /> Adicionar
+                    </GhostButton>
+                  </div>
+                </div>
+
+                {/* List of pricing tiers */}
+                <div className="space-y-2">
+                  {watchPricingTiers && watchPricingTiers.length > 0 ? (
+                    watchPricingTiers.map((tier, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface text-xs">
+                        <div>
+                          <strong className="text-sm font-semibold">{tier.name}</strong>
+                          {tier.description && <p className="text-muted-foreground mt-0.5">{tier.description}</p>}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-bold text-brand text-sm">
+                            {money(tier.price)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setValue("pricingTiers", watchPricingTiers.filter((_, i) => i !== idx), { shouldValidate: true });
+                            }}
+                            className="text-muted-foreground hover:text-danger p-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 border border-dashed border-border rounded-lg text-xs text-muted-foreground">
+                      Nenhuma tarifa adicionada. Clientes usarão o preço base do pacote.
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 pt-4 pb-2 border-b border-border">
+                  <Layers className="h-5 w-5 text-brand" />
+                  <h3 className="font-semibold text-base">Serviços Extras & Opcionais</h3>
+                </div>
+
+                {/* Form to add a new extra option */}
+                <div className="p-4 rounded-xl border border-border bg-surface-alt/10 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Novo Opcional</h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2">
+                      <Input
+                        placeholder="Nome do opcional (ex: Seguro Viagem Premium)"
+                        value={newExtraName}
+                        onChange={(e) => setNewExtraName(e.target.value)}
+                        className="text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="number"
+                        placeholder="Preço (R$)"
+                        value={newExtraPrice}
+                        onChange={(e) => setNewExtraPrice(e.target.value === "" ? "" : Number(e.target.value))}
+                        className="text-xs font-mono"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Descrição complementar (ex: Cobertura médica nacional)"
+                      value={newExtraDesc}
+                      onChange={(e) => setNewExtraDesc(e.target.value)}
+                      className="text-xs flex-1"
+                    />
+                    <GhostButton
+                      type="button"
+                      onClick={() => {
+                        if (!newExtraName.trim() || newExtraPrice === "") {
+                          toast.error("Preencha nome e preço do opcional.");
+                          return;
+                        }
+                        const current = watchExtraOptions || [];
+                        setValue(
+                          "extraOptions",
+                          [...current, { name: newExtraName.trim(), price: Number(newExtraPrice), description: newExtraDesc.trim() }],
+                          { shouldValidate: true }
+                        );
+                        setNewExtraName("");
+                        setNewExtraPrice("");
+                        setNewExtraDesc("");
+                        toast.success("Serviço opcional adicionado!");
+                      }}
+                      className="h-9 text-xs border border-border px-3 shrink-0"
+                    >
+                      <Plus className="h-4 w-4 mr-1" /> Adicionar
+                    </GhostButton>
+                  </div>
+                </div>
+
+                {/* List of extra options */}
+                <div className="space-y-2">
+                  {watchExtraOptions && watchExtraOptions.length > 0 ? (
+                    watchExtraOptions.map((ext, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface text-xs">
+                        <div>
+                          <strong className="text-sm font-semibold">{ext.name}</strong>
+                          {ext.description && <p className="text-muted-foreground mt-0.5">{ext.description}</p>}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-bold text-success text-sm">
+                            +{money(ext.price)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setValue("extraOptions", watchExtraOptions.filter((_, i) => i !== idx), { shouldValidate: true });
+                            }}
+                            className="text-muted-foreground hover:text-danger p-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 border border-dashed border-border rounded-lg text-xs text-muted-foreground">
+                      Nenhum serviço opcional cadastrado.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: VALUES & INCLUSIONS (originally Step 2) */}
+            {step === 4 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <Field label="Preço Base por Pessoa (R$) *" error={errors.price?.message}>
                   <Input
@@ -557,8 +935,8 @@ export function NewGroupTourWizard({
               </div>
             )}
 
-            {/* STEP 3: ITINERARY & MEDIA */}
-            {step === 3 && (
+            {/* STEP 5: ITINERARY (originally Step 3) */}
+            {step === 5 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <Field label="Imagem de Capa (Banner)" error={errors.coverUrl?.message}>
                   {watchCoverUrl ? (
@@ -694,8 +1072,8 @@ export function NewGroupTourWizard({
               </div>
             )}
 
-            {/* STEP 4: REVIEW & PUBLISH */}
-            {step === 4 && (
+            {/* STEP 6: REVIEW & PUBLISH (originally Step 4) */}
+            {step === 6 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="rounded-xl border border-border bg-surface-alt/20 p-6 flex gap-6">
                   {watchCoverUrl ? (
@@ -718,6 +1096,18 @@ export function NewGroupTourWizard({
                     </p>
 
                     <div className="grid grid-cols-2 gap-y-2 text-xs">
+                      <div className="flex flex-col col-span-2">
+                        <span className="text-muted-foreground">Hospedagem:</span>
+                        <strong>
+                          {watchHotelName ? (
+                            <span className="flex items-center gap-1">
+                              {watchHotelName} ({watchHotelStars} <Star className="h-3 w-3 fill-amber-400 text-amber-400 inline" />)
+                            </span>
+                          ) : (
+                            "Sem hospedagem cadastrada"
+                          )}
+                        </strong>
+                      </div>
                       <div className="flex flex-col">
                         <span className="text-muted-foreground">Preço Base:</span>
                         <strong className="text-brand font-mono text-sm">
@@ -747,6 +1137,38 @@ export function NewGroupTourWizard({
                     </div>
                   </div>
                 </div>
+
+                {watchPricingTiers && watchPricingTiers.length > 0 && (
+                  <div className="space-y-2 rounded-xl border border-border bg-surface p-5">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                      <BedDouble className="h-4 w-4" /> Tarifas de Acomodação ({watchPricingTiers.length})
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {watchPricingTiers.map((t, idx) => (
+                        <div key={idx} className="bg-surface-alt/40 p-2.5 rounded-lg flex justify-between items-center">
+                          <span>{t.name}</span>
+                          <strong className="font-mono text-brand">{money(t.price)}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {watchExtraOptions && watchExtraOptions.length > 0 && (
+                  <div className="space-y-2 rounded-xl border border-border bg-surface p-5">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                      <Layers className="h-4 w-4" /> Opcionais Cadastrados ({watchExtraOptions.length})
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {watchExtraOptions.map((e, idx) => (
+                        <div key={idx} className="bg-surface-alt/40 p-2.5 rounded-lg flex justify-between items-center">
+                          <span>{e.name}</span>
+                          <strong className="font-mono text-success">+{money(e.price)}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-4 rounded-xl border border-border bg-surface p-5">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
