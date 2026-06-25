@@ -10,7 +10,7 @@ import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
 
-export const Route = createFileRoute("/agency/$slug/group-tours")({
+export const Route = createFileRoute("/agency/$slug/group-tours/")({
   head: () => ({ meta: [{ title: "Excursões em grupo · TravelOS" }] }),
   component: GroupToursPage,
 });

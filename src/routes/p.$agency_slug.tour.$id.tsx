@@ -7,6 +7,7 @@ import { Field, Input, PrimaryButton, Textarea, Select, GhostButton, money } fro
 import { cn } from "@/lib/utils";
 import { Check, Clipboard, Copy, FileText, QrCode, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import ReactMarkdown from "react-markdown";
 
 export const Route = createFileRoute("/p/$agency_slug/tour/$id")({
   head: ({ params }) => ({ meta: [{ title: `Roteiro · ${params.agency_slug}` }] }),
@@ -293,11 +294,13 @@ function Page() {
                       >
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-200 group-hover:bg-[var(--color-brand)] transition-colors" />
                         <div className="font-bold text-sm text-gray-800 ml-2">
-                          Dia {d.day_number} — {d.title}
+                          Dia {d.day_number || d.day} — {d.title}
                         </div>
-                        <div className="text-xs text-gray-500 ml-2 mt-2 leading-relaxed">
-                          {d.description_md}
-                        </div>
+                        {(d.description_md || d.description) && (
+                          <div className="text-xs text-gray-500 ml-2 mt-2 leading-relaxed prose prose-sm max-w-none prose-slate">
+                            <ReactMarkdown>{d.description_md || d.description}</ReactMarkdown>
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ol>
@@ -541,10 +544,26 @@ function Page() {
               <PrimaryButton
                 type="submit"
                 disabled={!lgpdConsent}
-                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
+                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 shadow-sm"
               >
                 Avançar para Pagamento — {money(totalPrice)}
               </PrimaryButton>
+
+              {agency?.whatsapp && (
+                <a
+                  href={`https://wa.me/${agency.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+                    `Olá! Tenho interesse no grupo "${t.title}" e gostaria de tirar algumas dúvidas.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 flex w-full h-12 items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 text-sm font-bold text-emerald-700 transition-all cursor-pointer"
+                >
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.45 5.257-.002 9.532-4.282 9.534-9.544.001-2.55-1.01-4.945-2.846-6.782A9.458 9.458 0 0012.008 1.53c-5.26 0-9.536 4.281-9.538 9.543-.001 1.636.485 3.196 1.4 4.597L2.83 19.38l3.817-1.002.001-.001-.001-.001zm11.721-6.425c-.29-.145-1.714-.847-1.979-.942-.266-.096-.459-.145-.653.146-.193.29-.748.942-.917 1.135-.169.193-.338.217-.628.072-2.316-1.16-3.23-1.63-4.524-3.856-.289-.499.29-.464.829-1.538.085-.17.042-.317-.02-.462-.064-.145-.653-1.573-.895-2.152-.236-.569-.475-.49-.652-.499-.169-.008-.362-.008-.556-.008a1.07 1.07 0 00-.773.362c-.266.29-1.014.992-1.014 2.417 0 1.425 1.039 2.798 1.184 2.993.145.193 2.044 3.122 4.951 4.38.692.3 1.232.479 1.652.613.696.222 1.329.19 1.83.115.558-.083 1.714-.7 1.956-1.376.242-.676.242-1.256.17-1.377-.073-.121-.266-.193-.556-.339z"/>
+                  </svg>
+                  Dúvidas? Chamar no WhatsApp
+                </a>
+              )}
             </form>
           </div>
         )}

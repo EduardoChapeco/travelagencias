@@ -40,7 +40,7 @@ function slugify(s: string) {
 
 const STEPS = ["Essencial", "Data & Vagas", "Valores & Inclusos", "Itinerário & Mídia", "Revisão"];
 
-type ItineraryDay = { day: number; title: string; description: string };
+type ItineraryDay = { day_number: number; title: string; description: string };
 
 const tourWizardSchema = z
   .object({
@@ -63,7 +63,7 @@ const tourWizardSchema = z
     itinerary: z
       .array(
         z.object({
-          day: z.number(),
+          day_number: z.number(),
           title: z.string(),
           description: z.string(),
         }),
@@ -247,7 +247,10 @@ export function NewGroupTourWizard({
         base_price: data.price,
         includes: data.includes,
         excludes: data.excludes,
-        itinerary: data.itinerary,
+        itinerary: data.itinerary.map(item => ({
+          ...item,
+          description_md: item.description
+        })),
         cover_image_url: data.coverUrl || null,
         is_public: data.isPublic,
         status: data.status,
@@ -611,7 +614,7 @@ export function NewGroupTourWizard({
                           "itinerary",
                           [
                             ...watchItinerary,
-                            { day: watchItinerary.length + 1, title: "", description: "" },
+                            { day_number: watchItinerary.length + 1, title: "", description: "" },
                           ],
                           { shouldValidate: true },
                         )
@@ -639,7 +642,7 @@ export function NewGroupTourWizard({
                                 "itinerary",
                                 watchItinerary
                                   .filter((_, i) => i !== idx)
-                                  .map((d, i) => ({ ...d, day: i + 1 })),
+                                  .map((d, i) => ({ ...d, day_number: i + 1 })),
                                 { shouldValidate: true },
                               )
                             }

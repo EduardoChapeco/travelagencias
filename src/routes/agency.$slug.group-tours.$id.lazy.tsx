@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { exportRoomingListXlsx, exportRoomingListPdf } from "@/lib/exportRoomingList";
+import ReactMarkdown from "react-markdown";
 import {
   fetchRoomingListByTour,
   createRoomRecord,
@@ -41,7 +42,13 @@ export const Route = createLazyFileRoute("/agency/$slug/group-tours/$id")({
   component: TourDetailPage,
 });
 
-type ItineraryDay = { day_number: number; title: string; description_md?: string };
+type ItineraryDay = {
+  day_number?: number;
+  day?: number | string;
+  title: string;
+  description_md?: string;
+  description?: string;
+};
 type SeatCell = { r: number; c: number; label: string; type: string };
 
 type GroupCost = {
@@ -943,50 +950,74 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         
         <div
           ref={flyerRef}
-          className="relative w-[320px] h-[568px] rounded-2xl overflow-hidden border border-border bg-white flex flex-col justify-between p-6 select-none shadow-md"
+          className="relative w-[320px] h-[568px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex flex-col justify-between p-5 select-none shadow-xl text-white font-sans"
           style={{ aspectRatio: "9/16" }}
         >
-          <div className="flex items-center justify-between z-10">
-            <span className="text-[9px] font-extrabold uppercase tracking-widest bg-slate-900 text-white px-2 py-0.5 rounded">
-              Grupo Exclusivo
-            </span>
-            <div className="text-[10px] font-black text-slate-800 tracking-tight">{agency?.name}</div>
-          </div>
-
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/10 via-white/80 to-white z-0" />
-          {tour.cover_image_url && (
+          {/* Cover image as full-bleed background */}
+          {tour.cover_image_url ? (
             <img
               src={tour.cover_image_url}
               alt="Destination"
-              className="absolute inset-0 w-full h-[55%] object-cover opacity-80 z-[-1]"
+              className="absolute inset-0 w-full h-full object-cover z-0 opacity-80"
             />
+          ) : (
+            <div className="absolute inset-0 bg-slate-900 z-0" />
           )}
+          
+          {/* Linear gradient to make text highly readable */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30 z-[1]" />
 
-          <div className="z-10 mt-auto pt-4 flex flex-col space-y-4 text-slate-900 bg-white/95 backdrop-blur-xs p-4 rounded-xl border border-slate-100/50 shadow-xs">
+          {/* Top header row */}
+          <div className="flex items-center justify-between z-10 relative">
+            <span className="text-[8px] font-extrabold uppercase tracking-widest bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-sm">
+              Vagas Limitadas
+            </span>
+            <div className="text-[9px] font-black uppercase tracking-wider text-white bg-slate-950/40 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+              {agency?.name}
+            </div>
+          </div>
+
+          {/* Main info card pushed to the bottom */}
+          <div className="z-10 relative mt-auto flex flex-col space-y-3.5">
             <div>
-              <span className="text-[9px] font-bold text-brand uppercase tracking-wider block">Excursão para</span>
-              <h2 className="text-base font-black leading-tight tracking-tight text-slate-800 mt-0.5">
+              <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest block">
+                Excursão em Grupo
+              </span>
+              <h2 className="text-base font-black leading-tight tracking-tight text-white uppercase mt-0.5 line-clamp-2 drop-shadow-md">
                 {tour.title}
               </h2>
-              <p className="text-[10px] text-slate-500 font-semibold mt-1 flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {fmtDate(tour.departure_date)} a {fmtDate(tour.return_date)}
-              </p>
-            </div>
-
-            <div className="flex items-baseline gap-1">
-              <span className="text-[10px] font-medium text-slate-500">A partir de</span>
-              <strong className="text-xl font-black font-mono text-slate-900">
-                {money(Number(tour.base_price))}
-              </strong>
+              
+              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <span className="bg-white/10 backdrop-blur-xs text-white rounded-md px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
+                  <Calendar className="h-2.5 w-2.5 text-amber-400" />
+                  {fmtDate(tour.departure_date)} a {fmtDate(tour.return_date)}
+                </span>
+                
+                {tour.transport_type && (
+                  <span className="bg-white/10 backdrop-blur-xs text-white rounded-md px-1.5 py-0.5 text-[8px] font-bold border border-white/5 uppercase">
+                    {tour.transport_type === "bus"
+                      ? "🚌 Rodoviário"
+                      : tour.transport_type === "air"
+                        ? "✈️ Aéreo"
+                        : tour.transport_type === "cruise"
+                          ? "🚢 Cruzeiro"
+                          : "🔄 Conexões"}
+                  </span>
+                )}
+              </div>
             </div>
 
             {tour.includes && tour.includes.length > 0 && (
               <div className="space-y-1">
-                <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">O que está incluso:</span>
+                <span className="text-[8px] text-white/50 font-bold uppercase tracking-wider block">
+                  Incluso no Pacote:
+                </span>
                 <div className="flex flex-wrap gap-1">
                   {tour.includes.slice(0, 3).map((inc: string, idx: number) => (
-                    <span key={idx} className="bg-slate-50 border border-slate-100 text-slate-600 rounded px-1.5 py-0.5 text-[8px] font-medium">
+                    <span
+                      key={idx}
+                      className="bg-slate-950/60 backdrop-blur-xs border border-white/10 text-white rounded px-1.5 py-0.5 text-[8px] font-medium max-w-[90px] truncate"
+                    >
                       ✓ {inc}
                     </span>
                   ))}
@@ -994,12 +1025,30 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               </div>
             )}
 
-            <div className="border-t border-dashed border-slate-200 pt-3 flex items-center justify-between gap-3">
-              <div className="flex-1">
-                <span className="text-[9px] font-extrabold uppercase tracking-wider block text-slate-800">Garanta sua Vaga!</span>
-                <span className="text-[8px] text-slate-500 block leading-tight mt-0.5">Escaneie o QR Code ao lado para ver roteiro completo e se inscrever.</span>
+            <div>
+              <span className="text-[8px] text-white/50 font-bold uppercase tracking-wider block">
+                Valor por Pessoa:
+              </span>
+              <strong className="text-xl font-black font-mono text-amber-400 mt-0.5 block drop-shadow-sm">
+                {money(Number(tour.base_price))}
+              </strong>
+            </div>
+
+            {/* Premium QR Code scanning card */}
+            <div className="bg-white text-slate-950 rounded-xl p-2.5 flex items-center justify-between gap-3 shadow-lg border border-white/10">
+              <div className="flex-1 min-w-0">
+                <span className="text-[9px] font-black uppercase tracking-wider block text-slate-900 leading-none">
+                  GARANTA SUA VAGA
+                </span>
+                <span className="text-[7.5px] text-slate-500 block leading-tight mt-1 font-semibold">
+                  Escaneie o QR Code ao lado para ver roteiro completo e reservar.
+                </span>
               </div>
-              <img src={qrCodeUrl} alt="Inscrições" className="h-14 w-14 border border-slate-200 p-0.5 bg-white shrink-0 rounded" />
+              <img
+                src={qrCodeUrl}
+                alt="Inscrições"
+                className="h-11 w-11 border border-slate-200 p-0.5 bg-white shrink-0 rounded-lg shadow-sm"
+              />
             </div>
           </div>
         </div>
@@ -1095,8 +1144,8 @@ function ItineraryEditor({
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
-    const next = [...days, { day_number: dayNum, title, description_md: desc }].sort(
-      (a, b) => a.day_number - b.day_number,
+    const next = [...days, { day_number: dayNum, title, description_md: desc, description: desc }].sort(
+      (a, b) => Number(a.day_number || (a as any).day || 0) - Number(b.day_number || (b as any).day || 0),
     );
     await persist(next);
     toast.success("Dia adicionado");
@@ -1112,7 +1161,7 @@ function ItineraryEditor({
       description: "Tem certeza de que deseja remover este dia do itinerário da excursão?",
       variant: "destructive",
       onConfirm: async () => {
-        await persist(days.filter((d) => d.day_number !== day_number));
+        await persist(days.filter((d) => Number(d.day_number || (d as any).day) !== day_number));
       },
     });
   }
@@ -1229,24 +1278,24 @@ function ItineraryEditor({
         )}
       </div>
 
-      {days.map((d) => (
+      {days.map((d, idx) => (
         <div
-          key={d.day_number}
+          key={d.day_number || (d as any).day || idx}
           className="rounded border border-border bg-surface p-4 flex items-start gap-4"
         >
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-alt text-xs font-semibold">
-            D{d.day_number}
+            D{d.day_number || (d as any).day}
           </div>
           <div className="flex-1">
             <div className="font-semibold">{d.title}</div>
-            {d.description_md && (
-              <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">
-                {d.description_md}
-              </p>
+            {(d.description_md || d.description) && (
+              <div className="text-sm text-muted-foreground mt-1 prose prose-sm max-w-none prose-slate">
+                <ReactMarkdown>{d.description_md || d.description}</ReactMarkdown>
+              </div>
             )}
           </div>
           <button
-            onClick={() => handleRemove(d.day_number)}
+            onClick={() => handleRemove(Number(d.day_number || (d as any).day))}
             className="text-muted-foreground hover:text-danger p-2"
           >
             <Trash2 className="h-4 w-4" />
@@ -1543,7 +1592,14 @@ function EditTour({
     total_seats: tour.total_seats ?? 0,
     cover_image_url: tour.cover_image_url || "",
     important_notes: tour.important_notes || "",
+    destination: tour.destination || "",
+    transport_type: tour.transport_type || "air",
+    transport_details: tour.transport_details || "",
   });
+  const [includes, setIncludes] = useState<string[]>(Array.isArray(tour.includes) ? tour.includes : []);
+  const [excludes, setExcludes] = useState<string[]>(Array.isArray(tour.excludes) ? tour.excludes : []);
+  const [newInc, setNewInc] = useState("");
+  const [newExc, setNewExc] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function save(e: React.FormEvent) {
@@ -1560,6 +1616,11 @@ function EditTour({
         total_seats: Number(f.total_seats),
         cover_image_url: f.cover_image_url || null,
         important_notes: f.important_notes || null,
+        destination: f.destination || null,
+        transport_type: f.transport_type,
+        transport_details: f.transport_details || null,
+        includes: includes,
+        excludes: excludes,
       })
       .eq("id", tour.id);
     setBusy(false);
@@ -1579,6 +1640,37 @@ function EditTour({
         <Field label="Slug (URL Amigável)">
           <Input value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} required />
         </Field>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Destino">
+            <Input
+              value={f.destination}
+              onChange={(e) => setF({ ...f, destination: e.target.value })}
+              placeholder="Ex: Gramado, RS"
+            />
+          </Field>
+          <Field label="Meio de Transporte">
+            <Select
+              value={f.transport_type}
+              onChange={(e) => setF({ ...f, transport_type: e.target.value })}
+            >
+              <option value="air">✈️ Aéreo</option>
+              <option value="bus">🚌 Rodoviário</option>
+              <option value="cruise">🚢 Marítimo / Cruzeiro</option>
+              <option value="train">🚆 Trem</option>
+              <option value="mixed">🔄 Misto</option>
+            </Select>
+          </Field>
+        </div>
+
+        <Field label="Detalhes do Transporte">
+          <Input
+            value={f.transport_details}
+            onChange={(e) => setF({ ...f, transport_details: e.target.value })}
+            placeholder="Ex: Ônibus Leito Cama, voos Gol, etc."
+          />
+        </Field>
+
         <div className="grid grid-cols-2 gap-4">
           <Field label="Partida">
             <Input
@@ -1626,7 +1718,118 @@ function EditTour({
             onChange={(e) => setF({ ...f, important_notes: e.target.value })}
           />
         </Field>
-        <div className="mt-6 flex justify-end gap-3">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border">
+          {/* Includes */}
+          <div className="space-y-2">
+            <Field label="O que está incluso">
+              <div className="flex gap-2">
+                <Input
+                  value={newInc}
+                  onChange={(e) => setNewInc(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (newInc.trim()) {
+                        setIncludes([...includes, newInc.trim()]);
+                        setNewInc("");
+                      }
+                    }
+                  }}
+                  placeholder="Ex: Almoço incluso"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newInc.trim()) {
+                      setIncludes([...includes, newInc.trim()]);
+                      setNewInc("");
+                    }
+                  }}
+                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-lg text-sm shrink-0 cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+            </Field>
+            <div className="flex flex-col gap-1.5 max-h-[120px] overflow-y-auto pr-1">
+              {includes.map((inc, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between bg-emerald-50/60 border border-emerald-100 text-emerald-800 text-xs py-1 px-2.5 rounded-lg font-semibold"
+                >
+                  <span className="truncate">✓ {inc}</span>
+                  <button
+                    type="button"
+                    onClick={() => setIncludes(includes.filter((_, idx) => idx !== i))}
+                    className="text-emerald-500 hover:text-emerald-850 p-0.5 ml-2 cursor-pointer font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {includes.length === 0 && (
+                <div className="text-[10px] text-muted-foreground italic">Nenhum item incluso.</div>
+              )}
+            </div>
+          </div>
+
+          {/* Excludes */}
+          <div className="space-y-2">
+            <Field label="O que NÃO está incluso">
+              <div className="flex gap-2">
+                <Input
+                  value={newExc}
+                  onChange={(e) => setNewExc(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (newExc.trim()) {
+                        setExcludes([...excludes, newExc.trim()]);
+                        setNewExc("");
+                      }
+                    }
+                  }}
+                  placeholder="Ex: Taxa de turismo"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newExc.trim()) {
+                      setExcludes([...excludes, newExc.trim()]);
+                      setNewExc("");
+                    }
+                  }}
+                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-lg text-sm shrink-0 cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+            </Field>
+            <div className="flex flex-col gap-1.5 max-h-[120px] overflow-y-auto pr-1">
+              {excludes.map((exc, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between bg-red-50/60 border border-red-100 text-red-800 text-xs py-1 px-2.5 rounded-lg font-semibold"
+                >
+                  <span className="truncate">✗ {exc}</span>
+                  <button
+                    type="button"
+                    onClick={() => setExcludes(excludes.filter((_, idx) => idx !== i))}
+                    className="text-red-500 hover:text-red-850 p-0.5 ml-2 cursor-pointer font-bold"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {excludes.length === 0 && (
+                <div className="text-[10px] text-muted-foreground italic">Nenhum item excluído.</div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3 pt-2">
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
