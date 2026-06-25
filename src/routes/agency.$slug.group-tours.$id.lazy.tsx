@@ -247,7 +247,54 @@ function TourDetailPage() {
     }
   });
 
-  if (!tourQ.data) return <div className="text-sm text-muted-foreground">Carregando…</div>;
+  if (tourQ.isLoading) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent mb-4" />
+        <p className="text-sm text-muted-foreground">Carregando dados da excursão...</p>
+      </div>
+    );
+  }
+
+  if (tourQ.isError) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-xl border border-red-200 bg-red-50/50 m-6">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Excursão</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-md">
+          {tourQ.error instanceof Error ? tourQ.error.message : "Ocorreu um erro desconhecido ao carregar os dados."}
+        </p>
+        <button
+          onClick={() => tourQ.refetch()}
+          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (!tourQ.data) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-xl border border-dashed border-border m-6">
+        <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+          <XCircle className="h-5 w-5 text-slate-500" />
+        </div>
+        <h3 className="text-base font-bold text-foreground">Excursão Não Encontrada</h3>
+        <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+          A viagem com o código fornecido não existe ou foi removida pelo operador.
+        </p>
+        <a
+          href={`/agency/${agency?.slug}/group-tours`}
+          className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
+        >
+          Voltar para Lista de Excursões
+        </a>
+      </div>
+    );
+  }
   const t = tourQ.data;
   const itinerary: ItineraryDay[] = Array.isArray(t.itinerary)
     ? (t.itinerary as unknown as ItineraryDay[])
@@ -426,7 +473,17 @@ function TourDetailPage() {
 
         {/* Passengers & Payments alerts */}
         <TabsContent value="passengers">
-          {enrolQ.data?.length === 0 ? (
+          {enrolQ.isLoading ? (
+            <div className="py-8 text-center text-xs text-muted-foreground flex flex-col items-center justify-center">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent mb-2" />
+              Carregando lista de passageiros...
+            </div>
+          ) : enrolQ.isError ? (
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-xs text-red-750 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+              <span>Falha ao obter lista de inscrições: {enrolQ.error instanceof Error ? enrolQ.error.message : "Erro no banco de dados"}</span>
+            </div>
+          ) : enrolQ.data?.length === 0 ? (
             <div className="rounded border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
               Sem inscrições ainda.
             </div>
@@ -608,6 +665,10 @@ function TourDetailPage() {
                 <div className="divide-y divide-border">
                   {costsQ.isLoading ? (
                     <div className="px-5 py-4 text-xs text-muted-foreground">Carregando custos...</div>
+                  ) : costsQ.isError ? (
+                    <div className="px-5 py-4 text-xs text-red-650 bg-red-50/40">
+                      ⚠️ Falha ao obter despesas da viagem: {costsQ.error instanceof Error ? costsQ.error.message : "Erro"}
+                    </div>
                   ) : tourCosts.length === 0 ? (
                     <div className="px-5 py-4 text-xs text-muted-foreground italic">Nenhum custo lançado ainda.</div>
                   ) : (
@@ -2180,8 +2241,26 @@ function RoomingListManager({
     }
   }
 
-  if (roomsQ.isLoading)
-    return <div className="p-8 text-sm text-muted-foreground">Carregando rooming list…</div>;
+  if (roomsQ.isLoading) {
+    return (
+      <div className="py-12 text-center text-sm text-muted-foreground">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent mx-auto mb-2" />
+        Carregando rooming list…
+      </div>
+    );
+  }
+
+  if (roomsQ.isError) {
+    return (
+      <div className="p-6 text-center rounded-xl border border-red-200 bg-red-50/50 text-sm text-red-700 m-4 flex flex-col items-center justify-center">
+        <AlertTriangle className="h-6 w-6 text-red-600 mb-2 shrink-0" />
+        <span className="font-semibold">Falha ao obter rooming list:</span>
+        <span className="text-xs text-red-650 mt-1 max-w-sm">
+          {roomsQ.error instanceof Error ? roomsQ.error.message : "Erro desconhecido de conexão."}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

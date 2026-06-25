@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { fetchPublicTour, enrollPublicTour } from "@/services/public";
 import { Field, Input, PrimaryButton, Textarea, Select, GhostButton, money } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { Check, Clipboard, Copy, FileText, QrCode, Sparkles } from "lucide-react";
+import { Check, Clipboard, Copy, FileText, QrCode, Sparkles, AlertTriangle, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 
@@ -73,8 +73,35 @@ function Page() {
     );
   }
 
+  if (q.isError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f7f5ef] px-6 text-center">
+        <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center mb-4 border border-red-200">
+          <AlertTriangle className="w-6 h-6 text-red-600" />
+        </div>
+        <h2 className="text-lg font-bold text-gray-900">Falha ao Carregar Página</h2>
+        <p className="text-xs text-gray-500 mt-2 max-w-sm">
+          {q.error instanceof Error ? q.error.message : "Não foi possível carregar os detalhes do pacote de viagem."}
+        </p>
+        <button onClick={() => q.refetch()} className="mt-4 px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-xs shadow hover:bg-gray-800 transition-all cursor-pointer">
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
   if (!q.data || !q.data.tour) {
-    return <div className="p-10 text-center text-sm font-semibold text-gray-500 bg-[#f7f5ef] min-h-screen">Roteiro não disponível</div>;
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f7f5ef] px-6 text-center">
+        <div className="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center mb-4 border border-gray-200">
+          <XCircle className="w-6 h-6 text-gray-500" />
+        </div>
+        <h2 className="text-lg font-bold text-gray-900">Roteiro Indisponível</h2>
+        <p className="text-xs text-gray-500 mt-2 max-w-xs">
+          Esta viagem em grupo não existe, foi excluída ou está atualmente arquivada como rascunho.
+        </p>
+      </div>
+    );
   }
 
   const { agency, tour: t, days, layout, assignedSeats, settings } = q.data;
