@@ -7,6 +7,7 @@ import { fetchBrandingConfig, saveBrandingConfig } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { FileUploader } from "@/components/uploads/FileUploader";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -63,6 +64,7 @@ function Page() {
   const productName = watch("product_name");
   const tagline = watch("tagline");
   const logoUrl = watch("logo_url");
+  const faviconUrl = watch("favicon_url");
   const supportEmail = watch("support_email");
   const googleAnalyticsId = watch("google_analytics_id");
 
@@ -138,20 +140,34 @@ function Page() {
               <h3 className="text-sm font-semibold">Ativos e links</h3>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field
-                label="URL do Logo global"
-                hint="Endereço público da imagem"
-                error={errors.logo_url?.message}
-              >
-                <Input type="url" {...register("logo_url")} placeholder="https://..." />
-              </Field>
-              <Field
-                label="URL do Favicon"
-                hint="Endereço .ico ou .png 32×32"
-                error={errors.favicon_url?.message}
-              >
-                <Input type="url" {...register("favicon_url")} placeholder="https://..." />
-              </Field>
+              <div>
+                <FileUploader
+                  label="Logo Global"
+                  value={logoUrl || null}
+                  onChange={(url) => setValue("logo_url", url ?? "", { shouldValidate: true })}
+                  bucket="agency-logos"
+                  folder="admin/logos"
+                  variant="image"
+                  publicBucket={true}
+                />
+                {errors.logo_url && (
+                  <span className="text-xs text-danger mt-1 block">{errors.logo_url.message}</span>
+                )}
+              </div>
+              <div>
+                <FileUploader
+                  label="Favicon"
+                  value={faviconUrl || null}
+                  onChange={(url) => setValue("favicon_url", url ?? "", { shouldValidate: true })}
+                  bucket="agency-logos"
+                  folder="admin/favicons"
+                  variant="image"
+                  publicBucket={true}
+                />
+                {errors.favicon_url && (
+                  <span className="text-xs text-danger mt-1 block">{errors.favicon_url.message}</span>
+                )}
+              </div>
               <Field label="URL dos Termos de Uso" error={errors.terms_url?.message}>
                 <Input {...register("terms_url")} placeholder="/termos" />
               </Field>
