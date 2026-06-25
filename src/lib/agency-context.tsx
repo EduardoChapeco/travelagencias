@@ -84,6 +84,7 @@ export const DEFAULT_MODULE_NAMES: Record<string, string> = {
   dashboard: "Dashboard",
   "daily-tasks": "Meu Dia (Tarefas)",
   crm: "Negociações & Leads",
+  quotes: "Cotações VibeTour",
   calendar: "Agenda",
   omnichannel: "Conversas & Mensagens",
   proposals: "Orçamentos & Propostas",

@@ -14,6 +14,12 @@ import {
   WifiOff,
   ShieldCheck,
   Cpu,
+  Play,
+  RefreshCw,
+  AlertCircle,
+  Clock,
+  Calendar,
+  History,
 } from "lucide-react";
 import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
@@ -99,13 +105,13 @@ function IntegrationsPage() {
             value="apikeys"
             className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
           >
-            <KeyRound className="h-3.5 w-3.5" /> Chaves de Acesso
+            <KeyRound className="h-3.5 w-3.5" /> Parâmetros de Conexão
           </TabsTrigger>
           <TabsTrigger
             value="infotravel"
             className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
           >
-            <Wifi className="h-3.5 w-3.5" /> Infotravel GDS
+            <Wifi className="h-3.5 w-3.5" /> Operadora Infotravel
           </TabsTrigger>
         </TabsList>
 
@@ -113,7 +119,7 @@ function IntegrationsPage() {
           <ProviderKeysSection
             agencyId={agency.id}
             providers={AI_PROVIDERS}
-            title="Chaves de Inteligência Artificial"
+            title="Parâmetros de Inteligência Artificial"
             description="Quando ausentes, o sistema usa as chaves globais do administrador da plataforma."
           />
           <AiAgentSettingsSection agencyId={agency.id} />
@@ -599,27 +605,27 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
     <div className="mt-5 space-y-4">
       <ConfirmDialog />
       <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
-        <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
-        Gerencie livremente qualquer chave de integração para conectores customizados. Estas chaves
-        ficam associadas exclusivamente a esta agência.
-      </div>
+         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
+         Gerencie livremente qualquer parâmetro de conexão para integrações customizadas. Estas credenciais
+         ficam associadas exclusivamente a esta agência.
+       </div>
 
       <form
         onSubmit={add}
         className="grid gap-2 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5"
       >
-        <Field label="Provider">
+        <Field label="Serviço">
           <Input
-            placeholder="anthropic, openai…"
+            placeholder="Ex: anthropic, openai…"
             value={form.provider}
             onChange={(e) => setForm({ ...form, provider: e.target.value })}
             required
           />
         </Field>
-        <Field label="Label">
+        <Field label="Identificação">
           <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
         </Field>
-        <Field label="Chave">
+        <Field label="Código de Acesso">
           <Input
             type="password"
             value={form.key_value}
@@ -627,7 +633,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
             required
           />
         </Field>
-        <Field label="Limite/mês">
+        <Field label="Limite/mês (R$)">
           <Input
             type="number"
             value={form.monthly_limit}
@@ -651,11 +657,11 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 border-b border-border text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
-                <th className="px-3 py-2 text-left">Provider</th>
-                <th className="px-3 py-2 text-left">Label</th>
-                <th className="px-3 py-2 text-left">Chave</th>
-                <th className="px-3 py-2 text-right">Uso</th>
-                <th className="px-3 py-2 text-center">Ativa</th>
+                <th className="px-3 py-2 text-left">Serviço</th>
+                <th className="px-3 py-2 text-left">Identificação</th>
+                <th className="px-3 py-2 text-left">Código de Acesso</th>
+                <th className="px-3 py-2 text-right">Utilização</th>
+                <th className="px-3 py-2 text-center">Ativo</th>
                 <th className="px-3 py-2" />
               </tr>
             </thead>
@@ -772,9 +778,9 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
 
       <div className="flex items-center justify-between rounded-lg border border-border bg-surface-alt/10 p-3.5">
         <div>
-          <label className="text-xs font-bold text-foreground">Auto-Responder Ativo</label>
+          <label className="text-xs font-bold text-foreground">Respostas Automáticas Ativas</label>
           <p className="text-[10px] text-muted-foreground font-sans">
-            Se ativado, a IA responderá diretamente às mensagens recebidas via WhatsApp.
+            Se ativado, o assistente responderá diretamente às mensagens recebidas via WhatsApp.
           </p>
         </div>
         <input
@@ -786,19 +792,19 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Persona de Atendimento">
+        <Field label="Estilo de Atendimento">
           <Select value={persona} onChange={(e: any) => setPersona(e.target.value)}>
             <option value="balanced">Equilibrado / Neutro</option>
-            <option value="conversion">Foco em Conversão (Vendas Agressivas)</option>
-            <option value="retention">Foco em Retenção (Suporte & Pós-Venda)</option>
+            <option value="conversion">Foco em Conversão e Vendas</option>
+            <option value="retention">Foco em Retenção e Suporte</option>
           </Select>
           <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
-            Ajusta o estilo de comunicação e os objetivos de vendas da inteligência artificial.
+            Ajusta o estilo de comunicação e os objetivos comerciais do assistente virtual.
           </p>
         </Field>
       </div>
 
-      <Field label="Instruções de Contexto Base (System Prompt)">
+      <Field label="Instruções e Regras de Negócio do Assistente">
         <textarea
           rows={5}
           value={context}
@@ -812,7 +818,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
       </Field>
 
       <PrimaryButton type="button" disabled={busy} onClick={saveSettings} className="w-full">
-        {busy ? "Salvando..." : "Salvar Configurações do Agente de IA"}
+        {busy ? "Salvando..." : "Salvar Configurações do Assistente"}
       </PrimaryButton>
     </div>
   );
@@ -820,6 +826,8 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
 
 function InfotravelTab({ agencyId }: { agencyId: string }) {
   const [busy, setBusy] = useState(false);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [errorDetailsJobId, setErrorDetailsJobId] = useState<string | null>(null);
   const [config, setConfig] = useState({
     infotravel_url: "",
     infotravel_username: "",
@@ -828,6 +836,18 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     infotravel_agency: "",
     infotravel_markup: "0",
   });
+
+  // Datas padrão para o Backfill (últimos 30 dias)
+  const todayStr = new Date().toISOString().split("T")[0];
+  const thirtyDaysAgoStr = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().split("T")[0];
+  })();
+  const [backfillStart, setBackfillStart] = useState(thirtyDaysAgoStr);
+  const [backfillEnd, setBackfillEnd] = useState(todayStr);
+
+  const qc = useQueryClient();
 
   const { data: agencyData, isLoading } = useQuery({
     queryKey: ["agency-integrations-infotravel", agencyId],
@@ -845,6 +865,27 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   const keysQuery = useQuery({
     queryKey: ["agency-api-keys", agencyId],
     queryFn: () => fetchApiKeys(agencyId),
+  });
+
+  // Query de histórico de execuções (sync_jobs)
+  const jobsQuery = useQuery({
+    queryKey: ["sync-jobs", agencyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sync_jobs")
+        .select("*")
+        .eq("agency_id", agencyId)
+        .order("started_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data;
+    },
+    // Recarregar em tempo real a cada 3 segundos caso tenha algum job executando
+    refetchInterval: (query) => {
+      const data = query.state.data as any[] | undefined;
+      const hasRunning = data?.some((job) => job.status === "running");
+      return hasRunning ? 3000 : false;
+    },
   });
 
   useEffect(() => {
@@ -924,6 +965,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       }
 
       toast.success("Configurações do Infotravel salvas com sucesso!");
+      qc.invalidateQueries({ queryKey: ["agency-api-keys", agencyId] });
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar");
     } finally {
@@ -931,89 +973,387 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     }
   }
 
+  // Disparar Carga Histórica (Backfill)
+  async function handleRunBackfill() {
+    if (!backfillStart || !backfillEnd) {
+      toast.error("Por favor, preencha as datas de início e fim.");
+      return;
+    }
+    if (new Date(backfillStart) > new Date(backfillEnd)) {
+      toast.error("A data de início não pode ser maior que a data de fim.");
+      return;
+    }
+
+    setSyncBusy(true);
+    const toastId = toast.loading("Iniciando Sincronização Histórica na Operadora...");
+    try {
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "run_backfill",
+          agencyId,
+          params: {
+            startDate: backfillStart,
+            endDate: backfillEnd,
+          },
+        },
+      });
+
+      if (error) throw error;
+      toast.success("Sincronização Histórica iniciada com sucesso! Acompanhe o progresso no histórico de auditoria abaixo.", { id: toastId });
+      jobsQuery.refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao executar sincronização histórica", { id: toastId });
+    } finally {
+      setSyncBusy(false);
+    }
+  }
+
+  // Disparar Polling Manual (Sincronizar Agora)
+  async function handleRunPolling() {
+    setSyncBusy(true);
+    const toastId = toast.loading("Varrendo reservas ativas na Operadora...");
+    try {
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "run_periodic_sync",
+          agencyId,
+        },
+      });
+
+      if (error) throw error;
+      toast.success("Sincronização concluída com sucesso!", { id: toastId });
+      jobsQuery.refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao sincronizar reservas", { id: toastId });
+    } finally {
+      setSyncBusy(false);
+    }
+  }
+
+  function formatDuration(start: string, end: string | null) {
+    if (!end) return "executando…";
+    const ms = new Date(end).getTime() - new Date(start).getTime();
+    const sec = Math.round(ms / 1000);
+    if (sec < 60) return `${sec}s`;
+    const min = Math.floor(sec / 60);
+    const rem = sec % 60;
+    return `${min}m ${rem}s`;
+  }
+
+  const isConfigured = !!(config.infotravel_username && config.infotravel_password);
+
   if (isLoading)
     return (
       <div className="p-8 text-center text-sm text-muted-foreground font-sans">Carregando...</div>
     );
 
-  return (
-    <form onSubmit={save} className="mt-5 space-y-6">
-      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-        <div className="flex items-center gap-2 text-foreground font-semibold">
-          <Wifi className="h-5 w-5 text-brand" />
-          Conexão GDS Infotravel / Infotera
-        </div>
-        <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-          Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo
-          vinculada ao sistema Infotravel.
-        </p>
+  const selectedJobForError = jobsQuery.data?.find((j: any) => j.id === errorDetailsJobId);
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="col-span-2">
+  return (
+    <div className="space-y-8 mt-5">
+      {/* Formulário de Configuração de Credenciais */}
+      <form onSubmit={save} className="space-y-6">
+        <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+          <div className="flex items-center gap-2 text-foreground font-semibold">
+            <Wifi className="h-5 w-5 text-brand" />
+            Conexão com Operadora Infotravel
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+            Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo
+            vinculada ao sistema Infotravel.
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="col-span-2">
+              <Field
+                label="Endereço do Servidor (URL)"
+                hint="Padrão: http://api.infotravel.com.br/api/v1"
+              >
+                <Input
+                  placeholder="http://api.infotravel.com.br/api/v1"
+                  value={config.infotravel_url}
+                  onChange={(e) => setConfig({ ...config, infotravel_url: e.target.value })}
+                  required
+                />
+              </Field>
+            </div>
+            <Field label="Usuário de Integração">
+              <Input
+                placeholder="Digite o usuário de integração…"
+                value={config.infotravel_username}
+                onChange={(e) => setConfig({ ...config, infotravel_username: e.target.value })}
+                required
+              />
+            </Field>
+            <Field label="Senha de Integração">
+              <Input
+                type="password"
+                placeholder="Digite a senha de integração…"
+                value={config.infotravel_password}
+                onChange={(e) => setConfig({ ...config, infotravel_password: e.target.value })}
+                required
+              />
+            </Field>
+            <Field label="Identificador do Cliente">
+              <Input
+                placeholder="Identificador do cliente operadora…"
+                value={config.infotravel_client}
+                onChange={(e) => setConfig({ ...config, infotravel_client: e.target.value })}
+                required
+              />
+            </Field>
+            <Field label="Identificador da Agência">
+              <Input
+                placeholder="Código da agência contratante…"
+                value={config.infotravel_agency}
+                onChange={(e) => setConfig({ ...config, infotravel_agency: e.target.value })}
+                required
+              />
+            </Field>
             <Field
-              label="URL da API (Infotravel)"
-              hint="Padrão: http://api.infotravel.com.br/api/v1"
+              label="Margem Adicional (Markup %)"
+              hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas"
             >
               <Input
-                placeholder="http://api.infotravel.com.br/api/v1"
-                value={config.infotravel_url}
-                onChange={(e) => setConfig({ ...config, infotravel_url: e.target.value })}
+                type="number"
+                step="0.01"
+                placeholder="Ex: 15.00"
+                value={config.infotravel_markup}
+                onChange={(e) => setConfig({ ...config, infotravel_markup: e.target.value })}
                 required
               />
             </Field>
           </div>
-          <Field label="Usuário (Username)">
-            <Input
-              placeholder="Digite o usuário de integração…"
-              value={config.infotravel_username}
-              onChange={(e) => setConfig({ ...config, infotravel_username: e.target.value })}
-              required
-            />
-          </Field>
-          <Field label="Senha (Password)">
-            <Input
-              type="password"
-              placeholder="Digite a senha de integração…"
-              value={config.infotravel_password}
-              onChange={(e) => setConfig({ ...config, infotravel_password: e.target.value })}
-              required
-            />
-          </Field>
-          <Field label="Código do Cliente (Client ID)">
-            <Input
-              placeholder="Identificador do cliente operadora…"
-              value={config.infotravel_client}
-              onChange={(e) => setConfig({ ...config, infotravel_client: e.target.value })}
-              required
-            />
-          </Field>
-          <Field label="Código da Agência (Agency ID)">
-            <Input
-              placeholder="Código da agência contratante…"
-              value={config.infotravel_agency}
-              onChange={(e) => setConfig({ ...config, infotravel_agency: e.target.value })}
-              required
-            />
-          </Field>
-          <Field
-            label="Markup (%)"
-            hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas"
-          >
-            <Input
-              type="number"
-              step="0.01"
-              placeholder="Ex: 15.00"
-              value={config.infotravel_markup}
-              onChange={(e) => setConfig({ ...config, infotravel_markup: e.target.value })}
-              required
-            />
-          </Field>
+        </div>
+
+        <PrimaryButton disabled={busy} className="w-full">
+          {busy ? "Salvando..." : "Salvar configurações de conexão"}
+        </PrimaryButton>
+      </form>
+
+      {/* Painel de Controle de Sincronização */}
+      <div className={`border-t border-border/60 pt-8 space-y-6 ${!isConfigured ? "opacity-50 pointer-events-none" : ""}`}>
+        <div>
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Cpu className="h-4 w-4 text-brand" /> Painel de Sincronização de Reservas
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-sans">
+            Com os parâmetros de conexão salvos, você pode importar o histórico de reservas anteriores ou atualizar o status atual.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Lado Esquerdo: Backfill */}
+          <div className="rounded-xl border border-border bg-surface p-5 flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-brand" /> Importar Reservas Anteriores (Lote)
+              </span>
+              <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+                Importa de forma automática as reservas criadas na operadora parceira dentro de um período selecionado. 
+                O processamento é realizado de forma segura e direta no banco de dados.
+              </p>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Field label="Período Inicial">
+                  <Input
+                    type="date"
+                    value={backfillStart}
+                    onChange={(e) => setBackfillStart(e.target.value)}
+                  />
+                </Field>
+                <Field label="Período Final">
+                  <Input
+                    type="date"
+                    value={backfillEnd}
+                    onChange={(e) => setBackfillEnd(e.target.value)}
+                  />
+                </Field>
+              </div>
+            </div>
+            <button
+              type="button"
+              disabled={syncBusy || !isConfigured}
+              onClick={handleRunBackfill}
+              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-xl bg-brand/10 text-xs font-bold text-brand hover:bg-brand/20 transition-all border border-brand/20 disabled:opacity-50 cursor-pointer"
+            >
+              <Play className="h-3.5 w-3.5" /> Iniciar Importação de Reservas
+            </button>
+          </div>
+
+          {/* Lado Direito: Polling Engine */}
+          <div className="rounded-xl border border-border bg-surface p-5 flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas (Atualização)
+              </span>
+              <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+                Verifica as viagens com embarque programado para os próximos 30 dias na operadora parceira.
+                Atualiza automaticamente as informações de status, vouchers e bilhetes emitidos.
+              </p>
+              <div className="rounded-lg bg-surface-alt/40 p-3 border border-border/40 text-[11px] text-muted-foreground leading-normal font-sans">
+                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />
+                O sistema realiza esta atualização de status de forma automática a cada 4 horas.
+              </div>
+            </div>
+            <button
+              type="button"
+              disabled={syncBusy || !isConfigured}
+              onClick={handleRunPolling}
+              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-xl bg-surface-alt hover:bg-surface-alt/80 text-xs font-bold text-foreground border border-border transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar Viagens Ativas
+            </button>
+          </div>
+        </div>
+
+        {/* Auditoria / Histórico de Execuções */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between border-b border-border/50 pb-2">
+            <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de Processamento de Reservas (Últimos 10)
+            </h4>
+            {jobsQuery.isFetching && (
+              <span className="flex items-center gap-1 text-[10px] text-brand font-bold animate-pulse">
+                <RefreshCw className="h-3 w-3 animate-spin" /> Atualizando...
+              </span>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-border bg-surface overflow-x-auto">
+            {jobsQuery.isLoading ? (
+              <div className="p-8 text-center text-xs text-muted-foreground font-sans">Buscando histórico...</div>
+            ) : !jobsQuery.data || jobsQuery.data.length === 0 ? (
+              <div className="p-8 text-center text-xs text-muted-foreground font-sans italic">
+                Nenhuma importação ou atualização realizada recentemente.
+              </div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-surface-alt/40 border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                  <tr>
+                    <th className="px-4 py-2.5 text-left">Data de Execução</th>
+                    <th className="px-4 py-2.5 text-left">Tipo de Ação</th>
+                    <th className="px-4 py-2.5 text-center">Situação</th>
+                    <th className="px-4 py-2.5 text-right">Reservas Importadas</th>
+                    <th className="px-4 py-2.5 text-center">Ocorrências</th>
+                    <th className="px-4 py-2.5 text-right">Duração</th>
+                    <th className="px-4 py-2.5" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobsQuery.data.map((job: any) => {
+                    const errorCount = Array.isArray(job.errors_log) ? job.errors_log.length : 0;
+                    return (
+                      <tr key={job.id} className="border-t border-border/50 hover:bg-surface-alt/20 text-xs">
+                        <td className="px-4 py-3 text-muted-foreground font-medium">
+                          {new Date(job.started_at).toLocaleString("pt-BR")}
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-foreground">
+                          {job.job_type === "backfill" ? (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação em Lote
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1">
+                              <RefreshCw className="h-3.5 w-3.5 text-amber-500 shrink-0" /> Atualização Geral
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {job.status === "running" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand animate-pulse border border-brand/20">
+                              <RefreshCw className="h-3 w-3 animate-spin" /> PROCESSANDO
+                            </span>
+                          ) : job.status === "completed" ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                              FINALIZADO
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20">
+                              NÃO CONCLUÍDO
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono font-bold text-foreground">
+                          {job.records_processed}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {errorCount > 0 ? (
+                            <button
+                              type="button"
+                              onClick={() => setErrorDetailsJobId(job.id)}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 cursor-pointer transition-all"
+                            >
+                              <AlertCircle className="h-3 w-3" /> {errorCount} ocorrência(s)
+                            </button>
+                          ) : (
+                            <span className="text-muted-foreground/40">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-muted-foreground">
+                          {formatDuration(job.started_at, job.finished_at)}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {/* Empty spacer */}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
 
-      <PrimaryButton disabled={busy} className="w-full">
-        {busy ? "Salvando..." : "Salvar configurações do Infotravel"}
-      </PrimaryButton>
-    </form>
+      {/* Modal de Detalhes de Erros de Sincronização */}
+      {errorDetailsJobId && selectedJobForError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-4">
+              <h3 className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
+                <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
+              </h3>
+              <button
+                type="button"
+                onClick={() => setErrorDetailsJobId(null)}
+                className="text-xs text-muted-foreground hover:text-foreground font-semibold bg-surface-alt px-3 py-1.5 rounded-lg cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              <p className="text-xs text-muted-foreground mb-2">
+                Abaixo estão listadas as ocorrências registradas durante o processamento das reservas com a operadora parceira:
+              </p>
+              {Array.isArray(selectedJobForError.errors_log) &&
+                selectedJobForError.errors_log.map((log: any, idx: number) => (
+                  <div key={idx} className="p-3.5 rounded-xl border border-danger/20 bg-danger/5 text-xs font-mono space-y-1">
+                    <div className="flex justify-between items-center text-[10px] text-danger/80 border-b border-danger/10 pb-1.5 mb-1.5">
+                      <span className="font-bold uppercase">
+                        {log.booking_id ? `Reserva #${log.booking_id}` : "Ocorrência Geral"}
+                      </span>
+                      <span>{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : ""}</span>
+                    </div>
+                    <div className="text-foreground font-medium whitespace-pre-wrap break-all leading-relaxed">
+                      {log.error || JSON.stringify(log)}
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            <div className="border-t border-border pt-4 mt-4 text-right">
+              <button
+                type="button"
+                onClick={() => setErrorDetailsJobId(null)}
+                className="h-9 px-4 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 cursor-pointer transition-all"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

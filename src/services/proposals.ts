@@ -127,7 +127,10 @@ export async function recalculateProposal(id: string) {
 }
 
 export async function processOcrFile(file: File, proposal_id?: string, agency_id?: string) {
-  return new Promise<{
+  const maxRetries = 2;
+  const timeoutMs = 45000; // 45 seconds timeout for heavy Vision OCR files
+
+  const executeOcrWithRetry = async (attempt: number = 1): Promise<{
     flights?: Flight[];
     hotels?: Hotel[];
     transfers?: Transfer[];
@@ -141,31 +144,58 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
     pax?: string[];
     locator?: string;
     notes?: string;
-  }>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = async () => {
-      try {
-        const base64 = (reader.result as string).split(",")[1];
-        const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-          body: {
-            action: "completion",
-            feature: "ocr_proposal",
-            file_base64: base64,
-            mime: file.type,
-            file_name: file.name,
-            proposal_id,
-            agency_id,
-          },
-        });
-        if (error) throw error;
-        resolve(data?.result ?? {});
-      } catch (err) {
-        reject(err);
-      }
-    };
-    reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
-    reader.readAsDataURL(file);
-  });
+  }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+          const base64 = (reader.result as string).split(",")[1];
+          const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+            body: {
+              action: "completion",
+              feature: "ocr_proposal",
+              file_base64: base64,
+              mime: file.type,
+              file_name: file.name,
+              proposal_id,
+              agency_id,
+            },
+          });
+          clearTimeout(timeoutId);
+
+          if (error) {
+            throw new Error(error.message || "Erro retornado pela Edge Function de OCR");
+          }
+          resolve(data?.result ?? {});
+        } catch (err: any) {
+          clearTimeout(timeoutId);
+          const isTimeout = err.name === "AbortError";
+          const errorMessage = isTimeout
+            ? "O processamento do arquivo de proposta excedeu o tempo limite de 45s. Tente novamente ou use um arquivo menor."
+            : err.message || "Erro desconhecido durante a leitura OCR.";
+
+          console.warn(`[OCR Proposal Attempt ${attempt} failed]:`, errorMessage);
+
+          if (attempt < maxRetries && !isTimeout) {
+            const backoff = attempt * 2000;
+            console.log(`Retrying OCR in ${backoff}ms...`);
+            setTimeout(() => {
+              executeOcrWithRetry(attempt + 1).then(resolve, reject);
+            }, backoff);
+          } else {
+            reject(new Error(errorMessage));
+          }
+        }
+      };
+      reader.onerror = () => reject(new Error("Erro físico de leitura do arquivo no browser."));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  return executeOcrWithRetry(1);
 }
 
 export type UnsplashPhoto = {

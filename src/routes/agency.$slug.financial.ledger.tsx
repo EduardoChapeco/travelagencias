@@ -1,0 +1,320 @@
+import { createFileRoute, useParams } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAgency } from "@/lib/agency-context";
+import { useState } from "react";
+import {
+  Search,
+  Loader2,
+  BookOpen,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Scale,
+  RefreshCw,
+} from "lucide-react";
+import { money } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/agency/$slug/financial/ledger")({
+  head: () => ({ meta: [{ title: "Livro-Razão Contábil · TravelOS" }] }),
+  component: LedgerDashboard,
+});
+
+type LedgerEntry = {
+  id: string;
+  account_code: string;
+  debit_amount: number;
+  credit_amount: number;
+  entry_date: string;
+  description: string;
+  source_event: string;
+  source_id: string;
+  created_at: string;
+};
+
+export function LedgerDashboard() {
+  const { slug } = useParams({ from: "/agency/$slug/financial/ledger" });
+  const { agency } = useAgency();
+
+  // Filters state
+  const [search, setSearch] = useState("");
+  const [accountCode, setAccountCode] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 15;
+
+  // Query to calculate consolidated totals (for metrics card)
+  const totalsQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["ledger-totals", agency?.id, search, accountCode],
+    queryFn: async () => {
+      let query = supabase
+        .from("financial_ledger_entries")
+        .select("debit_amount, credit_amount")
+        .eq("agency_id", agency!.id);
+
+      if (search) {
+        query = query.ilike("description", `%${search}%`);
+      }
+      if (accountCode) {
+        query = query.ilike("account_code", `%${accountCode}%`);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      const totalDebits = (data ?? []).reduce((sum, item) => sum + Number(item.debit_amount), 0);
+      const totalCredits = (data ?? []).reduce((sum, item) => sum + Number(item.credit_amount), 0);
+      const balance = totalDebits - totalCredits;
+
+      return { totalDebits, totalCredits, balance };
+    },
+  });
+
+  // Query paginated ledger entries
+  const ledgerQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["ledger-entries", agency?.id, page, search, accountCode],
+    queryFn: async () => {
+      let query = supabase
+        .from("financial_ledger_entries")
+        .select("*", { count: "exact" })
+        .eq("agency_id", agency!.id)
+        .order("entry_date", { ascending: false });
+
+      if (search) {
+        query = query.ilike("description", `%${search}%`);
+      }
+      if (accountCode) {
+        query = query.ilike("account_code", `%${accountCode}%`);
+      }
+
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize - 1;
+
+      const { data, error, count } = await query.range(start, end);
+      if (error) throw error;
+
+      return {
+        entries: (data ?? []) as LedgerEntry[],
+        count: count ?? 0,
+      };
+    },
+  });
+
+  const totals = totalsQ.data ?? { totalDebits: 0, totalCredits: 0, balance: 0 };
+  const ledgerResult = ledgerQ.data;
+  const entries = ledgerResult?.entries ?? [];
+  const totalCount = ledgerResult?.count ?? 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  const resetFilters = () => {
+    setSearch("");
+    setAccountCode("");
+    setPage(1);
+  };
+
+  return (
+    <div className="flex h-full flex-col overflow-y-auto bg-surface-alt p-4 md:p-6 space-y-6">
+      {/* Title block */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-xl p-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">Livro-Razão Contábil</h1>
+          <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+            Histórico imutável de lançamentos de partidas dobradas e trilhas contábeis da agência.
+          </p>
+        </div>
+        <div className="text-[10px] text-muted-foreground font-bold uppercase bg-surface-alt px-2.5 py-1 rounded border border-border flex items-center gap-1.5">
+          <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
+          Razão Imutável
+        </div>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
+          </span>
+          <strong className="text-2xl font-mono block mt-1.5 text-success">
+            {money(totals.totalDebits)}
+          </strong>
+          <span className="text-[10px] text-muted-foreground mt-1 block">
+            Aplicações de recursos registradas
+          </span>
+        </div>
+
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
+          </span>
+          <strong className="text-2xl font-mono block mt-1.5 text-danger">
+            {money(totals.totalCredits)}
+          </strong>
+          <span className="text-[10px] text-muted-foreground mt-1 block">
+            Origens de recursos registradas
+          </span>
+        </div>
+
+        <div className="bg-surface border border-border rounded-xl p-4">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
+          </span>
+          <strong
+            className={cn(
+              "text-2xl font-mono block mt-1.5",
+              totals.balance === 0 ? "text-success" : "text-brand",
+            )}
+          >
+            {money(totals.balance)}
+          </strong>
+          <span className="text-[10px] text-muted-foreground mt-1 block">
+            Diferença consolidada entre D e C
+          </span>
+        </div>
+      </div>
+
+      {/* Filter and Table Panel */}
+      <div className="bg-surface border border-border rounded-xl overflow-hidden shadow-xs">
+        {/* Filters bar */}
+        <div className="px-5 py-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Razão Contábil</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Audite lançamentos gerados dinamicamente.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search by account code */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Conta (ex: 1.1.01)..."
+                value={accountCode}
+                onChange={(e) => {
+                  setAccountCode(e.target.value);
+                  setPage(1);
+                }}
+                className="h-8 rounded-md border border-border bg-surface pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[160px]"
+              />
+              <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+            </div>
+
+            {/* Search by description */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Descrição do lançamento..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="h-8 rounded-md border border-border bg-surface pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[200px]"
+              />
+              <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+            </div>
+
+            {/* Reset button */}
+            {(search || accountCode) && (
+              <button
+                onClick={resetFilters}
+                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition cursor-pointer"
+                title="Limpar filtros"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Entries Table */}
+        <div className="overflow-x-auto relative min-h-[150px]">
+          {ledgerQ.isLoading ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-surface/50">
+              <Loader2 className="w-6 h-6 animate-spin text-brand" />
+            </div>
+          ) : null}
+
+          <table className="w-full text-sm">
+            <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+              <tr>
+                <th className="px-5 py-3">Data/Hora</th>
+                <th className="px-5 py-3">Código da Conta</th>
+                <th className="px-5 py-3">Descrição do Lançamento</th>
+                <th className="px-5 py-3">Origem</th>
+                <th className="px-5 py-3 text-right">Débito (D)</th>
+                <th className="px-5 py-3 text-right">Crédito (C)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {entries.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-5 py-8 text-center text-xs text-muted-foreground">
+                    Nenhum lançamento contábil encontrado para os filtros informados.
+                  </td>
+                </tr>
+              ) : (
+                entries.map((entry) => (
+                  <tr key={entry.id} className="hover:bg-surface-alt/40 transition-colors">
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono whitespace-nowrap">
+                      {new Date(entry.entry_date).toLocaleString("pt-BR")}
+                    </td>
+                    <td className="px-5 py-3.5 text-xs font-bold font-mono text-foreground whitespace-nowrap">
+                      {entry.account_code}
+                    </td>
+                    <td className="px-5 py-3.5 text-xs font-medium text-foreground">
+                      {entry.description}
+                    </td>
+                    <td className="px-5 py-3.5 whitespace-nowrap">
+                      <span className="inline-block rounded-sm bg-surface-alt border border-border px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground capitalize">
+                        {entry.source_event.replace(/_/g, " ")}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-success">
+                      {Number(entry.debit_amount) > 0
+                        ? `+ ${money(Number(entry.debit_amount))}`
+                        : "—"}
+                    </td>
+                    <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-danger">
+                      {Number(entry.credit_amount) > 0
+                        ? `+ ${money(Number(entry.credit_amount))}`
+                        : "—"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-border bg-surface-alt px-5 py-3">
+            <span className="text-xs text-muted-foreground font-medium">
+              Mostrando {entries.length} de {totalCount} resultados
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+              >
+                Anterior
+              </button>
+              <span className="text-xs text-muted-foreground font-semibold">
+                Página {page} de {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+              >
+                Próxima
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

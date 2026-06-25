@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Plus,
@@ -35,6 +35,7 @@ function PassengersPage() {
   const qc = useQueryClient();
   const { confirm, ConfirmDialog } = useConfirm();
   const [open, setOpen] = useState(false);
+  const [activeReviewPassengerId, setActiveReviewPassengerId] = useState<string | null>(null);
 
   // Estados para Upload & OCR por passageiro
   const [uploadingPid, setUploadingPid] = useState<string | null>(null);
@@ -295,14 +296,14 @@ function PassengersPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-sm font-bold text-warning">Passageiros importados da cotação</h4>
+              <h4 className="text-sm font-bold text-warning">Passageiros da Proposta</h4>
               <p className="text-xs text-warning/80 mt-0.5 leading-relaxed">
                 {
                   list.data.filter((p: any) => p.notes?.includes("Importado automaticamente"))
                     .length
                 }{" "}
-                passageiro(s) foram importados automaticamente a partir do formulário do lead.
-                Revise os dados, corrija se necessário, e confirme antes do embarque.
+                passageiro(s) foram associados a partir da proposta.
+                Por favor, revise as informações e confirme os dados dos documentos antes do embarque.
               </p>
             </div>
           </div>
@@ -370,7 +371,7 @@ function PassengersPage() {
                         {translateKind(p.kind)}
                       </span>
                       {p.is_lead_passenger && (
-                        <StatusBadge tone="info">Líder da Reserva</StatusBadge>
+                        <StatusBadge tone="info">Responsável pela Proposta</StatusBadge>
                       )}
                     </div>
                   </div>
@@ -465,7 +466,7 @@ function PassengersPage() {
                     <span>Documentos Operacionais</span>
                     {uploadingPid === p.id && (
                       <span className="flex items-center gap-1 text-[10px] text-brand">
-                        <Loader2 className="h-3 w-3 animate-spin" /> OCR Ativo...
+                        <Loader2 className="h-3 w-3 animate-spin" /> Leitura Inteligente...
                       </span>
                     )}
                   </div>
@@ -587,7 +588,7 @@ function PassengersPage() {
                     </div>
                     <label className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
-                      Anexar & Extrair Dados
+                      Anexar & Identificar Dados
                       <input
                         type="file"
                         accept="application/pdf,image/*"
@@ -606,6 +607,12 @@ function PassengersPage() {
                       />
                     </label>
                   </div>
+                  <button
+                    onClick={() => setActiveReviewPassengerId(p.id)}
+                    className="w-full flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
+                  >
+                    <ShieldCheck className="h-4 w-4" /> Conferência de Dados
+                  </button>
                 </div>
               </div>
             </div>
@@ -624,6 +631,399 @@ function PassengersPage() {
           }}
         />
       )}
+
+      {activeReviewPassengerId && agency && (
+        <DataConferencePanel
+          passengerId={activeReviewPassengerId}
+          tripId={id}
+          agencyId={agency.id}
+          passengers={list.data || []}
+          documents={docsQ.data || []}
+          onClose={() => setActiveReviewPassengerId(null)}
+          onSaved={() => {
+            setActiveReviewPassengerId(null);
+            qc.invalidateQueries({ queryKey: ["passengers", id] });
+            qc.invalidateQueries({ queryKey: ["passenger-documents", id] });
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Painel Split-Screen de Conferência de Dados (Onboarding) ────────────────
+interface DataConferencePanelProps {
+  passengerId: string;
+  tripId: string;
+  agencyId: string;
+  passengers: any[];
+  documents: any[];
+  onClose: () => void;
+  onSaved: () => void;
+}
+
+function DataConferencePanel({
+  passengerId,
+  tripId,
+  agencyId,
+  passengers,
+  documents,
+  onClose,
+  onSaved,
+}: DataConferencePanelProps) {
+  const passenger = passengers.find(p => p.id === passengerId);
+  const doc = documents?.find(d => d.passenger_id === passengerId);
+
+  const [fullName, setFullName] = useState(passenger?.full_name || "");
+  const [kind, setKind] = useState(passenger?.kind || "adult");
+  const [docType, setDocType] = useState(passenger?.document_type || "rg");
+  const [docNumber, setDocNumber] = useState(passenger?.document || "");
+  const [birthDate, setBirthDate] = useState(passenger?.birth_date || "");
+  const [nationality, setNationality] = useState(passenger?.nationality || "");
+  const [email, setEmail] = useState(passenger?.email || "");
+  const [phone, setPhone] = useState(passenger?.phone || "");
+  const [notes, setNotes] = useState(passenger?.notes || "");
+
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [loadingUrl, setLoadingUrl] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    if (doc?.file_path) {
+      setLoadingUrl(true);
+      supabase.storage
+        .from("passenger-documents")
+        .createSignedUrl(doc.file_path, 3600)
+        .then(({ data, error }) => {
+          if (!error && data?.signedUrl) {
+            setSignedUrl(data.signedUrl);
+          }
+          setLoadingUrl(false);
+        });
+    } else {
+      setSignedUrl(null);
+    }
+  }, [doc?.file_path]);
+
+  async function handleInternalUpload(file: File) {
+    setUploading(true);
+    const toastId = toast.loading("Enviando documento...");
+    try {
+      const ext = file.name.split(".").pop();
+      const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, "_")}.${ext}`;
+      const filePath = `${agencyId}/${tripId}/${passengerId}/${filename}`;
+
+      const { error: uploadErr } = await supabase.storage
+        .from("passenger-documents")
+        .upload(filePath, file);
+      if (uploadErr) throw uploadErr;
+
+      toast.loading("Lendo Documento...", { id: toastId });
+
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const b64 = (reader.result as string).split(",")[1];
+          resolve(b64);
+        };
+        reader.onerror = reject;
+      });
+      reader.readAsDataURL(file);
+      const fileBase64 = await base64Promise;
+
+      let extractedData: any = {};
+      let expirationDate = null;
+      try {
+        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke(
+          "ai-orchestrator",
+          {
+            body: {
+              action: "completion",
+              feature: "ocr_passenger",
+              file_base64: fileBase64,
+              mime: file.type,
+              agency_id: agencyId,
+            },
+          },
+        );
+        if (!ocrErr && ocrData?.result) {
+          extractedData = ocrData.result;
+          if (extractedData.expiration_date) {
+            expirationDate = extractedData.expiration_date;
+          }
+          if (extractedData.full_name) setFullName(extractedData.full_name);
+          if (extractedData.document_number) setDocNumber(extractedData.document_number);
+          if (extractedData.birth_date) setBirthDate(extractedData.birth_date);
+          if (extractedData.nationality) setNationality(extractedData.nationality);
+
+          toast.success("Dados identificados e preenchidos no cadastro!", { id: toastId });
+        } else {
+          toast.success("Documento anexado com sucesso.", { id: toastId });
+        }
+      } catch (ocrErr) {
+        toast.success("Documento anexado com sucesso. (Leitura automática indisponível)", { id: toastId });
+      }
+
+      const { error: insertErr } = await supabase.from("passenger_documents").insert({
+        trip_id: tripId,
+        passenger_id: passengerId,
+        agency_id: agencyId,
+        document_type: docType || "passport",
+        file_path: filePath,
+        extracted_metadata: extractedData,
+        expiration_date: expirationDate || null,
+      } as any);
+
+      if (insertErr) throw insertErr;
+      qc.invalidateQueries({ queryKey: ["passenger-documents", tripId] });
+      qc.invalidateQueries({ queryKey: ["passengers", tripId] });
+    } catch (err: any) {
+      toast.error(err.message || "Erro no envio.", { id: toastId });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("trip_passengers")
+        .update({
+          full_name: fullName,
+          kind,
+          document_type: docType,
+          document: docNumber,
+          birth_date: birthDate || null,
+          nationality: nationality || null,
+          email: email || null,
+          phone: phone || null,
+          notes: "Passageiro revisado e confirmado.",
+        } as any)
+        .eq("id", passengerId);
+
+      if (error) throw error;
+      toast.success("Passageiro conferido e salvo com sucesso!");
+      onSaved();
+    } catch (err: any) {
+      toast.error("Erro ao salvar dados: " + err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!passenger) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex bg-background/90 p-4 md:p-6 overflow-hidden">
+      <div className="flex flex-col md:flex-row w-full gap-6 bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden container p-0">
+        {/* LADO ESQUERDO: Visualizador de Documentos */}
+        <div className="flex-1 flex flex-col p-6 border-r border-border/80 bg-surface-alt/10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <FileText className="h-5 w-5 text-brand" /> Documento do Passageiro
+            </h3>
+            {uploading && (
+              <span className="text-xs text-brand flex items-center gap-1.5 font-bold">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Lendo Documento...
+              </span>
+            )}
+          </div>
+
+          <div className="flex-1 flex items-center justify-center rounded-xl border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
+            {loadingUrl ? (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground text-sm">
+                <Loader2 className="h-6 w-6 animate-spin text-brand" />
+                Carregando documento...
+              </div>
+            ) : signedUrl ? (
+              doc?.file_path?.toLowerCase().endsWith(".pdf") ? (
+                <iframe src={signedUrl} className="w-full h-full rounded-lg border border-border" />
+              ) : (
+                <img src={signedUrl} className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-sm" alt="Documento" />
+              )
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center p-6">
+                <Upload className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                <h4 className="text-sm font-bold text-foreground">Nenhum documento anexado</h4>
+                <p className="text-xs text-muted-foreground max-w-xs mt-1 mb-4">
+                  Anexe o Passaporte, RG ou Visto do passageiro para visualizar aqui durante a conferência.
+                </p>
+                <label className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
+                  <Upload className="h-4 w-4" /> Anexar Documento
+                  <input
+                    type="file"
+                    accept="application/pdf,image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        handleInternalUpload(e.target.files[0]);
+                      }
+                    }}
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+
+          {doc?.extracted_metadata && Object.keys(doc.extracted_metadata).length > 0 && (
+            <div className="mt-4 p-4 rounded-xl border border-border bg-surface text-xs">
+              <h4 className="font-bold text-foreground mb-2 flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela Inteligência Artificial
+              </h4>
+              <div className="grid grid-cols-2 gap-3 text-[11px]">
+                {Object.entries(doc.extracted_metadata).map(([key, val]) => (
+                  <div key={key} className="bg-surface-alt/50 p-2 rounded border border-border/40">
+                    <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">{key.replace('_', ' ')}</span>
+                    <span className="font-mono text-foreground text-xs">{String(val)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* LADO DIREITO: Form de CRUD/CMS (Edição) */}
+        <div className="w-full md:w-[480px] flex flex-col p-6 bg-surface overflow-y-auto">
+          <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Conferência de Cadastro</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Revise e corrija os dados cadastrais do passageiro.</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-xs text-muted-foreground hover:text-foreground font-semibold bg-surface-alt px-3 py-1.5 rounded-lg"
+            >
+              Fechar
+            </button>
+          </div>
+
+          <div className="space-y-4 flex-1">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nome Completo</label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo de Passageiro</label>
+              <select
+                value={kind}
+                onChange={(e) => setKind(e.target.value)}
+                className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+              >
+                <option value="adult">Adulto</option>
+                <option value="child">Criança (CHD)</option>
+                <option value="infant">Infante (INF)</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Tipo Documento</label>
+                <select
+                  value={docType}
+                  onChange={(e) => setDocType(e.target.value)}
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                >
+                  <option value="rg">RG</option>
+                  <option value="cpf">CPF</option>
+                  <option value="passport">Passaporte</option>
+                  <option value="visa">Visto</option>
+                  <option value="other">Outro</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Número Documento</label>
+                <input
+                  type="text"
+                  value={docNumber}
+                  onChange={(e) => setDocNumber(e.target.value)}
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nascimento</label>
+                <input
+                  type="date"
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Nacionalidade</label>
+                <input
+                  type="text"
+                  value={nationality}
+                  onChange={(e) => setNationality(e.target.value)}
+                  placeholder="Ex: Brasileira"
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Telefone</label>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Observações Operacionais</label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Ex: Necessita de cadeira de rodas para embarque"
+                className="h-20 w-full rounded-lg border border-border bg-surface p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
+              />
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-4 mt-6 flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving || uploading}
+              className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              Salvar & Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

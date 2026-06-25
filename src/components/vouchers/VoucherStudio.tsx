@@ -157,6 +157,12 @@ export function VoucherStudio({
 
   const renderSidebarContent = () => (
     <>
+          {draft.source_type === "operator_pdf" && (
+            <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-[11px] text-amber-800 leading-normal space-y-1">
+              <span className="font-semibold block">Leitura de Documento & Modo de Contingência</span>
+              <p>O comprovante da operadora foi anexado com sucesso. Caso o leitor digital de documentos não tenha preenchido automaticamente todos os detalhes de voos ou hospedagens por oscilações na conexão, você poderá complementar os campos manualmente utilizando os botões abaixo.</p>
+            </div>
+          )}
 
           {/* Header fields */}
           <div className="rounded-lg border border-border bg-surface p-3 grid grid-cols-1 gap-2">

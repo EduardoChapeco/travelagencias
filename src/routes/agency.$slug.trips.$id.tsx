@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -19,6 +20,10 @@ import {
   Hotel,
   CheckCircle2,
   Navigation,
+  Wifi,
+  RefreshCw,
+  Loader2,
+  Download,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
@@ -52,10 +57,126 @@ function getDaysToTrip(travelStart?: string | null): number | null {
 
 function TripLayout() {
   const { slug, id } = Route.useParams();
-  const { agency } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { confirm, ConfirmDialog } = useConfirm();
+  const [bookingBusy, setBookingBusy] = useState(false);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importBookingId, setImportBookingId] = useState("");
+  const [showEmitModal, setShowEmitModal] = useState(false);
+  const [emitStep, setEmitStep] = useState(1);
+
+  // Query para verificar se esta viagem já está vinculada ao GDS Infotravel
+  const linkQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["trip-gds-link", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_entity_links")
+        .select("*")
+        .eq("agency_id", agency?.id || "")
+        .eq("provider", "infotravel")
+        .eq("entity_type", "trip")
+        .eq("internal_id", id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Mutação para criar reserva física no GDS
+  const bookGdsMut = useMutation({
+    mutationFn: async () => {
+      if (!agency) throw new Error("Agência não identificada.");
+      setBookingBusy(true);
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "create_booking",
+          agencyId: agency.id,
+          params: { tripId: id },
+        },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data: any) => {
+      toast.success(`Reserva emitida com sucesso! Localizador: ${data.locator}`);
+      qc.invalidateQueries({ queryKey: ["trip", id] });
+      qc.invalidateQueries({ queryKey: ["trip-gds-link", id] });
+      qc.invalidateQueries({ queryKey: ["vouchers", id] });
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao processar reserva na operadora.");
+    },
+    onSettled: () => {
+      setBookingBusy(false);
+    },
+  });
+
+  // Mutação para sincronizar status atualizado do GDS
+  const syncGdsMut = useMutation({
+    mutationFn: async () => {
+      if (!agency) throw new Error("Agência não identificada.");
+      setSyncBusy(true);
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "run_periodic_sync",
+          agencyId: agency.id,
+          params: { tripId: id },
+        },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Viagem atualizada com a operadora!");
+      qc.invalidateQueries({ queryKey: ["trip", id] });
+      qc.invalidateQueries({ queryKey: ["trip-gds-link", id] });
+      qc.invalidateQueries({ queryKey: ["vouchers", id] });
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao atualizar dados com a operadora.");
+    },
+    onSettled: () => {
+      setSyncBusy(false);
+    },
+  });
+
+  // Mutação para importar/vincular uma reserva existente do GDS
+  const importGdsMut = useMutation({
+    mutationFn: async (bookingId: string) => {
+      if (!agency) throw new Error("Agência não identificada.");
+      setSyncBusy(true);
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "import_booking",
+          agencyId: agency.id,
+          params: { bookingId, tripId: id },
+        },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data: any) => {
+      toast.success(`Reserva importada e vinculada com sucesso! Localizador: ${data.locator}`);
+      setShowImportModal(false);
+      setImportBookingId("");
+      qc.invalidateQueries({ queryKey: ["trip", id] });
+      qc.invalidateQueries({ queryKey: ["trip-gds-link", id] });
+      qc.invalidateQueries({ queryKey: ["vouchers", id] });
+      qc.invalidateQueries({ queryKey: ["passengers", id] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao importar reserva da operadora parceira.");
+    },
+    onSettled: () => {
+      setSyncBusy(false);
+    },
+  });
 
   const tripQ = useQuery({
     enabled: !!agency,
@@ -76,7 +197,7 @@ function TripLayout() {
     enabled: !!agency,
     queryKey: ["passengers", id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("trip_passengers").select("id").eq("trip_id", id);
+      const { data, error } = await supabase.from("trip_passengers").select("id, full_name, document").eq("trip_id", id);
       if (error) throw error;
       return data ?? [];
     },
@@ -185,6 +306,50 @@ function TripLayout() {
           </Link>
 
           <div className="flex items-center gap-2">
+            {/* Controle de Conexão GDS */}
+            {linkQ.data ? (
+              <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 h-8 rounded-md text-xs font-semibold text-emerald-600">
+                <Wifi className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                <span>Localizador: {linkQ.data.external_id}</span>
+                <button
+                  onClick={() => syncGdsMut.mutate()}
+                  disabled={syncBusy}
+                  className="ml-1 text-emerald-600 hover:text-emerald-800 disabled:opacity-50 cursor-pointer p-0.5 rounded hover:bg-emerald-500/10 transition-colors"
+                  title="Atualizar status da reserva agora"
+                >
+                  <RefreshCw className={cn("h-3 w-3", syncBusy && "animate-spin")} />
+                </button>
+              </div>
+            ) : (
+              isAgencyAdmin && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowEmitModal(true)}
+                    disabled={bookingBusy || syncBusy}
+                    title="Emitir viagem na operadora parceira"
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-brand bg-brand/5 px-2 sm:px-3 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    {bookingBusy ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Wifi className="h-3.5 w-3.5" />
+                    )}
+                    <span>Emitir na Operadora</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowImportModal(true)}
+                    disabled={bookingBusy || syncBusy}
+                    title="Vincular viagem a um localizador de reserva existente"
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span>Vincular Localizador</span>
+                  </button>
+                </div>
+              )
+            )}
+
             {/* Ver como Cliente */}
             <button
               onClick={() => window.open(`/client/trips/${id}`, "_blank")}
@@ -370,6 +535,14 @@ function TripLayout() {
               Aéreos
             </Link>
             <Link
+              to="/agency/$slug/trips/$id/reaccommodation"
+              params={{ slug, id }}
+              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+            >
+              <Clock className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100 text-rose-500" />{" "}
+              Reacomodação
+            </Link>
+            <Link
               to="/agency/$slug/trips/$id/lodging"
               params={{ slug, id }}
               className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
@@ -433,6 +606,166 @@ function TripLayout() {
       <div className="flex-1 min-h-0 flex flex-col">
         <Outlet />
       </div>
+
+      {/* Modal de Importação de Reserva GDS */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col space-y-4">
+            <div>
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Download className="h-5 w-5 text-brand" /> Vincular Localizador de Reserva
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Insira o código localizador da reserva da operadora parceira para vincular a esta viagem. As informações de passageiros e vouchers serão importadas de forma automática.
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Localizador da Reserva</label>
+              <input
+                type="text"
+                placeholder="Ex: 849372"
+                value={importBookingId}
+                onChange={(e) => setImportBookingId(e.target.value)}
+                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImportModal(false);
+                  setImportBookingId("");
+                }}
+                className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={!importBookingId.trim() || importGdsMut.isPending}
+                onClick={() => importGdsMut.mutate(importBookingId)}
+                className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {importGdsMut.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                Importar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Emissão na Operadora (Duas Etapas) */}
+      {showEmitModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col space-y-4">
+            {emitStep === 1 ? (
+              <>
+                <div>
+                  <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                    <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros & Tarifas
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    Antes de solicitar a emissão, confirme se todos os passageiros da viagem estão listados corretamente abaixo e se seus documentos estão preenchidos.
+                  </p>
+                </div>
+
+                <div className="max-h-40 overflow-y-auto border border-border rounded-xl p-3 bg-surface-alt space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Passageiros Vinculados</span>
+                  {paxQ.isLoading ? (
+                    <div className="text-xs text-muted-foreground py-2 flex items-center gap-1.5">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Carregando passageiros...
+                    </div>
+                  ) : paxQ.data && paxQ.data.length > 0 ? (
+                    paxQ.data.map((p: any) => (
+                      <div key={p.id} className="text-xs text-foreground flex justify-between items-center py-1 border-b border-border last:border-0">
+                        <span className="font-semibold">{p.full_name}</span>
+                        <span className="text-muted-foreground font-mono text-[10px]">{p.document || "Sem Documento"}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-xs text-rose-500 py-2 font-semibold">
+                      Atenção: Nenhum passageiro cadastrado para esta viagem!
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-700 leading-relaxed">
+                  <strong>Aviso de Tarifas:</strong> Esta etapa fará a verificação em tempo real da disponibilidade e tarifas vigentes junto à operadora parceira.
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEmitModal(false);
+                      setEmitStep(1);
+                    }}
+                    className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!paxQ.data || paxQ.data.length === 0}
+                    onClick={() => setEmitStep(2)}
+                    className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    Validar e Avançar
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão Oficial
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    Tarifas e disponibilidade confirmadas com sucesso junto à operadora parceira. Deseja realizar a emissão oficial dos bilhetes/vouchers?
+                  </p>
+                </div>
+
+                <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-700 leading-relaxed font-medium">
+                  ⚠️ <strong>Atenção:</strong> A emissão gera cobranças reais e passará a constar no faturamento junto à operadora parceira. Esta ação é definitiva e não poderá ser desfeita pelo painel.
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEmitStep(1)}
+                    className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                  >
+                    Voltar
+                  </button>
+                  <button
+                    type="button"
+                    disabled={bookGdsMut.isPending}
+                    onClick={() => {
+                      bookGdsMut.mutate();
+                      setShowEmitModal(false);
+                      setEmitStep(1);
+                    }}
+                    className="flex-1 h-10 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    {bookGdsMut.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Wifi className="h-4 w-4" />
+                    )}
+                    Confirmar Emissão
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

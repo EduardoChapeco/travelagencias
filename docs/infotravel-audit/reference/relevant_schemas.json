@@ -1,0 +1,327 @@
+{
+  "UserLoginRQ": {
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "loginType": {
+        "type": "string"
+      }
+    }
+  },
+  "UserLoginRS": {
+    "type": "object",
+    "properties": {
+      "user": {
+        "$ref": "#/components/schemas/ApiClient"
+      }
+    }
+  },
+  "HotelAvailbilityRS": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string"
+      },
+      "hotelAvail": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiHotelAvail"
+        }
+      },
+      "isRegionError": {
+        "type": "boolean"
+      }
+    }
+  },
+  "HotelAvailbilityRQ": {
+    "type": "object",
+    "properties": {
+      "giataIds": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    }
+  },
+  "FlightAvailbilityRS": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string"
+      },
+      "flightAvail": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiFlightAvail"
+        }
+      }
+    }
+  },
+  "ApiBooking": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "bannerId": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "clientId": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "RESERVED",
+          "CONFIRMED",
+          "CANCELED",
+          "WAITING_LIST",
+          "ORDER",
+          "INCONSISTENT",
+          "DENIED",
+          "QUOTATION",
+          "EXPIRED",
+          "PROCESSING",
+          "BLOCKED",
+          "IN_PAYMENT_PROCESS",
+          "ON_REQUEST",
+          "IN_CANCELLATION_PROCESS",
+          "MODIFIED",
+          "CREATION",
+          "EMPTY",
+          "NOT_INTEGRATED",
+          "ANALYSIS",
+          "EDITION"
+        ]
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "HOTEL_PACKAGE",
+          "HOTEL_FLIGHT_PACKAGE",
+          "HOTEL",
+          "SERVICE",
+          "FLIGHT",
+          "HOTEL_BUS_PACKAGE",
+          "SERVICE_BUS_PACKAGE",
+          "CRUISE",
+          "TOUR",
+          "MULTI_DESTINATION",
+          "BUS",
+          "TRAIN",
+          "EMPTY",
+          "HOUSE_SERVICE_PACKAGE",
+          "HOUSE_FLIGHT_PACKAGE"
+        ]
+      },
+      "contact": {
+        "$ref": "#/components/schemas/ApiContact"
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "expirationDate": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "virtual": {
+        "type": "boolean"
+      },
+      "logged": {
+        "type": "boolean"
+      },
+      "coupon": {
+        "type": "string"
+      },
+      "urlVoucher": {
+        "type": "string"
+      },
+      "observationApi": {
+        "type": "string"
+      },
+      "callBack": {
+        "type": "string"
+      },
+      "cancellationReason": {
+        "type": "string"
+      },
+      "bookingAmount": {
+        "$ref": "#/components/schemas/ApiPrice"
+      },
+      "additionalFares": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiFare"
+        }
+      },
+      "company": {
+        "$ref": "#/components/schemas/ApiCompany"
+      },
+      "client": {
+        "$ref": "#/components/schemas/ApiClient"
+      },
+      "unit": {
+        "$ref": "#/components/schemas/ApiClient"
+      },
+      "user": {
+        "$ref": "#/components/schemas/ApiClient"
+      },
+      "bookingHotels": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingHotel"
+        }
+      },
+      "bookingFlights": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingFlight"
+        }
+      },
+      "bookingInsurances": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingInsurance"
+        }
+      },
+      "bookingTours": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingTour"
+        }
+      },
+      "bookingServicePackages": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingServicePackage"
+        }
+      },
+      "bookingTickets": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingTicket"
+        }
+      },
+      "bookingTransfers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingTransfer"
+        }
+      },
+      "bookingServiceOthers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingOther"
+        }
+      },
+      "bookingPackages": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingPackage"
+        }
+      },
+      "bookingVehicles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingVehicle"
+        }
+      },
+      "bookingExperiences": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingExperience"
+        }
+      },
+      "bookingChips": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingChip"
+        }
+      },
+      "bookingCircuits": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingCircuit"
+        }
+      },
+      "bookingCruises": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingCruise"
+        }
+      },
+      "bookingBuses": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingBus"
+        }
+      },
+      "bookingTrains": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiBookingTrain"
+        }
+      },
+      "payments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiPayment"
+        }
+      },
+      "coupons": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiCoupon"
+        }
+      },
+      "attachments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiAttachment"
+        }
+      },
+      "textDoc": {
+        "type": "string"
+      },
+      "externalId2": {
+        "type": "string"
+      },
+      "localTrip": {
+        "type": "boolean"
+      },
+      "paymentLoyaltyPoints": {
+        "type": "boolean"
+      },
+      "isPaymentLoyaltyPoints": {
+        "type": "boolean"
+      }
+    }
+  },
+  "BookingRQ": {
+    "type": "object",
+    "properties": {
+      "booking": {
+        "$ref": "#/components/schemas/ApiBooking"
+      }
+    }
+  },
+  "BookingRS": {
+    "type": "object",
+    "properties": {
+      "booking": {
+        "$ref": "#/components/schemas/ApiBooking"
+      }
+    }
+  }
+}

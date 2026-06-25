@@ -40,7 +40,7 @@ export function OcrButton({ proposalId, agencyId, onExtracted }: Props) {
       const data = await processOcrFile(files[0], proposalId, agencyId);
       onExtracted(data);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erro no OCR");
+      toast.error(e instanceof Error ? e.message : "Não foi possível realizar a leitura automática do arquivo. Por favor, tente novamente ou preencha os dados manualmente.");
     } finally {
       setBusy(false);
     }
@@ -48,7 +48,7 @@ export function OcrButton({ proposalId, agencyId, onExtracted }: Props) {
 
   return (
     <label className="flex h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt">
-      <Sparkles className="h-3.5 w-3.5" /> {busy ? "Lendo…" : "OCR"}
+      <Sparkles className="h-3.5 w-3.5" /> {busy ? "Lendo…" : "Leitura Inteligente"}
       <input
         type="file"
         accept="application/pdf,image/*"

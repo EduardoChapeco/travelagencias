@@ -1,12 +1,12 @@
 import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download } from "lucide-react";
+import { Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download, FileText } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { exportRoomingListXlsx } from "@/lib/exportRoomingList";
+import { exportRoomingListXlsx, exportRoomingListPdf } from "@/lib/exportRoomingList";
 import {
   fetchRoomingListByTour,
   createRoomRecord,
@@ -1816,6 +1816,25 @@ function RoomingListManager({
     }
   }
 
+  async function handleExportPdf() {
+    if (rooms.length === 0) {
+      return toast.warning("Nenhum quarto cadastrado para exportar.");
+    }
+    setExporting(true);
+    try {
+      await exportRoomingListPdf(rooms as any, {
+        filename: `rooming-list-${tourId.slice(0, 8)}`,
+        tourTitle: `Excursão`,
+        departureDate: departureDate,
+      });
+      toast.success("Rooming List exportada para PDF com sucesso!");
+    } catch (err: any) {
+      toast.error(`Erro ao exportar PDF: ${err.message}`);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   // ── Mutations ─────────────────────────────────────────────────────────────
   const addRoomMutation = useMutation({
     mutationFn: async (e: React.FormEvent) => {
@@ -2010,15 +2029,26 @@ function RoomingListManager({
           </h3>
           <div className="flex items-center gap-2">
             {rooms.length > 0 && (
-              <button
-                type="button"
-                onClick={handleExportExcel}
-                disabled={exporting}
-                title="Exportar Rooming List para Excel (.xlsx)"
-                className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Download className="h-3.5 w-3.5" /> {exporting ? "Exportando..." : "Exportar Excel"}
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={handleExportExcel}
+                  disabled={exporting}
+                  title="Exportar Rooming List para Excel (.xlsx)"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="h-3.5 w-3.5" /> {exporting ? "Exportando..." : "Exportar Excel"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportPdf}
+                  disabled={exporting}
+                  title="Exportar Rooming List para PDF (.pdf)"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FileText className="h-3.5 w-3.5 text-rose-500" /> {exporting ? "Exportando..." : "Exportar PDF"}
+                </button>
+              </>
             )}
             <button
               type="button"

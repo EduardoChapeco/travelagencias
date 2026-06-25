@@ -35,12 +35,14 @@ import {
   Hotel,
   BarChart3,
   BedDouble,
+  Shield,
 } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } from "./SlimSidebar";
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 9 Hub Icons — Desktop left column
@@ -49,7 +51,7 @@ import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } fr
 const HUB_ITEMS: SlimSidebarItem[] = [
   { label: "dashboard",   to: "",               icon: LayoutDashboard, exact: true },
   { label: "daily-tasks", to: "daily-tasks",    icon: CalendarClock,   matchPaths: ["calendar", "omnichannel"] },
-  { label: "crm",         to: "crm",            icon: Users,           matchPaths: ["proposals", "contracts"] },
+  { label: "crm",         to: "crm",            icon: Users,           matchPaths: ["proposals", "contracts", "quotes"] },
   { label: "trips",       to: "trips",          icon: Luggage,         matchPaths: ["vouchers", "boarding"] },
   { label: "Grupos & Excursões", to: "group-tours", icon: Bus,         matchPaths: ["bus-layouts", "rooming-list", "financial/groups"] },
   { label: "clients",     to: "clients",        icon: UserRound,       matchPaths: ["corporate", "suppliers"] },
@@ -73,6 +75,7 @@ const MOBILE_ITEMS: SlimSidebarItem[] = [
 
   { type: "header", label: "Vendas & CRM" },
   { label: "crm",               to: "crm",                         icon: Users },
+  { label: "quotes",            to: "quotes",                      icon: Radar },
   { label: "proposals",         to: "proposals",                   icon: FileText },
   { label: "contracts",         to: "contracts",                   icon: ScrollText },
 
@@ -174,11 +177,17 @@ function buildContext(
   }
 
   // ── Vendas & CRM ──────────────────────────────────────────────────────────
-  if (pathname.includes("/crm") || pathname.includes("/proposals") || pathname.includes("/contracts")) {
+  if (
+    pathname.includes("/crm") ||
+    pathname.includes("/proposals") ||
+    pathname.includes("/contracts") ||
+    pathname.includes("/quotes")
+  ) {
     return {
       title: "Vendas & CRM",
       items: [
         { label: "Negociações & Leads",     to: `${base}/crm`,       icon: Users },
+        { label: "Cotações VibeTour",       to: `${base}/quotes`,    icon: Radar },
         { label: "Orçamentos & Propostas",  to: `${base}/proposals`, icon: FileText },
         { label: "Contratos",               to: `${base}/contracts`, icon: ScrollText },
       ],
@@ -297,6 +306,8 @@ function buildContext(
         { label: "Conexões & APIs",       to: `${base}/integrations`,  icon: Puzzle },
         { label: "Assinatura & Planos",   to: `${base}/billing`,       icon: CreditCard },
         { label: "Configurações Gerais",  to: `${base}/settings`,      icon: Settings },
+        { label: "Fechamentos & Comissões", to: `${base}/settings/financial`, icon: Wallet },
+        { label: "Auditoria de IA",       to: `${base}/settings/ai-audit`, icon: Shield },
       ],
       aiActions: [],
     };

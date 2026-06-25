@@ -474,3 +474,164 @@ export async function exportRoomingListDocx(
   document.body.removeChild(docLink);
   URL.revokeObjectURL(docUrl);
 }
+
+/**
+ * Exporta a Rooming List completa para um PDF A4 profissional.
+ */
+export async function exportRoomingListPdf(
+  rooms: RoomingExportRoom[],
+  options: RoomingExportOptions = {}
+): Promise<void> {
+  const {
+    filename = "rooming-list",
+    tourTitle = "Excursão",
+    departureDate,
+  } = options;
+
+  const { jsPDF } = await import("jspdf");
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  // Margens e dimensões
+  const margin = 15;
+  const pageWidth = 210;
+  const pageHeight = 297;
+
+  let pageNumber = 1;
+
+  // Função auxiliar para desenhar o cabeçalho
+  const drawHeader = (pageNum: number) => {
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.text(`Rooming List — ${tourTitle}`, margin, 20);
+
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139); // slate-500
+    const dateStr = departureDate
+      ? `Data de saída: ${new Date(departureDate).toLocaleDateString("pt-BR")}`
+      : "Data de saída: Não informada";
+    doc.text(dateStr, margin, 25);
+    doc.text(`Exportado em: ${new Date().toLocaleString("pt-BR")}`, pageWidth - margin, 25, { align: "right" });
+
+    // Linha divisória
+    doc.setDrawColor(226, 232, 240); // slate-200
+    doc.setLineWidth(0.3);
+    doc.line(margin, 28, pageWidth - margin, 28);
+  };
+
+  // Função auxiliar para desenhar o rodapé
+  const drawFooter = (pageNum: number) => {
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184); // slate-400
+    doc.text(`Página ${pageNum}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+    doc.text("TravelOS - Sistema de Gestão", margin, pageHeight - 10);
+  };
+
+  // Desenhar cabeçalho/rodapé da primeira página
+  drawHeader(pageNumber);
+  drawFooter(pageNumber);
+
+  // Posições das colunas da tabela
+  const colQuarto = margin;
+  const colTipo = margin + 28;
+  const colHotel = margin + 56;
+  const colPeriodo = margin + 94;
+  const colPassageiros = margin + 128;
+
+  let y = 36;
+
+  // Função auxiliar para desenhar os cabeçalhos da tabela
+  const drawTableHeaders = (startY: number) => {
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(71, 85, 105); // slate-600
+    
+    doc.text("Quarto", colQuarto, startY);
+    doc.text("Tipo", colTipo, startY);
+    doc.text("Hotel / Pousada", colHotel, startY);
+    doc.text("Período", colPeriodo, startY);
+    doc.text("Passageiros Alocados", colPassageiros, startY);
+
+    // Linha inferior do cabeçalho da tabela
+    doc.setDrawColor(203, 213, 225); // slate-300
+    doc.setLineWidth(0.4);
+    doc.line(margin, startY + 2, pageWidth - margin, startY + 2);
+    return startY + 7;
+  };
+
+  y = drawTableHeaders(y);
+
+  doc.setFont("Helvetica", "normal");
+  doc.setFontSize(9);
+
+  for (const room of rooms) {
+    const roomTypeLabel = ROOM_TYPE_LABEL[room.room_type] || room.room_type;
+    const paxList = room.passengers || [];
+    const checkinStr = room.checkin_date ? new Date(room.checkin_date).toLocaleDateString("pt-BR") : "—";
+    const checkoutStr = room.checkout_date ? new Date(room.checkout_date).toLocaleDateString("pt-BR") : "—";
+    const periodStr = room.checkin_date ? `${checkinStr} - ${checkoutStr}` : "—";
+    const hotelStr = room.hotel_name || "—";
+
+    // Calcular altura necessária para esta linha
+    const rowLines = Math.max(1, paxList.length);
+    const rowHeight = 5 + rowLines * 5;
+
+    // Verificar quebra de página
+    if (y + rowHeight > pageHeight - 15) {
+      doc.addPage();
+      pageNumber++;
+      drawHeader(pageNumber);
+      drawFooter(pageNumber);
+      y = 36;
+      y = drawTableHeaders(y);
+      doc.setFont("Helvetica", "normal");
+      doc.setFontSize(9);
+    }
+
+    // Desenhar informações do quarto
+    doc.setFont("Helvetica", "bold");
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.text(`Quarto ${room.room_number}`, colQuarto, y);
+
+    doc.setFont("Helvetica", "normal");
+    doc.setTextColor(51, 65, 85); // slate-700
+    doc.text(roomTypeLabel, colTipo, y);
+    
+    const hotelLines = doc.splitTextToSize(hotelStr, 35);
+    doc.text(hotelLines, colHotel, y);
+
+    doc.text(periodStr, colPeriodo, y);
+
+    // Desenhar passageiros
+    if (paxList.length === 0) {
+      doc.setFont("Helvetica", "italic");
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text("(sem passageiros)", colPassageiros, y);
+      doc.setFont("Helvetica", "normal");
+    } else {
+      doc.setFont("Helvetica", "bold");
+      doc.setTextColor(15, 23, 42);
+      paxList.forEach((pax, idx) => {
+        doc.text(pax.name, colPassageiros, y + idx * 5);
+      });
+      doc.setFont("Helvetica", "normal");
+    }
+
+    y += rowHeight;
+
+    // Linha divisória fina entre quartos
+    doc.setDrawColor(241, 245, 249); // slate-100
+    doc.setLineWidth(0.2);
+    doc.line(margin, y - 2, pageWidth - margin, y - 2);
+    y += 1;
+  }
+
+  doc.save(`${filename}.pdf`);
+}
+

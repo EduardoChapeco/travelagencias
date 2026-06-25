@@ -1,0 +1,22 @@
+# Matriz de Rastreabilidade: UI, Código e Banco de Dados
+
+Este documento mapeia o fluxo completo de dados das funcionalidades implementadas, desde o componente visual na tela (UI) até a persistência física no banco de dados e políticas de segurança aplicadas.
+
+---
+
+## Matriz de Rastreabilidade
+
+| Feature | UI Component | Handler / Action | Schema (Zod/TS) | Service | Tabela | Coluna | Migration | RLS Policy | Persiste | Reload | Estado |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Criação de Cotação** | `QuotesIndexPage` (Drawer) | `saveMut.mutate` | `TravelIntent` | `createQuoteRequest` | `quote_requests` | `normalized_intent`, `source`, `status` | `20260726000000` | `quote_requests_all` | Sim | Sim (Preserva via React Query) | **REAL PONTA A PONTA** |
+| **Passageiros da Cotação** | `QuotesIndexPage` (Drawer) | `saveMut.mutate` | `TravelerParty` | `createQuoteRequest` | `quote_travelers` | `traveler_type`, `age` | `20260726000000` | `quote_travelers_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Preferências do Cliente** | `QuotesIndexPage` (Drawer) | `saveMut.mutate` | `quotes.ts` interfaces | `createQuoteRequest` | `quote_preferences` | `preference_key`, `preference_value`, `priority` | `20260726000000` | `quote_preferences_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Criação de Cenários** | `QuoteDetailWorkspacePage` | `createScenariosMut.mutate` | Cenário DTO | `createSearchPlanAndScenarios` | `quote_search_plans`, `quote_scenarios` | `scenario_type`, `parameters`, `status` | `20260726000000` | `quote_search_plans_all`, `quote_scenarios_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Executar Buscas GDS** | `QuoteDetailWorkspacePage` | `handleExecuteSearch` | Parâmetros de pesquisa | `executeScenarioSearch` | `normalized_offers` | `normalized_data`, `price_total`, `currency` | `20260726000000` | `normalized_offers_all` | Sim | Sim | **REAL PONTA A PONTA** (mocked integration baseline) |
+| **Compor Alternativas** | `QuoteDetailWorkspacePage` | `handleAutoPackage` | Componentes do pacote | `createPackageCandidate` | `package_candidates`, `package_candidate_components` | `total_price`, `currency`, `status`, `offer_id` | `20260726000000` | `package_candidates_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Motor de Qualificação** | `QuoteDetailWorkspacePage` | `handleAutoPackage` / `scorePackageCandidate` | `PackageScorecard` | `scorePackageCandidate` | `package_scorecards` | `dimensions`, `penalties`, `bonuses`, `final_score` | `20260726000000` | `package_scorecards_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Simulação Agêntica** | `QuoteDetailWorkspacePage` | `runSimulationMut.mutate` | `SimulationRunDetails` | `runMarketSimulation` | `simulation_runs`, `simulation_results` | `personas`, `score`, `objections`, `strengths` | `20260726000000` | `simulation_runs_all` | Sim | Sim | **REAL PONTA A PONTA** |
+| **Ingestão Base RAG** | `QuotesIndexPage` (Aba Conhecimento) | `handleIngestKnowledge` | Métodos locais do service | `ingestKnowledgeDocument` | `knowledge_sources`, `knowledge_documents` | `name`, `content`, `category`, `scope` | `20260728000000` (**Não Aplicada**) | Nenhuma (Tabelas inexistentes) | **Não** | **Não (Gera erro no console e falha)** | **QUEBRADO** |
+| **Geração de Embeddings** | Backend do RAG Service | Chamada via gateway OpenAI | Array float vector(1536) | `getOpenAIEmbedding` | `knowledge_chunks`, `knowledge_embeddings` | `content`, `embedding` | `20260728000000` (**Não Aplicada**) | Nenhuma | **Não** | **Não** | **QUEBRADO** |
+| **Diretrizes de Perna** | `QuotesIndexPage` (Botão auto-alimentar) | `handleFeedDefaultGuidelines` | Array de regras estáticas | `ingestKnowledgeDocument` | `knowledge_documents` | `title`, `content` | `20260728000000` (**Não Aplicada**) | Nenhuma | **Não** | **Não** | **QUEBRADO** |
+| **Restrição SuperAdmin** | Gravação de regras globais | Lógica na UI e Mutations | Perfis globais | `scorePackageCandidate` | `score_profiles`, `decision_rules` | `scope` | `20260727000000` (**Não Aplicada**) | Políticas corretas inexistentes | **Parcial** | **Sim (Inseguro)** | **PARCIAL/VULNERÁVEL** |

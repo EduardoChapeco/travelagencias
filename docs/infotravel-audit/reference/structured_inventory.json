@@ -1,0 +1,3404 @@
+[
+  {
+    "path": "/api/v1/avail/hotel/rebooking",
+    "method": "GET",
+    "summary": "Hotel  rebooking Availbility",
+    "description": "This method is used to request room rebooking availability",
+    "operationId": "searchHotelRebooking",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "hotel",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/experience",
+    "method": "GET",
+    "summary": "Experience Availbility",
+    "description": "This method is used to request experience availability",
+    "operationId": "experienceAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "activity",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ExperiencAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/insurance",
+    "method": "GET",
+    "summary": "Insurance Availbility",
+    "description": "This method is used to request insurance availability",
+    "operationId": "insuranceAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "provider",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/InsuranceAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/servicePackage",
+    "method": "GET",
+    "summary": "Service Package Availbility",
+    "description": "This method is used to request service package availability",
+    "operationId": "servicePackageAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "servicePackage",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ServicePackageAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/serviceOther",
+    "method": "GET",
+    "summary": "Service Other",
+    "description": "This method is used to request activity availability",
+    "operationId": "serviceOtheravailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "serviceOther",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ServiceOtherAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/transfer",
+    "method": "GET",
+    "summary": "Transfers Availbility",
+    "description": "This method is used to request service transfers availability",
+    "operationId": "transferAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "originType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "hourStart",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "hourEnd",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "type",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "servicePackage",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "provider",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/TransferAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/hotel",
+    "method": "GET",
+    "summary": "Hotel Availbility",
+    "description": "This method is used to request room availability",
+    "operationId": "hotelAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "hotel",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "externalCode",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "keyDetail",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "giataCode",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "idHotelList",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "searchRadius",
+        "in": "query",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "isMobile",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "isCorporate",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "externalParam",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/hotel",
+    "method": "POST",
+    "summary": "Hotel Availbility",
+    "description": "This method is used to request room availability",
+    "operationId": "hotelAvailbilityGiata",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "hotel",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "idHotelList",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "searchRadius",
+        "in": "query",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/flight",
+    "method": "GET",
+    "summary": "Flight Availability",
+    "description": "This method is used to request flight availability",
+    "operationId": "flightAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "baggage",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "flightClass",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "stops",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "airlines",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "maxConnectionTime",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "isCombinedFlight",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/FlightAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/activity/detail",
+    "method": "GET",
+    "summary": "Activity detail",
+    "description": "This method is used to request activity detail",
+    "operationId": "activityDetail",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "key",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "isAdditionalService",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/TourAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/activity",
+    "method": "GET",
+    "summary": "Activity Availbility",
+    "description": "This method is used to request activity availability",
+    "operationId": "toursAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "activity",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "provider",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/TourAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/package/{packageType}",
+    "method": "GET",
+    "summary": "Package Availbility",
+    "description": "This method is used to request package availability",
+    "operationId": "packageAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "packageType",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "originIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "originType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destinationDiff",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationIataDiff",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destinationTypeDiff",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "baggage",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "keyDetail",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "isMobile",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/PackageAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/ticket",
+    "method": "GET",
+    "summary": "Ticket Availbility",
+    "description": "This method is used to request service ticket availability",
+    "operationId": "ticketAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "ticket",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "provider",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "isNotDetailed",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "keyDetail",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/TicketAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/chip",
+    "method": "GET",
+    "summary": "Chip Availbility",
+    "description": "This method is used to request chip availability",
+    "operationId": "chipAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "activity",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ChipAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/vehicle",
+    "method": "GET",
+    "summary": "Vehicle Availbility",
+    "description": "This method is used to request vehicle availability",
+    "operationId": "vehicleAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "pickUpDate",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "pickUpHour",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "pickUpLocation",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "pickUpLocationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "pickUpLocationIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "dropOffDate",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "dropOffHour",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "dropOffLocation",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "dropOffLocationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "dropOffLocationIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "driverAge",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "searchRadius",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/VehicleAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/circuit",
+    "method": "GET",
+    "summary": "Circuit Availability",
+    "description": "Search for available circuits based on destination, date, occupancy, and other filters.<br/>This is the first step to check which circuits are available for booking.<br/><br/>**Flow:** First, call `/circuit` to check availability, then `/circuit/calendar` to view monthly tariffs, and finally `/circuit/daily-details` to get detailed pricing for a specific day.",
+    "operationId": "circuitAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "integrationId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "searchType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "searchCode",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "allDestiny",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "idDestinationList",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "date",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CircuitAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/circuit/calendar",
+    "method": "POST",
+    "summary": "Get Circuit Tariff Calendar",
+    "description": "Retrieve the monthly tariff calendar for a selected circuit. Use this after checking availability to view prices across different dates within a month.",
+    "operationId": "tariffMonth",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [],
+    "requestBodyRef": "#/components/schemas/BookingRQ",
+    "responseBodyRef": "#/components/schemas/TariffMonthRS"
+  },
+  {
+    "path": "/api/v1/avail/bus",
+    "method": "GET",
+    "summary": "Bus Availability",
+    "description": "This method is used to request bus availability",
+    "operationId": "busAvailbility",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "occupancy",
+        "in": "query",
+        "required": false,
+        "type": "array"
+      },
+      {
+        "name": "nationality",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/BusAvailbilityRS"
+  },
+  {
+    "path": "/api/v1/avail/circuit/daily-details",
+    "method": "POST",
+    "summary": "Get Circuit Daily Tariff Details",
+    "description": "Retrieve detailed tariff information for a specific day of a selected circuit. This is used after viewing the calendar to get precise pricing and conditions for booking on a chosen date.",
+    "operationId": "tariffDay",
+    "tags": [
+      "Availability"
+    ],
+    "parameters": [],
+    "requestBodyRef": "#/components/schemas/BookingRQ",
+    "responseBodyRef": "#/components/schemas/CircuitDailyDetailRS"
+  },
+  {
+    "path": "/api/v1/b2c/listAllItB2c",
+    "method": "GET",
+    "summary": "List all B2C entries",
+    "description": "Returns all B2C configurations",
+    "operationId": "listarTodos",
+    "tags": [
+      "B2C"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/b2c/updateB2cConfigByDomain/{domain}",
+    "method": "POST",
+    "summary": "Update B2C Config by domain URL",
+    "description": "Overwrites the B2C configuration JSON for the given domain. Only users listed in the config's adminUsers array may call this endpoint.",
+    "operationId": "updateB2cConfigByDomain",
+    "tags": [
+      "B2C"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "domain",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/B2cConfigForm",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/b2c/getB2cConfigByDomain/{domain}",
+    "method": "GET",
+    "summary": "Get B2C Config by domain URL",
+    "description": "Returns the B2C configuration JSON for a given domain URL (ds_url_b2c)",
+    "operationId": "getB2cConfigByDomain",
+    "tags": [
+      "B2C"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "domain",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/backoffice/booking/search",
+    "method": "GET",
+    "summary": "Reservation Search",
+    "description": "This method is used to search for reservations.",
+    "operationId": "search",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "searchType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "bookingStatus",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "category",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "hourStart",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "hourEnd",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/BackOfficeSearchRS"
+  },
+  {
+    "path": "/api/v1/backoffice/booking/{id}",
+    "method": "GET",
+    "summary": "Search by booking",
+    "description": "This method is used to search for reservations.",
+    "operationId": "booking",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/BackofficeRS"
+  },
+  {
+    "path": "/api/v1/backoffice/checkBooking/{id}",
+    "method": "GET",
+    "summary": "Reservation Check Search",
+    "description": "This method is used to search for reservations unchecked.",
+    "operationId": "checkbooking",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/backoffice/booking/searchUncheckedBooking",
+    "method": "GET",
+    "summary": "Reservation Check Search",
+    "description": "This method is used to search for reservations unchecked.",
+    "operationId": "searchUncheckedBooking",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/BackOfficeSearchRS"
+  },
+  {
+    "path": "/api/v1/backoffice/client/{externalCode}",
+    "method": "GET",
+    "summary": "Find Client External Code",
+    "description": "This method is used to query the data referring to the Client",
+    "operationId": "buscarClientePorIdExterno",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "externalCode",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Pessoa"
+  },
+  {
+    "path": "/api/v1/backoffice/hotel/{id}",
+    "method": "GET",
+    "summary": "Hotel Detail",
+    "description": "This method is used to query the data referring to the  hotel",
+    "operationId": "buscarHotelPorIdInterno",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Pessoa"
+  },
+  {
+    "path": "/api/v1/backoffice/person",
+    "method": "GET",
+    "summary": "Person Detail",
+    "description": "This method is used to query the data referring to the person",
+    "operationId": "buscarPessoaPorId",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "documentNumber",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "documentType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Pessoa"
+  },
+  {
+    "path": "/api/v1/backoffice/person/{id}",
+    "method": "GET",
+    "summary": "Person Detail",
+    "description": "This method is used to query the data referring to the person",
+    "operationId": "buscarPessoaPorId_1",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Pessoa"
+  },
+  {
+    "path": "/api/v1/backoffice/booking/searchRebooking",
+    "method": "GET",
+    "summary": "Reservation Search Rebooking",
+    "description": "This method is used to search for reservations that have gone through the rebooking process. ",
+    "operationId": "searchRebooking",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Reserva"
+  },
+  {
+    "path": "/api/v1/backoffice/booking/update",
+    "method": "PUT",
+    "summary": "Update id externo by booking ",
+    "description": "This method is used to update id externo by reserva.",
+    "operationId": "atualizarIdExterno",
+    "tags": [
+      "Backoffice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/billing/import",
+    "method": "POST",
+    "summary": "Import Billing",
+    "description": "This method receives a byte array of an image, the file name and the credential id to which the billing will be imported to",
+    "operationId": "importBilling",
+    "tags": [
+      "Billing"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/BillingRQ",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/booking/{id}",
+    "method": "GET",
+    "summary": "Booking Detail",
+    "description": "The BookingDetail operation allows to retrieve a booking with all its details from the booking reference locator.",
+    "operationId": "find",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "isDocument",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "syncWithProviders",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ApiBooking"
+  },
+  {
+    "path": "/api/v1/booking/{id}/cancel",
+    "method": "DELETE",
+    "summary": "Booking Cancelation",
+    "description": "BookingCancellation is used either to simulate a cancellation or to perform the actual cancellation.",
+    "operationId": "cancel",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      },
+      {
+        "name": "cancelType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ApiBooking"
+  },
+  {
+    "path": "/api/v1/booking",
+    "method": "POST",
+    "summary": "Booking Reservation",
+    "description": "This method is used to make a reservation.",
+    "operationId": "booking_1",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "waitForProcessing",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/BookingRQ",
+    "responseBodyRef": "#/components/schemas/BookingRS"
+  },
+  {
+    "path": "/api/v1/rebooking/{id}",
+    "method": "POST",
+    "summary": "Rebooking",
+    "description": "This method is used to change an existing hotel reservation.",
+    "operationId": "rebooking",
+    "tags": [
+      "Rebooking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/BookingRQ",
+    "responseBodyRef": "#/components/schemas/BookingSearchRS"
+  },
+  {
+    "path": "/api/v1/booking/{id}/confirm",
+    "method": "POST",
+    "summary": "Booking Confirmation",
+    "description": "This method is used to request a booking confirmation.",
+    "operationId": "confirm",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ApiBooking"
+  },
+  {
+    "path": "/api/v1/applyCoupon/{id}/{coupon}",
+    "method": "POST",
+    "summary": "Apply coupon",
+    "description": "This method is used to apply a coupon to a reservation.",
+    "operationId": "applyCoupon",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "coupon",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/BookingRS"
+  },
+  {
+    "path": "/api/v1/checkRate",
+    "method": "POST",
+    "summary": "Check Rate",
+    "description": "This method is used to check rates before booking.",
+    "operationId": "checkRate",
+    "tags": [
+      "CheckRate"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "permanentKey",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "isAlteration",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "isMobile",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/BookingRQ",
+    "responseBodyRef": "#/components/schemas/BookingRS"
+  },
+  {
+    "path": "/api/v1/booking/search",
+    "method": "GET",
+    "summary": "Search Booking by User",
+    "description": "Search booking by period and by logged in user",
+    "operationId": "bookingSearch",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "client",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "businessType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "idExternalClient",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "searchType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "document",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "documentType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "detailed",
+        "in": "query",
+        "required": false,
+        "type": "boolean"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/company/{id}",
+    "method": "GET",
+    "summary": "Company Search",
+    "description": "This method is used to search company details",
+    "operationId": "searchCompany",
+    "tags": [
+      "Company"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CompanyRS"
+  },
+  {
+    "path": "/api/v1/company",
+    "method": "GET",
+    "summary": "Company Search",
+    "description": "This method is used to search company details",
+    "operationId": "searchCompany_1",
+    "tags": [
+      "Company"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CompanyRS"
+  },
+  {
+    "path": "/api/v1/company/code/{sgEmpresa}",
+    "method": "GET",
+    "summary": "Company Search",
+    "description": "This method is used to search company details",
+    "operationId": "searchCompanySgEmpresa",
+    "tags": [
+      "Company"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "sgEmpresa",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CompanyRS"
+  },
+  {
+    "path": "/api/v1/financial/cashRegister/search",
+    "method": "GET",
+    "summary": "Cash register Search",
+    "description": "This method is used to search for cash Registers.",
+    "operationId": "searchCashRegister",
+    "tags": [
+      "Financial"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "status",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "bookingId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CashRegisterRS"
+  },
+  {
+    "path": "/api/v1/financial/searchCreditLetter",
+    "method": "GET",
+    "summary": "Search Credit Letter",
+    "description": "This method is used to search a Credit Letter.",
+    "operationId": "searchCreditLetter",
+    "tags": [
+      "Financial"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "searchType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "start",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "end",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "document",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/financial/creditLetter",
+    "method": "POST",
+    "summary": "Create Credit Letter",
+    "description": "This method is used to make a Credit Letter.",
+    "operationId": "createCreditLetter",
+    "tags": [
+      "Financial"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/CreditLetterRQ",
+    "responseBodyRef": "#/components/schemas/CreditLetterRS"
+  },
+  {
+    "path": "/api/v1/financialposting/approval/{id}",
+    "method": "GET",
+    "summary": "Financial Posting Approval",
+    "description": "This method receives the product id and confirms the payment of the  Financial Posting",
+    "operationId": "financialLaunchesApproval",
+    "tags": [
+      "FinancialPosting"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/FinancialPostingRS"
+  },
+  {
+    "path": "/api/v1/invoice/generate/{idPayment}",
+    "method": "GET",
+    "summary": "Generate Invoice",
+    "description": "This method generates and closes an invoice.",
+    "operationId": "generateInvoice",
+    "tags": [
+      "Invoice"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "idPayment",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ApiInvoice"
+  },
+  {
+    "path": "/api/v1/package/{idPacote}",
+    "method": "GET",
+    "summary": "Package Search",
+    "description": "This method is used to search package.",
+    "operationId": "buscarPacote",
+    "tags": [
+      "Package"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "idPacote",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/Pacote"
+  },
+  {
+    "path": "/api/v1/payment/pix/consult/{id}",
+    "method": "GET",
+    "summary": "Pix Consult",
+    "description": "This method validates if the pix payment was made",
+    "operationId": "find_1",
+    "tags": [
+      "Payment"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ApiPaymentPix"
+  },
+  {
+    "path": "/api/v1/pointRules",
+    "method": "GET",
+    "summary": "Point Rule Search",
+    "description": "This method is used to search for point rules.",
+    "operationId": "buscarRegras",
+    "tags": [
+      "PointRule"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/PointRuleRS"
+  },
+  {
+    "path": "/api/v1/product/observation/{id}",
+    "method": "PUT",
+    "summary": "Update transfer ",
+    "description": "Updates the observation of a specific product ",
+    "operationId": "updateObservationProduct",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/product/transfer/{id}",
+    "method": "PUT",
+    "summary": "Update transfer ",
+    "description": "Updates the transfer data of a specific service ",
+    "operationId": "updateTransfer",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/product/circuit/{id}/service",
+    "method": "PUT",
+    "summary": "Update circuit service data",
+    "description": "Updates the service data of a specific circuit, such as setting flight information on a transfer service.",
+    "operationId": "updateCircuitService",
+    "tags": [
+      "Booking"
+    ],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/searchEngine/allottedDates/flight",
+    "method": "GET",
+    "summary": "Allotted Flight Dates",
+    "description": "This method is used to request flight allotment dates",
+    "operationId": "flightAllottedDates",
+    "tags": [],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "iata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destinationIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "key",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/DatasBloqueioAereo"
+  },
+  {
+    "path": "/api/v1/searchEngine/package/{packageType}/period",
+    "method": "GET",
+    "summary": "Package Periods",
+    "description": "This method is used to request package periods",
+    "operationId": "packagePeriod",
+    "tags": [
+      "Search Engine"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "packageType",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "originIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "originType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destination",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "destinationIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "destinationType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "key",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/MotorPacote"
+  },
+  {
+    "path": "/api/v1/searchEngine/package/{packageType}/destination",
+    "method": "GET",
+    "summary": "Package Destination",
+    "description": "This method is used to request package destinations",
+    "operationId": "packageDestination",
+    "tags": [
+      "Search Engine"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "packageType",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "originIata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "originType",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "key",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/MotorPacote"
+  },
+  {
+    "path": "/api/v1/searchEngine/package/{packageType}/origin",
+    "method": "GET",
+    "summary": "Package Origin",
+    "description": "This method is used to request package origins",
+    "operationId": "packageOrigin",
+    "tags": [
+      "Search Engine"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "packageType",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "name",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "origin",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "iata",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "type",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "key",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "packageId",
+        "in": "query",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "language",
+        "in": "query",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/MotorPacote"
+  },
+  {
+    "path": "/api/v1/service/service/import",
+    "method": "POST",
+    "summary": "Import Service Fare",
+    "description": "This method is used to generate a new Service Fare",
+    "operationId": "importServiceFare",
+    "tags": [
+      "Service"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/ServiceFareRQ",
+    "responseBodyRef": "#/components/schemas/ServiceFareRS"
+  },
+  {
+    "path": "/api/v1/user/register",
+    "method": "POST",
+    "summary": "Register",
+    "description": "",
+    "operationId": "register",
+    "tags": [
+      "User"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/UserRegisterRQ",
+    "responseBodyRef": "#/components/schemas/UserRegisterRS"
+  },
+  {
+    "path": "/api/v1/user/recover/password",
+    "method": "POST",
+    "summary": "Recover Password",
+    "description": "",
+    "operationId": "recoveryPassword",
+    "tags": [
+      "User"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/UserForgotPasswordRQ",
+    "responseBodyRef": "#/components/schemas/UserForgotPasswordRS"
+  },
+  {
+    "path": "/api/v1/user/{userId}",
+    "method": "PUT",
+    "summary": "Update User",
+    "description": "",
+    "operationId": "updateUser",
+    "tags": [
+      "User"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/UserUpdateRQ",
+    "responseBodyRef": "#/components/schemas/UserUpdateRS"
+  },
+  {
+    "path": "/api/v1/user/login",
+    "method": "POST",
+    "summary": "LogIn",
+    "description": "",
+    "operationId": "login",
+    "tags": [
+      "User"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      }
+    ],
+    "requestBodyRef": "#/components/schemas/UserLoginRQ",
+    "responseBodyRef": "#/components/schemas/UserLoginRS"
+  },
+  {
+    "path": "/api/v1/utility/hotelDetail/{keyDetail}",
+    "method": "GET",
+    "summary": "Hotel Detail",
+    "description": "This method is used to request room availability",
+    "operationId": "montaDetalheHotel",
+    "tags": [
+      "Utility"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "keyDetail",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelDetailRS"
+  },
+  {
+    "path": "/api/v1/utility/county/{countyName}",
+    "method": "GET",
+    "summary": "County Search",
+    "description": "This method is used to search coounty by name.",
+    "operationId": "buscarMunicipio",
+    "tags": [
+      "Utility"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "countyName",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/CountySearchRS"
+  },
+  {
+    "path": "/api/v1/utility/hotel/{keyDetail}/reviews",
+    "method": "GET",
+    "summary": "Hotel Reviews",
+    "description": "This method is used to request hotel reviews",
+    "operationId": "montaAvaliacaoHotel",
+    "tags": [
+      "Utility"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "keyDetail",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelDetailRS"
+  },
+  {
+    "path": "/api/v1/utility/zipcode/{nrcep}",
+    "method": "GET",
+    "summary": "Zipcode Search",
+    "description": "This method is used to search zipcode.",
+    "operationId": "buscaEndereco",
+    "tags": [
+      "Utility"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "nrcep",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/ZipCodeRS"
+  },
+  {
+    "path": "/api/v1/utility/coupon/{cdCupom}",
+    "method": "GET",
+    "summary": "Find coupon",
+    "description": "This method is used to search for a specific coupon",
+    "operationId": "validarCupom",
+    "tags": [
+      "Utility"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "cdCupom",
+        "in": "path",
+        "required": true,
+        "type": "string"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/utility/contract/{idReserva}",
+    "method": "GET",
+    "summary": "Contracts Search",
+    "description": "This method is used to search for contracts and terms of use.",
+    "operationId": "buscarContratosPreReservar",
+    "tags": [
+      "CheckRate"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "idReserva",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": ""
+  },
+  {
+    "path": "/api/v1/whiteLabel/{id}",
+    "method": "GET",
+    "summary": "Search",
+    "description": "",
+    "operationId": "login_1",
+    "tags": [
+      "Whitelabel"
+    ],
+    "parameters": [
+      {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "type": ""
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "type": "integer"
+      }
+    ],
+    "requestBodyRef": "",
+    "responseBodyRef": "#/components/schemas/HotelDetailRS"
+  }
+]

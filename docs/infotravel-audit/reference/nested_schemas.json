@@ -1,0 +1,418 @@
+{
+  "ApiHotelAvail": {
+    "type": "object",
+    "properties": {
+      "provider": {
+        "type": "string"
+      },
+      "checkIn": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "checkOut": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "hotel": {
+        "$ref": "#/components/schemas/ApiHotel"
+      },
+      "lowestFare": {
+        "$ref": "#/components/schemas/ApiLowestFare"
+      },
+      "roomGroups": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiRoomGroup"
+        }
+      },
+      "errorDescription": {
+        "type": "string"
+      },
+      "ruleViolations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiRuleViolation"
+        }
+      }
+    }
+  },
+  "ApiFlightAvail": {
+    "type": "object",
+    "properties": {
+      "provider": {
+        "type": "string"
+      },
+      "routes": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiRoute"
+        }
+      },
+      "names": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiName"
+        }
+      }
+    }
+  },
+  "ApiBookingHotel": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "RESERVED",
+          "CONFIRMED",
+          "CANCELED",
+          "WAITING_LIST",
+          "ORDER",
+          "INCONSISTENT",
+          "DENIED",
+          "QUOTATION",
+          "EXPIRED",
+          "PROCESSING",
+          "BLOCKED",
+          "IN_PAYMENT_PROCESS",
+          "ON_REQUEST",
+          "IN_CANCELLATION_PROCESS",
+          "MODIFIED",
+          "CREATION",
+          "EMPTY",
+          "NOT_INTEGRATED",
+          "ANALYSIS",
+          "EDITION"
+        ]
+      },
+      "locators": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiLocator"
+        }
+      },
+      "provider": {
+        "type": "string"
+      },
+      "providerId": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "hotel": {
+        "$ref": "#/components/schemas/ApiHotel"
+      },
+      "rooms": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiRoom"
+        }
+      },
+      "contacts": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiContact"
+        }
+      },
+      "rebooking": {
+        "type": "boolean"
+      },
+      "idProductRebooking": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "textDoc": {
+        "type": "string"
+      },
+      "observationSupplier": {
+        "type": "string"
+      },
+      "errorDescription": {
+        "type": "string"
+      },
+      "ruleViolations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiRuleViolation"
+        }
+      },
+      "commissionAdjustment": {
+        "$ref": "#/components/schemas/ApiCommission"
+      },
+      "regionError": {
+        "type": "boolean"
+      },
+      "manual": {
+        "type": "boolean"
+      },
+      "additionalInformations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/InfoAdicional"
+        }
+      }
+    }
+  },
+  "ApiBookingFlight": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "RESERVED",
+          "CONFIRMED",
+          "CANCELED",
+          "WAITING_LIST",
+          "ORDER",
+          "INCONSISTENT",
+          "DENIED",
+          "QUOTATION",
+          "EXPIRED",
+          "PROCESSING",
+          "BLOCKED",
+          "IN_PAYMENT_PROCESS",
+          "ON_REQUEST",
+          "IN_CANCELLATION_PROCESS",
+          "MODIFIED",
+          "CREATION",
+          "EMPTY",
+          "NOT_INTEGRATED",
+          "ANALYSIS",
+          "EDITION"
+        ]
+      },
+      "locators": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiLocator"
+        }
+      },
+      "provider": {
+        "type": "string"
+      },
+      "flights": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiFlight"
+        }
+      },
+      "names": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiName"
+        }
+      },
+      "fares": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiFare"
+        }
+      },
+      "policies": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiPolicy"
+        }
+      },
+      "cancellationPolicies": {
+        "$ref": "#/components/schemas/ApiCancellationPolicy"
+      },
+      "providerDetail": {
+        "$ref": "#/components/schemas/ApiClient"
+      },
+      "textDoc": {
+        "type": "string"
+      },
+      "commissionAdjustment": {
+        "$ref": "#/components/schemas/ApiCommission"
+      },
+      "manual": {
+        "type": "boolean"
+      },
+      "additionalInformations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/InfoAdicional"
+        }
+      }
+    }
+  },
+  "ApiContact": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "email": {
+        "type": "string"
+      },
+      "telephone": {
+        "type": "string"
+      },
+      "address": {
+        "$ref": "#/components/schemas/ApiAddress"
+      }
+    }
+  },
+  "ApiPrice": {
+    "type": "object",
+    "properties": {
+      "currency": {
+        "type": "string",
+        "enum": [
+          "BRL",
+          "USD",
+          "EUR",
+          "GBP",
+          "CLP",
+          "COP",
+          "CHF",
+          "CAD",
+          "NZD",
+          "ARS",
+          "MXN",
+          "IDR",
+          "UYU",
+          "AUD",
+          "JPY",
+          "ZAR",
+          "AED",
+          "NAD",
+          "FJD",
+          "RUB",
+          "CNY",
+          "ISK",
+          "MAD",
+          "NOK",
+          "SAR",
+          "THB",
+          "QAR",
+          "CZK",
+          "SEK",
+          "SGD",
+          "HKD",
+          "MZN",
+          "ILS",
+          "DKK",
+          "INR",
+          "TRY",
+          "BHD",
+          "PLN",
+          "MYR",
+          "HUF",
+          "KES",
+          "KRW",
+          "KZT",
+          "PEN"
+        ]
+      },
+      "amount": {
+        "type": "number",
+        "format": "double"
+      },
+      "percent": {
+        "type": "number",
+        "format": "double"
+      },
+      "coefficient": {
+        "type": "number",
+        "format": "double"
+      },
+      "exchange": {
+        "type": "number",
+        "format": "double"
+      },
+      "description": {
+        "type": "string"
+      },
+      "discounts": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiDiscount"
+        }
+      }
+    }
+  },
+  "ApiClient": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "format": "int32"
+      },
+      "externalCode": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "lastName": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "CLIENT",
+          "AIRLINE",
+          "PAYMENT_HOTEL",
+          "BUSINESS_UNIT",
+          "SUPPLIER",
+          "HOTEL",
+          "PROFESSIONAL",
+          "PROMOTER",
+          "SYSTEM",
+          "AUTONOMOUS",
+          "POINT_SEAL",
+          "COMPANY",
+          "BUS_COMPANY",
+          "AGENCY_WITNESS"
+        ]
+      },
+      "contactName": {
+        "type": "string"
+      },
+      "category": {
+        "$ref": "#/components/schemas/ApiClientCategory"
+      },
+      "address": {
+        "$ref": "#/components/schemas/ApiAddress"
+      },
+      "telephones": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiPhone"
+        }
+      },
+      "email": {
+        "type": "string"
+      },
+      "documents": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ApiDocument"
+        }
+      },
+      "birth": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "loginType": {
+        "type": "string"
+      },
+      "riskData": {
+        "type": "string"
+      },
+      "logo": {
+        "type": "string"
+      },
+      "image": {
+        "$ref": "#/components/schemas/ApiImage"
+      },
+      "localTrip": {
+        "type": "boolean"
+      }
+    }
+  },
+  "ApiPassenger": "NOT_FOUND"
+}

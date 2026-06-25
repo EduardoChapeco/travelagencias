@@ -499,6 +499,170 @@ export type Database = {
           },
         ]
       }
+      ai_agency_memories: {
+        Row: {
+          agency_id: string
+          category: string
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          category: string
+          content: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          category?: string
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agency_memories_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_api_credentials: {
+        Row: {
+          agency_id: string | null
+          cooldown_until: string | null
+          created_at: string
+          created_by: string | null
+          daily_limit: number | null
+          fingerprint: string
+          id: string
+          label: string | null
+          last_error_at: string | null
+          last_error_code: string | null
+          last_success_at: string | null
+          last_used_at: string | null
+          masked_hint: string
+          monthly_limit: number | null
+          priority: number
+          provider_id: string | null
+          secret_reference: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          created_by?: string | null
+          daily_limit?: number | null
+          fingerprint: string
+          id?: string
+          label?: string | null
+          last_error_at?: string | null
+          last_error_code?: string | null
+          last_success_at?: string | null
+          last_used_at?: string | null
+          masked_hint: string
+          monthly_limit?: number | null
+          priority?: number
+          provider_id?: string | null
+          secret_reference: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          created_by?: string | null
+          daily_limit?: number | null
+          fingerprint?: string
+          id?: string
+          label?: string | null
+          last_error_at?: string | null
+          last_error_code?: string | null
+          last_success_at?: string | null
+          last_used_at?: string | null
+          masked_hint?: string
+          monthly_limit?: number | null
+          priority?: number
+          provider_id?: string | null
+          secret_reference?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_api_credentials_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_api_credentials_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "ai_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_chat_feedback: {
+        Row: {
+          agency_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          message_id: string | null
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          agency_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          rating: number
+          user_id: string
+        }
+        Update: {
+          agency_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string | null
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_chat_feedback_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_chat_feedback_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "ai_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_chat_messages: {
         Row: {
           agency_id: string
@@ -600,6 +764,216 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ai_job_attempts: {
+        Row: {
+          attempt: number
+          created_at: string
+          credential_id: string | null
+          error_message: string | null
+          estimated_cost: number | null
+          http_status: number | null
+          id: string
+          input_tokens: number | null
+          job_id: string
+          latency_ms: number | null
+          model_id: string | null
+          output_tokens: number | null
+          provider_id: string | null
+          success: boolean
+        }
+        Insert: {
+          attempt: number
+          created_at?: string
+          credential_id?: string | null
+          error_message?: string | null
+          estimated_cost?: number | null
+          http_status?: number | null
+          id?: string
+          input_tokens?: number | null
+          job_id: string
+          latency_ms?: number | null
+          model_id?: string | null
+          output_tokens?: number | null
+          provider_id?: string | null
+          success: boolean
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          credential_id?: string | null
+          error_message?: string | null
+          estimated_cost?: number | null
+          http_status?: number | null
+          id?: string
+          input_tokens?: number | null
+          job_id?: string
+          latency_ms?: number | null
+          model_id?: string | null
+          output_tokens?: number | null
+          provider_id?: string | null
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_job_attempts_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "ai_api_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_job_attempts_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "ai_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_job_attempts_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_job_attempts_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "ai_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_jobs: {
+        Row: {
+          agency_id: string
+          completed_at: string | null
+          created_at: string
+          error_payload: Json | null
+          feature: string
+          id: string
+          idempotency_key: string | null
+          input_reference: string
+          priority: number
+          requested_by: string | null
+          result_payload: Json | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          agency_id: string
+          completed_at?: string | null
+          created_at?: string
+          error_payload?: Json | null
+          feature: string
+          id?: string
+          idempotency_key?: string | null
+          input_reference: string
+          priority?: number
+          requested_by?: string | null
+          result_payload?: Json | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          agency_id?: string
+          completed_at?: string | null
+          created_at?: string
+          error_payload?: Json | null
+          feature?: string
+          id?: string
+          idempotency_key?: string | null
+          input_reference?: string
+          priority?: number
+          requested_by?: string | null
+          result_payload?: Json | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_jobs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_models: {
+        Row: {
+          context_limit: number | null
+          created_at: string
+          id: string
+          modalities: string[]
+          model_code: string
+          output_limit: number | null
+          provider_id: string | null
+          status: string
+          supports_json_schema: boolean
+        }
+        Insert: {
+          context_limit?: number | null
+          created_at?: string
+          id?: string
+          modalities?: string[]
+          model_code: string
+          output_limit?: number | null
+          provider_id?: string | null
+          status?: string
+          supports_json_schema?: boolean
+        }
+        Update: {
+          context_limit?: number | null
+          created_at?: string
+          id?: string
+          modalities?: string[]
+          model_code?: string
+          output_limit?: number | null
+          provider_id?: string | null
+          status?: string
+          supports_json_schema?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_models_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "ai_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_providers: {
+        Row: {
+          auth_type: string | null
+          base_url: string | null
+          code: string
+          created_at: string
+          id: string
+          name: string
+          status: string
+        }
+        Insert: {
+          auth_type?: string | null
+          base_url?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+        }
+        Update: {
+          auth_type?: string | null
+          base_url?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
       }
       ai_rate_limit: {
         Row: {
@@ -1086,6 +1460,13 @@ export type Database = {
             referencedRelation: "group_tours"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "boarding_rooming_list_group_tour_id_fkey"
+            columns: ["group_tour_id"]
+            isOneToOne: false
+            referencedRelation: "group_tours_financial_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
       boarding_tickets: {
@@ -1401,6 +1782,50 @@ export type Database = {
             columns: ["group_trip_id"]
             isOneToOne: false
             referencedRelation: "group_trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_audit_logs: {
+        Row: {
+          action: string
+          agency_id: string
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          operator_id: string | null
+          record_id: string
+          table_name: string
+        }
+        Insert: {
+          action: string
+          agency_id: string
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          operator_id?: string | null
+          record_id: string
+          table_name: string
+        }
+        Update: {
+          action?: string
+          agency_id?: string
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          operator_id?: string | null
+          record_id?: string
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_audit_logs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
         ]
@@ -2587,12 +3012,232 @@ export type Database = {
           },
         ]
       }
+      customer_travel_decisions: {
+        Row: {
+          accepted_at: string | null
+          change_case_id: string
+          created_at: string
+          decision_status: string
+          decision_text_snapshot: string | null
+          disclosures_snapshot: string[] | null
+          id: string
+          ip_address: string | null
+          otp_verified_at: string | null
+          portal_session_id: string | null
+          selected_alternative_id: string | null
+          signature_hash: string | null
+          trip_id: string
+          typed_name: string | null
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          change_case_id: string
+          created_at?: string
+          decision_status?: string
+          decision_text_snapshot?: string | null
+          disclosures_snapshot?: string[] | null
+          id?: string
+          ip_address?: string | null
+          otp_verified_at?: string | null
+          portal_session_id?: string | null
+          selected_alternative_id?: string | null
+          signature_hash?: string | null
+          trip_id: string
+          typed_name?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          change_case_id?: string
+          created_at?: string
+          decision_status?: string
+          decision_text_snapshot?: string | null
+          disclosures_snapshot?: string[] | null
+          id?: string
+          ip_address?: string | null
+          otp_verified_at?: string | null
+          portal_session_id?: string | null
+          selected_alternative_id?: string | null
+          signature_hash?: string | null
+          trip_id?: string
+          typed_name?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_travel_decisions_change_case_id_fkey"
+            columns: ["change_case_id"]
+            isOneToOne: false
+            referencedRelation: "flight_change_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_travel_decisions_selected_alternative_id_fkey"
+            columns: ["selected_alternative_id"]
+            isOneToOne: false
+            referencedRelation: "flight_alternatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_travel_decisions_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decision_records: {
+        Row: {
+          created_at: string
+          decision_source: string
+          id: string
+          outcome: string
+          quote_request_id: string
+          reason: string | null
+          rejected_packages: Json
+          selected_package_id: string | null
+          sent_packages: Json
+        }
+        Insert: {
+          created_at?: string
+          decision_source?: string
+          id?: string
+          outcome?: string
+          quote_request_id: string
+          reason?: string | null
+          rejected_packages?: Json
+          selected_package_id?: string | null
+          sent_packages?: Json
+        }
+        Update: {
+          created_at?: string
+          decision_source?: string
+          id?: string
+          outcome?: string
+          quote_request_id?: string
+          reason?: string | null
+          rejected_packages?: Json
+          selected_package_id?: string | null
+          sent_packages?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_records_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "decision_records_selected_package_id_fkey"
+            columns: ["selected_package_id"]
+            isOneToOne: false
+            referencedRelation: "package_candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decision_rule_versions: {
+        Row: {
+          approved_by: string | null
+          confidence: number | null
+          created_at: string
+          effect: Json
+          expression: Json
+          id: string
+          rule_id: string
+          source: string
+          valid_from: string
+          valid_until: string | null
+          version: number
+        }
+        Insert: {
+          approved_by?: string | null
+          confidence?: number | null
+          created_at?: string
+          effect: Json
+          expression: Json
+          id?: string
+          rule_id: string
+          source?: string
+          valid_from?: string
+          valid_until?: string | null
+          version?: number
+        }
+        Update: {
+          approved_by?: string | null
+          confidence?: number | null
+          created_at?: string
+          effect?: Json
+          expression?: Json
+          id?: string
+          rule_id?: string
+          source?: string
+          valid_from?: string
+          valid_until?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_rule_versions_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "decision_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decision_rules: {
+        Row: {
+          agency_id: string | null
+          code: string
+          created_at: string
+          current_version_id: string | null
+          id: string
+          scope: string
+          status: string
+        }
+        Insert: {
+          agency_id?: string | null
+          code: string
+          created_at?: string
+          current_version_id?: string | null
+          id?: string
+          scope?: string
+          status?: string
+        }
+        Update: {
+          agency_id?: string | null
+          code?: string
+          created_at?: string
+          current_version_id?: string | null
+          id?: string
+          scope?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_rules_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       destination_info: {
         Row: {
+          agency_id: string | null
           ai_generated_at: string | null
           ai_model: string | null
           best_season: string | null
           budget_range: string | null
+          confidence_level: string | null
           country_code: string | null
           created_at: string
           cultural_tips: string | null
@@ -2600,6 +3245,7 @@ export type Database = {
           currency_code: string | null
           destination: string
           entry_requirements: string | null
+          expires_at: string | null
           health_notes: string | null
           id: string
           language: string | null
@@ -2609,6 +3255,8 @@ export type Database = {
           safety_level: string | null
           safety_notes: string | null
           slug: string | null
+          source: string | null
+          source_url: string | null
           time_zone: string | null
           tourist_tax: string | null
           tourist_tax_amount: number | null
@@ -2621,10 +3269,12 @@ export type Database = {
           visa_required: boolean | null
         }
         Insert: {
+          agency_id?: string | null
           ai_generated_at?: string | null
           ai_model?: string | null
           best_season?: string | null
           budget_range?: string | null
+          confidence_level?: string | null
           country_code?: string | null
           created_at?: string
           cultural_tips?: string | null
@@ -2632,6 +3282,7 @@ export type Database = {
           currency_code?: string | null
           destination: string
           entry_requirements?: string | null
+          expires_at?: string | null
           health_notes?: string | null
           id?: string
           language?: string | null
@@ -2641,6 +3292,8 @@ export type Database = {
           safety_level?: string | null
           safety_notes?: string | null
           slug?: string | null
+          source?: string | null
+          source_url?: string | null
           time_zone?: string | null
           tourist_tax?: string | null
           tourist_tax_amount?: number | null
@@ -2653,10 +3306,12 @@ export type Database = {
           visa_required?: boolean | null
         }
         Update: {
+          agency_id?: string | null
           ai_generated_at?: string | null
           ai_model?: string | null
           best_season?: string | null
           budget_range?: string | null
+          confidence_level?: string | null
           country_code?: string | null
           created_at?: string
           cultural_tips?: string | null
@@ -2664,6 +3319,7 @@ export type Database = {
           currency_code?: string | null
           destination?: string
           entry_requirements?: string | null
+          expires_at?: string | null
           health_notes?: string | null
           id?: string
           language?: string | null
@@ -2673,6 +3329,8 @@ export type Database = {
           safety_level?: string | null
           safety_notes?: string | null
           slug?: string | null
+          source?: string | null
+          source_url?: string | null
           time_zone?: string | null
           tourist_tax?: string | null
           tourist_tax_amount?: number | null
@@ -2684,7 +3342,205 @@ export type Database = {
           visa_info?: string | null
           visa_required?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "destination_info_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      destination_review_logs: {
+        Row: {
+          action: string
+          agency_id: string | null
+          created_at: string | null
+          destination_id: string
+          details: string | null
+          id: string
+          reviewed_by: string | null
+        }
+        Insert: {
+          action: string
+          agency_id?: string | null
+          created_at?: string | null
+          destination_id: string
+          details?: string | null
+          id?: string
+          reviewed_by?: string | null
+        }
+        Update: {
+          action?: string
+          agency_id?: string | null
+          created_at?: string | null
+          destination_id?: string
+          details?: string | null
+          id?: string
+          reviewed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "destination_review_logs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "destination_review_logs_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destination_info"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      external_entity_links: {
+        Row: {
+          agency_id: string
+          created_at: string | null
+          entity_type: string
+          external_id: string
+          id: string
+          internal_id: string
+          last_sync_at: string | null
+          metadata: Json | null
+          provider: string
+          sync_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string | null
+          entity_type: string
+          external_id: string
+          id?: string
+          internal_id: string
+          last_sync_at?: string | null
+          metadata?: Json | null
+          provider: string
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string | null
+          entity_type?: string
+          external_id?: string
+          id?: string
+          internal_id?: string
+          last_sync_at?: string | null
+          metadata?: Json | null
+          provider?: string
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_entity_links_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_categories: {
+        Row: {
+          agency_id: string
+          category_type: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          category_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          category_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_categories_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "financial_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_ledger_entries: {
+        Row: {
+          account_code: string
+          agency_id: string
+          created_at: string
+          credit_amount: number
+          debit_amount: number
+          description: string
+          entry_date: string
+          id: string
+          source_event: string
+          source_id: string
+        }
+        Insert: {
+          account_code: string
+          agency_id: string
+          created_at?: string
+          credit_amount?: number
+          debit_amount?: number
+          description: string
+          entry_date?: string
+          id?: string
+          source_event: string
+          source_id: string
+        }
+        Update: {
+          account_code?: string
+          agency_id?: string
+          created_at?: string
+          credit_amount?: number
+          debit_amount?: number
+          description?: string
+          entry_date?: string
+          id?: string
+          source_event?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_ledger_entries_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       financial_records: {
         Row: {
@@ -2897,6 +3753,214 @@ export type Database = {
             columns: ["record_id"]
             isOneToOne: false
             referencedRelation: "financial_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flight_alternatives: {
+        Row: {
+          availability_status: string
+          change_case_id: string
+          created_at: string
+          customer_visible: boolean
+          expires_at: string | null
+          id: string
+          itinerary_id: string
+          ranking: number
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          availability_status?: string
+          change_case_id: string
+          created_at?: string
+          customer_visible?: boolean
+          expires_at?: string | null
+          id?: string
+          itinerary_id: string
+          ranking?: number
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          availability_status?: string
+          change_case_id?: string
+          created_at?: string
+          customer_visible?: boolean
+          expires_at?: string | null
+          id?: string
+          itinerary_id?: string
+          ranking?: number
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_alternatives_change_case_id_fkey"
+            columns: ["change_case_id"]
+            isOneToOne: false
+            referencedRelation: "flight_change_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_alternatives_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "flight_itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flight_change_cases: {
+        Row: {
+          agency_id: string
+          assigned_to: string | null
+          change_reason: string | null
+          created_at: string
+          detected_at: string
+          detected_by: string | null
+          id: string
+          original_itinerary_id: string | null
+          priority: string
+          resolved_at: string | null
+          trip_id: string
+          updated_at: string
+          workflow_status: string
+        }
+        Insert: {
+          agency_id: string
+          assigned_to?: string | null
+          change_reason?: string | null
+          created_at?: string
+          detected_at?: string
+          detected_by?: string | null
+          id?: string
+          original_itinerary_id?: string | null
+          priority?: string
+          resolved_at?: string | null
+          trip_id: string
+          updated_at?: string
+          workflow_status?: string
+        }
+        Update: {
+          agency_id?: string
+          assigned_to?: string | null
+          change_reason?: string | null
+          created_at?: string
+          detected_at?: string
+          detected_by?: string | null
+          id?: string
+          original_itinerary_id?: string | null
+          priority?: string
+          resolved_at?: string | null
+          trip_id?: string
+          updated_at?: string
+          workflow_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_change_cases_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_change_cases_original_itinerary_id_fkey"
+            columns: ["original_itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "flight_itineraries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_change_cases_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flight_difference_analysis: {
+        Row: {
+          ai_summary: string | null
+          airport_changed: boolean
+          alternative_itinerary_id: string
+          baggage_changed: boolean
+          cabin_changed: boolean
+          created_at: string
+          date_changed: boolean
+          deterministic_summary: string | null
+          id: string
+          layover_delta_minutes: number
+          original_itinerary_id: string
+          overnight_connection: boolean
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_score: number
+          segment_count_delta: number
+          time_changed: boolean
+          total_duration_delta_minutes: number
+          updated_at: string
+          warnings: string[] | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          airport_changed?: boolean
+          alternative_itinerary_id: string
+          baggage_changed?: boolean
+          cabin_changed?: boolean
+          created_at?: string
+          date_changed?: boolean
+          deterministic_summary?: string | null
+          id?: string
+          layover_delta_minutes?: number
+          original_itinerary_id: string
+          overnight_connection?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_score?: number
+          segment_count_delta?: number
+          time_changed?: boolean
+          total_duration_delta_minutes?: number
+          updated_at?: string
+          warnings?: string[] | null
+        }
+        Update: {
+          ai_summary?: string | null
+          airport_changed?: boolean
+          alternative_itinerary_id?: string
+          baggage_changed?: boolean
+          cabin_changed?: boolean
+          created_at?: string
+          date_changed?: boolean
+          deterministic_summary?: string | null
+          id?: string
+          layover_delta_minutes?: number
+          original_itinerary_id?: string
+          overnight_connection?: boolean
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_score?: number
+          segment_count_delta?: number
+          time_changed?: boolean
+          total_duration_delta_minutes?: number
+          updated_at?: string
+          warnings?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_difference_analysis_alternative_itinerary_id_fkey"
+            columns: ["alternative_itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "flight_itineraries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flight_difference_analysis_original_itinerary_id_fkey"
+            columns: ["original_itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "flight_itineraries"
             referencedColumns: ["id"]
           },
         ]
@@ -3241,6 +4305,13 @@ export type Database = {
             referencedRelation: "group_tours"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "group_tour_costs_group_tour_id_fkey"
+            columns: ["group_tour_id"]
+            isOneToOne: false
+            referencedRelation: "group_tours_financial_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
       group_tour_enrollments: {
@@ -3334,6 +4405,9 @@ export type Database = {
           registration_deadline: string | null
           reserved_seats: number
           return_date: string | null
+          rooming_list_sent_bus: boolean | null
+          rooming_list_sent_hotel: boolean | null
+          rooming_list_status: string | null
           seat_map: Json
           seo: Json
           slug: string
@@ -3344,9 +4418,6 @@ export type Database = {
           transport_details: string | null
           transport_type: string | null
           updated_at: string
-          rooming_list_status: string
-          rooming_list_sent_hotel: boolean
-          rooming_list_sent_bus: boolean
         }
         Insert: {
           ads_budget?: number
@@ -3372,6 +4443,9 @@ export type Database = {
           registration_deadline?: string | null
           reserved_seats?: number
           return_date?: string | null
+          rooming_list_sent_bus?: boolean | null
+          rooming_list_sent_hotel?: boolean | null
+          rooming_list_status?: string | null
           seat_map?: Json
           seo?: Json
           slug: string
@@ -3382,9 +4456,6 @@ export type Database = {
           transport_details?: string | null
           transport_type?: string | null
           updated_at?: string
-          rooming_list_status?: string
-          rooming_list_sent_hotel?: boolean
-          rooming_list_sent_bus?: boolean
         }
         Update: {
           ads_budget?: number
@@ -3410,6 +4481,9 @@ export type Database = {
           registration_deadline?: string | null
           reserved_seats?: number
           return_date?: string | null
+          rooming_list_sent_bus?: boolean | null
+          rooming_list_sent_hotel?: boolean | null
+          rooming_list_status?: string | null
           seat_map?: Json
           seo?: Json
           slug?: string
@@ -3420,9 +4494,6 @@ export type Database = {
           transport_details?: string | null
           transport_type?: string | null
           updated_at?: string
-          rooming_list_status?: string
-          rooming_list_sent_hotel?: boolean
-          rooming_list_sent_bus?: boolean
         }
         Relationships: [
           {
@@ -3746,6 +4817,141 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_chunks: {
+        Row: {
+          agency_id: string | null
+          content: string
+          created_at: string
+          document_id: string | null
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          agency_id?: string | null
+          content: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          agency_id?: string | null
+          content?: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_chunks_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "knowledge_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_documents: {
+        Row: {
+          agency_id: string | null
+          category: string
+          content: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          scope: string
+          source_id: string | null
+          title: string
+        }
+        Insert: {
+          agency_id?: string | null
+          category?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          scope?: string
+          source_id?: string | null
+          title: string
+        }
+        Update: {
+          agency_id?: string | null
+          category?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          scope?: string
+          source_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_documents_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "knowledge_documents_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_embeddings: {
+        Row: {
+          agency_id: string | null
+          chunk_id: string | null
+          created_at: string
+          embedding: string
+          embedding_model: string
+          id: string
+        }
+        Insert: {
+          agency_id?: string | null
+          chunk_id?: string | null
+          created_at?: string
+          embedding: string
+          embedding_model?: string
+          id?: string
+        }
+        Update: {
+          agency_id?: string | null
+          chunk_id?: string | null
+          created_at?: string
+          embedding?: string
+          embedding_model?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_embeddings_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "knowledge_embeddings_chunk_id_fkey"
+            columns: ["chunk_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_chunks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_playbook_steps: {
         Row: {
           ai_guidelines: string | null
@@ -3821,6 +5027,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "knowledge_playbooks_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_sources: {
+        Row: {
+          agency_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          name: string
+          scope: string
+          source_type: string
+          source_url: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          scope?: string
+          source_type?: string
+          source_url?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          scope?: string
+          source_type?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_sources_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "agencies"
@@ -4352,6 +5599,120 @@ export type Database = {
           },
         ]
       }
+      monthly_closing_periods: {
+        Row: {
+          agency_id: string
+          closed_at: string | null
+          closed_by: string | null
+          created_at: string
+          id: string
+          month: number
+          opened_at: string
+          status: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          agency_id: string
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          month: number
+          opened_at?: string
+          status?: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          agency_id?: string
+          closed_at?: string | null
+          closed_by?: string | null
+          created_at?: string
+          id?: string
+          month?: number
+          opened_at?: string
+          status?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_closing_periods_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monthly_closing_periods_closed_by_fkey"
+            columns: ["closed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      normalized_offers: {
+        Row: {
+          currency: string
+          expires_at: string | null
+          external_offer_id: string | null
+          fetched_at: string
+          id: string
+          normalized_data: Json
+          price_total: number
+          product_type: string
+          provider: string
+          quote_request_id: string
+          scenario_id: string | null
+          status: string
+        }
+        Insert: {
+          currency?: string
+          expires_at?: string | null
+          external_offer_id?: string | null
+          fetched_at?: string
+          id?: string
+          normalized_data: Json
+          price_total?: number
+          product_type: string
+          provider: string
+          quote_request_id: string
+          scenario_id?: string | null
+          status?: string
+        }
+        Update: {
+          currency?: string
+          expires_at?: string | null
+          external_offer_id?: string | null
+          fetched_at?: string
+          id?: string
+          normalized_data?: Json
+          price_total?: number
+          product_type?: string
+          provider?: string
+          quote_request_id?: string
+          scenario_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "normalized_offers_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "normalized_offers_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "quote_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           agency_id: string
@@ -4584,6 +5945,232 @@ export type Database = {
           },
         ]
       }
+      operator_reaccommodation_requests: {
+        Row: {
+          change_case_id: string
+          confirmed_at: string | null
+          confirmed_itinerary_id: string | null
+          created_at: string
+          customer_decision_id: string | null
+          email_thread_id: string | null
+          id: string
+          operator_id: string | null
+          requested_at: string
+          response_snapshot: Json | null
+          status: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          change_case_id: string
+          confirmed_at?: string | null
+          confirmed_itinerary_id?: string | null
+          created_at?: string
+          customer_decision_id?: string | null
+          email_thread_id?: string | null
+          id?: string
+          operator_id?: string | null
+          requested_at?: string
+          response_snapshot?: Json | null
+          status?: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          change_case_id?: string
+          confirmed_at?: string | null
+          confirmed_itinerary_id?: string | null
+          created_at?: string
+          customer_decision_id?: string | null
+          email_thread_id?: string | null
+          id?: string
+          operator_id?: string | null
+          requested_at?: string
+          response_snapshot?: Json | null
+          status?: string
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operator_reaccommodation_requests_change_case_id_fkey"
+            columns: ["change_case_id"]
+            isOneToOne: false
+            referencedRelation: "flight_change_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operator_reaccommodation_requests_confirmed_itinerary_id_fkey"
+            columns: ["confirmed_itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "flight_itineraries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operator_reaccommodation_requests_customer_decision_id_fkey"
+            columns: ["customer_decision_id"]
+            isOneToOne: false
+            referencedRelation: "customer_travel_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operator_reaccommodation_requests_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operator_reaccommodation_requests_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      package_candidate_components: {
+        Row: {
+          component_type: string
+          id: string
+          metadata: Json | null
+          offer_id: string
+          package_candidate_id: string
+          price_allocation: number
+          sort_order: number
+        }
+        Insert: {
+          component_type: string
+          id?: string
+          metadata?: Json | null
+          offer_id: string
+          package_candidate_id: string
+          price_allocation?: number
+          sort_order?: number
+        }
+        Update: {
+          component_type?: string
+          id?: string
+          metadata?: Json | null
+          offer_id?: string
+          package_candidate_id?: string
+          price_allocation?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_candidate_components_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "normalized_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_candidate_components_package_candidate_id_fkey"
+            columns: ["package_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "package_candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      package_candidates: {
+        Row: {
+          composition_version: number
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          quote_request_id: string
+          score: number
+          score_profile_id: string | null
+          status: string
+          total_price: number
+          warnings: Json | null
+        }
+        Insert: {
+          composition_version?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          name: string
+          quote_request_id: string
+          score?: number
+          score_profile_id?: string | null
+          status?: string
+          total_price?: number
+          warnings?: Json | null
+        }
+        Update: {
+          composition_version?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          quote_request_id?: string
+          score?: number
+          score_profile_id?: string | null
+          status?: string
+          total_price?: number
+          warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_candidates_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      package_scorecards: {
+        Row: {
+          bonuses: Json
+          confidence: number | null
+          created_at: string
+          dimensions: Json
+          explanation: string | null
+          final_score: number
+          id: string
+          package_candidate_id: string
+          penalties: Json
+          rule_version_set: string
+        }
+        Insert: {
+          bonuses?: Json
+          confidence?: number | null
+          created_at?: string
+          dimensions?: Json
+          explanation?: string | null
+          final_score?: number
+          id?: string
+          package_candidate_id: string
+          penalties?: Json
+          rule_version_set: string
+        }
+        Update: {
+          bonuses?: Json
+          confidence?: number | null
+          created_at?: string
+          dimensions?: Json
+          explanation?: string | null
+          final_score?: number
+          id?: string
+          package_candidate_id?: string
+          penalties?: Json
+          rule_version_set?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_scorecards_package_candidate_id_fkey"
+            columns: ["package_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "package_candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       passenger_documents: {
         Row: {
           agency_id: string
@@ -4740,6 +6327,69 @@ export type Database = {
           trip_id?: string | null
         }
         Relationships: []
+      }
+      payment_receipt_snapshots: {
+        Row: {
+          agency_id: string
+          amount: number
+          created_at: string
+          description: string | null
+          enrollment_id: string | null
+          id: string
+          payer_cpf: string | null
+          payer_name: string
+          payment_date: string
+          payment_method: string | null
+          receipt_id: string
+          seat_number: string | null
+          trip_title: string
+        }
+        Insert: {
+          agency_id: string
+          amount: number
+          created_at?: string
+          description?: string | null
+          enrollment_id?: string | null
+          id?: string
+          payer_cpf?: string | null
+          payer_name: string
+          payment_date?: string
+          payment_method?: string | null
+          receipt_id: string
+          seat_number?: string | null
+          trip_title: string
+        }
+        Update: {
+          agency_id?: string
+          amount?: number
+          created_at?: string
+          description?: string | null
+          enrollment_id?: string | null
+          id?: string
+          payer_cpf?: string | null
+          payer_name?: string
+          payment_date?: string
+          payment_method?: string | null
+          receipt_id?: string
+          seat_number?: string | null
+          trip_title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_receipt_snapshots_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_receipt_snapshots_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "group_tour_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plans: {
         Row: {
@@ -5118,6 +6768,95 @@ export type Database = {
           },
         ]
       }
+      promotion_candidates: {
+        Row: {
+          created_at: string
+          detected_at: string
+          id: string
+          package_candidate_id: string
+          reason: string | null
+          score: number
+          status: string
+          watch_profile_id: string
+        }
+        Insert: {
+          created_at?: string
+          detected_at?: string
+          id?: string
+          package_candidate_id: string
+          reason?: string | null
+          score?: number
+          status?: string
+          watch_profile_id: string
+        }
+        Update: {
+          created_at?: string
+          detected_at?: string
+          id?: string
+          package_candidate_id?: string
+          reason?: string | null
+          score?: number
+          status?: string
+          watch_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotion_candidates_package_candidate_id_fkey"
+            columns: ["package_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "package_candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promotion_candidates_watch_profile_id_fkey"
+            columns: ["watch_profile_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_watch_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promotion_watch_profiles: {
+        Row: {
+          agency_id: string
+          created_at: string
+          criteria: Json
+          id: string
+          limits: Json
+          name: string
+          schedule: string
+          status: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          criteria?: Json
+          id?: string
+          limits?: Json
+          name: string
+          schedule: string
+          status?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          criteria?: Json
+          id?: string
+          limits?: Json
+          name?: string
+          schedule?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotion_watch_profiles_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       proposal_history: {
         Row: {
           action: string
@@ -5263,6 +7002,7 @@ export type Database = {
           excludes: Json
           extra_pages: Json | null
           flights: Json
+          group_tour_id: string | null
           hotels: Json
           id: string
           includes: Json
@@ -5274,7 +7014,6 @@ export type Database = {
           lead_id: string | null
           map_image_url: string | null
           notes: string | null
-          group_tour_id: string | null
           number: number
           owner_id: string | null
           pax_adults: number
@@ -5320,6 +7059,7 @@ export type Database = {
           excludes?: Json
           extra_pages?: Json | null
           flights?: Json
+          group_tour_id?: string | null
           hotels?: Json
           id?: string
           includes?: Json
@@ -5331,7 +7071,6 @@ export type Database = {
           lead_id?: string | null
           map_image_url?: string | null
           notes?: string | null
-          group_tour_id?: string | null
           number?: number
           owner_id?: string | null
           pax_adults?: number
@@ -5377,6 +7116,7 @@ export type Database = {
           excludes?: Json
           extra_pages?: Json | null
           flights?: Json
+          group_tour_id?: string | null
           hotels?: Json
           id?: string
           includes?: Json
@@ -5388,7 +7128,6 @@ export type Database = {
           lead_id?: string | null
           map_image_url?: string | null
           notes?: string | null
-          group_tour_id?: string | null
           number?: number
           owner_id?: string | null
           pax_adults?: number
@@ -5430,75 +7169,26 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "proposals_group_tour_id_fkey"
+            columns: ["group_tour_id"]
+            isOneToOne: false
+            referencedRelation: "group_tours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_group_tour_id_fkey"
+            columns: ["group_tour_id"]
+            isOneToOne: false
+            referencedRelation: "group_tours_financial_summary"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "proposals_lead_id_fkey"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      payment_receipt_snapshots: {
-        Row: {
-          id: string
-          agency_id: string
-          enrollment_id: string | null
-          receipt_id: string
-          payer_name: string
-          payer_cpf: string | null
-          amount: number
-          payment_method: string | null
-          payment_date: string
-          trip_title: string
-          seat_number: string | null
-          description: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          agency_id: string
-          enrollment_id?: string | null
-          receipt_id: string
-          payer_name: string
-          payer_cpf?: string | null
-          amount: number
-          payment_method?: string | null
-          payment_date?: string
-          trip_title: string
-          seat_number?: string | null
-          description?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          agency_id?: string
-          enrollment_id?: string | null
-          receipt_id?: string
-          payer_name?: string
-          payer_cpf?: string | null
-          amount?: number
-          payment_method?: string | null
-          payment_date?: string
-          trip_title?: string
-          seat_number?: string | null
-          description?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payment_receipt_snapshots_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "agencies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_receipt_snapshots_enrollment_id_fkey"
-            columns: ["enrollment_id"]
-            isOneToOne: false
-            referencedRelation: "group_tour_enrollments"
-            referencedColumns: ["id"]
-          }
         ]
       }
       public_leads: {
@@ -5581,6 +7271,650 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quote_preferences: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          hard_constraint: boolean
+          id: string
+          preference_key: string
+          preference_value: string
+          priority: number
+          quote_request_id: string
+          source: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          hard_constraint?: boolean
+          id?: string
+          preference_key: string
+          preference_value: string
+          priority?: number
+          quote_request_id: string
+          source?: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          hard_constraint?: boolean
+          id?: string
+          preference_key?: string
+          preference_value?: string
+          priority?: number
+          quote_request_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_preferences_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_requests: {
+        Row: {
+          agency_id: string
+          assigned_agent_id: string | null
+          client_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          lead_id: string | null
+          normalized_intent: Json | null
+          raw_request: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          assigned_agent_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id?: string | null
+          normalized_intent?: Json | null
+          raw_request?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          assigned_agent_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id?: string | null
+          normalized_intent?: Json | null
+          raw_request?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_scenarios: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          parameters: Json
+          priority: number
+          reason: string | null
+          scenario_type: string
+          search_plan_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          parameters?: Json
+          priority?: number
+          reason?: string | null
+          scenario_type: string
+          search_plan_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          parameters?: Json
+          priority?: number
+          reason?: string | null
+          scenario_type?: string
+          search_plan_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_scenarios_search_plan_id_fkey"
+            columns: ["search_plan_id"]
+            isOneToOne: false
+            referencedRelation: "quote_search_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_search_plans: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          id: string
+          limits: Json | null
+          quote_request_id: string
+          status: string
+          version: number
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          limits?: Json | null
+          quote_request_id: string
+          status?: string
+          version?: number
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          limits?: Json | null
+          quote_request_id?: string
+          status?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_search_plans_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_snapshots: {
+        Row: {
+          created_at: string
+          data: Json
+          hash: string
+          id: string
+          quote_request_id: string
+          snapshot_type: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          hash: string
+          id?: string
+          quote_request_id: string
+          snapshot_type: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          hash?: string
+          id?: string
+          quote_request_id?: string
+          snapshot_type?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_snapshots_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_travelers: {
+        Row: {
+          age: number | null
+          attributes: Json | null
+          client_traveler_id: string | null
+          created_at: string
+          id: string
+          quote_request_id: string
+          traveler_type: string
+        }
+        Insert: {
+          age?: number | null
+          attributes?: Json | null
+          client_traveler_id?: string | null
+          created_at?: string
+          id?: string
+          quote_request_id: string
+          traveler_type?: string
+        }
+        Update: {
+          age?: number | null
+          attributes?: Json | null
+          client_traveler_id?: string | null
+          created_at?: string
+          id?: string
+          quote_request_id?: string
+          traveler_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_travelers_client_traveler_id_fkey"
+            columns: ["client_traveler_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_travelers_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rule_candidates: {
+        Row: {
+          agency_id: string
+          confidence: number
+          created_at: string
+          id: string
+          pattern: string
+          proposed_rule: Json
+          reviewed_by: string | null
+          sample_size: number
+          simulated_impact: Json | null
+          status: string
+        }
+        Insert: {
+          agency_id: string
+          confidence?: number
+          created_at?: string
+          id?: string
+          pattern: string
+          proposed_rule: Json
+          reviewed_by?: string | null
+          sample_size?: number
+          simulated_impact?: Json | null
+          status?: string
+        }
+        Update: {
+          agency_id?: string
+          confidence?: number
+          created_at?: string
+          id?: string
+          pattern?: string
+          proposed_rule?: Json
+          reviewed_by?: string | null
+          sample_size?: number
+          simulated_impact?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_candidates_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      score_profiles: {
+        Row: {
+          agency_id: string | null
+          constraints: Json
+          created_at: string
+          id: string
+          name: string
+          scope: string
+          status: string
+          version: number
+          weights: Json
+        }
+        Insert: {
+          agency_id?: string | null
+          constraints?: Json
+          created_at?: string
+          id?: string
+          name: string
+          scope?: string
+          status?: string
+          version?: number
+          weights?: Json
+        }
+        Update: {
+          agency_id?: string | null
+          constraints?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          scope?: string
+          status?: string
+          version?: number
+          weights?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "score_profiles_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_adjustments: {
+        Row: {
+          adjustment_type: string
+          agency_id: string
+          amount: number
+          created_at: string
+          description: string
+          effective_period: string
+          id: string
+          sale_id: string | null
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          adjustment_type: string
+          agency_id: string
+          amount?: number
+          created_at?: string
+          description: string
+          effective_period: string
+          id?: string
+          sale_id?: string | null
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          adjustment_type?: string
+          agency_id?: string
+          amount?: number
+          created_at?: string
+          description?: string
+          effective_period?: string
+          id?: string
+          sale_id?: string | null
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_adjustments_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_adjustments_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_adjustments_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_commission_plans: {
+        Row: {
+          agency_id: string
+          approved_by: string | null
+          commission_base_rule: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          over_share_rule: string
+          seller_id: string
+          status: string
+          tier_mode: string
+          updated_at: string
+          valid_from: string
+          valid_until: string | null
+          version: number
+        }
+        Insert: {
+          agency_id: string
+          approved_by?: string | null
+          commission_base_rule?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          over_share_rule?: string
+          seller_id: string
+          status?: string
+          tier_mode?: string
+          updated_at?: string
+          valid_from: string
+          valid_until?: string | null
+          version?: number
+        }
+        Update: {
+          agency_id?: string
+          approved_by?: string | null
+          commission_base_rule?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          over_share_rule?: string
+          seller_id?: string
+          status?: string
+          tier_mode?: string
+          updated_at?: string
+          valid_from?: string
+          valid_until?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_commission_plans_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_commission_plans_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_commission_plans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_commission_plans_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_commission_tiers: {
+        Row: {
+          bonus_amount: number
+          commission_rate: number
+          id: string
+          maximum_volume: number | null
+          minimum_volume: number
+          plan_id: string
+          sort_order: number
+        }
+        Insert: {
+          bonus_amount?: number
+          commission_rate?: number
+          id?: string
+          maximum_volume?: number | null
+          minimum_volume?: number
+          plan_id: string
+          sort_order?: number
+        }
+        Update: {
+          bonus_amount?: number
+          commission_rate?: number
+          id?: string
+          maximum_volume?: number | null
+          minimum_volume?: number
+          plan_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_commission_tiers_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "seller_commission_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      simulation_results: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          id: string
+          objections: string[]
+          package_candidate_id: string
+          persona: string
+          score: number
+          simulation_run_id: string
+          strengths: string[]
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          objections?: string[]
+          package_candidate_id: string
+          persona: string
+          score?: number
+          simulation_run_id: string
+          strengths?: string[]
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          objections?: string[]
+          package_candidate_id?: string
+          persona?: string
+          score?: number
+          simulation_run_id?: string
+          strengths?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulation_results_package_candidate_id_fkey"
+            columns: ["package_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "package_candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simulation_results_simulation_run_id_fkey"
+            columns: ["simulation_run_id"]
+            isOneToOne: false
+            referencedRelation: "simulation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      simulation_runs: {
+        Row: {
+          created_at: string
+          id: string
+          model: string | null
+          personas: string[]
+          quote_request_id: string
+          status: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          personas?: string[]
+          quote_request_id: string
+          status?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          personas?: string[]
+          quote_request_id?: string
+          status?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulation_runs_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supplier_contacts: {
         Row: {
@@ -5838,7 +8172,6 @@ export type Database = {
           agency_id: string
           city: string | null
           commission_rate: number
-          contact_name: string | null
           contract_url: string | null
           country: string | null
           cover_url: string | null
@@ -5871,7 +8204,6 @@ export type Database = {
           agency_id: string
           city?: string | null
           commission_rate?: number
-          contact_name?: string | null
           contract_url?: string | null
           country?: string | null
           cover_url?: string | null
@@ -5904,7 +8236,6 @@ export type Database = {
           agency_id?: string
           city?: string | null
           commission_rate?: number
-          contact_name?: string | null
           contract_url?: string | null
           country?: string | null
           cover_url?: string | null
@@ -6052,6 +8383,97 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_checkpoints: {
+        Row: {
+          agency_id: string
+          created_at: string | null
+          cursor_value: string | null
+          id: string
+          last_run_at: string | null
+          metadata: Json | null
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string | null
+          cursor_value?: string | null
+          id?: string
+          last_run_at?: string | null
+          metadata?: Json | null
+          provider: string
+          updated_at?: string | null
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string | null
+          cursor_value?: string | null
+          id?: string
+          last_run_at?: string | null
+          metadata?: Json | null
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_checkpoints_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_jobs: {
+        Row: {
+          agency_id: string
+          created_at: string | null
+          errors_log: Json | null
+          finished_at: string | null
+          id: string
+          job_type: string
+          provider: string
+          records_processed: number | null
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string | null
+          errors_log?: Json | null
+          finished_at?: string | null
+          id?: string
+          job_type: string
+          provider: string
+          records_processed?: number | null
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string | null
+          errors_log?: Json | null
+          finished_at?: string | null
+          id?: string
+          job_type?: string
+          provider?: string
+          records_processed?: number | null
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_jobs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
         ]
@@ -6589,6 +9011,13 @@ export type Database = {
             columns: ["group_tour_id"]
             isOneToOne: false
             referencedRelation: "group_tours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_group_tour_id_fkey"
+            columns: ["group_tour_id"]
+            isOneToOne: false
+            referencedRelation: "group_tours_financial_summary"
             referencedColumns: ["id"]
           },
           {
@@ -7209,6 +9638,28 @@ export type Database = {
           },
         ]
       }
+      group_tours_financial_summary: {
+        Row: {
+          ads_budget: number | null
+          agency_id: string | null
+          base_price: number | null
+          departure_date: string | null
+          destination: string | null
+          id: string | null
+          net_profit: number | null
+          pax_count: number | null
+          return_date: string | null
+          revenue: number | null
+          roi: number | null
+          slug: string | null
+          status: string | null
+          target_poupanca_balance: number | null
+          title: string | null
+          total_cost: number | null
+          total_seats: number | null
+        }
+        Relationships: []
+      }
       vw_admin_agents: {
         Row: {
           agency_id: string | null
@@ -7251,28 +9702,6 @@ export type Database = {
     }
     Functions: {
       accept_agency_invite: { Args: { _token: string }; Returns: string }
-      approve_group_enrollment: {
-        Args: {
-          _enrollment_id: string
-          _agent_id: string
-        }
-        Returns: Json
-      }
-      get_my_room_allocation: {
-        Args: {
-          _trip_id: string
-        }
-        Returns: {
-          id: string
-          room_number: string
-          room_type: string
-          hotel_name: string | null
-          checkin_date: string | null
-          checkout_date: string | null
-          notes: string | null
-          is_confirmed: boolean
-        }[]
-      }
       accept_public_reaccommodation: {
         Args: { p_boarding_card_id: string; p_itinerary_id: string }
         Returns: undefined
@@ -7308,6 +9737,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      approve_group_enrollment: {
+        Args: { _agent_id: string; _enrollment_id: string }
+        Returns: Json
+      }
       calculate_cash_summary: {
         Args: { _agency_id: string; _filter?: string }
         Returns: Json
@@ -7315,6 +9748,10 @@ export type Database = {
       calculate_dre_summary: {
         Args: { _agency_id: string; _period: string }
         Returns: Json
+      }
+      calculate_progressive_commission: {
+        Args: { _billing: number; _ranges: Json }
+        Returns: number
       }
       calculate_proration_credit: {
         Args: { _agency_id: string; _new_plan_id: string }
@@ -7465,6 +9902,19 @@ export type Database = {
         Returns: string
       }
       get_my_agency_id: { Args: never; Returns: string }
+      get_my_room_allocation: {
+        Args: { _trip_id: string }
+        Returns: {
+          checkin_date: string
+          checkout_date: string
+          hotel_name: string
+          id: string
+          is_confirmed: boolean
+          notes: string
+          room_number: string
+          room_type: string
+        }[]
+      }
       get_public_agency_by_id: {
         Args: { _id: string }
         Returns: {
@@ -7547,6 +9997,37 @@ export type Database = {
       }
       mark_contract_viewed: { Args: { _token: string }; Returns: undefined }
       mark_session_read: { Args: { p_session_id: string }; Returns: undefined }
+      match_knowledge_embeddings: {
+        Args: {
+          match_count: number
+          match_threshold: number
+          p_agency_id: string
+          p_category?: string
+          query_embedding: string
+        }
+        Returns: {
+          category: string
+          chunk_id: string
+          content: string
+          document_title: string
+          scope: string
+          similarity: number
+        }[]
+      }
+      match_memories: {
+        Args: {
+          _agency_id: string
+          match_count: number
+          match_threshold: number
+          query_embedding: string
+        }
+        Returns: {
+          category: string
+          content: string
+          id: string
+          similarity: number
+        }[]
+      }
       merge_clients: {
         Args: { p_source_id: string; p_target_id: string }
         Returns: undefined
@@ -7742,10 +10223,29 @@ export type Database = {
         Args: { p_client_id: string; p_reason: string; p_trip_id: string }
         Returns: undefined
       }
+      resolve_agent_commission: {
+        Args: {
+          p_agency_id: string
+          p_agent_id: string
+          p_base_amount: number
+          p_monthly_billing: number
+        }
+        Returns: Json
+      }
       revert_portal_page: {
         Args: { p_page_id: string; p_version_id: string }
         Returns: undefined
       }
+      save_infotravel_booking_normalized:
+        | { Args: { p_agency_id: string; p_normalized: Json }; Returns: string }
+        | {
+            Args: {
+              p_agency_id: string
+              p_normalized: Json
+              p_override_trip_id?: string
+            }
+            Returns: string
+          }
       save_lead_stages_updates: {
         Args: { _agency_id: string; _stages: Json }
         Returns: undefined

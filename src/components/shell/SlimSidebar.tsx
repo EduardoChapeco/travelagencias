@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { type ComponentType, type ReactNode, useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Loader2, X, ChevronRight } from "lucide-react";
+import { Loader2, X, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import { AIChatPanel } from "./AIChatPanel";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
@@ -96,9 +96,49 @@ export function SlimSidebar({
   const hasContext = contextItems.length > 0;
   const drawerItems = mobileItems ?? items;
 
-  const [topHeight, setTopHeight] = useState(300);
+  const [topHeight, setTopHeight] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = window.localStorage.getItem("travelos.sidebar.topHeight");
+      return saved ? parseInt(saved, 10) : 300;
+    }
+    return 300;
+  });
+  
+  const [isNavCollapsed, setIsNavCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem("travelos.sidebar.nav.collapsed") === "true";
+    }
+    return false;
+  });
+
+  const [isChatCollapsed, setIsChatCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem("travelos.sidebar.chat.collapsed") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("travelos.sidebar.nav.collapsed", String(isNavCollapsed));
+    }
+  }, [isNavCollapsed]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("travelos.sidebar.chat.collapsed", String(isChatCollapsed));
+    }
+  }, [isChatCollapsed]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("travelos.sidebar.topHeight", String(topHeight));
+    }
+  }, [topHeight]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const isResizingRef = useRef(false);
+
 
   const startResize = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -304,71 +344,103 @@ export function SlimSidebar({
           {hasContext && (
             <>
               {/* Context header */}
-              <div className="flex h-[58px] shrink-0 items-center gap-2 border-b border-border/60 px-4">
+              <div className="flex h-[58px] shrink-0 items-center justify-between border-b border-border/60 px-4">
                 {contextTitle && (
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80 truncate">
                     {contextTitle}
                   </span>
                 )}
+                <button
+                  onClick={() => {
+                    setIsNavCollapsed((prev) => !prev);
+                    if (isChatCollapsed) setIsChatCollapsed(false);
+                  }}
+                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                  title={isNavCollapsed ? "Expandir Atalhos" : "Recolher Atalhos"}
+                >
+                  {isNavCollapsed ? (
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronUp className="h-3.5 w-3.5" />
+                  )}
+                </button>
               </div>
 
               <div ref={containerRef} className="flex-1 flex flex-col min-h-0 relative">
                 {/* Top: Context nav items */}
-                <nav
-                  style={{ height: `${topHeight}px` }}
-                  className="no-scrollbar overflow-y-auto px-2 py-3 shrink-0"
-                >
-                  <ul className="space-y-0.5">
-                    {contextItems.map((item) => {
-                      const active = isContextItemActive(item, pathname);
-                      const ItemIcon = item.icon;
+                {!isNavCollapsed && (
+                  <nav
+                    style={isChatCollapsed ? { flex: 1 } : { height: `${topHeight}px` }}
+                    className="no-scrollbar overflow-y-auto px-2 py-3 shrink-0"
+                  >
+                    <ul className="space-y-0.5">
+                      {contextItems.map((item) => {
+                        const active = isContextItemActive(item, pathname);
+                        const ItemIcon = item.icon;
 
-                      return (
-                        <li key={item.to}>
-                          <Link
-                            to={item.to}
-                            className={cn(
-                              "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-md px-2.5 text-muted-foreground transition-all duration-150",
-                              "hover:bg-accent hover:text-accent-foreground",
-                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                              active && [
-                                "bg-accent text-accent-foreground font-semibold",
-                                "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-r before:bg-brand",
-                              ],
-                            )}
-                          >
-                            <ItemIcon
+                        return (
+                          <li key={item.to}>
+                            <Link
+                              to={item.to}
                               className={cn(
-                                "h-3.5 w-3.5 shrink-0 transition-colors",
-                                active ? "text-brand" : "text-muted-foreground/70 group-hover/ctx:text-foreground",
+                                "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-md px-2.5 text-muted-foreground transition-all duration-150",
+                                "hover:bg-accent hover:text-accent-foreground",
+                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                active && [
+                                  "bg-accent text-accent-foreground font-semibold",
+                                  "before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-4 before:w-0.5 before:rounded-r before:bg-brand",
+                                ],
                               )}
-                              strokeWidth={active ? 2.2 : 1.8}
-                            />
-                            <span className="truncate text-[12px] leading-tight">{item.label}</span>
-                            {active && (
-                              <ChevronRight className="ml-auto h-3 w-3 shrink-0 text-brand/60" strokeWidth={2} />
-                            )}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </nav>
+                            >
+                              <ItemIcon
+                                className={cn(
+                                  "h-3.5 w-3.5 shrink-0 transition-colors",
+                                  active ? "text-brand" : "text-muted-foreground/70 group-hover/ctx:text-foreground",
+                                )}
+                                strokeWidth={active ? 2.2 : 1.8}
+                              />
+                              <span className="truncate text-[12px] leading-tight">{item.label}</span>
+                              {active && (
+                                <ChevronRight className="ml-auto h-3 w-3 shrink-0 text-brand/60" strokeWidth={2} />
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </nav>
+                )}
 
                 {/* Resizer Handle */}
-                <div
-                  onMouseDown={startResize}
-                  className="h-1.5 w-full cursor-row-resize bg-border/40 hover:bg-brand/60 active:bg-brand transition-colors shrink-0 flex items-center justify-center"
-                  role="separator"
-                  aria-valuenow={topHeight}
-                  title="Arraste para ajustar"
-                >
-                  <div className="w-6 h-0.5 rounded bg-muted-foreground/30" />
-                </div>
+                {!isNavCollapsed && !isChatCollapsed && (
+                  <div
+                    onMouseDown={startResize}
+                    className="h-1.5 w-full cursor-row-resize bg-border/40 hover:bg-brand/60 active:bg-brand transition-colors shrink-0 flex items-center justify-center"
+                    role="separator"
+                    aria-valuenow={topHeight}
+                    title="Arraste para ajustar"
+                  >
+                    <div className="w-6 h-0.5 rounded bg-muted-foreground/30" />
+                  </div>
+                )}
 
                 {/* Bottom: Contextual Chat Panel */}
-                <div className="flex-1 min-h-0 overflow-y-auto border-t border-border/40">
-                  <AIChatPanel isEmbedded={true} />
+                <div className={cn(
+                  "min-h-0 border-t border-border/40",
+                  isChatCollapsed ? "shrink-0" : "flex-1 overflow-y-auto"
+                )}>
+                  <AIChatPanel
+                    isEmbedded={true}
+                    isCollapsed={isChatCollapsed}
+                    onFocusExpand={() => {
+                      setIsChatCollapsed(false);
+                      setIsNavCollapsed(false);
+                    }}
+                    onToggleCollapse={() => {
+                      setIsChatCollapsed((prev) => !prev);
+                      if (isNavCollapsed) setIsNavCollapsed(false);
+                    }}
+                  />
                 </div>
               </div>
             </>

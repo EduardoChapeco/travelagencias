@@ -42,6 +42,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-muted-2: var(--muted-2);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
 
   --color-brand: var(--brand);
@@ -100,6 +101,7 @@
   --muted-foreground: #777168;
   --muted-2: #a39b90;
   --accent: #151515;
+  --accent-foreground: #ffffff;
   --accent-soft: #f8f7f4;
 
   /* Brand da agência — sobrescrível em runtime */
@@ -173,6 +175,7 @@
   --muted-foreground: #a39b90;
   --muted-2: #777168;
   --accent: #f8f7f4;
+  --accent-foreground: #151515;
   --accent-soft: #1f1e1b;
   --border: #2d2b27;
   --border-strong: #3f3c38;

@@ -53,7 +53,7 @@ import {
   type RoomRecord,
   type RoomingPassenger,
 } from "@/services/rooming";
-import { exportRoomingListXlsx, exportRoomingListDocx } from "@/lib/exportRoomingList";
+import { exportRoomingListXlsx, exportRoomingListDocx, exportRoomingListPdf } from "@/lib/exportRoomingList";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/$slug/rooming-list")({
@@ -442,6 +442,25 @@ function TourPanel({ tour, slug }: TourPanelProps) {
     }
   }
 
+  async function handleExportPdf() {
+    if (rooms.length === 0) {
+      return toast.warning("Nenhum quarto cadastrado para exportar.");
+    }
+    setExporting(true);
+    try {
+      await exportRoomingListPdf(rooms as any, {
+        filename: `rooming-list-${tour.slug}`,
+        tourTitle: tour.title,
+        departureDate: tour.departure_date,
+      });
+      toast.success("Rooming List exportada para PDF com sucesso!");
+    } catch (err: any) {
+      toast.error(`Erro ao exportar PDF: ${err.message}`);
+    } finally {
+      setExporting(false);
+    }
+  }
+
   // DND Handlers
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -609,6 +628,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3" /> Exportar Word
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportPdf}
+                  disabled={exporting || rooms.length === 0}
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <FileText className="h-3 w-3 text-rose-500" /> Exportar PDF
                 </button>
                 <button
                   type="button"

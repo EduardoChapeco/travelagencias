@@ -85,6 +85,20 @@ function TripsList() {
 
       if (!bookingData) throw new Error("Nenhum dado retornado para esta reserva.");
 
+      // Verificar se esta reserva já foi importada anteriormente (Prevenção de Duplicidade)
+      const { data: existingLink } = await supabase
+        .from("external_entity_links")
+        .select("internal_id")
+        .eq("agency_id", agency.id)
+        .eq("provider", "infotravel")
+        .eq("entity_type", "trip")
+        .eq("external_id", bookingData.locator)
+        .maybeSingle();
+
+      if (existingLink) {
+        throw new Error(`Esta reserva já foi importada anteriormente para a viagem de ID ${existingLink.internal_id}.`);
+      }
+
       // 1. Procurar ou criar cliente
       let clientId = null;
       if (bookingData.client_cpf || bookingData.client_email) {
@@ -145,6 +159,24 @@ function TripsList() {
 
       if (tripErr) throw tripErr;
       const tripId = newTrip.id;
+
+      // Gravar o vínculo de entidade externa para auditoria e sincronizações futuras
+      const { error: linkErr } = await supabase
+        .from("external_entity_links")
+        .insert({
+          agency_id: agency.id,
+          provider: "infotravel",
+          entity_type: "trip",
+          external_id: bookingData.locator,
+          internal_id: tripId,
+          sync_status: "synced",
+          metadata: {
+            booking_id: bookingData.booking_id,
+            imported_at: new Date().toISOString()
+          }
+        });
+
+      if (linkErr) console.error("Erro ao registrar vínculo de entidade externa:", linkErr);
 
       // 3. Cadastrar passageiros
       if (bookingData.passengers && bookingData.passengers.length > 0) {

@@ -1,0 +1,100 @@
+﻿8e68dc9 - EduardoChapeco: fix(edge-functions): strip ===== prefix in decryptData to resolve base64 decoding error
+0c1e4ad - EduardoChapeco: feat(integrations): support multiple API credentials per provider with unique fingerprints and custom labels
+8e7bdf6 - EduardoChapeco: fix(ocr,ui): resolve Edge Functions 401 auth by explicitly passing JWT to getUser, convert popups/dialogs to SheetPages, split contextual sidebar with vertical drag resizer
+ad07f9e - EduardoChapeco: feat: deploy and commit updates for financial groups, rooming list status, AI orchestrator, and Cloudflare Pages
+2ac19cc - EduardoChapeco: fix(rooming-list): resolve typecheck errors and align with database schema
+60240f4 - EduardoChapeco: fix: add deploy scripts with NODE_OPTIONS 8GB heap for Nitro SSR build
+c594808 - EduardoChapeco: feat: dual-column contextual sidebar navigation - SlimSidebar: 56px icon bar + 220px contextual panel - AppSidebar: 9 hub icons + smart submenu per module/pathname - Trip detail: 11 sub-sections in contextual panel - AppShell: mobile hamburger, removed isPinned legacy state
+b68316e - EduardoChapeco: style: restore original expandable sidebar, apply responsiveness fixes, and optimize layouts
+16aa64b - EduardoChapeco: fix: upgrade Gemini API endpoint to v1 and migrate to gemini-2.5-flash in all OCR and orchestrator functions
+28e63b2 - EduardoChapeco: chore: deploy stable build, sync supabase types and fix relative ocr upload paths
+8d5033e - EduardoChapeco: refactor: P0/P1/P2/P3 stabilization - security, OCR, gmail-sync, rooming, brand kit, dynamic imports
+e622c67 - EduardoChapeco: Stabilize codebase and post-phases responsiveness audit fixes
+0a48036 - Eduardo Chapeco: chore: add status column to trip_passengers in reaccommodation trigger migration
+f5e40cd - Eduardo Chapeco: chore: drop get_client_boarding_card function before recreating it
+5313d5d - Eduardo Chapeco: chore: drop policies before creating them in checkin_links migration
+f34e8ee - Eduardo Chapeco: chore: make rooming list migration safe for remote DB
+1eb0244 - Eduardo Chapeco: feat: implement group tour rooming list drag and drop, enforce B2C payment receipts, real omnichannel messaging triggers, flight integrity check triggers
+2661526 - Eduardo Chapeco: feat(types): fase-1 complete - remove duplicates and as any casts, sync schema types
+0ef1333 - Eduardo Chapeco: chore: audit systemic + fase-1 migrations track + portal components + rooming export
+69067f8 - EduardoChapeco: chore: add helper scripts and scratch tools for database migration and verification
+ecc3fbc - EduardoChapeco: docs: add stabilization progress reports and phase tracking documents
+1ba8b48 - EduardoChapeco: feat(fase-E): check-in links, reaccommodation and emergency notifications
+2623ea3 - EduardoChapeco: feat(fase-D): omnichannel activation and edge function fixes
+d338978 - EduardoChapeco: feat(fase-C): integration of B2C Pix Real checkout and settings
+d17624b - EduardoChapeco: feat(fase-B): consolidar rooming list ÔÇö JSONB ÔåÆ tabela normalizada
+f4f5da0 - EduardoChapeco: feat(fase-A): integrar rotas de viagem com dados reais (sem mocks)
+84fa867 - EduardoChapeco: chore(fase-A): rastrear migrations, services e auditoria no git [consolida├º├úo]
+d5584e5 - EduardoChapeco: migration: add trip lifecycle and aggregation fields to public.trips
+5a26234 - EduardoChapeco: feat(trip-rearchitecture): implement Phase 1 - Navigation Architecture (sidebar & trip sub-routes)
+c3df8b8 - EduardoChapeco: feat: implement post-audit PRD phases (OCR, suppliers autocomplete, contract clause library, check-in portal, rooming list, destination intelligence, and flight reconciliation)
+e64dfba - EduardoChapeco: feat(voucher): dynamic brand kit propagation, A4 template company info footer & responsive canvas layout fixes
+8a6ed46 - EduardoChapeco: feat: responsiveness fixes for sidebar and app shell
+86ea764 - EduardoChapeco: feat(builder): Phase 3+4 complete - IframeSandbox viewport simulation, grouped block library, editorial properties panel redesign
+e37231e - EduardoChapeco: fix: resolve conflicting migration timestamps with remote schema
+b7363a5 - EduardoChapeco: feat: conciliacao diaria de recibos, comprovantes recorrentes, segmentacao de passageiros e reorganizacao da sidebar
+e9fb695 - EduardoChapeco: design(onboarding-landing): redesign login, register and landing page to Light Editorial SaaS
+6e27f67 - EduardoChapeco: style(design-system): standardize layouts, sheets scroll, and flatten all shadow classes
+bb21738 - Eduardo Chapeco: style: run prettier formatter and fix eslint warnings
+0027562 - Eduardo Chapeco: fix(builder): update CMS blocks responsiveness for mobile viewports
+005c5f7 - Eduardo Chapeco: fix(layout): add overflow-x-auto to proposals table and standardize card radius on corporate page
+d4491b7 - Eduardo Chapeco: fix(layout): add proposals, trips, and corporate pages to isFullPage list in AppShell to fix double padding layout gaps
+61d3d1d - Eduardo Chapeco: style: align static landing page with Luma Light Editorial SaaS design system
+be32585 - Eduardo Chapeco: feat: design system refactor V2, GDS Infotravel integration, new trip wizard refinements
+d8ead7e - EduardoChapeco: style: global redesign to Light Editorial SaaS style (Phases 0-6) and docs update
+a53ab77 - EduardoChapeco: style: remove static shadow classes for a clean flat design system
+80bf336 - EduardoChapeco: style: remove manual shadows from landing and login pages according to user preference
+ccdf283 - EduardoChapeco: style: redesign landing page, login page, and update block editor styling options with vibrant colors and shadows
+c49ad3d - EduardoChapeco: fix: resolve landscape overflow scrollbars in StudioFrame and double scaling height cuts in ClientCanvasFrame
+400549b - EduardoChapeco: fix: resolve scale transform and page squishing distortion in PDF/image exports
+626b77c - EduardoChapeco: fix: change route definition in billing.tsx for TanStack Router builder compatibility
+20f79c9 - EduardoChapeco: feat: complete saas billing, proration math, access blockout and superadmin agency controls
+fd2fca4 - Eduardo Chapeco: style: standardize layout, responsive tabs and page headers across all routes
+0550f51 - EduardoChapeco: feat: integrate HeaderPortal and ModuleAdminPanel into all key modules
+bc24015 - EduardoChapeco: feat: universal layout header unifications, kanban standardization & commercial semantics alignment
+a4133e7 - EduardoChapeco: db: add omnichannel chat and AI playbooks/RAG orchestration migration
+1133ae9 - EduardoChapeco: style: refactor layouts, thin sidebar, unified toolbar headers, and omnichannel details tabs
+693bc69 - EduardoChapeco: feat: Portal index layout alignment, Trips soft archiving & contract biometric success KYC certificate
+88f23df - EduardoChapeco: feat: implement proposals edit history UI and advanced contract tracking ledger
+8dc3d61 - Eduardo Chapeco: docs: master audit updates and inventory structure
+8a92b4a - Eduardo Chapeco: feat(cms): register 12 new blocks, 4 premium templates, add icon mappings, and fix typescript compiler errors
+4842ea7 - Eduardo Chapeco: feat(portal): make visual page editor fullscreen, isolate frame scroll preview, fix HTML button nesting validation and support all 19 sections in AI generator
+80c6212 - Eduardo Chapeco: fix(portal): resolve rpc replication, revert to db versions, and integrate newsletter crm submission
+2c212bf - Eduardo Chapeco: refactor(portal): fix visual builder routing, remove emojis and replace confirm dialog popups with SheetPage
+cb9762a - Eduardo Chapeco: chore: remove temporary compile.txt
+f997dc2 - Eduardo Chapeco: refact: visual builder layouts, premium templates, remove emojis, replace Dialog with SheetPage
+2312fcb - Eduardo Chapeco: feat: complete visual page manager dashboard with visual templates library
+ad55404 - Eduardo Chapeco: refactor: wrap PWA plugins configResolved for SSR builds
+8638d96 - Eduardo Chapeco: build(pwa): conditionally disable VitePWA during SSR phase to resolve Workbox precache error
+356aaa6 - Eduardo Chapeco: fix(portal): resolve visual builder portal edits persistence, memory references sharing, click metrics metrics tracking, client token security, Deno auth limit scale and group tours status database constraint misalignment
+05bc399 - EduardoChapeco: refactor: resolve duplicate timestamp migration version prefixes and fix ocr-boleto syntax
+85b2916 - EduardoChapeco: feat: complete customer journey flow audit, ocr-boleto integration, airline-style boarding pass UX, and database schema fixes
+438cdd1 - EduardoChapeco: feat(crm): synchronize custom fields, pax count, and flexible travel period across crm and public forms, aligning with Flat Premium design standards
+0e7e41b - EduardoChapeco: chore: align register links, button components, and dashboard dead code with premium standards
+f4cc1ac - EduardoChapeco: chore: stabilize page builder schemas, replace native prompts with usePrompt, and clean up flat premium design system
+c0ff626 - EduardoChapeco: refactor: replace remaining native confirm dialogs with useConfirm and fix dynamic portal routing
+f1e05ab - EduardoChapeco: fix(db): correct invalid table references and missing triggers in recent migrations
+1db1768 - EduardoChapeco: chore: stabilization and integrity audit - build syntax fixes, security policies, edge function auth and design system cleanup
+c8961a5 - EduardoChapeco: fix(trips): convert trips layout to index route to prevent overshadowing children
+e0f8628 - EduardoChapeco: fix(trips): enforce strict Route.useParams context
+2fa91c6 - EduardoChapeco: fix(trips): resolve useParams strictness across all trip sub-routes
+50e86fb - EduardoChapeco: fix(trips): resolve useParams runtime error on trip detail sub-routes
+adc1d94 - EduardoChapeco: feat: complete refactoring of admin routes to service layer, add global API keys CRUD (Onda 3) and resolve TypeScript build errors
+ab867f7 - Eduardo Chapeco: feat: implement AI key orchestration, real profile analysis, and visual module separation (Fases 4 e 5)
+101ab89 - gpt-engineer-app[bot]: docs: atualiza PENDENCIAS.md com plano detalhado (Cota├º├Áes, IA, KYC, Viagens, Portal)
+874ad2f - gpt-engineer-app[bot]: fix: migrations type and table name errors
+8195b01 - gpt-engineer-app[bot]: feat: refatora global - portal, empresa, omnichannel, contratos, embarque
+d86ea1b - Eduardo Chapeco: fix(db): add RLS policies for knowledge_article_votes (was blocking all access)
+8592702 - Eduardo Chapeco: fix(db): grant USAGE on public schema to anon/authenticated/service_role (postgres 15+ compat)
+ac852bd - Eduardo Chapeco: fix(auth): add inline error banner, translate errors to PT-BR, catch all async failures in login flow
+8c0db43 - Eduardo Chapeco: fix(db): resolve ambiguous column reference in onboarding RPC and seed default plans
+167e4ac - Eduardo Chapeco: chore: include React Start types module declaration in routeTree
+245276e - Eduardo Chapeco: Merge remote-tracking branch 'target/main'
+b5677f4 - Eduardo Chapeco: feat: complete auth onboarding refactor, crm chat realtime improvements, flat design shadow sweep, and database deployment
+39b321d - Eduardo Chapeco: fix(ssr): replace isomorphic-dompurify with dompurify to fix 500 error in Cloudflare Workers
+57192ee - Eduardo Chapeco: debug: inject error into renderErrorPage
+ae97545 - Eduardo Chapeco: debug: show error in root.tsx
+8a130f1 - Eduardo Chapeco: chore: sync migration and edge functions config, add wrangler.toml
+269798e - Eduardo Chapeco: chore(supabase): complete migration and sql compatibility fixes for esmppoxxnyiscidzsjvy
+6b391c0 - gpt-engineer-app[bot]: Criou guia PPRR de migra├º├úo
+e3374a2 - gpt-engineer-app[bot]: Changes

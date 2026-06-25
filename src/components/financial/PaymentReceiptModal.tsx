@@ -179,7 +179,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
   const authCode = `TOS-REC-${receiptDetails.receiptId.slice(0, 8).toUpperCase()}-${new Date(receiptDetails.paymentDate || new Date()).getFullYear()}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(
-    `Autenticação TravelOS: ${authCode} | Valor: ${money(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`
+    `Autenticação TravelOS: ${authCode} | Valor: ${money(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`,
   )}`;
 
   const handlePrint = () => {
@@ -242,7 +242,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
     try {
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
-      
+
       const el = receiptRef.current;
       if (!el) throw new Error("Elemento não encontrado");
 
@@ -253,10 +253,10 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
       });
 
       const imgData = canvas.toDataURL("image/jpeg", 0.95);
-      
+
       const imgWidth = isThermal ? 80 : 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
+
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
@@ -279,10 +279,14 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
         {/* Header Options */}
         <div className="flex items-center justify-between border-b border-border bg-slate-50 px-5 py-3.5">
           <div>
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Recibo de Pagamento</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">Ref: {receiptDetails.receiptId.slice(0, 8).toUpperCase()}</p>
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              Recibo de Pagamento
+            </h3>
+            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+              Ref: {receiptDetails.receiptId.slice(0, 8).toUpperCase()}
+            </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {/* Layout switch */}
             <button
@@ -322,24 +326,33 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
             ref={receiptRef}
             className={cn(
               "bg-white shadow-sm border border-border transition-all duration-300",
-              isThermal 
-                ? "w-[300px] p-5 font-mono text-black leading-tight text-xs uppercase" 
-                : "w-[595px] min-h-[500px] p-8 text-slate-800 flex flex-col justify-between"
+              isThermal
+                ? "w-[300px] p-5 font-mono text-black leading-tight text-xs uppercase"
+                : "w-full max-w-[595px] min-h-[500px] p-4 sm:p-8 text-slate-800 flex flex-col justify-between",
             )}
           >
             {isThermal ? (
               /* THERMAL 80mm LAYOUT */
               <div className="space-y-4 text-center">
                 <div className="space-y-1">
-                  <h4 className="font-extrabold text-sm tracking-tight">{receiptDetails.agencyName}</h4>
+                  <h4 className="font-extrabold text-sm tracking-tight">
+                    {receiptDetails.agencyName}
+                  </h4>
                   <p className="text-[10px] text-slate-700">Comprovante de Inscrição</p>
                 </div>
-                
+
                 <div>--------------------------------</div>
-                
+
                 <div className="text-left space-y-1">
-                  <div>Recibo: <span className="font-bold">{receiptDetails.receiptId.slice(0, 8).toUpperCase()}</span></div>
-                  <div>Data: <span>{fmtDate(receiptDetails.paymentDate)}</span></div>
+                  <div>
+                    Recibo:{" "}
+                    <span className="font-bold">
+                      {receiptDetails.receiptId.slice(0, 8).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    Data: <span>{fmtDate(receiptDetails.paymentDate)}</span>
+                  </div>
                 </div>
 
                 <div>--------------------------------</div>
@@ -348,12 +361,16 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                   <div>
                     <span className="text-slate-600">Pagador:</span>
                     <div className="font-bold">{receiptDetails.payerName}</div>
-                    {receiptDetails.payerCpf && <div className="text-[10px] font-mono">CPF: {receiptDetails.payerCpf}</div>}
+                    {receiptDetails.payerCpf && (
+                      <div className="text-[10px] font-mono">CPF: {receiptDetails.payerCpf}</div>
+                    )}
                   </div>
                   <div>
                     <span className="text-slate-600">Referente a:</span>
                     <div className="font-bold text-xs">{receiptDetails.tripTitle}</div>
-                    {receiptDetails.seatNumber && <div className="text-[10px]">Poltrona: {receiptDetails.seatNumber}</div>}
+                    {receiptDetails.seatNumber && (
+                      <div className="text-[10px]">Poltrona: {receiptDetails.seatNumber}</div>
+                    )}
                   </div>
                 </div>
 
@@ -374,7 +391,9 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                   <>
                     <div>--------------------------------</div>
                     <div className="text-left text-[10px] normal-case bg-slate-50 p-1.5 rounded">
-                      <span className="font-bold uppercase block text-[8px] text-slate-500 mb-0.5">Obs:</span>
+                      <span className="font-bold uppercase block text-[8px] text-slate-500 mb-0.5">
+                        Obs:
+                      </span>
                       {receiptDetails.description}
                     </div>
                   </>
@@ -383,9 +402,14 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 <div>--------------------------------</div>
 
                 <div className="flex flex-col items-center justify-center space-y-2 pt-2">
-                  <img src={qrUrl} alt="Autenticação" className="h-20 w-20 border border-slate-200 p-1 bg-white" />
+                  <img
+                    src={qrUrl}
+                    alt="Autenticação"
+                    className="h-20 w-20 border border-slate-200 p-1 bg-white"
+                  />
                   <div className="text-[8px] font-mono text-slate-500 font-medium tracking-tight">
-                    Autenticador Digital:<br />
+                    Autenticador Digital:
+                    <br />
                     {authCode}
                   </div>
                 </div>
@@ -401,34 +425,50 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 <div className="flex items-start justify-between border-b border-slate-100 pb-5">
                   <div className="flex items-center gap-3">
                     {receiptDetails.agencyLogo ? (
-                      <img src={receiptDetails.agencyLogo} alt="Logo" className="h-10 w-10 object-contain rounded" />
+                      <img
+                        src={receiptDetails.agencyLogo}
+                        alt="Logo"
+                        className="h-10 w-10 object-contain rounded"
+                      />
                     ) : (
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-black text-white">
                         {receiptDetails.agencyName.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div>
-                      <h4 className="font-bold text-sm text-slate-800 leading-tight">{receiptDetails.agencyName}</h4>
-                      <span className="text-[10px] text-muted-foreground font-semibold">Agência Credenciada</span>
+                      <h4 className="font-bold text-sm text-slate-800 leading-tight">
+                        {receiptDetails.agencyName}
+                      </h4>
+                      <span className="text-[10px] text-muted-foreground font-semibold">
+                        Agência Credenciada
+                      </span>
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
-                    <h5 className="text-xs font-black text-slate-900 tracking-wider uppercase">Recibo de Pagamento</h5>
-                    <div className="font-mono text-[10px] text-slate-400 mt-1">Nº {receiptDetails.receiptId.slice(0, 8).toUpperCase()}</div>
+                    <h5 className="text-xs font-black text-slate-900 tracking-wider uppercase">
+                      Recibo de Pagamento
+                    </h5>
+                    <div className="font-mono text-[10px] text-slate-400 mt-1">
+                      Nº {receiptDetails.receiptId.slice(0, 8).toUpperCase()}
+                    </div>
                   </div>
                 </div>
 
                 {/* Amount / Value showcase block */}
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-5 flex items-center justify-between">
                   <div>
-                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Valor Recebido</span>
-                    <strong className="text-2xl font-mono text-slate-900 mt-1 block">{money(receiptDetails.amount)}</strong>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                      Valor Recebido
+                    </span>
+                    <strong className="text-2xl font-mono text-slate-900 mt-1 block">
+                      {money(receiptDetails.amount)}
+                    </strong>
                   </div>
                   <div className="text-right text-xs">
                     <span className="text-slate-400 font-bold block">Status do Pagamento</span>
                     <span className="inline-block bg-emerald-500/10 text-emerald-600 font-extrabold text-[9px] uppercase px-2 py-0.5 rounded border border-emerald-500/20 mt-1">
-                       Confirmado / Quitado
+                      Confirmado / Quitado
                     </span>
                   </div>
                 </div>
@@ -436,31 +476,55 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 {/* Core transaction fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-xs pt-2">
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-semibold block">Nome do Beneficiário / Pagador</span>
-                    <strong className="text-slate-800 block text-xs">{receiptDetails.payerName}</strong>
-                    {receiptDetails.payerCpf && <span className="text-[10px] font-mono text-slate-500">CPF: {receiptDetails.payerCpf}</span>}
+                    <span className="text-slate-400 font-semibold block">
+                      Nome do Beneficiário / Pagador
+                    </span>
+                    <strong className="text-slate-800 block text-xs">
+                      {receiptDetails.payerName}
+                    </strong>
+                    {receiptDetails.payerCpf && (
+                      <span className="text-[10px] font-mono text-slate-500">
+                        CPF: {receiptDetails.payerCpf}
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-semibold block">Viagem / Roteiro da Excursão</span>
-                    <strong className="text-slate-800 block text-xs">{receiptDetails.tripTitle}</strong>
-                    {receiptDetails.seatNumber && <span className="text-[10px] text-slate-500 font-medium">Poltrona Reservada: {receiptDetails.seatNumber}</span>}
+                    <span className="text-slate-400 font-semibold block">
+                      Viagem / Roteiro da Excursão
+                    </span>
+                    <strong className="text-slate-800 block text-xs">
+                      {receiptDetails.tripTitle}
+                    </strong>
+                    {receiptDetails.seatNumber && (
+                      <span className="text-[10px] text-slate-500 font-medium">
+                        Poltrona Reservada: {receiptDetails.seatNumber}
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-1">
                     <span className="text-slate-400 font-semibold block">Método de Liquidação</span>
-                    <strong className="text-slate-800 block text-xs">{translatePaymentMethod(receiptDetails.paymentMethod)}</strong>
+                    <strong className="text-slate-800 block text-xs">
+                      {translatePaymentMethod(receiptDetails.paymentMethod)}
+                    </strong>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-semibold block">Data e Hora do Pagamento</span>
-                    <strong className="text-slate-800 block text-xs">{fmtDate(receiptDetails.paymentDate)}</strong>
+                    <span className="text-slate-400 font-semibold block">
+                      Data e Hora do Pagamento
+                    </span>
+                    <strong className="text-slate-800 block text-xs">
+                      {fmtDate(receiptDetails.paymentDate)}
+                    </strong>
                   </div>
                 </div>
 
                 {receiptDetails.description && (
                   <div className="border border-slate-100 bg-slate-50/50 rounded-xl p-4 text-[11px] text-slate-600 leading-relaxed">
-                    <strong className="text-slate-800 block font-semibold mb-1 text-[10px] uppercase">Observações do Agente</strong>
+                    <strong className="text-slate-800 block font-semibold mb-1 text-[10px] uppercase">
+                      Observações do Agente
+                    </strong>
                     {receiptDetails.description}
                   </div>
                 )}
@@ -468,18 +532,32 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 {/* Footer Validation block */}
                 <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <img src={qrUrl} alt="Autenticação" className="h-14 w-14 border border-slate-200 p-1 bg-white" />
+                    <img
+                      src={qrUrl}
+                      alt="Autenticação"
+                      className="h-14 w-14 border border-slate-200 p-1 bg-white"
+                    />
                     <div>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Autenticação de Transação</span>
-                      <code className="text-[10px] font-mono text-slate-600 block mt-0.5">{authCode}</code>
-                      <span className="text-[9px] text-muted-foreground block font-medium mt-0.5">Assinado digitalmente por TravelOS</span>
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                        Autenticação de Transação
+                      </span>
+                      <code className="text-[10px] font-mono text-slate-600 block mt-0.5">
+                        {authCode}
+                      </code>
+                      <span className="text-[9px] text-muted-foreground block font-medium mt-0.5">
+                        Assinado digitalmente por TravelOS
+                      </span>
                     </div>
                   </div>
 
                   {/* Sign field */}
                   <div className="text-center w-48 border-t border-slate-300 pt-1.5 mt-4 sm:mt-0">
-                    <span className="text-[10px] font-semibold text-slate-500 block">Assinatura Operacional</span>
-                    <span className="text-[9px] text-slate-400 block mt-0.5">{receiptDetails.agencyName}</span>
+                    <span className="text-[10px] font-semibold text-slate-500 block">
+                      Assinatura Operacional
+                    </span>
+                    <span className="text-[9px] text-slate-400 block mt-0.5">
+                      {receiptDetails.agencyName}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -495,7 +573,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
           >
             <Printer className="h-3.5 w-3.5" /> Imprimir Recibo
           </button>
-          
+
           <button
             onClick={handleDownloadPdf}
             disabled={exporting}

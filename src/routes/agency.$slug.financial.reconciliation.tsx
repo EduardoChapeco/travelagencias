@@ -60,91 +60,40 @@ function ReconciliationPage() {
   const [selectedSessionId, setSelectedSessionId] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
 
-  // Local state fallbacks for demo/migration testing
-  const [localPending, setLocalPending] = useState<PendingReceipt[]>([
-    {
-      id: "rec-101",
-      number: 2,
-      amount: 450.00,
-      due_date: "2026-06-15",
-      receipt_url: "https://example.com/receipt1.pdf",
-      receipt_uploaded_at: "2026-06-17T14:32:00Z",
-      payment_method: "pix",
-      payment_plan: {
-        id: "plan-1",
-        trip: {
-          id: "trip-1",
-          code: "GRU-7782",
-          title: "Expedição Gramado & Canela Terrestre",
-          client: {
-            id: "cli-1",
-            full_name: "Marcos Paulo Souza",
-          }
-        }
-      }
-    },
-    {
-      id: "rec-102",
-      number: 1,
-      amount: 1200.00,
-      due_date: "2026-06-10",
-      receipt_url: "https://example.com/receipt2.png",
-      receipt_uploaded_at: "2026-06-17T18:10:00Z",
-      payment_method: "bank_transfer",
-      payment_plan: {
-        id: "plan-2",
-        trip: {
-          id: "trip-2",
-          code: "NAV-8812",
-          title: "Grupo Terrestre Beto Carrero World",
-          client: {
-            id: "cli-2",
-            full_name: "Luciana Costa Silva",
-          }
-        }
-      }
-    }
-  ]);
-
   // 1. Query pending receipts
   const receiptsQ = useQuery({
     enabled: !!agency,
     queryKey: ["pending-receipts", agency?.id],
     queryFn: async () => {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("payment_installments")
-          .select("*, payment_plans(*, trips(*, clients(*)))")
-          .eq("receipt_status", "pending")
-          .order("receipt_uploaded_at", { ascending: true });
-        
-        if (error) throw error;
-        
-        return (data || []).map((pi: any) => ({
-          id: pi.id,
-          number: pi.number,
-          amount: pi.amount,
-          due_date: pi.due_date,
-          receipt_url: pi.receipt_url,
-          receipt_uploaded_at: pi.receipt_uploaded_at,
-          payment_method: pi.payment_method || "pix",
-          payment_plan: pi.payment_plans ? {
-            id: pi.payment_plans.id,
-            trip: pi.payment_plans.trips ? {
-              id: pi.payment_plans.trips.id,
-              code: pi.payment_plans.trips.code,
-              title: pi.payment_plans.trips.title,
-              client: pi.payment_plans.trips.clients ? {
-                id: pi.payment_plans.trips.clients.id,
-                full_name: pi.payment_plans.trips.clients.full_name,
-              } : null
+      const { data, error } = await (supabase as any)
+        .from("payment_installments")
+        .select("*, payment_plans(*, trips(*, clients(*)))")
+        .eq("receipt_status", "pending")
+        .order("receipt_uploaded_at", { ascending: true });
+      
+      if (error) throw error;
+      
+      return (data || []).map((pi: any) => ({
+        id: pi.id,
+        number: pi.number,
+        amount: pi.amount,
+        due_date: pi.due_date,
+        receipt_url: pi.receipt_url,
+        receipt_uploaded_at: pi.receipt_uploaded_at,
+        payment_method: pi.payment_method || "pix",
+        payment_plan: pi.payment_plans ? {
+          id: pi.payment_plans.id,
+          trip: pi.payment_plans.trips ? {
+            id: pi.payment_plans.trips.id,
+            code: pi.payment_plans.trips.code,
+            title: pi.payment_plans.trips.title,
+            client: pi.payment_plans.trips.clients ? {
+              id: pi.payment_plans.trips.clients.id,
+              full_name: pi.payment_plans.trips.clients.full_name,
             } : null
           } : null
-        })) as PendingReceipt[];
-      } catch (err) {
-        console.warn("Failed to fetch pending receipts from DB, using fallback state:", err);
-        return localPending;
-      }
+        } : null
+      })) as PendingReceipt[];
     }
   });
 
@@ -153,19 +102,12 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["registers-reconciliation", agency?.id],
     queryFn: async () => {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("cash_registers")
-          .select("*")
-          .eq("is_active", true);
-        if (error) throw error;
-        return (data || []) as { id: string; name: string; type: string }[];
-      } catch (err) {
-        return [
-          { id: "reg-1", name: "Caixa Físico Recepção", type: "physical" },
-          { id: "reg-2", name: "Conta Digital Banco Cora", type: "bank_account" }
-        ];
-      }
+      const { data, error } = await (supabase as any)
+        .from("cash_registers")
+        .select("*")
+        .eq("is_active", true);
+      if (error) throw error;
+      return (data || []) as { id: string; name: string; type: string }[];
     }
   });
 
@@ -173,18 +115,12 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["active-sessions-reconciliation", agency?.id],
     queryFn: async () => {
-      try {
-        const { data, error } = await (supabase as any)
-          .from("cash_sessions")
-          .select("*")
-          .eq("status", "open");
-        if (error) throw error;
-        return (data || []) as { id: string; cash_register_id: string; status: string; opened_at: string }[];
-      } catch (err) {
-        return [
-          { id: "sess-1", cash_register_id: "reg-1", status: "open", opened_at: new Date().toISOString() }
-        ];
-      }
+      const { data, error } = await (supabase as any)
+        .from("cash_sessions")
+        .select("*")
+        .eq("status", "open");
+      if (error) throw error;
+      return (data || []) as { id: string; cash_register_id: string; status: string; opened_at: string }[];
     }
   });
 
@@ -193,7 +129,7 @@ function ReconciliationPage() {
     mutationFn: async ({ receiptId, regId, sessId }: { receiptId: string; regId: string; sessId: string }) => {
       setActionBusy(true);
       try {
-        const target = (receiptsQ.data || localPending).find(r => r.id === receiptId);
+        const target = (receiptsQ.data || []).find(r => r.id === receiptId);
         if (!target) throw new Error("Recibo não localizado");
 
         // DB Update
@@ -224,9 +160,8 @@ function ReconciliationPage() {
         if (txErr) console.warn("Could not insert transaction, continuing:", txErr.message);
 
       } catch (err: any) {
-        console.warn("Approval DB write failed, updating local memory state:", err.message);
-        // Local state update
-        setLocalPending(prev => prev.filter(r => r.id !== receiptId));
+        console.error("Approval DB write failed:", err.message);
+        throw err;
       } finally {
         setActionBusy(false);
       }
@@ -256,8 +191,8 @@ function ReconciliationPage() {
         
         if (error) throw error;
       } catch (err: any) {
-        console.warn("Rejection DB write failed, updating local memory state:", err.message);
-        setLocalPending(prev => prev.filter(r => r.id !== receiptId));
+        console.error("Rejection DB write failed:", err.message);
+        throw err;
       } finally {
         setActionBusy(false);
       }
@@ -273,7 +208,7 @@ function ReconciliationPage() {
     }
   });
 
-  const list = receiptsQ.data || localPending;
+  const list = receiptsQ.data || [];
   const filtered = list.filter((r) => {
     const term = filterQuery.toLowerCase();
     return (

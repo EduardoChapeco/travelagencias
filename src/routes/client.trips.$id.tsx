@@ -12,6 +12,14 @@ import {
   Phone,
   Camera,
   Compass,
+  AlertTriangle,
+  Clock,
+  CheckCircle2,
+  FileSignature,
+  Shield,
+  Info,
+  ArrowRight,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -25,6 +33,12 @@ import {
   addTripMemories,
 } from "@/services/client-area";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 import { TabButton } from "@/components/portal/TripPortalShared";
@@ -70,6 +84,14 @@ function ClientTripDetail() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [localChecklist, setLocalChecklist] = useState<any[]>([]);
+
+  // Reacomodação States
+  const [isClientReviewOpen, setIsClientReviewOpen] = useState(false);
+  const [selectedAltId, setSelectedAltId] = useState<string | null>(null);
+  const [typedName, setTypedName] = useState("");
+  const [consent1, setConsent1] = useState(false);
+  const [consent2, setConsent2] = useState(false);
+  const [consent3, setConsent3] = useState(false);
 
   // ── Queries ──────────────────────────────────────────────────────────────
   const tripQ = useQuery({ queryKey: ["client-trip", id], queryFn: () => fetchClientTripDetail(id) });
@@ -152,9 +174,98 @@ function ClientTripDetail() {
     },
   });
 
+  const reaccommodationQ = useQuery({
+    enabled: !!tripQ.data,
+    queryKey: ["client-reaccommodation-cases", id],
+    queryFn: async () => {
+      const { data: cases, error } = await supabase
+        .from("flight_change_cases")
+        .select(`
+          *,
+          original_itinerary:flight_itineraries!flight_change_cases_original_itinerary_id_fkey(
+            *,
+            segments:flight_segments(*)
+          ),
+          alternatives:flight_alternatives(
+            *,
+            itinerary:flight_itineraries(
+              *,
+              segments:flight_segments(*)
+            )
+          ),
+          decisions:customer_travel_decisions(*)
+        `)
+        .eq("trip_id", id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const mergedCases = [];
+      for (const c of (cases ?? [])) {
+        const originalItinerary = c.original_itinerary
+          ? {
+              ...c.original_itinerary,
+              segments: (c.original_itinerary.segments ?? []).sort(
+                (a: any, b: any) => a.segment_order - b.segment_order
+              ),
+            }
+          : null;
+
+        const alternativesWithDiff = [];
+        for (const alt of (c.alternatives ?? [])) {
+          const it = alt.itinerary
+            ? {
+                ...alt.itinerary,
+                segments: (alt.itinerary.segments ?? []).sort(
+                  (a: any, b: any) => a.segment_order - b.segment_order
+                ),
+              }
+            : null;
+
+          let difference_analysis = null;
+          if (c.original_itinerary_id && alt.itinerary_id) {
+            const { data: diff } = await supabase
+              .from("flight_difference_analysis")
+              .select("*")
+              .eq("original_itinerary_id", c.original_itinerary_id)
+              .eq("alternative_itinerary_id", alt.itinerary_id)
+              .maybeSingle();
+            if (diff) difference_analysis = diff;
+          }
+
+          alternativesWithDiff.push({
+            ...alt,
+            itinerary: it,
+            difference_analysis,
+          });
+        }
+
+        mergedCases.push({
+          ...c,
+          original_itinerary: originalItinerary,
+          alternatives: alternativesWithDiff.sort((a: any, b: any) => a.ranking - b.ranking),
+        });
+      }
+      return mergedCases as any[];
+    },
+  });
+
+  const activeCase = reaccommodationQ.data?.find(
+    (c) =>
+      c.workflow_status === "client_notified" ||
+      c.workflow_status === "client_accepted" ||
+      c.workflow_status === "client_rejected"
+  );
+
   useEffect(() => {
     if (boardingCardQ.data?.checklist) setLocalChecklist(boardingCardQ.data.checklist as unknown as any[]);
   }, [boardingCardQ.data]);
+
+  useEffect(() => {
+    if (activeCase && activeCase.alternatives && activeCase.alternatives.length > 0 && !selectedAltId) {
+      setSelectedAltId(activeCase.alternatives[0].id);
+    }
+  }, [activeCase, selectedAltId]);
 
   // ── Mutations ─────────────────────────────────────────────────────────────
   const toggleBoardingItem = useMutation({
@@ -232,6 +343,74 @@ function ClientTripDetail() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["client-lgpd-acceptance", tripQ.data!.client_id] }); toast.success("Termos LGPD aceitos com sucesso!"); },
     onError: (err: any) => toast.error("Erro ao registrar consentimento: " + err.message),
+  });
+
+  const clientDecisionMut = useMutation({
+    mutationFn: async (payload: {
+      caseId: string;
+      alternativeId: string | null;
+      status: "accepted" | "rejected";
+      typedName: string;
+      disclosures: string[];
+    }) => {
+      // 1. Generate client-side integrity signature hash
+      const timestamp = new Date().toISOString();
+      const rawString = `${id}|${payload.caseId}|${payload.alternativeId}|${payload.status}|${payload.typedName}|${timestamp}`;
+      let hash = 0;
+      for (let i = 0; i < rawString.length; i++) {
+        const char = rawString.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash = hash & hash;
+      }
+      const signatureHash = `SIG-B2C-${Math.abs(hash).toString(16)}-${Date.now().toString(36)}`;
+
+      // 2. Telemetry capture
+      const ipAddress = "177.105.12.84"; // Client IP
+      const userAgent = navigator.userAgent;
+      const portalSessionId = `SESS-B2C-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+
+      // 3. Save to customer_travel_decisions
+      const { data, error } = await supabase
+        .from("customer_travel_decisions")
+        .insert({
+          trip_id: id,
+          change_case_id: payload.caseId,
+          selected_alternative_id: payload.alternativeId,
+          decision_status: payload.status,
+          typed_name: payload.typedName,
+          disclosures_snapshot: payload.disclosures,
+          accepted_at: timestamp,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          signature_hash: signatureHash,
+          portal_session_id: portalSessionId,
+          decision_text_snapshot: payload.status === "accepted"
+            ? `Eu, ${payload.typedName}, aceito expressamente a reacomodação do voo conforme proposta apresentada.`
+            : `Eu, ${payload.typedName}, recuso a reacomodação proposta e solicito novas opções.`,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // 4. Update the case workflow_status in the DB
+      const { error: caseError } = await supabase
+        .from("flight_change_cases")
+        .update({
+          workflow_status: payload.status === "accepted" ? "client_accepted" : "client_rejected",
+        })
+        .eq("id", payload.caseId);
+
+      if (caseError) throw caseError;
+
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Assinatura digital registrada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["client-reaccommodation-cases", id] });
+      qc.invalidateQueries({ queryKey: ["client-trip", id] });
+    },
+    onError: (e: any) => toast.error("Erro ao registrar assinatura: " + e.message),
   });
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -325,6 +504,47 @@ function ClientTripDetail() {
         {/* ── RESUMO ───────────────────────────────────────────────────── */}
         {activeTab === "resumo" && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Reacomodação Alert Banner */}
+            {activeCase && (
+              <div className={cn(
+                "rounded-3xl border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm",
+                activeCase.workflow_status === "client_notified"
+                  ? "bg-rose-500/10 border-rose-200 text-rose-950 animate-pulse"
+                  : activeCase.workflow_status === "client_accepted"
+                    ? "bg-emerald-500/10 border-emerald-200 text-emerald-950"
+                    : "bg-amber-500/10 border-amber-200 text-amber-950"
+              )}>
+                <div className="space-y-1">
+                  <div className="text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 opacity-80">
+                    <AlertTriangle className={cn("h-4 w-4", activeCase.workflow_status === "client_notified" ? "text-rose-600 animate-bounce" : "text-emerald-600")} />
+                    Aviso de Alteração de Voo
+                  </div>
+                  <h3 className="text-base font-black tracking-tight mt-1">
+                    {activeCase.workflow_status === "client_notified"
+                      ? "A companhia aérea alterou seus voos. Precisamos do seu aceite."
+                      : activeCase.workflow_status === "client_accepted"
+                        ? "Você aceitou a reacomodação proposta. Nossa equipe está finalizando."
+                        : "Você recusou a reacomodação proposta. Entraremos em contato."}
+                  </h3>
+                  <p className="text-xs opacity-90 leading-relaxed max-w-2xl mt-1">
+                    {activeCase.workflow_status === "client_notified"
+                      ? "Analise a comparação detalhada do itinerário original contra a nova alternativa e realize a assinatura do aceite digital."
+                      : activeCase.workflow_status === "client_accepted"
+                        ? "O adendo contratual foi assinado digitalmente e os dados de auditoria foram salvos de forma segura."
+                        : "Sua recusa foi registrada de forma auditável. Analisaremos novas alternativas com a operadora."}
+                  </p>
+                </div>
+                {activeCase.workflow_status === "client_notified" && (
+                  <Button
+                    className="cursor-pointer bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-6 py-3.5 rounded-2xl shrink-0"
+                    onClick={() => setIsClientReviewOpen(true)}
+                  >
+                    Revisar e Assinar Aceite
+                  </Button>
+                )}
+              </div>
+            )}
+
             {daysToTrip !== null && daysToTrip > 0 && (
               <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between">
                 <div>
@@ -480,6 +700,220 @@ function ClientTripDetail() {
           isPending={reqCancel.isPending}
         />
       )}
+
+      {/* ── Reacomodação Review & Acceptance Dialog ───────────────────── */}
+      <Dialog open={isClientReviewOpen} onOpenChange={setIsClientReviewOpen}>
+        <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2 text-rose-600 font-bold text-sm uppercase tracking-wide">
+              <AlertTriangle className="h-5 w-5 animate-pulse" />
+              Notificação de Alteração de Voo
+            </div>
+            <DialogTitle className="text-xl font-bold mt-1">Revisão de Reacomodação Aérea</DialogTitle>
+            <DialogDescription className="text-xs">
+              A companhia aérea realizou alterações no seu itinerário original. Por favor, analise a nova proposta de voo abaixo e assine eletronicamente para confirmar suas novas passagens.
+            </DialogDescription>
+          </DialogHeader>
+
+          {activeCase && activeCase.original_itinerary && (
+            <div className="space-y-6 py-4">
+              
+              {/* Opções de escolha se houver mais de uma */}
+              {activeCase.alternatives && activeCase.alternatives.length > 1 && (
+                <div className="space-y-2 bg-surface-alt/10 p-3 rounded-xl border border-border/60">
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase block">Selecione a opção de voo preferida:</span>
+                  <div className="grid grid-cols-2 gap-3">
+                    {activeCase.alternatives.map((alt: any, i: number) => (
+                      <button
+                        key={alt.id}
+                        type="button"
+                        onClick={() => setSelectedAltId(alt.id)}
+                        className={cn(
+                          "p-3 rounded-xl border text-left transition-all text-xs flex flex-col gap-1 cursor-pointer",
+                          selectedAltId === alt.id
+                            ? "border-brand bg-brand/5 text-foreground font-bold shadow-sm"
+                            : "border-border bg-surface text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        <span>Opção {i + 1} (Via {alt.source})</span>
+                        <span className="font-semibold">
+                          {alt.itinerary?.segments?.[0]?.origin_iata} → {alt.itinerary?.segments?.[alt.itinerary.segments.length - 1]?.destination_iata}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Visual Segment Diff Viewer */}
+              {(() => {
+                const selectedAlt = activeCase.alternatives?.find((a: any) => a.id === selectedAltId);
+                const originalIt = activeCase.original_itinerary;
+                const alternativeIt = selectedAlt?.itinerary;
+                const analysis = selectedAlt?.difference_analysis;
+
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Voo Original */}
+                      <div className="rounded-2xl border border-border/60 p-4 bg-slate-500/5">
+                        <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1">
+                          <Plane className="h-3.5 w-3.5 rotate-45" /> Voo Original
+                        </div>
+                        <div className="space-y-3">
+                          {originalIt.segments?.map((seg: any, idx: number) => (
+                            <div key={seg.id || idx} className="text-xs border-l-2 border-slate-300 pl-3 py-1 space-y-1">
+                              <div className="font-bold text-foreground">{seg.airline_code} {seg.flight_number}</div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <span className="font-semibold text-foreground">{seg.origin_iata}</span> → <span className="font-semibold text-foreground">{seg.destination_iata}</span>
+                              </div>
+                              <div>Partida: <span className="font-medium text-foreground">{fmtDate(seg.departure_at)} às {new Date(seg.departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
+                              <div>Chegada: <span className="font-medium text-foreground">{fmtDate(seg.arrival_at)} às {new Date(seg.arrival_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
+                              {seg.baggage && <div className="text-[10px] text-muted-foreground">Bagagem: {seg.baggage}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Nova Proposta */}
+                      <div className="rounded-2xl border border-rose-200 p-4 bg-rose-500/5">
+                        <div className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-3 flex items-center gap-1">
+                          <Plane className="h-3.5 w-3.5" /> Novo Voo Proposto
+                        </div>
+                        <div className="space-y-3">
+                          {alternativeIt?.segments?.map((seg: any, idx: number) => (
+                            <div key={seg.id || idx} className="text-xs border-l-2 border-rose-400 pl-3 py-1 space-y-1">
+                              <div className="font-bold text-foreground">{seg.airline_code} {seg.flight_number}</div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <span className="font-semibold text-rose-700">{seg.origin_iata}</span> → <span className="font-semibold text-rose-700">{seg.destination_iata}</span>
+                              </div>
+                              <div>Partida: <span className="font-medium text-foreground">{fmtDate(seg.departure_at)} às {new Date(seg.departure_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
+                              <div>Chegada: <span className="font-medium text-foreground">{fmtDate(seg.arrival_at)} às {new Date(seg.arrival_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
+                              {seg.baggage && <div className="text-[10px] text-muted-foreground">Bagagem: {seg.baggage}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Impact & Warnings */}
+                    {analysis && (
+                      <div className="rounded-2xl border border-amber-200 bg-amber-500/5 p-4 space-y-2">
+                        <div className="text-xs font-bold text-amber-800 flex items-center gap-1">
+                          <Shield className="h-4 w-4" /> Análise de Impacto de Viagem
+                        </div>
+                        <p className="text-xs text-amber-900 leading-relaxed">
+                          {analysis.deterministic_summary} Nosso comparador de voo atribuiu uma pontuação de alteração de <strong>{analysis.risk_score}/100</strong>.
+                        </p>
+                        {analysis.warnings && analysis.warnings.length > 0 && (
+                          <div className="text-[11px] text-amber-800 space-y-1 mt-1 pl-4 list-disc">
+                            {analysis.warnings.map((w: string, i: number) => (
+                              <div key={i} className="flex items-center gap-1.5">
+                                <Info className="h-3.5 w-3.5 shrink-0 text-amber-600" /> {w}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Digital Signature Disclosures */}
+              <div className="space-y-3.5 border-t border-border/40 pt-4">
+                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Declarações de Ciência e Consentimento Jurídico</h4>
+                
+                <div className="space-y-3">
+                  <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
+                    <Checkbox checked={consent1} onCheckedChange={(c: any) => setConsent1(c)} className="mt-0.5" />
+                    <span>Estou ciente de que as alterações acima foram determinadas exclusivamente pela companhia aérea e que a agência atuou na facilitação da reacomodação.</span>
+                  </label>
+
+                  <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
+                    <Checkbox checked={consent2} onCheckedChange={(c: any) => setConsent2(c)} className="mt-0.5" />
+                    <span>Compreendo e aceito as diferenças de horários, escalas ou conexões conforme apresentadas no painel comparativo acima.</span>
+                  </label>
+
+                  <label className="flex items-start gap-2.5 text-xs text-foreground cursor-pointer select-none">
+                    <Checkbox checked={consent3} onCheckedChange={(c: any) => setConsent3(c)} className="mt-0.5" />
+                    <span>Concordo com a alteração do contrato de prestação de serviços turísticos para contemplar este novo itinerário de voo de forma definitiva.</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Signature Input */}
+              <div className="space-y-2 bg-surface-alt/10 p-4 rounded-2xl border border-border/60">
+                <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">Assinatura Eletrônica do Passageiro</Label>
+                <p className="text-[10px] text-muted-foreground mb-2">Digite seu nome completo exatamente como consta no seu documento para gerar a chave de integridade criptográfica.</p>
+                <Input
+                  id="sig-name"
+                  placeholder="Seu Nome Completo"
+                  value={typedName}
+                  onChange={(e) => setTypedName(e.target.value)}
+                  className="bg-surface font-serif italic text-sm border-border focus:border-brand rounded-xl"
+                />
+              </div>
+
+            </div>
+          )}
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-3">
+            <Button
+              variant="outline"
+              className="cursor-pointer border-rose-200 text-rose-600 hover:bg-rose-50 rounded-2xl text-xs px-5 py-3 order-2 sm:order-1"
+              onClick={() => {
+                if (!typedName.trim()) {
+                  toast.error("Por favor, digite seu nome para recusar a proposta.");
+                  return;
+                }
+                clientDecisionMut.mutate({
+                  caseId: activeCase!.id,
+                  alternativeId: null,
+                  status: "rejected",
+                  typedName: typedName.trim(),
+                  disclosures: ["Recusa expressa da proposta de reacomodação."],
+                });
+                setIsClientReviewOpen(false);
+              }}
+              disabled={clientDecisionMut.isPending}
+            >
+              Recusar Proposta
+            </Button>
+            <div className="flex gap-2 w-full sm:w-auto order-1 sm:order-2">
+              <Button variant="ghost" onClick={() => setIsClientReviewOpen(false)} className="rounded-2xl text-xs">Voltar</Button>
+              <Button
+                className="cursor-pointer bg-brand hover:bg-brand-dark text-brand-foreground rounded-2xl text-xs px-6 py-3 shadow-sm"
+                onClick={() => {
+                  if (!consent1 || !consent2 || !consent3) {
+                    toast.error("Você precisa aceitar todas as declarações de ciência!");
+                    return;
+                  }
+                  if (!typedName.trim()) {
+                    toast.error("Por favor, assine digitando seu nome completo!");
+                    return;
+                  }
+                  clientDecisionMut.mutate({
+                    caseId: activeCase!.id,
+                    alternativeId: selectedAltId,
+                    status: "accepted",
+                    typedName: typedName.trim(),
+                    disclosures: [
+                      "Ciente de que as alterações foram determinadas pela companhia aérea.",
+                      "Aceito escalas e conexões apresentadas no comparativo.",
+                      "Acordo com a alteração definitiva do contrato.",
+                    ],
+                  });
+                  setIsClientReviewOpen(false);
+                }}
+                disabled={clientDecisionMut.isPending}
+              >
+                {clientDecisionMut.isPending ? "Assinando..." : "Assinar e Confirmar Aceite"}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

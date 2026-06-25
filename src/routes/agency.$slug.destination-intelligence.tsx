@@ -69,6 +69,11 @@ type DestinationInfo = {
   ai_model: string | null;
   reviewed_at: string | null;
   reviewed_by: string | null;
+  agency_id: string | null;
+  source: string | null;
+  source_url: string | null;
+  expires_at: string | null;
+  confidence_level: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -103,6 +108,10 @@ const EMPTY_FORM: Partial<DestinationInfo> = {
   cultural_tips: "",
   best_season: "",
   budget_range: "",
+  source: "",
+  source_url: "",
+  expires_at: null,
+  confidence_level: "high",
 };
 
 function slugify(text: string) {
@@ -171,18 +180,42 @@ function DestinationIntelligencePage() {
         cultural_tips: form.cultural_tips || null,
         best_season: form.best_season || null,
         budget_range: form.budget_range || null,
+        agency_id: agency?.id || null,
+        source: form.source || null,
+        source_url: form.source_url || null,
+        expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+        confidence_level: form.confidence_level || null,
       };
 
+      let destinationId: string;
       if (editing) {
         const { error } = await supabase
           .from("destination_info")
           .update(payload)
           .eq("id", editing.id);
         if (error) throw error;
+        destinationId = editing.id;
       } else {
-        const { error } = await supabase.from("destination_info").insert(payload);
+        const { data, error } = await supabase
+          .from("destination_info")
+          .insert(payload)
+          .select("id")
+          .single();
         if (error) throw error;
+        destinationId = data.id;
       }
+
+      // Log manual edit or create
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase
+        .from("destination_review_logs")
+        .insert({
+          destination_id: destinationId,
+          agency_id: agency?.id || null,
+          reviewed_by: user?.id || null,
+          action: editing ? "manual_edit" : "create",
+          details: editing ? "Edição manual de informações" : "Criação manual do destino",
+        });
     },
     onSuccess: () => {
       toast.success(editing ? "Destino atualizado!" : "Destino criado!");
@@ -359,14 +392,27 @@ function DestinationIntelligencePage() {
                         onClick={async () => {
                           try {
                             const { data: { user } } = await supabase.auth.getUser();
+                            const nextReviewedAt = dest.reviewed_at ? null : new Date().toISOString();
                             const { error } = await supabase
                               .from("destination_info")
                               .update({
-                                reviewed_at: dest.reviewed_at ? null : new Date().toISOString(),
+                                reviewed_at: nextReviewedAt,
                                 reviewed_by: dest.reviewed_at ? null : (user?.id || null),
                               })
                               .eq("id", dest.id);
                             if (error) throw error;
+
+                            // Inserir log de auditoria
+                            await supabase
+                              .from("destination_review_logs")
+                              .insert({
+                                destination_id: dest.id,
+                                agency_id: agency?.id || null,
+                                reviewed_by: user?.id || null,
+                                action: dest.reviewed_at ? "unreview" : "review",
+                                details: dest.reviewed_at ? "Destino desmarcado como revisado" : "Destino marcado como revisado",
+                              });
+
                             toast.success(dest.reviewed_at ? "Destino desmarcado como revisado!" : "Destino marcado como revisado!");
                             qc.invalidateQueries({ queryKey: ["destination-info"] });
                           } catch (err: any) {
@@ -658,6 +704,29 @@ function DestinationIntelligencePage() {
                     <Input value={form.tourist_tax_currency ?? "USD"} onChange={(e) => setForm({ ...form, tourist_tax_currency: e.target.value })} placeholder="USD" maxLength={3} />
                   </Field>
                 </div>
+              </div>
+
+              {/* Curadoria e Controle */}
+              <div className="border border-border rounded-xl p-4 space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Curadoria e Qualidade</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Fonte das Informações">
+                    <Input value={form.source ?? ""} onChange={(e) => setForm({ ...form, source: e.target.value })} placeholder="Ex: AI Engine / Consulado" />
+                  </Field>
+                  <Field label="Nível de Confiança">
+                    <Select value={form.confidence_level ?? "high"} onChange={(e) => setForm({ ...form, confidence_level: e.target.value })}>
+                      <option value="low">Baixo (Rascunho / Não verificado)</option>
+                      <option value="medium">Médio (Verificação parcial)</option>
+                      <option value="high">Alto (Verificado e revisado)</option>
+                    </Select>
+                  </Field>
+                </div>
+                <Field label="URL da Fonte">
+                  <Input value={form.source_url ?? ""} onChange={(e) => setForm({ ...form, source_url: e.target.value })} placeholder="https://..." />
+                </Field>
+                <Field label="Expira em">
+                  <Input type="date" value={form.expires_at ? String(form.expires_at).slice(0, 10) : ""} onChange={(e) => setForm({ ...form, expires_at: e.target.value || null })} />
+                </Field>
               </div>
 
               {/* Tips */}

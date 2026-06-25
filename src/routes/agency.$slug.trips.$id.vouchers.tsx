@@ -210,8 +210,8 @@ function TripVouchers() {
       toast.loading("Enviando arquivo original…", { id: "ocr" });
       const signedUrl = await uploadVoucherSourceFile(agency.id, tripId, file);
 
-      // OCR via PDF.js
-      toast.loading("Processando e lendo PDF…", { id: "ocr" });
+      // Leitura automática via Inteligência Artificial
+      toast.loading("Realizando leitura inteligente do documento…", { id: "ocr" });
 
       try {
         const aiResult = await processVoucherWithAI(file, agency.id);
@@ -222,20 +222,19 @@ function TripVouchers() {
           destination: aiResult.title || d.destination,
           general_locator: aiResult.locator || d.general_locator,
           observations:
-            "Extraído via OCR\n\nProvedor: " +
+            "Importado via leitura automática de documento\n\nProvedor original: " +
             (aiResult.provider || "") +
-            "\n\nTexto Bruto:\n" +
+            "\n\nTexto extraído:\n" +
             (aiResult.raw_extracted_text?.substring(0, 400) || ""),
           source_file_url: signedUrl,
           source_type: "operator_pdf" as const,
         }));
 
-        toast.success("Dados extraídos com sucesso!", { id: "ocr" });
+        toast.success("Leitura inteligente concluída com sucesso!", { id: "ocr" });
       } catch (err: any) {
         toast.warning(
-          err.message ||
-            "Não foi possível ler todos os dados automaticamente. O arquivo foi salvo, mas preencha manualmente.",
-          { id: "ocr", duration: 5000 },
+          "Leitura automática temporariamente indisponível - Modo manual ativo. O arquivo original foi anexado.",
+          { id: "ocr", duration: 6000 },
         );
         setDraft((d) => ({
           ...d,
@@ -245,7 +244,7 @@ function TripVouchers() {
       }
     },
     onError: (e) =>
-      toast.error(e instanceof Error ? e.message : "Erro crítico no upload.", { id: "ocr" }),
+      toast.error(e instanceof Error ? e.message : "Não foi possível enviar o documento de origem.", { id: "ocr" }),
   });
 
   // ── Edit existing ─────────────────────────────────────────────────────────────

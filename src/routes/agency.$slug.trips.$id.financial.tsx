@@ -58,28 +58,60 @@ function TripFinancial() {
     setOcrFile(file);
     setOcrLoading(true);
     setOcrResult(null);
+
+    const maxRetries = 2;
+    const timeoutMs = 45000;
+
+    const executeOcrWithRetry = async (attempt: number = 1): Promise<void> => {
+      try {
+        const reader = new FileReader();
+        const b64 = await new Promise<string>((res, rej) => {
+          reader.onload = () => res((reader.result as string).split(",")[1]);
+          reader.onerror = rej;
+          reader.readAsDataURL(file);
+        });
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+          body: {
+            action: "completion",
+            feature: "ocr_boleto",
+            file_base64: b64,
+            mime: file.type,
+            agency_id: agency.id,
+          },
+        });
+        clearTimeout(timeoutId);
+
+        if (error) {
+          throw new Error(error.message || "Erro retornado pela Edge Function de OCR de Boleto");
+        }
+        setOcrResult(data?.result ?? data);
+        toast.success("Boleto analisado com sucesso!");
+      } catch (err: any) {
+        const isTimeout = err.name === "AbortError";
+        const errorMessage = isTimeout
+          ? "O processamento do boleto excedeu o limite de 45s. Tente novamente ou verifique o arquivo."
+          : err.message || "Erro desconhecido durante o OCR.";
+
+        console.warn(`[OCR Boleto Attempt ${attempt} failed]:`, errorMessage);
+
+        if (attempt < maxRetries && !isTimeout) {
+          const backoff = attempt * 2000;
+          console.log(`Retrying OCR in ${backoff}ms...`);
+          await new Promise(r => setTimeout(r, backoff));
+          return executeOcrWithRetry(attempt + 1);
+        } else {
+          toast.error("Erro no OCR: " + errorMessage);
+          setOcrResult(null);
+        }
+      }
+    };
+
     try {
-      const reader = new FileReader();
-      const b64 = await new Promise<string>((res, rej) => {
-        reader.onload = () => res((reader.result as string).split(",")[1]);
-        reader.onerror = rej;
-        reader.readAsDataURL(file);
-      });
-      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-        body: {
-          action: "completion",
-          feature: "ocr_boleto",
-          file_base64: b64,
-          mime: file.type,
-          agency_id: agency.id,
-        },
-      });
-      if (error) throw new Error(error.message);
-      setOcrResult(data?.result ?? data);
-      toast.success("Boleto analisado com sucesso!");
-    } catch (err: any) {
-      toast.error("Erro no OCR: " + err.message);
-      setOcrResult(null);
+      await executeOcrWithRetry(1);
     } finally {
       setOcrLoading(false);
     }

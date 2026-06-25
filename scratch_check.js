@@ -1,17 +1,19 @@
-import { createClient } from "@supabase/supabase-js";
+const fs = require("fs");
+const path = require("path");
 
-const supabase = createClient(
-  "https://esmppoxxnyiscidzsjvy.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzbXBwb3h4bnlpc2NpZHpzanZ5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTI1Mzg0OCwiZXhwIjoyMDk2ODI5ODQ4fQ.4fKEXQ_ahfmAPep8sXyyYa5gp9uit39bfOJiwPJ1IkQ",
-);
+const typesPath = path.join(__dirname, "src/integrations/supabase/types.ts");
+const content = fs.readFileSync(typesPath, "utf8");
 
-async function check() {
-  const { data, error } = await supabase.from("pg_proc").select("*").limit(1);
-  if (error) {
-    console.log("pg_proc check FAILED:", error.message);
-  } else {
-    console.log("pg_proc check SUCCESS! sample:", data);
-  }
+console.log("File length:", content.length);
+const matches = [];
+let idx = -1;
+while ((idx = content.indexOf("flight_change_cases", idx + 1)) !== -1) {
+  matches.push(idx);
 }
+console.log("flight_change_cases found at indices:", matches);
 
-check();
+if (matches.length > 0) {
+  matches.forEach((m) => {
+    console.log("Snippet:", content.substring(m - 50, m + 100));
+  });
+}
