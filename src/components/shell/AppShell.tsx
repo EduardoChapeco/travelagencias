@@ -94,18 +94,24 @@ export function AppShell({
           >
             <Menu className="h-4 w-4" />
           </button>
-          <nav className="flex min-w-0 items-center gap-1 ds-meta">
+          <nav className="hidden sm:flex min-w-0 items-center gap-1 ds-meta">
             {crumbs
               .filter((c) => c !== "agency" && c !== agency?.slug)
               .map((c, i, arr) => {
-                const label =
+                let label =
                   DEFAULT_MODULE_NAMES[c] !== undefined
                     ? getModuleName(c, agency)
                     : decodeURIComponent(c);
+
+                // Truncate UUID-like strings in crumbs to keep header clean and prevent overlap
+                if (label.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+                  label = label.substring(0, 8) + "...";
+                }
+
                 const isLast = i === arr.length - 1;
                 return (
-                  <span key={i} className="flex items-center gap-1">
-                    {i > 0 && <span className="opacity-30">/</span>}
+                  <span key={i} className="flex min-w-0 items-center gap-1">
+                    {i > 0 && <span className="opacity-30 shrink-0">/</span>}
                     <span
                       className={
                         isLast ? "text-foreground font-medium truncate" : "truncate opacity-60"
