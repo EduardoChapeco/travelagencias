@@ -2171,7 +2171,7 @@ function EditTour({
           <Input value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} required />
         </Field>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Destino">
             <Input
               value={f.destination}
@@ -2201,7 +2201,7 @@ function EditTour({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Partida">
             <Input
               type="date"
@@ -2217,7 +2217,7 @@ function EditTour({
             />
           </Field>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Preço (R$)">
             <Input
               type="number"
@@ -2258,7 +2258,7 @@ function EditTour({
               placeholder="Ex: Hotel Majestic Gramado"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Categoria (Estrelas)">
               <Select
                 value={f.hotel_stars}
@@ -2279,7 +2279,7 @@ function EditTour({
               />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Check-in">
               <Input
                 value={f.hotel_check_in}

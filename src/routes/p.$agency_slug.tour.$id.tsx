@@ -303,7 +303,7 @@ function Page() {
 
   return (
     <div
-      className="mx-auto min-h-screen bg-[#f4f5f8] pb-12 font-sans antialiased text-slate-800"
+      className="mx-auto min-h-screen bg-[#f4f5f8] pb-24 lg:pb-12 font-sans antialiased text-slate-800"
       style={
         {
           "--color-brand": agency.brand_color || "#151515",
@@ -354,10 +354,10 @@ function Page() {
       {/* Main Content Area */}
       <div className="mx-auto max-w-6xl px-4 md:px-8 py-8">
         {checkoutStep === "form" && (
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-3">
             
             {/* Left Content Area (Itinerary, Hotel, Video) */}
-            <div className="md:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-6">
               
               {/* YouTube Promo Video Embed */}
               {embedVideoUrl && (
@@ -381,7 +381,7 @@ function Page() {
               {/* Hotel Comfort Info */}
               {hotel && hotel.name && (
                 <section className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-xs relative">
-                  <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-100 pb-4">
                     <div className="space-y-1">
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">Hospedagem Inclusa</span>
                       <h2 className="text-lg font-black text-slate-900 uppercase flex items-center gap-2">
@@ -395,7 +395,7 @@ function Page() {
                       </div>
                     </div>
                     
-                    <div className="text-right text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shrink-0">
+                    <div className="text-left sm:text-right text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shrink-0">
                       <div>Check-in: <strong className="text-slate-800">{hotel.check_in || "14:00"}</strong></div>
                       <div>Check-out: <strong className="text-slate-800">{hotel.check_out || "12:00"}</strong></div>
                     </div>
@@ -937,6 +937,24 @@ function Page() {
               className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-xl cursor-pointer hover:bg-slate-800 shadow-sm"
             >
               Comprar outra passagem
+            </button>
+          </div>
+        )}
+        {/* Bottom Sticky Mobile CTA Bar */}
+        {checkoutStep === "form" && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 flex items-center justify-between shadow-[0_-4px_12px_rgba(0,0,0,0.08)] animate-in fade-in slide-in-from-bottom-5 duration-300">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">Subtotal</span>
+              <span className="text-lg font-mono font-black text-[var(--color-brand)] mt-1">{money(totalPrice)}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                document.getElementById("checkout_anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm active:scale-95 transition-transform"
+            >
+              Reservar
             </button>
           </div>
         )}

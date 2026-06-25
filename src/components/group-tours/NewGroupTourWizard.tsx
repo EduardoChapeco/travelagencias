@@ -378,8 +378,18 @@ export function NewGroupTourWizard({
         </p>
       </div>
 
-      {/* Stepper progress */}
-      <div className="flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
+      {/* Mobile progress indicator */}
+      <div className="md:hidden flex items-center justify-between border-b border-border bg-surface px-6 py-3 shrink-0">
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+          Passo {step + 1} de {STEPS.length}
+        </span>
+        <span className="text-xs font-black text-brand uppercase tracking-widest">
+          {STEPS[step]}
+        </span>
+      </div>
+
+      {/* Desktop progress indicator */}
+      <div className="hidden md:flex items-center justify-between border-b border-border bg-surface px-8 py-3 shrink-0">
         {STEPS.map((s, i) => (
           <div
             key={i}
@@ -397,7 +407,7 @@ export function NewGroupTourWizard({
               {i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}
             </div>
             <span
-              className={`text-xs font-semibold uppercase tracking-widest hidden md:block ${
+              className={`text-xs font-semibold uppercase tracking-widest hidden lg:block ${
                 i < step ? "text-success" : i === step ? "text-brand" : "text-muted-foreground"
               }`}
             >
@@ -425,7 +435,7 @@ export function NewGroupTourWizard({
                     autoFocus
                   />
                 </Field>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field label="Destino Principal *" error={errors.destination?.message}>
                     <Input {...register("destination")} placeholder="Ex: Gramado, RS" />
                   </Field>
@@ -456,7 +466,7 @@ export function NewGroupTourWizard({
             {/* STEP 1: DATES & SEATS */}
             {step === 1 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field label="Data de Saída *" error={errors.departure?.message}>
                     <Input type="date" {...register("departure")} />
                   </Field>
@@ -464,7 +474,7 @@ export function NewGroupTourWizard({
                     <Input type="date" {...register("ret")} />
                   </Field>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field label="Prazo limite p/ inscrição" error={errors.regDeadline?.message}>
                     <Input type="date" {...register("regDeadline")} />
                   </Field>
@@ -501,8 +511,8 @@ export function NewGroupTourWizard({
                   <h3 className="font-semibold text-base">Hospedagem Principal</h3>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
                     <Field label="Nome da Hospedagem (Hotel / Pousada)" error={errors.hotelName?.message}>
                       <Input {...register("hotelName")} placeholder="Ex: Hotel Majestic Gramado" />
                     </Field>
@@ -520,7 +530,7 @@ export function NewGroupTourWizard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field label="Horário de Check-in" error={errors.hotelCheckIn?.message}>
                     <Input {...register("hotelCheckIn")} placeholder="Ex: 14:00" />
                   </Field>
@@ -600,8 +610,8 @@ export function NewGroupTourWizard({
                 {/* Form to add a new pricing tier */}
                 <div className="p-4 rounded-xl border border-border bg-surface-alt/10 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Nova Tarifa</h4>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
                       <Input
                         placeholder="Nome da acomodação (ex: Quarto Individual)"
                         value={newTierName}
@@ -691,8 +701,8 @@ export function NewGroupTourWizard({
                 {/* Form to add a new extra option */}
                 <div className="p-4 rounded-xl border border-border bg-surface-alt/10 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Novo Opcional</h4>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="col-span-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
                       <Input
                         placeholder="Nome do opcional (ex: Seguro Viagem Premium)"
                         value={newExtraName}
@@ -1075,15 +1085,15 @@ export function NewGroupTourWizard({
             {/* STEP 6: REVIEW & PUBLISH (originally Step 4) */}
             {step === 6 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-xl border border-border bg-surface-alt/20 p-6 flex gap-6">
+                <div className="rounded-xl border border-border bg-surface-alt/20 p-6 flex flex-col sm:flex-row gap-6">
                   {watchCoverUrl ? (
                     <img
                       src={watchCoverUrl}
                       alt="Cover"
-                      className="w-32 h-32 rounded-lg object-cover"
+                      className="w-full h-40 sm:w-32 sm:h-32 rounded-lg object-cover shrink-0"
                     />
                   ) : (
-                    <div className="w-32 h-32 rounded-lg bg-surface flex items-center justify-center border border-dashed border-border">
+                    <div className="w-full h-40 sm:w-32 sm:h-32 rounded-lg bg-surface flex items-center justify-center border border-dashed border-border shrink-0">
                       <Map className="h-8 w-8 text-muted-foreground/30" />
                     </div>
                   )}
@@ -1138,12 +1148,12 @@ export function NewGroupTourWizard({
                   </div>
                 </div>
 
-                {watchPricingTiers && watchPricingTiers.length > 0 && (
+                 {watchPricingTiers && watchPricingTiers.length > 0 && (
                   <div className="space-y-2 rounded-xl border border-border bg-surface p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
                       <BedDouble className="h-4 w-4" /> Tarifas de Acomodação ({watchPricingTiers.length})
                     </h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                       {watchPricingTiers.map((t, idx) => (
                         <div key={idx} className="bg-surface-alt/40 p-2.5 rounded-lg flex justify-between items-center">
                           <span>{t.name}</span>
@@ -1159,7 +1169,7 @@ export function NewGroupTourWizard({
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
                       <Layers className="h-4 w-4" /> Opcionais Cadastrados ({watchExtraOptions.length})
                     </h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                       {watchExtraOptions.map((e, idx) => (
                         <div key={idx} className="bg-surface-alt/40 p-2.5 rounded-lg flex justify-between items-center">
                           <span>{e.name}</span>
