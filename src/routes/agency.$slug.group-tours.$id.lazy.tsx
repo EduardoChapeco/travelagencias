@@ -2325,6 +2325,11 @@ function BusSeatManager({
   const mapData = (qMap.data.seat_map as unknown as SeatCell[]) || [];
   const cols = qMap.data.cols;
 
+  const validSeatLabels = new Set(mapData.filter((c) => c.type === "seat").map((c) => c.label));
+  const orphans = passengers.filter(
+    (p) => p.seat_number && !validSeatLabels.has(p.seat_number)
+  );
+
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <div className="flex-1 bg-surface border border-border rounded-xl p-8 overflow-x-auto">
@@ -2374,6 +2379,39 @@ function BusSeatManager({
       </div>
 
       <div className="w-full md:w-80 space-y-4">
+        {orphans.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 space-y-2">
+            <div className="font-bold flex items-center gap-1">
+              ⚠️ Inconsistência de Assentos
+            </div>
+            <p className="text-[11px] text-amber-700 leading-snug font-medium">
+              Os seguintes passageiros estão alocados em poltronas que não existem no layout selecionado:
+            </p>
+            <ul className="list-disc pl-4 space-y-1 font-semibold text-[10px] text-amber-800">
+              {orphans.map((p) => (
+                <li key={p.id}>
+                  {p.passenger_name} ({p.seat_number})
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={async () => {
+                const { error } = await supabase
+                  .from("group_tour_enrollments")
+                  .update({ seat_number: null })
+                  .in("id", orphans.map((p) => p.id));
+                if (error) return toast.error(error.message);
+                toast.success("Assentos inconsistentes liberados!");
+                onChange();
+              }}
+              className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[10px] transition-colors cursor-pointer"
+            >
+              Liberar Assentos
+            </button>
+          </div>
+        )}
+
         {selectedSeat ? (
           <div className="bg-brand/5 border border-brand/20 rounded p-5">
             <div className="text-[10px] font-bold uppercase tracking-widest text-brand mb-1">
