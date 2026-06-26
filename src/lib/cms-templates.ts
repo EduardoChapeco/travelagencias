@@ -1366,6 +1366,323 @@ export const CMS_TEMPLATES: PageTemplate[] = [
       },
     ],
   },
+  {
+    id: "editorial-premium",
+    name: "Editorial Premium",
+    description: "Design clássico e minimalista, focado na fotografia imersiva e tipografia elegante.",
+    category: "site",
+    blocks: [
+      {
+        id: "ed-hero",
+        type: "hero",
+        title: "A Arte de Viajar com Significado",
+        subtitle: "Roteiros cuidadosamente esculpidos para almas curiosas e paladares refinados.",
+        bg_image_url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Explorar Itinerário",
+        cta_link: "#roteiro",
+        layout: "centered"
+      },
+      {
+        id: "ed-timeline",
+        type: "itinerary_timeline",
+        title: "Sua Jornada Dia a Dia",
+        tour_id: ""
+      },
+      {
+        id: "ed-hotel",
+        type: "features",
+        title: "Sua Acomodação Premium",
+        layout: "cards",
+        items: [
+          { icon: "Hotel", title: "Refúgio de Luxo", description: "Hospedagens boutiques de design único e atendimento diferenciado." },
+          { icon: "Safe", title: "Segurança Silenciosa", description: "Presença discreta da coordenação para sua total tranquilidade." }
+        ]
+      },
+      {
+        id: "ed-faq",
+        type: "faq",
+        title: "Dúvidas Frequentes",
+        layout: "accordion",
+        items: [
+          { question: "Qual o tamanho do grupo?", answer: "Nossos grupos premium operam com capacidade reduzida de até 16 passageiros." },
+          { question: "Como funciona a política de cancelamento?", answer: "Cancelamento flexível com devolução integral ou crédito em até 60 dias antes da partida." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "alta-conversao",
+    name: "Oferta de Alta Conversão",
+    description: "Layout agressivo e persuasivo, focado em vendas com barra de escassez e cronômetro.",
+    category: "site",
+    blocks: [
+      {
+        id: "ac-counter",
+        type: "live_sales_counter",
+        duration_sec: 15
+      },
+      {
+        id: "ac-hero",
+        type: "hero",
+        title: "Garanta Sua Vaga no Próximo Grupo!",
+        subtitle: "Inscreva-se hoje com R$ 1.000 de desconto no lote promocional de lançamento.",
+        bg_image_url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "RESERVAR POLTRONA AGORA",
+        cta_link: "#comprar",
+        layout: "split"
+      },
+      {
+        id: "ac-benefits",
+        type: "features",
+        title: "Benefícios do Lote 1",
+        layout: "list",
+        items: [
+          { icon: "check", title: "Desconto Exclusivo", description: "Economize R$ 1.000 pagando à vista ou no pix." },
+          { icon: "coins", title: "Parcelamento no Boleto", description: "Pague parcelado sem juros diretamente até a data do embarque." }
+        ]
+      },
+      {
+        id: "ac-countdown",
+        type: "countdown_tour",
+        tour_id: "",
+        title: "O Lote Promocional Encerra Em:",
+        subtitle: "Após o prazo o valor retornará à tabela oficial.",
+        button_label: "Quero Garantir Meu Desconto"
+      },
+      {
+        id: "ac-timeline",
+        type: "itinerary_timeline",
+        title: "O Que Você Vai Vivenciar",
+        tour_id: ""
+      },
+      {
+        id: "ac-testimonials",
+        type: "live_reviews",
+        title: "Prova Social de Nossos Passageiros",
+        subtitle: "Veja o relato de quem viajou conosco na última saída."
+      },
+      {
+        id: "ac-faq",
+        type: "faq",
+        title: "Perguntas Frequentes",
+        layout: "accordion",
+        items: [
+          { question: "É seguro comprar online?", answer: "Sim. A Excetur utiliza transações Pix seguras e contratos digitais com validade jurídica." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "grupo-rodoviario",
+    name: "Grupo Rodoviário",
+    description: "Template sob medida para excursões rodoviárias e de curta distância.",
+    category: "site",
+    blocks: [
+      {
+        id: "rod-hero",
+        type: "hero",
+        title: "Excursão de Fim de Semana",
+        subtitle: "Pontos de embarque facilitados e ônibus semi-leito de última geração com serviço de bordo.",
+        bg_image_url: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Ver Pontos de Embarque",
+        cta_link: "#embarque",
+        layout: "split"
+      },
+      {
+        id: "rod-vehicle",
+        type: "features",
+        title: "Nossa Frota & Conforto",
+        layout: "cards",
+        items: [
+          { icon: "bus", title: "Semi-Leito Premium", description: "Ar condicionado, tomadas USB individuais, Wi-Fi e WC a bordo." },
+          { icon: "care", title: "Serviço de Bordo", description: "Água, refrigerante, snacks e coordenador acompanhante em toda a viagem." }
+        ]
+      },
+      {
+        id: "rod-timeline",
+        type: "itinerary_timeline",
+        title: "Cronograma Rodoviário",
+        tour_id: ""
+      },
+      {
+        id: "rod-inclusions",
+        type: "cta",
+        title: "Pacote Rodoviário Completo",
+        subtitle: "Incluso: Transporte + Hospedagem com Café + Passeios Locais + Seguro Viagem.",
+        button_label: "Escolher Assento",
+        button_link: "#comprar"
+      },
+      {
+        id: "rod-map",
+        type: "map",
+        title: "Ponto de Encontro e Partida",
+        embed_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3550.9123847990146!2d-52.618608223689255!3d-27.11142580795493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e53e414c77c68b%3A0xc3cf33887d1955c4!2sChapec%C3%B3%2C%20SC!5e0!3m2!1spt-BR!2sbr!4v1718471847683!5m2!1spt-BR!2sbr",
+        address_label: "Terminal Rodoviário - Plataforma de Embarques Especiais"
+      }
+    ]
+  },
+  {
+    id: "pacote-aereo",
+    name: "Pacote Aéreo",
+    description: "Ideal para pacotes aéreos nacionais e internacionais de longa distância.",
+    category: "site",
+    blocks: [
+      {
+        id: "air-hero",
+        type: "hero",
+        title: "Sua Viagem dos Sonhos com Aéreo Incluso",
+        subtitle: "Passagens aéreas, taxas de embarque, bagagem despachada e transfer inclusos no pacote.",
+        bg_image_url: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Consultar Voos",
+        cta_link: "#voos",
+        layout: "centered"
+      },
+      {
+        id: "air-flights",
+        type: "features",
+        title: "Estrutura Aérea do Grupo",
+        layout: "cards",
+        items: [
+          { icon: "flight", title: "Cia Aérea Oficial", description: "Bloqueios confirmados em voos regulares LATAM / GOL." },
+          { icon: "bag", title: "Franquia de Bagagem", description: "Incluso 1 mala de mão (10kg) + 1 mala despachada (23kg) por passageiro." }
+        ]
+      },
+      {
+        id: "air-timeline",
+        type: "itinerary_timeline",
+        title: "Roteiro e Conexões",
+        tour_id: ""
+      },
+      {
+        id: "air-gateways",
+        type: "payment_gateways_display",
+        title: "Condições de Pagamento e Financiamento"
+      }
+    ]
+  },
+  {
+    id: "luxo-experiencia",
+    name: "Luxo/Experiência",
+    description: "Design com espaços amplos, focado em curadoria de roteiros exclusivos e hotéis boutique.",
+    category: "site",
+    blocks: [
+      {
+        id: "lux-exp-hero",
+        type: "hero",
+        title: "Coleção de Viagens Extraordinárias",
+        subtitle: "Experiências altamente exclusivas desenhadas para viajantes exigentes.",
+        bg_image_url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Solicitar Atendimento Privado",
+        cta_link: "#contato",
+        layout: "split"
+      },
+      {
+        id: "lux-exp-gallery",
+        type: "gallery",
+        images: [
+          "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80",
+          "https://images.unsplash.com/photo-1522083165195-3427502977a1?auto=format&fit=crop&w=400&q=80",
+          "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=400&q=80",
+          "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80"
+        ]
+      },
+      {
+        id: "lux-exp-timeline",
+        type: "itinerary_timeline",
+        title: "Vivências Exclusivas Inclusas",
+        tour_id: ""
+      },
+      {
+        id: "lux-exp-card",
+        type: "agent_profile_card",
+        agent_id: "",
+        cta_label: "Falar com o Concierge Líder"
+      }
+    ]
+  },
+  {
+    id: "familia-parques",
+    name: "Família/Parques",
+    description: "Template alegre e dinâmico, ideal para parques de diversões (Orlando, Beto Carrero) e turismo familiar.",
+    category: "site",
+    blocks: [
+      {
+        id: "fam-hero",
+        type: "hero",
+        title: "Magia & Diversão em Família!",
+        subtitle: "Pacotes completos com ingressos para parques, hotel temático e guia especializado em recreação.",
+        bg_image_url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Ver Parques Inclusos",
+        cta_link: "#parques",
+        layout: "centered"
+      },
+      {
+        id: "fam-timeline",
+        type: "itinerary_timeline",
+        title: "Cronograma das Atrações",
+        tour_id: ""
+      },
+      {
+        id: "fam-features",
+        type: "features",
+        title: "Facilidades para Crianças & Idosos",
+        layout: "cards",
+        items: [
+          { icon: "smile", title: "Suporte Infantil", description: "Guias preparados para coordenação de grupos familiares e recreação." },
+          { icon: "ticket", title: "Ingressos Fast-Pass", description: "Acesso sem filas nas principais atrações dos parques inclusos." }
+        ]
+      },
+      {
+        id: "fam-faq",
+        type: "faq",
+        title: "Perguntas de Pais & Mães",
+        layout: "accordion",
+        items: [
+          { question: "Crianças de qual idade pagam menos?", answer: "Crianças até 2 anos viajam como cortesia (colo). De 3 a 11 anos possuem tarifas com descontos de até 30%." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "cruzeiro",
+    name: "Cruzeiro",
+    description: "Focado em saídas marítimas ou fluviais, cabines e portos de escala.",
+    category: "site",
+    blocks: [
+      {
+        id: "cru-hero",
+        type: "hero",
+        title: "Embarque no Gigante dos Mares",
+        subtitle: "Grupo exclusivo a bordo com sistema tudo incluso de alimentação e entretenimento de classe mundial.",
+        bg_image_url: "https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&w=1200&q=80",
+        cta_label: "Conhecer Cabines",
+        cta_link: "#cabines",
+        layout: "split"
+      },
+      {
+        id: "cru-cabins",
+        type: "features",
+        title: "Escolha Sua Cabine",
+        layout: "cards",
+        items: [
+          { icon: "bed", title: "Cabine Interna", description: "Excelente custo-benefício com todo o conforto de bordo." },
+          { icon: "nature", title: "Cabine Externa com Varanda", description: "Vista panorâmica particular para o mar durante toda a navegação." }
+        ]
+      },
+      {
+        id: "cru-timeline",
+        type: "itinerary_timeline",
+        title: "Portos de Escala & Rota",
+        tour_id: ""
+      },
+      {
+        id: "cru-visas",
+        type: "visa_checker",
+        title: "Verificar Documentação de Embarque Marítimo",
+        default_nationality: "Brasil"
+      }
+    ]
+  },
 ];
 
 export function getTemplateById(id: string): PageTemplate | undefined {
