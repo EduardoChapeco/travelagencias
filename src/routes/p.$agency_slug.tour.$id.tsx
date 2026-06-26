@@ -163,7 +163,8 @@ function Page() {
     );
   }
 
-  const { agency, tour: t, days, layout, assignedSeats, settings, confirmedCount } = q.data;
+  const { agency, tour: t, days, layout, assignedSeats: rawAssignedSeats, settings, confirmedCount } = q.data;
+  const assignedSeats = (rawAssignedSeats as string[]) || [];
   const seatMap: SeatCell[] =
     layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
 
