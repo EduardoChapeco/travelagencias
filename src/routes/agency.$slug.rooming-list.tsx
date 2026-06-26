@@ -1100,7 +1100,7 @@ function RoomingListDashboard() {
   return (
     <div className="flex flex-col h-full bg-background text-foreground overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 shrink-0 print:hidden bg-surface/20">
+      <div className="flex items-center justify-between gap-4 border-b border-border px-4 md:px-6 py-4 shrink-0 print:hidden bg-surface/20">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand/10 text-brand">
             <BedDouble className="h-5 w-5" />
@@ -1125,7 +1125,7 @@ function RoomingListDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-border px-6 py-3 shrink-0 print:hidden bg-surface/50">
+      <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 md:px-6 py-3 shrink-0 print:hidden bg-surface/50">
         <div className="relative flex-1 min-w-[220px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -1160,7 +1160,7 @@ function RoomingListDashboard() {
       </div>
 
       {/* Content list */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         {toursQ.isLoading && (
           <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
