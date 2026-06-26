@@ -65,7 +65,10 @@ export const Route = createFileRoute("/agency/$slug/rooming-list")({
   component: RoomingListDashboard,
 });
 
-type Tour = Database["public"]["Tables"]["group_tours"]["Row"];
+type Tour = Database["public"]["Tables"]["group_tours"]["Row"] & {
+  rooms?: any[];
+  enrollments?: any[];
+};
 
 function fmtDate(d: string | null | undefined) {
   if (!d) return "—";
@@ -206,6 +209,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   const roomsQ = useQuery({
     queryKey: ["rooming-list", tour.id],
     queryFn: () => fetchRoomingListByTour(tour.id),
+    enabled: expanded,
   });
 
   const enrolQ = useQuery({
@@ -219,10 +223,11 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       if (error) throw error;
       return data ?? [];
     },
+    enabled: expanded,
   });
 
-  const rooms = roomsQ.data ?? [];
-  const passengers = enrolQ.data ?? [];
+  const rooms = roomsQ.data ?? tour.rooms ?? [];
+  const passengers = enrolQ.data ?? (tour.enrollments?.filter((e: any) => e.status === "confirmed") ?? []);
 
   const allocatedIds = new Set(
     rooms.flatMap((r) =>
@@ -1062,11 +1067,13 @@ function RoomingListDashboard() {
     enabled: !!agency,
     queryKey: ["group-tours", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from("group_tours")
-        .select(
-          "id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id",
-        )
+        .select(`
+          id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id,
+          rooms:boarding_rooming_list(id, room_number, room_type, passengers, is_confirmed, hotel_name, checkin_date, checkout_date, notes),
+          enrollments:group_tour_enrollments(id, passenger_name, status)
+        `) as any)
         .eq("agency_id", agency!.id)
         .order("departure_date", { ascending: true });
       if (error) throw error;

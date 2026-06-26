@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useState } from "react";
-import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2 } from "lucide-react";
+import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
 import { money } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
@@ -119,6 +119,26 @@ export function GroupFinancialsDashboard() {
 
   const ledger = ledgerQ.data ?? [];
 
+  const renderKpiValue = (value: string | number, colorClass?: string) => {
+    if (kpisQ.isLoading) {
+      return (
+        <span className="h-8 w-32 bg-muted-foreground/10 animate-pulse rounded block mt-1.5" />
+      );
+    }
+    if (kpisQ.isError) {
+      return (
+        <span className="text-[10px] text-danger font-bold mt-1.5 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3 shrink-0" /> Erro ao carregar
+        </span>
+      );
+    }
+    return (
+      <strong className={cn("text-2xl font-mono block mt-1.5", colorClass)}>
+        {typeof value === "number" ? money(value) : value}
+      </strong>
+    );
+  };
+
   return (
     <div className="flex h-full flex-col overflow-y-auto bg-surface-alt p-4 md:p-6 space-y-6">
       {/* Title block */}
@@ -133,7 +153,7 @@ export function GroupFinancialsDashboard() {
           </p>
         </div>
         <div className="text-[10px] text-muted-foreground font-bold uppercase bg-surface-alt px-2.5 py-1 rounded border border-border">
-          {activeKpis.length} Grupos Ativos
+          {kpisQ.isLoading ? "Carregando..." : `${activeKpis.length} Grupos Ativos`}
         </div>
       </div>
 
@@ -143,9 +163,7 @@ export function GroupFinancialsDashboard() {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <DollarSign className="w-3.5 h-3.5 text-success" /> Faturamento Total
           </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-success">
-            {money(totalRevenue)}
-          </strong>
+          {renderKpiValue(totalRevenue, "text-success")}
           <span className="text-[10px] text-muted-foreground mt-1 block">
             Inscrições quitadas ou geradas
           </span>
@@ -155,9 +173,7 @@ export function GroupFinancialsDashboard() {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5 text-danger" /> Custos Operacionais
           </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-danger">
-            {money(totalCosts)}
-          </strong>
+          {renderKpiValue(totalCosts, "text-danger")}
           <span className="text-[10px] text-muted-foreground mt-1 block">
             Fixo, variável e marketing
           </span>
@@ -167,14 +183,10 @@ export function GroupFinancialsDashboard() {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
             Resultado Líquido
           </span>
-          <strong
-            className={cn(
-              "text-2xl font-mono block mt-1.5",
-              totalNetProfit >= 0 ? "text-foreground" : "text-danger",
-            )}
-          >
-            {money(totalNetProfit)}
-          </strong>
+          {renderKpiValue(
+            totalNetProfit,
+            totalNetProfit >= 0 ? "text-foreground" : "text-danger",
+          )}
           <span className="text-[10px] text-muted-foreground mt-1 block">
             Lucro líquido acumulado
           </span>
@@ -184,9 +196,7 @@ export function GroupFinancialsDashboard() {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Landmark className="w-3.5 h-3.5 text-brand" /> Poupança Retida
           </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-brand">
-            {money(totalVault)}
-          </strong>
+          {renderKpiValue(totalVault, "text-brand")}
           <span className="text-[10px] text-muted-foreground mt-1 block">
             Fundo garantidor terrestre
           </span>
@@ -196,9 +206,7 @@ export function GroupFinancialsDashboard() {
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Target className="w-3.5 h-3.5 text-amber-600" /> Gastos Meta/Google
           </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-amber-700">
-            {money(totalMarketing)}
-          </strong>
+          {renderKpiValue(totalMarketing, "text-amber-700")}
           <span className="text-[10px] text-muted-foreground mt-1 block">
             Orçamento de tráfego pago
           </span>

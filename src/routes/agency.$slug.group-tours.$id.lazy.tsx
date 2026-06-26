@@ -30,6 +30,7 @@ import { useAgency } from "@/lib/agency-context";
 import { exportRoomingListXlsx, exportRoomingListPdf } from "@/lib/exportRoomingList";
 import ReactMarkdown from "react-markdown";
 import { FileUploader } from "@/components/uploads/FileUploader";
+import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import {
   fetchRoomingListByTour,
   createRoomRecord,
@@ -333,6 +334,7 @@ function TourDetailPage() {
     : [];
 
   const pCount = enrolQ.data?.length || 0;
+  const confirmedCount = enrolQ.data?.filter((e: any) => e.status === "confirmed").length || 0;
   const basePrice = Number(t.base_price) || 0;
   const totalRevenue = enrolQ.data
     ? enrolQ.data.reduce((sum: number, e: any) => {
@@ -400,7 +402,16 @@ function TourDetailPage() {
         <Stat label="Saída" value={fmtDate(t.departure_date)} />
         <Stat label="Retorno" value={fmtDate(t.return_date)} />
         <Stat label="Preço base" value={money(Number(t.base_price))} />
-        <Stat label="Ocupação" value={`${t.reserved_seats || pCount}/${t.total_seats}`} />
+        <Stat
+          label="Ocupação"
+          value={
+            (t.financial && typeof t.financial === "object" && (t.financial as any).capacity_mode === "UNLIMITED")
+              ? `${confirmedCount} / Ilimitado`
+              : (t.financial && typeof t.financial === "object" && (t.financial as any).capacity_mode === "ALLOTMENT")
+                ? `${confirmedCount} / ${t.total_seats} (Allotment)`
+                : `${confirmedCount} / ${t.total_seats}`
+          }
+        />
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
@@ -1115,7 +1126,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
 
   const handleCreateBrochure = async () => {
     setCreatingBrochure(true);
-    toast.loading("Criando brochura no Studio...", { id: "brochure-create" });
+    toast.loading("Criando Apresentação da Viagem no Studio...", { id: "brochure-create" });
     try {
       const { data: existingProp } = await supabase
         .from("proposals")
@@ -1124,7 +1135,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         .maybeSingle();
 
       if (existingProp) {
-        toast.success("Redirecionando para a brochura existente...", { id: "brochure-create" });
+        toast.success("Redirecionando para a apresentação existente...", { id: "brochure-create" });
         navigate({
           to: "/agency/$slug/proposals/$id",
           params: { slug: agency.slug, id: existingProp.id },
@@ -1138,7 +1149,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
       const newProp = await createProposal(
         agency.id,
         {
-          title: `Brochura Oficial - ${tour.title}`,
+          title: `Apresentação Oficial - ${tour.title}`,
           destination: tour.destination || undefined,
           pax_adults: 2,
           pax_children: 0,
@@ -1146,7 +1157,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           currency: "BRL",
           travel_start: tour.departure_date || undefined,
           travel_end: tour.return_date || undefined,
-          notes: `Brochura vinculada à excursão em grupo: ${tour.title}.`,
+          notes: `Apresentação vinculada à excursão em grupo: ${tour.title}.`,
           visibility: "agency",
           group_tour_id: tour.id,
         } as any,
@@ -1166,13 +1177,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         cover_image_url: tour.cover_image_url,
       });
 
-      toast.success("Brochura criada! Redirecionando para o Studio...", { id: "brochure-create" });
+      toast.success("Apresentação criada! Redirecionando para o Studio...", { id: "brochure-create" });
       navigate({
         to: "/agency/$slug/proposals/$id",
         params: { slug: agency.slug, id: newProp.id },
       });
     } catch (err: any) {
-      toast.error(`Erro ao criar brochura: ${err.message}`, { id: "brochure-create" });
+      toast.error(`Erro ao criar apresentação: ${err.message}`, { id: "brochure-create" });
     } finally {
       setCreatingBrochure(false);
     }
@@ -1398,13 +1409,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         </div>
       </div>
 
-      {/* Col 3: Brochura Comercial */}
+      {/* Col 3: Apresentação Comercial */}
       <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
         <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
-          Brochura do Studio
+          Apresentação da Viagem
         </h4>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Crie um folheto comercial multipáginas interativo no Proposal Studio para enviar em PDF ou
+          Crie uma apresentação comercial multipáginas interativa no Proposal Studio para enviar em PDF ou
           apresentar online. O sistema preencherá automaticamente todos os dados existentes da
           excursão:
         </p>
@@ -1432,10 +1443,10 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             disabled={creatingBrochure}
             className="flex items-center justify-center gap-2 h-10 w-full rounded-lg bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
           >
-            <Sparkles className="h-4 w-4 text-brand" /> Criar Brochura no Studio
+            <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
           </button>
           <span className="text-[10px] text-muted-foreground block mt-2 text-center">
-            Será gerada uma brochura onde poderá diagramar novos slides e exportar em PDF.
+            Será gerado um material comercial no Studio onde poderá diagramar novos slides e exportar em PDF.
           </span>
         </div>
       </div>
@@ -1444,6 +1455,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
 }
 
 function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () => void }) {
+  const { agency } = useAgency();
   const hotel =
     tour.hotel_details && typeof tour.hotel_details === "object" ? tour.hotel_details : {};
   const promo = tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {};
@@ -1702,6 +1714,31 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
               rows={3}
             />
           </Field>
+
+          <MultiFileUploader
+            label="Galeria de Fotos do Hotel"
+            values={hotel.gallery || []}
+            onChange={async (urls) => {
+              try {
+                const nextHotel = {
+                  ...hotel,
+                  gallery: urls,
+                };
+                const { error } = await supabase
+                  .from("group_tours")
+                  .update({ hotel_details: nextHotel })
+                  .eq("id", tour.id);
+                if (error) throw error;
+                toast.success("Galeria atualizada!");
+                onUpdate();
+              } catch (err: any) {
+                toast.error("Erro ao atualizar galeria: " + err.message);
+              }
+            }}
+            bucket="agency-media"
+            folder={`${agency?.id}/tours/${tour.id}/hotel`}
+            max={8}
+          />
 
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
@@ -2409,6 +2446,16 @@ function EditTour({
   const promoMedia =
     tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {};
 
+  const tourFinancial =
+    tour.financial && typeof tour.financial === "object" ? tour.financial : {};
+
+  const [capacityMode, setCapacityMode] = useState(tourFinancial.capacity_mode || "FIXED");
+  const [capacitySource, setCapacitySource] = useState(tourFinancial.capacity_source || "Veículo");
+  const [blockedCapacity, setBlockedCapacity] = useState(tourFinancial.blocked_capacity ?? 0);
+  const [sellableCapacity, setSellableCapacity] = useState(tourFinancial.sellable_capacity ?? 0);
+  const [overbookingAllowed, setOverbookingAllowed] = useState(!!tourFinancial.overbooking_allowed);
+  const [waitlistEnabled, setWaitlistEnabled] = useState(!!tourFinancial.waitlist_enabled);
+
   const [f, setF] = useState({
     title: tour.title,
     slug: tour.slug,
@@ -2454,6 +2501,16 @@ function EditTour({
       youtube_url: f.youtube_url.trim(),
     };
 
+    const nextFinancial = {
+      ...tourFinancial,
+      capacity_mode: capacityMode,
+      capacity_source: capacitySource,
+      blocked_capacity: Number(blockedCapacity),
+      sellable_capacity: Number(sellableCapacity),
+      overbooking_allowed: overbookingAllowed,
+      waitlist_enabled: waitlistEnabled,
+    };
+
     const { error } = await supabase
       .from("group_tours")
       .update({
@@ -2462,7 +2519,7 @@ function EditTour({
         departure_date: f.departure_date || null,
         return_date: f.return_date || null,
         base_price: Number(f.base_price),
-        total_seats: Number(f.total_seats),
+        total_seats: capacityMode === "UNLIMITED" ? 999999 : Number(f.total_seats),
         cover_image_url: f.cover_image_url || null,
         important_notes: f.important_notes || null,
         destination: f.destination || null,
@@ -2472,6 +2529,7 @@ function EditTour({
         excludes: excludes,
         hotel_details: nextHotelDetails,
         promo_media: nextPromoMedia,
+        financial: nextFinancial,
       })
       .eq("id", tour.id);
     setBusy(false);
@@ -2548,14 +2606,70 @@ function EditTour({
               required
             />
           </Field>
-          <Field label="Vagas (Total)">
-            <Input
-              type="number"
-              value={f.total_seats}
-              onChange={(e) => setF({ ...f, total_seats: e.target.value })}
-              required
-            />
+          <Field label="Tipo de Capacidade">
+            <Select
+              value={capacityMode}
+              onChange={(e) => {
+                const mode = e.target.value;
+                setCapacityMode(mode);
+                if (mode === "UNLIMITED") {
+                  setF({ ...f, total_seats: 999999 });
+                } else if (f.total_seats === 999999) {
+                  setF({ ...f, total_seats: 40 });
+                }
+              }}
+            >
+              <option value="FIXED">Fixo (Ônibus, Van, etc.)</option>
+              <option value="ALLOTMENT">Bloqueio / Allotment (Aéreo, Cruzeiro)</option>
+              <option value="MULTI_RESOURCE">Multi-veículo / Multi-recurso</option>
+              <option value="DYNAMIC">Ajustável / Dinâmica</option>
+              <option value="PROVIDER_CONTROLLED">Controlado pelo Fornecedor</option>
+              <option value="UNLIMITED">Sem limite operacional</option>
+            </Select>
           </Field>
+        </div>
+
+        {capacityMode !== "UNLIMITED" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label={capacityMode === "ALLOTMENT" ? "Lugares Bloqueados" : "Vagas (Total)"}>
+              <Input
+                type="number"
+                value={f.total_seats === 999999 ? "" : f.total_seats}
+                onChange={(e) => setF({ ...f, total_seats: e.target.value })}
+                required
+              />
+            </Field>
+            {capacityMode === "ALLOTMENT" && (
+              <Field label="Vagas Cortesia / Staff">
+                <Input
+                  type="number"
+                  value={blockedCapacity}
+                  onChange={(e) => setBlockedCapacity(Number(e.target.value))}
+                />
+              </Field>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-4 py-2 border-t border-b border-border/40">
+          <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={overbookingAllowed}
+              onChange={(e) => setOverbookingAllowed(e.target.checked)}
+              className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+            />
+            Permitir Overbooking
+          </label>
+          <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={waitlistEnabled}
+              onChange={(e) => setWaitlistEnabled(e.target.checked)}
+              className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+            />
+            Ativar Lista de Espera
+          </label>
         </div>
         <FileUploader
           label="Imagem de Capa (Banner)"

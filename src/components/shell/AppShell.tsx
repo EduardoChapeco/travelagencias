@@ -55,6 +55,7 @@ export function AppShell({
     pathname.includes("/clients") ||
     pathname.includes("/suppliers") ||
     pathname.includes("/group-tours") ||
+    pathname.includes("/rooming-list") ||
     pathname.includes("/bus-layouts") ||
     pathname.includes("/contracts") ||
     pathname.includes("/financial") ||

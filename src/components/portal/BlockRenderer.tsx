@@ -407,7 +407,7 @@ function BoundBlockWrapper({
             month: "short",
             year: "numeric",
           });
-        } else if (dbKey === "price" && typeof val === "number") {
+        } else if ((dbKey === "price" || dbKey === "base_price") && typeof val === "number") {
           val = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val);
         }
 
