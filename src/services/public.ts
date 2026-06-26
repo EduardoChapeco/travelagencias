@@ -276,7 +276,13 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
       .filter((s: any): s is string => !!s);
   }
 
-  return { agency, tour, days, layout, assignedSeats, settings };
+  const { count: confirmedCount } = await supabase
+    .from("group_tour_enrollments")
+    .select("*", { count: "exact", head: true })
+    .eq("group_tour_id", tourId)
+    .eq("status", "confirmed");
+
+  return { agency, tour, days, layout, assignedSeats, settings, confirmedCount: confirmedCount || 0 };
 }
 
 export async function enrollPublicTour(

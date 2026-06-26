@@ -163,7 +163,7 @@ function Page() {
     );
   }
 
-  const { agency, tour: t, days, layout, assignedSeats, settings } = q.data;
+  const { agency, tour: t, days, layout, assignedSeats, settings, confirmedCount } = q.data;
   const seatMap: SeatCell[] =
     layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
 
@@ -373,6 +373,43 @@ function Page() {
                       <span>{new Date(t.return_date).toLocaleDateString("pt-BR")}</span>
                     </>
                   )}
+                  {(() => {
+                    const limit = t.total_seats || 0;
+                    const confirmed = Math.max(assignedSeats.length, confirmedCount || 0);
+                    const remaining = Math.max(0, limit - confirmed);
+                    const isUnlimited = (t.financial && (t.financial as any).capacity_mode === "UNLIMITED") || t.total_seats === 999999;
+                    if (isUnlimited) {
+                      return (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                            Vagas Ilimitadas
+                          </span>
+                        </>
+                      );
+                    }
+                    if (remaining === 0) {
+                      return (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="text-xs bg-rose-500/20 text-rose-350 px-2 py-0.5 rounded-full font-bold">
+                            Esgotado
+                          </span>
+                        </>
+                      );
+                    }
+                    if (remaining <= 5) {
+                      return (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold animate-pulse">
+                            Últimas Vagas ({remaining})
+                          </span>
+                        </>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
             </div>
@@ -468,6 +505,31 @@ function Page() {
                         </div>
                       </div>
                     )}
+
+                  {hotel.gallery && Array.isArray(hotel.gallery) && hotel.gallery.length > 0 && (
+                    <div className="space-y-2 pt-3 border-t border-slate-100">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+                        Galeria de Fotos
+                      </span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {hotel.gallery.map((imgUrl: string, imgIdx: number) => (
+                          <a
+                            key={imgIdx}
+                            href={imgUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 group bg-slate-100 block"
+                          >
+                            <img
+                              src={imgUrl}
+                              alt={`Foto do hotel ${imgIdx + 1}`}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -550,6 +612,49 @@ function Page() {
                   <div className="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider mt-1">
                     Subtotal com taxas inclusas
                   </div>
+                </div>
+
+                {/* Capacidade e Vagas */}
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center space-y-1.5">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
+                    Disponibilidade
+                  </span>
+                  {(t.financial && (t.financial as any).capacity_mode === "UNLIMITED") || t.total_seats === 999999 ? (
+                    <span className="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1">
+                      ● Vagas Ilimitadas
+                    </span>
+                  ) : (() => {
+                    const limit = t.total_seats || 0;
+                    const confirmed = Math.max(assignedSeats.length, confirmedCount || 0);
+                    const remaining = Math.max(0, limit - confirmed);
+                    if (remaining === 0) {
+                      return (t.financial && (t.financial as any).waitlist_enabled) ? (
+                        <span className="text-xs font-bold text-amber-600 flex items-center justify-center gap-1">
+                          ⚠ Vagas Esgotadas (Lista de Espera)
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-red-650 flex items-center justify-center gap-1">
+                          ✕ Vagas Esgotadas
+                        </span>
+                      );
+                    }
+                    return (
+                      <div className="space-y-1">
+                        <strong className="text-xs font-bold text-slate-800 block">
+                          {remaining} {remaining === 1 ? "vaga disponível" : "vagas disponíveis"}
+                        </strong>
+                        <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all"
+                            style={{ width: `${Math.min(100, (confirmed / limit) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-[9px] font-semibold text-slate-500 block font-sans">
+                          {confirmed} de {limit} vagas ocupadas
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Pricing Tiers Selection */}
