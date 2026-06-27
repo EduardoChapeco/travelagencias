@@ -70,7 +70,7 @@ function FinancialSettingsPage() {
     enabled: !!agency,
     queryKey: ["closing-periods", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("monthly_closing_periods")
         .select("*")
         .eq("agency_id", agency!.id)
@@ -95,7 +95,7 @@ function FinancialSettingsPage() {
     }) => {
       if (periodId) {
         // Update existing period
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from("monthly_closing_periods")
           .update({
             status: close ? "closed" : "open",
@@ -105,7 +105,7 @@ function FinancialSettingsPage() {
         if (error) throw error;
       } else {
         // Insert new period control
-        const { error } = await (supabase as any).from("monthly_closing_periods").insert({
+        const { error } = await supabase.from("monthly_closing_periods").insert({
           agency_id: agency!.id,
           year,
           month,
@@ -138,7 +138,7 @@ function FinancialSettingsPage() {
     enabled: !!agency,
     queryKey: ["agency-sellers", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("user_roles")
         .select("user_id, profiles(full_name)")
         .eq("agency_id", agency!.id);
@@ -154,7 +154,7 @@ function FinancialSettingsPage() {
     enabled: !!agency,
     queryKey: ["commission-plans", agency?.id],
     queryFn: async () => {
-      const { data: plansData, error: plansErr } = await (supabase as any)
+      const { data: plansData, error: plansErr } = await supabase
         .from("seller_commission_plans")
         .select("*, seller_profiles:seller_id(full_name)")
         .eq("agency_id", agency!.id);
@@ -165,7 +165,7 @@ function FinancialSettingsPage() {
       // Fetch tiers for each plan
       const resolvedPlans: CommissionPlan[] = [];
       for (const p of plansList) {
-        const { data: tiersData } = await (supabase as any)
+        const { data: tiersData } = await supabase
           .from("seller_commission_tiers")
           .select("*")
           .eq("plan_id", p.id)
@@ -198,7 +198,7 @@ function FinancialSettingsPage() {
       if (!newPlanName || !selectedSeller) throw new Error("Preencha todos os campos.");
 
       // 1. Create plan
-      const { data: newPlan, error: planErr } = await (supabase as any)
+      const { data: newPlan, error: planErr } = await supabase
         .from("seller_commission_plans")
         .insert({
           agency_id: agency!.id,
@@ -214,7 +214,7 @@ function FinancialSettingsPage() {
       if (planErr) throw planErr;
 
       // 2. Create base default tier
-      const { error: tierErr } = await (supabase as any).from("seller_commission_tiers").insert({
+      const { error: tierErr } = await supabase.from("seller_commission_tiers").insert({
         plan_id: newPlan.id,
         minimum_volume: 0,
         maximum_volume: null,
@@ -238,7 +238,7 @@ function FinancialSettingsPage() {
 
   const deletePlan = useMutation({
     mutationFn: async (planId: string) => {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from("seller_commission_plans")
         .delete()
         .eq("id", planId);
@@ -571,7 +571,7 @@ function FinancialSettingsPage() {
                 <Field label="Modo de Escala *">
                   <select
                     value={tierMode}
-                    onChange={(e) => setTierMode(e.target.value as any)}
+                    onChange={(e) => setTierMode(e.target.value as "integral" | "progressive")}
                     className="w-full h-10 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
                     required
                   >

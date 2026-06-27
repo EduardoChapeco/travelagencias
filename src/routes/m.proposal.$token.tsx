@@ -177,7 +177,7 @@ function PublicProposalView() {
       if (error) throw error;
       if (!p) return null;
 
-      const { data: agency } = await (supabase as any)
+      const { data: agency } = await supabase
         .rpc("get_public_agency_by_id", { _id: p.agency_id })
         .maybeSingle();
 

@@ -31,6 +31,7 @@ const API_KEY_SECRET = Deno.env.get("API_KEY_SECRET") || "travelos_default_secre
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 serve(async (req) => {
+  let recordId: string | null = null;
   try {
     // STRICT SECURITY: Only allow invocations from Supabase Database Webhooks (Service Role)
     const authHeader = req.headers.get("Authorization");
@@ -40,6 +41,9 @@ serve(async (req) => {
 
     const payload = await req.json();
     const message = payload.record; // from pg_net trigger (after insert on omnichannel_messages)
+    if (message?.id) {
+      recordId = message.id;
+    }
 
     if (!message || message.direction !== "outbound" || message.status !== "pending") {
       return new Response("Not an outbound pending message", { status: 200 });
@@ -164,15 +168,19 @@ serve(async (req) => {
   } catch (error: any) {
     console.error("Error sending whatsapp message:", error);
     // Mark as failed if possible
-    try {
-      const payload = await req.clone().json();
-      if (payload?.record?.id) {
-        await supabase
+    if (recordId) {
+      try {
+        const { error: updateErr } = await supabase
           .from("omnichannel_messages")
           .update({ status: "failed" })
-          .eq("id", payload.record.id);
+          .eq("id", recordId);
+        if (updateErr) {
+          console.error(`Failed to update message status to failed for ${recordId}:`, updateErr.message);
+        }
+      } catch (err: any) {
+        console.error(`Secondary error updating message status for ${recordId}:`, err.message);
       }
-    } catch (_) {}
+    }
 
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,

@@ -48,7 +48,7 @@ export async function fetchRoomingList(cardId: string): Promise<RoomRecord[]> {
  * Fetch all rooms for a given group tour (normalized table, not JSONB).
  */
 export async function fetchRoomingListByTour(tourId: string): Promise<RoomRecord[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("boarding_rooming_list")
     .select("*")
     .eq("group_tour_id", tourId)

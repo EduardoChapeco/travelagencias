@@ -43,7 +43,7 @@ function DynamicPage() {
   useEffect(() => {
     if (page && agency) {
       const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
-      (supabase as any)
+      supabase
         .from("portal_page_analytics")
         .insert({
           page_id: page.id,
@@ -51,7 +51,7 @@ function DynamicPage() {
           event_type: "view",
           device_type: deviceType,
         })
-        .then(({ error }: any) => {
+        .then(({ error }) => {
           if (error) console.error("Error logging page view:", error.message);
         });
     }

@@ -2506,7 +2506,7 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
         return;
       }
       const { data } = await supabase
-        .from("agency_reviews" as any)
+        .from("agency_reviews")
         .select("*")
         .eq("agency_id", agencyId)
         .eq("status", "approved")
@@ -4341,14 +4341,14 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
     if (!name.trim() || !text.trim() || !agencyId) return;
     setLoading(true);
     try {
-      const { error } = await supabase.from("agency_reviews" as any).insert({
+      const { error } = await supabase.from("agency_reviews").insert({
         agency_id: agencyId,
         author_name: name.trim(),
         author_role: role.trim() || null,
         review_text: text.trim(),
         stars: stars,
         status: "pending",
-      } as any);
+      });
 
       if (error) throw error;
       setDone(true);

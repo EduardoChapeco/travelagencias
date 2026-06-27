@@ -73,59 +73,64 @@ export async function createQuoteRequest(
 }
 
 export async function fetchQuoteRequestDetails(id: string) {
-  const { data: quote, error: quoteErr } = await supabase
-    .from("quote_requests")
-    .select(
-      `
-      *,
-      lead:leads(id, name),
-      client:clients(id, full_name, email, phone)
-    `,
-    )
-    .eq("id", id)
-    .maybeSingle();
+  // Executa todas as consultas em paralelo — nenhum waterfall sequencial
+  // Os cenários são carregados junto com os planos via join nested (P2.1)
+  const [quoteRes, travelersRes, preferencesRes, searchPlansRes] = await Promise.all([
+    supabase
+      .from("quote_requests")
+      .select(
+        `
+        *,
+        lead:leads(id, name),
+        client:clients(id, full_name, email, phone)
+      `,
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("quote_travelers")
+      .select("*")
+      .eq("quote_request_id", id),
+    supabase
+      .from("quote_preferences")
+      .select("*")
+      .eq("quote_request_id", id),
+    // P2.1: Scenarios são embutidos como join nested — sem segundo round-trip
+    supabase
+      .from("quote_search_plans")
+      .select(
+        `
+        *,
+        scenarios:quote_scenarios(*)
+      `,
+      )
+      .eq("quote_request_id", id)
+      .order("created_at", { ascending: false }),
+  ]);
 
-  if (quoteErr) throw quoteErr;
+  if (quoteRes.error) throw quoteRes.error;
+  const quote = quoteRes.data;
   if (!quote) return null;
 
-  // Buscar passageiros
-  const { data: travelers } = await supabase
-    .from("quote_travelers")
-    .select("*")
-    .eq("quote_request_id", id);
+  const travelers = travelersRes.data || [];
+  const preferences = preferencesRes.data || [];
+  const searchPlans = searchPlansRes.data || [];
 
-  // Buscar preferências
-  const { data: preferences } = await supabase
-    .from("quote_preferences")
-    .select("*")
-    .eq("quote_request_id", id);
-
-  // Buscar cenários de busca
-  const { data: searchPlans } = await supabase
-    .from("quote_search_plans")
-    .select("*")
-    .eq("quote_request_id", id)
-    .order("created_at", { ascending: false });
-
-  const activePlan = searchPlans?.[0];
-  let scenarios: any[] = [];
-  if (activePlan) {
-    const { data: scenData } = await supabase
-      .from("quote_scenarios")
-      .select("*")
-      .eq("search_plan_id", activePlan.id)
-      .order("priority", { ascending: false });
-    scenarios = scenData || [];
-  }
+  const activePlan = searchPlans?.[0] ?? null;
+  // Cenários já embarcados no activePlan — sem consulta adicional
+  const scenarios: any[] = (activePlan as any)?.scenarios ?? [];
 
   return {
     ...quote,
-    travelers: travelers || [],
-    preferences: preferences || [],
-    searchPlan: activePlan || null,
+    travelers,
+    preferences,
+    searchPlan: activePlan
+      ? { ...activePlan, scenarios: undefined } // evitar duplicidade no retorno
+      : null,
     scenarios,
   };
 }
+
 
 export async function fetchQuoteRequestsList(agencyId: string) {
   const { data, error } = await supabase
@@ -397,4 +402,37 @@ export async function rejectPackageCandidate(
 
   // 3. Atualizar status do package_candidates para "invalid"
   await supabase.from("package_candidates").update({ status: "invalid" }).eq("id", candidateId);
+
+  // 4. Executar o Decision Learning em segundo plano
+  import("./quotes-learning").then(({ runDecisionLearningAnalysis }) => {
+    runDecisionLearningAnalysis(quoteRequestId, agencyId).then();
+  }).catch((err) => console.error("Erro ao carregar orquestrador de learning:", err));
 }
+
+export async function createQuoteSnapshot(
+  agencyId: string,
+  quoteRequestId: string,
+  snapshotData: any,
+): Promise<void> {
+  const dataStr = JSON.stringify(snapshotData);
+  
+  // Gerar hash SHA-256 nativo
+  const msgBuffer = new TextEncoder().encode(dataStr);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  const { error } = await supabase.from("quote_snapshots").insert({
+    quote_request_id: quoteRequestId,
+    snapshot_type: "proposal",
+    data: snapshotData as any,
+    hash: hashHex,
+    version: 1,
+  });
+
+  if (error) {
+    console.error("Erro ao gravar snapshot de cotação:", error.message);
+    throw error;
+  }
+}
+

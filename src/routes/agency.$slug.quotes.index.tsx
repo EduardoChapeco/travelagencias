@@ -15,6 +15,16 @@ import {
   BookOpen,
   ShieldCheck,
   UserCheck,
+  Zap,
+  Bell,
+  BellOff,
+  CheckCircle2,
+  XCircle,
+  ToggleLeft,
+  ToggleRight,
+  AlertTriangle,
+  TrendingDown,
+  Eye,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -35,6 +45,22 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { fetchQuoteRequestsList, createQuoteRequest } from "@/services/quotes";
 import { fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
 import { ingestKnowledgeDocument } from "@/services/quotes-rag";
+import {
+  fetchAgencyRules,
+  fetchRuleCandidates,
+  approveRuleCandidate,
+  rejectRuleCandidate,
+  toggleRuleStatus,
+  deleteRule,
+} from "@/services/quotes-rules-admin";
+import {
+  fetchWatchProfiles,
+  createWatchProfile,
+  toggleWatchProfileStatus,
+  deleteWatchProfile,
+  fetchPromotionCandidates,
+  updatePromotionStatus,
+} from "@/services/quotes-promotions";
 
 export const Route = createFileRoute("/agency/$slug/quotes/")({
   head: () => ({ meta: [{ title: "Workspace de Cotações · TravelOS" }] }),
@@ -72,7 +98,7 @@ function QuotesIndexPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<"quotes" | "knowledge">("quotes");
+  const [activeTab, setActiveTab] = useState<"quotes" | "knowledge" | "rules" | "promotions">("quotes");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
 
@@ -89,6 +115,15 @@ function QuotesIndexPage() {
   const [knowledgeScope, setKnowledgeScope] = useState<"global" | "agency">("agency");
   const [ingesting, setIngesting] = useState(false);
   const [feedingDefaults, setFeedingDefaults] = useState(false);
+
+  // WatchProfile Creation State
+  const [watcherOpen, setWatcherOpen] = useState(false);
+  const [watcherName, setWatcherName] = useState("");
+  const [watcherOrigin, setWatcherOrigin] = useState("CXP");
+  const [watcherDest, setWatcherDest] = useState("");
+  const [watcherMaxPrice, setWatcherMaxPrice] = useState<number>(3000);
+  const [watcherMinRating, setWatcherMinRating] = useState<number>(3);
+  const [watcherType, setWatcherType] = useState<"flight" | "hotel" | "package">("package");
 
   // Form states for manual additions
   const [clientId, setClientId] = useState("");
@@ -153,6 +188,32 @@ function QuotesIndexPage() {
       if (error) throw error;
       return data || [];
     },
+  });
+
+  // ── Rules & AI tab queries ──────────────────────────────────────────────
+  const { data: agencyRules = [], isLoading: isRulesLoading } = useQuery({
+    enabled: !!agency && activeTab === "rules",
+    queryKey: ["agency-rules", agency?.id],
+    queryFn: () => fetchAgencyRules(agency!.id),
+  });
+
+  const { data: ruleCandidates = [], isLoading: isCandidatesLoading } = useQuery({
+    enabled: !!agency && activeTab === "rules",
+    queryKey: ["rule-candidates", agency?.id],
+    queryFn: () => fetchRuleCandidates(agency!.id),
+  });
+
+  // ── Promotions tab queries ──────────────────────────────────────────────
+  const { data: watchProfiles = [], isLoading: isWatchersLoading } = useQuery({
+    enabled: !!agency && activeTab === "promotions",
+    queryKey: ["watch-profiles", agency?.id],
+    queryFn: () => fetchWatchProfiles(agency!.id),
+  });
+
+  const { data: promotionCandidates = [], isLoading: isPromotionsLoading } = useQuery({
+    enabled: !!agency && activeTab === "promotions",
+    queryKey: ["promotion-candidates", agency?.id],
+    queryFn: () => fetchPromotionCandidates(agency!.id),
   });
 
   const filteredQuotes = quotes.filter((q) => {
@@ -400,16 +461,122 @@ Texto: "${aiText}"`;
     onError: (e: any) => toast.error(e.message),
   });
 
+  // ── Rules mutations ────────────────────────────────────────────────────
+  const approveCandidateMut = useMutation({
+    mutationFn: async (candidateId: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Sessão expirada");
+      return approveRuleCandidate(candidateId, user.id);
+    },
+    onSuccess: () => {
+      toast.success("Sugestão aprovada e regra ativa criada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["rule-candidates", agency?.id] });
+      qc.invalidateQueries({ queryKey: ["agency-rules", agency?.id] });
+    },
+    onError: (e: any) => toast.error("Erro ao aprovar: " + e.message),
+  });
+
+  const rejectCandidateMut = useMutation({
+    mutationFn: async (candidateId: string) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Sessão expirada");
+      return rejectRuleCandidate(candidateId, user.id);
+    },
+    onSuccess: () => {
+      toast.success("Sugestão rejeitada.");
+      qc.invalidateQueries({ queryKey: ["rule-candidates", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const toggleRuleMut = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: "active" | "paused" }) =>
+      toggleRuleStatus(id, status),
+    onSuccess: () => {
+      toast.success("Status da regra atualizado.");
+      qc.invalidateQueries({ queryKey: ["agency-rules", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const deleteRuleMut = useMutation({
+    mutationFn: (id: string) => deleteRule(id),
+    onSuccess: () => {
+      toast.success("Regra excluída.");
+      qc.invalidateQueries({ queryKey: ["agency-rules", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  // ── Watch profile mutations ────────────────────────────────────────────
+  const createWatcherMut = useMutation({
+    mutationFn: async () => {
+      if (!agency) throw new Error("Agência não encontrada");
+      if (!watcherName.trim()) throw new Error("Nome do alerta é obrigatório");
+      if (!watcherDest.trim()) throw new Error("Destino é obrigatório");
+      return createWatchProfile(agency.id, {
+        name: watcherName.trim(),
+        schedule: "daily",
+        criteria: {
+          origin: watcherOrigin || undefined,
+          destination: watcherDest.trim(),
+          maxPrice: watcherMaxPrice > 0 ? watcherMaxPrice : undefined,
+          minHotelRating: watcherMinRating > 0 ? watcherMinRating : undefined,
+          productType: watcherType,
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("Alerta de promoção criado com sucesso!");
+      setWatcherOpen(false);
+      setWatcherName("");
+      setWatcherDest("");
+      setWatcherMaxPrice(3000);
+      setWatcherMinRating(3);
+      setWatcherType("package");
+      qc.invalidateQueries({ queryKey: ["watch-profiles", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const toggleWatcherMut = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: "active" | "paused" }) =>
+      toggleWatchProfileStatus(id, status),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["watch-profiles", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const deleteWatcherMut = useMutation({
+    mutationFn: (id: string) => deleteWatchProfile(id),
+    onSuccess: () => {
+      toast.success("Alerta removido.");
+      qc.invalidateQueries({ queryKey: ["watch-profiles", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const updatePromotionMut = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: "approved" | "dismissed" }) =>
+      updatePromotionStatus(id, status),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["promotion-candidates", agency?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
-          {activeTab === "quotes" ? (
+          {activeTab === "quotes" && (
             <PrimaryButton onClick={() => setNewOpen(true)} className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
               Nova Cotação VibeTour
             </PrimaryButton>
-          ) : (
+          )}
+          {activeTab === "knowledge" && (
             <div className="flex gap-2">
               <GhostButton
                 onClick={handleFeedDefaultGuidelines}
@@ -425,12 +592,18 @@ Texto: "${aiText}"`;
               </GhostButton>
               <PrimaryButton
                 onClick={() => setNewKnowledgeOpen(true)}
-                className="gap-1.5 bg-brand text-brand-foreground hover:bg-brand/90"
+                className="gap-1.5"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Auto-Alimentar Diretriz (IA)
               </PrimaryButton>
             </div>
+          )}
+          {activeTab === "promotions" && (
+            <PrimaryButton onClick={() => setWatcherOpen(true)} className="gap-1.5">
+              <Bell className="h-3.5 w-3.5" />
+              Novo Alerta de Promoção
+            </PrimaryButton>
           )}
         </div>
       </HeaderPortal>
@@ -466,7 +639,45 @@ Texto: "${aiText}"`;
               : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
-          Cérebro Global & RAG (Memória)
+          Cérebro Global &amp; RAG
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab("rules");
+            setSearchQuery("");
+          }}
+          className={`px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "rules"
+              ? "border-brand text-brand"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Zap className="h-3 w-3" />
+          Regras &amp; IA
+          {ruleCandidates.filter((c: any) => c.status === "pending").length > 0 && (
+            <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning/20 px-1 text-[9px] font-bold text-warning">
+              {ruleCandidates.filter((c: any) => c.status === "pending").length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab("promotions");
+            setSearchQuery("");
+          }}
+          className={`px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+            activeTab === "promotions"
+              ? "border-brand text-brand"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Bell className="h-3 w-3" />
+          Monitor de Promoções
+          {promotionCandidates.filter((c: any) => c.status === "new").length > 0 && (
+            <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-success/20 px-1 text-[9px] font-bold text-success">
+              {promotionCandidates.filter((c: any) => c.status === "new").length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -479,7 +690,11 @@ Texto: "${aiText}"`;
             placeholder={
               activeTab === "quotes"
                 ? "Buscar por cliente, lead ou destino..."
-                : "Buscar nas memórias e diretrizes..."
+                : activeTab === "knowledge"
+                ? "Buscar nas memórias e diretrizes..."
+                : activeTab === "rules"
+                ? "Buscar por código ou padrão da regra..."
+                : "Buscar em alertas e promoções..."
             }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -684,9 +899,384 @@ Texto: "${aiText}"`;
             ))}
           </div>
         )}
+
+        {/* ── Tab: Regras & IA ─────────────────────────────────────────────── */}
+        {activeTab === "rules" && (
+          <div className="p-4 md:p-6 space-y-8">
+
+            {/* Sugestões da IA — rule_candidates pendentes */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="h-4 w-4 text-warning" />
+                <h3 className="text-sm font-bold text-foreground">Sugestões da IA para Revisão</h3>
+                {isCandidatesLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+              </div>
+
+              {ruleCandidates.filter((c: any) => c.status === "pending").length === 0 ? (
+                <div className="rounded border border-border bg-surface p-6 text-center">
+                  <CheckCircle2 className="h-8 w-8 text-success mx-auto mb-2 opacity-60" />
+                  <p className="text-xs text-muted-foreground">Nenhuma sugestão pendente de revisão.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">O motor de aprendizado irá sugerir novas regras conforme as cotações forem processadas.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {ruleCandidates
+                    .filter((c: any) => c.status === "pending")
+                    .map((cand: any) => {
+                      const proposed = cand.proposed_rule as any;
+                      return (
+                        <div key={cand.id} className="rounded border border-warning/30 bg-warning/5 p-4 flex flex-col gap-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" />
+                                <span className="text-xs font-bold text-foreground">{cand.pattern}</span>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground">
+                                {cand.sample_size} casos analisados · confiança {Math.round(Number(cand.confidence) * 100)}%
+                              </span>
+                            </div>
+                            <StatusBadge tone="warning">Pendente</StatusBadge>
+                          </div>
+
+                          {proposed?.effect && (
+                            <div className="bg-surface rounded border border-border p-2">
+                              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Efeito Proposto</div>
+                              <pre className="text-[10px] text-foreground whitespace-pre-wrap break-all font-mono">
+                                {JSON.stringify(proposed.effect, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+
+                          {cand.simulated_impact && (
+                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                              <TrendingDown className="h-3 w-3" />
+                              Impacto simulado registrado
+                            </div>
+                          )}
+
+                          <div className="flex gap-2 mt-1">
+                            <button
+                              onClick={() => approveCandidateMut.mutate(cand.id)}
+                              disabled={approveCandidateMut.isPending}
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 rounded border border-success/40 bg-success/10 text-[11px] font-bold text-success hover:bg-success/20 transition-colors disabled:opacity-50"
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              Aprovar e Ativar Regra
+                            </button>
+                            <button
+                              onClick={() => rejectCandidateMut.mutate(cand.id)}
+                              disabled={rejectCandidateMut.isPending}
+                              className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded border border-danger/30 bg-danger/5 text-[11px] font-bold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+                            >
+                              <XCircle className="h-3.5 w-3.5" />
+                              Rejeitar
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+
+            {/* Regras Ativas — decision_rules */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="h-4 w-4 text-brand" />
+                <h3 className="text-sm font-bold text-foreground">Regras Ativas do Motor de Decisão</h3>
+                {isRulesLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+              </div>
+
+              {agencyRules.length === 0 ? (
+                <div className="rounded border border-border bg-surface p-6 text-center">
+                  <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
+                  <p className="text-xs text-muted-foreground">Nenhuma regra ativa ainda.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">Aprove sugestões da IA acima para ativar regras no motor de decisão.</p>
+                </div>
+              ) : (
+                <div className="rounded border border-border overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-surface-alt border-b border-border text-muted-foreground font-semibold">
+                        <th className="px-4 py-3 text-left">Código</th>
+                        <th className="px-4 py-3 text-left">Escopo</th>
+                        <th className="px-4 py-3 text-left">Versão</th>
+                        <th className="px-4 py-3 text-left">Confiança</th>
+                        <th className="px-4 py-3 text-left">Status</th>
+                        <th className="px-4 py-3 text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border bg-surface">
+                      {agencyRules.map((rule: any) => {
+                        const ver = rule.current_version;
+                        return (
+                          <tr key={rule.id} className="hover:bg-surface-alt/50 transition-colors">
+                            <td className="px-4 py-3.5 font-mono text-[11px] text-foreground">{rule.code}</td>
+                            <td className="px-4 py-3.5">
+                              <StatusBadge tone={rule.scope === "global" ? "success" : "info"}>
+                                {rule.scope === "global" ? "Global" : "Agência"}
+                              </StatusBadge>
+                            </td>
+                            <td className="px-4 py-3.5 text-muted-foreground">
+                              {ver ? `v${ver.version}` : "—"}
+                            </td>
+                            <td className="px-4 py-3.5 text-muted-foreground">
+                              {ver ? `${Math.round(Number(ver.confidence) * 100)}%` : "—"}
+                            </td>
+                            <td className="px-4 py-3.5">
+                              <StatusBadge tone={rule.status === "active" ? "success" : "neutral"}>
+                                {rule.status === "active" ? "Ativa" : "Pausada"}
+                              </StatusBadge>
+                            </td>
+                            <td className="px-4 py-3.5 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() =>
+                                    toggleRuleMut.mutate({
+                                      id: rule.id,
+                                      status: rule.status === "active" ? "paused" : "active",
+                                    })
+                                  }
+                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                                  title={rule.status === "active" ? "Pausar regra" : "Ativar regra"}
+                                >
+                                  {rule.status === "active" ? (
+                                    <ToggleRight className="h-3.5 w-3.5 text-success" />
+                                  ) : (
+                                    <ToggleLeft className="h-3.5 w-3.5" />
+                                  )}
+                                  {rule.status === "active" ? "Pausar" : "Ativar"}
+                                </button>
+                                {(rule.scope === "agency" || isSuperAdmin) && (
+                                  <button
+                                    onClick={() => {
+                                      if (confirm("Excluir esta regra permanentemente?")) {
+                                        deleteRuleMut.mutate(rule.id);
+                                      }
+                                    }}
+                                    className="inline-flex h-7 w-7 items-center justify-center rounded border border-border text-danger hover:bg-danger-bg transition-colors"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab: Monitor de Promoções ────────────────────────────────────── */}
+        {activeTab === "promotions" && (
+          <div className="p-4 md:p-6 space-y-8">
+
+            {/* Alertas de Monitoramento — promotion_watch_profiles */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Bell className="h-4 w-4 text-brand" />
+                <h3 className="text-sm font-bold text-foreground">Alertas de Monitoramento Ativos</h3>
+                {isWatchersLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+              </div>
+
+              {watchProfiles.length === 0 ? (
+                <div className="rounded border border-border bg-surface p-6 text-center">
+                  <Bell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
+                  <p className="text-xs text-muted-foreground">Nenhum alerta configurado.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
+                  <PrimaryButton onClick={() => setWatcherOpen(true)} className="gap-1.5">
+                    <Bell className="h-3.5 w-3.5" />
+                    Criar Primeiro Alerta
+                  </PrimaryButton>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {watchProfiles.map((w: any) => {
+                    const crit = w.criteria as any;
+                    return (
+                      <div
+                        key={w.id}
+                        className={`rounded border p-4 flex flex-col justify-between gap-3 transition-colors ${
+                          w.status === "active"
+                            ? "border-brand/30 bg-brand/5"
+                            : "border-border bg-surface opacity-60"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h4 className="text-xs font-bold text-foreground line-clamp-1">{w.name}</h4>
+                            <StatusBadge tone={w.status === "active" ? "success" : "neutral"}>
+                              {w.status === "active" ? "Ativo" : "Pausado"}
+                            </StatusBadge>
+                          </div>
+                          <div className="space-y-1">
+                            {crit?.destination && (
+                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <Compass className="h-3 w-3 shrink-0" />
+                                Destino: <span className="text-foreground font-medium">{crit.destination}</span>
+                              </div>
+                            )}
+                            {crit?.origin && (
+                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <ArrowRight className="h-3 w-3 shrink-0" />
+                                Origem: <span className="text-foreground font-medium">{crit.origin}</span>
+                              </div>
+                            )}
+                            {crit?.maxPrice > 0 && (
+                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <TrendingDown className="h-3 w-3 shrink-0" />
+                                Teto: <span className="text-foreground font-medium">R$ {Number(crit.maxPrice).toLocaleString("pt-BR")}</span>
+                              </div>
+                            )}
+                            {crit?.productType && (
+                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <Eye className="h-3 w-3 shrink-0" />
+                                Tipo: <span className="text-foreground font-medium capitalize">{crit.productType}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 border-t border-border pt-2">
+                          <button
+                            onClick={() =>
+                              toggleWatcherMut.mutate({
+                                id: w.id,
+                                status: w.status === "active" ? "paused" : "active",
+                              })
+                            }
+                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                          >
+                            {w.status === "active" ? (
+                              <><BellOff className="h-3 w-3" /> Pausar</>
+                            ) : (
+                              <><Bell className="h-3 w-3" /> Ativar</>
+                            )}
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm("Remover este alerta de monitoramento?")) {
+                                deleteWatcherMut.mutate(w.id);
+                              }
+                            }}
+                            className="inline-flex h-7 w-7 items-center justify-center rounded border border-border text-danger hover:bg-danger-bg transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Oportunidades Identificadas — promotion_candidates */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingDown className="h-4 w-4 text-success" />
+                <h3 className="text-sm font-bold text-foreground">Oportunidades Identificadas</h3>
+                {isPromotionsLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+              </div>
+
+              {promotionCandidates.length === 0 ? (
+                <div className="rounded border border-border bg-surface p-6 text-center">
+                  <TrendingDown className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
+                  <p className="text-xs text-muted-foreground">Nenhuma oportunidade detectada ainda.</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    O motor reativo detecta automaticamente tarifas abaixo dos limites configurados nos alertas acima durante as buscas GDS.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {promotionCandidates.map((promo: any) => {
+                    const watchProfile = promo.watch_profile as any;
+                    const pkg = promo.package_candidate as any;
+                    return (
+                      <div
+                        key={promo.id}
+                        className={`rounded border p-4 flex flex-col justify-between gap-3 ${
+                          promo.status === "new"
+                            ? "border-success/30 bg-success/5"
+                            : promo.status === "approved"
+                            ? "border-brand/20 bg-surface"
+                            : "border-border bg-surface opacity-50"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div>
+                              <p className="text-xs font-bold text-foreground line-clamp-1">
+                                {pkg?.name || "Pacote identificado"}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">
+                                Alerta: {watchProfile?.name || "—"}
+                              </p>
+                            </div>
+                            <StatusBadge
+                              tone={
+                                promo.status === "new"
+                                  ? "success"
+                                  : promo.status === "approved"
+                                  ? "info"
+                                  : "neutral"
+                              }
+                            >
+                              {promo.status === "new" ? "Nova" : promo.status === "approved" ? "Aprovada" : "Arquivada"}
+                            </StatusBadge>
+                          </div>
+
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="flex-1 bg-surface rounded-full h-1.5 overflow-hidden">
+                              <div
+                                className="h-full bg-success rounded-full"
+                                style={{ width: `${Math.min(100, promo.score)}%` }}
+                              />
+                            </div>
+                            <span className="text-[10px] font-bold text-success">{promo.score}pts</span>
+                          </div>
+
+                          {promo.reason && (
+                            <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-3">
+                              {promo.reason}
+                            </p>
+                          )}
+                        </div>
+
+                        {promo.status === "new" && (
+                          <div className="flex gap-2 border-t border-border pt-2">
+                            <button
+                              onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "approved" })}
+                              className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-success/40 bg-success/10 text-[10px] font-bold text-success hover:bg-success/20 transition-colors"
+                            >
+                              <CheckCircle2 className="h-3 w-3" />
+                              Aprovar
+                            </button>
+                            <button
+                              onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })}
+                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+                            >
+                              <XCircle className="h-3 w-3" />
+                              Ignorar
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* New Quote Sheet */}
+      {/* ── New Quote Sheet ───────────────────────────────────────────────── */}
       {newOpen && (
         <div
           className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs"
@@ -944,6 +1534,122 @@ Texto: "${aiText}"`;
                   </>
                 ) : (
                   "Salvar e Sincronizar Cérebro"
+                )}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── New Watch Profile Sheet ───────────────────────────────────────── */}
+      {watcherOpen && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs"
+          onClick={() => setWatcherOpen(false)}
+        >
+          <div
+            className="h-full w-full max-w-lg overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
+                <div>
+                  <h2 className="ds-h3 text-foreground flex items-center gap-2">
+                    <Bell className="h-5 w-5 text-brand" />
+                    Novo Alerta de Promoção
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Configure os critérios de monitoramento automático de tarifas GDS.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setWatcherOpen(false)}
+                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                >
+                  <Plus className="h-5 w-5 rotate-45" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <Field label="Nome do Alerta">
+                  <Input
+                    placeholder="Ex: Pacotes Baratos para Florianópolis"
+                    value={watcherName}
+                    onChange={(e) => setWatcherName(e.target.value)}
+                  />
+                </Field>
+
+                <Field label="Tipo de Produto Monitorado">
+                  <Select value={watcherType} onChange={(e) => setWatcherType(e.target.value as any)}>
+                    <option value="package">Pacote Completo (Voo + Hotel)</option>
+                    <option value="flight">Apenas Voo</option>
+                    <option value="hotel">Apenas Hotel</option>
+                  </Select>
+                </Field>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Origem (IATA)">
+                    <Input
+                      placeholder="CXP"
+                      value={watcherOrigin}
+                      onChange={(e) => setWatcherOrigin(e.target.value.toUpperCase())}
+                      maxLength={3}
+                    />
+                  </Field>
+
+                  <Field label="Destino Monitorado">
+                    <Input
+                      placeholder="Ex: Florianópolis ou FLN"
+                      value={watcherDest}
+                      onChange={(e) => setWatcherDest(e.target.value)}
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Preço Máximo (R$) — Teto de Tarifa">
+                  <Input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={watcherMaxPrice}
+                    onChange={(e) => setWatcherMaxPrice(Number(e.target.value))}
+                    placeholder="3000"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Tarifas abaixo deste valor serão registradas como oportunidade.
+                  </p>
+                </Field>
+
+                <Field label="Avaliação Mínima do Hotel (estrelas)">
+                  <Select
+                    value={String(watcherMinRating)}
+                    onChange={(e) => setWatcherMinRating(Number(e.target.value))}
+                  >
+                    <option value="0">Qualquer</option>
+                    <option value="3">3 estrelas ou mais</option>
+                    <option value="4">4 estrelas ou mais</option>
+                    <option value="5">5 estrelas</option>
+                  </Select>
+                </Field>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
+              <GhostButton type="button" onClick={() => setWatcherOpen(false)}>
+                Cancelar
+              </GhostButton>
+              <PrimaryButton
+                type="button"
+                onClick={() => createWatcherMut.mutate()}
+                disabled={createWatcherMut.isPending || !watcherName.trim() || !watcherDest.trim()}
+              >
+                {createWatcherMut.isPending ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Criando Alerta...
+                  </>
+                ) : (
+                  "Ativar Monitoramento"
                 )}
               </PrimaryButton>
             </div>

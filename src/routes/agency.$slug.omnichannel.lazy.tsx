@@ -58,6 +58,8 @@ type Session = {
   status: string;
   tags: string[];
   assigned_to: string | null;
+  assignment_status?: string;
+  queue_id?: string | null;
 };
 
 type Message = {
@@ -69,6 +71,7 @@ type Message = {
   media_url: string | null;
   status: string;
   created_at: string;
+  source?: string;
 };
 
 const CHANNEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -119,18 +122,27 @@ function OmnichannelPage() {
   const [contactNotes, setContactNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
 
+  const [mySessionsOnly, setMySessionsOnly] = useState(false);
+
   // ── Sessions ───────────────────────────────────────────────────
   const { data: sessions = [], isLoading: sessionsLoading } = useQuery({
     enabled: !!agency,
-    queryKey: ["omnichannel-sessions", agency?.id, filterChannel],
+    queryKey: ["omnichannel-sessions", agency?.id, filterChannel, mySessionsOnly],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       let q = (supabase.from as any)("omnichannel_sessions")
         .select(
-          "id, channel, contact_id, contact_name, contact_avatar_url, unread_count, last_message_at, last_message_preview, status, tags, assigned_to",
+          "id, channel, contact_id, contact_name, contact_avatar_url, unread_count, last_message_at, last_message_preview, status, tags, assigned_to, assignment_status, queue_id",
         )
         .eq("agency_id", agency!.id)
         .order("last_message_at", { ascending: false, nullsFirst: false });
+        
       if (filterChannel) q = q.eq("channel", filterChannel);
+      if (mySessionsOnly && user) {
+        q = q.eq("assigned_to", user.id);
+      }
+      
       const { data, error } = await q;
       if (error) throw error;
       return (data ?? []) as Session[];
@@ -350,9 +362,8 @@ function OmnichannelPage() {
     enabled: !!selectedId,
     queryKey: ["omnichannel-messages", selectedId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("omnichannel_messages")
-        .select("id, session_id, direction, channel, content, media_url, status, created_at")
+      const { data, error } = await (supabase.from("omnichannel_messages") as any)
+        .select("id, session_id, direction, channel, content, media_url, status, created_at, source")
         .eq("session_id", selectedId!)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -370,6 +381,32 @@ function OmnichannelPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
+
+  // Realtime subscriptions
+  useEffect(() => {
+    if (!agency?.id) return;
+    const channel = supabase.channel(`omni_${agency.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "omnichannel_messages", filter: `agency_id=eq.${agency.id}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["omnichannel-messages", selectedId] });
+          qc.invalidateQueries({ queryKey: ["omnichannel-sessions", agency.id] });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "omnichannel_sessions", filter: `agency_id=eq.${agency.id}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["omnichannel-sessions", agency.id] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [agency?.id, selectedId, qc]);
 
   // Mark session as read when opened
   useEffect(() => {
@@ -645,8 +682,10 @@ function OmnichannelPage() {
                 </button>
               )}
             </div>
-            {/* Channel filter tabs */}
-            <div className="flex gap-1">
+            
+            <div className="flex items-center justify-between pb-1">
+              {/* Channel filter tabs */}
+              <div className="flex gap-1">
               {[null, "whatsapp", "instagram", "email"].map((ch) => (
                 <button
                   key={ch ?? "all"}
@@ -671,6 +710,19 @@ function OmnichannelPage() {
                   )}
                 </button>
               ))}
+              </div>
+              <button
+                onClick={() => setMySessionsOnly(!mySessionsOnly)}
+                className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-medium transition-colors ${
+                  mySessionsOnly
+                    ? "bg-brand/10 text-brand border border-brand/20"
+                    : "text-muted-foreground hover:bg-surface-alt border border-transparent"
+                }`}
+                title="Mostrar apenas os meus atendimentos"
+              >
+                <UserCircle className="h-3 w-3" />
+                Meus
+              </button>
             </div>
           </div>
 
@@ -807,6 +859,36 @@ function OmnichannelPage() {
                   )}
                 </div>
               </div>
+              
+              {/* Assignment Status indicator (P2) */}
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                  selectedSession?.assignment_status === "unassigned" ? "bg-amber-100 text-amber-700 border border-amber-200" :
+                  selectedSession?.assignment_status === "closed" ? "bg-slate-100 text-slate-500 border border-slate-200" :
+                  "bg-brand/10 text-brand border border-brand/20"
+                )}>
+                  {selectedSession?.assignment_status || "Aberto"}
+                </span>
+                
+                {selectedSession?.assignment_status === "unassigned" && (
+                  <button
+                    onClick={async () => {
+                       const { data: { user } } = await supabase.auth.getUser();
+                       if (!user) return;
+                       await supabase.from("omnichannel_sessions").update({
+                         assigned_to: user.id,
+                         assignment_status: "in_progress"
+                       } as any).eq("id", selectedSession.id);
+                       toast.success("Conversa atribuída a você!");
+                    }}
+                    className="text-[10px] font-bold bg-brand text-brand-foreground px-2.5 py-1 rounded-md hover:bg-brand/90 transition-colors"
+                  >
+                    Atribuir a mim
+                  </button>
+                )}
+              </div>
+
               <div className="ml-auto flex items-center gap-2">
                 <button
                   onClick={generateAiSuggestion}
@@ -889,14 +971,21 @@ function OmnichannelPage() {
                     )}
                     <p className="whitespace-pre-wrap">{m.content}</p>
                     <div
-                      className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
+                      className={`mt-1 flex items-center justify-end gap-1 text-[9px] ${
                         m.direction === "outbound"
-                          ? "text-brand-foreground/70"
+                          ? "text-brand-foreground/80"
                           : "text-muted-foreground"
                       }`}
                     >
+                      {m.source === "business_app" && <Phone className="h-2.5 w-2.5" />}
+                      {m.source === "automation" && <Bot className="h-2.5 w-2.5" />}
                       {formatTime(m.created_at)}
-                      {m.direction === "outbound" && <CheckCheck className="h-3 w-3" />}
+                      {m.direction === "outbound" && (
+                        m.status === "read" ? <CheckCheck className="h-3 w-3 text-blue-300" /> :
+                        m.status === "delivered" ? <CheckCheck className="h-3 w-3" /> :
+                        m.status === "failed" ? <AlertTriangle className="h-3 w-3 text-red-500" /> :
+                        <CheckCheck className="h-3 w-3 opacity-50" />
+                      )}
                     </div>
                   </div>
                 </div>

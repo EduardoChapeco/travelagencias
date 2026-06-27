@@ -1,8 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export async function fetchVisaStages(agencyId: string) {
-  await (supabase as any).rpc("seed_default_visa_stages", { p_agency_id: agencyId });
-  const { data, error } = await (supabase as any)
+  await supabase.rpc("seed_default_visa_stages", { p_agency_id: agencyId });
+  const { data, error } = await supabase
     .from("visa_stages")
     .select("*")
     .eq("agency_id", agencyId)
@@ -12,9 +12,9 @@ export async function fetchVisaStages(agencyId: string) {
 }
 
 export async function fetchVisas(agencyId: string) {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("visas")
-    .select("*, client:clients(name)")
+    .select("*, client:clients(full_name)")
     .eq("agency_id", agencyId)
     .is("deleted_at", null);
   if (error) throw error;
@@ -26,7 +26,7 @@ export async function persistVisaMove(payload: {
   toStageId: string;
   reorderedIds: string[];
 }) {
-  const { error } = await (supabase.rpc as any)("persist_visa_move", {
+  const { error } = await supabase.rpc("persist_visa_move", {
     _visa_id: payload.visaId,
     _to_stage_id: payload.toStageId,
     _reordered_ids: payload.reorderedIds,

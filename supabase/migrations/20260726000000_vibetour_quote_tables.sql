@@ -107,7 +107,28 @@ CREATE POLICY quote_scenarios_all ON public.quote_scenarios
     )
   );
 
--- 6. normalized_offers
+-- 6. quote_raw_results
+CREATE TABLE IF NOT EXISTS public.quote_raw_results (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  quote_request_id uuid NOT NULL REFERENCES public.quote_requests(id) ON DELETE CASCADE,
+  scenario_id uuid REFERENCES public.quote_scenarios(id) ON DELETE CASCADE,
+  provider text NOT NULL,
+  endpoint text NOT NULL,
+  raw_payload jsonb NOT NULL,
+  fetched_at timestamptz NOT NULL DEFAULT now(),
+  expires_at timestamptz NOT NULL
+);
+
+ALTER TABLE public.quote_raw_results ENABLE ROW LEVEL SECURITY;
+CREATE POLICY raw_results_all ON public.quote_raw_results
+  FOR ALL TO authenticated USING (
+    EXISTS (
+      SELECT 1 FROM public.quote_requests r
+      WHERE r.id = quote_request_id AND public.is_agency_member(auth.uid(), r.agency_id)
+    )
+  );
+
+-- 6.1 normalized_offers
 CREATE TABLE IF NOT EXISTS public.normalized_offers (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   quote_request_id uuid NOT NULL REFERENCES public.quote_requests(id) ON DELETE CASCADE,
@@ -137,12 +158,14 @@ CREATE TABLE IF NOT EXISTS public.package_candidates (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   quote_request_id uuid NOT NULL REFERENCES public.quote_requests(id) ON DELETE CASCADE,
   name text NOT NULL,
+  description text,
   status text NOT NULL DEFAULT 'draft', -- draft | valid | invalid | shortlisted | approved | selected
   composition_version int NOT NULL DEFAULT 1,
   total_price numeric(12,2) NOT NULL DEFAULT 0.00,
   currency text NOT NULL DEFAULT 'BRL',
   score int NOT NULL DEFAULT 0,
   score_profile_id uuid, -- link opcional a um profile
+  provider_references jsonb DEFAULT '{}'::jsonb,
   warnings jsonb DEFAULT '[]'::jsonb,
   created_at timestamptz NOT NULL DEFAULT now()
 );

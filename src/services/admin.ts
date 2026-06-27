@@ -22,7 +22,7 @@ export async function fetchAdminAgencyDetail(agencyId: string): Promise<AdminAge
     supabase.from("user_roles").select("user_id, role, created_at").eq("agency_id", agencyId),
     supabase.from("trips").select("id", { count: "exact", head: true }).eq("agency_id", agencyId),
     supabase.from("financial_records").select("amount, type, status").eq("agency_id", agencyId),
-    (supabase as any)
+    supabase
       .from("agency_subscriptions")
       .select("*")
       .eq("agency_id", agencyId)
@@ -77,7 +77,7 @@ export async function logAdminAuditEvent(
 
 export async function provisionAgencyTrial(agencyId: string, planId: string): Promise<void> {
   const trialEnds = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
-  const { error } = await (supabase as any).from("agency_subscriptions").upsert({
+  const { error } = await supabase.from("agency_subscriptions").upsert({
     agency_id: agencyId,
     plan_id: planId,
     status: "trialing",
@@ -87,7 +87,7 @@ export async function provisionAgencyTrial(agencyId: string, planId: string): Pr
 }
 
 export async function forceChangeAgencyPlan(agencyId: string, planId: string): Promise<void> {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("agency_subscriptions")
     .update({ plan_id: planId })
     .eq("agency_id", agencyId);
@@ -95,7 +95,7 @@ export async function forceChangeAgencyPlan(agencyId: string, planId: string): P
 }
 
 export async function forceChangeAgencyStatus(agencyId: string, status: string): Promise<void> {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("agency_subscriptions")
     .update({ status })
     .eq("agency_id", agencyId);
@@ -256,7 +256,7 @@ export type AuditLogResponse = {
 };
 
 export async function fetchAdminAuditLogs(filters: AuditLogFilters): Promise<AuditLogResponse> {
-  let query = (supabase as any).from("vw_admin_audit").select("*", { count: "exact" });
+  let query = supabase.from("vw_admin_audit").select("*", { count: "exact" });
 
   if (filters.action) {
     query = query.eq("action", filters.action);
@@ -553,7 +553,7 @@ export async function fetchAdminAgents(filters: {
   page: number;
   pageSize: number;
 }): Promise<{ data: any[]; count: number }> {
-  let query = (supabase as any).from("vw_admin_agents").select("*", { count: "exact" });
+  let query = supabase.from("vw_admin_agents").select("*", { count: "exact" });
 
   if (filters.search) {
     query = query.or(`user_name.ilike.%${filters.search}%,agency_name.ilike.%${filters.search}%`);

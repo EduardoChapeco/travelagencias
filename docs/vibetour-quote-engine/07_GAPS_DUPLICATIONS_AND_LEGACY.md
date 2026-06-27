@@ -4,18 +4,22 @@ Este documento identifica os desvios entre os requisitos do PRD do motor intelig
 
 ---
 
-## 1. Mapeamento de Gaps de Implementação
+## 1. Mapeamento de Gaps de Implementação (Status Atualizado)
 
-Comparando o PRD com o codebase, as seguintes lacunas estruturais foram identificadas:
+Comparando o PRD com o codebase atual:
 
-- **Ausência de Entidade Cotação Isolada**: O TravelOS hoje cria propostas diretamente. Para implementar o motor multicenário, precisamos criar as tabelas `quote_requests`, `quote_search_plans` e `quote_scenarios` sem duplicar a tabela `proposals` (que continuará servindo de contêiner para propostas aprovadas enviadas ao cliente).
-- **Falta de Cache de Resultados de Busca**: Cada pesquisa de hotel/voo consome chamadas do provedor em tempo real. Falta a tabela `quote_raw_results` para atuar como cache temporário com tempo de expiração (`expires_at`), reduzindo latência e taxas de rate limit.
-- **Inexistência do Motor de Regras e Pesos (Scoring)**: O código atual não possui tabelas de controle de regras de destino (`gatewayLocationId`, `minimumArrivalBufferMinutes`) nem perfis de pesos (`score_profiles`).
+- **Entidade Cotação Isolada**: **CONCLUÍDO**. Tabelas `quote_requests`, `quote_search_plans`, `quote_scenarios` foram criadas e integradas com tipos TypeScript.
+- **Cache de Resultados de Busca**: **CONCLUÍDO**. A tabela `quote_raw_results` está operacional atuando como cache de busca.
+- **Motor de Regras e Pesos (Scoring)**: **CONCLUÍDO**. A tabela `score_profiles` e `package_scorecards` estão em funcionamento. Scoring determinístico baseado em companhias, refeições, e conexões logísticas implementado em `quotes-scoring.ts`.
+- **Regras de Negócio Dinâmicas (Decision Rules)**: **LACUNA**. As regras dinâmicas em `decision_rules` e versionamentos (`decision_rule_versions`) ainda não estão implementados.
+- **Decision Learning (Aprendizado de Decisões)**: **LACUNA**. Fluxo de feedback e sugestão automática de regras baseado em decisões anteriores (`decision_records` e `rule_candidates`) pendente.
+- **WatchProfile (Promoções)**: **LACUNA**. Tabelas e jobs de busca automática de promoções terrestres e aéreas (`promotion_watch_profiles` e `promotion_candidates`) pendentes.
+- **Snapshots de Cotação**: **LACUNA**. Travamento imutável de tarifas para conversão final (`quote_snapshots`) pendente.
 
 ---
 
 ## 2. Riscos de Duplicação a Evitar
 
-- **Vouchers e Passageiros**: Não crie novas tabelas para guardar passageiros finais ou itinerários. O motor inteligente deve normalizar os resultados na estrutura existente de vouchers/viagens para garantir compatibilidade com o financeiro e o portal do cliente.
-- **Interface do Chat**: Não crie uma nova caixa de diálogo de chat agêntico. O assistente de cotações deve ser incorporado no ActionRegistry do chat omnichannel já integrado.
-- **OCR de Documentos**: O motor de leitura inteligente via IA (`processOcrFile`) já está implementado e deve ser mantido como o adapter padrão para importações manuais de arquivos de imagem/PDF.
+- **Vouchers e Passageiros**: Não crie novas tabelas para guardar passageiros finais ou itinerários. O motor inteligente normaliza os resultados na estrutura existente de vouchers/viagens para garantir compatibilidade com o financeiro e o portal do cliente.
+- **Interface do Chat**: Não crie uma nova caixa de diálogo de chat agêntico. O assistente de cotações está incorporado no ActionRegistry do chat omnichannel já integrado.
+- **OCR de Documentos**: O motor de leitura inteligente via IA (`processOcrFile`) está implementado e é mantido como o conector canônico para vouchers e faturas.

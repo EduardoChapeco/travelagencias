@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/public/sitemap/$agency_slug")({
           const { agency_slug } = params;
 
           // 1. Fetch agency
-          const { data: agency } = await (supabase as any)
+          const { data: agency } = await supabase
             .rpc("get_public_agency_by_slug", { _slug: agency_slug })
             .maybeSingle();
 

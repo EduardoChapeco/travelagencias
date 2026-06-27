@@ -38,13 +38,13 @@ export async function fetchPortalPage(pageId: string): Promise<PageRow> {
 }
 
 export async function fetchPortalPageVersions(pageId: string): Promise<PageVersionRow[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("portal_page_versions")
     .select("*")
     .eq("page_id", pageId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return data as PageVersionRow[];
+  return data as unknown as PageVersionRow[];
 }
 
 export async function savePortalPageDraft(
@@ -113,12 +113,12 @@ export async function savePortalPageDraft(
 }
 
 export async function publishPortalPage(pageId: string): Promise<void> {
-  const { error } = await (supabase as any).rpc("publish_portal_page", { p_page_id: pageId });
+  const { error } = await supabase.rpc("publish_portal_page", { p_page_id: pageId });
   if (error) throw new Error(error.message);
 }
 
 export async function revertPortalPageVersion(pageId: string, versionId: string): Promise<void> {
-  const { error } = await (supabase as any).rpc("revert_portal_page", {
+  const { error } = await supabase.rpc("revert_portal_page", {
     p_page_id: pageId,
     p_version_id: versionId,
   });

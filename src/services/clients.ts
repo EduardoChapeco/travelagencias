@@ -117,7 +117,7 @@ export async function fetchClientTrips(clientId: string): Promise<ClientTrip[]> 
 export async function fetchClientLegalAcceptances(
   clientId: string,
 ): Promise<ClientLegalAcceptance[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("legal_acceptances")
     .select("id, accepted_at, context, document_id")
     .eq("client_id", clientId)

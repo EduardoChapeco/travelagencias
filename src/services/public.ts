@@ -367,8 +367,7 @@ export async function fetchKbArticle(agencySlug: string, articleSlug: string) {
     .maybeSingle();
 
   if (article) {
-    // fire-and-forget using as any since increment_ka_views is not in typed RPCs yet
-    (supabase as any).rpc("increment_ka_views", { p_article_id: article.id }).then();
+    supabase.rpc("increment_ka_views", { p_article_id: article.id }).then();
   }
 
   return { agency, article };
@@ -398,8 +397,7 @@ export async function fetchPublicBlogPost(agencySlug: string, postSlug: string) 
     .maybeSingle();
 
   if (post) {
-    // fire-and-forget using as any since increment_post_views is not in typed RPCs yet
-    (supabase as any).rpc("increment_post_views", { p_post_id: post.id }).then();
+    supabase.rpc("increment_post_views", { p_post_id: post.id }).then();
   }
 
   let related: any[] = [];
@@ -449,25 +447,7 @@ export async function verifyContract(serial: string) {
   return (data as any[])?.[0] ?? null;
 }
 
-// ─── Corporate Approval ──────────────────────────────────────────────────────
-export async function fetchCorporateApprovalRequest(token: string) {
-  const { data, error } = await (supabase as any)
-    .from("corporate_approval_requests")
-    .select("*, trip:trips(code, destination, travel_start, travel_end, total_sale, currency)")
-    .eq("token", token)
-    .maybeSingle();
-  if (error) throw error;
-  return data;
-}
-
-export async function submitCorporateApproval(token: string, approved: boolean, notes?: string) {
-  const { error } = await (supabase as any).rpc("process_corporate_approval", {
-    _token: token,
-    _approved: approved,
-    _notes: notes ?? null,
-  });
-  if (error) throw error;
-}
+// ─── Corporate Approval (Legacy placeholder removed) ─────────────────────────
 
 // ─── Corporate RFP (direct table flow) ───────────────────────────────────────
 export async function fetchCorporateRfp(token: string) {
@@ -486,10 +466,10 @@ export async function updateCorporateRfpStatus(
   reason?: string,
   approvedBy?: string,
 ) {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("corporate_rfps")
     .update({
-      status,
+      status: status as any,
       rejection_reason: reason || null,
       approved_at: status === "approved" ? new Date().toISOString() : null,
       approved_by: approvedBy ?? null,

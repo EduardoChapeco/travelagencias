@@ -315,13 +315,13 @@ export async function addLeadActivity(payload: {
   metadata?: any;
 }) {
   const user = (await supabase.auth.getUser()).data.user;
-  const { error } = await (supabase as any).from("lead_activities").insert({
+  const { error } = await supabase.from("lead_activities").insert({
     lead_id: payload.leadId,
     agency_id: payload.agencyId,
     author_id: user?.id ?? null,
-    type: payload.type,
+    type: payload.type as any,
     content: payload.content,
-    metadata: payload.metadata,
+    metadata: payload.metadata || {},
   });
   if (error) throw error;
 }
@@ -450,21 +450,21 @@ export async function createLeadMeeting(payload: any): Promise<LeadMeeting> {
 
 export async function deleteLeadMeeting(meetingId: string): Promise<void> {
   const { error } = await supabase
-    .from("lead_meetings" as any)
+    .from("lead_meetings")
     .delete()
     .eq("id", meetingId);
   if (error) throw error;
 }
 export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<void> {
-  const { data: meeting } = await (supabase as any)
+  const { data: meeting } = await supabase
     .from("lead_meetings")
     .select("agency_id, title, description, scheduled_at, duration_minutes")
     .eq("id", meetingId)
     .single();
 
-  if (!meeting) throw new Error("Compromisso não encontrado");
+  if (!meeting || !meeting.agency_id) throw new Error("Compromisso não encontrado ou sem agência associada");
 
-  const { data: apiKeys } = await (supabase as any)
+  const { data: apiKeys } = await supabase
     .from("api_keys")
     .select("key_value")
     .eq("agency_id", meeting.agency_id)
@@ -479,7 +479,7 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
 
   const googleEventId = `g_cal_${Math.random().toString(36).substring(2)}`;
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("lead_meetings")
     .update({ google_event_id: googleEventId, invite_sent: true })
     .eq("id", meetingId);

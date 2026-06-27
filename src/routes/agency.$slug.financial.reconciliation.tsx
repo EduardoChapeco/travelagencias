@@ -74,7 +74,7 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["pending-receipts", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("payment_installments")
         .select("*, payment_plans(*, trips(*, clients(*)))")
         .eq("receipt_status", "pending")
@@ -117,7 +117,7 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["registers-reconciliation", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("cash_registers")
         .select("*")
         .eq("is_active", true);
@@ -130,7 +130,7 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["active-sessions-reconciliation", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("cash_sessions")
         .select("*")
         .eq("status", "open");
@@ -161,7 +161,7 @@ function ReconciliationPage() {
         if (!target) throw new Error("Recibo não localizado");
 
         // DB Update
-        const { error: piErr } = await (supabase as any)
+        const { error: piErr } = await supabase
           .from("payment_installments")
           .update({
             status: "paid",
@@ -173,9 +173,9 @@ function ReconciliationPage() {
         if (piErr) throw piErr;
 
         // DB Transaction Register entry
-        const { error: txErr } = await (supabase as any).from("financial_transactions").insert({
+        const { error: txErr } = await supabase.from("cash_transactions").insert({
           agency_id: agency!.id,
-          cash_register_id: regId || null,
+          cash_register_id: regId,
           cash_session_id: sessId || null,
           amount: target.amount,
           type: "receipt",
@@ -206,7 +206,7 @@ function ReconciliationPage() {
     mutationFn: async ({ receiptId, reason }: { receiptId: string; reason: string }) => {
       setActionBusy(true);
       try {
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from("payment_installments")
           .update({
             receipt_status: "rejected",

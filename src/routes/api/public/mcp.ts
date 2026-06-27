@@ -118,7 +118,7 @@ export const Route = createFileRoute("/api/public/mcp")({
                   result: { content: [{ type: "text", text: "Agency not found." }] },
                 });
 
-              let q = (supabase as any)
+              let q = supabase
                 .from("knowledge_articles")
                 .select("title, slug, content")
                 .eq("agency_id", agency.id)

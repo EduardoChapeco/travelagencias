@@ -290,7 +290,7 @@ function Page() {
       }
 
       // 3. Obter cadeia de auditoria blockchain
-      const { data: auditChain } = await (supabase as any).rpc("public_audit_chain_by_token", {
+      const { data: auditChain } = await supabase.rpc("public_audit_chain_by_token", {
         _token: token,
       });
 

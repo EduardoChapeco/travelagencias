@@ -130,7 +130,7 @@ function CashPage() {
     enabled: !!agency,
     queryKey: ["cash-registers", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("cash_registers")
         .select("*")
         .eq("agency_id", agency!.id)
@@ -156,7 +156,7 @@ function CashPage() {
     enabled: !!activeReg,
     queryKey: ["cash-session-active", activeReg?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("cash_sessions")
         .select("*")
         .eq("cash_register_id", activeReg!.id)
@@ -179,7 +179,7 @@ function CashPage() {
       activeReg?.type === "physical" ? activeSession?.id : activeReg?.id,
     ],
     queryFn: async () => {
-      let q = (supabase as any)
+      let q = supabase
         .from("cash_transactions")
         .select("*")
         .eq("cash_register_id", activeReg!.id)
@@ -228,11 +228,11 @@ function CashPage() {
 
   const openSession = useMutation({
     mutationFn: async (data: { openingBalance: number; notes?: string }) => {
-      const { error } = await (supabase as any).rpc("open_cash_session", {
+      const { error } = await supabase.rpc("open_cash_session", {
         p_register_id: activeReg!.id,
         p_agency_id: agency!.id,
         p_opening_balance: data.openingBalance,
-        p_notes: data.notes || null,
+        p_notes: data.notes || undefined,
       });
       if (error) throw error;
     },
@@ -246,10 +246,10 @@ function CashPage() {
 
   const closeSession = useMutation({
     mutationFn: async (data: { reportedBalance: number; notes?: string }) => {
-      const { error } = await (supabase as any).rpc("close_cash_session", {
+      const { error } = await supabase.rpc("close_cash_session", {
         p_session_id: activeSession!.id,
         p_reported_balance: data.reportedBalance,
-        p_notes: data.notes || null,
+        p_notes: data.notes || undefined,
       });
       if (error) throw error;
     },
@@ -269,7 +269,7 @@ function CashPage() {
         type: CashTransaction["type"];
       },
     ) => {
-      const { error } = await (supabase as any).from("cash_transactions").insert({
+      const { error } = await supabase.from("cash_transactions").insert({
         cash_register_id: activeReg!.id,
         cash_session_id: activeReg!.type === "physical" ? (activeSession?.id ?? null) : null,
         agency_id: agency!.id,
@@ -294,7 +294,7 @@ function CashPage() {
 
   const createRegister = useMutation({
     mutationFn: async (data: { name: string; type: "physical" | "bank_account" }) => {
-      const { error } = await (supabase as any).from("cash_registers").insert({
+      const { error } = await supabase.from("cash_registers").insert({
         agency_id: agency!.id,
         name: data.name,
         type: data.type,
@@ -878,9 +878,9 @@ function TransactionForm({
     enabled: isVale && !!agencyId,
     queryKey: ["agency-team-select", agencyId],
     queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from("agency_users")
-        .select("user_id, profiles:user_id(id, full_name)")
+      const { data } = await supabase
+        .from("user_roles")
+        .select("user_id, profiles(id, full_name)")
         .eq("agency_id", agencyId);
       return (data || []).map((au: any) => ({
         value: au.user_id,

@@ -96,7 +96,7 @@ function HomePage() {
   useEffect(() => {
     if (homePage && agency) {
       const deviceType = /iPad|iPhone|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
-      (supabase as any)
+      supabase
         .from("portal_page_analytics")
         .insert({
           page_id: homePage.id,
@@ -104,7 +104,7 @@ function HomePage() {
           event_type: "view",
           device_type: deviceType,
         })
-        .then(({ error }: any) => {
+        .then(({ error }) => {
           if (error) console.error("Error logging home view:", error.message);
         });
     }
@@ -250,27 +250,7 @@ function HomePage() {
         </section>
       )}
 
-      {/* ── STATS STRIP ───────────────────────────────────────────── */}
-      {tours.length > 0 && (
-        <div className="border-y border-border py-6 mb-20">
-          <div className="mx-auto max-w-[1240px] px-6">
-            <div className="grid grid-cols-3 divide-x divide-border text-center">
-              <div className="px-4">
-                <div className="ds-h2 text-foreground">{tours.length}+</div>
-                <div className="ds-label-caps text-muted-foreground mt-1">Roteiros</div>
-              </div>
-              <div className="px-4">
-                <div className="ds-h2 text-foreground">100%</div>
-                <div className="ds-label-caps text-muted-foreground mt-1">Satisfação</div>
-              </div>
-              <div className="px-4">
-                <div className="ds-h2 text-foreground">24h</div>
-                <div className="ds-label-caps text-muted-foreground mt-1">Suporte</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       <main className="space-y-20 pb-20">
         {/* ── TOURS GRID ──────────────────────────────────────────── */}

@@ -21,22 +21,30 @@ Derivada da definição estática do Supabase, a tabela canônica `proposals` po
 - `subtotal`: `NUMERIC` (Soma dos componentes brutos)
 - `discount`: `NUMERIC` (Descontos aplicados)
 - `total`: `NUMERIC` (Valor final de faturamento)
-- `pix_discount_percent`: `NUMERIC` (Desconto condicional para pagamento via PIX)
-- `installments_card`: `INTEGER` (Máximo de parcelas no cartão)
-- `installments_boleto`: `INTEGER` (Máximo de parcelas no boleto)
 - `status`: `proposal_status` (Enum: `draft`, `sent`, `accepted`, `declined`, `expired`)
 - **Componentes em formato JSONB**:
-  - `flights`: JSON contendo a lista de trechos aéreos (companhia, voo, origem, destino, datas, bagagem, preço).
-  - `hotels`: JSON contendo acomodações (nome, check-in, check-out, regime, quartos, preço).
-  - `transfers`: JSON contendo serviços de traslados (veículo, datas, tipo, preço).
-  - `tours`: JSON contendo passeios locais (passeio, datas, comissão, preço).
-  - `itinerary`: JSON contendo o cronograma diário da viagem.
-  - `includes`/`excludes`: Arrays de texto com o que está incluso/excluso na tarifa.
-  - `insurance`: JSON com as apólices e coberturas contratadas.
+  - `flights`, `hotels`, `transfers`, `tours`, `itinerary`, `includes`, `excludes`, `insurance`
 
 ---
 
-## 2. Relações Canônicas
+## 2. Tabelas do Motor Inteligente VibeTour (Fase Core Aplicada)
+
+As seguintes tabelas foram implementadas e mapeadas em `types.ts`:
+
+- **`quote_requests`**: Armazena as intenções de viagem normalizadas (`normalized_intent`) capturadas da IA.
+- **`quote_travelers`**: Armazena os passageiros e faixas etárias associados à cotação.
+- **`quote_preferences`**: Parâmetros de preferência do cliente (filtros rígidos vs. soft constraints).
+- **`quote_search_plans` / `quote_scenarios`**: Versionamento e listagem de cenários concorrentes de busca.
+- **`quote_raw_results`**: Cache de buscas temporárias dos provedores.
+- **`normalized_offers`**: Detalhes normalizados de passagens aéreas, hotéis, traslados e passeios.
+- **`package_candidates` / `package_candidate_components`**: Combinações de componentes que formam um pacote cotado.
+- **`package_scorecards`**: Detalhamento matemático de bônus, penalidades e nota final do candidato.
+- **`score_profiles`**: Definição de pesos das dimensões de conforto, logística e custo-benefício.
+- **`simulation_runs` / `simulation_results`**: Histórico e resultados de simulações com personas.
+
+---
+
+## 3. Relações Canônicas
 
 - **proposals → leads**: Uma cotação pode nascer a partir de uma oportunidade de venda (`lead_id`) no CRM do TravelOS.
 - **proposals → clients**: Uma proposta aceita vincula-se ao cadastro oficial do cliente (`client_id`).
@@ -44,7 +52,8 @@ Derivada da definição estática do Supabase, a tabela canônica `proposals` po
 
 ---
 
-## 3. Classificação e Lacunas estruturais
+## 4. Classificação e Lacunas estruturais
 
-- **Tabela de Cotações Avançadas/Cenários**: **Ausente**. Não existem tabelas como `quote_requests`, `quote_scenarios`, ou `normalized_offers`.
-- **Versionamento**: **Incompleto**. Não há rastreabilidade física de versões anteriores da mesma cotação caso o agente modifique as informações (sobrescreve os campos).
+- **Tabelas Operacionais do Core**: **REAL PONTA A PONTA**. Todas as tabelas descritas no item 2 estão físicas e integradas ao ORM.
+- **Versionamento de Propostas**: **Incompleto**. Não há rastreabilidade física de versões anteriores da mesma cotação caso o agente modifique as informações (sobrescreve os campos).
+- **Learning & Rules**: **Ausente**. As tabelas de aprendizado (`decision_rules`, `decision_records`, `rule_candidates`) ainda não existem no banco de dados.

@@ -1,6 +1,3 @@
-import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   Compass,
@@ -23,7 +20,12 @@ import {
   ChevronRight,
   HelpCircle,
   RefreshCw,
+  ShieldCheck,
+  Sliders,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -47,6 +49,7 @@ import {
   fetchPackageCandidates,
   fetchNormalizedOffersForQuote,
   rejectPackageCandidate,
+  createQuoteSnapshot,
 } from "@/services/quotes";
 import { scorePackageCandidate } from "@/services/quotes-scoring";
 import { createProposal } from "@/services/proposals";
@@ -73,6 +76,88 @@ function QuoteDetailWorkspacePage() {
   const [rightTab, setRightTab] = useState<"matrix" | "simulation">("matrix");
   const [selectedResult, setSelectedResult] = useState<any | null>(null);
   const [simulating, setSimulating] = useState(false);
+
+  // States para o painel de Revisar Regras e Pesos (P1/P2)
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [comfortWeight, setComfortWeight] = useState(40);
+  const [priceWeight, setPriceWeight] = useState(40);
+  const [logisticsWeight, setLogisticsWeight] = useState(20);
+
+  // Buscar perfil de score ativo no banco
+  const { data: activeProfile, refetch: refetchProfile } = useQuery({
+    enabled: !!agency,
+    queryKey: ["score-profile", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("score_profiles")
+        .select("*")
+        .eq("agency_id", agency!.id)
+        .eq("status", "active")
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Sincronizar pesos locais com o banco
+  useEffect(() => {
+    if (activeProfile?.weights) {
+      const w = activeProfile.weights as any;
+      setComfortWeight(w.comfort !== undefined ? Math.round(w.comfort * 100) : 40);
+      setPriceWeight(w.price !== undefined ? Math.round(w.price * 100) : 40);
+      setLogisticsWeight(w.logistics !== undefined ? Math.round(w.logistics * 100) : 20);
+    }
+  }, [activeProfile]);
+
+  // Salvar pesos e re-pontuar alternativas em tempo real
+  const saveRulesMut = useMutation({
+    mutationFn: async () => {
+      if (!agency) return;
+      
+      const updatedWeights = {
+        comfort: comfortWeight / 100,
+        price: priceWeight / 100,
+        logistics: logisticsWeight / 100
+      };
+      
+      if (activeProfile) {
+        const { error } = await supabase
+          .from("score_profiles")
+          .update({ weights: updatedWeights })
+          .eq("id", activeProfile.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("score_profiles")
+          .insert({
+            agency_id: agency.id,
+            name: "Perfil Personalizado",
+            status: "active",
+            scope: "agency",
+            weights: updatedWeights,
+            constraints: {},
+            version: 1
+          });
+        if (error) throw error;
+      }
+      
+      // Re-pontuar os candidatos de forma reativa
+      if (candidates.length > 0) {
+        toast.loading("Re-calculando notas logísticas...", { id: "rescore" });
+        for (const cand of candidates) {
+          await scorePackageCandidate(cand.id);
+        }
+        toast.success("Notas atualizadas em tempo real!", { id: "rescore" });
+      }
+    },
+    onSuccess: () => {
+      toast.success("Regras e pesos de scoring atualizados com sucesso!");
+      refetchProfile();
+      qc.invalidateQueries({ queryKey: ["quote-candidates", id] });
+      setRulesOpen(false);
+    },
+    onError: (e: any) => toast.error(e.message)
+  });
 
   // 1. Fetch Quote Details
   const { data: quote, isLoading: isQuoteLoading } = useQuery({
@@ -222,6 +307,8 @@ function QuoteDetailWorkspacePage() {
 
       // b. Combinar os primeiros hotéis com voos e criar candidatos
       let createdCount = 0;
+      const createdIds: string[] = [];
+      
       for (let i = 0; i < Math.min(hotels.length, 3); i++) {
         for (let j = 0; j < Math.min(flights.length, 2); j++) {
           const hotelOffer = hotels[i];
@@ -240,8 +327,15 @@ function QuoteDetailWorkspacePage() {
 
           // Calcular score determinístico imediatamente
           await scorePackageCandidate(candidateId);
+          createdIds.push(candidateId);
           createdCount++;
         }
+      }
+
+      // Acionar motor de promoções de forma reativa e real
+      if (agency?.id && createdIds.length > 0) {
+        const { checkPackagesForPromotions } = await import("@/services/quotes-promotions");
+        await checkPackagesForPromotions(agency.id, id, createdIds);
       }
 
       toast.success(`${createdCount} alternativas de pacotes geradas e qualificadas com sucesso!`);
@@ -281,15 +375,16 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       });
 
       if (error) throw error;
-      setAiExplanations((prev) => ({ ...prev, [candidateId]: data?.result || "" }));
+      setAiExplanations((prev: Record<string, string>) => ({ ...prev, [candidateId]: data?.result || "" }));
     } catch (e: any) {
+      console.error("Erro ao gerar explicação por IA:", e);
       toast.error("Erro ao gerar explicação por IA");
     } finally {
       setExplaining(null);
     }
   }
 
-  // 7. Convert Candidate to Proposal Mutation
+  // 7. Convert Candidate to Proposal Mutation (Atomic & Transaction-safe via RPC)
   const convertMut = useMutation({
     mutationFn: async (cand: any) => {
       if (!agency || !quote) throw new Error("Parâmetros inválidos");
@@ -345,40 +440,82 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
       const intent = quote.normalized_intent as any;
 
-      // Criar a proposta canonical
-      const newProposal = await createProposal(agency.id, {
-        title: `Proposta Inteligente: ${cand.name}`,
-        destination: intent?.destinations?.[0]?.name || "",
-        client_id: quote.client_id || undefined,
-        lead_id: quote.lead_id || undefined,
-        travel_start: intent?.dateWindow?.start,
-        travel_end: intent?.dateWindow?.end,
-        pax_adults: intent?.travelers?.adults || 2,
-        pax_children: intent?.travelers?.children || 0,
-        pax_infants: 0,
-        currency: "BRL",
-        valid_until: new Date(Date.now() + 3 * 86400000).toISOString().split("T")[0],
-        notes: `Gerado automaticamente via Motor VibeTour. Pontuação Logística: ${cand.score}/100.`,
+      // Obter ID do usuário autenticado para passar como owner_id
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Usuário não autenticado");
+
+      // Gravar o snapshot congelado da cotação no banco
+      const snapshotData = {
+        quote_request: quote,
+        selected_candidate: cand,
+        mapped_flights: mappedFlights,
+        mapped_hotels: mappedHotels,
+        mapped_transfers: mappedTransfers,
+        intent
+      };
+
+      if (agency?.id) {
+        await createQuoteSnapshot(agency.id, id, snapshotData);
+      }
+
+      // Invocar a transação atômica RPC no banco
+      const { data: proposalId, error: rpcErr } = await supabase.rpc("convert_quote_to_proposal", {
+        p_quote_request_id: id,
+        p_proposal_payload: {
+          title: `Proposta Inteligente: ${cand.name}`,
+          destination: intent?.destinations?.[0]?.name || "",
+          client_id: quote.client_id || null,
+          lead_id: quote.lead_id || null,
+          travel_start: intent?.dateWindow?.start || null,
+          travel_end: intent?.dateWindow?.end || null,
+          pax_adults: intent?.travelers?.adults || 2,
+          pax_children: intent?.travelers?.children || 0,
+          pax_infants: 0,
+          currency: "BRL",
+          valid_until: new Date(Date.now() + 3 * 86400000).toISOString().split("T")[0],
+          notes: `Gerado automaticamente via Motor VibeTour. Pontuação Logística: ${cand.score}/100.`,
+          flights: mappedFlights,
+          hotels: mappedHotels,
+          transfers: mappedTransfers,
+          total: Number(cand.total_price),
+        },
+        p_owner_id: user.id
       });
 
-      // Atualizar a proposta recém-criada com os voos e hotéis mapeados
-      await supabase
-        .from("proposals")
-        .update({
-          flights: mappedFlights as any,
-          hotels: mappedHotels as any,
-          transfers: mappedTransfers as any,
-          total: Number(cand.total_price),
-        })
-        .eq("id", newProposal.id);
+      if (rpcErr) throw new Error(rpcErr.message);
 
-      // Marcar o status da cotação como completed
-      await supabase.from("quote_requests").update({ status: "completed" }).eq("id", id);
-
-      return newProposal.id;
+      return proposalId as string;
     },
-    onSuccess: (proposalId) => {
+    onSuccess: async (proposalId: string, cand: any) => {
       toast.success("Cotação convertida em proposta com sucesso!");
+
+      try {
+        const { data: allCandidates } = await supabase
+          .from("package_candidates")
+          .select("id")
+          .eq("quote_request_id", id);
+          
+        const sentPackages = allCandidates?.map((c) => c.id) || [];
+        const rejectedPackages = sentPackages.filter((pid) => pid !== cand.id);
+
+        await supabase.from("decision_records").insert({
+          quote_request_id: id,
+          selected_package_id: cand.id,
+          sent_packages: sentPackages as any,
+          rejected_packages: rejectedPackages as any,
+          decision_source: "manual",
+          reason: "Conversão de cenário de cotação para proposta",
+          outcome: "accepted",
+        });
+
+        if (agency?.id) {
+          const { runDecisionLearningAnalysis } = await import("@/services/quotes-learning");
+          runDecisionLearningAnalysis(id, agency.id).then();
+        }
+      } catch (err) {
+        console.error("Erro ao registrar feedback de decisão:", err);
+      }
+
       navigate({ to: `/agency/${slug}/proposals/${proposalId}` });
     },
     onError: (e: any) => toast.error(e.message),
@@ -463,6 +600,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             <ArrowLeft className="h-3.5 w-3.5" />
             Cotações
           </Link>
+          
+          <GhostButton onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border border-border">
+            <ShieldCheck className="h-3.5 w-3.5 text-brand animate-pulse" />
+            Revisar Regras
+          </GhostButton>
+
           <PrimaryButton onClick={handleAutoPackage} disabled={packaging} className="gap-1.5">
             {packaging ? (
               <>
@@ -691,7 +834,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 </div>
               ) : (
                 candidates.map((cand: any) => {
-                  const card = cand.scorecard;
+                  const card = Array.isArray(cand.scorecard) ? cand.scorecard[0] : cand.scorecard;
                   const hasWarnings = cand.warnings && cand.warnings.length > 0;
 
                   return (
@@ -1122,6 +1265,138 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           )}
         </div>
       </div>
+
+      {/* ── SHEET: REVISAR REGRAS E PESOS (P1/P2) ─────────────────────────── */}
+      {rulesOpen && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-overlay/50 backdrop-blur-xs"
+          onClick={() => setRulesOpen(false)}
+        >
+          <div
+            className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
+                <div>
+                  <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Sliders className="h-4 w-4 text-brand" />
+                    Revisar Regras e Pesos de Scoring
+                  </h2>
+                  <p className="text-[10px] text-muted-foreground mt-1 leading-normal">
+                    Ajuste os pesos que o motor contábil e de IA utilizam para pontuar e classificar cada alternativa de viagem.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setRulesOpen(false)}
+                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                >
+                  <Plus className="h-4 w-4 rotate-45" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-surface-alt/40 border border-border/50 rounded-xl p-4 space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Pesos de Scoring (Soma deve ser 100%)
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <Field label={`Peso de Conforto (Hotelaria): ${comfortWeight}%`}>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={comfortWeight}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setComfortWeight(val);
+                          const remaining = 100 - val;
+                          setPriceWeight(Math.round(remaining * 0.6));
+                          setLogisticsWeight(Math.round(remaining * 0.4));
+                        }}
+                        className="w-full accent-brand cursor-pointer"
+                      />
+                    </Field>
+
+                    <Field label={`Peso de Preço (Orçamento): ${priceWeight}%`}>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={priceWeight}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setPriceWeight(val);
+                          const remaining = 100 - val;
+                          setComfortWeight(Math.round(remaining * 0.6));
+                          setLogisticsWeight(Math.round(remaining * 0.4));
+                        }}
+                        className="w-full accent-brand cursor-pointer"
+                      />
+                    </Field>
+
+                    <Field label={`Peso de Logística (Conexões/Escalas): ${logisticsWeight}%`}>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={logisticsWeight}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setLogisticsWeight(val);
+                          const remaining = 100 - val;
+                          setComfortWeight(Math.round(remaining * 0.6));
+                          setPriceWeight(Math.round(remaining * 0.4));
+                        }}
+                        className="w-full accent-brand cursor-pointer"
+                      />
+                    </Field>
+                  </div>
+
+                  <div className="text-[10px] text-muted-foreground flex justify-between pt-2">
+                    <span>Soma Total: {comfortWeight + priceWeight + logisticsWeight}%</span>
+                    {comfortWeight + priceWeight + logisticsWeight !== 100 && (
+                      <span className="text-warning font-semibold">Ajustando pesos automaticamente...</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-surface-alt/40 border border-border/50 rounded-xl p-4 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Restrições Logísticas Ativas
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Conexão Máxima (Horas)">
+                      <Input type="number" defaultValue={3} disabled className="h-8 text-xs opacity-70" />
+                    </Field>
+                    <Field label="Categoria Mínima (Estrelas)">
+                      <Input type="number" defaultValue={3} disabled className="h-8 text-xs opacity-70" />
+                    </Field>
+                  </div>
+                  <span className="text-[9px] text-muted-foreground block leading-relaxed">
+                    * As restrições de destino são coordenadas inteligentemente pelo cérebro RAG associado ao localizador.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
+              <GhostButton type="button" onClick={() => setRulesOpen(false)}>
+                Cancelar
+              </GhostButton>
+              <PrimaryButton
+                type="button"
+                onClick={() => saveRulesMut.mutate()}
+                disabled={saveRulesMut.isPending || comfortWeight + priceWeight + logisticsWeight !== 100}
+                className="text-xs h-9"
+              >
+                {saveRulesMut.isPending ? "Re-calculando..." : "Salvar e Re-avaliar"}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

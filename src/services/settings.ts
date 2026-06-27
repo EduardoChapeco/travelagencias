@@ -42,11 +42,11 @@ export async function saveCompanyProfile(
     await supabase.from("agency_private").upsert({ agency_id: agencyId, ...privatePayload });
   }
 
-  await (supabase as any).from("audit_log").insert({
+  await supabase.from("audit_log").insert({
     agency_id: agencyId,
-    user_id: u?.id,
+    actor_id: u?.id,
     action: "update_company_profile",
-    details: payload,
+    metadata: payload,
   });
 }
 
@@ -119,7 +119,7 @@ export async function createApiKey(payload: any) {
 
 export async function toggleApiKey(id: string, is_active: boolean) {
   const status = is_active ? "healthy" : "disabled";
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("ai_api_credentials")
     .update({ status })
     .eq("id", id);
@@ -127,7 +127,7 @@ export async function toggleApiKey(id: string, is_active: boolean) {
 }
 
 export async function deleteApiKey(id: string) {
-  const { error } = await (supabase as any).from("ai_api_credentials").delete().eq("id", id);
+  const { error } = await supabase.from("ai_api_credentials").delete().eq("id", id);
   if (error) throw error;
 }
 
@@ -184,9 +184,9 @@ export async function removeTeamMember(agencyId: string, userId: string) {
 }
 
 export async function changeTeamMemberRole(agencyId: string, userId: string, role: string) {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("user_roles")
-    .update({ role })
+    .update({ role: role as any })
     .eq("agency_id", agencyId)
     .eq("user_id", userId);
   if (error) throw error;

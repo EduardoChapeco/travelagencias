@@ -304,6 +304,98 @@ export async function scorePackageCandidate(
     }
   }
 
+  // C3. DYNAMIC DECISION RULES FROM DATABASE
+  if (agencyId) {
+    try {
+      const { data: dbRules } = await supabase
+        .from("decision_rules")
+        .select("id, code, current_version_id")
+        .eq("agency_id", agencyId)
+        .eq("status", "active");
+
+      const activeVersionIds = dbRules?.map((r) => r.current_version_id).filter(Boolean) as string[];
+
+      if (activeVersionIds && activeVersionIds.length > 0) {
+        const { data: versions } = await supabase
+          .from("decision_rule_versions")
+          .select("*")
+          .in("id", activeVersionIds);
+
+        for (const ver of versions || []) {
+          const expr = ver.expression as any;
+          const eff = ver.effect as any;
+          const ruleCode = dbRules?.find((r) => r.id === ver.rule_id)?.code || "DYNAMIC_RULE";
+
+          if (expr && eff) {
+            const evalMatch = (offerValue: any, operator: string, ruleValue: any): boolean => {
+              if (offerValue === undefined || offerValue === null) return false;
+              const valStr = String(offerValue).toLowerCase();
+              const ruleStr = String(ruleValue).toLowerCase();
+              switch (operator) {
+                case "eq": return offerValue === ruleValue;
+                case "neq": return offerValue !== ruleValue;
+                case "gt": return Number(offerValue) > Number(ruleValue);
+                case "lt": return Number(offerValue) < Number(ruleValue);
+                case "contains": return valStr.includes(ruleStr);
+                case "not_contains": return !valStr.includes(ruleStr);
+                default: return false;
+              }
+            };
+
+            const points = Number(eff.points) || 0;
+            const reason = eff.reason || "Regra de negócio dinâmica aplicada";
+
+            if (expr.type === "flight") {
+              const flights = offers.filter((o) => o.productType === "flight");
+              for (const f of flights) {
+                for (const opt of f.flights || []) {
+                  const depHour = parseInt(opt.departure?.split("T")[1]?.substring(0, 2) || "12");
+                  const arrHour = parseInt(opt.arrival?.split("T")[1]?.substring(0, 2) || "12");
+
+                  let val: any = null;
+                  if (expr.field === "stops") val = opt.stops;
+                  else if (expr.field === "departure_hour") val = depHour;
+                  else if (expr.field === "arrival_hour") val = arrHour;
+                  else if (expr.field === "airline") val = opt.airlineCode;
+
+                  if (evalMatch(val, expr.operator, expr.value)) {
+                    if (eff.type === "penalty") {
+                      penalties.push({ dimension: "flight", ruleCode, points, reason });
+                    } else if (eff.type === "bonus") {
+                      bonuses.push({ dimension: "flight", ruleCode, points, reason });
+                    }
+                  }
+                }
+              }
+            } else if (expr.type === "hotel") {
+              const hotels = offers.filter((o) => o.productType === "hotel");
+              for (const h of hotels) {
+                for (const opt of h.accommodations || []) {
+                  const hasFreeCancellation = h.policies?.some((p) => p.type === "cancellation" && !p.isPenaltyActive) || false;
+                  const boardDesc = opt.rooms?.[0]?.boardDescription || "";
+
+                  let val: any = null;
+                  if (expr.field === "cancellation") val = hasFreeCancellation ? "free" : "penalty";
+                  else if (expr.field === "board") val = boardDesc;
+
+                  if (evalMatch(val, expr.operator, expr.value)) {
+                    if (eff.type === "penalty") {
+                      penalties.push({ dimension: "hotel", ruleCode, points, reason });
+                    } else if (eff.type === "bonus") {
+                      bonuses.push({ dimension: "hotel", ruleCode, points, reason });
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (dbRulesErr) {
+      console.error("Falha ao processar regras dinâmicas no scoring:", dbRulesErr);
+    }
+  }
+
   // Calcular sub-scores finais
   const sumFlightPenalties = penalties
     .filter((p) => p.dimension === "flight")

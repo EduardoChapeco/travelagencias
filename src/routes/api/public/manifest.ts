@@ -46,14 +46,12 @@ export const Route = createFileRoute("/api/public/manifest")({
           return json(defaultManifest);
         }
 
-        const { data: settings } = await (supabase as any)
-          .from("global_settings")
-          .select("settings")
+               const { data: brand } = await supabase
+          .from("brand_kit")
+          .select("primary_color")
           .eq("agency_id", agency.id)
-          .eq("key", "brand")
           .maybeSingle();
 
-        const brand = (settings as any)?.settings as { primary_color?: string } | undefined;
         const themeColor = brand?.primary_color || "#3b82f6";
         const logo = agency.logo_url || "/icon-512x512.png";
 

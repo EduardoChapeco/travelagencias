@@ -27,7 +27,7 @@ const DEFAULT_DOCS: PolicyDoc[] = [
     version: "1.0.0",
     is_published: false,
     effective_at: null,
-    content_md: `# Política de Privacidade\n\n**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}\n\n## 1. Dados coletados\n\nColetamos os seguintes dados pessoais no uso da plataforma TravelOS:\n\n- Nome completo e e-mail ao criar conta\n- Dados de viagem e passageiros fornecidos pela agência\n- Dados de navegação e uso da plataforma (logs técnicos)\n\n## 2. Finalidade do tratamento\n\nOs dados são usados exclusivamente para:\n\n- Prestação dos serviços contratados\n- Comunicação de suporte e atualizações\n- Melhoria contínua da plataforma\n\n## 3. Compartilhamento\n\nNão vendemos nem compartilhamos dados com terceiros, exceto quando necessário para a operação do serviço (ex.: processadores de pagamento e servidores de hospedagem).\n\n## 4. Direitos do titular\n\nVocê pode solicitar acesso, correção, portabilidade ou exclusão dos seus dados pelo e-mail: dpo@travelos.com.br\n\n## 5. Retenção\n\nDados são retidos pelo período necessário para a prestação do serviço e obrigações legais.\n\n## 6. Contato DPO\n\nNome: Encarregado de Dados TravelOS  \nE-mail: dpo@travelos.com.br\n`,
+    content_md: `# Política de Privacidade\n\n**Última atualização:** ${new Date().toLocaleDateString("pt-BR")}\n\n## 1. Dados coletados\n\nColetamos os seguintes dados pessoais no uso da plataforma TravelOS:\n\n- Nome completo e e-mail ao criar conta\n- Dados de viagem e passageiros fornecidos pela agência\n- Dados de navegação e uso da plataforma (logs técnicos)\n\n## 2. Finalidade do tratamento\n\nOs dados são usados exclusivamente para:\n\n- Prestação dos serviços contratados\n- Comunicação de suporte e atualizações\n- Melhoria contínua da plataforma\n\n## 3. Compartilhamento\n\nNão vendemos nem compartilhamos dados com terceiros, except quando necessário para a operação do serviço (ex.: processadores de pagamento e servidores de hospedagem).\n\n## 4. Direitos do titular\n\nVocê pode solicitar acesso, correção, portabilidade ou exclusão dos seus dados pelo e-mail: dpo@travelos.com.br\n\n## 5. Retenção\n\nDados são retidos pelo período necessário para a prestação do serviço e obrigações legais.\n\n## 6. Contato DPO\n\nNome: Encarregado de Dados TravelOS  \nE-mail: dpo@travelos.com.br\n`,
   },
   {
     kind: "terms",
@@ -52,7 +52,7 @@ const DEFAULT_DOCS: PolicyDoc[] = [
 export { DEFAULT_DOCS, META_MAP };
 
 export async function fetchPolicies(): Promise<PolicyDoc[]> {
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from("policy_documents")
     .select("*")
     .order("created_at", { ascending: false });
@@ -84,13 +84,13 @@ export async function fetchPolicies(): Promise<PolicyDoc[]> {
 
 export async function savePolicyDraft(doc: PolicyDoc): Promise<void> {
   if (doc.id) {
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("policy_documents")
       .update({ version: doc.version, content_md: doc.content_md })
       .eq("id", doc.id);
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await (supabase as any).from("policy_documents").insert({
+    const { error } = await supabase.from("policy_documents").insert({
       kind: doc.kind,
       version: doc.version,
       content_md: doc.content_md,
@@ -101,7 +101,7 @@ export async function savePolicyDraft(doc: PolicyDoc): Promise<void> {
 }
 
 export async function savePolicyNewVersion(doc: PolicyDoc, newVersion: string): Promise<void> {
-  const { error } = await (supabase as any).from("policy_documents").insert({
+  const { error } = await supabase.from("policy_documents").insert({
     kind: doc.kind,
     version: newVersion,
     content_md: doc.content_md,
@@ -111,7 +111,7 @@ export async function savePolicyNewVersion(doc: PolicyDoc, newVersion: string): 
 }
 
 export async function publishPolicy(id: string): Promise<void> {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("policy_documents")
     .update({ is_published: true, effective_at: new Date().toISOString() })
     .eq("id", id);
@@ -119,7 +119,7 @@ export async function publishPolicy(id: string): Promise<void> {
 }
 
 export async function unpublishPolicy(id: string): Promise<void> {
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from("policy_documents")
     .update({ is_published: false })
     .eq("id", id);
