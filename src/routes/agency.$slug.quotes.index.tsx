@@ -182,7 +182,7 @@ function QuotesIndexPage() {
     queryKey: ["knowledge-documents", agency?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("knowledge_documents" as any)
+        .from("knowledge_documents")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -449,7 +449,7 @@ Texto: "${aiText}"`;
   const deleteKnowledgeMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("knowledge_documents" as any)
+        .from("knowledge_documents")
         .delete()
         .eq("id", id);
       if (error) throw error;
@@ -1494,7 +1494,7 @@ Texto: "${aiText}"`;
                 <Field label="Escopo de Distribuição">
                   <Select
                     value={knowledgeScope}
-                    onChange={(e) => setKnowledgeScope(e.target.value as any)}
+                    onChange={(e) => setKnowledgeScope(e.target.value as "global" | "agency")}
                   >
                     <option value="agency">Minha Agência (Isolado)</option>
                     {isSuperAdmin ? (
@@ -1580,7 +1580,7 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Tipo de Produto Monitorado">
-                  <Select value={watcherType} onChange={(e) => setWatcherType(e.target.value as any)}>
+                  <Select value={watcherType} onChange={(e) => setWatcherType(e.target.value as "flight" | "hotel" | "package")}>
                     <option value="package">Pacote Completo (Voo + Hotel)</option>
                     <option value="flight">Apenas Voo</option>
                     <option value="hotel">Apenas Hotel</option>

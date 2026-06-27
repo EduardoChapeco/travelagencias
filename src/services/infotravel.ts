@@ -68,7 +68,7 @@ export async function infotravelImportBooking(
     return mapApiBookingToNormalized(data as ApiBooking);
   }
 
-  return data as NormalizedBooking; // O mock já retorna no formato NormalizedBooking
+  return data as NormalizedBooking; // Edge Function retornou dados já no formato normalizado
 }
 
 export async function infotravelTestConnection(agencyId: string): Promise<boolean> {

@@ -26,8 +26,8 @@ export async function recordDecisionFeedback(input: DecisionFeedbackInput): Prom
   const { error: insertErr } = await supabase.from("decision_records").insert({
     quote_request_id: quoteRequestId,
     selected_package_id: selectedPackageId,
-    sent_packages: sentPackages as any,
-    rejected_packages: rejectedPackageIds as any,
+    sent_packages: sentPackages as any, // Json ↔ app boundary (JSONB column)
+    rejected_packages: rejectedPackageIds as any, // Json ↔ app boundary (JSONB column)
     decision_source: "manual",
     reason: reason,
     outcome: selectedPackageId ? "accepted" : "rejected",
@@ -65,7 +65,7 @@ export async function runDecisionLearningAnalysis(quoteRequestId: string, agency
     // Para simplificar a análise por IA, consolidaremos os motivos e o histórico de rejeições
     let historyContext = "";
     for (const dec of pastDecisions) {
-      const dest = (dec.quote_requests as any)?.normalized_intent?.destinations?.[0]?.name || "Destino";
+      const dest = (dec.quote_requests as any)?.normalized_intent?.destinations?.[0]?.name || "Destino"; // Json ↔ app boundary
       historyContext += `
 Destino: ${dest}
 Justificativa da Decisão: ${dec.reason}

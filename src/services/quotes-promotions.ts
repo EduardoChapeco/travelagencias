@@ -34,8 +34,8 @@ export async function createWatchProfile(agencyId: string, input: WatchProfileIn
       agency_id: agencyId,
       name: input.name,
       schedule: input.schedule || "daily",       // campo obrigatório no schema real
-      criteria: (input.criteria ?? {}) as any,
-      limits: (input.limits ?? {}) as any,
+      criteria: (input.criteria ?? {}) as any, // Json ↔ app boundary (JSONB column)
+      limits: (input.limits ?? {}) as any, // Json ↔ app boundary (JSONB column)
       status: "active",
     })
     .select("*")
@@ -195,7 +195,7 @@ export async function checkPackagesForPromotions(
         if (crit.destination) {
           const watcherDest = crit.destination.toLowerCase().trim();
           const hasMatchingDest = candOffers.some((o: any) => {
-            const nd = o.normalized_data as any;
+            const nd = o.normalized_data as any; // Json ↔ app boundary
             const flightMatch = nd?.flights?.some((f: any) =>
               f.destination?.toLowerCase().includes(watcherDest)
             ) ?? false;
@@ -209,7 +209,7 @@ export async function checkPackagesForPromotions(
         if (crit.origin) {
           const watcherOrigin = crit.origin.toLowerCase().trim();
           const hasMatchingOrigin = candOffers.some((o: any) => {
-            const nd = o.normalized_data as any;
+            const nd = o.normalized_data as any; // Json ↔ app boundary
             return nd?.flights?.some((f: any) =>
               f.origin?.toLowerCase().includes(watcherOrigin)
             ) ?? false;
@@ -221,7 +221,7 @@ export async function checkPackagesForPromotions(
         if (crit.minHotelRating !== undefined) {
           const hasBelowRating = candOffers.some((o: any) => {
             if (o.product_type === "hotel") {
-              const stars = Number((o.normalized_data as any)?.stars ?? 0);
+              const stars = Number((o.normalized_data as any)?.stars ?? 0); // Json ↔ app boundary
               return stars < Number(crit.minHotelRating);
             }
             return false;

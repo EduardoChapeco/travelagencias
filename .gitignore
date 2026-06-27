@@ -43,3 +43,9 @@ patch_*
 count_routes.cjs
 *.cjs
 
+# Debug and temp artifacts
+*.tmp
+*_err.txt
+types_from_*.ts
+wrangler_deployments.txt
+

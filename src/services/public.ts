@@ -447,8 +447,6 @@ export async function verifyContract(serial: string) {
   return (data as any[])?.[0] ?? null;
 }
 
-// ─── Corporate Approval (Legacy placeholder removed) ─────────────────────────
-
 // ─── Corporate RFP (direct table flow) ───────────────────────────────────────
 export async function fetchCorporateRfp(token: string) {
   const { data, error } = await supabase

@@ -200,7 +200,7 @@ export async function scorePackageCandidate(
 
   // C. SCORING LOGÍSTICO (GATEWAY RULES)
   const destination = intent?.destinations?.[0]?.name || "";
-  const agencyId = (candidate.quote_requests as any)?.agency_id;
+  const agencyId = (candidate.quote_requests as any)?.agency_id; // Json ↔ app boundary (joined row)
   const rule = DEFAULT_GATEWAY_RULES.find((r) =>
     destination.toLowerCase().includes(r.destination.toLowerCase()),
   );
@@ -322,8 +322,8 @@ export async function scorePackageCandidate(
           .in("id", activeVersionIds);
 
         for (const ver of versions || []) {
-          const expr = ver.expression as any;
-          const eff = ver.effect as any;
+          const expr = ver.expression as any; // Json ↔ app boundary (JSONB column)
+          const eff = ver.effect as any; // Json ↔ app boundary (JSONB column)
           const ruleCode = dbRules?.find((r) => r.id === ver.rule_id)?.code || "DYNAMIC_RULE";
 
           if (expr && eff) {
@@ -427,7 +427,7 @@ export async function scorePackageCandidate(
     flightScore * (weights.comfort + weights.connections) +
       hotelScore * weights.hotelRating +
       logisticsScore * weights.logistics +
-      experienceScore * ((weights as any).experience || 0.1) +
+      experienceScore * ((weights as any).experience || 0.1) + // Json ↔ app boundary (JSONB weights)
       80 * weights.price, // score preço estimado
   );
 
@@ -444,8 +444,8 @@ export async function scorePackageCandidate(
       experience_score: experienceScore,
       cost_benefit_score: 80,
     },
-    penalties: penalties as any,
-    bonuses: bonuses as any,
+    penalties: penalties as any, // Json ↔ app boundary (JSONB column)
+    bonuses: bonuses as any, // Json ↔ app boundary (JSONB column)
     final_score: finalScore,
     explanation,
     confidence: 1.0,
@@ -471,7 +471,7 @@ export async function scorePackageCandidate(
     .update({
       score: finalScore,
       status: candidateStatus,
-      warnings: penalties.map((p) => p.reason) as any,
+      warnings: penalties.map((p) => p.reason) as any, // Json ↔ app boundary (JSONB column)
     })
     .eq("id", candidateId);
 

@@ -183,7 +183,7 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
 
           if (attempt < maxRetries && !isTimeout) {
             const backoff = attempt * 2000;
-            console.log(`Retrying OCR in ${backoff}ms...`);
+            console.warn(`Retrying OCR in ${backoff}ms...`);
             setTimeout(() => {
               executeOcrWithRetry(attempt + 1).then(resolve, reject);
             }, backoff);
