@@ -42,6 +42,7 @@ import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } from "./SlimSidebar";
+import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 9 Hub Icons — Desktop left column
@@ -452,6 +453,9 @@ export function AppSidebar({
 
   if (!slug || !agency) return null;
 
+  // ── Unread conversations badge ────────────────────────────────────────────
+  const { data: unreadCount = 0 } = useUnreadConversations();
+
   // ── Build contextual items ────────────────────────────────────────────────
   const {
     title: contextTitle,
@@ -466,6 +470,8 @@ export function AppSidebar({
       label: getModuleName(h.label, agency),
       to: `${base}${h.to ? `/${h.to}` : ""}`,
       matchPaths: h.matchPaths?.map((p) => `${base}/${p}`),
+      // Adicionar badge de não-lidas no inbox
+      badge: h.label === "inbox" ? (unreadCount > 0 ? unreadCount : undefined) : undefined,
     }),
   );
 

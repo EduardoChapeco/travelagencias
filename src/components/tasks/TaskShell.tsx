@@ -16,6 +16,8 @@ import { TimelineView } from "./views/TimelineView";
 import { CalendarView } from "./views/CalendarView";
 import { WorkloadView } from "./views/WorkloadView";
 import { ReportsView } from "./views/ReportsView";
+import { NewTaskModal } from "./NewTaskModal";
+import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
 
 export function TaskShell() {
   const { isAgencyAdmin } = useAgency();
@@ -41,6 +43,9 @@ export function TaskShell() {
     search: "",
   });
 
+  const [newTaskOpen, setNewTaskOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, search: e.target.value }));
   };
@@ -51,6 +56,17 @@ export function TaskShell() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-var(--header-h))] overflow-hidden bg-[var(--surface-alt)]">
+      {/* Modal de nova tarefa */}
+      <NewTaskModal open={newTaskOpen} onClose={() => setNewTaskOpen(false)} />
+
+      {/* Drawer de filtros avançados */}
+      <TaskFiltersDrawer
+        isOpen={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        filters={filters}
+        onApplyFilters={setFilters}
+      />
+
       <Tabs
         value={activeView}
         onValueChange={(v) => setActiveView(v as TaskView)}
@@ -71,7 +87,7 @@ export function TaskShell() {
             ))}
           </TabsList>
 
-          {/* Ações — busca e filtros */}
+          {/* Ações — busca + filtros + nova tarefa */}
           <div className="flex items-center gap-2 shrink-0">
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-2)]" />
@@ -83,12 +99,21 @@ export function TaskShell() {
               />
             </div>
 
-            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 gap-1.5 text-xs"
+              onClick={() => setFiltersOpen(true)}
+            >
               <Filter className="h-3.5 w-3.5" />
               Filtros
             </Button>
 
-            <Button size="sm" className="h-8 gap-1.5 text-xs">
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 text-xs"
+              onClick={() => setNewTaskOpen(true)}
+            >
               <Plus className="h-3.5 w-3.5" />
               Nova Tarefa
             </Button>
@@ -101,7 +126,7 @@ export function TaskShell() {
             <MyDayView filters={filters} />
           </TabsContent>
           <TabsContent value="kanban" className="m-0 h-full outline-none">
-            <KanbanView filters={filters} />
+            <KanbanView filters={filters} onNewTask={() => setNewTaskOpen(true)} />
           </TabsContent>
           <TabsContent value="list" className="m-0 h-full outline-none">
             <ListView filters={filters} />
@@ -128,3 +153,4 @@ export function TaskShell() {
     </div>
   );
 }
+

@@ -3,9 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 
-// A tabela 'tasks' existe no banco (migration 20260628170100_task_management_v2.sql)
-// mas ainda não foi refletida no types.ts gerado. Usar cast temporário até regenerar:
-// supabase gen types typescript --project-id esmppoxxnyiscidzsjvy > src/integrations/supabase/types.ts
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
@@ -16,26 +13,24 @@ export function useTasksQuery(filters: TaskFiltersState) {
     queryKey: ["tasks", agency?.id, filters],
     enabled: !!agency?.id,
     staleTime: 30_000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
-      // Query principal sem labels (mais robusta)
+      // ── Fase 1: Query simples de tasks (sem JOINs pesados) ──────────────
+      // RAIZ DO LOADING LENTO: JOINs por FK nomeada (!tasks_assigned_to_fkey)
+      // causam ambiguidade no PostgREST e forçam full-scan.
+      // Solução: select("*") simples + enrich manual.
       let query = db
         .from("tasks")
-        .select(`
-          *,
-          assignee:profiles!tasks_assigned_to_fkey(id, full_name, avatar_url),
-          creator:profiles!tasks_created_by_fkey(id, full_name, avatar_url)
-        `)
+        .select("*")
         .eq("agency_id", agency!.id)
         .eq("is_deleted", false);
 
       if (!filters.show_done) {
         query = query.neq("status", "done").neq("status", "cancelled");
       }
-
       if (!filters.show_subtasks) {
         query = query.is("parent_task_id", null);
       }
-
       if (filters.assignees?.length > 0) {
         query = query.in("assigned_to", filters.assignees);
       }
@@ -58,66 +53,53 @@ export function useTasksQuery(filters: TaskFiltersState) {
         query = query.ilike("title", `%${filters.search}%`);
       }
 
-      query = query.order("position", { ascending: true });
+      query = query.order("position", { ascending: true }).order("created_at", { ascending: false });
 
-      const { data, error } = await query;
+      const { data: tasks, error } = await query;
       if (error) throw error;
+      if (!tasks || tasks.length === 0) return [] as TaskWithRelations[];
 
-      // Tentar carregar labels separadamente (gracioso — falha silenciosa)
-      let labelsMap: Record<string, any[]> = {};
-      try {
-        const taskIds = (data as any[])?.map((t: any) => t.id) ?? [];
-        if (taskIds.length > 0) {
-          const { data: labelAssignments } = await db
-            .from("task_label_assignments")
-            .select("task_id, task_labels(*)")
-            .in("task_id", taskIds);
+      // ── Fase 2: Enriquecer com profiles (gracioso) ───────────────────────
+      const profileIds = [
+        ...new Set([
+          ...(tasks as any[]).map((t: any) => t.assigned_to).filter(Boolean),
+          ...(tasks as any[]).map((t: any) => t.created_by).filter(Boolean),
+        ]),
+      ] as string[];
 
-          if (labelAssignments) {
-            for (const row of labelAssignments as any[]) {
-              if (!labelsMap[row.task_id]) labelsMap[row.task_id] = [];
-              if (row.task_labels) labelsMap[row.task_id].push(row.task_labels);
+      let profilesMap: Record<string, { id: string; name: string; avatar_url: string | null }> = {};
+      if (profileIds.length > 0) {
+        try {
+          const { data: profiles } = await db
+            .from("profiles")
+            .select("id, full_name, avatar_url")
+            .in("id", profileIds);
+
+          if (profiles) {
+            for (const p of profiles as any[]) {
+              profilesMap[p.id] = {
+                id: p.id,
+                name: p.full_name || "Desconhecido",
+                avatar_url: p.avatar_url ?? null,
+              };
             }
           }
+        } catch {
+          // Profiles não disponíveis — continuar sem eles
         }
-      } catch {
-        // Labels não disponíveis — continuar sem elas
-        labelsMap = {};
       }
 
-      // Cleanup: mapear profiles e labels
-      const cleanedData = (data as any[])?.map((task: any) => {
-        const assigneeProfile = task.assignee
-          ? {
-              id: task.assignee.id,
-              name: task.assignee.full_name || "Desconhecido",
-              email: task.assignee.full_name
-                ? `${task.assignee.full_name.toLowerCase().replace(/\s+/g, "")}@agency.com`
-                : "agente@agency.com",
-              avatar_url: task.assignee.avatar_url,
-            }
-          : null;
-
-        const creatorProfile = task.creator
-          ? {
-              id: task.creator.id,
-              name: task.creator.full_name || "Desconhecido",
-              email: task.creator.full_name
-                ? `${task.creator.full_name.toLowerCase().replace(/\s+/g, "")}@agency.com`
-                : "agente@agency.com",
-              avatar_url: task.creator.avatar_url,
-            }
-          : null;
-
-        return {
-          ...task,
-          assignee: assigneeProfile,
-          creator: creatorProfile,
-          labels: labelsMap[task.id] ?? [],
-        };
-      });
-
-      return cleanedData as TaskWithRelations[];
+      // Mapear resultado final
+      return (tasks as any[]).map((task: any): TaskWithRelations => ({
+        ...task,
+        assignee: task.assigned_to && profilesMap[task.assigned_to]
+          ? profilesMap[task.assigned_to]
+          : null,
+        creator: task.created_by && profilesMap[task.created_by]
+          ? profilesMap[task.created_by]
+          : null,
+        labels: [],
+      }));
     },
   });
 }

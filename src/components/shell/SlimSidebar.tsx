@@ -15,6 +15,8 @@ export type SlimSidebarItem = {
   adminOnly?: boolean;
   /** Extra path prefixes that also make this item appear "active" */
   matchPaths?: string[];
+  /** Optional badge count (shows a red dot if >0) */
+  badge?: number;
 };
 
 export type ContextItem = {
@@ -210,6 +212,11 @@ export function SlimSidebar({
               <ItemIcon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
             ))}
           <span className="truncate text-xs font-medium">{item.label}</span>
+          {item.badge && item.badge > 0 ? (
+            <span className="ml-auto flex h-4.5 min-w-[18px] items-center justify-center rounded-full bg-destructive px-1.5 text-[9px] font-bold text-white leading-none">
+              {item.badge > 99 ? "99+" : item.badge}
+            </span>
+          ) : null}
         </Link>
       </li>
     );
@@ -316,6 +323,12 @@ export function SlimSidebar({
                           strokeWidth={active ? 2.2 : 1.8}
                         />
                       ))}
+                    {/* Badge de notificação */}
+                    {item.badge && item.badge > 0 ? (
+                      <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-white leading-none">
+                        {item.badge > 99 ? "99+" : item.badge}
+                      </span>
+                    ) : null}
                   </Link>
                 );
               })}

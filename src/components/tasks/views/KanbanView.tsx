@@ -1,41 +1,59 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { TaskFiltersState, TaskWithRelations, TaskStatus } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
 import { DEFAULT_KANBAN_COLUMNS, TASK_STATUSES } from "@/lib/tasks/task.constants";
-import { 
-  DndContext, 
-  DragOverlay, 
-  closestCorners, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
   useSensors,
   DragStartEvent,
   DragOverEvent,
   DragEndEvent,
-  defaultDropAnimationSideEffects
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
-import { 
-  SortableContext, 
-  arrayMove, 
+import {
+  SortableContext,
+  arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  useSortable
+  horizontalListSortingStrategy,
+  useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, X, Eye } from "lucide-react";
+import {
+  CalendarIcon,
+  Plus,
+  X,
+  Check,
+  GripVertical,
+  Pencil,
+  MoreHorizontal,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { NewTaskModal } from "../NewTaskModal";
+import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 
-// Sub-component: Sortable Task Card
+// ── KanbanCard ─────────────────────────────────────────────────────────────
 function KanbanCard({ task }: { task: TaskWithRelations }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
-    data: { type: "Task", task }
+    data: { type: "Task", task },
   });
 
   const style = {
@@ -44,7 +62,8 @@ function KanbanCard({ task }: { task: TaskWithRelations }) {
   };
 
   const statusDef = TASK_STATUSES[task.status as TaskStatus];
-  
+  const priorityDef = TASK_PRIORITIES[task.priority as keyof typeof TASK_PRIORITIES];
+
   return (
     <div
       ref={setNodeRef}
@@ -52,142 +71,319 @@ function KanbanCard({ task }: { task: TaskWithRelations }) {
       {...attributes}
       {...listeners}
       className={cn(
-        "p-3 mb-2 bg-card border border-border/80 hover:border-border-hover rounded-xl shadow-xs text-xs cursor-grab active:cursor-grabbing transition-colors",
-        isDragging && "opacity-40"
+        "p-3 mb-2 bg-card border border-border/80 hover:border-border rounded-xl shadow-xs text-xs cursor-grab active:cursor-grabbing transition-all group",
+        isDragging && "opacity-40 scale-95"
       )}
     >
-      <div className="font-semibold mb-1.5 text-foreground line-clamp-2">{task.title}</div>
-      {(task as any).client?.full_name && (
-        <div className="text-[10px] text-muted-foreground truncate mb-2">{(task as any).client.full_name}</div>
+      <div className="font-semibold mb-1.5 text-foreground line-clamp-2 leading-snug">{task.title}</div>
+
+      {task.assignee && (
+        <div className="text-[10px] text-muted-foreground truncate mb-1.5 flex items-center gap-1">
+          <div className="w-3.5 h-3.5 rounded-full bg-surface-alt border border-border flex items-center justify-center text-[8px] font-bold uppercase text-muted-foreground shrink-0">
+            {((task.assignee as any).name || "?")[0]}
+          </div>
+          {(task.assignee as any).name}
+        </div>
       )}
+
       <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-border/40">
         {task.due_date ? (
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
             <CalendarIcon className="h-3 w-3 text-muted-foreground/60" />
             {format(new Date(task.due_date), "dd/MM")}
           </div>
-        ) : <div />}
-        <Badge 
-          variant="outline" 
-          className="text-[9px] h-4.5 px-1.5 border-none font-bold uppercase tracking-wider" 
-          style={{ 
-            color: statusDef?.color, 
-            backgroundColor: `${statusDef?.color}12` 
-          }}
-        >
-          {statusDef?.label}
-        </Badge>
-      </div>
-    </div>
-  );
-}
-
-// Sub-component: Static Task Card for Overlay
-function KanbanCardOverlay({ task }: { task: TaskWithRelations }) {
-  return (
-    <div className="p-3 mb-2 bg-card border border-brand/20 rounded-xl shadow-md text-xs cursor-grabbing rotate-2 scale-102 opacity-95">
-      <div className="font-semibold mb-1 text-foreground line-clamp-2">{task.title}</div>
-      {(task as any).client?.full_name && (
-        <div className="text-[10px] text-muted-foreground truncate">{(task as any).client.full_name}</div>
-      )}
-    </div>
-  );
-}
-
-// Sub-component: Column
-function KanbanColumn({ status, tasks, onHide }: { status: TaskStatus; tasks: TaskWithRelations[]; onHide: () => void }) {
-  const statusDef = TASK_STATUSES[status];
-  const { setNodeRef } = useSortable({
-    id: status,
-    data: { type: "Column", status }
-  });
-
-  return (
-    <div className="flex flex-col flex-shrink-0 w-76 bg-surface border border-border/80 rounded-xl h-full shadow-xs">
-      {/* Column Header */}
-      <div className="p-3 border-b border-border/60 bg-surface-alt/20 sticky top-0 flex items-center justify-between rounded-t-xl shrink-0">
-        <div className="font-bold text-xs text-foreground flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusDef?.color }} />
-          {statusDef?.label}
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Badge variant="secondary" className="text-[10px] font-bold h-5 px-1.5 bg-surface-alt border-none">{tasks.length}</Badge>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="w-6 h-6 text-muted-foreground hover:text-foreground cursor-pointer rounded-lg hover:bg-surface-alt/40"
-            onClick={onHide}
-            title="Ocultar coluna"
-          >
-            <X className="w-3.5 h-3.5" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Column Content */}
-      <div ref={setNodeRef} className="p-2 flex-1 overflow-y-auto min-h-0 bg-surface/50 rounded-b-xl">
-        <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-          {tasks.map(task => (
-            <KanbanCard key={task.id} task={task} />
-          ))}
-        </SortableContext>
-        {tasks.length === 0 && (
-          <div className="h-20 w-full border border-dashed border-border/40 rounded-xl flex items-center justify-center text-[10px] text-muted-foreground/80 font-medium">
-            Arraste tarefas para cá
-          </div>
+        ) : (
+          <div />
+        )}
+        {priorityDef && (
+          <div
+            className="w-1.5 h-1.5 rounded-full shrink-0"
+            style={{ backgroundColor: priorityDef.color }}
+            title={priorityDef.label}
+          />
         )}
       </div>
     </div>
   );
 }
 
-// Main View
-export function KanbanView({ filters }: { filters: TaskFiltersState }) {
+// ── KanbanCardOverlay ──────────────────────────────────────────────────────
+function KanbanCardOverlay({ task }: { task: TaskWithRelations }) {
+  return (
+    <div className="p-3 mb-2 bg-card border border-brand/30 rounded-xl shadow-lg text-xs cursor-grabbing rotate-2 scale-105 opacity-95">
+      <div className="font-semibold mb-1 text-foreground line-clamp-2">{task.title}</div>
+    </div>
+  );
+}
+
+// ── QuickAddCard ───────────────────────────────────────────────────────────
+function QuickAddCard({
+  status,
+  onAdd,
+}: {
+  status: TaskStatus;
+  onAdd: (title: string, status: TaskStatus) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open) setTimeout(() => inputRef.current?.focus(), 50);
+  }, [open]);
+
+  const handleSubmit = () => {
+    if (title.trim()) {
+      onAdd(title.trim(), status);
+      setTitle("");
+      setOpen(false);
+    }
+  };
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="w-full mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/70 hover:text-muted-foreground px-2 py-1.5 rounded-lg hover:bg-surface-alt/40 transition-colors"
+      >
+        <Plus className="w-3.5 h-3.5" />
+        Adicionar card
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-1 p-2 bg-surface border border-border rounded-xl space-y-2">
+      <Input
+        ref={inputRef}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Título da tarefa..."
+        className="h-8 text-xs bg-surface-alt border-none"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleSubmit();
+          if (e.key === "Escape") setOpen(false);
+        }}
+      />
+      <div className="flex items-center gap-1.5">
+        <Button size="sm" className="h-6 text-[11px] px-2 gap-1" onClick={handleSubmit} disabled={!title.trim()}>
+          <Check className="w-3 h-3" />
+          Criar
+        </Button>
+        <Button size="sm" variant="ghost" className="h-6 text-[11px] px-2" onClick={() => setOpen(false)}>
+          <X className="w-3 h-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── KanbanColumn ───────────────────────────────────────────────────────────
+function KanbanColumn({
+  status,
+  tasks,
+  onHide,
+  onQuickAdd,
+}: {
+  status: TaskStatus;
+  tasks: TaskWithRelations[];
+  onHide: () => void;
+  onQuickAdd: (title: string, status: TaskStatus) => void;
+}) {
+  const statusDef = TASK_STATUSES[status];
+  const [editingLabel, setEditingLabel] = useState(false);
+  const [labelValue, setLabelValue] = useState(statusDef?.label || status);
+  const labelInputRef = useRef<HTMLInputElement>(null);
+
+  // useSortable para drag de COLUNA (type = "Column")
+  const {
+    setNodeRef: setColRef,
+    attributes: colAttr,
+    listeners: colListeners,
+    transform: colTransform,
+    transition: colTransition,
+    isDragging: isColDragging,
+  } = useSortable({
+    id: status,
+    data: { type: "Column", status },
+  });
+
+  const colStyle = {
+    transform: CSS.Transform.toString(colTransform),
+    transition: colTransition,
+  };
+
+
+  const handleRenameStart = () => {
+    setLabelValue(statusDef?.label || status);
+    setEditingLabel(true);
+    setTimeout(() => labelInputRef.current?.focus(), 50);
+  };
+
+  const handleRenameConfirm = () => {
+    setEditingLabel(false);
+    // NOTE: renomear a label é um comportamento local (salvo no localStorage)
+    // pois o status é uma coluna do enum — só o display name muda
+  };
+
+  return (
+    <div
+      ref={setColRef}
+      style={colStyle}
+      className={cn(
+        "flex flex-col flex-shrink-0 w-[280px] bg-surface border border-border/80 rounded-xl h-full shadow-xs transition-opacity",
+        isColDragging && "opacity-40"
+      )}
+    >
+      {/* Column Header */}
+      <div className="p-3 border-b border-border/60 bg-surface-alt/20 sticky top-0 flex items-center justify-between rounded-t-xl shrink-0 gap-2">
+        {/* Drag handle de coluna */}
+        <button
+          {...colAttr}
+          {...colListeners}
+          className="text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors p-0.5 rounded"
+          title="Arrastar coluna"
+        >
+          <GripVertical className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Label da coluna */}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: statusDef?.color }} />
+          {editingLabel ? (
+            <Input
+              ref={labelInputRef}
+              value={labelValue}
+              onChange={(e) => setLabelValue(e.target.value)}
+              className="h-6 text-xs font-bold border-none bg-surface-alt px-1 py-0"
+              onBlur={handleRenameConfirm}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleRenameConfirm();
+                if (e.key === "Escape") setEditingLabel(false);
+              }}
+            />
+          ) : (
+            <span className="font-bold text-xs text-foreground truncate">
+              {statusDef?.label || status}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1 shrink-0">
+          <Badge variant="secondary" className="text-[10px] font-bold h-5 px-1.5 bg-surface-alt border-none">
+            {tasks.length}
+          </Badge>
+
+          {/* Menu de opções da coluna */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-6 h-6 text-muted-foreground hover:text-foreground rounded-lg hover:bg-surface-alt/40"
+              >
+                <MoreHorizontal className="w-3.5 h-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border shadow-md text-xs">
+              <DropdownMenuItem onClick={handleRenameStart} className="text-xs gap-2 cursor-pointer">
+                <Pencil className="w-3.5 h-3.5" />
+                Renomear coluna
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onHide} className="text-xs gap-2 cursor-pointer text-destructive focus:text-destructive">
+                <X className="w-3.5 h-3.5" />
+                Ocultar coluna
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Column Cards — drop zone para tasks (use setColRef on outer for detection) */}
+      <div
+        data-column-status={status}
+        className="p-2 flex-1 overflow-y-auto min-h-0 bg-surface/50 rounded-b-xl"
+      >
+        <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+          {tasks.map((task) => (
+            <KanbanCard key={task.id} task={task} />
+          ))}
+        </SortableContext>
+
+        {tasks.length === 0 && (
+          <div className="h-16 w-full border border-dashed border-border/40 rounded-xl flex items-center justify-center text-[10px] text-muted-foreground/70 font-medium">
+            Arraste tarefas para cá
+          </div>
+        )}
+
+        {/* Quick Add Card */}
+        <QuickAddCard status={status} onAdd={onQuickAdd} />
+      </div>
+    </div>
+  );
+}
+
+// ── KanbanView (Main) ──────────────────────────────────────────────────────
+export function KanbanView({
+  filters,
+  onNewTask,
+}: {
+  filters: TaskFiltersState;
+  onNewTask?: () => void;
+}) {
   const { data: tasksData, isLoading } = useTasksQuery(filters);
-  const { moveTask } = useTaskMutations();
-  
+  const { moveTask, createTask } = useTaskMutations();
+
   const [tasks, setTasks] = useState<TaskWithRelations[]>([]);
   const [activeTask, setActiveTask] = useState<TaskWithRelations | null>(null);
+  const [activeColumnId, setActiveColumnId] = useState<TaskStatus | null>(null);
 
-  // Colunas ativas carregadas do localStorage ou default
+  // Modal de nova tarefa com status pré-selecionado
+  const [newTaskModal, setNewTaskModal] = useState<{ open: boolean; defaultStatus: TaskStatus }>({
+    open: false,
+    defaultStatus: "todo",
+  });
+
+  // Colunas ativas — salvas no localStorage
   const [activeColumns, setActiveColumns] = useState<TaskStatus[]>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("ta_kanban_columns");
+      const saved = localStorage.getItem("ta_kanban_columns_v2");
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch (e) {
-          console.error(e);
+        } catch {
+          /* ignore */
         }
       }
     }
     return DEFAULT_KANBAN_COLUMNS;
   });
 
-  // Salvar colunas ativas ao alterar
   useEffect(() => {
-    localStorage.setItem("ta_kanban_columns", JSON.stringify(activeColumns));
+    localStorage.setItem("ta_kanban_columns_v2", JSON.stringify(activeColumns));
   }, [activeColumns]);
 
   useEffect(() => {
-    if (tasksData) {
-      setTasks(tasksData);
-    }
+    if (tasksData) setTasks(tasksData);
   }, [tasksData]);
 
   const tasksByColumn = useMemo(() => {
-    const grouped = activeColumns.reduce((acc, col) => {
-      acc[col] = [];
-      return acc;
-    }, {} as Record<TaskStatus, TaskWithRelations[]>);
+    const grouped = activeColumns.reduce(
+      (acc, col) => {
+        acc[col] = [];
+        return acc;
+      },
+      {} as Record<TaskStatus, TaskWithRelations[]>
+    );
 
     tasks.forEach((t) => {
       if (grouped[t.status as TaskStatus]) {
         grouped[t.status as TaskStatus].push(t);
       }
     });
-    
-    Object.keys(grouped).forEach(k => {
+
+    Object.keys(grouped).forEach((k) => {
       grouped[k as TaskStatus].sort((a, b) => (a.position || 0) - (b.position || 0));
     });
 
@@ -195,13 +391,17 @@ export function KanbanView({ filters }: { filters: TaskFiltersState }) {
   }, [tasks, activeColumns]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  // ── Drag Handlers ────────────────────────────────────────────────────────
   function onDragStart(event: DragStartEvent) {
-    if (event.active.data.current?.type === "Task") {
+    const type = event.active.data.current?.type;
+    if (type === "Task") {
       setActiveTask(event.active.data.current.task);
+    } else if (type === "Column") {
+      setActiveColumnId(event.active.data.current.status);
     }
   }
 
@@ -209,138 +409,212 @@ export function KanbanView({ filters }: { filters: TaskFiltersState }) {
     const { active, over } = event;
     if (!over) return;
 
+    const activeType = active.data.current?.type;
+    const overType = over.data.current?.type;
+
+    if (activeType !== "Task") return;
+
     const activeId = active.id;
     const overId = over.id;
-
     if (activeId === overId) return;
 
-    const isActiveTask = active.data.current?.type === "Task";
-    const isOverTask = over.data.current?.type === "Task";
-    const isOverColumn = over.data.current?.type === "Column";
+    const isOverTask = overType === "Task";
+    const isOverColumn = overType === "Column" || overType === "ColumnDrop";
 
-    if (!isActiveTask) return;
+    if (isOverTask) {
+      setTasks((prev) => {
+        const activeIndex = prev.findIndex((t) => t.id === activeId);
+        const overIndex = prev.findIndex((t) => t.id === overId);
+        if (activeIndex === -1 || overIndex === -1) return prev;
 
-    if (isActiveTask && isOverTask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const overIndex = tasks.findIndex((t) => t.id === overId);
-
-        if (tasks[activeIndex].status !== tasks[overIndex].status) {
-          const newTasks = [...tasks];
-          newTasks[activeIndex].status = tasks[overIndex].status;
+        const newTasks = [...prev];
+        if (newTasks[activeIndex].status !== newTasks[overIndex].status) {
+          newTasks[activeIndex] = { ...newTasks[activeIndex], status: newTasks[overIndex].status };
           return arrayMove(newTasks, activeIndex, overIndex);
         }
-
-        return arrayMove(tasks, activeIndex, overIndex);
+        return arrayMove(newTasks, activeIndex, overIndex);
       });
     }
 
-    if (isActiveTask && isOverColumn) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeId);
-        const newTasks = [...tasks];
-        newTasks[activeIndex].status = overId as TaskStatus;
-        return arrayMove(newTasks, activeIndex, activeIndex);
+    if (isOverColumn) {
+      const targetStatus = over.data.current?.status as TaskStatus;
+      setTasks((prev) => {
+        const activeIndex = prev.findIndex((t) => t.id === activeId);
+        if (activeIndex === -1) return prev;
+        const newTasks = [...prev];
+        newTasks[activeIndex] = { ...newTasks[activeIndex], status: targetStatus };
+        return newTasks;
       });
     }
   }
 
   function onDragEnd(event: DragEndEvent) {
-    setActiveTask(null);
     const { active, over } = event;
+    const activeType = active.data.current?.type;
+
+    setActiveTask(null);
+    setActiveColumnId(null);
+
     if (!over) return;
 
-    const activeId = active.id;
-    const overData = over.data.current;
-    const activeTask = tasks.find((t) => t.id === activeId);
-    
-    if (!activeTask) return;
+    // ── Drag de coluna ────────────────────────────────────────────────────
+    if (activeType === "Column") {
+      const fromStatus = active.id as TaskStatus;
+      const toStatus = over.id as TaskStatus;
+      if (fromStatus !== toStatus) {
+        setActiveColumns((prev) => {
+          const fromIdx = prev.indexOf(fromStatus);
+          const toIdx = prev.indexOf(toStatus);
+          if (fromIdx === -1 || toIdx === -1) return prev;
+          return arrayMove(prev, fromIdx, toIdx);
+        });
+      }
+      return;
+    }
 
-    let targetStatus = activeTask.status;
-    if (overData?.type === "Column") targetStatus = overData.status;
-    else if (overData?.type === "Task") targetStatus = overData.task.status;
+    // ── Drag de task ─────────────────────────────────────────────────────
+    if (activeType === "Task") {
+      const activeId = active.id as string;
+      const overData = over.data.current;
+      const movedTask = tasks.find((t) => t.id === activeId);
+      if (!movedTask) return;
 
-    moveTask.mutate({
-      id: activeTask.id,
-      status: targetStatus,
-      position: Date.now()
-    });
+      let targetStatus = movedTask.status;
+      if (overData?.type === "Column" || overData?.type === "ColumnDrop") {
+        targetStatus = overData.status;
+      } else if (overData?.type === "Task") {
+        targetStatus = overData.task.status;
+      }
+
+      moveTask.mutate({
+        id: movedTask.id,
+        status: targetStatus,
+        position: Date.now(),
+      });
+    }
   }
 
-  // Ocultar coluna
-  const handleHideColumn = (status: TaskStatus) => {
-    setActiveColumns(prev => prev.filter(c => c !== status));
+  // ── Quick Add ─────────────────────────────────────────────────────────────
+  const handleQuickAdd = (title: string, status: TaskStatus) => {
+    createTask.mutate({
+      title,
+      status,
+      priority: "medium",
+      source_type: "manual",
+      is_recurring: false,
+    });
   };
 
-  // Adicionar coluna
+  // ── Column management ─────────────────────────────────────────────────────
+  const handleHideColumn = (status: TaskStatus) => {
+    setActiveColumns((prev) => prev.filter((c) => c !== status));
+  };
+
   const handleAddColumn = (status: TaskStatus) => {
     if (!activeColumns.includes(status)) {
-      setActiveColumns(prev => [...prev, status]);
+      setActiveColumns((prev) => [...prev, status]);
     }
   };
 
-  // Obter status inativos que podem ser adicionados
   const inactiveStatuses = Object.keys(TASK_STATUSES).filter(
-    (status) => !activeColumns.includes(status as TaskStatus)
+    (s) => !activeColumns.includes(s as TaskStatus)
   ) as TaskStatus[];
 
   if (isLoading && !tasksData) {
-    return <div className="h-full flex items-center justify-center text-xs text-muted-foreground">Carregando Kanban...</div>;
+    return (
+      <div className="h-full flex items-center justify-center gap-2 text-xs text-muted-foreground">
+        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        Carregando tarefas...
+      </div>
+    );
   }
 
   return (
-    <div className="h-full flex flex-col -mx-6 -mb-6">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDragEnd={onDragEnd}
-      >
-        <div className="flex-1 flex overflow-x-auto gap-4 p-6 min-h-0 bg-[var(--surface-alt)]/25">
-          {activeColumns.map((col) => (
-            <KanbanColumn 
-              key={col} 
-              status={col} 
-              tasks={tasksByColumn[col] || []} 
-              onHide={() => handleHideColumn(col)}
-            />
-          ))}
+    <>
+      {/* Modal de nova tarefa com status pré-selecionado */}
+      <NewTaskModal
+        open={newTaskModal.open}
+        defaultStatus={newTaskModal.defaultStatus}
+        onClose={() => setNewTaskModal({ open: false, defaultStatus: "todo" })}
+      />
 
-          {/* Botão de Adicionar Coluna */}
-          {inactiveStatuses.length > 0 && (
-            <div className="flex-shrink-0 w-64 h-full flex flex-col justify-start">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-11 border-dashed border-border/80 hover:border-border rounded-xl text-xs gap-1.5 text-muted-foreground bg-surface hover:bg-surface-alt/30 transition-all font-semibold"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Adicionar Coluna
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 rounded-xl border border-border shadow-md">
-                  {inactiveStatuses.map((status) => (
-                    <DropdownMenuItem 
-                      key={status} 
-                      onClick={() => handleAddColumn(status)}
-                      className="text-xs py-2 px-3 rounded-lg font-medium cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
-                      Mostrar Coluna: {TASK_STATUSES[status].label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+      <div className="h-full flex flex-col -mx-6 -mb-6">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDragEnd={onDragEnd}
+        >
+          {/* ── Colunas ── SortableContext para arrastar colunas */}
+          <SortableContext items={activeColumns} strategy={horizontalListSortingStrategy}>
+            <div className="flex-1 flex overflow-x-auto gap-4 p-6 min-h-0 bg-[var(--surface-alt)]/25">
+              {activeColumns.map((col) => (
+                <KanbanColumn
+                  key={col}
+                  status={col}
+                  tasks={tasksByColumn[col] || []}
+                  onHide={() => handleHideColumn(col)}
+                  onQuickAdd={handleQuickAdd}
+                />
+              ))}
+
+              {/* Adicionar Coluna */}
+              {inactiveStatuses.length > 0 && (
+                <div className="flex-shrink-0 w-[200px] h-full flex flex-col justify-start">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full h-11 border-dashed border-border/80 hover:border-border rounded-xl text-xs gap-1.5 text-muted-foreground bg-surface hover:bg-surface-alt/30 transition-all font-semibold"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Adicionar Coluna
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 rounded-xl border border-border shadow-md">
+                      {inactiveStatuses.map((s) => (
+                        <DropdownMenuItem
+                          key={s}
+                          onClick={() => handleAddColumn(s)}
+                          className="text-xs py-2 px-3 rounded-lg font-medium cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: TASK_STATUSES[s]?.color }}
+                            />
+                            {TASK_STATUSES[s]?.label}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </SortableContext>
 
-        <DragOverlay dropAnimation={{ sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.5" } } }) }}>
-          {activeTask ? <KanbanCardOverlay task={activeTask} /> : null}
-        </DragOverlay>
-      </DndContext>
-    </div>
+          <DragOverlay
+            dropAnimation={{
+              sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.5" } } }),
+            }}
+          >
+            {activeTask ? <KanbanCardOverlay task={activeTask} /> : null}
+            {activeColumnId && (
+              <div className="flex-shrink-0 w-[280px] bg-surface border border-brand/30 rounded-xl shadow-xl opacity-90 h-24 p-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: TASK_STATUSES[activeColumnId]?.color }}
+                  />
+                  <span className="font-bold text-xs">{TASK_STATUSES[activeColumnId]?.label}</span>
+                </div>
+              </div>
+            )}
+          </DragOverlay>
+        </DndContext>
+      </div>
+    </>
   );
 }
