@@ -4,7 +4,7 @@ Neste documento listamos todas as alterações de código efetuadas durante a se
 
 ---
 
-## 1. Sanidade de Tipos do Supabase Client
+## 1. Sanidade de Tipos do Supabase Client e Eliminação de Mocks no Inbox
 * **Arquivos Modificados:**
   * `src/routes/agency.$slug.inbox.tsx`
   * `src/routes/agency.$slug.settings.ai-brain.tsx`
@@ -13,6 +13,9 @@ Neste documento listamos todas as alterações de código efetuadas durante a se
   * `src/hooks/tasks/useDailyDigest.ts`
   * `src/components/tasks/views/ListView.tsx`
 * **Correção:** Como o `types.ts` não possui as tabelas recém-adicionadas pelas migrations SQL locais, criamos uma asserção temporária `(supabase as any)` apenas nos locais que usam tabelas novas, preservando a compilação.
+* **Eliminação de Mocks no Inbox:**
+  * Substituído o array estático vazio `accounts={[]}` no `InboxSidebar` por uma consulta ativa à tabela `channels`, mapeando todas as contas reais de atendimento (WhatsApp/Email) da agência ativa.
+  * Substituído o parâmetro estático `email={null}` no `AIPanel` por um objeto reativo baseado nas mensagens e no estado (`ai_mode` / `status`) da conversa ativa selecionada.
 * **Remapeamento de Tabela Inexistente:** Removida a referência à tabela fantasma `emails` no `ai-brain.tsx`, substituindo-a pela tabela `messages` real da nova infraestrutura de Inbox.
 
 ---
