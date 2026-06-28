@@ -53,7 +53,7 @@ const HUB_ITEMS: SlimSidebarItem[] = [
     label: "daily-tasks",
     to: "daily-tasks",
     icon: CalendarClock,
-    matchPaths: ["calendar", "omnichannel"],
+    matchPaths: ["calendar", "inbox"],
   },
   { label: "crm", to: "crm", icon: Users, matchPaths: ["proposals", "contracts", "quotes"] },
   { label: "trips", to: "trips", icon: Luggage, matchPaths: ["vouchers", "boarding"] },
@@ -92,7 +92,7 @@ const MOBILE_ITEMS: SlimSidebarItem[] = [
   { type: "header", label: "Dia a Dia" },
   { label: "daily-tasks", to: "daily-tasks", icon: ListTodo },
   { label: "calendar", to: "calendar", icon: Calendar },
-  { label: "omnichannel", to: "omnichannel", icon: MessageSquare },
+  { label: "Mensagens", to: "inbox", icon: MessageSquare },
 
   { type: "header", label: "Vendas & CRM" },
   { label: "crm", to: "crm", icon: Users },
@@ -204,14 +204,14 @@ function buildContext(
   if (
     pathname.includes("/daily-tasks") ||
     pathname.includes("/calendar") ||
-    pathname.includes("/omnichannel")
+    pathname.includes("/inbox")
   ) {
     return {
       title: "Dia a Dia",
       items: [
         { label: "Tarefas", to: `${base}/daily-tasks`, icon: ListTodo },
         { label: "Agenda", to: `${base}/calendar`, icon: Calendar },
-        { label: "Mensagens", to: `${base}/omnichannel`, icon: MessageSquare },
+        { label: "Mensagens", to: `${base}/inbox`, icon: MessageSquare },
       ],
       aiActions: [],
     };

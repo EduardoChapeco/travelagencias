@@ -40,57 +40,52 @@ export function TaskShell() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-var(--header-h))] overflow-hidden bg-[var(--surface-alt)]">
-      {/* Top Bar / Header Contextual */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-6 py-4 bg-[var(--surface)] border-b shrink-0 gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Trabalho e Produtividade</h1>
-          <p className="text-sm text-[var(--muted-foreground)]">Gerencie tarefas, embarques e atendimentos em um só lugar.</p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--muted-2)]" />
-            <Input 
-              placeholder="Buscar..." 
-              className="pl-9 w-[200px] h-9 bg-[var(--surface-alt)] border-none"
-              value={filters.search}
-              onChange={handleSearch}
-            />
-          </div>
-          
-          <Button variant="outline" size="sm" className="h-9 gap-2">
-            <Filter className="h-4 w-4" />
-            Filtros
-          </Button>
-          
-          <Button size="sm" className="h-9 gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Tarefa
-          </Button>
-        </div>
-      </div>
-
       <Tabs 
         value={activeView} 
         onValueChange={(v) => setActiveView(v as TaskView)} 
         className="flex flex-col flex-1 min-h-0"
       >
-        <div className="px-6 border-b bg-[var(--surface)] shrink-0 overflow-x-auto no-scrollbar">
-          <TabsList className="h-12 bg-transparent p-0 border-none justify-start w-max">
-            {views.map(([key, config]) => (
-              <TabsTrigger 
-                key={key} 
-                value={key}
-                className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[var(--brand)] data-[state=active]:shadow-none rounded-none h-12 px-4 text-sm font-medium text-[var(--muted-foreground)] data-[state=active]:text-[var(--foreground)]"
-              >
-                {config.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        {/* Top Bar / Header Contextual Unificado */}
+        <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2.5 bg-[var(--surface)] border-b shrink-0 gap-4">
+          <div className="overflow-x-auto no-scrollbar w-full md:w-auto">
+            <TabsList className="bg-transparent p-0 border-none justify-start w-max h-9">
+              {views.map(([key, config]) => (
+                <TabsTrigger 
+                  key={key} 
+                  value={key}
+                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[var(--brand)] data-[state=active]:shadow-none rounded-none h-9 px-3 text-xs font-semibold text-[var(--muted-foreground)] data-[state=active]:text-[var(--foreground)]"
+                >
+                  {config.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          
+          <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+            <div className="relative w-full md:w-auto">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-2)]" />
+              <Input 
+                placeholder="Buscar..." 
+                className="pl-9 w-full md:w-[180px] h-8 bg-[var(--surface-alt)] border-none text-xs"
+                value={filters.search}
+                onChange={handleSearch}
+              />
+            </div>
+            
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+              <Filter className="h-3.5 w-3.5" />
+              Filtros
+            </Button>
+            
+            <Button size="sm" className="h-8 gap-1.5 text-xs">
+              <Plus className="h-3.5 w-3.5" />
+              Nova Tarefa
+            </Button>
+          </div>
         </div>
 
         {/* Content Area - Scrollable */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6 bg-[var(--surface-alt)]/20">
           <TabsContent value="my-day" className="m-0 h-full outline-none"><MyDayView filters={filters} /></TabsContent>
           <TabsContent value="kanban" className="m-0 h-full outline-none"><KanbanView filters={filters} /></TabsContent>
           <TabsContent value="list" className="m-0 h-full outline-none"><ListView filters={filters} /></TabsContent>

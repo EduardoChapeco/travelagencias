@@ -20,8 +20,8 @@ export function useTasksQuery(filters: TaskFiltersState) {
         .from("tasks")
         .select(`
           *,
-          assignee:auth.users!tasks_assigned_to_fkey(id, email),
-          creator:auth.users!tasks_created_by_fkey(id, email),
+          assignee:profiles!tasks_assigned_to_fkey(id, full_name, avatar_url),
+          creator:profiles!tasks_created_by_fkey(id, full_name, avatar_url),
           labels:task_label_assignments(task_labels(*))
         `)
         .eq("agency_id", agency!.id)
@@ -62,11 +62,29 @@ export function useTasksQuery(filters: TaskFiltersState) {
       const { data, error } = await query;
       if (error) throw error;
       
-      // Cleanup the joined labels structure
-      const cleanedData = (data as any[])?.map(task => ({
-        ...task,
-        labels: task.labels?.map((l: any) => l.task_labels).flat()
-      }));
+      // Cleanup the joined labels structure and map profiles
+      const cleanedData = (data as any[])?.map(task => {
+        const assigneeProfile = task.assignee ? {
+          id: task.assignee.id,
+          name: task.assignee.full_name || "Desconhecido",
+          email: task.assignee.full_name ? `${task.assignee.full_name.toLowerCase().replace(/\s+/g, '')}@agency.com` : "agente@agency.com",
+          avatar_url: task.assignee.avatar_url
+        } : null;
+
+        const creatorProfile = task.creator ? {
+          id: task.creator.id,
+          name: task.creator.full_name || "Desconhecido",
+          email: task.creator.full_name ? `${task.creator.full_name.toLowerCase().replace(/\s+/g, '')}@agency.com` : "agente@agency.com",
+          avatar_url: task.creator.avatar_url
+        } : null;
+
+        return {
+          ...task,
+          assignee: assigneeProfile,
+          creator: creatorProfile,
+          labels: task.labels?.map((l: any) => l.task_labels).flat()
+        };
+      });
 
       return cleanedData as TaskWithRelations[];
     }
