@@ -2522,52 +2522,7 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
       <div className="mx-auto max-w-5xl w-full px-4 h-48 animate-pulse rounded-2xl bg-surface-alt" />
     );
   if (reviews.length === 0) {
-    const mockReviews = [
-      {
-        author_name: "Gabriela Abreu",
-        author_role: "Viajou para o Nordeste",
-        review_text:
-          "Excelente atendimento! Tudo muito bem organizado e conforme combinado. Recomendo de olhos fechados.",
-        stars: 5,
-      },
-      {
-        author_name: "Luciano Costa",
-        author_role: "Viagem de Lua de Mel",
-        review_text:
-          "Incrível! Nossa viagem para a Europa foi inesquecível. Suporte perfeito durante todo o tempo.",
-        stars: 5,
-      },
-    ];
-    return (
-      <section className="mx-auto max-w-5xl w-full px-4">
-        {block.title && (
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">{block.title}</h2>
-            {block.subtitle && <p className="mt-2 text-muted-foreground">{block.subtitle}</p>}
-          </div>
-        )}
-        <div className="grid gap-6 md:grid-cols-2">
-          {mockReviews.map((r, i) => (
-            <div
-              key={i}
-              className="flex flex-col p-6 rounded-2xl bg-surface border border-border/50 relative"
-            >
-              <Quote className="absolute top-4 right-4 w-8 h-8 opacity-5 text-muted-foreground" />
-              <div className="flex gap-1 mb-3">
-                {Array.from({ length: r.stars }).map((_, idx) => (
-                  <Star key={idx} className="w-4 h-4 fill-brand text-brand" />
-                ))}
-              </div>
-              <p className="text-sm text-foreground flex-1 italic mb-4">"{r.review_text}"</p>
-              <div>
-                <h4 className="font-bold text-xs text-foreground">{r.author_name}</h4>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{r.author_role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (

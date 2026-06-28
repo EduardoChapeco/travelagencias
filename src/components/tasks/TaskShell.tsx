@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Plus, Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-// Import das views (serão criadas a seguir)
 import { MyDayView } from "./views/MyDayView";
 import { KanbanView } from "./views/KanbanView";
 import { ListView } from "./views/ListView";

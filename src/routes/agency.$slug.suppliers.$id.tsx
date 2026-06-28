@@ -1067,7 +1067,41 @@ function SupplierDetailsPage() {
     },
   });
 
-  if (isLoading) {
+  const { data: stats, isLoading: isStatsLoading } = useQuery({
+    enabled: !!agency && !!supplier,
+    queryKey: ["supplier-stats", id],
+    queryFn: async () => {
+      // 1. Contagem de uso em itens de proposta
+      const { count: proposalsCount } = await supabase
+        .from("proposal_items")
+        .select("id", { count: "exact", head: true })
+        .eq("supplier_id", id);
+
+      // 2. Contagem de produtos cadastrados
+      const { count: productsCount } = await supabase
+        .from("supplier_products")
+        .select("id", { count: "exact", head: true })
+        .eq("supplier_id", id);
+
+      // 3. Média de avaliações dos agentes
+      const { data: reviews } = await supabase
+        .from("supplier_reviews")
+        .select("rating")
+        .eq("supplier_id", id);
+
+      const avgRating = reviews && reviews.length > 0
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : 0;
+
+      return {
+        usageCount: proposalsCount || 0,
+        productsCount: productsCount || 0,
+        avgRating,
+      };
+    }
+  });
+
+  if (isLoading || isStatsLoading) {
     return (
       <div className="p-8 space-y-4">
         <Skeleton className="h-8 w-1/4" />
@@ -1380,19 +1414,34 @@ function SupplierDetailsPage() {
           </div>
         )}
 
-        {/* Stats placeholder (sem dados ainda) */}
-        <div className="p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
-            Uso no Sistema
+        {/* Estatísticas Reais de Uso */}
+        {stats && (
+          <div className="p-5 border-t border-border space-y-4">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Métricas do Parceiro
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-xl border border-border bg-surface-alt">
+                <div className="text-[10px] text-muted-foreground uppercase font-bold">Vendas</div>
+                <div className="text-lg font-bold text-foreground mt-0.5">{stats.usageCount}</div>
+              </div>
+              <div className="p-3 rounded-xl border border-border bg-surface-alt">
+                <div className="text-[10px] text-muted-foreground uppercase font-bold">Produtos</div>
+                <div className="text-lg font-bold text-foreground mt-0.5">{stats.productsCount}</div>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-surface-alt">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold">Avaliação Média</div>
+              <div className="flex items-center gap-1">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span className="text-xs font-bold text-foreground">
+                  {stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "N/A"}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <BarChart3 className="h-4 w-4" />
-            Inteligência em breve
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Após usar este fornecedor em viagens, as estatísticas aparecerão aqui.
-          </p>
-        </div>
+        )}
       </aside>
     </div>
   );

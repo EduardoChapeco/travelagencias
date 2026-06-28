@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
-  Brain, FileText, Database, ShieldAlert, Cpu, CheckCircle2, Zap, AlertTriangle
+  Brain, FileText, Database, ShieldAlert, Cpu, CheckCircle2, Zap
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -33,15 +33,17 @@ function BrainPanel() {
     },
   });
 
-  // 2. Fetch Processed Inbox Emails (Semantic Match)
+  // 2. Fetch Processed Inbox Messages (Omnichannel Inbox)
   const inboxAiQuery = useQuery({
     queryKey: ["inbox_ai_stats", agency?.id],
     enabled: !!agency,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("emails")
-        .select("id, subject, ai_category, ai_confidence, link_method, ai_extracted_entities, created_at")
-        .not("ai_category", "is", null)
+      // Usa a tabela 'messages' do módulo Inbox Omnichannel (migration 20260801000003)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from("messages")
+        .select("id, body, direction, status, created_at")
+        .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
@@ -52,12 +54,10 @@ function BrainPanel() {
   if (!agency) return null;
 
   const docs = (docsQuery.data || []) as any[];
-  const processedEmails = (inboxAiQuery.data || []) as any[];
+  const inboxMessages = (inboxAiQuery.data || []) as any[];
 
   const totalChunks = docs.reduce((acc, doc) => acc + (doc.chunk_count || 0), 0);
-  const avgConfidence = processedEmails.length > 0 
-    ? (processedEmails.reduce((acc, em) => acc + (em.ai_confidence || 1), 0) / processedEmails.length * 100).toFixed(1)
-    : 0;
+  const inboundCount = inboxMessages.filter((m: any) => m.direction === 'inbound').length;
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
@@ -96,17 +96,17 @@ function BrainPanel() {
             </div>
           </div>
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">E-mails Processados</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-2xl font-bold text-foreground text-brand">{processedEmails.length}</span>
-              <span className="text-[10px] text-muted-foreground">inbox webhook</span>
+              <span className="text-2xl font-bold text-foreground text-brand">{inboundCount}</span>
+              <span className="text-[10px] text-muted-foreground">inbound (omnichannel)</span>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Confiança Média (Match)</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total no Período</span>
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="text-2xl font-bold text-success">{avgConfidence}%</span>
-              <span className="text-[10px] text-muted-foreground">gemini-2.5</span>
+              <span className="text-2xl font-bold text-success">{inboxMessages.length}</span>
+              <span className="text-[10px] text-muted-foreground">últimas 20 msgs</span>
             </div>
           </div>
         </div>
@@ -152,36 +152,40 @@ function BrainPanel() {
                 </div>
              </div>
              <div className="divide-y divide-border max-h-[400px] overflow-y-auto bg-card">
-               {processedEmails.length === 0 ? (
-                 <div className="p-4 text-sm text-muted-foreground">Nenhum e-mail recebido e processado.</div>
-               ) : processedEmails.map(em => {
-                 const isAlert = em.ai_category === 'cancellation' || em.ai_category === 'flight_change';
-                 return (
-                 <div key={em.id} className="p-3">
-                    <div className="flex justify-between items-start mb-1">
-                      <div className="text-sm font-medium text-foreground line-clamp-1">{em.subject || "Sem Assunto"}</div>
-                      <Badge variant="outline" className="text-[10px] h-5 bg-surface">{((em.ai_confidence || 1) * 100).toFixed(0)}% Match</Badge>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                       <div className="flex items-center gap-2">
-                         <Badge variant="outline" className={`text-[10px] h-5 border-none ${isAlert ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'}`}>
-                           {em.ai_category}
-                         </Badge>
-                         {em.link_method === 'hash_exact_match' && (
-                            <span className="text-[10px] text-brand flex items-center gap-1 bg-brand/10 px-1.5 py-0.5 rounded">
-                              Auto-Vínculo (Hash)
-                            </span>
-                         )}
-                       </div>
-                       {/* CRM Alert Automation Logic View */}
-                       {isAlert && (
-                         <span className="text-[10px] text-destructive flex items-center gap-1 font-medium">
-                           <AlertTriangle className="w-3 h-3" /> Alerta CRM Disparado
-                         </span>
-                       )}
-                    </div>
+               {inboxMessages.length === 0 ? (
+                 <div className="p-4 text-sm text-muted-foreground">Nenhuma mensagem recebida no período.</div>
+               ) : inboxMessages.map((msg: any) => (
+                 <div key={msg.id} className="p-3">
+                   <div className="flex justify-between items-start mb-1">
+                     <div className="text-sm font-medium text-foreground line-clamp-1">
+                       {msg.body || "(sem corpo)"}
+                     </div>
+                     <Badge
+                       variant="outline"
+                       className={`text-[10px] h-5 ml-2 shrink-0 ${
+                         msg.direction === 'inbound' ? 'bg-blue-50 text-blue-700' : 'bg-surface'
+                       }`}
+                     >
+                       {msg.direction === 'inbound' ? '↓ recebida' : '↑ enviada'}
+                     </Badge>
+                   </div>
+                   <div className="flex items-center gap-2 mt-1">
+                     <Badge
+                       variant="outline"
+                       className={`text-[10px] h-5 border-none ${
+                         msg.status === 'read' ? 'bg-success/10 text-success' :
+                         msg.status === 'failed' ? 'bg-destructive/10 text-destructive' :
+                         'bg-primary/10 text-primary'
+                       }`}
+                     >
+                       {msg.status}
+                     </Badge>
+                     <span className="text-[10px] text-muted-foreground">
+                       {format(new Date(msg.created_at), "dd/MM HH:mm", { locale: ptBR })}
+                     </span>
+                   </div>
                  </div>
-               )})}
+               ))}
              </div>
           </div>
         </div>

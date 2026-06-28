@@ -9,6 +9,12 @@ import { useAgency } from '@/lib/agency-context';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+// Supabase client sem tipagem forte para tabelas novas (conversations, messages, channels, contacts)
+// que ainda não foram refletidas no types.ts gerado automaticamente. Regenerar com:
+// supabase gen types typescript --project-id esmppoxxnyiscidzsjvy > src/integrations/supabase/types.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = supabase as any;
+
 export const Route = createFileRoute('/agency/$slug/inbox')({
   head: () => ({ meta: [{ title: 'Caixa de Entrada · TravelOS' }] }),
   component: InboxModule,
@@ -31,7 +37,7 @@ function InboxModule() {
     queryKey: ['conversations', agency?.id],
     queryFn: async () => {
       if (!agency?.id) return [];
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('conversations')
         .select(`
           *,
@@ -54,7 +60,7 @@ function InboxModule() {
     queryKey: ['messages', selectedConversationId],
     queryFn: async () => {
       if (!selectedConversationId) return [];
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('messages')
         .select('*')
         .eq('conversation_id', selectedConversationId)
@@ -105,7 +111,7 @@ function InboxModule() {
   const sendMessageMutation = useMutation({
     mutationFn: async (text: string) => {
       if (!agency?.id || !selectedConversationId) throw new Error("No conversation selected");
-      const { data, error } = await supabase.from('messages').insert({
+      const { data, error } = await db.from('messages').insert({
         agency_id: agency.id,
         conversation_id: selectedConversationId,
         direction: 'outbound',
@@ -121,7 +127,7 @@ function InboxModule() {
   const assignMutation = useMutation({
     mutationFn: async () => {
       if (!selectedConversationId || !currentUser?.id) throw new Error("No user/conversation");
-      const { data, error } = await supabase.from('conversations').update({
+      const { data, error } = await db.from('conversations').update({
         assigned_user_id: currentUser.id,
         status: 'open'
       }).eq('id', selectedConversationId);

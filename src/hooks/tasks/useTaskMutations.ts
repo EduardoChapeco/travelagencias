@@ -4,6 +4,11 @@ import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { CreateTaskFormValues, UpdateTaskFormValues } from "@/lib/tasks/task.schema";
 
+// A tabela 'tasks' existe no banco (migration 20260628170100_task_management_v2.sql)
+// mas ainda não foi refletida no types.ts gerado. Cast temporário.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = supabase as any;
+
 export function useTaskMutations() {
   const { agency } = useAgency();
   const qc = useQueryClient();
@@ -16,13 +21,13 @@ export function useTaskMutations() {
   const createMutation = useMutation({
     mutationFn: async (payload: CreateTaskFormValues) => {
       const { data: user } = await supabase.auth.getUser();
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from("tasks")
         .insert({
           ...payload,
           agency_id: agency!.id,
           created_by: user.user?.id,
-          // Se assigned_to não foi passado, assinamos o próprio criador para não ficar orfão (regra comum)
+          // Se assigned_to não foi passado, assinamos o próprio criador para não ficar orfão
           assigned_to: payload.assigned_to || user.user?.id,
         })
         .select()
@@ -30,7 +35,7 @@ export function useTaskMutations() {
         
       if (error) throw error;
       
-      // Avaliador de IA para scoring automático
+      // Avaliador de IA para scoring automático (fire-and-forget)
       supabase.functions.invoke("ai-task-evaluator", {
         body: { record: data }
       });
@@ -41,7 +46,7 @@ export function useTaskMutations() {
       invalidate();
       toast.success("Tarefa criada");
     },
-    onError: (err) => {
+    onError: (err: Error) => {
       toast.error("Erro ao criar tarefa: " + err.message);
     }
   });
@@ -49,7 +54,7 @@ export function useTaskMutations() {
   const updateMutation = useMutation({
     mutationFn: async (payload: UpdateTaskFormValues) => {
       const { id, ...updates } = payload;
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from("tasks")
         .update(updates)
         .eq("id", id)
@@ -60,23 +65,23 @@ export function useTaskMutations() {
       return data;
     },
     onSuccess: () => invalidate(),
-    onError: (err) => toast.error("Erro ao atualizar: " + err.message)
+    onError: (err: Error) => toast.error("Erro ao atualizar: " + err.message)
   });
   
   const moveTaskMutation = useMutation({
-    mutationFn: async ({ id, status, position }: { id: string, status: string, position: number }) => {
-      const { error } = await supabase
+    mutationFn: async ({ id, status, position }: { id: string; status: string; position: number }) => {
+      const { error } = await db
         .from("tasks")
         .update({ status, position })
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => invalidate() // otimista update será melhor feito aqui depois
+    onSuccess: () => invalidate()
   });
 
   const softDeleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await db
         .from("tasks")
         .update({ is_deleted: true, deleted_at: new Date().toISOString() })
         .eq("id", id);

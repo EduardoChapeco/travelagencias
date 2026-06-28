@@ -3,6 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 
+// A tabela 'tasks' existe no banco (migration 20260628170100_task_management_v2.sql)
+// mas ainda não foi refletida no types.ts gerado. Usar cast temporário até regenerar:
+// supabase gen types typescript --project-id esmppoxxnyiscidzsjvy > src/integrations/supabase/types.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = supabase as any;
+
 export function useTasksQuery(filters: TaskFiltersState) {
   const { agency } = useAgency();
 
@@ -10,7 +16,7 @@ export function useTasksQuery(filters: TaskFiltersState) {
     queryKey: ["tasks", agency?.id, filters],
     enabled: !!agency?.id,
     queryFn: async () => {
-      let query = supabase
+      let query = db
         .from("tasks")
         .select(`
           *,
@@ -57,7 +63,7 @@ export function useTasksQuery(filters: TaskFiltersState) {
       if (error) throw error;
       
       // Cleanup the joined labels structure
-      const cleanedData = data?.map(task => ({
+      const cleanedData = (data as any[])?.map(task => ({
         ...task,
         labels: task.labels?.map((l: any) => l.task_labels).flat()
       }));
