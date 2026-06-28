@@ -57,21 +57,7 @@ export function TaskShell() {
         className="flex flex-col flex-1 min-h-0"
       >
         {/* Top Bar / Header Contextual Unificado */}
-        <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2.5 bg-[var(--surface)] border-b shrink-0 gap-4">
-          <div className="overflow-x-auto no-scrollbar w-full md:w-auto">
-            <TabsList className="bg-transparent p-0 border-none justify-start w-max h-9">
-              {views.map(([key, config]) => (
-                <TabsTrigger 
-                  key={key} 
-                  value={key}
-                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[var(--brand)] data-[state=active]:shadow-none rounded-none h-9 px-3 text-xs font-semibold text-[var(--muted-foreground)] data-[state=active]:text-[var(--foreground)]"
-                >
-                  {config.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          
+        <div className="flex flex-col md:flex-row items-center justify-end px-6 py-2.5 bg-[var(--surface)] border-b shrink-0 gap-4">
           <div className="flex items-center gap-2 w-full md:w-auto justify-end">
             <div className="relative w-full md:w-auto">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-2)]" />
