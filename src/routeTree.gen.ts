@@ -68,6 +68,7 @@ import { Route as AgencySlugTeamRouteImport } from './routes/agency.$slug.team'
 import { Route as AgencySlugSupportRouteImport } from './routes/agency.$slug.support'
 import { Route as AgencySlugSettingsRouteImport } from './routes/agency.$slug.settings'
 import { Route as AgencySlugRoomingListRouteImport } from './routes/agency.$slug.rooming-list'
+import { Route as AgencySlugRadarRouteImport } from './routes/agency.$slug.radar'
 import { Route as AgencySlugQuotesRouteImport } from './routes/agency.$slug.quotes'
 import { Route as AgencySlugProposalsRouteImport } from './routes/agency.$slug.proposals'
 import { Route as AgencySlugProductivityRouteImport } from './routes/agency.$slug.productivity'
@@ -438,6 +439,11 @@ const AgencySlugSettingsRoute = AgencySlugSettingsRouteImport.update({
 const AgencySlugRoomingListRoute = AgencySlugRoomingListRouteImport.update({
   id: '/rooming-list',
   path: '/rooming-list',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
+const AgencySlugRadarRoute = AgencySlugRadarRouteImport.update({
+  id: '/radar',
+  path: '/radar',
   getParentRoute: () => AgencySlugRoute,
 } as any)
 const AgencySlugQuotesRoute = AgencySlugQuotesRouteImport.update({
@@ -917,6 +923,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/quotes': typeof AgencySlugQuotesRouteWithChildren
+  '/agency/$slug/radar': typeof AgencySlugRadarRoute
   '/agency/$slug/rooming-list': typeof AgencySlugRoomingListRoute
   '/agency/$slug/settings': typeof AgencySlugSettingsRouteWithChildren
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
@@ -1045,6 +1052,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
   '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
+  '/agency/$slug/radar': typeof AgencySlugRadarRoute
   '/agency/$slug/rooming-list': typeof AgencySlugRoomingListRoute
   '/agency/$slug/settings': typeof AgencySlugSettingsRouteWithChildren
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
@@ -1181,6 +1189,7 @@ export interface FileRoutesById {
   '/agency/$slug/productivity': typeof AgencySlugProductivityRoute
   '/agency/$slug/proposals': typeof AgencySlugProposalsRouteWithChildren
   '/agency/$slug/quotes': typeof AgencySlugQuotesRouteWithChildren
+  '/agency/$slug/radar': typeof AgencySlugRadarRoute
   '/agency/$slug/rooming-list': typeof AgencySlugRoomingListRoute
   '/agency/$slug/settings': typeof AgencySlugSettingsRouteWithChildren
   '/agency/$slug/support': typeof AgencySlugSupportRouteWithChildren
@@ -1320,6 +1329,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/productivity'
     | '/agency/$slug/proposals'
     | '/agency/$slug/quotes'
+    | '/agency/$slug/radar'
     | '/agency/$slug/rooming-list'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
@@ -1448,6 +1458,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
     | '/agency/$slug/productivity'
+    | '/agency/$slug/radar'
     | '/agency/$slug/rooming-list'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
@@ -1583,6 +1594,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/productivity'
     | '/agency/$slug/proposals'
     | '/agency/$slug/quotes'
+    | '/agency/$slug/radar'
     | '/agency/$slug/rooming-list'
     | '/agency/$slug/settings'
     | '/agency/$slug/support'
@@ -2093,6 +2105,13 @@ declare module '@tanstack/react-router' {
       path: '/rooming-list'
       fullPath: '/agency/$slug/rooming-list'
       preLoaderRoute: typeof AgencySlugRoomingListRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
+    '/agency/$slug/radar': {
+      id: '/agency/$slug/radar'
+      path: '/radar'
+      fullPath: '/agency/$slug/radar'
+      preLoaderRoute: typeof AgencySlugRadarRouteImport
       parentRoute: typeof AgencySlugRoute
     }
     '/agency/$slug/quotes': {
@@ -2976,6 +2995,7 @@ interface AgencySlugRouteChildren {
   AgencySlugProductivityRoute: typeof AgencySlugProductivityRoute
   AgencySlugProposalsRoute: typeof AgencySlugProposalsRouteWithChildren
   AgencySlugQuotesRoute: typeof AgencySlugQuotesRouteWithChildren
+  AgencySlugRadarRoute: typeof AgencySlugRadarRoute
   AgencySlugRoomingListRoute: typeof AgencySlugRoomingListRoute
   AgencySlugSettingsRoute: typeof AgencySlugSettingsRouteWithChildren
   AgencySlugSupportRoute: typeof AgencySlugSupportRouteWithChildren
@@ -3016,6 +3036,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugProductivityRoute: AgencySlugProductivityRoute,
   AgencySlugProposalsRoute: AgencySlugProposalsRouteWithChildren,
   AgencySlugQuotesRoute: AgencySlugQuotesRouteWithChildren,
+  AgencySlugRadarRoute: AgencySlugRadarRoute,
   AgencySlugRoomingListRoute: AgencySlugRoomingListRoute,
   AgencySlugSettingsRoute: AgencySlugSettingsRouteWithChildren,
   AgencySlugSupportRoute: AgencySlugSupportRouteWithChildren,

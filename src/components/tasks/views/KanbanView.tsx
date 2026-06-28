@@ -3,6 +3,8 @@ import { TaskFiltersState, TaskWithRelations, TaskStatus } from "@/lib/tasks/tas
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
 import { DEFAULT_KANBAN_COLUMNS, TASK_STATUSES } from "@/lib/tasks/task.constants";
+import { useAgency } from "@/lib/agency-context";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DndContext,
   DragOverlay,
@@ -178,21 +180,28 @@ function QuickAddCard({
   );
 }
 
-// ── KanbanColumn ───────────────────────────────────────────────────────────
+// ── KanbanColumn ─────────────────────────────────────────────────────────────
 function KanbanColumn({
   status,
   tasks,
   onHide,
   onQuickAdd,
+  onOpenNewTask,
+  customLabel,
+  onRename,
 }: {
   status: TaskStatus;
   tasks: TaskWithRelations[];
   onHide: () => void;
   onQuickAdd: (title: string, status: TaskStatus) => void;
+  onOpenNewTask: () => void;
+  customLabel?: string;
+  onRename: (status: TaskStatus, newLabel: string) => void;
 }) {
   const statusDef = TASK_STATUSES[status];
+  const displayLabel = customLabel || statusDef?.label || status;
   const [editingLabel, setEditingLabel] = useState(false);
-  const [labelValue, setLabelValue] = useState(statusDef?.label || status);
+  const [labelValue, setLabelValue] = useState(displayLabel);
   const labelInputRef = useRef<HTMLInputElement>(null);
 
   // useSortable para drag de COLUNA (type = "Column")
@@ -213,17 +222,27 @@ function KanbanColumn({
     transition: colTransition,
   };
 
+  // Sincronizar se o label customizado mudar externamente (ex: localStorage reset)
+  useEffect(() => {
+    setLabelValue(customLabel || statusDef?.label || status);
+  }, [customLabel, statusDef?.label, status]);
 
   const handleRenameStart = () => {
-    setLabelValue(statusDef?.label || status);
+    setLabelValue(customLabel || statusDef?.label || status);
     setEditingLabel(true);
     setTimeout(() => labelInputRef.current?.focus(), 50);
   };
 
   const handleRenameConfirm = () => {
     setEditingLabel(false);
-    // NOTE: renomear a label é um comportamento local (salvo no localStorage)
-    // pois o status é uma coluna do enum — só o display name muda
+    const trimmed = labelValue.trim();
+    if (trimmed && trimmed !== (statusDef?.label || status)) {
+      // Persistir o label customizado via callback do pai (salvo no localStorage)
+      onRename(status, trimmed);
+    } else if (!trimmed) {
+      // Se apagou tudo, restaurar o nome padrão
+      setLabelValue(customLabel || statusDef?.label || status);
+    }
   };
 
   return (
@@ -264,7 +283,7 @@ function KanbanColumn({
             />
           ) : (
             <span className="font-bold text-xs text-foreground truncate">
-              {statusDef?.label || status}
+              {displayLabel}
             </span>
           )}
         </div>
@@ -273,6 +292,17 @@ function KanbanColumn({
           <Badge variant="secondary" className="text-[10px] font-bold h-5 px-1.5 bg-surface-alt border-none">
             {tasks.length}
           </Badge>
+
+          {/* Botão de atalho para nova tarefa nesta coluna */}
+          <Button
+            variant="ghost"
+            size="icon"
+            title={`Nova tarefa em ${displayLabel}`}
+            onClick={onOpenNewTask}
+            className="w-6 h-6 text-muted-foreground hover:text-foreground rounded-lg hover:bg-surface-alt/40"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </Button>
 
           {/* Menu de opções da coluna */}
           <DropdownMenu>
@@ -332,6 +362,7 @@ export function KanbanView({
   filters: TaskFiltersState;
   onNewTask?: () => void;
 }) {
+  const { agency } = useAgency();
   const { data: tasksData, isLoading } = useTasksQuery(filters);
   const { moveTask, createTask } = useTaskMutations();
 
@@ -344,6 +375,87 @@ export function KanbanView({
     open: false,
     defaultStatus: "todo",
   });
+
+  // Labels customizados das colunas — persistidos no localStorage (inicialmente) e banco de dados
+  const [customColumnLabels, setCustomColumnLabels] = useState<Partial<Record<TaskStatus, string>>>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("ta_kanban_column_labels_v2");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    return {};
+  });
+
+  // Carregar configurações de colunas salvas no banco
+  useEffect(() => {
+    async function loadBackendLabels() {
+      if (!agency?.id) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await (supabase as any)
+          .from("kanban_settings")
+          .select("column_key, display_label")
+          .eq("agency_id", agency.id)
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const loadedLabels: Partial<Record<TaskStatus, string>> = {};
+          data.forEach((row: any) => {
+            loadedLabels[row.column_key as TaskStatus] = row.display_label;
+          });
+          setCustomColumnLabels((prev) => {
+            const merged = { ...prev, ...loadedLabels };
+            localStorage.setItem("ta_kanban_column_labels_v2", JSON.stringify(merged));
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao carregar labels do Kanban do banco:", err);
+      }
+    }
+
+    loadBackendLabels();
+  }, [agency?.id]);
+
+  const handleColumnRename = async (status: TaskStatus, newLabel: string) => {
+    setCustomColumnLabels((prev) => {
+      const updated = { ...prev, [status]: newLabel };
+      try {
+        localStorage.setItem("ta_kanban_column_labels_v2", JSON.stringify(updated));
+      } catch { /* noop */ }
+      return updated;
+    });
+
+    if (agency?.id) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { error } = await (supabase as any)
+          .from("kanban_settings")
+          .upsert({
+            agency_id: agency.id,
+            user_id: user.id,
+            column_key: status,
+            display_label: newLabel,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "agency_id,user_id,column_key" });
+
+        if (error) throw error;
+      } catch (err) {
+        console.error("Erro ao persistir label no banco:", err);
+      }
+    }
+  };
 
   // Colunas ativas — salvas no localStorage
   const [activeColumns, setActiveColumns] = useState<TaskStatus[]>(() => {
@@ -397,11 +509,13 @@ export function KanbanView({
 
   // ── Drag Handlers ────────────────────────────────────────────────────────
   function onDragStart(event: DragStartEvent) {
-    const type = event.active.data.current?.type;
+    const current = event.active.data.current;
+    if (!current) return;
+    const type = current.type;
     if (type === "Task") {
-      setActiveTask(event.active.data.current.task);
+      setActiveTask(current.task);
     } else if (type === "Column") {
-      setActiveColumnId(event.active.data.current.status);
+      setActiveColumnId(current.status);
     }
   }
 
@@ -502,6 +616,8 @@ export function KanbanView({
       priority: "medium",
       source_type: "manual",
       is_recurring: false,
+      difficulty_score: 1,
+      estimated_minutes: 30,
     });
   };
 
@@ -556,6 +672,9 @@ export function KanbanView({
                   tasks={tasksByColumn[col] || []}
                   onHide={() => handleHideColumn(col)}
                   onQuickAdd={handleQuickAdd}
+                  customLabel={customColumnLabels[col]}
+                  onRename={handleColumnRename}
+                  onOpenNewTask={() => setNewTaskModal({ open: true, defaultStatus: col })}
                 />
               ))}
 

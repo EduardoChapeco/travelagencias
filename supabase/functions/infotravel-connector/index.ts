@@ -71,25 +71,35 @@ serve(async (req) => {
     const client = getVal("infotravel_client");
     const agency = getVal("infotravel_agency");
 
-    // Verificar se as credenciais existem ou se estamos no modo simulação
-    const isMock =
+    // Verificar se as credenciais de produção foram configuradas pela agência
+    const credentialsMissing =
       !username ||
       !password ||
       username.toLowerCase() === "test" ||
       username.toLowerCase() === "sandbox";
 
-    if (isMock) {
-      throw new Error(
-        "Ambiente de Simulação Desativado. As credenciais do Infotravel não foram configuradas ou são inválidas. Insira credenciais reais de produção no painel de integrações da agência para realizar transações e buscas de verdade.",
+    if (credentialsMissing) {
+      // Retorno estruturado (não uma exceção) — o frontend interpreta este código
+      // para exibir o estado "API não configurada" sem exibir erros técnicos ao operador.
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error_code: "CREDENTIALS_NOT_CONFIGURED",
+          error: "As credenciais de acesso ao GDS Infotravel ainda não foram configuradas para esta agência. Acesse Configurações → Conexões → Infotravel para inserir suas credenciais de produção.",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200, // 200 intencional: o frontend deve ler o error_code, não o status HTTP
+        },
       );
     }
 
-    // Se houver credenciais reais, efetuar a chamada HTTP real
+    // Autenticar na API real do GDS
     const token = await authenticateInfotravel(url, username, password, client, agency);
 
     let result;
     if (action === "test_connection") {
-      result = { success: true, message: "Conexão com a API Infotravel estabelecida!" };
+      result = { success: true, message: "Conexão com a API Infotravel estabelecida com sucesso!" };
     } else if (action === "search_hotels") {
       const rawData = await fetchRealHotels(url, token, params);
       if (params.quoteRequestId && params.scenarioId) {
@@ -98,7 +108,7 @@ serve(async (req) => {
           mapApiHotelToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
-        result = { success: true, offers };
+        result = { success: true, offers, total: offers.length };
       } else {
         result = rawData;
       }
@@ -110,13 +120,39 @@ serve(async (req) => {
           mapApiFlightToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
-        result = { success: true, offers };
+        result = { success: true, offers, total: offers.length };
+      } else {
+        result = rawData;
+      }
+    } else if (action === "search_transfers") {
+      // ── Busca real de traslados no GDS ──────────────────────────────────────
+      const rawData = await fetchRealTransfers(url, token, params);
+      if (params.quoteRequestId && params.scenarioId) {
+        const transferAvails = rawData?.transferAvail || rawData?.transfers || [];
+        const offers = transferAvails.map((avail: any) =>
+          mapApiTransferToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
+        );
+        await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
+        result = { success: true, offers, total: offers.length };
+      } else {
+        result = rawData;
+      }
+    } else if (action === "search_activities") {
+      // ── Busca real de passeios/atividades no GDS ─────────────────────────────
+      const rawData = await fetchRealActivities(url, token, params);
+      if (params.quoteRequestId && params.scenarioId) {
+        const activityAvails = rawData?.tourAvail || rawData?.activities || [];
+        const offers = activityAvails.map((avail: any) =>
+          mapApiActivityToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
+        );
+        await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
+        result = { success: true, offers, total: offers.length };
       } else {
         result = rawData;
       }
     } else if (action === "import_booking") {
       const { bookingId, tripId } = params;
-      if (!bookingId) throw new Error("Parâmetro bookingId é obrigatório para importação.");
+      if (!bookingId) throw new Error("O ID da reserva é obrigatório para realizar a importação.");
       const rawBooking = await fetchRealBooking(url, token, params);
       const savedTripId = await saveBookingToDatabase(supabaseAdmin, agencyId, rawBooking, tripId);
       result = { success: true, tripId: savedTripId, locator: rawBooking.locator || bookingId };
@@ -127,18 +163,41 @@ serve(async (req) => {
     } else if (action === "create_booking") {
       result = await executeCreateBooking(url, token, supabaseAdmin, agencyId, params);
     } else {
-      throw new Error(`Ação desconhecida: ${action}`);
+      throw new Error(`Ação não reconhecida: "${action}". Verifique a documentação do conector.`);
     }
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Erro no infotravel-connector:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
-    });
+    console.error("[infotravel-connector] Erro:", error);
+
+    // Traduzir erros técnicos em mensagens comerciais inteligíveis
+    let userMessage = error.message || "Ocorreu um erro inesperado ao processar sua solicitação.";
+
+    if (userMessage.includes("401") || userMessage.includes("Unauthorized") || userMessage.includes("autenticação")) {
+      userMessage = "As credenciais do Infotravel são inválidas ou expiraram. Verifique seu usuário e senha nas configurações de integração.";
+    } else if (userMessage.includes("403") || userMessage.includes("Forbidden")) {
+      userMessage = "Acesso negado pelo GDS. Verifique se sua conta possui as permissões de API ativadas.";
+    } else if (userMessage.includes("429") || userMessage.includes("rate limit") || userMessage.includes("Too Many")) {
+      userMessage = "Limite de requisições atingido no GDS. Aguarde alguns minutos e tente novamente.";
+    } else if (userMessage.includes("500") || userMessage.includes("502") || userMessage.includes("503") || userMessage.includes("504")) {
+      userMessage = "O servidor do GDS Infotravel está temporariamente indisponível. Tente novamente em instantes.";
+    } else if (userMessage.includes("fetch") || userMessage.includes("network") || userMessage.includes("ECONNREFUSED")) {
+      userMessage = "Não foi possível conectar ao servidor do GDS Infotravel. Verifique a URL de acesso nas configurações de integração.";
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: userMessage,
+        error_code: "API_ERROR",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      },
+    );
   }
 });
 
@@ -212,7 +271,10 @@ async function fetchRealHotels(url: string, token: string, params: any) {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error(`Erro na busca de hotéis da Infotravel: HTTP ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Falha na consulta de disponibilidade de hotéis (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+  }
   return await res.json();
 }
 
@@ -234,7 +296,72 @@ async function fetchRealFlights(url: string, token: string, params: any) {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) throw new Error(`Erro na busca de voos da Infotravel: HTTP ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Falha na consulta de disponibilidade de voos (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+  }
+  return await res.json();
+}
+
+// ─── Busca real de Traslados/Transfers ────────────────────────────────────────
+async function fetchRealTransfers(url: string, token: string, params: any) {
+  // Endpoint de traslados conforme documentação Infotravel OpenAPI (service/tour/avail)
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/transfer"));
+
+  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+  if (params.city) {
+    const destCode = parseInt(params.city);
+    if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
+  }
+  if (params.date || params.checkin) {
+    targetUrl.searchParams.append("start", params.date || params.checkin);
+  }
+  if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
+  targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+
+  const res = await fetch(targetUrl.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Falha na consulta de traslados (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+  }
+  return await res.json();
+}
+
+// ─── Busca real de Passeios/Atividades ───────────────────────────────────────
+async function fetchRealActivities(url: string, token: string, params: any) {
+  // Endpoint de passeios/tours conforme documentação Infotravel OpenAPI
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/tour"));
+
+  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+  if (params.city) {
+    const destCode = parseInt(params.city);
+    if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
+  }
+  if (params.date || params.checkin) {
+    targetUrl.searchParams.append("start", params.date || params.checkin);
+  }
+  if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
+  targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+
+  const res = await fetch(targetUrl.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Falha na consulta de passeios e atividades (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+  }
   return await res.json();
 }
 
@@ -1157,6 +1284,123 @@ function mapApiFlightToNormalizedOffer(
     availability: {
       isAvailable: true,
     },
+    fetchedAt: new Date().toISOString(),
+    status: "available",
+  };
+}
+
+// ─── Normalizador de Transfer para NormalizedOffer ──────────────────────────
+function mapApiTransferToNormalizedOffer(
+  avail: any,
+  agencyId: string,
+  quoteRequestId: string,
+  scenarioId: string,
+) {
+  const transferId = avail.id?.toString() || avail.key || `tr-${crypto.randomUUID().substring(0, 8)}`;
+  const name = avail.name || avail.description || "Transfer não identificado";
+  const cityName = avail.city?.name || avail.destination?.name || "";
+  const price = avail.lowestFare?.price?.amount || avail.price?.amount || avail.amount || 0;
+  const currency = avail.lowestFare?.price?.currency || avail.price?.currency || "BRL";
+
+  return {
+    id: crypto.randomUUID(),
+    agencyId,
+    providerCode: "infotravel",
+    externalOfferId: transferId,
+    searchScenarioId: scenarioId,
+    productType: "transfer",
+    origin: [],
+    destination: [{ code: avail.destination?.code?.toString() || "", name: cityName }],
+    startAt: avail.date || avail.checkIn || "",
+    endAt: avail.date || avail.checkOut || "",
+    travelers: { adults: 2 },
+    flights: [],
+    accommodations: [],
+    transfers: [
+      {
+        id: transferId,
+        name,
+        cityName,
+        description: avail.longDescription || avail.description || name,
+        type: avail.transferType || "PRIVATIVO",
+        capacity: avail.capacity || null,
+        price,
+        currency,
+      },
+    ],
+    experiences: [],
+    insurances: [],
+    tickets: [],
+    pricing: {
+      netPrice: price * 0.9,
+      commission: price * 0.1,
+      markup: 0,
+      taxes: 0,
+      totalPrice: price,
+      currency,
+    },
+    policies: [],
+    availability: { isAvailable: true },
+    fetchedAt: new Date().toISOString(),
+    status: "available",
+  };
+}
+
+// ─── Normalizador de Passeio/Atividade para NormalizedOffer ─────────────────
+function mapApiActivityToNormalizedOffer(
+  avail: any,
+  agencyId: string,
+  quoteRequestId: string,
+  scenarioId: string,
+) {
+  const activityId = avail.id?.toString() || avail.key || `act-${crypto.randomUUID().substring(0, 8)}`;
+  const name = avail.name || avail.tourName || "Passeio não identificado";
+  const cityName = avail.city?.name || avail.destination?.name || "";
+  const price = avail.lowestFare?.price?.amount || avail.price?.amount || avail.amount || 0;
+  const currency = avail.lowestFare?.price?.currency || avail.price?.currency || "BRL";
+  const images = avail.images?.map((img: any) => img.url || img.path || "").filter(Boolean) || [];
+
+  return {
+    id: crypto.randomUUID(),
+    agencyId,
+    providerCode: "infotravel",
+    externalOfferId: activityId,
+    searchScenarioId: scenarioId,
+    productType: "activity",
+    origin: [],
+    destination: [{ code: avail.destination?.code?.toString() || "", name: cityName }],
+    startAt: avail.date || avail.startDate || "",
+    endAt: avail.date || avail.endDate || "",
+    travelers: { adults: 2 },
+    flights: [],
+    accommodations: [],
+    transfers: [],
+    experiences: [
+      {
+        id: activityId,
+        name,
+        cityName,
+        description: avail.longDescription || avail.description || name,
+        duration: avail.duration || null,
+        category: avail.category || avail.tourType || "Passeio",
+        price,
+        currency,
+        images,
+        rating: avail.rating || null,
+      },
+    ],
+    insurances: [],
+    tickets: [],
+    pricing: {
+      netPrice: price * 0.9,
+      commission: price * 0.1,
+      markup: 0,
+      taxes: 0,
+      totalPrice: price,
+      currency,
+    },
+    policies: [],
+    availability: { isAvailable: true },
     fetchedAt: new Date().toISOString(),
     status: "available",
   };

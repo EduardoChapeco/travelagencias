@@ -275,6 +275,8 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     evolution_api_url: "",
     evolution_api_key: "",
     preferred_provider: "meta_official" as "meta_official" | "evolution_api",
+    meta_app_id: "",
+    meta_config_id: "",
   });
 
   const { data: agencyData, isLoading } = useQuery({
@@ -297,7 +299,12 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
   useEffect(() => {
     if ((agencyData as any)?.integrations_config) {
-      setConfig((c) => ({ ...c, ...(agencyData as any).integrations_config }));
+      setConfig((c) => ({ 
+        ...c, 
+        ...(agencyData as any).integrations_config,
+        meta_app_id: (agencyData as any).integrations_config.meta_app_id || "",
+        meta_config_id: (agencyData as any).integrations_config.meta_config_id || "",
+      }));
     }
     if (keysQuery.data) {
       const getVal = (provider: string) =>
@@ -313,6 +320,67 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     }
   }, [agencyData, keysQuery.data]);
 
+  const launchEmbeddedSignup = () => {
+    if (!config.meta_app_id) {
+      toast.error("Por favor, preencha o Meta App ID primeiro e salve as configurações.");
+      return;
+    }
+
+    if (!(window as any).FB) {
+      (function (d, s, id) {
+        var js: any, fjs: any = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, "script", "facebook-jssdk"));
+    }
+
+    const triggerLogin = () => {
+      (window as any).FB.init({
+        appId: config.meta_app_id,
+        cookie: true,
+        xfbml: true,
+        version: "v21.0"
+      });
+
+      (window as any).FB.login((response: any) => {
+        if (response.authResponse) {
+          const code = response.authResponse.code;
+          if (code) {
+            toast.promise(
+              supabase.functions.invoke("meta-oauth-exchange", {
+                body: { code, agency_id: agencyId, config_id: config.meta_config_id }
+              }).then(({ data, error }) => {
+                if (error) throw error;
+                toast.success("WhatsApp conectado com sucesso via Embedded Signup!");
+              }),
+              {
+                loading: "Trocando código de autorização e descobrindo ativos...",
+                success: "Conexão criada com sucesso!",
+                error: (err) => "Erro ao conectar: " + err.message
+              }
+            );
+          }
+        } else {
+          toast.error("O login ou permissão foi cancelado pelo usuário.");
+        }
+      }, {
+        scope: "whatsapp_business_management,whatsapp_business_messaging",
+        extras: {
+          feature: "whatsapp_embedded_signup",
+          config_id: config.meta_config_id
+        }
+      });
+    };
+
+    if ((window as any).FB) {
+      triggerLogin();
+    } else {
+      setTimeout(triggerLogin, 1000);
+    }
+  };
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -323,6 +391,8 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
         meta_pixel_id: config.meta_pixel_id,
         evolution_api_url: config.evolution_api_url,
         preferred_provider: config.preferred_provider,
+        meta_app_id: config.meta_app_id,
+        meta_config_id: config.meta_config_id,
       };
       const { error } = await (supabase as any)
         .from("agencies")
@@ -370,6 +440,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
       setBusy(false);
     }
   }
+
 
   const webhookUrl = `${window.location.origin.replace("5173", "54321")}/functions/v1/whatsapp-webhook`;
 
@@ -453,10 +524,33 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
       {/* Meta Official */}
       {config.preferred_provider === "meta_official" && (
         <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-          <div className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-brand" /> API Oficial Meta
+          <div className="text-sm font-semibold text-foreground flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-brand" /> API Oficial Meta
+            </div>
+            <button
+              type="button"
+              onClick={launchEmbeddedSignup}
+              className="bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-brand/90 flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            >
+              <Zap className="h-3.5 w-3.5" /> Conectar WhatsApp via Meta
+            </button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Meta App ID" hint="ID do aplicativo no painel de desenvolvedores Meta">
+              <Input
+                placeholder="Ex: 1029384756..."
+                value={config.meta_app_id}
+                onChange={(e) => setConfig({ ...config, meta_app_id: e.target.value })}
+              />
+            </Field>
+            <Field label="Configuration ID (Embedded Signup)" hint="Opcional. Config ID do fluxo customizado">
+              <Input
+                placeholder="Ex: waba-config-id..."
+                value={config.meta_config_id}
+                onChange={(e) => setConfig({ ...config, meta_config_id: e.target.value })}
+              />
+            </Field>
             <Field label="WhatsApp Phone Number ID">
               <Input
                 type="password"

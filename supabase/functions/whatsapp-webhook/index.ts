@@ -40,7 +40,7 @@ serve(async (req) => {
 
   const url = new URL(req.url);
 
-  // 1. WhatsApp Webhook Verification (GET)
+  // 1. Webhook Verification (GET) - Meta standard challenge
   if (req.method === "GET") {
     const mode = url.searchParams.get("hub.mode");
     const token = url.searchParams.get("hub.verify_token");
@@ -65,24 +65,20 @@ serve(async (req) => {
     const signature = req.headers.get("x-hub-signature-256");
     const rawBody = await req.text();
 
-    // ──────────────────────────────────────────────────────────────────────
-    // P0.1 — HMAC MANDATORY EARLY REJECT
-    // Validate the signature before even parsing the body.
-    // If no signature is present on a POST, reject immediately.
-    // ──────────────────────────────────────────────────────────────────────
     if (!signature) {
-      console.warn("[P0] Rejected: Missing x-hub-signature-256 header.");
+      console.warn("[Webhook] Rejected: Missing x-hub-signature-256 header.");
       return new Response("Unauthorized", { status: 401 });
     }
 
     const body = JSON.parse(rawBody);
 
-    // Meta API Object
+    // ──────────────────────────────────────────────────────────────────────
+    // CASE A: WhatsApp Cloud API Message Events
+    // ──────────────────────────────────────────────────────────────────────
     if (body.object === "whatsapp_business_account") {
       for (const entry of body.entry) {
         const wabaId = entry.id;
 
-        // Fetch connection info for signature validation and agency matching
         const { data: connections, error: connErr } = await supabase
           .from("whatsapp_connections")
           .select("id, agency_id, secret_reference")
@@ -90,53 +86,77 @@ serve(async (req) => {
           .eq("status", "active")
           .limit(1);
 
-        if (connErr) {
-          console.error(`[Webhook] DB error fetching connection for WABA ${wabaId}:`, connErr.message);
+        if (connErr || !connections?.[0]) {
+          console.warn(`[Webhook] No active WhatsApp connection found for WABA ID: ${wabaId}`);
           continue;
         }
 
-        const connection = connections?.[0];
-
-        if (!connection) {
-          console.warn(`[Webhook] No active connection found for WABA ID: ${wabaId}`);
-          continue;
-        }
-
-        // ──────────────────────────────────────────────────────────────────
-        // P0.1 — Per-connection HMAC validation (mandatory, no bypass)
-        // Falls back to global META_APP_SECRET only if connection has none.
-        // If NEITHER secret is available → reject with 500 (server misconfiguration).
-        // ──────────────────────────────────────────────────────────────────
+        const connection = connections[0];
         const appSecret = connection.secret_reference || Deno.env.get("META_APP_SECRET");
         if (!appSecret) {
-          console.error(
-            `[P0] CRITICAL: No app secret configured for WABA ${wabaId}. ` +
-            `Set META_APP_SECRET env var or configure secret_reference in whatsapp_connections.`
-          );
           return new Response("Server misconfiguration", { status: 500 });
         }
 
         const expectedSignature = `sha256=${await computeHmacSha256(appSecret, rawBody)}`;
         if (signature !== expectedSignature) {
-          console.warn(`[P0] Rejected: Invalid HMAC signature for WABA ${wabaId}.`);
+          console.warn(`[Webhook] Rejected: Invalid HMAC signature for WABA ${wabaId}.`);
           return new Response("Unauthorized", { status: 401 });
         }
 
-        // Signature is valid — process changes
         for (const change of entry.changes) {
           if (change.value) {
-            // Handle Messages
             if (change.value.messages) {
               for (const msg of change.value.messages) {
-                await processIncomingMessage(supabase, connection, msg, change.value.contacts);
+                // Avoid trigger if it's an echo from the app and loop prevention
+                const isEcho = msg.from === change.value.metadata?.display_phone_number;
+                const source = isEcho ? "whatsapp_business_app" : "customer";
+                await processIncomingMessage(supabase, connection, msg, change.value.contacts, source);
               }
             }
-            // Handle Statuses
             if (change.value.statuses) {
               for (const statusObj of change.value.statuses) {
                 await processMessageStatus(supabase, statusObj);
               }
             }
+          }
+        }
+      }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    // CASE B: Instagram Direct Message Events
+    // ──────────────────────────────────────────────────────────────────────
+    if (body.object === "instagram") {
+      for (const entry of body.entry) {
+        const instaAccountId = entry.id;
+
+        // Fetch connection info for Instagram channel matching
+        const { data: channels, error: channelErr } = await supabase
+          .from("channels")
+          .select("id, agency_id")
+          .eq("type", "instagram")
+          .eq("external_id", `instagram-${instaAccountId}`)
+          .eq("is_active", true)
+          .limit(1);
+
+        if (channelErr || !channels?.[0]) {
+          console.warn(`[Webhook] No active Instagram connection found for ID: ${instaAccountId}`);
+          continue;
+        }
+
+        const channel = channels[0];
+        const appSecret = Deno.env.get("META_APP_SECRET");
+        if (appSecret) {
+          const expectedSignature = `sha256=${await computeHmacSha256(appSecret, rawBody)}`;
+          if (signature !== expectedSignature) {
+            console.warn(`[Webhook] Rejected: Invalid HMAC signature for Instagram ${instaAccountId}.`);
+            return new Response("Unauthorized", { status: 401 });
+          }
+        }
+
+        for (const messagingItem of entry.messaging) {
+          if (messagingItem.message) {
+            await processIncomingInstagramMessage(supabase, channel, messagingItem);
           }
         }
       }
@@ -154,7 +174,7 @@ serve(async (req) => {
   }
 });
 
-async function processIncomingMessage(supabase: any, connection: any, msg: any, waContacts: any[]) {
+async function processIncomingMessage(supabase: any, connection: any, msg: any, waContacts: any[], source: string) {
   const phone = msg.from;
   const text = msg.text?.body || "";
   const wamid = msg.id;
@@ -165,7 +185,7 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
   const contactName = waContacts?.find((c: any) => c.wa_id === phone)?.profile?.name || "Novo Contato";
   const cleanPhone = phone.replace(/\D/g, "");
 
-  // 1. Find or Create Contact (New Schema)
+  // 1. Find or Create Contact
   let { data: contacts } = await supabase
     .from("contacts")
     .select("id, agency_id")
@@ -191,8 +211,7 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
     contact = newContact;
   }
 
-  // 2. Find or Create Conversation (New Schema)
-  // Check if there is an active (open or pending) conversation for this contact and channel
+  // 2. Find or Create Conversation
   let { data: conversations } = await supabase
     .from("conversations")
     .select("id, status, ai_mode")
@@ -212,15 +231,14 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
         channel_id: connection.id,
         contact_id: contact.id,
         status: "open",
-        ai_mode: false, // Default from channel config could be injected here
+        ai_mode: false,
       })
       .select("id")
       .single();
 
-    if (convErr) throw new Error(`Failed to create conversation for ${cleanPhone}: ${convErr.message}`);
+    if (convErr) throw new Error(`Failed to create conversation: ${convErr.message}`);
     conversation = newConv;
   } else {
-    // If it was snoozed or pending, a new message from user re-opens it
     if (conversation.status !== "open") {
       await supabase.from("conversations").update({ status: "open", last_message_at: timestamp }).eq("id", conversation.id);
     } else {
@@ -228,7 +246,7 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
     }
   }
 
-  // 3. Prevent duplicate message (idempotency via unique wamid index)
+  // 3. Prevent duplicate messages (idempotency via unique wamid index)
   const { data: existingMsg } = await supabase
     .from("messages")
     .select("id")
@@ -236,30 +254,105 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
     .limit(1);
 
   if (!existingMsg || existingMsg.length === 0) {
-    const { error: msgErr } = await supabase.from("messages").insert({
+    await supabase.from("messages").insert({
       agency_id: contact.agency_id,
       conversation_id: conversation.id,
-      direction: "inbound",
+      direction: source === "customer" ? "inbound" : "outbound",
       body: text,
       status: "delivered",
       external_id: wamid,
       created_at: timestamp,
     });
-    
-    if (msgErr) throw new Error(`Failed to insert message wamid=${wamid}: ${msgErr.message}`);
-    
-    // RAG AI Trigger (Onda 4)
-    if (conversation.ai_mode) {
-      // Future: Call ai-reply edge function via queue or direct HTTP
-    }
+  }
+}
+
+async function processIncomingInstagramMessage(supabase: any, connection: any, messaging: any) {
+  const senderId = messaging.sender?.id;
+  const text = messaging.message?.text || "";
+  const msgId = messaging.message?.mid;
+  const timestamp = new Date(messaging.timestamp).toISOString();
+
+  if (!senderId) return;
+
+  // 1. Find or Create Contact
+  let { data: contacts } = await supabase
+    .from("contacts")
+    .select("id, agency_id")
+    .eq("agency_id", connection.agency_id)
+    .eq("metadata->>instagram_id", senderId)
+    .limit(1);
+
+  let contact = contacts?.[0];
+
+  if (!contact) {
+    const { data: newContact, error: contactErr } = await supabase
+      .from("contacts")
+      .insert({
+        agency_id: connection.agency_id,
+        name: `Instagram User (${senderId.slice(-4)})`,
+        metadata: { source: "instagram", instagram_id: senderId },
+      })
+      .select("id, agency_id")
+      .single();
+
+    if (contactErr) throw new Error(`Failed to create contact for Instagram ${senderId}: ${contactErr.message}`);
+    contact = newContact;
+  }
+
+  // 2. Find or Create Conversation
+  let { data: conversations } = await supabase
+    .from("conversations")
+    .select("id, status, ai_mode")
+    .eq("agency_id", contact.agency_id)
+    .eq("contact_id", contact.id)
+    .eq("channel_id", connection.id)
+    .in("status", ["open", "pending", "snoozed"])
+    .limit(1);
+
+  let conversation = conversations?.[0];
+
+  if (!conversation) {
+    const { data: newConv, error: convErr } = await supabase
+      .from("conversations")
+      .insert({
+        agency_id: contact.agency_id,
+        channel_id: connection.id,
+        contact_id: contact.id,
+        status: "open",
+        ai_mode: false,
+      })
+      .select("id")
+      .single();
+
+    if (convErr) throw new Error(`Failed to create conversation: ${convErr.message}`);
+    conversation = newConv;
+  } else {
+    await supabase.from("conversations").update({ status: "open", last_message_at: timestamp }).eq("id", conversation.id);
+  }
+
+  // 3. Prevent duplicate message
+  const { data: existingMsg } = await supabase
+    .from("messages")
+    .select("id")
+    .eq("external_id", msgId)
+    .limit(1);
+
+  if (!existingMsg || existingMsg.length === 0) {
+    await supabase.from("messages").insert({
+      agency_id: contact.agency_id,
+      conversation_id: conversation.id,
+      direction: "inbound",
+      body: text,
+      status: "delivered",
+      external_id: msgId,
+      created_at: timestamp,
+    });
   }
 }
 
 async function processMessageStatus(supabase: any, statusObj: any) {
   const wamid = statusObj.id;
-  const status = statusObj.status; // 'sent' | 'delivered' | 'read' | 'failed'
-  
-  // Enums from new schema: queued, sent, delivered, read, failed
+  const status = statusObj.status;
   const updatePayload: Record<string, unknown> = { status };
 
   if (status === "failed") {

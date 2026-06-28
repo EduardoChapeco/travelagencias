@@ -756,7 +756,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         const contactPhone = validatedData.phoneNumber.replace(/\D/g, "");
 
         // 1. Obter canal ativo
-        const { data: activeChannel } = await supabase
+        const { data: activeChannel } = await (supabase as any)
           .from("channels")
           .select("id")
           .eq("agency_id", agencyId)
@@ -767,7 +767,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         let targetChannelId = activeChannel?.id;
 
         if (!targetChannelId) {
-          const { data: existingChannel } = await supabase
+          const { data: existingChannel } = await (supabase as any)
             .from("channels")
             .select("id")
             .eq("agency_id", agencyId)
@@ -776,7 +776,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           targetChannelId = existingChannel?.id;
 
           if (!targetChannelId) {
-            const { data: newChan, error: chanErr } = await supabase
+            const { data: newChan, error: chanErr } = await (supabase as any)
               .from("channels")
               .insert({
                 agency_id: agencyId,
@@ -794,7 +794,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         }
 
         // 2. Obter ou criar contato
-        let { data: contact } = await supabase
+        let { data: contact } = await (supabase as any)
           .from("contacts")
           .select("id")
           .eq("agency_id", agencyId)
@@ -802,7 +802,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           .maybeSingle();
 
         if (!contact) {
-          const { data: newContact, error: contactErr } = await supabase
+          const { data: newContact, error: contactErr } = await (supabase as any)
             .from("contacts")
             .insert({
               agency_id: agencyId,
@@ -817,14 +817,14 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         }
 
         // 3. Obter ou criar conversa
-        let { data: conv } = await supabase
+        let { data: conv } = await (supabase as any)
           .from("conversations")
           .select("id")
           .eq("contact_id", contact!.id)
           .maybeSingle();
 
         if (!conv) {
-          const { data: newConv, error: convErr } = await supabase
+          const { data: newConv, error: convErr } = await (supabase as any)
             .from("conversations")
             .insert({
               agency_id: agencyId,
@@ -852,7 +852,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           `Template [${validatedData.templateName}] disparado via WhatsApp.`;
 
         // 5. Gravar a mensagem
-        const { data: message, error: mErr } = await supabase
+        const { data: message, error: mErr } = await (supabase as any)
           .from("messages")
           .insert({
             conversation_id: conv.id,

@@ -51,12 +51,14 @@ type Clause = {
 
 export function ContractClauseLibrary({
   agencyId,
-  isOpen,
-  onClose,
+  isOpen = false,
+  onClose = () => {},
+  isInline = false,
 }: {
   agencyId: string;
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  isInline?: boolean;
 }) {
   const qc = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
@@ -205,14 +207,8 @@ export function ContractClauseLibrary({
     return groups;
   }, [q.data]);
 
-  return (
-    <SheetPage
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Biblioteca de Cláusulas Contratuais"
-      width="clamp(500px, 50vw, 850px)"
-      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
-    >
+  const content = (
+    <div className={isInline ? "flex flex-col flex-1 min-h-0 h-full overflow-hidden bg-background" : "flex flex-col flex-1 min-h-0 overflow-hidden"}>
       {/* Intro section */}
       <div className="px-6 py-4 border-b border-border bg-surface-alt/20 shrink-0 flex items-center justify-between">
         <div>
@@ -232,7 +228,6 @@ export function ContractClauseLibrary({
 
       <div className="flex-1 overflow-y-auto p-6 min-h-0 relative bg-surface/30">
         {formOpen ? (
-          /* Form to Add/Edit */
           <form
             onSubmit={handleSubmit}
             className="mx-auto max-w-xl space-y-5 border border-border rounded-xl p-5 bg-surface animate-in fade-in slide-in-from-bottom-2 duration-300"
@@ -252,78 +247,81 @@ export function ContractClauseLibrary({
               </button>
             </div>
 
-            <Field label="Título / Identificação da Cláusula">
+            <Field label="Título da Cláusula">
               <Input
+                placeholder="Ex: Condições de Cancelamento por Força Maior"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Responsabilidade de Bagagens extraviadas"
-                autoFocus
+                className="h-9 text-xs"
               />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Classificação / Categoria">
-                <Select value={kind} onChange={(e) => setKind(e.target.value as any)}>
-                  <option value="general">Geral</option>
-                  <option value="cancellation">Cancelamento</option>
-                  <option value="liability">Responsabilidade</option>
-                  <option value="payment">Condições de Pagamento</option>
-                  <option value="insurance">Seguro Viagem</option>
-                  <option value="lgpd">Proteção de Dados (LGPD)</option>
-                  <option value="custom">Outra Cláusula Customizada</option>
+              <Field label="Classificação/Tipo">
+                <Select
+                  value={kind}
+                  onChange={(e) => setKind(e.target.value as Clause["kind"])}
+                  className="h-9 text-xs"
+                >
+                  {Object.entries(CLAUSE_KIND_LABELS).map(([k, label]) => (
+                    <option key={k} value={k}>
+                      {label}
+                    </option>
+                  ))}
                 </Select>
               </Field>
 
-              <Field label="Status da Cláusula">
+              <Field label="Status">
                 <Select
-                  value={isActive ? "true" : "false"}
-                  onChange={(e) => setIsActive(e.target.value === "true")}
+                  value={isActive ? "active" : "inactive"}
+                  onChange={(e) => setIsActive(e.target.value === "active")}
+                  className="h-9 text-xs"
                 >
-                  <option value="true">Ativa (Usar nos contratos)</option>
-                  <option value="false">Inativa (Ocultar nos contratos)</option>
+                  <option value="active">Ativa (Visível ao Gerar)</option>
+                  <option value="inactive">Inativa (Oculta)</option>
                 </Select>
               </Field>
             </div>
 
-            <Field label="Texto Legal da Cláusula">
+            <Field label="Texto da Cláusula">
               <Textarea
-                rows={10}
+                placeholder="Texto legal que será inserido no corpo do contrato..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                placeholder="Texto legal completo da cláusula que será renderizado no contrato..."
-                className="font-sans text-xs leading-relaxed"
+                rows={8}
+                className="text-xs resize-none"
               />
             </Field>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-border">
-              <GhostButton type="button" onClick={resetForm} className="h-9 text-xs">
-                Cancelar
-              </GhostButton>
-              <PrimaryButton
-                type="submit"
-                disabled={createMut.isPending || updateMut.isPending}
-                className="h-9 text-xs"
-              >
-                {editingClause ? "Salvar Alterações" : "Salvar Cláusula"}
-              </PrimaryButton>
+            <div className="flex items-center justify-between border-t border-border pt-4">
+              {editingClause && (
+                <div className="text-[10px] text-muted-foreground">
+                  Versão Atual: {editingClause.version} · Criada por:{" "}
+                  {editingClause.agency_id ? "Sua Agência" : "Global"}
+                </div>
+              )}
+              <div className="flex gap-2 ml-auto">
+                <GhostButton type="button" onClick={resetForm} className="h-8 text-xs font-semibold">
+                  Cancelar
+                </GhostButton>
+                <PrimaryButton
+                  type="submit"
+                  disabled={createMut.isPending || updateMut.isPending}
+                  className="h-8 text-xs font-semibold"
+                >
+                  {createMut.isPending || updateMut.isPending ? "Salvando..." : "Salvar Cláusula"}
+                </PrimaryButton>
+              </div>
             </div>
           </form>
+        ) : q.isLoading ? (
+          <div className="text-xs text-muted-foreground p-4">Carregando biblioteca...</div>
+        ) : q.data?.length === 0 ? (
+          <div className="text-center py-12 text-xs text-muted-foreground">
+            Nenhuma cláusula cadastrada. Cadastre cláusulas personalizadas para sua agência.
+          </div>
         ) : (
-          /* List of Clauses grouped by classification */
           <div className="space-y-6 animate-in fade-in duration-300">
-            {q.isLoading && (
-              <div className="flex flex-col items-center py-12 gap-3 text-muted-foreground text-sm">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                Carregando cláusulas...
-              </div>
-            )}
-
-            {q.data && q.data.length === 0 && (
-              <div className="text-center py-12 border border-dashed rounded-xl text-sm text-muted-foreground">
-                Nenhuma cláusula cadastrada. Cadastre cláusulas personalizadas para sua agência.
-              </div>
-            )}
-
             {Object.entries(groupedClauses).map(([groupKey, clauses]) => {
               if (clauses.length === 0) return null;
               return (
@@ -415,6 +413,22 @@ export function ContractClauseLibrary({
           </div>
         )}
       </div>
+    </div>
+  );
+
+  if (isInline) {
+    return content;
+  }
+
+  return (
+    <SheetPage
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Biblioteca de Cláusulas Contratuais"
+      width="clamp(500px, 50vw, 850px)"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      {content}
     </SheetPage>
   );
 }

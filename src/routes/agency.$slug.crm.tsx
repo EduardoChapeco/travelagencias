@@ -48,6 +48,7 @@ import {
 import { CrmFilterBar } from "@/components/crm/CrmFilterBar";
 import { CrmKanbanBoard } from "@/components/crm/CrmKanbanBoard";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -73,8 +74,7 @@ function CRMPage() {
   const { confirm, ConfirmDialog } = useConfirm();
 
   const [newOpen, setNewOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [showArchived, setShowArchived] = useState(false);
+  const [activeTab, setActiveTab] = useState("kanban");
   const [proposalLeadId, setProposalLeadId] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,9 +90,9 @@ function CRMPage() {
   });
 
   const leadsQ = useQuery({
-    enabled: !!agency,
-    queryKey: ["leads", agency?.id, showArchived],
-    queryFn: () => (showArchived ? fetchArchivedLeads(agency!.id) : fetchLeads(agency!.id)),
+    enabled: !!agency && (activeTab === "kanban" || activeTab === "archived"),
+    queryKey: ["leads", agency?.id, activeTab === "archived"],
+    queryFn: () => (activeTab === "archived" ? fetchArchivedLeads(agency!.id) : fetchLeads(agency!.id)),
   });
 
   const usersQ = useQuery({
@@ -181,45 +181,47 @@ function CRMPage() {
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowArchived(!showArchived)}
-            className={`flex h-8 items-center justify-center gap-1.5 rounded-sm border px-2 sm:px-3 text-xs font-medium transition-all cursor-pointer ${
-              showArchived
-                ? "bg-brand/10 border-brand text-brand hover:bg-brand/20"
-                : "bg-surface border-border text-muted-foreground hover:text-foreground"
-            }`}
-            title={showArchived ? "Funil Ativo" : "Ver Arquivados"}
-          >
-            {showArchived ? (
-              <FolderOpen className="h-3.5 w-3.5" />
-            ) : (
-              <Archive className="h-3.5 w-3.5" />
-            )}
-            <span className="hidden sm:inline">{showArchived ? "Funil Ativo" : "Arquivados"}</span>
-          </button>
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-sm bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-            title="Novo Lead"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Novo Lead</span>
-          </button>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setSettingsOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar CRM"
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
+        {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+            <TabsTrigger
+              value="kanban"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
             >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-      </HeaderPortal>
+              Funil de Vendas (Kanban)
+            </TabsTrigger>
+            <TabsTrigger
+              value="archived"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+            >
+              Leads Arquivados
+            </TabsTrigger>
+            {isAgencyAdmin && (
+              <TabsTrigger
+                value="admin"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              >
+                Configurações
+              </TabsTrigger>
+            )}
+          </TabsList>
 
-      {!showArchived && (
+          <div className="flex items-center gap-2">
+            {activeTab !== "admin" && (
+              <button
+                onClick={() => setNewOpen(true)}
+                className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+                title="Novo Lead"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Novo Lead</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {activeTab !== "admin" && (
         <div className="flex flex-col sm:flex-row gap-2 border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
@@ -291,7 +293,7 @@ function CRMPage() {
         </div>
       )}
 
-      {showArchived && leadsQ.data && (
+      {activeTab === "archived" && leadsQ.data && (
         <div className="flex-1 overflow-auto p-6 bg-surface/30">
           <div className="rounded-md border border-border bg-surface p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
@@ -382,7 +384,7 @@ function CRMPage() {
         </div>
       )}
 
-      {!showArchived && stagesQ.data && stagesQ.data.length === 0 && (
+      {activeTab === "kanban" && stagesQ.data && stagesQ.data.length === 0 && (
         <div className="flex-1 p-6">
           <EmptyState
             icon={KanbanSquare}
@@ -397,7 +399,7 @@ function CRMPage() {
         </div>
       )}
 
-      {!showArchived && stagesQ.data && stagesQ.data.length > 0 && localLeads && (
+      {activeTab === "kanban" && stagesQ.data && stagesQ.data.length > 0 && localLeads && (
         <CrmKanbanBoard
           stages={stagesQ.data}
           stagesById={stagesById}
@@ -413,38 +415,29 @@ function CRMPage() {
         />
       )}
 
-      {newOpen && agency && (
-        <NewLeadSheet
-          agencyId={agency.id}
-          stages={stagesQ.data ?? []}
-          onClose={() => setNewOpen(false)}
-          onCreated={() => {
-            setNewOpen(false);
-            qc.invalidateQueries({ queryKey: ["leads", agency.id] });
-          }}
-        />
+      {activeTab === "admin" && agency && (
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+          <ModuleAdminPanel
+            moduleKey="crm"
+            moduleName="CRM"
+            agencyId={agency.id}
+            isInline={true}
+            customSettingsComponent={
+              <StageSettingsPanel
+                agencyId={agency.id}
+                stages={stagesQ.data ?? []}
+                onUpdated={() => {
+                  qc.invalidateQueries({ queryKey: ["stages", agency.id] });
+                  qc.invalidateQueries({ queryKey: ["leads", agency.id] });
+                }}
+                onClose={() => setActiveTab("kanban")}
+              />
+            }
+          />
+        </div>
       )}
 
-      {settingsOpen && agency && (
-        <ModuleAdminPanel
-          isOpen={settingsOpen}
-          onClose={() => setSettingsOpen(false)}
-          moduleKey="crm"
-          moduleName="CRM"
-          agencyId={agency.id}
-          customSettingsComponent={
-            <StageSettingsPanel
-              agencyId={agency.id}
-              stages={stagesQ.data ?? []}
-              onUpdated={() => {
-                qc.invalidateQueries({ queryKey: ["stages", agency.id] });
-                qc.invalidateQueries({ queryKey: ["leads", agency.id] });
-              }}
-              onClose={() => setSettingsOpen(false)}
-            />
-          }
-        />
-      )}
+      </Tabs>
 
       {proposalLeadId && agency && (
         <NewProposalSheet
@@ -458,6 +451,18 @@ function CRMPage() {
               to: "/agency/$slug/proposals/$id",
               params: { slug, id: newProposalId },
             });
+          }}
+        />
+      )}
+
+      {newOpen && agency && (
+        <NewLeadSheet
+          agencyId={agency.id}
+          stages={stagesQ.data ?? []}
+          onClose={() => setNewOpen(false)}
+          onCreated={() => {
+            setNewOpen(false);
+            qc.invalidateQueries({ queryKey: ["leads", agency.id] });
           }}
         />
       )}

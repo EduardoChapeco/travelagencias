@@ -9,23 +9,25 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
 
 interface ModuleAdminPanelProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   moduleKey: string;
   moduleName: string;
   agencyId: string;
   customSettingsComponent?: React.ReactNode;
+  isInline?: boolean;
 }
 
 type TabType = "kpis" | "settings";
 
 export function ModuleAdminPanel({
-  isOpen,
-  onClose,
+  isOpen = false,
+  onClose = () => {},
   moduleKey,
   moduleName,
   agencyId,
   customSettingsComponent,
+  isInline = false,
 }: ModuleAdminPanelProps) {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabType>("kpis");
@@ -81,7 +83,7 @@ export function ModuleAdminPanel({
 
   // Scoped Playbooks Query
   const playbooksQ = useQuery({
-    enabled: isOpen && !!agencyId,
+    enabled: (isOpen || isInline) && !!agencyId,
     queryKey: ["playbooks-scoped", agencyId, moduleName],
     queryFn: async () => {
       try {
@@ -105,7 +107,7 @@ export function ModuleAdminPanel({
 
   // Scoped Articles Query
   const articlesQ = useQuery({
-    enabled: isOpen && !!agencyId,
+    enabled: (isOpen || isInline) && !!agencyId,
     queryKey: ["articles-scoped", agencyId, moduleName],
     queryFn: async () => {
       try {

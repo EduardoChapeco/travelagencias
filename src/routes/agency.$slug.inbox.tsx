@@ -130,8 +130,19 @@ function InboxModule() {
   const [docTypeToUpload, setDocTypeToUpload] = useState("rg");
   const [contactNotes, setContactNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
-  const [mySessionsOnly, setMySessionsOnly] = useState(false);
   const [isConnectSheetOpen, setIsConnectSheetOpen] = useState(false);
+  const [connectType, setConnectType] = useState<"whatsapp" | "gmail" | "instagram" | null>(null);
+  const [waPhoneId, setWaPhoneId] = useState("");
+  const [waToken, setWaToken] = useState("");
+  const [waProvider, setWaProvider] = useState<"meta_official" | "evolution_api">("meta_official");
+  const [evolutionUrl, setEvolutionUrl] = useState("");
+  const [evolutionKey, setEvolutionKey] = useState("");
+  const [gmailAddress, setGmailAddress] = useState("");
+  const [resendApiKey, setResendApiKey] = useState("");
+  const [instaAccountId, setInstaAccountId] = useState("");
+  const [instaToken, setInstaToken] = useState("");
+  const [submittingConfig, setSubmittingConfig] = useState(false);
+  const [mySessionsOnly, setMySessionsOnly] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [analyzing, setAnalyzing] = useState(false);
 
@@ -704,50 +715,358 @@ function InboxModule() {
                 </div>
 
                 {/* Ações de Conexão */}
-                <div className="space-y-3 pt-2">
-                  <h3 className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
-                  
-                  <button 
-                    onClick={() => {
-                      toast.info("Redirecionando para login de e-mail corporativo...");
-                      setIsConnectSheetOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
-                  >
-                    <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-                    <div>
-                      <p className="font-bold">Conectar Gmail</p>
-                      <span className="text-[10px] text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
-                    </div>
-                  </button>
+                <div className="space-y-4 pt-2">
+                  {!connectType ? (
+                    <>
+                      <h3 className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
+                      
+                      <button 
+                        onClick={() => setConnectType("gmail")}
+                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                      >
+                        <Mail className="w-4 h-4 text-blue-500 shrink-0" />
+                        <div>
+                          <p className="font-bold">Conectar Gmail</p>
+                          <span className="text-[10px] text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
+                        </div>
+                      </button>
 
-                  <button 
-                    onClick={() => {
-                      toast.info("Abra as configurações de integrações do WhatsApp no CRM.");
-                      setIsConnectSheetOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
-                  >
-                    <Phone className="w-4 h-4 text-green-500 shrink-0" />
-                    <div>
-                      <p className="font-bold">Integrar WhatsApp</p>
-                      <span className="text-[10px] text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial.</span>
-                    </div>
-                  </button>
+                      <button 
+                        onClick={() => setConnectType("whatsapp")}
+                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                      >
+                        <Phone className="w-4 h-4 text-green-500 shrink-0" />
+                        <div>
+                          <p className="font-bold">Integrar WhatsApp</p>
+                          <span className="text-[10px] text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial ou Evolution API.</span>
+                        </div>
+                      </button>
 
-                  <button 
-                    onClick={() => {
-                      toast.info("Instagram Direct estará disponível sob chaves Meta.");
-                      setIsConnectSheetOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
-                  >
-                    <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
-                    <div>
-                      <p className="font-bold">Integrar Instagram</p>
-                      <span className="text-[10px] text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
+                      <button 
+                        onClick={() => setConnectType("instagram")}
+                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                      >
+                        <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
+                        <div>
+                          <p className="font-bold">Integrar Instagram</p>
+                          <span className="text-[10px] text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
+                        </div>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between pb-2 border-b border-border">
+                        <button
+                          onClick={() => setConnectType(null)}
+                          className="text-[10px] font-black uppercase text-brand hover:underline cursor-pointer flex items-center gap-1 bg-transparent border-none"
+                        >
+                          ← Voltar
+                        </button>
+                        <span className="text-[9px] font-extrabold uppercase text-muted-foreground tracking-wider">
+                          {connectType === "gmail" ? "Gmail" : connectType === "whatsapp" ? "WhatsApp" : "Instagram"}
+                        </span>
+                      </div>
+
+                      {connectType === "gmail" && (
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          if (!gmailAddress.trim() || !resendApiKey.trim()) {
+                            toast.error("Preencha todos os campos obrigatórios.");
+                            return;
+                          }
+                          setSubmittingConfig(true);
+                          try {
+                            await supabase.functions.invoke("ai-orchestrator", {
+                              body: {
+                                action: "save-credential",
+                                agency_id: agency!.id,
+                                provider: "resend_api_key",
+                                key_value: resendApiKey.trim(),
+                                label: "Resend Email Key",
+                              },
+                            });
+
+                            await db.from("channels").insert({
+                              agency_id: agency!.id,
+                              type: "email",
+                              display_name: `Gmail (${gmailAddress.trim()})`,
+                              external_id: `gmail-${gmailAddress.trim()}`,
+                              is_active: true,
+                            });
+
+                            toast.success("Gmail conectado com sucesso!");
+                            setConnectType(null);
+                            setGmailAddress("");
+                            setResendApiKey("");
+                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                          } catch (err: any) {
+                            toast.error("Erro ao configurar: " + err.message);
+                          } finally {
+                            setSubmittingConfig(false);
+                          }
+                        }} className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
+                            <input
+                              type="email"
+                              required
+                              placeholder="exemplo@gmail.com"
+                              value={gmailAddress}
+                              onChange={(e) => setGmailAddress(e.target.value)}
+                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Resend API Key *</label>
+                            <input
+                              type="password"
+                              required
+                              placeholder="re_..."
+                              value={resendApiKey}
+                              onChange={(e) => setResendApiKey(e.target.value)}
+                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                            />
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={submittingConfig}
+                            className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
+                          >
+                            {submittingConfig ? "Salvando..." : "Conectar Canal"}
+                          </button>
+                        </form>
+                      )}
+
+                      {connectType === "whatsapp" && (
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          setSubmittingConfig(true);
+                          try {
+                            if (waProvider === "meta_official") {
+                              if (!waPhoneId.trim() || !waToken.trim()) {
+                                toast.error("Preencha o Phone ID e Token.");
+                                return;
+                              }
+                              await Promise.all([
+                                supabase.functions.invoke("ai-orchestrator", {
+                                  body: {
+                                    action: "save-credential",
+                                    agency_id: agency!.id,
+                                    provider: "whatsapp_phone_id",
+                                    key_value: waPhoneId.trim(),
+                                    label: "WhatsApp Phone ID",
+                                  },
+                                }),
+                                supabase.functions.invoke("ai-orchestrator", {
+                                  body: {
+                                    action: "save-credential",
+                                    agency_id: agency!.id,
+                                    provider: "whatsapp_token",
+                                    key_value: waToken.trim(),
+                                    label: "WhatsApp Token",
+                                  },
+                                }),
+                              ]);
+
+                              await db.from("channels").insert({
+                                agency_id: agency!.id,
+                                type: "whatsapp",
+                                display_name: `WhatsApp Oficial (${waPhoneId.trim()})`,
+                                external_id: `whatsapp-${waPhoneId.trim()}`,
+                                is_active: true,
+                              });
+                            } else {
+                              if (!evolutionUrl.trim() || !evolutionKey.trim()) {
+                                toast.error("Preencha a URL e a API Key da Evolution.");
+                                return;
+                              }
+                              await supabase.functions.invoke("ai-orchestrator", {
+                                body: {
+                                  action: "save-credential",
+                                  agency_id: agency!.id,
+                                  provider: "evolution_api_key",
+                                  key_value: evolutionKey.trim(),
+                                  label: "Evolution API Key",
+                                },
+                              });
+
+                              const { data: agData } = await db.from("agencies").select("integrations_config").eq("id", agency!.id).single();
+                              const oldConfig = agData?.integrations_config || {};
+                              await db.from("agencies").update({
+                                integrations_config: {
+                                  ...oldConfig,
+                                  evolution_api_url: evolutionUrl.trim(),
+                                  preferred_provider: "evolution_api",
+                                }
+                              }).eq("id", agency!.id);
+
+                              await db.from("channels").insert({
+                                agency_id: agency!.id,
+                                type: "whatsapp",
+                                display_name: "WhatsApp Evolution API",
+                                external_id: "whatsapp-evolution",
+                                is_active: true,
+                              });
+                            }
+
+                            toast.success("WhatsApp integrado com sucesso!");
+                            setConnectType(null);
+                            setWaPhoneId("");
+                            setWaToken("");
+                            setEvolutionUrl("");
+                            setEvolutionKey("");
+                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                          } catch (err: any) {
+                            toast.error("Erro ao configurar: " + err.message);
+                          } finally {
+                            setSubmittingConfig(false);
+                          }
+                        }} className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Provedor</label>
+                            <select
+                              value={waProvider}
+                              onChange={(e) => setWaProvider(e.target.value as any)}
+                              className="w-full h-8 px-2 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                            >
+                              <option value="meta_official">WhatsApp Cloud (Oficial)</option>
+                              <option value="evolution_api">Evolution API (Instância)</option>
+                            </select>
+                          </div>
+
+                          {waProvider === "meta_official" ? (
+                            <>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Phone Number ID *</label>
+                                <input
+                                  type="text"
+                                  required
+                                  placeholder="Digite o ID da linha..."
+                                  value={waPhoneId}
+                                  onChange={(e) => setWaPhoneId(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Access Token *</label>
+                                <input
+                                  type="password"
+                                  required
+                                  placeholder="EAA..."
+                                  value={waToken}
+                                  onChange={(e) => setWaToken(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">URL do Servidor *</label>
+                                <input
+                                  type="url"
+                                  required
+                                  placeholder="https://sua-evolution.com"
+                                  value={evolutionUrl}
+                                  onChange={(e) => setEvolutionUrl(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Global API Key *</label>
+                                <input
+                                  type="password"
+                                  required
+                                  placeholder="Chave de acesso..."
+                                  value={evolutionKey}
+                                  onChange={(e) => setEvolutionKey(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                            </>
+                          )}
+
+                          <button
+                            type="submit"
+                            disabled={submittingConfig}
+                            className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
+                          >
+                            {submittingConfig ? "Gravando chaves..." : "Conectar WhatsApp"}
+                          </button>
+                        </form>
+                      )}
+
+                      {connectType === "instagram" && (
+                        <form onSubmit={async (e) => {
+                          e.preventDefault();
+                          if (!instaAccountId.trim() || !instaToken.trim()) {
+                            toast.error("Preencha o Instagram ID e Token.");
+                            return;
+                          }
+                          setSubmittingConfig(true);
+                          try {
+                            await supabase.functions.invoke("ai-orchestrator", {
+                              body: {
+                                action: "save-credential",
+                                agency_id: agency!.id,
+                                provider: "instagram_access_token",
+                                key_value: instaToken.trim(),
+                                label: "Instagram Access Token",
+                              },
+                            });
+
+                            await db.from("channels").insert({
+                              agency_id: agency!.id,
+                              type: "instagram",
+                              display_name: `Instagram (${instaAccountId.trim()})`,
+                              external_id: `instagram-${instaAccountId.trim()}`,
+                              is_active: true,
+                            });
+
+                            toast.success("Instagram conectado com sucesso!");
+                            setConnectType(null);
+                            setInstaAccountId("");
+                            setInstaToken("");
+                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                          } catch (err: any) {
+                            toast.error("Erro ao configurar: " + err.message);
+                          } finally {
+                            setSubmittingConfig(false);
+                          }
+                        }} className="space-y-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Instagram Account ID *</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Digite o ID da conta..."
+                              value={instaAccountId}
+                              onChange={(e) => setInstaAccountId(e.target.value)}
+                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Meta Page Access Token *</label>
+                            <input
+                              type="password"
+                              required
+                              placeholder="EAA..."
+                              value={instaToken}
+                              onChange={(e) => setInstaToken(e.target.value)}
+                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                            />
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={submittingConfig}
+                            className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
+                          >
+                            {submittingConfig ? "Salvando chaves..." : "Conectar Instagram"}
+                          </button>
+                        </form>
+                      )}
                     </div>
-                  </button>
+                  )}
                 </div>
               </div>
             </SheetContent>

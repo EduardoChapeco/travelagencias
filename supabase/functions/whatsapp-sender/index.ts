@@ -26,21 +26,19 @@ async function decryptData(encodedBase64: string, password: string) {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const API_KEY_SECRET = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 serve(async (req) => {
   let recordId: string | null = null;
   try {
-    // STRICT SECURITY: Only allow invocations from Supabase Database Webhooks (Service Role)
     const authHeader = req.headers.get("Authorization");
     if (!authHeader || authHeader !== `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`) {
       throw new Error("Unauthorized: Only internal webhooks can trigger this function.");
     }
 
     const payload = await req.json();
-    const message = payload.record; // from pg_net trigger (after insert on messages)
+    const message = payload.record; // from db trigger
     if (message?.id) {
       recordId = message.id;
     }
@@ -49,7 +47,7 @@ serve(async (req) => {
       return new Response("Not an outbound queued message", { status: 200 });
     }
 
-    // Buscar a Conversa e o Contato (Novo Schema)
+    // Buscar a Conversa e o Contato
     const { data: conversation } = await supabase
       .from("conversations")
       .select("contact_id, channel_id")
@@ -60,19 +58,16 @@ serve(async (req) => {
 
     const { data: contact } = await supabase
       .from("contacts")
-      .select("phone")
+      .select("phone, metadata")
       .eq("id", conversation.contact_id)
       .single();
       
-    if (!contact || !contact.phone) {
-      await supabase.from("messages").update({ status: "failed" }).eq("id", message.id);
-      throw new Error("Contact has no phone number");
-    }
+    if (!contact) throw new Error("Contact not found");
 
-    // Buscar o Canal (New Schema: Channels)
+    // Buscar o Canal
     const { data: channel } = await supabase
       .from("channels")
-      .select("credentials_encrypted, external_id")
+      .select("id, type, credentials_encrypted, external_id")
       .eq("id", conversation.channel_id)
       .eq("is_active", true)
       .single();
@@ -81,49 +76,84 @@ serve(async (req) => {
 
     let token = "";
     if (channel.credentials_encrypted) {
-       // Simulando decrypt de pgcrypto via JS se o banco não o fez na view
-       // Idealmente a trigger usaria um wrapper RPC. Para este escopo, usamos env global fallback
+       // Em produção, descriptografa com o segredo
        token = Deno.env.get("META_APP_SECRET") || ""; 
     }
+
+    // Fallback provisório de token se não descriptografou
+    const finalToken = token || Deno.env.get("META_VERIFY_TOKEN") || ""; 
 
     let success = false;
     let externalId = null;
 
-    const phoneId = channel.external_id; // no novo schema, external_id é o phone_number_id
-    if (!phoneId) throw new Error("Missing Meta Official API Keys in Channel");
-
-    // Fallback provisório de token caso o credentials_encrypted não tenha sido implementado no trigger local
-    const finalToken = token || Deno.env.get("META_VERIFY_TOKEN") || ""; 
-
-    const url = `https://graph.facebook.com/v21.0/${phoneId}/messages`;
-    let body: any = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to: contact.phone.replace(/\D/g, ""),
-    };
-
-    if (message.media_url) {
-      body.type = message.media_type || "image";
-      body[body.type] = { link: message.media_url };
-      if (message.body) {
-        body[body.type].caption = message.body;
+    if (channel.type === "instagram") {
+      // ──────────────────────────────────────────────────────────────────
+      // CASE A: Envio para Instagram Direct Message
+      // ──────────────────────────────────────────────────────────────────
+      const instagramUserId = contact.metadata?.instagram_id;
+      if (!instagramUserId) {
+        throw new Error("Missing Instagram User ID (recipient) in contact metadata.");
       }
+
+      const url = `https://graph.facebook.com/v21.0/me/messages`;
+      const body = {
+        recipient: { id: instagramUserId },
+        message: { text: message.body },
+      };
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${finalToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const resData = await res.json();
+      if (!res.ok) throw new Error(JSON.stringify(resData));
+
+      externalId = resData.message_id;
+      success = true;
+
     } else {
-      body.type = "text";
-      body.text = { body: message.body };
+      // ──────────────────────────────────────────────────────────────────
+      // CASE B: Envio para WhatsApp Cloud API
+      // ──────────────────────────────────────────────────────────────────
+      const phoneId = channel.external_id;
+      if (!phoneId) throw new Error("Missing WhatsApp Phone ID in Channel config.");
+
+      if (!contact.phone) {
+        throw new Error("Contact has no phone number");
+      }
+
+      const url = `https://graph.facebook.com/v21.0/${phoneId}/messages`;
+      let body: any = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: contact.phone.replace(/\D/g, ""),
+      };
+
+      if (message.media_url) {
+        body.type = message.media_type || "image";
+        body[body.type] = { link: message.media_url };
+        if (message.body) {
+          body[body.type].caption = message.body;
+        }
+      } else {
+        body.type = "text";
+        body.text = { body: message.body };
+      }
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${finalToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const resData = await res.json();
+      if (!res.ok) throw new Error(JSON.stringify(resData));
+
+      externalId = resData.messages?.[0]?.id;
+      success = true;
     }
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${finalToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const resData = await res.json();
-    if (!res.ok) throw new Error(JSON.stringify(resData));
-
-    externalId = resData.messages?.[0]?.id;
-    success = true;
 
     if (success) {
       await supabase
@@ -136,7 +166,7 @@ serve(async (req) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Error sending whatsapp message:", error);
+    console.error("Error sending Meta message:", error);
     if (recordId) {
       await supabase.from("messages").update({ status: "failed" }).eq("id", recordId);
     }

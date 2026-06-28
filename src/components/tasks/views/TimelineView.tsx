@@ -62,7 +62,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
           {/* Header do Grid */}
           <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
             <div className="col-span-4 p-3 border-r text-left">Tarefa</div>
-            <div className="col-span-8 p-3 grid grid-cols-14 gap-1">
+            <div className="col-span-8 p-3 gap-1" style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
               {timelineDays.map((day, idx) => (
                 <div key={idx} className="flex flex-col items-center justify-center">
                   <span>{format(day, "eee", { locale: ptBR })}</span>
@@ -78,8 +78,12 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
               const priorityCfg = TASK_PRIORITIES[task.priority] || { color: "var(--muted)" };
               
               // Determinar o período da tarefa. Se não houver due_date, ela expira no dia da criação
-              const dueDate = task.due_date ? startOfDay(new Date(task.due_date)) : today;
-              const startDate = task.created_at ? startOfDay(new Date(task.created_at)) : today;
+              const rawDueDate = task.due_date ? startOfDay(new Date(task.due_date)) : today;
+              const rawStartDate = task.created_at ? startOfDay(new Date(task.created_at)) : today;
+              
+              // date-fns isWithinInterval requires start <= end
+              const startDate = rawStartDate <= rawDueDate ? rawStartDate : rawDueDate;
+              const dueDate = rawStartDate <= rawDueDate ? rawDueDate : rawStartDate;
               
               return (
                 <div key={task.id} className="grid grid-cols-12 text-sm hover:bg-[var(--surface-alt)]/20 transition-colors items-center">
@@ -89,7 +93,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
                   </div>
 
                   {/* Representação Gantt na Barra de Dias */}
-                  <div className="col-span-8 p-3 grid grid-cols-14 gap-1 h-12 relative items-center">
+                  <div className="col-span-8 p-3 gap-1 h-12 relative items-center" style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
                     {timelineDays.map((day, dayIdx) => {
                       const isTaskDay = isSameDay(day, dueDate) || 
                         (task.due_date && isWithinInterval(day, { start: startDate, end: dueDate }));

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
+import { TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -500,108 +501,106 @@ function TripLayout() {
         )}
 
         {/* Tabs */}
-        <div className="border-b border-border/60">
-          <nav className="flex gap-6 overflow-x-auto no-scrollbar" aria-label="Tabs">
+        <div className="border-b border-border bg-[var(--surface)] px-4 py-2 shrink-0 overflow-x-auto no-scrollbar">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 inline-flex flex-nowrap gap-0">
             <Link
               to="/agency/$slug/trips/$id"
               params={{ slug, id }}
               activeOptions={{ exact: true }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <ReceiptText className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <ReceiptText className="h-3.5 w-3.5" />
               Visão Geral
             </Link>
             <Link
               to="/agency/$slug/trips/$id/passengers"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Users className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Users className="h-3.5 w-3.5" />
               Passageiros ({paxQ.data?.length ?? 0})
             </Link>
             <Link
               to="/agency/$slug/trips/$id/financial"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <span className="opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100">
-                R$
-              </span>{" "}
+              <span className="text-[11px] font-extrabold">R$</span>
               Financeiro
             </Link>
             <Link
               to="/agency/$slug/trips/$id/flights"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Plane className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Plane className="h-3.5 w-3.5" />
               Aéreos
             </Link>
             <Link
               to="/agency/$slug/trips/$id/reaccommodation"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Clock className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100 text-rose-500" />{" "}
+              <Clock className="h-3.5 w-3.5 text-rose-500" />
               Reacomodação
             </Link>
             <Link
               to="/agency/$slug/trips/$id/lodging"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Hotel className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Hotel className="h-3.5 w-3.5" />
               Hospedagem
             </Link>
             <Link
               to="/agency/$slug/trips/$id/contract"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <FileSignature className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <FileSignature className="h-3.5 w-3.5" />
               Contrato
             </Link>
             <Link
               to="/agency/$slug/trips/$id/confirmation"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <CheckCircle2 className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <CheckCircle2 className="h-3.5 w-3.5" />
               Confirmação
             </Link>
             <Link
               to="/agency/$slug/trips/$id/vouchers"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Ticket className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Ticket className="h-3.5 w-3.5" />
               Voucher
             </Link>
             <Link
               to="/agency/$slug/trips/$id/boarding"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Navigation className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Navigation className="h-3.5 w-3.5" />
               Check-in & Embarque
             </Link>
             <Link
               to="/agency/$slug/trips/$id/destination"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <MapPin className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <MapPin className="h-3.5 w-3.5" />
               Destino & Segurança
             </Link>
             <Link
               to="/agency/$slug/trips/$id/history"
               params={{ slug, id }}
-              className="group pb-3 border-b-2 font-medium text-sm transition-colors data-[status=active]:border-brand data-[status=active]:text-foreground border-transparent text-muted-foreground hover:text-foreground flex items-center gap-2 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
-              <Clock className="h-4 w-4 opacity-70 group-data-[status=active]:text-brand group-data-[status=active]:opacity-100" />{" "}
+              <Clock className="h-3.5 w-3.5" />
               Histórico
             </Link>
-          </nav>
+          </TabsList>
         </div>
       </div>
 

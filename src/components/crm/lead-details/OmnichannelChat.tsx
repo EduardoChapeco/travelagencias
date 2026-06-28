@@ -38,7 +38,7 @@ export function OmnichannelChat({
     async function loadData() {
       try {
         // 1. Achar o contato pelo telefone
-        const { data: contact } = await supabase
+        const { data: contact } = await (supabase as any)
           .from("contacts")
           .select("id")
           .eq("agency_id", agencyId)
@@ -48,7 +48,7 @@ export function OmnichannelChat({
         if (!contact) return;
 
         // 2. Achar a conversa ativa
-        const { data: conv } = await supabase
+        const { data: conv } = await (supabase as any)
           .from("conversations")
           .select("id")
           .eq("contact_id", contact.id)
@@ -58,7 +58,7 @@ export function OmnichannelChat({
         setConversationId(conv.id);
 
         // 3. Carregar mensagens
-        const { data: msgs } = await supabase
+        const { data: msgs } = await (supabase as any)
           .from("messages")
           .select("*")
           .eq("conversation_id", conv.id)
@@ -159,7 +159,7 @@ export function OmnichannelChat({
       if (!cleanPhone) throw new Error("Lead sem número de telefone cadastrado.");
 
       // 1. Garantir canal ativo
-      const { data: activeChannel } = await supabase
+      const { data: activeChannel } = await (supabase as any)
         .from("channels")
         .select("id")
         .eq("agency_id", agencyId)
@@ -170,7 +170,7 @@ export function OmnichannelChat({
       let targetChannelId = activeChannel?.id;
 
       if (!targetChannelId) {
-        const { data: existingChannel } = await supabase
+        const { data: existingChannel } = await (supabase as any)
           .from("channels")
           .select("id")
           .eq("agency_id", agencyId)
@@ -179,7 +179,7 @@ export function OmnichannelChat({
         targetChannelId = existingChannel?.id;
 
         if (!targetChannelId) {
-          const { data: newChan, error: chanErr } = await supabase
+          const { data: newChan, error: chanErr } = await (supabase as any)
             .from("channels")
             .insert({
               agency_id: agencyId,
@@ -197,7 +197,7 @@ export function OmnichannelChat({
       }
 
       // 2. Garantir contato
-      let { data: contact } = await supabase
+      let { data: contact } = await (supabase as any)
         .from("contacts")
         .select("id")
         .eq("agency_id", agencyId)
@@ -205,7 +205,7 @@ export function OmnichannelChat({
         .maybeSingle();
 
       if (!contact) {
-        const { data: newContact, error: contactErr } = await supabase
+        const { data: newContact, error: contactErr } = await (supabase as any)
           .from("contacts")
           .insert({
             agency_id: agencyId,
@@ -222,14 +222,14 @@ export function OmnichannelChat({
       // 3. Garantir conversa
       let currentConvId = conversationId;
       if (!currentConvId) {
-        let { data: conv } = await supabase
+        let { data: conv } = await (supabase as any)
           .from("conversations")
           .select("id")
           .eq("contact_id", contact!.id)
           .maybeSingle();
 
         if (!conv) {
-          const { data: newConv, error: convErr } = await supabase
+          const { data: newConv, error: convErr } = await (supabase as any)
             .from("conversations")
             .insert({
               agency_id: agencyId,
@@ -249,7 +249,7 @@ export function OmnichannelChat({
       }
 
       // 4. Gravar mensagem na tabela canônica
-      const { error } = await supabase.from("messages").insert({
+      const { error } = await (supabase as any).from("messages").insert({
         conversation_id: currentConvId,
         agency_id: agencyId,
         direction: "outbound",

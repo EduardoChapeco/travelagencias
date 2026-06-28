@@ -76,6 +76,8 @@ function QuoteDetailWorkspacePage() {
   const [rightTab, setRightTab] = useState<"matrix" | "simulation">("matrix");
   const [selectedResult, setSelectedResult] = useState<any | null>(null);
   const [simulating, setSimulating] = useState(false);
+  // Estado para sinalizar que o GDS não está configurado (sem chaves de produção)
+  const [apiNotConfigured, setApiNotConfigured] = useState(false);
 
   // States para o painel de Revisar Regras e Pesos (P1/P2)
   const [rulesOpen, setRulesOpen] = useState(false);
@@ -266,17 +268,33 @@ function QuoteDetailWorkspacePage() {
   // 4. Run Search Mutation
   async function handleExecuteSearch(
     scenarioId: string,
-    productType: "hotel" | "flight",
+    productType: "hotel" | "flight" | "transfer" | "activity",
     params: any,
   ) {
     if (!agency) return;
     setSearching(scenarioId + "-" + productType);
     try {
       await executeScenarioSearch(agency.id, id, scenarioId, productType, params);
-      toast.success(`Busca de ${productType === "hotel" ? "hotéis" : "voos"} concluída no GDS!`);
+      const labels: Record<string, string> = {
+        hotel: "hotéis",
+        flight: "voos",
+        transfer: "traslados",
+        activity: "passeios",
+      };
+      toast.success(`Busca de ${labels[productType] || productType} concluída no GDS!`);
       qc.invalidateQueries({ queryKey: ["quote-details", id] });
+      qc.invalidateQueries({ queryKey: ["normalized-offers", id] });
     } catch (e: any) {
-      toast.error(e.message || "Erro ao executar busca");
+      // Verificar se é o erro de credenciais não configuradas
+      if (
+        e.message?.includes("Acesse Configurações") ||
+        e.message?.includes("credenciais de acesso ao GDS")
+      ) {
+        setApiNotConfigured(true);
+        // Não exibir toast genérico — o banner contextual será exibido na interface
+      } else {
+        toast.error(e.message || "Erro ao executar busca no GDS");
+      }
     } finally {
       setSearching(null);
     }
@@ -751,8 +769,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
                         ) : (
                           <>
-                            <Play className="h-3 w-3 shrink-0" />
-                            Buscar Voo
+                            <Plane className="h-3 w-3 shrink-0" />
+                            Aéreo
                           </>
                         )}
                       </GhostButton>
@@ -772,8 +790,52 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
                         ) : (
                           <>
-                            <Play className="h-3 w-3 shrink-0" />
-                            Buscar Hotel
+                            <Building className="h-3 w-3 shrink-0" />
+                            Hotel
+                          </>
+                        )}
+                      </GhostButton>
+
+                      <GhostButton
+                        onClick={() =>
+                          handleExecuteSearch(sc.id, "transfer", {
+                            destination: sc.parameters.destination,
+                            city: sc.parameters.destination,
+                            checkin: sc.parameters.checkin,
+                            checkout: sc.parameters.checkout,
+                          })
+                        }
+                        disabled={searching !== null}
+                        className="h-7 text-[10px] justify-center px-1"
+                      >
+                        {searching === `${sc.id}-transfer` ? (
+                          <Loader2 className="h-3 w-3 animate-spin text-brand" />
+                        ) : (
+                          <>
+                            <Truck className="h-3 w-3 shrink-0" />
+                            Traslado
+                          </>
+                        )}
+                      </GhostButton>
+
+                      <GhostButton
+                        onClick={() =>
+                          handleExecuteSearch(sc.id, "activity", {
+                            destination: sc.parameters.destination,
+                            city: sc.parameters.destination,
+                            checkin: sc.parameters.checkin,
+                            checkout: sc.parameters.checkout,
+                          })
+                        }
+                        disabled={searching !== null}
+                        className="h-7 text-[10px] justify-center px-1"
+                      >
+                        {searching === `${sc.id}-activity` ? (
+                          <Loader2 className="h-3 w-3 animate-spin text-brand" />
+                        ) : (
+                          <>
+                            <Heart className="h-3 w-3 shrink-0" />
+                            Passeio
                           </>
                         )}
                       </GhostButton>
@@ -781,6 +843,28 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Banner: GDS não configurado */}
+          {apiNotConfigured && (
+            <div className="mb-4 p-3 bg-warning/5 border border-warning/30 rounded-lg">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-semibold text-warning">GDS não conectado</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                    As credenciais do Infotravel não foram configuradas para esta agência. As buscas precisam de conexão com o GDS para retornar disponibilidades e preços reais.
+                  </p>
+                  <Link
+                    to="/agency/$slug/integrations"
+                    params={{ slug }}
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-warning hover:underline mt-1.5"
+                  >
+                    Configurar Integração <ChevronRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
             </div>
           )}
 

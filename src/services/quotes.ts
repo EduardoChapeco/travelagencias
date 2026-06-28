@@ -203,7 +203,7 @@ export async function executeScenarioSearch(
   agencyId: string,
   quoteRequestId: string,
   scenarioId: string,
-  productType: "hotel" | "flight",
+  productType: "hotel" | "flight" | "transfer" | "activity",
   params: {
     origin?: string;
     destination?: string;
@@ -214,13 +214,21 @@ export async function executeScenarioSearch(
     rooms?: number;
   },
 ): Promise<NormalizedOffer[]> {
+  // Mapear tipo de produto para a ação do conector
+  const actionMap: Record<typeof productType, string> = {
+    hotel: "search_hotels",
+    flight: "search_flights",
+    transfer: "search_transfers",
+    activity: "search_activities",
+  };
+
   // Atualizar status do cenário para processando
   await supabase.from("quote_scenarios").update({ status: "processing" }).eq("id", scenarioId);
 
   try {
     const { data, error } = await supabase.functions.invoke("infotravel-connector", {
       body: {
-        action: productType === "hotel" ? "search_hotels" : "search_flights",
+        action: actionMap[productType],
         agencyId,
         params: {
           ...params,
@@ -230,15 +238,24 @@ export async function executeScenarioSearch(
       },
     });
 
-    if (error) throw new Error(error.message || "Erro na pesquisa no Infotravel");
+    // Credenciais não configuradas — retorno estruturado (HTTP 200 com error_code)
+    if (data?.error_code === "CREDENTIALS_NOT_CONFIGURED") {
+      await supabase.from("quote_scenarios").update({ status: "pending" }).eq("id", scenarioId);
+      throw new Error(data.error);
+    }
+
+    if (error) throw new Error(error.message || "Erro na pesquisa no GDS InfoTravel");
+    if (data?.success === false && data?.error) throw new Error(data.error);
 
     // Marcar como concluído
     await supabase.from("quote_scenarios").update({ status: "completed" }).eq("id", scenarioId);
 
     return (data?.offers as NormalizedOffer[]) || [];
   } catch (err: any) {
-    // Marcar como falho
-    await supabase.from("quote_scenarios").update({ status: "failed" }).eq("id", scenarioId);
+    // Marcar como falho somente se não for "não configurado" (que já foi tratado acima)
+    if (!err.message?.includes("Acesse Configurações")) {
+      await supabase.from("quote_scenarios").update({ status: "failed" }).eq("id", scenarioId);
+    }
     throw err;
   }
 }

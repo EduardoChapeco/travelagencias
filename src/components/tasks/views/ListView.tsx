@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { TaskFiltersState, TaskWithRelations, TaskStatus } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
+import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -7,25 +9,25 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { 
   CheckCircle2, 
-  Clock, 
-  AlertCircle, 
-  User, 
   Calendar,
-  Check
+  Check,
+  User,
+  AlertCircle
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
+import { cn } from "@/lib/utils";
 
 export function ListView({ filters }: { filters: TaskFiltersState }) {
   const qc = useQueryClient();
-  const { data: tasks, isLoading, error } = useTasksQuery(filters);
+  const { data: tasks = [], isLoading, error } = useTasksQuery(filters);
+  const { createTask } = useTaskMutations();
 
   const toggleStatus = async (taskId: string, currentStatus: TaskStatus) => {
     const nextStatus: TaskStatus = currentStatus === "done" ? "todo" : "done";
     
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: patchError } = await (supabase as any)
         .from("tasks")
         .update({ status: nextStatus })
@@ -35,10 +37,22 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
       
       toast.success(`Tarefa marcada como ${nextStatus === "done" ? "concluída" : "pendente"}`);
       qc.invalidateQueries({ queryKey: ["tasks"] });
-      qc.invalidateQueries({ queryKey: ["daily-digest"] });
+      qc.invalidateQueries({ queryKey: ["daily_digest"] });
     } catch (err: any) {
       toast.error("Erro ao atualizar status: " + err.message);
     }
+  };
+
+  const handleQuickAdd = (title: string, status: TaskStatus) => {
+    createTask.mutate({
+      title,
+      status,
+      priority: "medium",
+      source_type: "manual",
+      is_recurring: false,
+      difficulty_score: 1,
+      estimated_minutes: 30,
+    });
   };
 
   if (isLoading) {
@@ -64,123 +78,167 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
     );
   }
 
-  if (!tasks || tasks.length === 0) {
-    return (
-      <div className="text-center py-20 bg-[var(--surface)] rounded-2xl border text-[var(--muted-foreground)]">
-        <CheckCircle2 className="h-12 w-12 mx-auto mb-4 text-[var(--muted-2)] opacity-50" />
-        <p className="font-semibold text-sm">Nenhuma tarefa encontrada.</p>
-        <p className="text-xs mt-1">Crie novas tarefas para começar a organizar sua rotina.</p>
-      </div>
-    );
-  }
+  return (
+    <div className="space-y-6">
+      {Object.entries(TASK_STATUSES).map(([statusKey, cfg]) => {
+        const groupTasks = tasks.filter((t) => t.status === statusKey);
+        
+        // Se houver filtros de status, oculte os grupos de status não selecionados
+        if (filters.statuses && filters.statuses.length > 0 && !filters.statuses.includes(statusKey as TaskStatus)) {
+          return null;
+        }
+
+        return (
+          <StatusGroupSection
+            key={statusKey}
+            status={statusKey as TaskStatus}
+            label={cfg.label}
+            color={cfg.color}
+            tasks={groupTasks}
+            toggleStatus={toggleStatus}
+            onQuickAdd={handleQuickAdd}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function StatusGroupSection({
+  status,
+  label,
+  color,
+  tasks,
+  toggleStatus,
+  onQuickAdd,
+}: {
+  status: TaskStatus;
+  label: string;
+  color: string;
+  tasks: TaskWithRelations[];
+  toggleStatus: (id: string, current: TaskStatus) => void;
+  onQuickAdd: (title: string, status: TaskStatus) => void;
+}) {
+  const [quickTitle, setQuickTitle] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickTitle.trim()) return;
+    onQuickAdd(quickTitle.trim(), status);
+    setQuickTitle("");
+  };
 
   return (
-    <div className="bg-[var(--surface)] rounded-2xl border overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left">
-          <thead>
-            <tr className="border-b bg-[var(--surface-alt)]/50 text-[10px] uppercase font-bold tracking-widest text-[var(--muted-foreground)]">
-              <th className="p-4 w-12 text-center">Status</th>
-              <th className="p-4">Tarefa</th>
-              <th className="p-4">Prioridade</th>
-              <th className="p-4">Prazo</th>
-              <th className="p-4">Responsável</th>
-              <th className="p-4">Etiquetas</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y text-sm">
-            {tasks.map((task) => {
-              const statusCfg = TASK_STATUSES[task.status] || { label: task.status, color: "var(--muted)" };
-              const priorityCfg = TASK_PRIORITIES[task.priority] || { label: task.priority, color: "var(--muted)" };
-              
-              return (
-                <tr 
-                  key={task.id} 
-                  className={`hover:bg-[var(--surface-alt)]/30 transition-colors ${task.status === "done" ? "opacity-60 line-through" : ""}`}
-                >
-                  <td className="p-4 text-center">
-                    <button
-                      onClick={() => toggleStatus(task.id, task.status as TaskStatus)}
-                      className={`flex h-5 w-5 mx-auto items-center justify-center rounded-md border cursor-pointer transition-all ${
-                        task.status === "done" 
-                          ? "bg-[var(--success)] border-[var(--success)] text-white" 
-                          : "border-border hover:border-[var(--brand)] text-transparent"
-                      }`}
-                    >
-                      <Check className="h-3 w-3 stroke-[3]" />
-                    </button>
-                  </td>
-                  <td className="p-4 font-medium text-[var(--foreground)]">
-                    <div className="flex flex-col">
-                      <span>{task.title}</span>
-                      {(task as any).notes && (
-                        <span className="text-xs text-[var(--muted-foreground)] font-normal line-clamp-1 mt-0.5">
-                          {(task as any).notes}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <Badge variant="outline" style={{ color: priorityCfg.color, borderColor: `${priorityCfg.color}20`, backgroundColor: `${priorityCfg.color}08` }}>
-                      {priorityCfg.label}
-                    </Badge>
-                  </td>
-                  <td className="p-4 text-[var(--muted-foreground)]">
-                    {task.due_date ? (
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>
-                          {format(new Date(task.due_date), "dd 'de' MMM", { locale: ptBR })}
-                          {task.due_time && ` às ${task.due_time}`}
-                        </span>
-                      </div>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td className="p-4">
-                    {task.assignee ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-[var(--brand)]/10 text-[var(--brand)] flex items-center justify-center text-xs font-bold font-sans">
-                          {task.assignee.email?.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-xs font-medium truncate max-w-[120px]">
-                          {task.assignee.email?.split("@")[0]}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-[var(--muted-2)]">
-                        <User className="h-4 w-4" />
-                        <span className="text-xs">Não atribuído</span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex flex-wrap gap-1">
-                      {task.labels && task.labels.length > 0 ? (
-                        task.labels.map((lbl: any) => (
-                          <span 
-                            key={lbl.id} 
-                            className="text-[10px] px-1.5 py-0.5 rounded-md font-semibold border"
-                            style={{ 
-                              color: lbl.color || "var(--muted-foreground)", 
-                              backgroundColor: `${lbl.color}08` || "transparent",
-                              borderColor: `${lbl.color}20` || "var(--border)"
-                            }}
-                          >
-                            {lbl.name}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-[var(--muted-2)]">-</span>
-                      )}
-                    </div>
-                  </td>
+    <div className="space-y-2">
+      {/* Group Header */}
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)]/40 rounded-lg border border-border/30">
+        <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+        <span className="text-[10px] font-black uppercase text-foreground tracking-wider">{label}</span>
+        <span className="text-[9px] font-mono font-bold bg-slate-100 dark:bg-slate-900 border px-1.5 py-0.5 rounded text-muted-foreground ml-auto">
+          {tasks.length}
+        </span>
+      </div>
+
+      {/* Table Container */}
+      <div className="border border-border/50 bg-[var(--surface)] rounded-xl overflow-hidden shadow-xs">
+        {tasks.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left">
+              <thead>
+                <tr className="border-b bg-[var(--surface-alt)]/20 text-[9px] uppercase font-black tracking-wider text-muted-foreground">
+                  <th className="p-3 w-10 text-center">Status</th>
+                  <th className="p-3">Tarefa</th>
+                  <th className="p-3 w-28">Prioridade</th>
+                  <th className="p-3 w-36">Prazo</th>
+                  <th className="p-3 w-40">Responsável</th>
+                  <th className="p-3 w-44">Tags</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y text-xs">
+                {tasks.map((task) => {
+                  const priorityCfg = TASK_PRIORITIES[task.priority] || { label: task.priority, color: "var(--muted)" };
+                  return (
+                    <tr key={task.id} className={cn("hover:bg-[var(--surface-alt)]/20 transition-colors", task.status === "done" && "opacity-60 line-through")}>
+                      <td className="p-3 text-center">
+                        <button
+                          onClick={() => toggleStatus(task.id, task.status as TaskStatus)}
+                          className={cn(
+                            "flex h-4.5 w-4.5 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
+                            task.status === "done" ? "bg-[var(--success)] border-[var(--success)] text-white" : "border-border hover:border-brand text-transparent"
+                          )}
+                        >
+                          <Check className="h-3 w-3 stroke-[3]" />
+                        </button>
+                      </td>
+                      <td className="p-3 font-semibold text-foreground">
+                        {task.title}
+                      </td>
+                      <td className="p-3">
+                        <Badge variant="outline" style={{ color: priorityCfg.color, borderColor: `${priorityCfg.color}20`, backgroundColor: `${priorityCfg.color}05` }} className="text-[9px] font-bold">
+                          {priorityCfg.label}
+                        </Badge>
+                      </td>
+                      <td className="p-3 text-muted-foreground">
+                        {task.due_date ? (
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3.5 w-3.5 opacity-70" />
+                            <span>{format(new Date(task.due_date), "dd 'de' MMM", { locale: ptBR })}</span>
+                          </div>
+                        ) : "-"}
+                      </td>
+                      <td className="p-3">
+                        {task.assignee ? (
+                          <div className="flex items-center gap-1.5">
+                            <div className="h-5.5 w-5.5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-[10px] font-black uppercase">
+                              {task.assignee.name?.charAt(0) || "?"}
+                            </div>
+                            <span className="text-[11px] font-medium text-foreground truncate max-w-[100px]">{task.assignee.name || "—"}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-muted-foreground">-</span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <div className="flex flex-wrap gap-1">
+                          {task.labels && task.labels.length > 0 ? (
+                            task.labels.map((lbl) => (
+                              <span
+                                key={lbl.id}
+                                className="text-[9px] px-1.5 py-0.5 rounded-md font-bold border"
+                                style={{ color: lbl.color, backgroundColor: `${lbl.color}08`, borderColor: `${lbl.color}15` }}
+                              >
+                                {lbl.name}
+                              </span>
+                            ))
+                          ) : "-"}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {/* Quick Add row inside card */}
+        <form onSubmit={handleSubmit} className="p-2.5 bg-[var(--surface-alt)]/10 flex items-center gap-2">
+          <input
+            type="text"
+            placeholder={`+ Adicionar tarefa rápida em "${label}"...`}
+            value={quickTitle}
+            onChange={(e) => setQuickTitle(e.target.value)}
+            className="flex-1 h-8 bg-transparent border-none text-[11px] font-semibold outline-none text-foreground placeholder:text-muted-foreground/60 px-2"
+          />
+          {quickTitle.trim() && (
+            <button
+              type="submit"
+              className="h-7 px-3 rounded bg-brand text-white text-[10px] font-bold hover:bg-brand/90 cursor-pointer shadow-xs transition-colors shrink-0"
+            >
+              Adicionar
+            </button>
+          )}
+        </form>
       </div>
     </div>
   );

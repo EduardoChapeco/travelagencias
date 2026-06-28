@@ -23,6 +23,7 @@ import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/compo
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibrary";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
   head: () => ({ meta: [{ title: "Contratos · TravelOS" }] }),
@@ -55,13 +56,12 @@ function ContractsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
-  const [clauseLibraryOpen, setClauseLibraryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("list");
   const debouncedSearch = useDebounce(search, 400);
   const pageSize = 20;
 
   const q = useQuery({
-    enabled: !!agency,
+    enabled: !!agency && activeTab === "list",
     queryKey: ["contracts", agency?.id, page, debouncedSearch, statusFilter],
     queryFn: async () => {
       let query = supabase
@@ -91,82 +91,90 @@ function ContractsPage() {
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {isAgencyAdmin && (
-            <>
-              <button
-                onClick={() => setClauseLibraryOpen(true)}
-                className="flex h-8 items-center gap-1.5 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                title="Biblioteca de Cláusulas"
-              >
-                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                <span>Biblioteca de Cláusulas</span>
-              </button>
-              <button
-                onClick={() => setAdminPanelOpen(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-                title="Administrar Contratos"
-              >
-                <Settings2 className="h-3.5 w-3.5" />
-              </button>
-            </>
-          )}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
+        {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+            <TabsTrigger
+              value="list"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+            >
+              Lista de Contratos
+            </TabsTrigger>
+            {isAgencyAdmin && (
+              <>
+                <TabsTrigger
+                  value="clauses"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                >
+                  Biblioteca de Cláusulas
+                </TabsTrigger>
+                <TabsTrigger
+                  value="admin"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                >
+                  Configurações
+                </TabsTrigger>
+              </>
+            )}
+          </TabsList>
         </div>
-      </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar por pacote..."
-            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
-        <div className="relative w-full sm:w-44">
-          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
-          >
-            <option value="all">Todos os Status</option>
-            <option value="draft">Rascunho</option>
-            <option value="sent">Enviado</option>
-            <option value="viewed">Visualizado</option>
-            <option value="signed">Assinado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-        </div>
-        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
-          {q.data?.count ?? 0} contratos
-        </span>
-      </div>
+        {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
+        {activeTab === "list" && (
+          <>
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Buscar por pacote..."
+                  className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                />
+              </div>
+              <div className="relative w-full sm:w-44">
+                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+                >
+                  <option value="all">Todos os Status</option>
+                  <option value="draft">Rascunho</option>
+                  <option value="sent">Enviado</option>
+                  <option value="viewed">Visualizado</option>
+                  <option value="signed">Assinado</option>
+                  <option value="cancelled">Cancelado</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              </div>
+              <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
+                {q.data?.count ?? 0} contratos
+              </span>
+            </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
-        {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+              {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
-        {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
-          <EmptyState
-            title="Nenhum contrato gerado"
-            description="Acesse uma viagem confirmada e clique em 'Gerar Contrato' para iniciar o fluxo de assinaturas."
-          />
-        ) : q.data?.data.length === 0 ? (
-          <EmptyState
-            title="Nenhum contrato encontrado"
-            description="Altere os filtros ou a busca para ver resultados."
-          />
-        ) : null}
+              {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
+                <EmptyState
+                  title="Nenhum contrato gerado"
+                  description="Acesse uma viagem confirmada e clique em 'Gerar Contrato' para iniciar o fluxo de assinaturas."
+                />
+              ) : q.data?.data.length === 0 ? (
+                <EmptyState
+                  title="Nenhum contrato encontrado"
+                  description="Altere os filtros ou a busca para ver resultados."
+                />
+              ) : null}
 
         {q.data && q.data.data.length > 0 && (
           <>
@@ -288,23 +296,28 @@ function ContractsPage() {
           </>
         )}
       </div>
+    </>
+  )}
 
-      {adminPanelOpen && agency && (
-        <ModuleAdminPanel
-          isOpen={adminPanelOpen}
-          onClose={() => setAdminPanelOpen(false)}
-          moduleKey="contracts"
-          moduleName="Contratos"
-          agencyId={agency.id}
-        />
-      )}
-      {clauseLibraryOpen && agency && (
-        <ContractClauseLibrary
-          agencyId={agency.id}
-          isOpen={clauseLibraryOpen}
-          onClose={() => setClauseLibraryOpen(false)}
-        />
-      )}
+        {/* ── Visualização de Biblioteca de Cláusulas Contratuais (Inline) ───────────── */}
+        {activeTab === "clauses" && agency && (
+          <div className="flex-1 overflow-hidden">
+            <ContractClauseLibrary agencyId={agency.id} isInline={true} />
+          </div>
+        )}
+
+        {/* ── Visualização do Painel de Administrador (Inline) ───────────────────────── */}
+        {activeTab === "admin" && agency && (
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+            <ModuleAdminPanel
+              moduleKey="contracts"
+              moduleName="Contratos"
+              agencyId={agency.id}
+              isInline={true}
+            />
+          </div>
+        )}
+      </Tabs>
     </div>
   );
 }

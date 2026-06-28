@@ -89,6 +89,36 @@ export function useTasksQuery(filters: TaskFiltersState) {
         }
       }
 
+      // ── Fase 3: Enriquecer com etiquetas (labels) ────────────────────────
+      const taskIds = tasks.map((t: any) => t.id);
+      let labelsMap: Record<string, Array<{ id: string; name: string; color: string }>> = {};
+      if (taskIds.length > 0) {
+        try {
+          const { data: assignments } = await db
+            .from("task_label_assignments")
+            .select("task_id, task_labels (id, name, color)")
+            .in("task_id", taskIds);
+          
+          if (assignments) {
+            for (const item of assignments as any[]) {
+              const lbl = item.task_labels;
+              if (lbl) {
+                if (!labelsMap[item.task_id]) {
+                  labelsMap[item.task_id] = [];
+                }
+                labelsMap[item.task_id].push({
+                  id: lbl.id,
+                  name: lbl.name,
+                  color: lbl.color || "#6b7280",
+                });
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to load task labels", err);
+        }
+      }
+
       // Mapear resultado final
       return (tasks as any[]).map((task: any): TaskWithRelations => ({
         ...task,
@@ -98,7 +128,7 @@ export function useTasksQuery(filters: TaskFiltersState) {
         creator: task.created_by && profilesMap[task.created_by]
           ? profilesMap[task.created_by]
           : null,
-        labels: [],
+        labels: labelsMap[task.id] || [],
       }));
     },
   });

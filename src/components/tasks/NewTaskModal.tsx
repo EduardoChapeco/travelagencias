@@ -45,6 +45,8 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
   const [priority, setPriority] = useState<TaskPriority>("medium");
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [dueDate, setDueDate] = useState<string>("");
+  const [sourceType, setSourceType] = useState<string>("manual");
+  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
   // Sync default status when modal opens
   useEffect(() => {
@@ -55,6 +57,8 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
       setPriority("medium");
       setAssignedTo("");
       setDueDate("");
+      setSourceType("manual");
+      setSelectedLabels([]);
     }
   }, [open, defaultStatus]);
 
@@ -69,6 +73,20 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
         .select("id, full_name, avatar_url")
         .eq("agency_id", agency!.id);
       return (data || []) as Array<{ id: string; full_name: string; avatar_url: string | null }>;
+    },
+  });
+
+  // Carregar etiquetas (labels) da agência
+  const { data: availableLabels = [] } = useQuery({
+    queryKey: ["task-labels", agency?.id],
+    enabled: !!agency?.id && open,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data } = await db
+        .from("task_labels")
+        .select("id, name, color")
+        .eq("agency_id", agency!.id);
+      return (data || []) as Array<{ id: string; name: string; color: string }>;
     },
   });
 
@@ -87,9 +105,12 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
         priority,
         assigned_to: assignedTo || null,
         due_date: dueDate || null,
-        source_type: "manual",
+        source_type: sourceType as any,
         is_recurring: false,
-      },
+        difficulty_score: 1,
+        estimated_minutes: 60,
+        labels: selectedLabels,
+      } as any,
       {
         onSuccess: (data: any) => {
           onCreated?.(data?.id);
@@ -228,6 +249,72 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 onChange={(e) => setDueDate(e.target.value)}
                 className="h-9 text-xs bg-[var(--surface-alt)] border-border/60"
               />
+            </div>
+          </div>
+
+          {/* Tipo de Tarefa e Etiquetas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Tipo de Tarefa
+              </label>
+              <Select value={sourceType} onValueChange={setSourceType}>
+                <SelectTrigger className="h-9 text-xs bg-[var(--surface-alt)] border-border/60">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="manual" className="text-xs">Manual / Geral</SelectItem>
+                  <SelectItem value="suporte" className="text-xs">Suporte ao Cliente</SelectItem>
+                  <SelectItem value="embarque" className="text-xs">Operações de Embarque</SelectItem>
+                  <SelectItem value="crm" className="text-xs">Negociação Comercial</SelectItem>
+                  <SelectItem value="trip" className="text-xs">Gestão de Viagem</SelectItem>
+                  <SelectItem value="ticket" className="text-xs">Emissão de Passagem</SelectItem>
+                  <SelectItem value="lead" className="text-xs">Pré-venda / Prospecção</SelectItem>
+                  <SelectItem value="agenda" className="text-xs">Evento da Agenda</SelectItem>
+                  <SelectItem value="system" className="text-xs">Rotina de Sistema</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Etiquetas / Tags
+              </label>
+              {availableLabels.length === 0 ? (
+                <p className="text-[10px] text-muted-foreground pt-2">Nenhuma etiqueta cadastrada.</p>
+              ) : (
+                <div className="flex flex-wrap gap-1 pt-1.5">
+                  {availableLabels.map((lbl) => {
+                    const isSelected = selectedLabels.includes(lbl.id);
+                    return (
+                      <button
+                        key={lbl.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedLabels((prev) =>
+                            prev.includes(lbl.id)
+                              ? prev.filter((id) => id !== lbl.id)
+                              : [...prev, lbl.id]
+                          );
+                        }}
+                        className={cn(
+                          "text-[9px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer",
+                          isSelected
+                            ? "shadow-xs scale-102 font-extrabold"
+                            : "opacity-60 hover:opacity-100"
+                        )}
+                        style={{
+                          color: lbl.color,
+                          borderColor: isSelected ? lbl.color : "var(--border)",
+                          backgroundColor: isSelected ? `${lbl.color}15` : "transparent",
+                        }}
+                      >
+                        {lbl.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

@@ -216,7 +216,7 @@ function buildContext(
       title: "Tarefas",
       items: [
         { label: "Meu Dia", to: `${base}/daily-tasks?view=my-day`, icon: ListTodo },
-        { label: "Quadro Kanban", to: `${base}/daily-tasks?view=kanban`, icon: CalendarClock },
+        { label: "Mapeamento Operacional", to: `${base}/daily-tasks?view=kanban`, icon: CalendarClock },
         { label: "Lista", to: `${base}/daily-tasks?view=list`, icon: FileText },
         { label: "Timeline", to: `${base}/daily-tasks?view=timeline`, icon: Clock },
         { label: "Calendário", to: `${base}/daily-tasks?view=calendar`, icon: Calendar },

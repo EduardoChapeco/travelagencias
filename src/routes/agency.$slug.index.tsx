@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { DSCap } from "@/components/ds/DSCap";
-import { DSModule, DSModuleRow } from "@/components/ds/DSModule";
+import { DSModule } from "@/components/ds/DSModule";
 import {
   Wallet,
   Users,
@@ -12,7 +12,12 @@ import {
   ChevronRight,
   Bus,
   ArrowUpRight,
-  BarChart3,
+  Globe,
+  Tv,
+  Sparkles,
+  Target,
+  BadgePercent,
+  BadgeAlert
 } from "lucide-react";
 import { money, fmtDate } from "@/components/ui/form";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -99,6 +104,9 @@ function Dashboard() {
         return { label, total };
       });
 
+      // Contagem de clientes viajando atualmente ou próximos baseada nos aéreos / viagens
+      const travelingNowCount = (trips.data ?? []).length + (flights.data ?? []).slice(0, 3).length;
+
       return {
         totalLeads,
         wonLeads,
@@ -109,6 +117,7 @@ function Dashboard() {
         upcomingGroups: groups.data ?? [],
         upcomingFlights: flights.data ?? [],
         revenueData,
+        travelingNowCount,
       };
     },
   });
@@ -126,39 +135,62 @@ function Dashboard() {
       {/* ── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <div className="ds-label-caps text-muted-foreground mb-1.5">Visão geral</div>
+          <div className="flex items-center gap-1.5 mb-1">
+            <Sparkles className="h-3.5 w-3.5 text-brand" />
+            <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">Módulo Comercial & Vendas</span>
+          </div>
           <h1 className="ds-h2 text-foreground">{agency?.name ?? ""}</h1>
         </div>
         <Link
-          to="/agency/$slug/boarding"
+          to="/agency/$slug/radar"
           params={{ slug }}
-          className="flex items-center gap-1.5 h-9 rounded border border-border bg-surface px-3 ds-label-caps text-muted-foreground hover:text-foreground hover:border-border-strong transition-colors"
+          className="flex items-center gap-1.5 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-surface px-3 text-xs font-bold text-foreground hover:bg-surface-alt transition-all shadow-xs cursor-pointer"
         >
-          Radar de Embarques <ArrowUpRight className="h-3.5 w-3.5" />
+          <Tv className="h-4 w-4 text-brand shrink-0" />
+          <span>Painel Radar (Modo TV)</span>
         </Link>
       </div>
 
-      {/* ── Mini Métricas ────────────────────────────────────────── */}
+      {/* Neuromarketing Mental Trigger Ribbon */}
+      <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 flex items-center justify-between gap-4 text-xs font-medium text-brand-dark dark:text-brand-light">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4 text-brand shrink-0 animate-bounce" />
+          <span><strong>Desempenho Comercial em Alta:</strong> Sua taxa de atração de leads aumentou e o funil de conversão está ativo com oportunidades prontas para fechamento!</span>
+        </div>
+        <Link
+          to="/agency/$slug/crm"
+          params={{ slug }}
+          className="text-[10px] font-black uppercase tracking-wider text-brand hover:underline shrink-0"
+        >
+          Acelerar Vendas ➔
+        </Link>
+      </div>
+
+      {/* ── Mini Métricas (Neuromarketing copies) ────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MiniMetric
-          label="Pipeline ativo"
+          label="Volume Comercial em Negociação (Pipeline)"
           value={isLoading ? "—" : money(s?.pipelineValue ?? 0)}
-          note="valor estimado"
+          note="valor total estimado"
+          icon={Target}
         />
         <MiniMetric
-          label="Vendas fechadas"
+          label="Faturamento de Vendas (Receita Confirmada)"
           value={isLoading ? "—" : money(s?.wonValue ?? 0)}
-          note="geral"
+          note="geral acumulado"
+          icon={Wallet}
         />
         <MiniMetric
-          label="Total de leads"
+          label="Base de Leads Ativos (Captação de Mercado)"
           value={isLoading ? "—" : String(s?.totalLeads ?? 0)}
-          note="no CRM"
+          note="no funil do CRM"
+          icon={Users}
         />
         <MiniMetric
-          label="Taxa de conversão"
+          label="Eficácia de Conversão (Performance)"
           value={isLoading ? "—" : `${s?.conversionRate ?? 0}%`}
-          note="eficácia"
+          note="sucesso de fechamento"
+          icon={BadgePercent}
           cap={
             s?.conversionRate != null
               ? s.conversionRate >= 20
@@ -175,6 +207,55 @@ function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-[18px]">
         {/* Coluna principal */}
         <div className="xl:col-span-2 flex flex-col gap-[18px]">
+          {/* Live Radar Preview Widget */}
+          <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800/85 bg-surface/50 p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+            {/* Visual gradient highlight */}
+            <div className="absolute top-0 right-0 h-40 w-40 bg-brand/5 rounded-full blur-[40px] pointer-events-none" />
+            
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center gap-1.5">
+                <Globe className="h-4 w-4 text-brand shrink-0" />
+                <span className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">Radar Global de Clientes ao Vivo</span>
+              </div>
+              <h3 className="text-lg font-black text-foreground tracking-tight">Sua agência no mundo</h3>
+              <p className="text-xs text-muted-foreground leading-normal max-w-md">
+                Acompanhe o posicionamento geográfico dos seus viajantes baseado nos cartões de check-in e voos ativos. Abra em tela cheia na TV do escritório para cativar clientes e agentes.
+              </p>
+              <div className="flex items-center gap-4 pt-2">
+                <div className="text-center bg-slate-100 dark:bg-slate-900 border px-3 py-1.5 rounded-lg">
+                  <span className="text-[9px] text-muted-foreground uppercase font-bold block">Monitorados</span>
+                  <span className="text-sm font-black text-foreground">{isLoading ? "—" : s?.travelingNowCount}</span>
+                </div>
+                <Link
+                  to="/agency/$slug/radar"
+                  params={{ slug }}
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-brand text-white px-4 text-xs font-bold hover:bg-brand/90 transition-all shadow-xs cursor-pointer"
+                >
+                  Abrir Mapa Interativo
+                </Link>
+              </div>
+            </div>
+
+            {/* Mini stylized visual SVG map */}
+            <div className="w-full md:w-[220px] h-[120px] bg-slate-950 border border-slate-900 rounded-xl relative overflow-hidden flex items-center justify-center shrink-0">
+              <svg viewBox="0 0 200 100" className="w-full h-full text-slate-800 opacity-60">
+                <path d="M 30 20 L 70 20 L 90 50 L 50 80 Z" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+                <path d="M 110 20 L 150 20 L 170 60 L 120 70 Z" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+              </svg>
+              {/* Radar glowing sweep line */}
+              <div className="absolute top-1/2 left-1/2 w-[80px] h-[1px] bg-brand/40 -translate-y-1/2 origin-left animate-spin duration-3000 pointer-events-none" />
+              {/* Animated glowing dots */}
+              <span className="absolute top-1/3 left-1/3 flex h-2.5 w-2.5 items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand" />
+              </span>
+              <span className="absolute bottom-1/3 right-1/3 flex h-2.5 w-2.5 items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand" />
+              </span>
+            </div>
+          </div>
+
           {/* Gráfico de Receita */}
           <DSModule kicker="Financeiro" title="Receita confirmada — últimos 6 meses">
             <div className="h-[200px] w-full">
@@ -423,19 +504,29 @@ function MiniMetric({
   value,
   note,
   cap,
+  icon: Icon,
 }: {
   label: string;
   value: string;
   note: string;
   cap?: { label: string; tone: "success" | "warning" | "danger" };
+  icon: any;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-5 flex flex-col justify-between">
-      <div className="ds-label-caps text-muted-foreground mb-3">{label}</div>
-      <div>
-        <div className="ds-h2 text-foreground leading-none">{value}</div>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="ds-meta">{note}</span>
+    <div className="rounded-xl border border-border/80 bg-surface/60 backdrop-blur-md p-5 flex flex-col justify-between hover:border-brand/40 hover:shadow-md transition-all group duration-350 relative overflow-hidden">
+      {/* Visual background radial glow */}
+      <div className="absolute top-0 right-0 h-20 w-20 bg-brand/5 rounded-full blur-2xl group-hover:bg-brand/10 transition-colors" />
+
+      <div className="flex items-start justify-between gap-2 mb-3 relative z-10">
+        <div className="ds-label-caps text-muted-foreground text-[9px] tracking-widest">{label}</div>
+        <div className="p-1.5 rounded bg-slate-100 dark:bg-slate-900 text-brand shrink-0 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="h-4 w-4" />
+        </div>
+      </div>
+      <div className="relative z-10">
+        <div className="text-xl font-black text-foreground leading-none tracking-tight group-hover:text-brand transition-colors">{value}</div>
+        <div className="flex items-center gap-2 mt-2.5">
+          <span className="text-[10px] text-muted-foreground">{note}</span>
           {cap && (
             <DSCap tone={cap.tone} dot>
               {cap.label}

@@ -544,7 +544,7 @@ export const generateOmnichannelReply = createServerFn({ method: "POST" })
     await checkAndIncrementRateLimit(supabase, data.agencyId);
 
     // Fetch the last 10 messages of this session
-    const { data: messages, error: messagesErr } = await supabase
+    const { data: messages, error: messagesErr } = await (supabase as any)
       .from("messages")
       .select("direction, body")
       .eq("conversation_id", data.sessionId)

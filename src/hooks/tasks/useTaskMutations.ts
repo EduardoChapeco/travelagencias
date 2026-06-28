@@ -19,21 +19,34 @@ export function useTaskMutations() {
   };
 
   const createMutation = useMutation({
-    mutationFn: async (payload: CreateTaskFormValues) => {
+    mutationFn: async (payload: CreateTaskFormValues & { labels?: string[] }) => {
+      const { labels, ...rest } = payload;
       const { data: user } = await supabase.auth.getUser();
       const { data, error } = await db
         .from("tasks")
         .insert({
-          ...payload,
+          ...rest,
           agency_id: agency!.id,
           created_by: user.user?.id,
           // Se assigned_to não foi passado, assinamos o próprio criador para não ficar orfão
-          assigned_to: payload.assigned_to || user.user?.id,
+          assigned_to: rest.assigned_to || user.user?.id,
         })
         .select()
         .single();
         
       if (error) throw error;
+
+      // Gravar labels vinculadas
+      if (labels && labels.length > 0) {
+        const assignments = labels.map((labelId) => ({
+          task_id: data.id,
+          label_id: labelId,
+        }));
+        const { error: labelsErr } = await db
+          .from("task_label_assignments")
+          .insert(assignments);
+        if (labelsErr) console.warn("Failed to assign labels", labelsErr);
+      }
       
       // Avaliador de IA para scoring automático (fire-and-forget)
       supabase.functions.invoke("ai-task-evaluator", {
@@ -52,8 +65,8 @@ export function useTaskMutations() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (payload: UpdateTaskFormValues) => {
-      const { id, ...updates } = payload;
+    mutationFn: async (payload: UpdateTaskFormValues & { labels?: string[] }) => {
+      const { id, labels, ...updates } = payload;
       const { data, error } = await db
         .from("tasks")
         .update(updates)
@@ -62,6 +75,19 @@ export function useTaskMutations() {
         .select()
         .single();
       if (error) throw error;
+
+      // Atualizar labels se informadas
+      if (labels !== undefined) {
+        await db.from("task_label_assignments").delete().eq("task_id", id);
+        if (labels.length > 0) {
+          const assignments = labels.map((labelId) => ({
+            task_id: id,
+            label_id: labelId,
+          }));
+          await db.from("task_label_assignments").insert(assignments);
+        }
+      }
+
       return data;
     },
     onSuccess: () => invalidate(),

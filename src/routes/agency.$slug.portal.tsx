@@ -5,6 +5,7 @@ import {
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
+import { TabsList } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/portal")({
   head: () => ({
@@ -35,26 +36,29 @@ function Page() {
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
-      <div className="flex items-center gap-1 border-b border-border bg-surface/50 px-4 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
-        {tabs.map((tab) => {
-          const active =
-            pathname === tab.path ||
-            (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
-          return (
-            <button
-              key={tab.path}
-              type="button"
-              onClick={() => navigate({ to: tab.path as any })}
-              className={`-mb-px border-b-2 px-3 py-2.5 text-xs font-semibold transition shrink-0 ${
-                active
-                  ? "border-foreground text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+      {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
+        <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+          {tabs.map((tab) => {
+            const active =
+              pathname === tab.path ||
+              (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
+            return (
+              <button
+                key={tab.path}
+                type="button"
+                onClick={() => navigate({ to: tab.path as any })}
+                className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-md transition-all cursor-pointer ${
+                  active
+                    ? "bg-[var(--surface)] text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </TabsList>
       </div>
       <div className="flex-1 overflow-hidden min-h-0">
         <Outlet />
