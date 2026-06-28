@@ -55,8 +55,8 @@ function KanbanCard({ task }: { task: TaskWithRelations }) {
       )}
     >
       <div className="font-medium mb-1 line-clamp-2">{task.title}</div>
-      {task.client?.full_name && (
-        <div className="text-xs text-muted-foreground truncate">{task.client.full_name}</div>
+      {(task as any).client?.full_name && (
+        <div className="text-xs text-muted-foreground truncate">{(task as any).client.full_name}</div>
       )}
       <div className="flex items-center justify-between gap-2 mt-3">
         {task.due_date ? (
@@ -78,8 +78,8 @@ function KanbanCardOverlay({ task }: { task: TaskWithRelations }) {
   return (
     <div className="p-3 mb-2 bg-card border border-border rounded-md shadow-lg text-sm cursor-grabbing rotate-2 scale-105 opacity-90">
       <div className="font-medium mb-1 line-clamp-2">{task.title}</div>
-      {task.client?.full_name && (
-        <div className="text-xs text-muted-foreground truncate">{task.client.full_name}</div>
+      {(task as any).client?.full_name && (
+        <div className="text-xs text-muted-foreground truncate">{(task as any).client.full_name}</div>
       )}
     </div>
   );

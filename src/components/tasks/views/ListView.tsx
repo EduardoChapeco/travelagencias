@@ -113,9 +113,9 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
                   <td className="p-4 font-medium text-[var(--foreground)]">
                     <div className="flex flex-col">
                       <span>{task.title}</span>
-                      {task.notes && (
+                      {(task as any).notes && (
                         <span className="text-xs text-[var(--muted-foreground)] font-normal line-clamp-1 mt-0.5">
-                          {task.notes}
+                          {(task as any).notes}
                         </span>
                       )}
                     </div>

@@ -13,10 +13,9 @@ export function useDailyDigest(date: string) {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error("Não autenticado");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any).rpc("get_daily_digest", {
         p_user_id: user.user.id,
-        p_agency_id: agency.id,
+        p_agency_id: agency!.id,
         p_date: date
       });
 
