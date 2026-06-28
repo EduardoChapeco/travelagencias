@@ -140,16 +140,55 @@ function InboxModule() {
     }
   });
 
+  // 1.5 Fetch Channels (Contas/Canais Conectados da Agência)
+  const { data: channels = [], isLoading: isLoadingChannels } = useQuery({
+    queryKey: ['channels', agency?.id],
+    queryFn: async () => {
+      if (!agency?.id) return [];
+      const { data, error } = await db
+        .from('channels')
+        .select('*')
+        .eq('agency_id', agency.id);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!agency?.id,
+  });
+
   const selectedConversation = conversations.find((c: any) => c.id === selectedConversationId) || null;
+
+  // Mapeia canais reais para o formato esperado pelo InboxSidebar
+  const sidebarAccounts = channels.map((c: any) => ({
+    id: c.id,
+    display_name: c.display_name || c.name,
+    email_address: c.type === 'email' ? (c.metadata?.email || c.name) : `Canal ${c.type}`,
+    profile_picture: c.type === 'whatsapp' ? 'https://cdn-icons-png.flaticon.com/512/124/124034.png' : undefined,
+    status: c.status
+  }));
+
+  // Simula ou formata dados para o AIPanel com base na conversa ativa e suas mensagens
+  const aiPanelData = selectedConversation ? {
+    id: selectedConversation.id,
+    ai_confidence: selectedConversation.ai_mode ? 0.92 : 0.75,
+    ai_summary: selectedConversation.ai_mode 
+      ? `Agente virtual ativo respondendo a ${selectedConversation.contacts?.name || 'cliente'}. Histórico recente sob análise contextual.`
+      : `Atendimento manual. O cliente ${selectedConversation.contacts?.name || ''} enviou mensagens recentes. Clique em assumir se necessário.`,
+    ai_extracted_entities: {
+      passengers: selectedConversation.contacts?.name ? [selectedConversation.contacts.name] : [],
+      locs: [],
+      ticket_hash: null
+    },
+    linked_ticket_id: selectedConversation.status === 'open' ? selectedConversation.id : null
+  } : null;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
       <InboxSidebar 
-        accounts={[]} 
+        accounts={sidebarAccounts} 
         selectedAccountId={null} 
         onSelectAccount={() => {}}
         onConnectGmail={() => {}}
-        isLoading={false}
+        isLoading={isLoadingChannels}
       />
       
       <ConversationList 
@@ -167,7 +206,7 @@ function InboxModule() {
         currentUserId={currentUser?.id}
       />
       
-      <AIPanel email={null} />
+      <AIPanel email={aiPanelData} />
     </div>
   );
 }
