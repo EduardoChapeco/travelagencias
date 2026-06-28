@@ -464,9 +464,7 @@ const AgencySlugOmnichannelRoute = AgencySlugOmnichannelRouteImport.update({
   id: '/omnichannel',
   path: '/omnichannel',
   getParentRoute: () => AgencySlugRoute,
-} as any).lazy(() =>
-  import('./routes/agency.$slug.omnichannel.lazy').then((d) => d.Route),
-)
+} as any)
 const AgencySlugKnowledgeRoute = AgencySlugKnowledgeRouteImport.update({
   id: '/knowledge',
   path: '/knowledge',

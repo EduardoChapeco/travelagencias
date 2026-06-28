@@ -545,9 +545,9 @@ export const generateOmnichannelReply = createServerFn({ method: "POST" })
 
     // Fetch the last 10 messages of this session
     const { data: messages, error: messagesErr } = await supabase
-      .from("omnichannel_messages")
-      .select("direction, content")
-      .eq("session_id", data.sessionId)
+      .from("messages")
+      .select("direction, body")
+      .eq("conversation_id", data.sessionId)
       .order("created_at", { ascending: true })
       .limit(10);
 
@@ -559,7 +559,7 @@ export const generateOmnichannelReply = createServerFn({ method: "POST" })
 
     const sessionMessages = messages.map((m: any) => ({
       role: m.direction === "inbound" ? ("user" as const) : ("assistant" as const),
-      content: m.content || "",
+      content: m.body || "",
     }));
 
     const systemPrompt = `Você é o assistente de IA da agência de viagens. Seu papel é analisar a conversa do cliente com o agente humano e sugerir a próxima resposta ideal em português.

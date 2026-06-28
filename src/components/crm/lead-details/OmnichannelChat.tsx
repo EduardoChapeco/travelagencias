@@ -26,33 +26,94 @@ export function OmnichannelChat({
   const [messages, setMessages] = useState<OmniMsg[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    supabase
-      .from("omnichannel_messages")
-      .select("*")
-      .eq("lead_id", leadId)
-      .order("created_at", { ascending: true })
-      .limit(100)
-      .then(({ data }: any) => {
-        if (data) setMessages(data as OmniMsg[]);
-      });
+    const cleanPhone = leadPhone ? leadPhone.replace(/\D/g, "") : "";
+    if (!cleanPhone) return;
+
+    let activeChannel: any = null;
+
+    async function loadData() {
+      try {
+        // 1. Achar o contato pelo telefone
+        const { data: contact } = await supabase
+          .from("contacts")
+          .select("id")
+          .eq("agency_id", agencyId)
+          .like("phone", `%${cleanPhone}%`)
+          .maybeSingle();
+
+        if (!contact) return;
+
+        // 2. Achar a conversa ativa
+        const { data: conv } = await supabase
+          .from("conversations")
+          .select("id")
+          .eq("contact_id", contact.id)
+          .maybeSingle();
+
+        if (!conv) return;
+        setConversationId(conv.id);
+
+        // 3. Carregar mensagens
+        const { data: msgs } = await supabase
+          .from("messages")
+          .select("*")
+          .eq("conversation_id", conv.id)
+          .order("created_at", { ascending: true })
+          .limit(100);
+
+        if (msgs) {
+          setMessages(
+            msgs.map((m: any) => ({
+              id: m.id,
+              direction: m.direction,
+              content: m.body,
+              media_url: m.media_url,
+              media_type: m.media_url ? "image" : null,
+              status: m.status || "sent",
+              created_at: m.created_at,
+              channel: "whatsapp",
+            })),
+          );
+        }
+      } catch (err: any) {
+        console.error("Erro ao carregar mensagens omnichannel:", err);
+      }
+    }
+
+    loadData();
+  }, [leadPhone, agencyId]);
+
+  useEffect(() => {
+    if (!conversationId) return;
 
     const channel = supabase
-      .channel(`omni_${leadId}`)
+      .channel(`omni_chat_${conversationId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
-          table: "omnichannel_messages",
-          filter: `lead_id=eq.${leadId}`,
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
           setMessages((prev) => {
             if (prev.some((m) => m.id === payload.new.id)) return prev;
-            return [...prev, payload.new as OmniMsg];
+            const newMsg: OmniMsg = {
+              id: payload.new.id,
+              direction: payload.new.direction,
+              content: payload.new.body,
+              media_url: payload.new.media_url,
+              media_type: payload.new.media_url ? "image" : null,
+              status: payload.new.status || "sent",
+              created_at: payload.new.created_at,
+              channel: "whatsapp",
+            };
+            return [...prev, newMsg];
           });
         },
       )
@@ -61,12 +122,21 @@ export function OmnichannelChat({
         {
           event: "UPDATE",
           schema: "public",
-          table: "omnichannel_messages",
-          filter: `lead_id=eq.${leadId}`,
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
           setMessages((prev) =>
-            prev.map((msg) => (msg.id === payload.new.id ? (payload.new as OmniMsg) : msg)),
+            prev.map((msg) =>
+              msg.id === payload.new.id
+                ? {
+                    ...msg,
+                    status: payload.new.status || "sent",
+                    content: payload.new.body,
+                    media_url: payload.new.media_url,
+                  }
+                : msg,
+            ),
           );
         },
       )
@@ -75,7 +145,7 @@ export function OmnichannelChat({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [leadId]);
+  }, [conversationId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -85,18 +155,112 @@ export function OmnichannelChat({
     if (!text.trim() || sending) return;
     setSending(true);
     try {
-      const { error } = await supabase.from("omnichannel_messages").insert({
+      const cleanPhone = leadPhone ? leadPhone.replace(/\D/g, "") : "";
+      if (!cleanPhone) throw new Error("Lead sem número de telefone cadastrado.");
+
+      // 1. Garantir canal ativo
+      const { data: activeChannel } = await supabase
+        .from("channels")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+
+      let targetChannelId = activeChannel?.id;
+
+      if (!targetChannelId) {
+        const { data: existingChannel } = await supabase
+          .from("channels")
+          .select("id")
+          .eq("agency_id", agencyId)
+          .limit(1)
+          .maybeSingle();
+        targetChannelId = existingChannel?.id;
+
+        if (!targetChannelId) {
+          const { data: newChan, error: chanErr } = await supabase
+            .from("channels")
+            .insert({
+              agency_id: agencyId,
+              type: "whatsapp",
+              display_name: "WhatsApp CRM",
+              external_id: "whatsapp-crm-default",
+              is_active: true,
+            })
+            .select("id")
+            .single();
+
+          if (chanErr) throw chanErr;
+          targetChannelId = newChan.id;
+        }
+      }
+
+      // 2. Garantir contato
+      let { data: contact } = await supabase
+        .from("contacts")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .like("phone", `%${cleanPhone}%`)
+        .maybeSingle();
+
+      if (!contact) {
+        const { data: newContact, error: contactErr } = await supabase
+          .from("contacts")
+          .insert({
+            agency_id: agencyId,
+            name: "Lead CRM",
+            phone: cleanPhone,
+          })
+          .select("id")
+          .single();
+
+        if (contactErr) throw contactErr;
+        contact = newContact;
+      }
+
+      // 3. Garantir conversa
+      let currentConvId = conversationId;
+      if (!currentConvId) {
+        let { data: conv } = await supabase
+          .from("conversations")
+          .select("id")
+          .eq("contact_id", contact!.id)
+          .maybeSingle();
+
+        if (!conv) {
+          const { data: newConv, error: convErr } = await supabase
+            .from("conversations")
+            .insert({
+              agency_id: agencyId,
+              channel_id: targetChannelId,
+              contact_id: contact!.id,
+              status: "open",
+              last_message_at: new Date().toISOString(),
+            })
+            .select("id")
+            .single();
+
+          if (convErr) throw convErr;
+          conv = newConv;
+        }
+        currentConvId = conv.id;
+        setConversationId(conv.id);
+      }
+
+      // 4. Gravar mensagem na tabela canônica
+      const { error } = await supabase.from("messages").insert({
+        conversation_id: currentConvId,
         agency_id: agencyId,
-        lead_id: leadId,
-        channel: "whatsapp",
         direction: "outbound",
-        content: text.trim(),
-        status: "pending",
+        body: text.trim(),
+        status: "queued",
       });
+
       if (error) throw error;
       setText("");
-    } catch {
-      toast.error("Falha ao enviar mensagem");
+    } catch (err: any) {
+      toast.error(err.message || "Falha ao enviar mensagem");
     } finally {
       setSending(false);
     }
@@ -135,8 +299,7 @@ export function OmnichannelChat({
             <div>
               <p className="text-sm font-medium text-muted-foreground">Nenhuma mensagem ainda</p>
               <p className="text-xs text-muted-foreground/70 max-w-xs mt-1">
-                Configure a API de WhatsApp em Configurações → Omnichannel para receber mensagens em
-                tempo real.
+                Envie uma mensagem pelo campo abaixo para iniciar o chat em tempo real com o lead.
               </p>
             </div>
           </div>
@@ -174,7 +337,7 @@ export function OmnichannelChat({
                           <Clock className="h-2.5 w-2.5 opacity-60 animate-pulse" />
                         </span>
                       )}
-                      {msg.status === "sent" && (
+                      {(msg.status === "sent" || msg.status === "queued") && (
                         <span title="Enviado">
                           <Check className="h-2.5 w-2.5 text-emerald-300" />
                         </span>

@@ -126,20 +126,117 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       const url = `${window.location.origin}/m/proposal/${createdProposal.publicToken}`;
       const content = `Olá! Preparamos uma proposta personalizada de viagem para você. Você pode acessá-la e detalhar todos os serviços por este link: ${url}`;
 
-      const { error } = await supabase.from("omnichannel_messages").insert({
+      // 0. Obter telefone do Lead
+      const { data: lead } = await supabase
+        .from("crm_leads")
+        .select("phone")
+        .eq("id", leadId)
+        .maybeSingle();
+
+      const cleanPhone = lead?.phone ? lead.phone.replace(/\D/g, "") : "";
+      if (!cleanPhone) throw new Error("Este lead não possui número de telefone cadastrado.");
+
+      // 1. Garantir canal ativo
+      const { data: activeChannel } = await supabase
+        .from("channels")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+
+      let targetChannelId = activeChannel?.id;
+
+      if (!targetChannelId) {
+        const { data: existingChannel } = await supabase
+          .from("channels")
+          .select("id")
+          .eq("agency_id", agencyId)
+          .limit(1)
+          .maybeSingle();
+        targetChannelId = existingChannel?.id;
+
+        if (!targetChannelId) {
+          const { data: newChan, error: chanErr } = await supabase
+            .from("channels")
+            .insert({
+              agency_id: agencyId,
+              type: "whatsapp",
+              display_name: "WhatsApp CRM",
+              external_id: "whatsapp-crm-default",
+              is_active: true,
+            })
+            .select("id")
+            .single();
+
+          if (chanErr) throw chanErr;
+          targetChannelId = newChan.id;
+        }
+      }
+
+      // 2. Garantir contato
+      let { data: contact } = await supabase
+        .from("contacts")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .like("phone", `%${cleanPhone}%`)
+        .maybeSingle();
+
+      if (!contact) {
+        const { data: newContact, error: contactErr } = await supabase
+          .from("contacts")
+          .insert({
+            agency_id: agencyId,
+            name: "Lead CRM",
+            phone: cleanPhone,
+          })
+          .select("id")
+          .single();
+
+        if (contactErr) throw contactErr;
+        contact = newContact;
+      }
+
+      // 3. Garantir conversa
+      let { data: conv } = await supabase
+        .from("conversations")
+        .select("id")
+        .eq("contact_id", contact!.id)
+        .maybeSingle();
+
+      if (!conv) {
+        const { data: newConv, error: convErr } = await supabase
+          .from("conversations")
+          .insert({
+            agency_id: agencyId,
+            channel_id: targetChannelId,
+            contact_id: contact!.id,
+            status: "open",
+            last_message_at: new Date().toISOString(),
+          })
+          .select("id")
+          .single();
+
+        if (convErr) throw convErr;
+        conv = newConv;
+      }
+
+      // 4. Gravar mensagem na tabela canônica
+      const { error } = await supabase.from("messages").insert({
+        conversation_id: conv.id,
         agency_id: agencyId,
-        lead_id: leadId,
-        channel: "whatsapp",
         direction: "outbound",
-        content,
-        status: "pending",
+        body: content,
+        status: "queued",
       });
+
       if (error) throw error;
       toast.success("Mensagem adicionada à fila de envio do WhatsApp!");
       qc.invalidateQueries({ queryKey: ["lead-activities", leadId] });
+      qc.invalidateQueries({ queryKey: ["conversations", agencyId] });
     } catch (e: any) {
       console.error(e);
-      toast.error("Erro ao enviar link da cotação.");
+      toast.error(e.message || "Erro ao enviar link da cotação.");
     } finally {
       setSendingWa(false);
     }

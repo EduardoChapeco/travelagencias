@@ -753,33 +753,94 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           .eq("id", validatedData.clientId)
           .maybeSingle();
 
-        // 1. Check or create omnichannel session
-        const contactId = validatedData.phoneNumber;
-        let { data: session } = await (supabase as any)
-          .from("omnichannel_sessions")
+        const contactPhone = validatedData.phoneNumber.replace(/\D/g, "");
+
+        // 1. Obter canal ativo
+        const { data: activeChannel } = await supabase
+          .from("channels")
           .select("id")
           .eq("agency_id", agencyId)
-          .eq("contact_id", contactId)
+          .eq("is_active", true)
+          .limit(1)
           .maybeSingle();
 
-        if (!session) {
-          const { data: newSession, error: sErr } = await (supabase as any)
-            .from("omnichannel_sessions")
+        let targetChannelId = activeChannel?.id;
+
+        if (!targetChannelId) {
+          const { data: existingChannel } = await supabase
+            .from("channels")
+            .select("id")
+            .eq("agency_id", agencyId)
+            .limit(1)
+            .maybeSingle();
+          targetChannelId = existingChannel?.id;
+
+          if (!targetChannelId) {
+            const { data: newChan, error: chanErr } = await supabase
+              .from("channels")
+              .insert({
+                agency_id: agencyId,
+                type: "whatsapp",
+                display_name: "WhatsApp CRM",
+                external_id: "whatsapp-crm-default",
+                is_active: true,
+              })
+              .select("id")
+              .single();
+
+            if (chanErr) throw chanErr;
+            targetChannelId = newChan.id;
+          }
+        }
+
+        // 2. Obter ou criar contato
+        let { data: contact } = await supabase
+          .from("contacts")
+          .select("id")
+          .eq("agency_id", agencyId)
+          .like("phone", `%${contactPhone}%`)
+          .maybeSingle();
+
+        if (!contact) {
+          const { data: newContact, error: contactErr } = await supabase
+            .from("contacts")
             .insert({
               agency_id: agencyId,
-              channel: "whatsapp",
-              contact_id: contactId,
-              contact_name: client?.full_name || "Cliente via WhatsApp",
-              status: "active",
-              unread_count: 0,
+              name: client?.full_name || "Cliente via WhatsApp",
+              phone: contactPhone,
             })
             .select("id")
             .single();
-          if (sErr) throw sErr;
-          session = newSession;
+
+          if (contactErr) throw contactErr;
+          contact = newContact;
         }
 
-        // 2. Insert message with template placeholder content
+        // 3. Obter ou criar conversa
+        let { data: conv } = await supabase
+          .from("conversations")
+          .select("id")
+          .eq("contact_id", contact!.id)
+          .maybeSingle();
+
+        if (!conv) {
+          const { data: newConv, error: convErr } = await supabase
+            .from("conversations")
+            .insert({
+              agency_id: agencyId,
+              channel_id: targetChannelId,
+              contact_id: contact!.id,
+              status: "open",
+              last_message_at: new Date().toISOString(),
+            })
+            .select("id")
+            .single();
+
+          if (convErr) throw convErr;
+          conv = newConv;
+        }
+
+        // 4. Mapear template text
         const templateTexts: Record<string, string> = {
           welcome: `Olá! Bem-vindo à Vibetour. Estamos felizes em ter você conosco!`,
           voucher_ready: `Olá! Seu voucher de viagem já está pronto e disponível na sua área do cliente. Boa viagem!`,
@@ -790,22 +851,22 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
           templateTexts[validatedData.templateName] ||
           `Template [${validatedData.templateName}] disparado via WhatsApp.`;
 
+        // 5. Gravar a mensagem
         const { data: message, error: mErr } = await supabase
-          .from("omnichannel_messages")
+          .from("messages")
           .insert({
-            session_id: session.id,
-            channel: "whatsapp",
-            direction: "outbound",
-            content: contentText,
-            status: "sent",
+            conversation_id: conv.id,
             agency_id: agencyId,
-          } as any)
+            direction: "outbound",
+            body: contentText,
+            status: "sent",
+          })
           .select("id")
           .single();
 
         if (mErr) throw mErr;
         entityId = message.id;
-        entityType = "omnichannel_message";
+        entityType = "message";
         resultMessage = `Template de WhatsApp '${validatedData.templateName}' disparado para o número ${validatedData.phoneNumber} com sucesso.`;
       } else if (actionCode === "apply_discount_or_fee") {
         const { data: proposal, error: getErr } = await supabase
