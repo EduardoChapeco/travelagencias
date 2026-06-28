@@ -50,9 +50,11 @@ CREATE TABLE IF NOT EXISTS public.data_subject_request_evidence (
 ALTER TABLE public.data_subject_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.data_subject_request_evidence ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Agency members manage requests" ON public.data_subject_requests;
 CREATE POLICY "Agency members manage requests" ON public.data_subject_requests
   FOR ALL USING (is_agency_member(auth.uid(), agency_id));
 
+DROP POLICY IF EXISTS "Agency members manage request evidence" ON public.data_subject_request_evidence;
 CREATE POLICY "Agency members manage request evidence" ON public.data_subject_request_evidence
   FOR ALL USING (
     EXISTS (SELECT 1 FROM public.data_subject_requests r WHERE r.id = request_id AND is_agency_member(auth.uid(), r.agency_id))
@@ -79,6 +81,7 @@ CREATE TABLE IF NOT EXISTS public.kanban_settings (
 
 ALTER TABLE public.kanban_settings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "manage own kanban settings" ON public.kanban_settings;
 CREATE POLICY "manage own kanban settings" ON public.kanban_settings
   FOR ALL USING (agency_id IN (SELECT agency_id FROM public.profiles WHERE id = auth.uid()));
 

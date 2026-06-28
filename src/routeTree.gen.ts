@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as DataDeletionRouteImport } from './routes/data-deletion'
 import { Route as ClientRouteImport } from './routes/client'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -146,6 +149,21 @@ import { Route as AgencySlugTripsIdBoardingRouteImport } from './routes/agency.$
 import { Route as AgencySlugProposalsIdPreviewRouteImport } from './routes/agency.$slug.proposals.$id.preview'
 import { Route as AgencySlugPortalPagesPage_idRouteImport } from './routes/agency.$slug.portal.pages.$page_id'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataDeletionRoute = DataDeletionRouteImport.update({
+  id: '/data-deletion',
+  path: '/data-deletion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClientRoute = ClientRouteImport.update({
   id: '/client',
   path: '/client',
@@ -865,6 +883,9 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/client': typeof ClientRouteWithChildren
+  '/data-deletion': typeof DataDeletionRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/api-keys': typeof AdminApiKeysRoute
@@ -1000,6 +1021,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/data-deletion': typeof DataDeletionRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/api-keys': typeof AdminApiKeysRoute
@@ -1131,6 +1155,9 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/client': typeof ClientRouteWithChildren
+  '/data-deletion': typeof DataDeletionRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/admin/agencies': typeof AdminAgenciesRouteWithChildren
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/api-keys': typeof AdminApiKeysRoute
@@ -1271,6 +1298,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/client'
+    | '/data-deletion'
+    | '/privacy'
+    | '/terms'
     | '/admin/agencies'
     | '/admin/agents'
     | '/admin/api-keys'
@@ -1406,6 +1436,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/data-deletion'
+    | '/privacy'
+    | '/terms'
     | '/admin/agencies'
     | '/admin/agents'
     | '/admin/api-keys'
@@ -1536,6 +1569,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/client'
+    | '/data-deletion'
+    | '/privacy'
+    | '/terms'
     | '/admin/agencies'
     | '/admin/agents'
     | '/admin/api-keys'
@@ -1675,6 +1711,9 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
+  DataDeletionRoute: typeof DataDeletionRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
   BuilderAiRoute: typeof BuilderAiRoute
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
@@ -1694,6 +1733,27 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-deletion': {
+      id: '/data-deletion'
+      path: '/data-deletion'
+      fullPath: '/data-deletion'
+      preLoaderRoute: typeof DataDeletionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/client': {
       id: '/client'
       path: '/client'
@@ -3086,6 +3146,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
+  DataDeletionRoute: DataDeletionRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   AgencySlugRoute: AgencySlugRouteWithChildren,
   BuilderAiRoute: BuilderAiRoute,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
