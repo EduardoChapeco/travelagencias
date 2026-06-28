@@ -8,6 +8,7 @@ import {
   ArrowLeft, User, Briefcase, Mail, Clock, AlertCircle, Send, Paperclip, MessageSquare, Zap, FileText, CheckCircle2, Ticket
 } from "lucide-react";
 import { Field, Select, StatusBadge, PrimaryButton, Textarea, Input } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { format, isPast } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ function TicketAdvancedRoute() {
         .eq("id", ticket_id)
         .single();
       if (error) throw error;
-      return data;
+      return data as any;
     },
   });
 
@@ -48,8 +49,7 @@ function TicketAdvancedRoute() {
     queryKey: ["ticket_timeline", ticket_id],
     enabled: !!agency,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ticket_timeline")
+      const { data, error } = await (supabase.from as any)("ticket_timeline")
         .select(`
           *,
           actor:users(raw_user_meta_data),
@@ -78,7 +78,7 @@ function TicketAdvancedRoute() {
       if (!replyText.trim()) return;
       
       const eventType = replyType === "internal" ? "note" : "email_sent";
-      const { error } = await supabase.from("ticket_timeline").insert({
+      const { error } = await (supabase.from as any)("ticket_timeline").insert({
         ticket_id,
         org_id: agency!.id,
         event_type: eventType,

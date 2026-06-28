@@ -7,7 +7,7 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState(() => Math.random().toString(36).substring(7));
+  const [sessionId] = useState(() => crypto.randomUUID());
   const [isConverted, setIsConverted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 

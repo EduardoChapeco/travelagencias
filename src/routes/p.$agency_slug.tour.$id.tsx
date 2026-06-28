@@ -204,7 +204,7 @@ function Page() {
       setUploadedFileName(file.name);
 
       const fileExt = file.name.split(".").pop();
-      const fileName = `${agency.id}/${Date.now()}_${Math.random().toString(35).substring(2, 7)}.${fileExt}`;
+      const fileName = `${agency.id}/${Date.now()}_${crypto.randomUUID()}.${fileExt}`;
 
       setUploadProgress(30);
 

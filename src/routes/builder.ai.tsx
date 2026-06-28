@@ -189,7 +189,7 @@ function AISiteBuilder() {
 
       // 3. Save to database (portal_pages)
       const pageTitle = `Site Gerado - ${new Date().toLocaleDateString()}`;
-      const slugValue = `site-${Math.random().toString(36).substring(2, 7)}`;
+      const slugValue = `site-${crypto.randomUUID()}`;
 
       const { data: newPage, error: saveError } = await supabase
         .from("portal_pages")

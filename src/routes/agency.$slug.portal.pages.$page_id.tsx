@@ -392,7 +392,7 @@ function PageEditorRoute() {
         .single();
       if (fetchErr) throw fetchErr;
 
-      const randomSuffix = Math.random().toString(36).substring(2, 5);
+      const randomSuffix = crypto.randomUUID();
       const newTitle = `${pageDetails.title} (Cópia)`;
       const newSlug = `${pageDetails.slug}-copia-${randomSuffix}`;
 
@@ -1354,7 +1354,7 @@ function PageEditorRoute() {
                   const deepCopiedBlock = JSON.parse(JSON.stringify(b));
                   return {
                     ...deepCopiedBlock,
-                    id: `${b.type}-${Math.random().toString(36).substring(2, 9)}`,
+                    id: `${b.type}-${crypto.randomUUID()}`,
                   };
                 });
                 setBlocks(freshBlocks as any);
@@ -1616,7 +1616,7 @@ function PageEditorRoute() {
             const deepCopiedBlock = JSON.parse(JSON.stringify(b));
             return {
               ...deepCopiedBlock,
-              id: `${b.type}-${Math.random().toString(36).substring(2, 9)}`,
+              id: `${b.type}-${crypto.randomUUID()}`,
             };
           });
           setBlocks([...blocks, ...freshBlocks]);

@@ -247,7 +247,7 @@ export function NewGroupTourWizard({
 
   const generateSlug = () => {
     if (!watchTitle) return;
-    setValue("slug", slugify(watchTitle) + "-" + Math.random().toString(36).slice(2, 6), {
+    setValue("slug", slugify(watchTitle) + "-" + crypto.randomUUID(), {
       shouldValidate: true,
     });
   };
@@ -292,7 +292,7 @@ export function NewGroupTourWizard({
     try {
       setUploading(true);
       const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
       const filePath = `${agencyId}/tours/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -318,7 +318,7 @@ export function NewGroupTourWizard({
       const payload = {
         agency_id: agencyId,
         title: data.title,
-        slug: data.slug || slugify(data.title) + "-" + Math.random().toString(36).slice(2, 6),
+        slug: data.slug || slugify(data.title) + "-" + crypto.randomUUID(),
         destination: data.destination || null,
         transport_type: data.transportType,
         departure_date: data.departure || null,

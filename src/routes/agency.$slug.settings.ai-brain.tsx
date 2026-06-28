@@ -51,8 +51,8 @@ function BrainPanel() {
 
   if (!agency) return null;
 
-  const docs = docsQuery.data || [];
-  const processedEmails = inboxAiQuery.data || [];
+  const docs = (docsQuery.data || []) as any[];
+  const processedEmails = (inboxAiQuery.data || []) as any[];
 
   const totalChunks = docs.reduce((acc, doc) => acc + (doc.chunk_count || 0), 0);
   const avgConfidence = processedEmails.length > 0 

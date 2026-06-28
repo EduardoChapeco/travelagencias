@@ -59,7 +59,7 @@ export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const uid = () => Math.random().toString(36).slice(2, 9);
+const uid = () => crypto.randomUUID();
 
 const TEMPLATE_LABELS = {
   navy: "Azul Marinho",

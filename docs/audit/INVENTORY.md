@@ -1,0 +1,281 @@
+
+# INVENTORY.md (A.I.R.I. Phase 1)
+
+## A) FRONTEND
+- **Dependências Relevantes:** React, TanStack Router/Query, Supabase-js, Zustand (ou React Query state), Tailwind, Radix UI.
+- **Rotas Mapeadas (139):**
+  - `admin.agencies.$id.tsx`
+  - `admin.agencies.tsx`
+  - `admin.agents.tsx`
+  - `admin.api-keys.tsx`
+  - `admin.audit.tsx`
+  - `admin.billing.tsx`
+  - `admin.brand.tsx`
+  - `admin.contracts.tsx`
+  - `admin.index.tsx`
+  - `admin.integrations.tsx`
+  - `admin.plans.tsx`
+  - `admin.policies.tsx`
+  - `admin.travelers.tsx`
+  - `admin.trips.tsx`
+  - `admin.tsx`
+  *(... e mais 124 rotas)*
+- **Componentes Estruturais (169):**
+  - Módulos detectados: `inbox`, `tasks`, `trips`, `portal`, `shell`.
+- **Hooks Customizados (10):**
+  - `tasks\useDailyDigest.ts`
+  - `tasks\useTaskMutations.ts`
+  - `tasks\useTasksQuery.ts`
+  - `use-block-editor.ts`
+  - `use-confirm.tsx`
+  - `use-crm-kanban.ts`
+  - `use-debounce.ts`
+  - `use-mobile.tsx`
+  - `use-prompt.tsx`
+  - `use-scroll-animation.ts`
+- **Design System:** Usa Tailwind com CSS vars nativas (shadcn-like). Presença forte de tokens utilitários de `surface`, `brand`, `border`.
+
+## B) BACKEND / SUPABASE
+- **Tabelas Encontradas (via Migrations):**
+  - `public.agencies`
+  - `public.profiles`
+  - `public.user_roles`
+  - `public.lead_stages`
+  - `public.leads`
+  - `public.lead_activities`
+  - `public.clients`
+  - `public.suppliers`
+  - `public.proposals`
+  - `public.proposal_items`
+  - `public.trips`
+  - `public.trip_passengers`
+  - `public.agency_tags`
+  - `public.brand_kit`
+  - `public.contracts`
+  - `public.vouchers`
+  - `public.financial_records`
+  - `public.payment_plans`
+  - `public.payment_installments`
+  - `public.support_tickets`
+  - `public.boarding_cards`
+  - `public.group_tours`
+  - `public.group_tour_enrollments`
+  - `public.visa_requests`
+  - `public.visa_requirements`
+  - `public.corporate_clients`
+  - `public.company_profiles`
+  - `public.portal_pages`
+  - `public.blog_posts`
+  - `public.knowledge_articles`
+  - `public.lead_forms`
+  - `public.api_keys`
+  - `public.notifications`
+  - `public.audit_log`
+  - `public.agency_invites`
+  - `public.contract_clauses_template`
+  - `public.agency_private`
+  - `public.coupons`
+  - `public.gift_cards`
+  - `public.plans`
+  - `public.push_subscriptions`
+  - `public.global_settings`
+  - `public.ai_chat_messages`
+  - `public.ai_rate_limit`
+  - `public.policy_documents`
+  - `public.booking_installments`
+  - `public.legal_acceptances`
+  - `public.agency_subscriptions`
+  - `public.bus_layouts`
+  - `public.ticket_messages`
+  - `public.trip_memories`
+  - `public.corporate_rfps`
+  - `public.web_push_subscriptions`
+  - `public.visa_stages`
+  - `public.visas`
+  - `public.visa_documents`
+  - `public.corporate_policies`
+  - `public.portal_page_versions`
+  - `public.knowledge_article_votes`
+  - `public.lead_meetings`
+  - `public.client_relationships`
+  - `public.contract_addendums`
+  - `public.contract_audit_chain`
+  - `public.boarding_card_activities`
+  - `public.passenger_documents`
+  - `public.portal_settings`
+  - `public.agent_commission_rules`
+  - `public.cms_templates`
+  - `public.agent_tasks`
+  - `public.proposal_history`
+  - `public.portal_page_analytics`
+  - `public.agency_reviews`
+  - `public.public_leads`
+  - `public.ai_generation_logs`
+  - `public.knowledge_playbooks`
+  - `public.knowledge_playbook_steps`
+  - `public.omnichannel_message_embeddings`
+  - `public.workflow_definitions`
+  - `public.workflow_runs`
+  - `public.agency_billing_invoices`
+  - `public.boarding_rooming_list`
+  - `public.agency_integrations`
+  - `public.cash_registers`
+  - `public.cash_sessions`
+  - `public.financial_transactions`
+  - `public.invoices`
+  - `public.group_tour_costs`
+  - `public.supplier_contacts`
+  - `public.supplier_products`
+  - `public.supplier_files`
+  - `public.supplier_reviews`
+  - `public.boarding_tickets`
+  - `public.contract_clauses`
+  - `public.trip_confirmation_items`
+  - `public.flight_itineraries`
+  - `public.flight_segments`
+  - `public.checkin_links`
+  - `public.boarding_events`
+  - `public.cash_transactions`
+  - `public.task_spaces`
+  - `public.task_projects`
+  - `public.tasks`
+  - `public.task_checklist_items`
+  - `public.task_time_entries`
+  - `public.task_comments`
+  - `public.task_dependencies`
+  - `public.task_labels`
+  - `public.task_label_assignments`
+  - `public.task_watchers`
+  - `public.task_activity_log`
+  - `public.user_task_preferences`
+  - `public.agent_productivity_scores`
+  - `public.calendar_events`
+  - `public.payment_receipt_snapshots`
+  - `public.ai_providers`
+  - `public.ai_models`
+  - `public.ai_api_credentials`
+  - `public.ai_jobs`
+  - `public.ai_job_attempts`
+  - `public.external_entity_links`
+  - `public.sync_checkpoints`
+  - `public.sync_jobs`
+  - `public.ai_chat_feedback`
+  - `public.ai_agency_memories`
+  - `public.financial_categories`
+  - `public.seller_commission_plans`
+  - `public.seller_commission_tiers`
+  - `public.seller_adjustments`
+  - `public.monthly_closing_periods`
+  - `public.financial_ledger_entries`
+  - `public.destination_review_logs`
+  - `public.flight_change_cases`
+  - `public.flight_alternatives`
+  - `public.flight_difference_analysis`
+  - `public.customer_travel_decisions`
+  - `public.operator_reaccommodation_requests`
+  - `public.cash_audit_logs`
+  - `public.quote_requests`
+  - `public.quote_travelers`
+  - `public.quote_preferences`
+  - `public.quote_search_plans`
+  - `public.quote_scenarios`
+  - `public.quote_raw_results`
+  - `public.normalized_offers`
+  - `public.package_candidates`
+  - `public.package_candidate_components`
+  - `public.package_scorecards`
+  - `public.score_profiles`
+  - `public.decision_rules`
+  - `public.decision_rule_versions`
+  - `public.decision_records`
+  - `public.rule_candidates`
+  - `public.simulation_runs`
+  - `public.simulation_results`
+  - `public.quote_snapshots`
+  - `public.promotion_watch_profiles`
+  - `public.promotion_candidates`
+  - `public.knowledge_sources`
+  - `public.knowledge_documents`
+  - `public.knowledge_chunks`
+  - `public.knowledge_embeddings`
+  - `public.whatsapp_connections`
+  - `public.inbox_queues`
+  - `public.inbox_teams`
+  - `public.inbox_team_members`
+  - `public.email_accounts`
+  - `public.emails`
+  - `public.email_attachments`
+  - `public.email_link_history`
+  - `public.ticket_timeline`
+  - `public.audit_logs`
+- **RLS (Policies parciais detectadas):**
+  - `create policy "agencies are publicly readable"
+  on public.agencies for select
+ ...`
+  - `create policy "authenticated users can create an agency"
+  on public.agencies fo...`
+  - `create policy "agency members can update their agency"
+  on public.agencies for ...`
+  - `create policy "agency admins can delete their agency"
+  on public.agencies for d...`
+  - `create policy "users see their own profile"
+  on public.profiles for select
+  to...`
+  - `create policy "users insert their own profile"
+  on public.profiles for insert
+ ...`
+  - `create policy "users update their own profile"
+  on public.profiles for update
+ ...`
+  - `create policy "users see their own roles"
+  on public.user_roles for select
+  to...`
+  - `create policy "agency admins see roles in their agency"
+  on public.user_roles f...`
+  - `create policy "agency admins manage roles in their agency"
+  on public.user_role...`
+- **Edge Functions (Deno):**
+  - `admin-secure-keys`
+  - `ai-message-processor`
+  - `ai-orchestrator`
+  - `ai-quote-engine`
+  - `ai-task-evaluator`
+  - `ai-voucher-ocr`
+  - `client-token-login`
+  - `cron-productivity`
+  - `generate-proposal-pdf`
+  - `generate-site-ai`
+  - `generate-voucher-pdf`
+  - `gmail-oauth`
+  - `gmail-send`
+  - `gmail-sync`
+  - `google-business-post`
+  - `infotravel-connector`
+  - `landing-page-agent`
+  - `mcp-llms-txt`
+  - `meta-capi-sync`
+  - `meta-catalog-feed`
+  - `ocr-boleto`
+  - `ocr-passenger-document`
+  - `ocr-proposal`
+  - `rag-document-processor`
+  - `search-unsplash`
+  - `supplier-ocr-extractor`
+  - `web-push`
+  - `whatsapp-sender`
+  - `whatsapp-webhook`
+
+## C) INTEGRAÇÕES
+- **Webhooks Recebidos:** Edge Functions para `gmail-oauth`, `whatsapp-webhook` e `rag-document-processor`.
+- **APIs Externas:** Google OAuth (Gmail API), Infotravel, Gemini (Text Embedding 004).
+- **Filas & Cron:** Supabase `pg_net` utilizado em triggers (ex: documentos RAG). `cron-productivity` detectada.
+
+## D) CONTRATOS
+- `task.schema.ts` encontrado (Zod).
+- Respostas da API seguem tipagem estrita gerada pelo Supabase.
+
+## E) SEGURANÇA ATUAL
+- **Roles:** Detectada a tabela de roles e assignments (`user_roles`, `agency_members`).
+- **RLS:** A maioria das tabelas possui RLS ativado (ex: `task_label_assignments`, `task_activity_log` auditadas anteriormente).
+- **Service Role:** Encontrados 6 usos de `service_role_key` no cliente (⚠️ Necessário verificar se estão apenas em scripts ou vazados no frontend).
+- **PII:** Dados isolados por `agency_id` (tenant).

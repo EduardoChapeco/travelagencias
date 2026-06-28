@@ -10,7 +10,7 @@ export function useBlockEditor(initialBlocks: PortalBlock[] = []) {
   }, []);
 
   const addBlock = useCallback((type: PortalBlockType) => {
-    const id = Math.random().toString(36).slice(2, 8);
+    const id = crypto.randomUUID();
     const defaults = BLOCK_DEFAULTS[type];
     const deepCopiedDefaults = JSON.parse(JSON.stringify(defaults));
     const newBlock: PortalBlock = { id, ...deepCopiedDefaults } as PortalBlock;

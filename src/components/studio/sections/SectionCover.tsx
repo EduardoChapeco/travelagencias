@@ -25,7 +25,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
     else setUploadingAgent(true);
 
     try {
-      const uidVal = Math.random().toString(36).slice(2, 11);
+      const uidVal = crypto.randomUUID();
       const fileExt = file.name.split(".").pop();
       const path = `${draft.agency_id}/studio/${draft.id}/${type}-${uidVal}.${fileExt}`;
 

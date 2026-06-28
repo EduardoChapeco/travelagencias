@@ -139,7 +139,7 @@ export function CommissionSection({
     } else if (!commQ.data && !loaded && totalSale > 0) {
       setItems([
         {
-          id: Math.random().toString(36).substring(2, 9),
+          id: crypto.randomUUID(),
           type: "other",
           description: "Pacote de Viagem",
           supplier_id: "",
@@ -177,7 +177,7 @@ export function CommissionSection({
     setItems([
       ...items,
       {
-        id: Math.random().toString(36).substring(2, 9),
+        id: crypto.randomUUID(),
         type: "other",
         description: "Novo Item",
         supplier_id: "",

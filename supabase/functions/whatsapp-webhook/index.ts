@@ -154,7 +154,7 @@ serve(async (req) => {
   }
 });
 
-async function processIncomingMessage(supabase: any, connection: any, msg: any, contacts: any[]) {
+async function processIncomingMessage(supabase: any, connection: any, msg: any, waContacts: any[]) {
   const phone = msg.from;
   const text = msg.text?.body || "";
   const wamid = msg.id;
@@ -162,110 +162,112 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
 
   if (!phone) return;
 
-  const contactName = contacts?.find((c: any) => c.wa_id === phone)?.profile?.name || "Novo Contato";
+  const contactName = waContacts?.find((c: any) => c.wa_id === phone)?.profile?.name || "Novo Contato";
   const cleanPhone = phone.replace(/\D/g, "");
 
-  // 1. Find or Create Lead
-  let { data: leads } = await supabase
-    .from("leads")
+  // 1. Find or Create Contact (New Schema)
+  let { data: contacts } = await supabase
+    .from("contacts")
     .select("id, agency_id")
     .eq("agency_id", connection.agency_id)
     .ilike("phone", `%${cleanPhone.slice(-8)}%`)
     .limit(1);
 
-  let lead = leads?.[0];
+  let contact = contacts?.[0];
 
-  if (!lead) {
-    const { data: newLead, error: leadErr } = await supabase
-      .from("leads")
+  if (!contact) {
+    const { data: newContact, error: contactErr } = await supabase
+      .from("contacts")
       .insert({
         agency_id: connection.agency_id,
         name: contactName,
         phone: cleanPhone,
-        status: "new",
-        source: "whatsapp",
+        metadata: { source: "whatsapp" },
       })
       .select("id, agency_id")
       .single();
 
-    // P0.2 — propagate error instead of swallowing it silently
-    if (leadErr) throw new Error(`Failed to create lead for ${cleanPhone}: ${leadErr.message}`);
-    lead = newLead;
+    if (contactErr) throw new Error(`Failed to create contact for ${cleanPhone}: ${contactErr.message}`);
+    contact = newContact;
   }
 
-  // 2. Find or Create Session
-  let { data: sessions } = await supabase
-    .from("omnichannel_sessions")
-    .select("id")
-    .eq("agency_id", lead.agency_id)
-    .eq("phone_number", cleanPhone)
+  // 2. Find or Create Conversation (New Schema)
+  // Check if there is an active (open or pending) conversation for this contact and channel
+  let { data: conversations } = await supabase
+    .from("conversations")
+    .select("id, status, ai_mode")
+    .eq("agency_id", contact.agency_id)
+    .eq("contact_id", contact.id)
+    .eq("channel_id", connection.id)
+    .in("status", ["open", "pending", "snoozed"])
     .limit(1);
 
-  let session = sessions?.[0];
+  let conversation = conversations?.[0];
 
-  if (!session) {
-    const { data: newSession, error: sessionErr } = await supabase
-      .from("omnichannel_sessions")
+  if (!conversation) {
+    const { data: newConv, error: convErr } = await supabase
+      .from("conversations")
       .insert({
-        agency_id: lead.agency_id,
-        session_name: contactName,
-        provider: "meta_official",
-        status: "connected",
-        phone_number: cleanPhone,
-        connection_id: connection.id,
-        contact_name: contactName,
-        assignment_status: "unassigned",
+        agency_id: contact.agency_id,
+        channel_id: connection.id,
+        contact_id: contact.id,
+        status: "open",
+        ai_mode: false, // Default from channel config could be injected here
       })
       .select("id")
       .single();
 
-    // P0.2 — was silently swallowed before; now throws so the outer catch returns 400
-    if (sessionErr) throw new Error(`Failed to create omnichannel_session for ${cleanPhone}: ${sessionErr.message}`);
-    session = newSession;
+    if (convErr) throw new Error(`Failed to create conversation for ${cleanPhone}: ${convErr.message}`);
+    conversation = newConv;
+  } else {
+    // If it was snoozed or pending, a new message from user re-opens it
+    if (conversation.status !== "open") {
+      await supabase.from("conversations").update({ status: "open", last_message_at: timestamp }).eq("id", conversation.id);
+    } else {
+      await supabase.from("conversations").update({ last_message_at: timestamp }).eq("id", conversation.id);
+    }
   }
 
   // 3. Prevent duplicate message (idempotency via unique wamid index)
   const { data: existingMsg } = await supabase
-    .from("omnichannel_messages")
+    .from("messages")
     .select("id")
-    .eq("wamid", wamid)
+    .eq("external_id", wamid)
     .limit(1);
 
   if (!existingMsg || existingMsg.length === 0) {
-    const { error: msgErr } = await supabase.from("omnichannel_messages").insert({
-      agency_id: lead.agency_id,
-      lead_id: lead.id,
-      session_id: session.id,
-      channel: "whatsapp",
+    const { error: msgErr } = await supabase.from("messages").insert({
+      agency_id: contact.agency_id,
+      conversation_id: conversation.id,
       direction: "inbound",
-      content: text,
+      body: text,
       status: "delivered",
-      external_message_id: wamid,
-      wamid: wamid,
+      external_id: wamid,
       created_at: timestamp,
     });
+    
     if (msgErr) throw new Error(`Failed to insert message wamid=${wamid}: ${msgErr.message}`);
+    
+    // RAG AI Trigger (Onda 4)
+    if (conversation.ai_mode) {
+      // Future: Call ai-reply edge function via queue or direct HTTP
+    }
   }
 }
 
 async function processMessageStatus(supabase: any, statusObj: any) {
   const wamid = statusObj.id;
   const status = statusObj.status; // 'sent' | 'delivered' | 'read' | 'failed'
-  const timestamp = new Date(parseInt(statusObj.timestamp) * 1000).toISOString();
-
+  
+  // Enums from new schema: queued, sent, delivered, read, failed
   const updatePayload: Record<string, unknown> = { status };
 
-  if (status === "delivered") updatePayload.delivered_at = timestamp;
-  if (status === "read") updatePayload.read_at = timestamp;
   if (status === "failed") {
-    updatePayload.failed_at = timestamp;
-    updatePayload.failure_code = statusObj.errors?.[0]?.code;
-    updatePayload.failure_message = statusObj.errors?.[0]?.title;
+    updatePayload.body = `[FAILED] ${statusObj.errors?.[0]?.title}`;
   }
 
-  // Use external_message_id or wamid
   await supabase
-    .from("omnichannel_messages")
+    .from("messages")
     .update(updatePayload)
-    .or(`wamid.eq.${wamid},external_message_id.eq.${wamid}`);
+    .eq("external_id", wamid);
 }

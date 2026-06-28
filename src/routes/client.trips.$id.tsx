@@ -458,7 +458,7 @@ function ClientTripDetail() {
       // 2. Telemetry capture
       const ipAddress = "177.105.12.84"; // Client IP
       const userAgent = navigator.userAgent;
-      const portalSessionId = `SESS-B2C-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+      const portalSessionId = `SESS-B2C-${crypto.randomUUID().toUpperCase()}`;
 
       // 3. Save to customer_travel_decisions
       const { data, error } = await supabase

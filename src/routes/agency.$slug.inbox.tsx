@@ -1,83 +1,96 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
-import { useSupabase } from '@/hooks/useSupabase';
+import { supabase } from '@/integrations/supabase/client';
 import { InboxSidebar } from '@/components/inbox/InboxSidebar';
-import { EmailList } from '@/components/inbox/EmailList';
+import { ConversationList } from '@/components/inbox/ConversationList';
 import { ThreadView } from '@/components/inbox/ThreadView';
 import { AIPanel } from '@/components/inbox/AIPanel';
+import { useAgency } from '@/lib/agency-context';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/agency/$slug/inbox')({
-  component: InboxPage,
+  head: () => ({ meta: [{ title: 'Caixa de Entrada · TravelOS' }] }),
+  component: InboxModule,
 });
 
-function InboxPage() {
+function InboxModule() {
+  const { agency } = useAgency();
   const { slug } = Route.useParams();
-  const supabase = useSupabase();
+  const queryClient = useQueryClient();
   
-  const [accounts, setAccounts] = useState<any[]>([]);
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
-  
-  const [emails, setEmails] = useState<any[]>([]);
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
-  
-  const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
-  const [isLoadingEmails, setIsLoadingEmails] = useState(false);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // 1. Fetch Accounts
   useEffect(() => {
-    async function fetchAccounts() {
-      setIsLoadingAccounts(true);
-      const { data: agency } = await supabase.from('agencies').select('id').eq('slug', slug).single();
-      if (agency) {
-        const { data } = await supabase.from('email_accounts').select('*').eq('org_id', agency.id);
-        setAccounts(data || []);
-      }
-      setIsLoadingAccounts(false);
-    }
-    fetchAccounts();
-  }, [slug, supabase]);
+    supabase.auth.getUser().then(({ data }) => setCurrentUser(data.user));
+  }, []);
 
-  // 2. Fetch Emails based on Selected Account
+  // 1. Fetch Conversations
+  const { data: conversations = [], isLoading: isLoadingConversations } = useQuery({
+    queryKey: ['conversations', agency?.id],
+    queryFn: async () => {
+      if (!agency?.id) return [];
+      const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          contacts(name, phone, email),
+          channels(type, display_name),
+          messages(body, created_at)
+        `)
+        .eq('agency_id', agency.id)
+        .order('last_message_at', { ascending: false })
+        .limit(50);
+        
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!agency?.id,
+  });
+
+  // 2. Fetch Messages for Selected Conversation
+  const { data: messages = [] } = useQuery({
+    queryKey: ['messages', selectedConversationId],
+    queryFn: async () => {
+      if (!selectedConversationId) return [];
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', selectedConversationId)
+        .order('created_at', { ascending: true });
+        
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedConversationId,
+  });
+
+  // 3. Supabase Realtime Subscription (New Messages)
   useEffect(() => {
-    async function fetchEmails() {
-      setIsLoadingEmails(true);
-      const { data: agency } = await supabase.from('agencies').select('id').eq('slug', slug).single();
-      if (!agency) return;
-
-      let query = supabase.from('emails').select('*').eq('org_id', agency.id).eq('is_deleted', false).order('created_at', { ascending: false }).limit(50);
-      
-      if (selectedAccountId) {
-        query = query.eq('email_account_id', selectedAccountId);
-      }
-      
-      const { data } = await query;
-      setEmails(data || []);
-      
-      // Auto-select first email if available
-      if (data && data.length > 0 && !selectedEmailId) {
-        setSelectedEmailId(data[0].id);
-      } else if (!data || data.length === 0) {
-        setSelectedEmailId(null);
-      }
-      setIsLoadingEmails(false);
-    }
+    if (!agency?.id) return;
     
-    fetchEmails();
-  }, [slug, selectedAccountId, supabase]);
-
-  // 3. Supabase Realtime Subscription
-  useEffect(() => {
-    const channel = supabase.channel('schema-db-changes')
+    const channel = supabase.channel('inbox-realtime')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'emails' },
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `agency_id=eq.${agency.id}` },
         (payload) => {
-          // Add new email to top of list if it matches current filter
-          const newEmail = payload.new;
-          if (!selectedAccountId || newEmail.email_account_id === selectedAccountId) {
-            setEmails((prev) => [newEmail, ...prev]);
-            toast.success("Novo email recebido e processado pela IA.");
+          // Invalidate queries to refresh UI seamlessly
+          queryClient.invalidateQueries({ queryKey: ['conversations', agency.id] });
+          if (payload.new.conversation_id === selectedConversationId) {
+            queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
+            if (payload.new.direction === 'inbound') {
+               toast("Nova mensagem recebida!");
+            }
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'messages', filter: `agency_id=eq.${agency.id}` },
+        (payload) => {
+          if (payload.new.conversation_id === selectedConversationId) {
+             queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
           }
         }
       )
@@ -86,51 +99,69 @@ function InboxPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedAccountId, supabase]);
+  }, [agency?.id, selectedConversationId, queryClient]);
 
-  const handleConnectGmail = async () => {
-    try {
-      const { data: agency } = await supabase.from('agencies').select('id').eq('slug', slug).single();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!agency || !user) throw new Error("Agency or User not found");
-
-      // Call Edge Function to get Auth URL
-      const { data, error } = await supabase.functions.invoke('gmail-oauth', {
-        body: { action: 'get_url' },
-        query: { org_id: agency.id, user_id: user.id, account_type: 'general' }
+  // Actions
+  const sendMessageMutation = useMutation({
+    mutationFn: async (text: string) => {
+      if (!agency?.id || !selectedConversationId) throw new Error("No conversation selected");
+      const { data, error } = await supabase.from('messages').insert({
+        agency_id: agency.id,
+        conversation_id: selectedConversationId,
+        direction: 'outbound',
+        body: text,
+        status: 'queued',
+        sender_user_id: currentUser?.id
       });
-
       if (error) throw error;
-      if (data.url) {
-        window.location.href = data.url; // Redirect to Google Consent
-      }
-    } catch (err: any) {
-      toast.error("Erro ao iniciar conexão: " + err.message);
+      return data;
     }
-  };
+  });
 
-  const selectedEmail = emails.find(e => e.id === selectedEmailId) || null;
+  const assignMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedConversationId || !currentUser?.id) throw new Error("No user/conversation");
+      const { data, error } = await supabase.from('conversations').update({
+        assigned_user_id: currentUser.id,
+        status: 'open'
+      }).eq('id', selectedConversationId);
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Conversa assumida com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ['conversations', agency?.id] });
+    }
+  });
+
+  const selectedConversation = conversations.find((c: any) => c.id === selectedConversationId) || null;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-background">
       <InboxSidebar 
-        accounts={accounts} 
-        selectedAccountId={selectedAccountId} 
-        onSelectAccount={setSelectedAccountId}
-        onConnectGmail={handleConnectGmail}
-        isLoading={isLoadingAccounts}
+        accounts={[]} 
+        selectedAccountId={null} 
+        onSelectAccount={() => {}}
+        onConnectGmail={() => {}}
+        isLoading={false}
       />
       
-      <EmailList 
-        emails={emails} 
-        selectedEmailId={selectedEmailId} 
-        onSelectEmail={setSelectedEmailId}
-        isLoading={isLoadingEmails}
+      <ConversationList 
+        conversations={conversations} 
+        selectedId={selectedConversationId} 
+        onSelect={setSelectedConversationId}
+        isLoading={isLoadingConversations}
       />
       
-      <ThreadView email={selectedEmail} />
+      <ThreadView 
+        conversation={selectedConversation}
+        messages={messages}
+        onSendMessage={(text) => sendMessageMutation.mutate(text)}
+        onAssignToMe={() => assignMutation.mutate()}
+        currentUserId={currentUser?.id}
+      />
       
-      <AIPanel email={selectedEmail} />
+      <AIPanel email={null} />
     </div>
   );
 }

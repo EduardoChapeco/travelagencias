@@ -158,7 +158,7 @@ export async function uploadVoucherSourceFile(
   tripId: string,
   file: File,
 ): Promise<string> {
-  const uid = Math.random().toString(36).slice(2, 9);
+  const uid = crypto.randomUUID();
   const path = `${agencyId}/${tripId}/${uid}-${file.name}`;
 
   const { error: upErr } = await supabase.storage

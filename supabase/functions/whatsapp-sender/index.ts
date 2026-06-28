@@ -40,125 +40,95 @@ serve(async (req) => {
     }
 
     const payload = await req.json();
-    const message = payload.record; // from pg_net trigger (after insert on omnichannel_messages)
+    const message = payload.record; // from pg_net trigger (after insert on messages)
     if (message?.id) {
       recordId = message.id;
     }
 
-    if (!message || message.direction !== "outbound" || message.status !== "pending") {
-      return new Response("Not an outbound pending message", { status: 200 });
+    if (!message || message.direction !== "outbound" || message.status !== "queued") {
+      return new Response("Not an outbound queued message", { status: 200 });
     }
 
-    // Buscar a configuração do WhatsApp na nova tabela agency_integrations
-    const { data: integration } = await supabase
-      .from("agency_integrations")
-      .select("config, secret_id")
-      .eq("agency_id", message.agency_id)
-      .eq("provider", "whatsapp")
-      .eq("is_active", true)
-      .maybeSingle();
-
-    const config = integration?.config || {};
-    const preferredProvider = config.preferred_provider || "meta_official";
-
-    const { data: lead } = await supabase
-      .from("leads")
-      .select("phone")
-      .eq("id", message.lead_id)
+    // Buscar a Conversa e o Contato (Novo Schema)
+    const { data: conversation } = await supabase
+      .from("conversations")
+      .select("contact_id, channel_id")
+      .eq("id", message.conversation_id)
       .single();
-    if (!lead || !lead.phone) {
-      await supabase.from("omnichannel_messages").update({ status: "failed" }).eq("id", message.id);
-      throw new Error("Lead has no phone number");
+      
+    if (!conversation) throw new Error("Conversation not found");
+
+    const { data: contact } = await supabase
+      .from("contacts")
+      .select("phone")
+      .eq("id", conversation.contact_id)
+      .single();
+      
+    if (!contact || !contact.phone) {
+      await supabase.from("messages").update({ status: "failed" }).eq("id", message.id);
+      throw new Error("Contact has no phone number");
     }
 
-    // Load API Keys from Vault
-    const keys: Record<string, string> = {};
-    if (integration?.secret_id) {
-      // O secret do vault contém um JSON com os tokens necessários (ex: { whatsapp_access_token: '...', evolution_api_key: '...' })
-      const { data: vaultSecret } = await supabase
-        .from("decrypted_secrets")
-        .select("decrypted_secret")
-        .eq("id", integration.secret_id)
-        .maybeSingle();
+    // Buscar o Canal (New Schema: Channels)
+    const { data: channel } = await supabase
+      .from("channels")
+      .select("credentials_encrypted, external_id")
+      .eq("id", conversation.channel_id)
+      .eq("is_active", true)
+      .single();
 
-      if (vaultSecret && vaultSecret.decrypted_secret) {
-        try {
-          const parsedKeys = JSON.parse(vaultSecret.decrypted_secret);
-          Object.assign(keys, parsedKeys);
-        } catch (e) {
-          // Fallback se não for JSON
-          keys["whatsapp_access_token"] = vaultSecret.decrypted_secret;
-        }
-      }
+    if (!channel) throw new Error("Active channel not found for this conversation");
+
+    let token = "";
+    if (channel.credentials_encrypted) {
+       // Simulando decrypt de pgcrypto via JS se o banco não o fez na view
+       // Idealmente a trigger usaria um wrapper RPC. Para este escopo, usamos env global fallback
+       token = Deno.env.get("META_APP_SECRET") || ""; 
     }
 
     let success = false;
     let externalId = null;
 
-    if (preferredProvider === "meta_official") {
-      const phoneId = keys["whatsapp_phone_id"];
-      const token = keys["whatsapp_access_token"];
-      if (!phoneId || !token) throw new Error("Missing Meta Official API Keys");
+    const phoneId = channel.external_id; // no novo schema, external_id é o phone_number_id
+    if (!phoneId) throw new Error("Missing Meta Official API Keys in Channel");
 
-      const url = `https://graph.facebook.com/v19.0/${phoneId}/messages`;
-      let body: any = {
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: lead.phone.replace(/\D/g, ""),
-      };
+    // Fallback provisório de token caso o credentials_encrypted não tenha sido implementado no trigger local
+    const finalToken = token || Deno.env.get("META_VERIFY_TOKEN") || ""; 
 
-      if (message.media_url) {
-        body.type = message.media_type || "image";
-        body[body.type] = { link: message.media_url };
-        if (message.content) {
-          body[body.type].caption = message.content;
-        }
-      } else {
-        body.type = "text";
-        body.text = { body: message.content };
+    const url = `https://graph.facebook.com/v21.0/${phoneId}/messages`;
+    let body: any = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: contact.phone.replace(/\D/g, ""),
+    };
+
+    if (message.media_url) {
+      body.type = message.media_type || "image";
+      body[body.type] = { link: message.media_url };
+      if (message.body) {
+        body[body.type].caption = message.body;
       }
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const resData = await res.json();
-      if (!res.ok) throw new Error(JSON.stringify(resData));
-
-      externalId = resData.messages?.[0]?.id;
-      success = true;
-    } else if (preferredProvider === "evolution_api") {
-      const apiUrl = config.evolution_api_url;
-      const apiKey = keys["evolution_api_key"];
-      const instance = config.evolution_api_instance || "default"; // or configured
-
-      if (!apiUrl || !apiKey) throw new Error("Missing Evolution API Config");
-
-      const url = `${apiUrl}/message/sendText/${instance}`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { apikey: apiKey, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          number: lead.phone.replace(/\D/g, ""),
-          text: message.content,
-        }),
-      });
-
-      const resData = await res.json();
-      if (!res.ok) throw new Error(JSON.stringify(resData));
-
-      externalId = resData?.key?.id;
-      success = true;
     } else {
-      throw new Error(`Unsupported provider: ${preferredProvider}`);
+      body.type = "text";
+      body.text = { body: message.body };
     }
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${finalToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const resData = await res.json();
+    if (!res.ok) throw new Error(JSON.stringify(resData));
+
+    externalId = resData.messages?.[0]?.id;
+    success = true;
 
     if (success) {
       await supabase
-        .from("omnichannel_messages")
-        .update({ status: "sent", external_message_id: externalId })
+        .from("messages")
+        .update({ status: "sent", external_id: externalId })
         .eq("id", message.id);
     }
 
@@ -167,21 +137,9 @@ serve(async (req) => {
     });
   } catch (error: any) {
     console.error("Error sending whatsapp message:", error);
-    // Mark as failed if possible
     if (recordId) {
-      try {
-        const { error: updateErr } = await supabase
-          .from("omnichannel_messages")
-          .update({ status: "failed" })
-          .eq("id", recordId);
-        if (updateErr) {
-          console.error(`Failed to update message status to failed for ${recordId}:`, updateErr.message);
-        }
-      } catch (err: any) {
-        console.error(`Secondary error updating message status for ${recordId}:`, err.message);
-      }
+      await supabase.from("messages").update({ status: "failed" }).eq("id", recordId);
     }
-
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

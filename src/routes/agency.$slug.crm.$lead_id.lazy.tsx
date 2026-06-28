@@ -268,7 +268,7 @@ function LeadDetailPage() {
     if (!checklistInput.trim()) return;
     const list = lead.checklist || [];
     const newItem = {
-      id: Math.random().toString(36).substring(2),
+      id: crypto.randomUUID(),
       text: checklistInput.trim(),
       done: false,
     };

@@ -183,7 +183,7 @@ export function FileUploadList({
     setUploading(true);
     const urls: string[] = [];
     for (const file of Array.from(files)) {
-      const uidVal = Math.random().toString(36).slice(2, 11);
+      const uidVal = crypto.randomUUID();
       const path = `${agencyId}/${uidVal}-${file.name}`;
       const { error } = await supabase.storage.from("proposal-attachments").upload(path, file);
       if (error) {

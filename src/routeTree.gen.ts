@@ -109,6 +109,7 @@ import { Route as AgencySlugTripsIdRouteImport } from './routes/agency.$slug.tri
 import { Route as AgencySlugSupportTicket_idRouteImport } from './routes/agency.$slug.support.$ticket_id'
 import { Route as AgencySlugSuppliersIdRouteImport } from './routes/agency.$slug.suppliers.$id'
 import { Route as AgencySlugSettingsFinancialRouteImport } from './routes/agency.$slug.settings.financial'
+import { Route as AgencySlugSettingsBotRouteImport } from './routes/agency.$slug.settings.bot'
 import { Route as AgencySlugSettingsAiBrainRouteImport } from './routes/agency.$slug.settings.ai-brain'
 import { Route as AgencySlugSettingsAiAuditRouteImport } from './routes/agency.$slug.settings.ai-audit'
 import { Route as AgencySlugQuotesIdRouteImport } from './routes/agency.$slug.quotes.$id'
@@ -653,6 +654,11 @@ const AgencySlugSettingsFinancialRoute =
     path: '/financial',
     getParentRoute: () => AgencySlugSettingsRoute,
   } as any)
+const AgencySlugSettingsBotRoute = AgencySlugSettingsBotRouteImport.update({
+  id: '/bot',
+  path: '/bot',
+  getParentRoute: () => AgencySlugSettingsRoute,
+} as any)
 const AgencySlugSettingsAiBrainRoute =
   AgencySlugSettingsAiBrainRouteImport.update({
     id: '/ai-brain',
@@ -954,6 +960,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
   '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
+  '/agency/$slug/settings/bot': typeof AgencySlugSettingsBotRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1080,6 +1087,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
   '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
+  '/agency/$slug/settings/bot': typeof AgencySlugSettingsBotRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1216,6 +1224,7 @@ export interface FileRoutesById {
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
   '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
+  '/agency/$slug/settings/bot': typeof AgencySlugSettingsBotRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1354,6 +1363,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
     | '/agency/$slug/settings/ai-brain'
+    | '/agency/$slug/settings/bot'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -1480,6 +1490,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
     | '/agency/$slug/settings/ai-brain'
+    | '/agency/$slug/settings/bot'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -1615,6 +1626,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
     | '/agency/$slug/settings/ai-brain'
+    | '/agency/$slug/settings/bot'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -2372,6 +2384,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugSettingsFinancialRouteImport
       parentRoute: typeof AgencySlugSettingsRoute
     }
+    '/agency/$slug/settings/bot': {
+      id: '/agency/$slug/settings/bot'
+      path: '/bot'
+      fullPath: '/agency/$slug/settings/bot'
+      preLoaderRoute: typeof AgencySlugSettingsBotRouteImport
+      parentRoute: typeof AgencySlugSettingsRoute
+    }
     '/agency/$slug/settings/ai-brain': {
       id: '/agency/$slug/settings/ai-brain'
       path: '/ai-brain'
@@ -2876,12 +2895,14 @@ const AgencySlugQuotesRouteWithChildren =
 interface AgencySlugSettingsRouteChildren {
   AgencySlugSettingsAiAuditRoute: typeof AgencySlugSettingsAiAuditRoute
   AgencySlugSettingsAiBrainRoute: typeof AgencySlugSettingsAiBrainRoute
+  AgencySlugSettingsBotRoute: typeof AgencySlugSettingsBotRoute
   AgencySlugSettingsFinancialRoute: typeof AgencySlugSettingsFinancialRoute
 }
 
 const AgencySlugSettingsRouteChildren: AgencySlugSettingsRouteChildren = {
   AgencySlugSettingsAiAuditRoute: AgencySlugSettingsAiAuditRoute,
   AgencySlugSettingsAiBrainRoute: AgencySlugSettingsAiBrainRoute,
+  AgencySlugSettingsBotRoute: AgencySlugSettingsBotRoute,
   AgencySlugSettingsFinancialRoute: AgencySlugSettingsFinancialRoute,
 }
 

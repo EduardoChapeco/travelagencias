@@ -343,7 +343,7 @@ function BlogSheet({
     }
     setSubmitting(true);
 
-    const slug = post?.slug ?? slugify(title) + "-" + Math.random().toString(36).slice(2, 6);
+    const slug = post?.slug ?? slugify(title) + "-" + crypto.randomUUID();
     const tags = tagsRaw
       .split(",")
       .map((t) => t.trim())

@@ -370,7 +370,7 @@ export async function uploadLeadAttachment(
   currentAttachments: any[],
 ): Promise<any[]> {
   const fileExt = file.name.split(".").pop();
-  const filePath = `crm/attachments/${leadId}/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+  const filePath = `crm/attachments/${leadId}/${crypto.randomUUID()}-${Date.now()}.${fileExt}`;
 
   const { data, error } = await supabase.storage.from("agency-media").upload(filePath, file);
 
@@ -381,7 +381,7 @@ export async function uploadLeadAttachment(
   } = supabase.storage.from("agency-media").getPublicUrl(filePath);
 
   const newAttachment = {
-    id: Math.random().toString(36).substring(2),
+    id: crypto.randomUUID(),
     name: file.name,
     url: publicUrl,
     size: file.size,
@@ -477,7 +477,7 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
     );
   }
 
-  const googleEventId = `g_cal_${Math.random().toString(36).substring(2)}`;
+  const googleEventId = `g_cal_${crypto.randomUUID()}`;
 
   const { error } = await supabase
     .from("lead_meetings")

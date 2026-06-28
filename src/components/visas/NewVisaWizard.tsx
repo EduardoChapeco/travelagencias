@@ -174,7 +174,7 @@ export function NewVisaWizard({
       setUploading(true);
       for (const doc of documents) {
         const fileExt = doc.file.name.split(".").pop();
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
         const filePath = `${agencyId}/${visaData.id}/${fileName}`;
 
         try {

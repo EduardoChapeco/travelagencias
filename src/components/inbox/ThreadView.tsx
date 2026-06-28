@@ -1,54 +1,94 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Reply, Forward, Archive, MoreVertical, Paperclip } from "lucide-react";
-import DOMPurify from "dompurify";
+import { Send, UserPlus, Archive, MoreVertical, Paperclip, Check, CheckCheck, Clock } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface ThreadViewProps {
-  email: any | null;
+  conversation: any | null;
+  messages: any[];
+  onSendMessage: (text: string) => void;
+  onAssignToMe: () => void;
+  currentUserId?: string;
 }
 
-export function ThreadView({ email }: ThreadViewProps) {
-  if (!email) {
+export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe, currentUserId }: ThreadViewProps) {
+  const [inputText, setInputText] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  if (!conversation) {
     return (
       <div className="flex-1 h-full flex items-center justify-center bg-surface-muted text-muted-foreground flex-col gap-4">
         <div className="w-16 h-16 rounded-full bg-border flex items-center justify-center opacity-50">
-          <Reply className="w-8 h-8" />
+          <MessageCircle className="w-8 h-8" />
         </div>
-        <p>Selecione um e-mail para visualizar a thread.</p>
+        <p>Selecione uma conversa para visualizar o histórico.</p>
       </div>
     );
   }
 
-  const createSafeHtml = (html: string) => {
-    return { __html: DOMPurify.sanitize(html) };
+  const contact = conversation.contacts || {};
+  const channelType = conversation.channels?.type || 'whatsapp';
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+    onSendMessage(inputText);
+    setInputText("");
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'queued': return <Clock className="w-3 h-3 text-muted-foreground" />;
+      case 'sent': return <Check className="w-3 h-3 text-muted-foreground" />;
+      case 'delivered': return <CheckCheck className="w-3 h-3 text-muted-foreground" />;
+      case 'read': return <CheckCheck className="w-3 h-3 text-blue-500" />;
+      case 'failed': return <span className="text-[10px] text-red-500">Falha</span>;
+      default: return null;
+    }
   };
 
   return (
-    <div className="flex-1 h-full flex flex-col bg-background">
+    <div className="flex-1 h-full flex flex-col bg-background relative">
       {/* Thread Header */}
       <div className="p-4 border-b border-border bg-surface flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold text-foreground line-clamp-1">
-            {email.subject || "(Sem Assunto)"}
-          </h2>
-          {email.ai_category && (
-            <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-md whitespace-nowrap">
-              {email.ai_category}
+          <Avatar className="w-10 h-10">
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {(contact.name || contact.phone || "?").charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-base font-semibold text-foreground line-clamp-1">
+              {contact.name || contact.phone}
+            </h2>
+            <div className="text-xs text-muted-foreground">
+              {channelType === 'whatsapp' ? contact.phone : contact.email}
+            </div>
+          </div>
+          {conversation.ai_mode && (
+            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-md whitespace-nowrap ml-4">
+              IA Gerenciando
             </span>
           )}
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Reply className="w-4 h-4 mr-2" />
-            Responder
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Forward className="w-4 h-4" />
-          </Button>
+          {!conversation.assigned_user_id && (
+            <Button variant="outline" size="sm" onClick={onAssignToMe}>
+              <UserPlus className="w-4 h-4 mr-2" />
+              Assumir
+            </Button>
+          )}
           <Button variant="ghost" size="icon">
             <Archive className="w-4 h-4" />
           </Button>
@@ -58,58 +98,68 @@ export function ThreadView({ email }: ThreadViewProps) {
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Message Block */}
-          <div className="border border-border rounded-lg bg-card overflow-hidden">
-            <div className="p-4 border-b border-border bg-surface flex justify-between items-start">
-              <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {email.from_name?.charAt(0) || email.from_email.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-medium text-foreground">
-                    {email.from_name} <span className="text-sm font-normal text-muted-foreground">&lt;{email.from_email}&gt;</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Para: {email.to_emails?.join(", ")}
+      {/* Messages Area */}
+      <ScrollArea className="flex-1 bg-[#efeae2] dark:bg-black/20 p-4">
+        <div className="max-w-3xl mx-auto flex flex-col gap-2 pb-4">
+          {messages.map((msg, index) => {
+            const isOutbound = msg.direction === 'outbound';
+            return (
+              <div 
+                key={msg.id || index} 
+                className={cn("flex w-full", isOutbound ? "justify-end" : "justify-start")}
+              >
+                <div 
+                  className={cn(
+                    "max-w-[75%] rounded-lg p-3 text-sm shadow-sm relative group",
+                    isOutbound 
+                      ? "bg-[#d9fdd3] dark:bg-primary text-slate-900 dark:text-primary-foreground rounded-tr-none" 
+                      : "bg-white dark:bg-card text-foreground rounded-tl-none"
+                  )}
+                >
+                  {msg.body && <p className="whitespace-pre-wrap">{msg.body}</p>}
+                  {msg.media_url && (
+                    <div className="mt-2 rounded overflow-hidden">
+                      {/* Placeholder for media rendering */}
+                      <a href={msg.media_url} target="_blank" rel="noreferrer" className="text-xs underline text-blue-600">Ver Anexo</a>
+                    </div>
+                  )}
+                  <div className={cn("text-[10px] mt-1 flex items-center gap-1 justify-end opacity-70", isOutbound ? "text-slate-700 dark:text-primary-foreground" : "text-muted-foreground")}>
+                    {format(new Date(msg.created_at), "HH:mm")}
+                    {isOutbound && getStatusIcon(msg.status)}
                   </div>
                 </div>
               </div>
-              <div className="text-xs text-muted-foreground">
-                {format(new Date(email.created_at), "dd 'de' MMM, yyyy 'às' HH:mm", { locale: ptBR })}
-              </div>
-            </div>
-            
-            <div className="p-6 text-sm text-foreground overflow-x-auto">
-              {email.body_html ? (
-                <div 
-                  className="prose prose-sm dark:prose-invert max-w-none prose-a:text-primary"
-                  dangerouslySetInnerHTML={createSafeHtml(email.body_html)} 
-                />
-              ) : (
-                <pre className="whitespace-pre-wrap font-sans">{email.body_text}</pre>
-              )}
-            </div>
-
-            {email.has_attachments && (
-              <div className="p-4 border-t border-border bg-surface-muted flex gap-2 overflow-x-auto">
-                <Button variant="outline" size="sm" className="bg-background">
-                  <Paperclip className="w-3 h-3 mr-2" />
-                  anexo.pdf (1.2MB)
-                </Button>
-              </div>
-            )}
-          </div>
-          
-          {/* Quick Reply Box Placeholder */}
-          <div className="mt-4 border border-border rounded-lg bg-card p-4 text-muted-foreground text-sm cursor-text hover:border-primary/50 transition-colors">
-            Clique aqui para responder a {email.from_name || email.from_email}...
-          </div>
+            );
+          })}
+          <div ref={scrollRef} />
         </div>
       </ScrollArea>
+      
+      {/* Input Area */}
+      <div className="p-4 border-t border-border bg-surface">
+        <div className="max-w-3xl mx-auto flex items-end gap-2">
+          <Button variant="ghost" size="icon" className="shrink-0 mb-1">
+            <Paperclip className="w-5 h-5 text-muted-foreground" />
+          </Button>
+          <Textarea 
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Mensagem..." 
+            className="min-h-[44px] max-h-32 resize-none rounded-2xl bg-background border-none focus-visible:ring-1"
+            rows={1}
+          />
+          <Button onClick={handleSend} size="icon" className="shrink-0 mb-1 rounded-full h-11 w-11 bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Send className="w-5 h-5 ml-1" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
+import { MessageCircle } from "lucide-react";
