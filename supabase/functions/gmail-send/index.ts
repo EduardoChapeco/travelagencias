@@ -11,131 +11,95 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { ticket_id, to, subject, text, agency_id } = await req.json();
-
-    if (!ticket_id || !to || !agency_id) {
-      return new Response("Missing parameters", { status: 400 });
-    }
-
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Fetch agency tokens from integrations_config
-    const { data: agency, error: agencyErr } = await supabase
-      .from("agencies")
-      .select("integrations_config")
-      .eq("id", agency_id)
+    const { ticket_id, text, type } = await req.json();
+
+    if (!ticket_id || !text) {
+      return new Response(JSON.stringify({ error: "Missing parameters" }), { status: 400, headers: corsHeaders });
+    }
+
+    // 1. Obter dados do Ticket e Agência
+    const { data: ticket, error: tktErr } = await supabase
+      .from("support_tickets")
+      .select("*, clients(email, full_name)")
+      .eq("id", ticket_id)
       .single();
 
-    if (agencyErr || !agency) throw new Error("Agência não encontrada.");
+    if (tktErr || !ticket) throw new Error("Ticket not found");
 
-    let sentViaGmail = false;
-    let threadId = null;
-
-    const gmailTokens = agency.integrations_config?.gmail_tokens;
-    if (gmailTokens && gmailTokens.access_token) {
-      try {
-        // Prepare MIME email
-        // https://developers.google.com/gmail/api/guides/sending
-        const boundary = "boundary_" + Math.random().toString(36).substring(2);
-        const messageStr = [
-          `To: ${to}`,
-          `Subject: =?utf-8?B?${btoa(unescape(encodeURIComponent(subject || "Atualização do Chamado")))}?=`,
-          `MIME-Version: 1.0`,
-          `Content-Type: text/plain; charset=utf-8`,
-          "",
-          text,
-        ].join("\r\n");
-
-        const encodedMessage = btoa(unescape(encodeURIComponent(messageStr)))
-          .replace(/\+/g, "-")
-          .replace(/\//g, "_")
-          .replace(/=+$/, "");
-
-        const res = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${gmailTokens.access_token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ raw: encodedMessage }),
-        });
-
-        if (res.ok) {
-          const sentData = await res.json();
-          threadId = sentData.threadId;
-          sentViaGmail = true;
-        } else {
-          console.warn("Gmail API failed sending email: " + (await res.text()));
-        }
-      } catch (err: any) {
-        console.warn("Gmail API threw exception: " + err.message);
-      }
+    // 2. Definir o destinatário
+    let toEmail = "";
+    if (type === "client") {
+      toEmail = (ticket.clients as any)?.email;
+    } else {
+      toEmail = "fornecedor_stub@travelos.com"; // In production, fetch supplier email
     }
 
-    if (!sentViaGmail) {
-      // Fallback to Resend API
-      const { data: resendKeyData } = await supabase
-        .from("api_keys")
-        .select("key_value")
-        .eq("agency_id", agency_id)
-        .eq("provider", "resend")
-        .eq("is_active", true)
-        .maybeSingle();
+    if (!toEmail) throw new Error("Recipient email not found");
 
-      if (!resendKeyData || !resendKeyData.key_value) {
-        throw new Error("Agência não possui integração com Gmail ou chave do Resend configurada.");
-      }
+    // 3. Obter a conta de email ativa da agência (para usar o Token OAuth)
+    const { data: account, error: accErr } = await supabase
+      .from("email_accounts")
+      .select("*")
+      .eq("org_id", ticket.agency_id)
+      .eq("status", "active")
+      .limit(1)
+      .single();
 
-      const resendKey = resendKeyData.key_value;
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "TravelOS <onboarding@resend.dev>",
-          to: [to],
-          subject: subject || "Atualização do Chamado",
-          text: text,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Falha ao enviar e-mail via Resend: " + (await res.text()));
-      }
-
-      const sentData = await res.json();
-      threadId = sentData.id;
+    if (accErr || !account) {
+      console.warn("No active email account found for agency", ticket.agency_id);
+      return new Response(JSON.stringify({ error: "Agency has no connected Gmail account" }), { status: 400, headers: corsHeaders });
     }
 
-    // Save Thread ID or Message ID to Ticket
-    if (threadId) {
-      await supabase
-        .from("support_tickets")
-        .update({ email_thread_id: threadId })
-        .eq("id", ticket_id);
-    }
+    // 4. Montar a mensagem RFC 2822
+    const subject = `Re: Chamado ${ticket.ticket_hash} - ${ticket.title}`;
+    const utf8Subject = `=?utf-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
+    
+    const messageParts = [
+      `To: ${toEmail}`,
+      `Subject: ${utf8Subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/html; charset="UTF-8"`,
+      ``,
+      text.replace(/\n/g, "<br>")
+    ];
 
-    // Save to timeline
-    await supabase.from("ticket_messages").insert({
-      ticket_id,
-      sender: "system",
-      content: `[E-mail enviado para ${to}]\n\n${text}`,
+    const messageString = messageParts.join("\r\n");
+    const encodedMessage = btoa(unescape(encodeURIComponent(messageString)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    // 5. Enviar via Google API
+    const gmailRes = await fetch("https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${account.access_token_enc}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ raw: encodedMessage })
     });
 
-    return new Response(JSON.stringify({ success: true, threadId }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    if (!gmailRes.ok) {
+      const gErr = await gmailRes.text();
+      console.error("Gmail API Error:", gErr);
+      throw new Error("Failed to send email via Google API");
+    }
+
+    // Sucesso
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
+      headers: corsHeaders,
     });
   } catch (error: any) {
-    console.error("Gmail/Resend Send Error:", error);
+    console.error("gmail-send error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
+      headers: corsHeaders,
     });
   }
 });

@@ -1,0 +1,51 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAgency } from "@/lib/agency-context";
+import type { DailyDigest } from "@/lib/tasks/task.types";
+
+export function useDailyDigest(date: string) {
+  const { agency } = useAgency();
+
+  return useQuery({
+    queryKey: ["daily_digest", agency?.id, date],
+    enabled: !!agency?.id,
+    queryFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("Não autenticado");
+
+      const { data, error } = await supabase.rpc("get_daily_digest", {
+        p_user_id: user.user.id,
+        p_agency_id: agency.id,
+        p_date: date
+      });
+
+      if (error) {
+        console.error("Erro ao buscar digest diário:", error);
+        throw error;
+      }
+
+      // get_daily_digest returns JSONB matching the DailyDigest interface mostly
+      const result = data as any;
+      
+      const digest: DailyDigest = {
+        date: result.date || date,
+        greeting: `Bom dia!`, // TODO: Mapear nome real do usuário
+        summary: {
+          tasks_today: result.tasks_today?.length || 0,
+          meetings_today: result.agenda_events?.length || 0,
+          overdue_count: result.overdue_tasks?.length || 0,
+          completed_today: 0,
+        },
+        embarques_today: result.embarques_today || [],
+        agenda_events: result.agenda_events || [],
+        suportes_critical: [],
+        tasks_with_time: result.tasks_today?.filter((t: any) => t.due_time) || [],
+        tasks_without_time: result.tasks_today?.filter((t: any) => !t.due_time) || [],
+        overdue_tasks: result.overdue_tasks || [],
+        upcoming_deadlines: result.upcoming_deadlines || []
+      };
+
+      return digest;
+    },
+  });
+}

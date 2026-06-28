@@ -1,0 +1,97 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAgency } from "@/lib/agency-context";
+import { toast } from "sonner";
+import { CreateTaskFormValues, UpdateTaskFormValues } from "@/lib/tasks/task.schema";
+
+export function useTaskMutations() {
+  const { agency } = useAgency();
+  const qc = useQueryClient();
+
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["tasks"] });
+    qc.invalidateQueries({ queryKey: ["daily_digest"] });
+  };
+
+  const createMutation = useMutation({
+    mutationFn: async (payload: CreateTaskFormValues) => {
+      const { data: user } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("tasks")
+        .insert({
+          ...payload,
+          agency_id: agency!.id,
+          created_by: user.user?.id,
+          // Se assigned_to não foi passado, assinamos o próprio criador para não ficar orfão (regra comum)
+          assigned_to: payload.assigned_to || user.user?.id,
+        })
+        .select()
+        .single();
+        
+      if (error) throw error;
+      
+      // Avaliador de IA para scoring automático
+      supabase.functions.invoke("ai-task-evaluator", {
+        body: { record: data }
+      });
+      
+      return data;
+    },
+    onSuccess: () => {
+      invalidate();
+      toast.success("Tarefa criada");
+    },
+    onError: (err) => {
+      toast.error("Erro ao criar tarefa: " + err.message);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (payload: UpdateTaskFormValues) => {
+      const { id, ...updates } = payload;
+      const { data, error } = await supabase
+        .from("tasks")
+        .update(updates)
+        .eq("id", id)
+        .eq("agency_id", agency!.id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => invalidate(),
+    onError: (err) => toast.error("Erro ao atualizar: " + err.message)
+  });
+  
+  const moveTaskMutation = useMutation({
+    mutationFn: async ({ id, status, position }: { id: string, status: string, position: number }) => {
+      const { error } = await supabase
+        .from("tasks")
+        .update({ status, position })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => invalidate() // otimista update será melhor feito aqui depois
+  });
+
+  const softDeleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("tasks")
+        .update({ is_deleted: true, deleted_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      invalidate();
+      toast.success("Tarefa enviada para a lixeira");
+    }
+  });
+
+  return {
+    createTask: createMutation,
+    updateTask: updateMutation,
+    moveTask: moveTaskMutation,
+    deleteTask: softDeleteMutation
+  };
+}

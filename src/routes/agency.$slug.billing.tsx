@@ -152,16 +152,6 @@ function BillingPage() {
       setIsProcessing(true);
       setCheckoutError(null);
 
-      // Simulate bank latency
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Simulate payment failure for testing if credit card number starts with 5 (refused)
-      if (cardNumber.replaceAll(" ", "").startsWith("5")) {
-        throw new Error(
-          "Transação Recusada pela Operadora do Cartão de Crédito. Saldo insuficiente ou limite excedido.",
-        );
-      }
-
       const { data, error } = await supabase.rpc("upgrade_agency_plan", {
         _agency_id: agency!.id,
         _new_plan_id: checkoutPlan.id,

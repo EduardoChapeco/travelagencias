@@ -75,6 +75,7 @@ import { Route as AgencySlugPortalRouteImport } from './routes/agency.$slug.port
 import { Route as AgencySlugOmnichannelRouteImport } from './routes/agency.$slug.omnichannel'
 import { Route as AgencySlugKnowledgeRouteImport } from './routes/agency.$slug.knowledge'
 import { Route as AgencySlugIntegrationsRouteImport } from './routes/agency.$slug.integrations'
+import { Route as AgencySlugInboxRouteImport } from './routes/agency.$slug.inbox'
 import { Route as AgencySlugGroupToursRouteImport } from './routes/agency.$slug.group-tours'
 import { Route as AgencySlugFinancialRouteImport } from './routes/agency.$slug.financial'
 import { Route as AgencySlugDestinationIntelligenceRouteImport } from './routes/agency.$slug.destination-intelligence'
@@ -108,6 +109,7 @@ import { Route as AgencySlugTripsIdRouteImport } from './routes/agency.$slug.tri
 import { Route as AgencySlugSupportTicket_idRouteImport } from './routes/agency.$slug.support.$ticket_id'
 import { Route as AgencySlugSuppliersIdRouteImport } from './routes/agency.$slug.suppliers.$id'
 import { Route as AgencySlugSettingsFinancialRouteImport } from './routes/agency.$slug.settings.financial'
+import { Route as AgencySlugSettingsAiBrainRouteImport } from './routes/agency.$slug.settings.ai-brain'
 import { Route as AgencySlugSettingsAiAuditRouteImport } from './routes/agency.$slug.settings.ai-audit'
 import { Route as AgencySlugQuotesIdRouteImport } from './routes/agency.$slug.quotes.$id'
 import { Route as AgencySlugProposalsNewRouteImport } from './routes/agency.$slug.proposals.new'
@@ -474,6 +476,11 @@ const AgencySlugIntegrationsRoute = AgencySlugIntegrationsRouteImport.update({
   path: '/integrations',
   getParentRoute: () => AgencySlugRoute,
 } as any)
+const AgencySlugInboxRoute = AgencySlugInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AgencySlugRoute,
+} as any)
 const AgencySlugGroupToursRoute = AgencySlugGroupToursRouteImport.update({
   id: '/group-tours',
   path: '/group-tours',
@@ -644,6 +651,12 @@ const AgencySlugSettingsFinancialRoute =
   AgencySlugSettingsFinancialRouteImport.update({
     id: '/financial',
     path: '/financial',
+    getParentRoute: () => AgencySlugSettingsRoute,
+  } as any)
+const AgencySlugSettingsAiBrainRoute =
+  AgencySlugSettingsAiBrainRouteImport.update({
+    id: '/ai-brain',
+    path: '/ai-brain',
     getParentRoute: () => AgencySlugSettingsRoute,
   } as any)
 const AgencySlugSettingsAiAuditRoute =
@@ -892,6 +905,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursRouteWithChildren
+  '/agency/$slug/inbox': typeof AgencySlugInboxRoute
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
@@ -939,6 +953,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
+  '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1020,6 +1035,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/design-system': typeof AgencySlugDesignSystemRoute
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
+  '/agency/$slug/inbox': typeof AgencySlugInboxRoute
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
@@ -1063,6 +1079,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
+  '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1150,6 +1167,7 @@ export interface FileRoutesById {
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursRouteWithChildren
+  '/agency/$slug/inbox': typeof AgencySlugInboxRoute
   '/agency/$slug/integrations': typeof AgencySlugIntegrationsRoute
   '/agency/$slug/knowledge': typeof AgencySlugKnowledgeRoute
   '/agency/$slug/omnichannel': typeof AgencySlugOmnichannelRoute
@@ -1197,6 +1215,7 @@ export interface FileRoutesById {
   '/agency/$slug/proposals/new': typeof AgencySlugProposalsNewRoute
   '/agency/$slug/quotes/$id': typeof AgencySlugQuotesIdRoute
   '/agency/$slug/settings/ai-audit': typeof AgencySlugSettingsAiAuditRoute
+  '/agency/$slug/settings/ai-brain': typeof AgencySlugSettingsAiBrainRoute
   '/agency/$slug/settings/financial': typeof AgencySlugSettingsFinancialRoute
   '/agency/$slug/suppliers/$id': typeof AgencySlugSuppliersIdRoute
   '/agency/$slug/support/$ticket_id': typeof AgencySlugSupportTicket_idRoute
@@ -1286,6 +1305,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/destination-intelligence'
     | '/agency/$slug/financial'
     | '/agency/$slug/group-tours'
+    | '/agency/$slug/inbox'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
@@ -1333,6 +1353,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
+    | '/agency/$slug/settings/ai-brain'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -1414,6 +1435,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/design-system'
     | '/agency/$slug/destination-intelligence'
     | '/agency/$slug/financial'
+    | '/agency/$slug/inbox'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
@@ -1457,6 +1479,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
+    | '/agency/$slug/settings/ai-brain'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -1543,6 +1566,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/destination-intelligence'
     | '/agency/$slug/financial'
     | '/agency/$slug/group-tours'
+    | '/agency/$slug/inbox'
     | '/agency/$slug/integrations'
     | '/agency/$slug/knowledge'
     | '/agency/$slug/omnichannel'
@@ -1590,6 +1614,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/proposals/new'
     | '/agency/$slug/quotes/$id'
     | '/agency/$slug/settings/ai-audit'
+    | '/agency/$slug/settings/ai-brain'
     | '/agency/$slug/settings/financial'
     | '/agency/$slug/suppliers/$id'
     | '/agency/$slug/support/$ticket_id'
@@ -2109,6 +2134,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugIntegrationsRouteImport
       parentRoute: typeof AgencySlugRoute
     }
+    '/agency/$slug/inbox': {
+      id: '/agency/$slug/inbox'
+      path: '/inbox'
+      fullPath: '/agency/$slug/inbox'
+      preLoaderRoute: typeof AgencySlugInboxRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
     '/agency/$slug/group-tours': {
       id: '/agency/$slug/group-tours'
       path: '/group-tours'
@@ -2338,6 +2370,13 @@ declare module '@tanstack/react-router' {
       path: '/financial'
       fullPath: '/agency/$slug/settings/financial'
       preLoaderRoute: typeof AgencySlugSettingsFinancialRouteImport
+      parentRoute: typeof AgencySlugSettingsRoute
+    }
+    '/agency/$slug/settings/ai-brain': {
+      id: '/agency/$slug/settings/ai-brain'
+      path: '/ai-brain'
+      fullPath: '/agency/$slug/settings/ai-brain'
+      preLoaderRoute: typeof AgencySlugSettingsAiBrainRouteImport
       parentRoute: typeof AgencySlugSettingsRoute
     }
     '/agency/$slug/settings/ai-audit': {
@@ -2836,11 +2875,13 @@ const AgencySlugQuotesRouteWithChildren =
 
 interface AgencySlugSettingsRouteChildren {
   AgencySlugSettingsAiAuditRoute: typeof AgencySlugSettingsAiAuditRoute
+  AgencySlugSettingsAiBrainRoute: typeof AgencySlugSettingsAiBrainRoute
   AgencySlugSettingsFinancialRoute: typeof AgencySlugSettingsFinancialRoute
 }
 
 const AgencySlugSettingsRouteChildren: AgencySlugSettingsRouteChildren = {
   AgencySlugSettingsAiAuditRoute: AgencySlugSettingsAiAuditRoute,
+  AgencySlugSettingsAiBrainRoute: AgencySlugSettingsAiBrainRoute,
   AgencySlugSettingsFinancialRoute: AgencySlugSettingsFinancialRoute,
 }
 
@@ -2908,6 +2949,7 @@ interface AgencySlugRouteChildren {
   AgencySlugDestinationIntelligenceRoute: typeof AgencySlugDestinationIntelligenceRoute
   AgencySlugFinancialRoute: typeof AgencySlugFinancialRouteWithChildren
   AgencySlugGroupToursRoute: typeof AgencySlugGroupToursRouteWithChildren
+  AgencySlugInboxRoute: typeof AgencySlugInboxRoute
   AgencySlugIntegrationsRoute: typeof AgencySlugIntegrationsRoute
   AgencySlugKnowledgeRoute: typeof AgencySlugKnowledgeRoute
   AgencySlugOmnichannelRoute: typeof AgencySlugOmnichannelRoute
@@ -2947,6 +2989,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
     AgencySlugDestinationIntelligenceRoute,
   AgencySlugFinancialRoute: AgencySlugFinancialRouteWithChildren,
   AgencySlugGroupToursRoute: AgencySlugGroupToursRouteWithChildren,
+  AgencySlugInboxRoute: AgencySlugInboxRoute,
   AgencySlugIntegrationsRoute: AgencySlugIntegrationsRoute,
   AgencySlugKnowledgeRoute: AgencySlugKnowledgeRoute,
   AgencySlugOmnichannelRoute: AgencySlugOmnichannelRoute,
