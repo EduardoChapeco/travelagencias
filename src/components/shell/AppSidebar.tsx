@@ -52,8 +52,17 @@ const HUB_ITEMS: SlimSidebarItem[] = [
   {
     label: "daily-tasks",
     to: "daily-tasks",
-    icon: CalendarClock,
-    matchPaths: ["calendar", "inbox"],
+    icon: ListTodo,
+  },
+  {
+    label: "calendar",
+    to: "calendar",
+    icon: Calendar,
+  },
+  {
+    label: "inbox",
+    to: "inbox",
+    icon: MessageSquare,
   },
   { label: "crm", to: "crm", icon: Users, matchPaths: ["proposals", "contracts", "quotes"] },
   { label: "trips", to: "trips", icon: Luggage, matchPaths: ["vouchers", "boarding"] },
@@ -200,19 +209,39 @@ function buildContext(
     };
   }
 
-  // ── Dia a Dia ─────────────────────────────────────────────────────────────
-  if (
-    pathname.includes("/daily-tasks") ||
-    pathname.includes("/calendar") ||
-    pathname.includes("/inbox")
-  ) {
+  // ── Tarefas (daily-tasks) ──────────────────────────────────────────────────
+  if (pathname.includes("/daily-tasks")) {
     return {
-      title: "Dia a Dia",
+      title: "Tarefas",
       items: [
-        { label: "Tarefas", to: `${base}/daily-tasks`, icon: ListTodo },
-        { label: "Agenda", to: `${base}/calendar`, icon: Calendar },
-        { label: "Mensagens", to: `${base}/inbox`, icon: MessageSquare },
+        { label: "Meu Dia", to: `${base}/daily-tasks?view=my-day`, icon: ListTodo },
+        { label: "Quadro Kanban", to: `${base}/daily-tasks?view=kanban`, icon: CalendarClock },
+        { label: "Lista", to: `${base}/daily-tasks?view=list`, icon: FileText },
+        { label: "Timeline", to: `${base}/daily-tasks?view=timeline`, icon: Clock },
+        { label: "Calendário", to: `${base}/daily-tasks?view=calendar`, icon: Calendar },
+        ...(isAdmin ? [
+          { label: "Workload", to: `${base}/daily-tasks?view=workload`, icon: Users2 },
+          { label: "Relatórios", to: `${base}/daily-tasks?view=reports`, icon: BarChart3 }
+        ] : [])
       ],
+      aiActions: [],
+    };
+  }
+
+  // ── Agenda (calendar) ──────────────────────────────────────────────────────
+  if (pathname.includes("/calendar")) {
+    return {
+      title: "Agenda",
+      items: [], // Tela cheia!
+      aiActions: [],
+    };
+  }
+
+  // ── Mensagens (inbox) ──────────────────────────────────────────────────────
+  if (pathname.includes("/inbox")) {
+    return {
+      title: "Mensagens",
+      items: [], // Tela cheia!
       aiActions: [],
     };
   }

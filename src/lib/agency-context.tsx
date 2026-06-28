@@ -88,10 +88,11 @@ const AgencyContext = createContext<Ctx>({
 
 export const DEFAULT_MODULE_NAMES: Record<string, string> = {
   dashboard: "Dashboard",
-  "daily-tasks": "Meu Dia (Tarefas)",
+  "daily-tasks": "Tarefas",
   crm: "Negociações & Leads",
   quotes: "Cotações VibeTour",
   calendar: "Agenda",
+  inbox: "Mensagens",
   omnichannel: "Conversas & Mensagens",
   proposals: "Orçamentos & Propostas",
   trips: "Viagens",

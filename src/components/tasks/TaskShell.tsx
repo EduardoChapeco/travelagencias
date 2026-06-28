@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "@tanstack/react-router";
+import { Route } from "@/routes/agency.$slug.daily-tasks";
 
 import { MyDayView } from "./views/MyDayView";
 import { KanbanView } from "./views/KanbanView";
@@ -17,7 +19,16 @@ import { ReportsView } from "./views/ReportsView";
 
 export function TaskShell() {
   const { isAgencyAdmin } = useAgency();
-  const [activeView, setActiveView] = useState<TaskView>("my-day");
+  const navigate = useNavigate();
+  const search = Route.useSearch() as any;
+  const activeView = (search.view as TaskView) || "my-day";
+  
+  const setActiveView = (view: TaskView) => {
+    navigate({
+      to: ".",
+      search: (prev: any) => ({ ...prev, view }),
+    });
+  };
   
   const [filters, setFilters] = useState<TaskFiltersState>({
     assignees: [],

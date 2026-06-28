@@ -5,7 +5,12 @@ import { TaskShell } from "@/components/tasks/TaskShell";
 import { Settings2 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/$slug/daily-tasks")({
-  head: () => ({ meta: [{ title: "Tarefas e Produtividade v2.0" }] }),
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      view: (search.view as string) || "my-day",
+    };
+  },
+  head: () => ({ meta: [{ title: "Tarefas e Produtividade" }] }),
   component: DailyTasksRoute,
 });
 
