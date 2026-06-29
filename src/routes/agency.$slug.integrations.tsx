@@ -21,7 +21,7 @@ import {
   Calendar,
   History,
 } from "lucide-react";
-import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey } from "@/services/settings";
+import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchOperators, saveOperator, deleteOperator, testOperatorConnection, fetchIntegrationCredentials, saveIntegrationCredential } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import {
@@ -425,10 +425,11 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
       ];
       for (const secret of secrets) {
         if (secret.val.trim() !== "") {
-          await saveApiKey(agencyId, {
+          await saveIntegrationCredential(agencyId, {
             provider: secret.provider,
             label: secret.label,
             key_value: secret.val.trim(),
+            category: "whatsapp",
             is_active: true,
           });
         }
@@ -919,17 +920,23 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
 }
 
 function InfotravelTab({ agencyId }: { agencyId: string }) {
-  const [busy, setBusy] = useState(false);
   const [syncBusy, setSyncBusy] = useState(false);
   const [errorDetailsJobId, setErrorDetailsJobId] = useState<string | null>(null);
-  const [config, setConfig] = useState({
+  const [editingOperatorId, setEditingOperatorId] = useState<string | null>(null);
+  const [addingNew, setAddingNew] = useState(false);
+  const [testingId, setTestingId] = useState<string | null>(null);
+
+  const emptyForm = {
+    operator_name: "",
     infotravel_url: "",
     infotravel_username: "",
     infotravel_password: "",
     infotravel_client: "",
     infotravel_agency: "",
-    infotravel_markup: "0",
-  });
+    markup: "0",
+  };
+  const [form, setForm] = useState(emptyForm);
+  const [formBusy, setFormBusy] = useState(false);
 
   // Datas padrão para o Backfill (últimos 30 dias)
   const todayStr = new Date().toISOString().split("T")[0];
@@ -940,26 +947,47 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   })();
   const [backfillStart, setBackfillStart] = useState(thirtyDaysAgoStr);
   const [backfillEnd, setBackfillEnd] = useState(todayStr);
+  const [selectedOperatorId, setSelectedOperatorId] = useState<string | null>(null);
 
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
 
-  const { data: agencyData, isLoading } = useQuery({
-    queryKey: ["agency-integrations-infotravel", agencyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("agencies")
-        .select("integrations_config")
-        .eq("id", agencyId)
-        .single();
-      if (error) throw error;
-      return data;
-    },
+  // Lista de operadoras cadastradas
+  const operatorsQuery = useQuery({
+    queryKey: ["infotravel-operators", agencyId],
+    queryFn: () => fetchOperators(agencyId),
   });
 
-  const keysQuery = useQuery({
-    queryKey: ["agency-api-keys", agencyId],
-    queryFn: () => fetchApiKeys(agencyId),
+  // Credenciais detalhadas da operadora sendo editada
+  const editCredentialsQuery = useQuery({
+    queryKey: ["infotravel-operator-credentials", agencyId, editingOperatorId],
+    queryFn: () =>
+      editingOperatorId
+        ? fetchIntegrationCredentials(agencyId, {
+            operator_id: editingOperatorId,
+            category: "infotravel_operator",
+          })
+        : Promise.resolve([]),
+    enabled: !!editingOperatorId,
   });
+
+  // Quando abre edição, pré-preenche o formulário com os dados salvos
+  useEffect(() => {
+    if (editingOperatorId && editCredentialsQuery.data && editCredentialsQuery.data.length > 0) {
+      const getVal = (p: string) =>
+        editCredentialsQuery.data.find((k) => k.provider === p)?.key_value || "";
+      const op = operatorsQuery.data?.find((o) => o.operator_id === editingOperatorId);
+      setForm({
+        operator_name: op?.operator_name || "",
+        infotravel_url: getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1",
+        infotravel_username: getVal("infotravel_username"),
+        infotravel_password: getVal("infotravel_password"),
+        infotravel_client: getVal("infotravel_client"),
+        infotravel_agency: getVal("infotravel_agency"),
+        markup: getVal("infotravel_markup") || "0",
+      });
+    }
+  }, [editingOperatorId, editCredentialsQuery.data]);
 
   // Query de histórico de execuções (sync_jobs)
   const jobsQuery = useQuery({
@@ -974,7 +1002,6 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       if (error) throw error;
       return data;
     },
-    // Recarregar em tempo real a cada 3 segundos caso tenha algum job executando
     refetchInterval: (query) => {
       const data = query.state.data as any[] | undefined;
       const hasRunning = data?.some((job) => job.status === "running");
@@ -982,92 +1009,80 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     },
   });
 
+  const operators = operatorsQuery.data ?? [];
+  const activeOperator = operators.find((o) => o.operator_id === selectedOperatorId) ?? operators[0];
+
+  // Seleciona automaticamente o primeiro operador disponível
   useEffect(() => {
-    if (agencyData?.integrations_config) {
-      const cfg = agencyData.integrations_config as any;
-      setConfig((c) => ({
-        ...c,
-        infotravel_markup:
-          cfg.infotravel_markup !== undefined ? String(cfg.infotravel_markup) : "0",
-      }));
+    if (!selectedOperatorId && operators.length > 0) {
+      setSelectedOperatorId(operators[0].operator_id);
     }
-    if (keysQuery.data) {
-      const getVal = (provider: string) =>
-        keysQuery.data?.find((k: any) => k.provider === provider)?.key_value || "";
-      setConfig((c) => ({
-        ...c,
-        infotravel_url: getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1",
-        infotravel_username: getVal("infotravel_username"),
-        infotravel_password: getVal("infotravel_password"),
-        infotravel_client: getVal("infotravel_client"),
-        infotravel_agency: getVal("infotravel_agency"),
-      }));
-    }
-  }, [agencyData, keysQuery.data]);
+  }, [operators, selectedOperatorId]);
 
-  async function save(e: React.FormEvent) {
+  async function handleSaveOperator(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true);
+    setFormBusy(true);
     try {
-      const existingConfig = (agencyData?.integrations_config as Record<string, any>) || {};
-      const newConfig = {
-        ...existingConfig,
-        infotravel_markup: parseFloat(config.infotravel_markup) || 0,
-      };
-
-      const { error } = await supabase
-        .from("agencies")
-        .update({ integrations_config: newConfig })
-        .eq("id", agencyId);
-      if (error) throw error;
-
-      const secrets = [
-        {
-          provider: "infotravel_url",
-          val: config.infotravel_url.trim(),
-          label: "Infotravel Base URL",
-        },
-        {
-          provider: "infotravel_username",
-          val: config.infotravel_username.trim(),
-          label: "Infotravel Username",
-        },
-        {
-          provider: "infotravel_password",
-          val: config.infotravel_password.trim(),
-          label: "Infotravel Password",
-        },
-        {
-          provider: "infotravel_client",
-          val: config.infotravel_client.trim(),
-          label: "Infotravel Client Code",
-        },
-        {
-          provider: "infotravel_agency",
-          val: config.infotravel_agency.trim(),
-          label: "Infotravel Agency Code",
-        },
-      ];
-
-      for (const secret of secrets) {
-        await saveApiKey(agencyId, {
-          provider: secret.provider,
-          label: secret.label,
-          key_value: secret.val,
-          is_active: true,
-        });
-      }
-
-      toast.success("Configurações do Infotravel salvas com sucesso!");
-      qc.invalidateQueries({ queryKey: ["agency-api-keys", agencyId] });
+      const opId = editingOperatorId || crypto.randomUUID();
+      await saveOperator(agencyId, {
+        operator_id: opId,
+        operator_name: form.operator_name.trim(),
+        infotravel_url: form.infotravel_url.trim(),
+        infotravel_username: form.infotravel_username.trim(),
+        infotravel_password: form.infotravel_password.trim(),
+        infotravel_client: form.infotravel_client.trim(),
+        infotravel_agency: form.infotravel_agency.trim(),
+        markup: parseFloat(form.markup) || 0,
+      });
+      toast.success(`Operadora "${form.operator_name}" salva com sucesso!`);
+      setEditingOperatorId(null);
+      setAddingNew(false);
+      setForm(emptyForm);
+      setSelectedOperatorId(opId);
+      qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
     } catch (err: any) {
-      toast.error(err.message || "Erro ao salvar");
+      toast.error(err.message || "Erro ao salvar operadora");
     } finally {
-      setBusy(false);
+      setFormBusy(false);
     }
   }
 
-  // Disparar Carga Histórica (Backfill)
+  async function handleDeleteOperator(operatorId: string, operatorName: string) {
+    const ok = await confirm({
+      title: `Remover operadora "${operatorName}"?`,
+      description:
+        "Todas as credenciais desta operadora serão removidas permanentemente. As reservas já importadas não serão afetadas.",
+      confirmLabel: "Sim, remover",
+      variant: "danger",
+    });
+    if (!ok) return;
+    try {
+      await deleteOperator(agencyId, operatorId);
+      toast.success(`Operadora "${operatorName}" removida.`);
+      if (selectedOperatorId === operatorId) setSelectedOperatorId(null);
+      qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao remover operadora");
+    }
+  }
+
+  async function handleTestConnection(operatorId: string) {
+    setTestingId(operatorId);
+    const toastId = toast.loading("Testando conexão com a operadora...");
+    try {
+      const result = await testOperatorConnection(agencyId, operatorId);
+      if (result.success) {
+        toast.success(result.message, { id: toastId });
+      } else {
+        toast.error(result.message, { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao testar conexão", { id: toastId });
+    } finally {
+      setTestingId(null);
+    }
+  }
+
   async function handleRunBackfill() {
     if (!backfillStart || !backfillEnd) {
       toast.error("Por favor, preencha as datas de início e fim.");
@@ -1075,6 +1090,10 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     }
     if (new Date(backfillStart) > new Date(backfillEnd)) {
       toast.error("A data de início não pode ser maior que a data de fim.");
+      return;
+    }
+    if (!activeOperator) {
+      toast.error("Selecione uma operadora ativa para sincronizar.");
       return;
     }
 
@@ -1085,16 +1104,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
         body: {
           action: "run_backfill",
           agencyId,
-          params: {
-            startDate: backfillStart,
-            endDate: backfillEnd,
-          },
+          operatorId: activeOperator.operator_id,
+          params: { startDate: backfillStart, endDate: backfillEnd },
         },
       });
-
       if (error) throw error;
       toast.success(
-        "Sincronização Histórica iniciada com sucesso! Acompanhe o progresso no histórico de auditoria abaixo.",
+        "Sincronização Histórica iniciada! Acompanhe o progresso no histórico abaixo.",
         { id: toastId },
       );
       jobsQuery.refetch();
@@ -1105,8 +1121,11 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     }
   }
 
-  // Disparar Polling Manual (Sincronizar Agora)
   async function handleRunPolling() {
+    if (!activeOperator) {
+      toast.error("Selecione uma operadora ativa para sincronizar.");
+      return;
+    }
     setSyncBusy(true);
     const toastId = toast.loading("Varrendo reservas ativas na Operadora...");
     try {
@@ -1114,9 +1133,9 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
         body: {
           action: "run_periodic_sync",
           agencyId,
+          operatorId: activeOperator.operator_id,
         },
       });
-
       if (error) throw error;
       toast.success("Sincronização concluída com sucesso!", { id: toastId });
       jobsQuery.refetch();
@@ -1137,109 +1156,271 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     return `${min}m ${rem}s`;
   }
 
-  const isConfigured = !!(config.infotravel_username && config.infotravel_password);
-
-  if (isLoading)
-    return (
-      <div className="p-8 text-center text-sm text-muted-foreground font-sans">Carregando...</div>
-    );
-
+  const isConfigured = operators.length > 0;
   const selectedJobForError = jobsQuery.data?.find((j: any) => j.id === errorDetailsJobId);
+
+  const showForm = addingNew || !!editingOperatorId;
 
   return (
     <div className="space-y-8 mt-5">
-      {/* Formulário de Configuração de Credenciais */}
-      <form onSubmit={save} className="space-y-6">
-        <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
-          <div className="flex items-center gap-2 text-foreground font-semibold">
-            <Wifi className="h-5 w-5 text-brand" />
-            Conexão com Operadora Infotravel
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-            Preencha os campos abaixo com as credenciais fornecidas pela sua operadora de turismo
-            vinculada ao sistema Infotravel.
+      <ConfirmDialog />
+
+      {/* Cabeçalho com botão Adicionar */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Wifi className="h-4 w-4 text-brand" />
+            Operadoras Infotravel Conectadas
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-sans">
+            Conecte múltiplas operadoras de turismo que utilizam o sistema Infotravel/Infoterra.
+            Cada operadora fornece sua própria URL de API, usuário e senha.
           </p>
+        </div>
+        {!showForm && (
+          <button
+            type="button"
+            onClick={() => {
+              setForm(emptyForm);
+              setEditingOperatorId(null);
+              setAddingNew(true);
+            }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand text-brand-foreground text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer shrink-0"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Nova Operadora
+          </button>
+        )}
+      </div>
+
+      {/* Formulário de Nova / Edição de Operadora */}
+      {showForm && (
+        <form
+          onSubmit={handleSaveOperator}
+          className="rounded-xl border border-brand/30 bg-surface p-5 space-y-4 ring-1 ring-brand/20"
+        >
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Wifi className="h-4 w-4 text-brand" />
+              {editingOperatorId ? "Editar Operadora" : "Nova Operadora Infotravel"}
+            </h4>
+            <button
+              type="button"
+              onClick={() => {
+                setAddingNew(false);
+                setEditingOperatorId(null);
+                setForm(emptyForm);
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              Cancelar
+            </button>
+          </div>
+
+          <div className="rounded-lg border border-border/60 bg-surface-alt/30 px-4 py-3 text-xs text-muted-foreground">
+            <ShieldCheck className="inline h-3.5 w-3.5 mr-1.5 text-brand" />
+            Preencha com as credenciais fornecidas pela sua operadora de turismo vinculada ao
+            sistema Infotravel/Infoterra. O link da API, usuário, senha e identificadores são
+            enviados pela própria operadora.
+          </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="col-span-2">
+              <Field label="Nome da Operadora" hint="Ex: Incomum Viagens, CVC Operadora, Trend">
+                <Input
+                  placeholder="Nome comercial da operadora..."
+                  value={form.operator_name}
+                  onChange={(e) => setForm({ ...form, operator_name: e.target.value })}
+                  required
+                />
+              </Field>
+            </div>
+            <div className="col-span-2">
               <Field
-                label="Endereço do Servidor (URL)"
-                hint="Padrão: http://api.infotravel.com.br/api/v1"
+                label="URL da API (Endpoint da Operadora)"
+                hint="Link fornecido pela operadora — ex: https://reservas.incomumviagens.com.br/api/v1"
               >
                 <Input
-                  placeholder="http://api.infotravel.com.br/api/v1"
-                  value={config.infotravel_url}
-                  onChange={(e) => setConfig({ ...config, infotravel_url: e.target.value })}
+                  placeholder="https://reservas.suaoperadora.com.br/api/v1"
+                  value={form.infotravel_url}
+                  onChange={(e) => setForm({ ...form, infotravel_url: e.target.value })}
                   required
                 />
               </Field>
             </div>
             <Field label="Usuário de Integração">
               <Input
-                placeholder="Digite o usuário de integração…"
-                value={config.infotravel_username}
-                onChange={(e) => setConfig({ ...config, infotravel_username: e.target.value })}
+                placeholder="Usuário fornecido pela operadora..."
+                value={form.infotravel_username}
+                onChange={(e) => setForm({ ...form, infotravel_username: e.target.value })}
                 required
               />
             </Field>
             <Field label="Senha de Integração">
               <Input
                 type="password"
-                placeholder="Digite a senha de integração…"
-                value={config.infotravel_password}
-                onChange={(e) => setConfig({ ...config, infotravel_password: e.target.value })}
+                placeholder="Senha fornecida pela operadora..."
+                value={form.infotravel_password}
+                onChange={(e) => setForm({ ...form, infotravel_password: e.target.value })}
                 required
               />
             </Field>
-            <Field label="Identificador do Cliente">
+            <Field label="Código do Cliente (client_id)" hint="Identificador de cliente na API">
               <Input
-                placeholder="Identificador do cliente operadora…"
-                value={config.infotravel_client}
-                onChange={(e) => setConfig({ ...config, infotravel_client: e.target.value })}
-                required
+                placeholder="Ex: 1234"
+                value={form.infotravel_client}
+                onChange={(e) => setForm({ ...form, infotravel_client: e.target.value })}
               />
             </Field>
-            <Field label="Identificador da Agência">
+            <Field label="Código da Agência (agency_id)" hint="Identificador de sua agência">
               <Input
-                placeholder="Código da agência contratante…"
-                value={config.infotravel_agency}
-                onChange={(e) => setConfig({ ...config, infotravel_agency: e.target.value })}
-                required
+                placeholder="Ex: 5678"
+                value={form.infotravel_agency}
+                onChange={(e) => setForm({ ...form, infotravel_agency: e.target.value })}
               />
             </Field>
             <Field
-              label="Margem Adicional (Markup %)"
-              hint="Margem padrão a ser aplicada sobre as tarifas líquidas importadas"
+              label="Markup Padrão (%)"
+              hint="Margem adicional sobre tarifas líquidas desta operadora"
             >
               <Input
                 type="number"
                 step="0.01"
                 placeholder="Ex: 15.00"
-                value={config.infotravel_markup}
-                onChange={(e) => setConfig({ ...config, infotravel_markup: e.target.value })}
-                required
+                value={form.markup}
+                onChange={(e) => setForm({ ...form, markup: e.target.value })}
               />
             </Field>
           </div>
-        </div>
 
-        <PrimaryButton disabled={busy} className="w-full">
-          {busy ? "Salvando..." : "Salvar configurações de conexão"}
-        </PrimaryButton>
-      </form>
+          <div className="flex gap-2 pt-2">
+            <PrimaryButton disabled={formBusy} className="flex-1">
+              {formBusy ? "Salvando..." : editingOperatorId ? "Salvar Alterações" : "Adicionar Operadora"}
+            </PrimaryButton>
+          </div>
+        </form>
+      )}
+
+      {/* Lista de operadoras cadastradas */}
+      {operatorsQuery.isLoading ? (
+        <div className="p-8 text-center text-sm text-muted-foreground font-sans">
+          Carregando operadoras...
+        </div>
+      ) : operators.length === 0 && !showForm ? (
+        <div className="rounded-xl border border-dashed border-border bg-surface/50 p-10 text-center space-y-3">
+          <WifiOff className="h-8 w-8 text-muted-foreground/30 mx-auto" />
+          <p className="text-sm font-semibold text-foreground">Nenhuma operadora configurada</p>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed font-sans">
+            Clique em <strong>Nova Operadora</strong> para conectar sua primeira operadora de
+            turismo via Infotravel. Você pode adicionar múltiplas operadoras.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {operators.map((op) => (
+            <div
+              key={op.operator_id}
+              onClick={() => {
+                if (!showForm) setSelectedOperatorId(op.operator_id);
+              }}
+              className={`rounded-xl border bg-surface p-4 transition-all cursor-pointer ${
+                selectedOperatorId === op.operator_id
+                  ? "border-brand ring-1 ring-brand/30"
+                  : "border-border hover:border-brand/30"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 border border-brand/20">
+                    <Wifi className="h-4 w-4 text-brand" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-sm text-foreground truncate">
+                      {op.operator_name}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground font-sans">
+                      {op.is_active ? (
+                        <span className="text-emerald-600 font-semibold">● Ativa</span>
+                      ) : (
+                        <span className="text-muted-foreground">○ Inativa</span>
+                      )}
+                      {op.updated_at && (
+                        <span className="ml-2">
+                          · Atualizada {new Date(op.updated_at).toLocaleDateString("pt-BR")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTestConnection(op.operator_id);
+                    }}
+                    disabled={testingId === op.operator_id}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-[11px] font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all disabled:opacity-50 cursor-pointer"
+                  >
+                    {testingId === op.operator_id ? (
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Zap className="h-3 w-3" />
+                    )}
+                    Testar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAddingNew(false);
+                      setEditingOperatorId(op.operator_id);
+                    }}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-[11px] font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all cursor-pointer"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteOperator(op.operator_id, op.operator_name);
+                    }}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-danger/20 text-[11px] font-semibold text-danger/70 hover:bg-danger/10 hover:text-danger transition-all cursor-pointer"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+              {selectedOperatorId === op.operator_id && (
+                <div className="mt-2 pt-2 border-t border-border/50">
+                  <span className="text-[10px] text-brand font-semibold uppercase tracking-wider">
+                    ✓ Operadora selecionada para sincronização
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Painel de Controle de Sincronização */}
       <div
-        className={`border-t border-border/60 pt-8 space-y-6 ${!isConfigured ? "opacity-50 pointer-events-none" : ""}`}
+        className={`border-t border-border/60 pt-8 space-y-6 ${
+          !isConfigured ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Cpu className="h-4 w-4 text-brand" /> Painel de Sincronização de Reservas
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-sans">
-            Com os parâmetros de conexão salvos, você pode importar o histórico de reservas
-            anteriores ou atualizar o status atual.
-          </p>
+          {activeOperator && (
+            <p className="text-xs text-muted-foreground mt-0.5 font-sans">
+              Sincronizando via: <strong>{activeOperator.operator_name}</strong>
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1250,9 +1431,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 <Calendar className="h-4 w-4 text-brand" /> Importar Reservas Anteriores (Lote)
               </span>
               <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Importa de forma automática as reservas criadas na operadora parceira dentro de um
-                período selecionado. O processamento é realizado de forma segura e direta no banco
-                de dados.
+                Importa automaticamente as reservas criadas na operadora parceira dentro de um
+                período selecionado.
               </p>
               <div className="grid grid-cols-2 gap-2 pt-2">
                 <Field label="Período Inicial">
@@ -1285,16 +1465,15 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           <div className="rounded-xl border border-border bg-surface p-5 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas (Atualização)
+                <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas
               </span>
               <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Verifica as viagens com embarque programado para os próximos 30 dias na operadora
-                parceira. Atualiza automaticamente as informações de status, vouchers e bilhetes
-                emitidos.
+                Verifica viagens com embarque nos próximos 30 dias. Atualiza status, vouchers e
+                bilhetes emitidos.
               </p>
               <div className="rounded-lg bg-surface-alt/40 p-3 border border-border/40 text-[11px] text-muted-foreground leading-normal font-sans">
-                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />O
-                sistema realiza esta atualização de status de forma automática a cada 4 horas.
+                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />
+                O sistema realiza esta atualização automaticamente a cada 4 horas.
               </div>
             </div>
             <button
@@ -1309,12 +1488,12 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           </div>
         </div>
 
-        {/* Auditoria / Histórico de Execuções */}
+        {/* Histórico de Execuções */}
         <div className="space-y-3">
           <div className="flex items-center justify-between border-b border-border/50 pb-2">
             <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de Processamento
-              de Reservas (Últimos 10)
+              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de
+              Processamento (Últimos 10)
             </h4>
             {jobsQuery.isFetching && (
               <span className="flex items-center gap-1 text-[10px] text-brand font-bold animate-pulse">
@@ -1359,8 +1538,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         <td className="px-4 py-3 font-semibold text-foreground">
                           {job.job_type === "backfill" ? (
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação em
-                              Lote
+                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação
+                              em Lote
                             </span>
                           ) : (
                             <span className="flex items-center gap-1">
@@ -1403,7 +1582,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         <td className="px-4 py-3 text-right font-mono text-muted-foreground">
                           {formatDuration(job.started_at, job.finished_at)}
                         </td>
-                        <td className="px-4 py-3 text-right">{/* Empty spacer */}</td>
+                        <td className="px-4 py-3 text-right">{/* spacer */}</td>
                       </tr>
                     );
                   })}
@@ -1414,7 +1593,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
         </div>
       </div>
 
-      {/* Modal de Detalhes de Erros de Sincronização */}
+      {/* Modal de Detalhes de Erros */}
       {errorDetailsJobId && selectedJobForError && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col max-h-[80vh] overflow-hidden">
@@ -1433,8 +1612,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
               <p className="text-xs text-muted-foreground mb-2">
-                Abaixo estão listadas as ocorrências registradas durante o processamento das
-                reservas com a operadora parceira:
+                Ocorrências registradas durante o processamento das reservas com a operadora
+                parceira:
               </p>
               {Array.isArray(selectedJobForError.errors_log) &&
                 selectedJobForError.errors_log.map((log: any, idx: number) => (
@@ -1472,3 +1651,4 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     </div>
   );
 }
+

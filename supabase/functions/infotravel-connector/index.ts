@@ -32,7 +32,7 @@ serve(async (req) => {
     if (authError || !user) throw new Error("Unauthorized.");
 
     // Obter payload
-    const { action, agencyId, params = {} } = await req.json();
+    const { action, agencyId, operatorId, params = {} } = await req.json();
     if (!agencyId) throw new Error("Parâmetro agencyId é obrigatório.");
 
     // Validar se o usuário pertence à agência
@@ -50,9 +50,11 @@ serve(async (req) => {
     // Cliente administrativo para obter as credenciais salvas em api_keys de forma segura
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
-    const { data: keys } = await supabaseAdmin
+    // Buscar credenciais da operadora — suporta multi-operadora via operatorId
+    // Se operatorId foi passado, busca a operadora específica; senão, usa a primeira ativa
+    let keysQuery = supabaseAdmin
       .from("api_keys")
-      .select("provider, key_value")
+      .select("provider, key_value, operator_id")
       .eq("agency_id", agencyId)
       .in("provider", [
         "infotravel_url",
@@ -60,7 +62,30 @@ serve(async (req) => {
         "infotravel_password",
         "infotravel_client",
         "infotravel_agency",
+        "infotravel_markup",
       ]);
+
+    if (operatorId) {
+      keysQuery = keysQuery.eq("operator_id", operatorId);
+    } else {
+      // Compatibilidade retroativa: busca por category OU operator_id nulo (formato legado)
+      keysQuery = keysQuery.or(
+        "category.eq.infotravel_operator,operator_id.is.null",
+      );
+    }
+
+    const { data: allKeys } = await keysQuery;
+
+    // Se múltiplos operadores, seleciona o primeiro ativo quando nenhum operatorId foi especificado
+    let keys = allKeys ?? [];
+    if (!operatorId && keys.length > 0) {
+      // Prefere registros com operator_id definido (novo formato) sobre os legados (null)
+      const withOperator = keys.filter((k) => k.operator_id);
+      if (withOperator.length > 0) {
+        const firstOpId = withOperator[0].operator_id;
+        keys = withOperator.filter((k) => k.operator_id === firstOpId);
+      }
+    }
 
     const getVal = (provider: string) =>
       keys?.find((k) => k.provider === provider)?.key_value || "";

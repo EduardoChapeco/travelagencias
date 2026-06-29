@@ -60,7 +60,7 @@ export async function saveSettings(
   return saveCompanyProfile(agencyId, payload, agencyPayload, privatePayload);
 }
 
-// ─── API Keys ────────────────────────────────────────────────────────────────
+// ─── API Keys para IA (ai-orchestrator → tabela ai_api_credentials) ──────────
 
 export async function fetchApiKeys(agencyId: string, provider?: string) {
   const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
@@ -130,6 +130,153 @@ export async function deleteApiKey(id: string) {
   const { error } = await supabase.from("ai_api_credentials").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ─── Integration Manager — Credenciais Gerais da Agência ────────────────────
+// (integration-manager → tabela api_keys)
+// Usado para: operadoras Infotravel, Meta/WhatsApp, Gmail OAuth, etc.
+
+export interface IntegrationCredential {
+  id: string;
+  agency_id: string;
+  provider: string;
+  label: string;
+  key_value: string;
+  key_value_masked?: string;
+  category: string;
+  operator_id: string | null;
+  operator_name: string | null;
+  metadata: Record<string, any>;
+  is_active: boolean;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface InfotravelOperator {
+  operator_id: string;
+  operator_name: string;
+  is_active: boolean;
+  updated_at?: string;
+}
+
+/** Salva (upsert) uma credencial de integração geral */
+export async function saveIntegrationCredential(
+  agencyId: string,
+  payload: {
+    provider: string;
+    key_value: string;
+    label?: string;
+    category?: string;
+    operator_id?: string;
+    operator_name?: string;
+    metadata?: Record<string, any>;
+    is_active?: boolean;
+  },
+) {
+  const { error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "save",
+      agency_id: agencyId,
+      ...payload,
+    },
+  });
+  if (error) throw error;
+}
+
+/** Lista credenciais de integração geral com filtros opcionais */
+export async function fetchIntegrationCredentials(
+  agencyId: string,
+  options?: { category?: string; operator_id?: string },
+): Promise<IntegrationCredential[]> {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "list",
+      agency_id: agencyId,
+      ...options,
+    },
+  });
+  if (error) throw error;
+  return data?.credentials ?? [];
+}
+
+/** Deleta uma credencial de integração geral por ID */
+export async function deleteIntegrationCredential(agencyId: string, id: string) {
+  const { error } = await supabase.functions.invoke("integration-manager", {
+    body: { action: "delete", agency_id: agencyId, id },
+  });
+  if (error) throw error;
+}
+
+/** Lista todas as operadoras Infotravel cadastradas para a agência */
+export async function fetchOperators(agencyId: string): Promise<InfotravelOperator[]> {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
+    body: { action: "list-operators", agency_id: agencyId },
+  });
+  if (error) throw error;
+  return data?.operators ?? [];
+}
+
+/** Salva todas as credenciais de uma operadora Infotravel em batch */
+export async function saveOperator(
+  agencyId: string,
+  payload: {
+    operator_id: string;
+    operator_name: string;
+    infotravel_url: string;
+    infotravel_username: string;
+    infotravel_password: string;
+    infotravel_client?: string;
+    infotravel_agency?: string;
+    markup?: number;
+    is_active?: boolean;
+  },
+) {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "save-operator",
+      agency_id: agencyId,
+      ...payload,
+    },
+  });
+  if (error) throw error;
+  return data;
+}
+
+/** Remove uma operadora Infotravel e todas as suas credenciais */
+export async function deleteOperator(agencyId: string, operatorId: string) {
+  const { error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "delete-operator",
+      agency_id: agencyId,
+      operator_id: operatorId,
+    },
+  });
+  if (error) throw error;
+}
+
+/** Testa a conexão com uma operadora Infotravel pelo operator_id salvo */
+export async function testOperatorConnection(
+  agencyId: string,
+  operatorId?: string,
+  directCredentials?: {
+    infotravel_url: string;
+    infotravel_username: string;
+    infotravel_password: string;
+    infotravel_client?: string;
+    infotravel_agency?: string;
+  },
+): Promise<{ success: boolean; message: string }> {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "test-operator",
+      agency_id: agencyId,
+      operator_id: operatorId,
+      ...directCredentials,
+    },
+  });
+  if (error) throw new Error(error.message || "Erro ao testar conexão.");
+  return data;
+}
+
 
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
