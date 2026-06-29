@@ -292,8 +292,7 @@ function buildContext(
   if (
     pathname.includes("/group-tours") ||
     pathname.includes("/bus-layouts") ||
-    pathname.includes("/rooming-list") ||
-    pathname.includes("/financial/groups")
+    pathname.includes("/rooming-list")
   ) {
     return {
       title: "Grupos & Excursões",
@@ -338,6 +337,8 @@ function buildContext(
         { label: "DRE", to: `${base}/financial/dre`, icon: BarChart3 },
         { label: "Conciliação", to: `${base}/financial/reconciliation`, icon: ClipboardCheck },
         { label: "Faturas", to: `${base}/financial/invoices`, icon: FileText },
+        { label: "Grupos & Excursões", to: `${base}/financial/groups`, icon: Bus },
+        { label: "Livro-Razão", to: `${base}/financial/ledger`, icon: FileText },
       ],
       aiActions: [],
     };

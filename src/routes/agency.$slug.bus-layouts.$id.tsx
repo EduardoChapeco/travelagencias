@@ -1,13 +1,13 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Save, RefreshCcw } from "lucide-react";
+import { Save, RefreshCcw, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { PrimaryButton, GhostButton, Input } from "@/components/ui/form";
+import { PrimaryButton, GhostButton, Input, Sheet, Field, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
@@ -25,6 +25,7 @@ function BusLayoutEditorPage() {
 
   const [map, setMap] = useState<SeatCell[]>([]);
   const [saving, setSaving] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   const q = useQuery({
     enabled: !!agency,
@@ -113,6 +114,13 @@ function BusLayoutEditorPage() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <GhostButton
+            onClick={() => setEditOpen(true)}
+            type="button"
+            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt"
+          >
+            <Settings2 className="h-3.5 w-3.5 mr-1.5" /> Editar Cadastro
+          </GhostButton>
+          <GhostButton
             onClick={() => generateDefaultMap(l.rows, l.cols)}
             type="button"
             className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt"
@@ -174,6 +182,104 @@ function BusLayoutEditorPage() {
           ))}
         </div>
       </div>
+
+      {editOpen && (
+        <EditVehicleModal
+          layout={l}
+          onClose={() => setEditOpen(false)}
+          onSaved={() => {
+            setEditOpen(false);
+            qc.invalidateQueries({ queryKey: ["bus-layout", id] });
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function EditVehicleModal({
+  layout,
+  onClose,
+  onSaved,
+}: {
+  layout: any;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [name, setName] = useState(layout.name || "");
+  const [type, setType] = useState(layout.vehicle_type || "bus");
+  const [rows, setRows] = useState(layout.rows || 14);
+  const [cols, setCols] = useState(layout.cols || 5);
+  const [submitting, setSubmitting] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase
+      .from("bus_layouts")
+      .update({
+        name,
+        vehicle_type: type,
+        rows,
+        cols,
+      })
+      .eq("id", layout.id);
+    setSubmitting(false);
+    if (error) return toast.error(error.message);
+    toast.success("Dados do veículo atualizados!");
+    onSaved();
+  }
+
+  return (
+    <Sheet onClose={onClose} title="Editar Cadastro do Veículo">
+      <form onSubmit={submit} className="space-y-4">
+        <Field label="Nome da Frota/Veículo *">
+          <Input
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex: Ônibus Leito Marcopolo 44L"
+          />
+        </Field>
+        <Field label="Tipo de Veículo">
+          <Select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="bus">Ônibus (Convencional/Leito)</option>
+            <option value="van">Van / Micro-ônibus</option>
+            <option value="plane">Avião</option>
+          </Select>
+        </Field>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Fileiras (Linhas)">
+            <Input
+              type="number"
+              min={1}
+              max={50}
+              value={rows}
+              onChange={(e) => setRows(+e.target.value || 1)}
+            />
+          </Field>
+          <Field label="Colunas (Assentos por fila)">
+            <Input
+              type="number"
+              min={1}
+              max={10}
+              value={cols}
+              onChange={(e) => setCols(+e.target.value || 1)}
+            />
+          </Field>
+        </div>
+        <p className="text-xs text-muted-foreground pt-2">
+          Aviso: Alterar o número de fileiras ou colunas não altera automaticamente o mapa de assentos atual. Se desejar aplicar as novas dimensões ao mapa de assentos, utilize o botão "Recriar Matriz" na tela principal.
+        </p>
+        <div className="flex justify-end gap-2 pt-4">
+          <GhostButton type="button" onClick={onClose}>
+            Cancelar
+          </GhostButton>
+          <PrimaryButton type="submit" disabled={submitting}>
+            {submitting ? "Salvando…" : "Salvar Alterações"}
+          </PrimaryButton>
+        </div>
+      </form>
+    </Sheet>
   );
 }

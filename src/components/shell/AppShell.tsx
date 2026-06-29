@@ -129,39 +129,41 @@ export function AppShell({
             {title && <h1 className="ds-h3 text-foreground whitespace-nowrap">{title}</h1>}
           </div>
 
-          <div
-            id="app-header-portal"
-            className="flex-1 flex items-center justify-end gap-2.5 min-w-0 px-2"
-          />
-
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex-1 flex items-center justify-end gap-3 min-w-0">
             <div
-              className="hidden items-center gap-2 rounded border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
-              onClick={() =>
-                document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
-              }
-            >
-              <Search className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
-              <div className="w-44 ds-meta group-hover:text-foreground flex items-center justify-between">
-                <span>Buscar...</span>
-                <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">
-                  ⌘K
-                </span>
+              id="app-header-portal"
+              className="flex items-center gap-2.5 min-w-0"
+            />
+
+            <div className="flex items-center gap-2 shrink-0">
+              <div
+                className="hidden items-center gap-2 rounded border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
+                onClick={() =>
+                  document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
+                }
+              >
+                <Search className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
+                <div className="w-44 ds-meta group-hover:text-foreground flex items-center justify-between">
+                  <span>Buscar...</span>
+                  <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">
+                    ⌘K
+                  </span>
+                </div>
               </div>
+              {actions}
+              <NotificationBadge />
+              <button
+                onClick={() => setAiOpen((v) => !v)}
+                className={`flex h-8 items-center gap-1.5 rounded border border-border px-2 ds-meta font-semibold transition-colors ${
+                  aiOpen
+                    ? "bg-surface-alt text-foreground"
+                    : "bg-surface text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                IA
+              </button>
             </div>
-            {actions}
-            <NotificationBadge />
-            <button
-              onClick={() => setAiOpen((v) => !v)}
-              className={`flex h-8 items-center gap-1.5 rounded border border-border px-2 ds-meta font-semibold transition-colors ${
-                aiOpen
-                  ? "bg-surface-alt text-foreground"
-                  : "bg-surface text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              IA
-            </button>
           </div>
         </header>
 

@@ -398,7 +398,7 @@ function TourDetailPage() {
 
       <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo terrestre"} />
 
-      <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 text-sm mb-6">
         <Stat label="Saída" value={fmtDate(t.departure_date)} />
         <Stat label="Retorno" value={fmtDate(t.return_date)} />
         <Stat label="Preço base" value={money(Number(t.base_price))} />
