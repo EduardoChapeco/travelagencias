@@ -1,5 +1,5 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -18,6 +18,10 @@ import {
   Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const RadarMapWidget = lazy(() =>
+  import("@/components/radar/RadarMapWidget").then((m) => ({ default: m.RadarMapWidget }))
+);
 
 export const Route = createFileRoute("/agency/$slug/radar")({
   head: () => ({ meta: [{ title: "Radar de Clientes ao Vivo · TravelOS" }] }),
@@ -303,71 +307,34 @@ function RadarTVPage() {
         {/* Painel Central do Mapa (Radar Sweep) */}
         <div className="xl:col-span-3 rounded-2xl border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-6 flex flex-col justify-between relative overflow-hidden group">
           {/* Radar Sweep Effect overlay */}
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(6,8,20,0.4)_100%)]" />
-          <div className="absolute inset-0 pointer-events-none border border-slate-800/20 rounded-full w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed" />
-          <div className="absolute inset-0 pointer-events-none border border-slate-850/40 rounded-full w-[350px] h-[350px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(6,8,20,0.4)_100%)] z-10" />
+          <div className="absolute inset-0 pointer-events-none border border-slate-800/20 rounded-full w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed z-10" />
+          <div className="absolute inset-0 pointer-events-none border border-slate-850/40 rounded-full w-[350px] h-[350px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" />
           
           {/* Neon rotating sweep line */}
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[2px] bg-gradient-to-r from-transparent to-brand/35 -translate-y-1/2 origin-left animate-[spin_8s_linear_infinite] pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 w-[400px] h-[2px] bg-gradient-to-r from-transparent to-brand/35 -translate-y-1/2 origin-left animate-[spin_8s_linear_infinite] pointer-events-none z-10" />
 
-          {/* Mapa Mundi em SVG */}
-          <div className="flex-1 flex items-center justify-center relative min-h-[350px]">
-            <svg 
-              viewBox="0 0 1000 480" 
-              className="w-full h-full max-h-[440px] text-slate-800 opacity-80"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Simplified dotted/schematic world map design */}
-              {/* Americas */}
-              <path d="M 120 100 L 250 100 L 280 200 L 220 280 L 280 340 L 320 440 L 260 440 L 200 320 L 140 220 Z" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-              {/* Europe/Africa */}
-              <path d="M 420 80 L 520 80 L 530 180 L 460 220 L 480 340 L 540 380 L 500 440 L 430 380 L 420 240 L 380 180 Z" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-              {/* Asia/Australia */}
-              <path d="M 580 80 L 780 80 L 820 200 L 720 260 L 760 380 L 820 420 L 760 440 L 680 360 L 640 240 Z" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-              
-              {/* Equator Line */}
-              <line x1="50" y1="240" x2="950" y2="240" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" className="text-slate-850" />
-            </svg>
-
-            {/* Pins do Mapa */}
-            {filteredTravelers.map((pin) => (
-              <button
-                key={pin.id}
-                onClick={() => setSelectedPin(pin)}
-                className="absolute transition-transform hover:scale-125 focus:outline-none cursor-pointer"
-                style={{ 
-                  left: `${(pin.x / 1000) * 100}%`, 
-                  top: `${(pin.y / 480) * 100}%` 
-                }}
-              >
-                <span className="relative flex h-4 w-4 items-center justify-center">
-                  <span className={cn(
-                    "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                    pin.type === "flight" ? "bg-blue-400" : "bg-brand"
-                  )} />
-                  <span className={cn(
-                    "relative inline-flex rounded-full h-2 w-2 shadow-lg border border-white/20",
-                    pin.type === "flight" ? "bg-blue-500" : "bg-brand"
-                  )} />
-                </span>
-                
-                {/* Micro tooltip com nome do cliente */}
-                <span className="absolute left-1/2 -translate-x-1/2 top-5 bg-slate-950/90 border border-slate-800 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xl whitespace-nowrap text-white hidden group-hover:block z-20">
-                  {pin.name.split(" ")[0]} ➔ {pin.country}
-                </span>
-              </button>
-            ))}
+          {/* Mapa Mundi Interativo Leaflet Real */}
+          <div className="flex-1 flex items-stretch relative min-h-[350px] z-0">
+            <Suspense fallback={
+              <div className="flex-1 flex items-center justify-center text-slate-500 text-xs gap-2 animate-pulse bg-[#0a0c20] rounded-xl border border-slate-800">
+                <Compass className="h-5 w-5 animate-spin" />
+                <span>Carregando mapa interativo global...</span>
+              </div>
+            }>
+              <RadarMapWidget travelers={filteredTravelers as any} />
+            </Suspense>
           </div>
 
           {/* Status Geral / Neuromarketing */}
           <div className="flex flex-wrap items-center justify-between gap-4 mt-4 pt-4 border-t border-slate-800/40 relative z-10">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-brand" />
+                <div className="h-3 w-3 rounded-full bg-violet-400" />
                 <span className="text-xs text-slate-400 font-medium">Sucessos da Agência (Embarques)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-blue-500" />
+                <div className="h-3 w-3 rounded-full bg-blue-400" />
                 <span className="text-xs text-slate-400 font-medium">Conexões Logísticas (Aéreos)</span>
               </div>
             </div>
