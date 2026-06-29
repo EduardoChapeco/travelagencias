@@ -401,13 +401,24 @@ export function KanbanView({
 
         const { data, error } = await (supabase as any)
           .from("kanban_settings")
-          .select("column_key, display_label")
+          .select("column_key, display_label, column_order, is_visible")
           .eq("agency_id", agency.id)
           .eq("user_id", user.id);
 
         if (error) throw error;
 
         if (data && data.length > 0) {
+          // Reconstruir colunas visíveis ordenadas
+          const sorted = [...data].sort((a: any, b: any) => (a.column_order ?? 0) - (b.column_order ?? 0));
+          const visibleCols = sorted
+            .filter((r: any) => r.is_visible !== false)
+            .map((r: any) => r.column_key as TaskStatus);
+
+          if (visibleCols.length > 0) {
+            setActiveColumns(visibleCols);
+            localStorage.setItem("ta_kanban_columns_v2", JSON.stringify(visibleCols));
+          }
+
           const loadedLabels: Partial<Record<TaskStatus, string>> = {};
           data.forEach((row: any) => {
             loadedLabels[row.column_key as TaskStatus] = row.display_label;
@@ -447,6 +458,8 @@ export function KanbanView({
             user_id: user.id,
             column_key: status,
             display_label: newLabel,
+            is_visible: activeColumns.includes(status),
+            column_order: activeColumns.indexOf(status) !== -1 ? activeColumns.indexOf(status) : 99,
             updated_at: new Date().toISOString(),
           }, { onConflict: "agency_id,user_id,column_key" });
 
@@ -562,6 +575,31 @@ export function KanbanView({
     }
   }
 
+  const persistColumnOrder = async (columns: TaskStatus[]) => {
+    if (!agency?.id) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      for (let i = 0; i < columns.length; i++) {
+        const col = columns[i];
+        await (supabase as any)
+          .from("kanban_settings")
+          .upsert({
+            agency_id: agency.id,
+            user_id: user.id,
+            column_key: col,
+            display_label: customColumnLabels[col] || TASK_STATUSES[col]?.label || col,
+            is_visible: true,
+            column_order: i,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "agency_id,user_id,column_key" });
+      }
+    } catch (err) {
+      console.error("Erro ao persistir ordem das colunas no banco:", err);
+    }
+  };
+
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     const activeType = active.data.current?.type;
@@ -580,7 +618,9 @@ export function KanbanView({
           const fromIdx = prev.indexOf(fromStatus);
           const toIdx = prev.indexOf(toStatus);
           if (fromIdx === -1 || toIdx === -1) return prev;
-          return arrayMove(prev, fromIdx, toIdx);
+          const reordered = arrayMove(prev, fromIdx, toIdx);
+          persistColumnOrder(reordered);
+          return reordered;
         });
       }
       return;
@@ -622,13 +662,56 @@ export function KanbanView({
   };
 
   // ── Column management ─────────────────────────────────────────────────────
-  const handleHideColumn = (status: TaskStatus) => {
-    setActiveColumns((prev) => prev.filter((c) => c !== status));
+  const handleHideColumn = async (status: TaskStatus) => {
+    const updated = activeColumns.filter((c) => c !== status);
+    setActiveColumns(updated);
+
+    if (agency?.id) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        await (supabase as any)
+          .from("kanban_settings")
+          .upsert({
+            agency_id: agency.id,
+            user_id: user.id,
+            column_key: status,
+            display_label: customColumnLabels[status] || TASK_STATUSES[status]?.label || status,
+            is_visible: false,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "agency_id,user_id,column_key" });
+      } catch (err) {
+        console.error("Erro ao ocultar coluna no banco:", err);
+      }
+    }
   };
 
-  const handleAddColumn = (status: TaskStatus) => {
+  const handleAddColumn = async (status: TaskStatus) => {
     if (!activeColumns.includes(status)) {
-      setActiveColumns((prev) => [...prev, status]);
+      const updated = [...activeColumns, status];
+      setActiveColumns(updated);
+
+      if (agency?.id) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+
+          await (supabase as any)
+            .from("kanban_settings")
+            .upsert({
+              agency_id: agency.id,
+              user_id: user.id,
+              column_key: status,
+              display_label: customColumnLabels[status] || TASK_STATUSES[status]?.label || status,
+              is_visible: true,
+              column_order: updated.indexOf(status),
+              updated_at: new Date().toISOString(),
+            }, { onConflict: "agency_id,user_id,column_key" });
+        } catch (err) {
+          console.error("Erro ao adicionar coluna no banco:", err);
+        }
+      }
     }
   };
 
