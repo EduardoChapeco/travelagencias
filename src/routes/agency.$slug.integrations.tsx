@@ -17,6 +17,8 @@ import {
   Play,
   RefreshCw,
   AlertCircle,
+  Check,
+  CheckCircle,
   Clock,
   Calendar,
   History,
@@ -1338,17 +1340,33 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                     <div className="font-semibold text-sm text-foreground truncate">
                       {op.operator_name}
                     </div>
-                    <div className="text-[11px] text-muted-foreground font-sans">
+                    <div className="text-[11px] text-muted-foreground font-sans flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
                       {op.is_active ? (
                         <span className="text-emerald-600 font-semibold">● Ativa</span>
                       ) : (
                         <span className="text-muted-foreground">○ Inativa</span>
                       )}
                       {op.updated_at && (
-                        <span className="ml-2">
+                        <span>
                           · Atualizada {new Date(op.updated_at).toLocaleDateString("pt-BR")}
                         </span>
                       )}
+                      {op.last_sync_at && (
+                        <span>
+                          · Último Sync: {new Date(op.last_sync_at).toLocaleString("pt-BR")}
+                        </span>
+                      )}
+                      {op.last_sync_error ? (
+                        <span className="text-rose-600 bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-900/40 font-semibold flex items-center gap-0.5 select-none" title={op.last_sync_error}>
+                          <AlertCircle className="h-3 w-3 shrink-0" />
+                          Falha na Conexão
+                        </span>
+                      ) : op.last_sync_at ? (
+                        <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40 font-semibold flex items-center gap-0.5 select-none">
+                          <CheckCircle className="h-3 w-3 shrink-0" />
+                          Conexão Saudável
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 </div>

@@ -39,6 +39,150 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_api_credentials: {
+        Row: {
+          id: string
+          agency_id: string
+          provider: string
+          secret_reference: string
+          status: string
+          priority: number
+          fingerprint: string
+          cooldown_until: string | null
+          last_error_at: string | null
+          last_error_code: string | null
+          last_used_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          agency_id: string
+          provider: string
+          secret_reference: string
+          status?: string
+          priority?: number
+          fingerprint: string
+          cooldown_until?: string | null
+          last_error_at?: string | null
+          last_error_code?: string | null
+          last_used_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          agency_id?: string
+          provider?: string
+          secret_reference?: string
+          status?: string
+          priority?: number
+          fingerprint?: string
+          cooldown_until?: string | null
+          last_error_at?: string | null
+          last_error_code?: string | null
+          last_used_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_request_logs: {
+        Row: {
+          request_id: string
+          agency_id: string
+          module: string
+          capability: string
+          provider: string
+          model: string
+          key_fingerprint: string | null
+          attempt: number
+          fallback_used: boolean
+          latency_ms: number | null
+          input_tokens: number | null
+          output_tokens: number | null
+          success: boolean
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          request_id?: string
+          agency_id: string
+          module: string
+          capability: string
+          provider: string
+          model: string
+          key_fingerprint?: string | null
+          attempt?: number
+          fallback_used?: boolean
+          latency_ms?: number | null
+          input_tokens?: number | null
+          output_tokens?: number | null
+          success?: boolean
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          request_id?: string
+          agency_id?: string
+          module?: string
+          capability?: string
+          provider?: string
+          model?: string
+          key_fingerprint?: string | null
+          attempt?: number
+          fallback_used?: boolean
+          latency_ms?: number | null
+          input_tokens?: number | null
+          output_tokens?: number | null
+          success?: boolean
+          error_message?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      api_keys: {
+        Row: {
+          id: string
+          agency_id: string
+          provider: string
+          key_value: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+          category: string
+          operator_id: string | null
+          operator_name: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          id?: string
+          agency_id: string
+          provider: string
+          key_value: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          category?: string
+          operator_id?: string | null
+          operator_name?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          agency_id?: string
+          provider?: string
+          key_value?: string
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+          category?: string
+          operator_id?: string | null
+          operator_name?: string | null
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       agencies: {
         Row: {
           brand_color: string | null

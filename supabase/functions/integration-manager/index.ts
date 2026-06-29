@@ -311,7 +311,7 @@ serve(async (req) => {
     if (action === "list-operators") {
       const { data, error } = await admin
         .from("api_keys")
-        .select("operator_id, operator_name, is_active, updated_at")
+        .select("operator_id, operator_name, is_active, updated_at, last_sync_error, last_sync_at")
         .eq("agency_id", agencyId)
         .eq("category", "infotravel_operator")
         .not("operator_id", "is", null)

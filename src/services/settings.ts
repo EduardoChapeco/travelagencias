@@ -156,6 +156,8 @@ export interface InfotravelOperator {
   operator_name: string;
   is_active: boolean;
   updated_at?: string;
+  last_sync_error?: string | null;
+  last_sync_at?: string | null;
 }
 
 /** Salva (upsert) uma credencial de integração geral */

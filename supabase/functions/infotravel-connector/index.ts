@@ -11,6 +11,11 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  let reqAgencyId: string | null = null;
+  let reqOperatorId: string | null = null;
+  let reqAction: string | null = null;
+  let supabaseAdmin: any = null;
+
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("Missing Authorization header.");
@@ -18,6 +23,9 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+    // Cliente administrativo declarado no início do try
+    supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Cliente autenticado com as permissões do usuário logado
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
@@ -35,6 +43,11 @@ serve(async (req) => {
     const { action, agencyId, operatorId, params = {} } = await req.json();
     if (!agencyId) throw new Error("Parâmetro agencyId é obrigatório.");
 
+    // Guardar nos escopos globais do handler
+    reqAgencyId = agencyId;
+    reqOperatorId = operatorId || null;
+    reqAction = action || null;
+
     // Validar se o usuário pertence à agência
     const { data: roleData, error: roleError } = await supabaseClient
       .from("user_roles")
@@ -46,9 +59,6 @@ serve(async (req) => {
     if (roleError || !roleData) {
       throw new Error("Acesso não autorizado para esta agência.");
     }
-
-    // Cliente administrativo para obter as credenciais salvas em api_keys de forma segura
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Buscar credenciais da operadora — suporta multi-operadora via operatorId
     // Se operatorId foi passado, busca a operadora específica; senão, usa a primeira ativa
@@ -191,6 +201,22 @@ serve(async (req) => {
       throw new Error(`Ação não reconhecida: "${action}". Verifique a documentação do conector.`);
     }
 
+    // Se o sync rodou com sucesso, limpa os logs de erros da operadora correspondente
+    if (reqAgencyId && reqOperatorId && (reqAction === "run_periodic_sync" || reqAction === "run_backfill" || reqAction === "test_connection")) {
+      try {
+        await supabaseAdmin
+          .from("api_keys")
+          .update({
+            last_sync_error: null,
+            last_sync_at: new Date().toISOString(),
+          })
+          .eq("agency_id", reqAgencyId)
+          .eq("operator_id", reqOperatorId);
+      } catch (dbErr) {
+        console.error("[infotravel-connector] Falha ao limpar last_sync_error:", dbErr);
+      }
+    }
+
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -210,6 +236,22 @@ serve(async (req) => {
       userMessage = "O servidor do GDS Infotravel está temporariamente indisponível. Tente novamente em instantes.";
     } else if (userMessage.includes("fetch") || userMessage.includes("network") || userMessage.includes("ECONNREFUSED")) {
       userMessage = "Não foi possível conectar ao servidor do GDS Infotravel. Verifique a URL de acesso nas configurações de integração.";
+    }
+
+    // REGISTRAR ERRO NO BANCO
+    if (supabaseAdmin && reqAgencyId && reqOperatorId && (reqAction === "run_periodic_sync" || reqAction === "run_backfill" || reqAction === "test_connection")) {
+      try {
+        await supabaseAdmin
+          .from("api_keys")
+          .update({
+            last_sync_error: userMessage,
+            last_sync_at: new Date().toISOString(),
+          })
+          .eq("agency_id", reqAgencyId)
+          .eq("operator_id", reqOperatorId);
+      } catch (dbErr) {
+        console.error("[infotravel-connector] Falha ao registrar last_sync_error:", dbErr);
+      }
     }
 
     return new Response(
