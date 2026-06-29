@@ -120,6 +120,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 4. Harden cash_transactions RLS policies (Restrict DELETE/UPDATE to Admins)
 DROP POLICY IF EXISTS "agency_cash_transactions" ON public.cash_transactions;
+DROP POLICY IF EXISTS "cash_transactions_select" ON public.cash_transactions;
+DROP POLICY IF EXISTS "cash_transactions_insert" ON public.cash_transactions;
+DROP POLICY IF EXISTS "cash_transactions_update" ON public.cash_transactions;
+DROP POLICY IF EXISTS "cash_transactions_delete" ON public.cash_transactions;
 
 CREATE POLICY "cash_transactions_select" ON public.cash_transactions
   FOR SELECT TO authenticated USING (public.is_agency_member(auth.uid(), agency_id));
@@ -135,6 +139,8 @@ CREATE POLICY "cash_transactions_delete" ON public.cash_transactions
 
 -- 5. Harden payment_installments RLS policies (Allow Trip Owner Agents to update/check status)
 DROP POLICY IF EXISTS "installments admin write" ON public.payment_installments;
+DROP POLICY IF EXISTS "installments_admin_manage" ON public.payment_installments;
+DROP POLICY IF EXISTS "installments_agent_update" ON public.payment_installments;
 
 CREATE POLICY "installments_admin_manage" ON public.payment_installments
   FOR ALL TO authenticated USING (

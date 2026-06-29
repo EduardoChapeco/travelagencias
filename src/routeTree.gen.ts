@@ -738,16 +738,16 @@ const AgencySlugFinancialReconciliationRoute =
     path: '/reconciliation',
     getParentRoute: () => AgencySlugFinancialRoute,
   } as any)
-const AgencySlugFinancialLedgerRoute =
-  AgencySlugFinancialLedgerRouteImport.update({
-    id: '/ledger',
-    path: '/ledger',
-    getParentRoute: () => AgencySlugFinancialRoute,
-  } as any)
 const AgencySlugFinancialOperatorsRoute =
   AgencySlugFinancialOperatorsRouteImport.update({
     id: '/operators',
     path: '/operators',
+    getParentRoute: () => AgencySlugFinancialRoute,
+  } as any)
+const AgencySlugFinancialLedgerRoute =
+  AgencySlugFinancialLedgerRouteImport.update({
+    id: '/ledger',
+    path: '/ledger',
     getParentRoute: () => AgencySlugFinancialRoute,
   } as any)
 const AgencySlugFinancialInvoicesRoute =
@@ -2551,18 +2551,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugFinancialReconciliationRouteImport
       parentRoute: typeof AgencySlugFinancialRoute
     }
-    '/agency/$slug/financial/ledger': {
-      id: '/agency/$slug/financial/ledger'
-      path: '/ledger'
-      fullPath: '/agency/$slug/financial/ledger'
-      preLoaderRoute: typeof AgencySlugFinancialLedgerRouteImport
-      parentRoute: typeof AgencySlugFinancialRoute
-    }
     '/agency/$slug/financial/operators': {
       id: '/agency/$slug/financial/operators'
       path: '/operators'
       fullPath: '/agency/$slug/financial/operators'
       preLoaderRoute: typeof AgencySlugFinancialOperatorsRouteImport
+      parentRoute: typeof AgencySlugFinancialRoute
+    }
+    '/agency/$slug/financial/ledger': {
+      id: '/agency/$slug/financial/ledger'
+      path: '/ledger'
+      fullPath: '/agency/$slug/financial/ledger'
+      preLoaderRoute: typeof AgencySlugFinancialLedgerRouteImport
       parentRoute: typeof AgencySlugFinancialRoute
     }
     '/agency/$slug/financial/invoices': {

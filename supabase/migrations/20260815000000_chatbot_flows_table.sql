@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS public.chatbot_flows (
 ALTER TABLE public.chatbot_flows ENABLE ROW LEVEL SECURITY;
 
 -- Politicas de acesso
+DROP POLICY IF EXISTS "Admins can manage chatbot flows" ON public.chatbot_flows;
+DROP POLICY IF EXISTS "Members can view chatbot flows" ON public.chatbot_flows;
+
 CREATE POLICY "Admins can manage chatbot flows" ON public.chatbot_flows
   FOR ALL
   TO authenticated
