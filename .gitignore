@@ -49,3 +49,11 @@ count_routes.cjs
 types_from_*.ts
 wrangler_deployments.txt
 
+# Environment secrets — NEVER commit
+.env
+.env.*
+!.env.example
+.secrets
+*.secrets
+supabase/.env
+.supabase-credentials

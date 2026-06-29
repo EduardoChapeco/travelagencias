@@ -2,10 +2,20 @@
 -- Objective: Ensure public.legal_acceptances table supports both user-compliance and client-contract accepts
 
 -- 1. Alter columns in public.legal_acceptances to be optional and add missing columns
-ALTER TABLE public.legal_acceptances 
-  ALTER COLUMN client_id DROP NOT NULL,
-  ALTER COLUMN agency_id DROP NOT NULL,
-  ALTER COLUMN terms_type DROP NOT NULL;
+DO $$
+BEGIN
+  ALTER TABLE public.legal_acceptances ALTER COLUMN client_id DROP NOT NULL;
+  ALTER TABLE public.legal_acceptances ALTER COLUMN agency_id DROP NOT NULL;
+  
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+      AND table_name = 'legal_acceptances' 
+      AND column_name = 'terms_type'
+  ) THEN
+    ALTER TABLE public.legal_acceptances ALTER COLUMN terms_type DROP NOT NULL;
+  END IF;
+END $$;
 
 ALTER TABLE public.legal_acceptances
   ADD COLUMN IF NOT EXISTS document_id uuid REFERENCES public.policy_documents(id) ON DELETE RESTRICT,

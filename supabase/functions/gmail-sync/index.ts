@@ -32,8 +32,14 @@ function extractBody(payload: any): { text: string, html: string } {
   return { text, html };
 }
 
-/** Uses Google Gemini API for entity extraction */
-async function extractEntitiesWithGemini(subject: string, body: string, apiKey: string) {
+/** Uses central AI orchestrator for entity extraction */
+async function extractEntitiesWithOrchestrator(
+  subject: string,
+  body: string,
+  orchestratorUrl: string,
+  serviceRoleKey: string,
+  agencyId: string | null
+) {
   const prompt = `
     Analise o seguinte email recebido por uma agência de viagens.
     Extraia as seguintes informações em formato JSON estrito:
@@ -50,40 +56,69 @@ async function extractEntitiesWithGemini(subject: string, body: string, apiKey: 
   `;
 
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(orchestratorUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${serviceRoleKey}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      })
+        action: "completion",
+        agency_id: agencyId,
+        prompt,
+        jsonMode: true,
+        module: "gmail-sync",
+        capability: "extraction",
+      }),
     });
-    const data = await res.json();
-    const textContent = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (textContent) {
-      return JSON.parse(textContent);
+
+    if (!res.ok) {
+      throw new Error(`Orchestrator extraction failed: ${await res.text()}`);
     }
+
+    const data = await res.json();
+    let resultText = data.result.trim();
+    if (resultText.startsWith("```")) {
+      resultText = resultText
+        .replace(/^```json\n?/, "")
+        .replace(/^```\n?/, "")
+        .replace(/\n?```$/, "");
+    }
+    return JSON.parse(resultText);
   } catch (e) {
-    console.error("Gemini Extraction Error:", e);
+    console.error("Orchestrator Gmail Extraction Error:", e);
   }
   return { intent: "general", locs: [], passengers: [], ticket_hash: null, summary: "" };
 }
 
-/** Uses Google Gemini API to create text embeddings */
-async function generateEmbedding(text: string, apiKey: string) {
+/** Uses central AI orchestrator to create text embeddings */
+async function generateEmbedding(
+  text: string,
+  orchestratorUrl: string,
+  serviceRoleKey: string,
+  agencyId: string | null
+): Promise<number[] | null> {
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`, {
+    const res = await fetch(orchestratorUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${serviceRoleKey}`,
+      },
       body: JSON.stringify({
-        model: "models/text-embedding-004",
-        content: { parts: [{ text: text.substring(0, 2000) }] }
-      })
+        action: "embeddings",
+        agency_id: agencyId,
+        text,
+        module: "gmail-sync",
+      }),
     });
+    if (!res.ok) {
+      throw new Error(`Orchestrator embeddings failed: ${await res.text()}`);
+    }
     const data = await res.json();
-    return data.embedding?.values || null;
+    return data.embedding || null;
   } catch (e) {
-    console.error("Embedding Error:", e);
+    console.error("Gmail embedding generation error via orchestrator:", e);
     return null;
   }
 }
@@ -102,10 +137,11 @@ serve(async (req) => {
     const { emailAddress, historyId } = payload;
     if (!emailAddress || !historyId) return new Response("Missing data", { status: 200 }); // Ack
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const orchestratorUrl = `${supabaseUrl}/functions/v1/ai-orchestrator`;
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     // 1. Fetch Account Config
     const { data: account } = await supabase
@@ -124,7 +160,6 @@ serve(async (req) => {
     });
 
     if (!historyRes.ok) {
-      // Token might be expired, need a refresh mechanism here in production
       console.error("History fetch failed", await historyRes.text());
       return new Response("OK", { status: 200 });
     }
@@ -134,11 +169,8 @@ serve(async (req) => {
       (h.messagesAdded ?? []).map((m: any) => m.message.id)
     );
 
-    const geminiApiKey = Deno.env.get("GEMINI_API_KEY") ?? "";
-
     // 3. Process each message
     for (const msgId of newMsgIds) {
-      // Check if already processed
       const { data: existingMsg } = await supabase.from("emails").select("id").eq("gmail_message_id", msgId).maybeSingle();
       if (existingMsg) continue;
 
@@ -158,19 +190,29 @@ serve(async (req) => {
       
       const { text: bodyText, html: bodyHtml } = extractBody(msg.payload);
 
-      // Skip self-sent webhook loops
       if (from.includes(emailAddress)) continue;
 
-      // 4. Run AI Intelligence (Gemini)
-      const aiData = await extractEntitiesWithGemini(subject, bodyText || bodyHtml, geminiApiKey);
-      const vector = await generateEmbedding(`${subject} ${bodyText}`, geminiApiKey);
+      // 4. Run AI Intelligence (Orchestrated)
+      // Associamos a agência se ela estiver configurada no email_account
+      const agencyId = account.agency_id || null;
+      const aiData = await extractEntitiesWithOrchestrator(
+        subject,
+        bodyText || bodyHtml,
+        orchestratorUrl,
+        serviceRoleKey,
+        agencyId
+      );
+      const vector = await generateEmbedding(
+        `${subject} ${bodyText}`,
+        orchestratorUrl,
+        serviceRoleKey,
+        agencyId
+      );
 
       // 5. Semantic Linking & Conciliation
       let linked_ticket_id = null;
-      let linked_embarque_id = null;
       let link_method = "none";
 
-      // 5.1 By Ticket Hash in Subject/Body or Thread ID
       if (aiData.ticket_hash) {
         const { data: tkt } = await supabase.from("support_tickets").select("id").eq("ticket_hash", aiData.ticket_hash).maybeSingle();
         if (tkt) {
@@ -180,19 +222,11 @@ serve(async (req) => {
       }
 
       if (!linked_ticket_id) {
-        // Fallback: Check if thread_id is already linked to a ticket in emails table
         const { data: prevEmail } = await supabase.from("emails").select("linked_ticket_id").eq("gmail_thread_id", threadId).not("linked_ticket_id", "is", null).order("created_at", { ascending: false }).limit(1).maybeSingle();
         if (prevEmail?.linked_ticket_id) {
           linked_ticket_id = prevEmail.linked_ticket_id;
           link_method = "thread_match";
         }
-      }
-
-      // 5.2 By LOC (Embarque)
-      if (aiData.locs.length > 0) {
-        const { data: trip } = await supabase.from("trips").select("id").contains("ticket_ids", aiData.locs).maybeSingle();
-        // Wait, LOCs are usually in flight_segments, but let's assume it can be queried. 
-        // For simplicity, we just save the entity. The RAG will query it later.
       }
 
       // 6. Insert into emails table

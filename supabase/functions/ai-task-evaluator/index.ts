@@ -7,8 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") || "";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -18,9 +16,6 @@ serve(async (req) => {
     if (!record || !record.id || !record.title) {
       return new Response("Missing record data", { status: 400 });
     }
-
-    // Only process if difficulty_score is default (1) or hasn't been evaluated.
-    // If it's a manual override, we might not want to re-eval, but let's just evaluate anyway for now if called.
 
     const taskContext = `Task Title: ${record.title}\nTask Description: ${record.description || "N/A"}\nType: ${record.type}`;
 
@@ -32,30 +27,33 @@ Sua tarefa é analisar a tarefa abaixo e atribuir um 'difficulty_score' de 1 a 1
 
 RETORNE APENAS UM NÚMERO INTEIRO DE 1 A 10. Nada de texto. Nenhuma explicação.`;
 
-    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const orchestratorUrl = `${supabaseUrl}/functions/v1/ai-orchestrator`;
+
+    const aiRes = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "HTTP-Referer": "https://travelos.com",
-        "X-Title": "TravelOS CMS",
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: taskContext },
-        ],
-        temperature: 0.1,
+        action: "completion",
+        agency_id: record.agency_id || null,
+        prompt: taskContext,
+        systemPrompt,
+        jsonMode: false,
+        module: "ai_task_evaluator",
+        capability: "classification",
       }),
     });
 
     if (!aiRes.ok) {
-      throw new Error("Erro na IA: " + (await aiRes.text()));
+      throw new Error("Erro no orquestrador de IA: " + (await aiRes.text()));
     }
 
     const aiData = await aiRes.json();
-    const rawScore = aiData.choices[0].message.content.trim();
+    const rawScore = aiData.result.trim();
     let score = parseInt(rawScore, 10);
 
     if (isNaN(score)) score = 1;
@@ -63,10 +61,7 @@ RETORNE APENAS UM NÚMERO INTEIRO DE 1 A 10. Nada de texto. Nenhuma explicação
     if (score > 10) score = 10;
 
     // Update the task via service role
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    );
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     await supabase.from("agent_tasks").update({ difficulty_score: score }).eq("id", record.id);
 

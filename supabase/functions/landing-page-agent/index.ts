@@ -6,8 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") || "";
-
 async function checkMembership(
   supabaseAdmin: any,
   userId: string,
@@ -67,7 +65,7 @@ serve(async (req) => {
       }
     }
 
-    const { messages, pageContext, sessionId, agencySlug, clientIp } = await req.json();
+    const { messages, pageContext, sessionId, agencySlug } = await req.json();
 
     if (!messages || !agencySlug) {
       return new Response("Missing parameters", { status: 400, headers: corsHeaders });
@@ -78,9 +76,9 @@ serve(async (req) => {
       .select("id, name")
       .eq("slug", agencySlug)
       .single();
+
     if (!agency) return new Response("Agency not found", { status: 404, headers: corsHeaders });
 
-    // Validate membership if authenticated user is making the call
     if (!isPublic && user) {
       const hasAccess = await checkMembership(supabaseAdmin, user.id, agency.id);
       if (!hasAccess) {
@@ -94,107 +92,106 @@ serve(async (req) => {
       }
     }
 
-    // Rate Limiting (Max 7 interactions for public, higher or no limit for authenticated members)
     const interactionCount = messages.filter((m: any) => m.role === "user").length;
     const MUST_CONVERT = isPublic && interactionCount >= 7;
 
-    const systemPrompt = {
-      role: "system",
-      content: `Você é um agente de Inside Sales da agência '${agency.name}'.
-Você está conversando com um visitante na Landing Page com o seguinte contexto e conteúdo da página:
-${JSON.stringify(pageContext).substring(0, 3000)}
+    const systemPrompt = `Você é um agente de Inside Sales da agência '${agency.name}'.
+Você está conversando com um visitante na Landing Page com o seguinte contexto:
+${JSON.stringify(pageContext).substring(0, 2000)}
 
 DIRETRIZES:
 1. Responda perguntas sobre a viagem ou agência com base no contexto.
-2. Seja amigável, persuasivo e conciso (máximo 2-3 frases).
+2. Seja amigável, persuasivo e conciso.
 3. Seu objetivo MAIOR é capturar o nome, telefone (WhatsApp) e email do cliente.
-4. Se o cliente demonstrar intenção de compra OU quando eu ordenar, você DEVE chamar a ferramenta 'submit_lead' com os dados dele.
+4. Se o cliente demonstrar intenção de compra OU quando fornecer nome e WhatsApp, você DEVE transicionar a conversa informando os dados dele.
 
-${MUST_CONVERT ? "⚠️ URGENTE: O TEMPO DO CHAT ACABOU. VOCÊ NÃO PODE MAIS RESPONDER DÚVIDAS. PEÇA O WHATSAPP E EMAIL DO CLIENTE AGORA E CHAME A FERRAMENTA submit_lead." : ""}
-`,
-    };
+${MUST_CONVERT ? "⚠️ URGENTE: O tempo do chat acabou. Você DEVE pedir o WhatsApp e e-mail do cliente imediatamente e definir should_convert para true." : ""}
 
-    const tools = [
-      {
-        type: "function",
-        function: {
-          name: "submit_lead",
-          description:
-            "Salva o contato do cliente (Lead) no CRM da agência quando ele fornecer nome e telefone/email.",
-          parameters: {
-            type: "object",
-            properties: {
-              name: { type: "string", description: "Nome completo do cliente" },
-              phone: { type: "string", description: "WhatsApp ou telefone" },
-              email: { type: "string", description: "Email do cliente (se fornecido)" },
-              insights: {
-                type: "string",
-                description: "Resumo em uma frase do que ele quer ou dúvidas principais",
-              },
-            },
-            required: ["name", "phone"],
-          },
-        },
-      },
-    ];
+Você deve responder EM FORMATO JSON VÁLIDO seguindo estritamente a estrutura abaixo:
+{
+  "should_convert": false, // true se você obteve nome e WhatsApp ou e-mail, ou se for urgente converter
+  "reply": "Texto da sua mensagem para o cliente",
+  "lead_data": {
+    "name": "Nome do cliente ou null",
+    "phone": "WhatsApp/Telefone do cliente ou null",
+    "email": "Email do cliente ou null",
+    "insights": "Resumo do que ele busca"
+  }
+}`;
 
-    const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Chamar o ai-orchestrator central
+    const orchestratorUrl = `${supabaseUrl}/functions/v1/ai-orchestrator`;
+    const aiRes = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4-turbo-preview",
-        messages: [systemPrompt, ...messages],
-        tools: tools,
-        tool_choice: MUST_CONVERT
-          ? { type: "function", function: { name: "submit_lead" } }
-          : "auto",
-        temperature: 0.7,
+        action: "completion",
+        agency_id: agency.id,
+        prompt: JSON.stringify(messages),
+        systemPrompt,
+        jsonMode: true,
+        module: "landing_page_agent",
+        capability: "chat",
       }),
     });
 
-    const aiData = await aiRes.json();
-    const message = aiData.choices[0].message;
-
-    // Se o modelo decidiu chamar a ferramenta
-    if (message.tool_calls && message.tool_calls.length > 0) {
-      const toolCall = message.tool_calls[0];
-      if (toolCall.function.name === "submit_lead") {
-        const args = JSON.parse(toolCall.function.arguments);
-
-        // Save to CRM via RPC
-        const { data: leadData, error: leadError } = await supabaseAdmin.rpc("submit_public_lead", {
-          _agency_slug: agencySlug,
-          _name: args.name,
-          _email: args.email || null,
-          _phone: args.phone,
-          _destination: args.insights,
-          _travel_start: null,
-          _travel_end: null,
-          _pax_count: 1,
-          _estimated_value: 0,
-          _source: "ai_landing_agent",
-          _notes: `[AI Capturado] Sessão: ${sessionId} | Resumo: ${args.insights}`,
-        });
-
-        if (leadError) console.error("Lead save error:", leadError);
-
-        return new Response(
-          JSON.stringify({
-            role: "assistant",
-            content: `Perfeito, ${args.name}! Já salvei seu contato. Um de nossos consultores vai te chamar no WhatsApp em instantes para continuarmos o atendimento com prioridade. Obrigado!`,
-            type: "conversion",
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
+    if (!aiRes.ok) {
+      throw new Error("Erro no orquestrador de IA: " + (await aiRes.text()));
     }
 
-    return new Response(JSON.stringify(message), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const aiData = await aiRes.json();
+    let rawResult = aiData.result.trim();
+
+    // Sanitizar markdown
+    if (rawResult.startsWith("```")) {
+      rawResult = rawResult
+        .replace(/^```json\n?/, "")
+        .replace(/^```\n?/, "")
+        .replace(/\n?```$/, "");
+    }
+
+    const parsedResponse = JSON.parse(rawResult);
+
+    if (parsedResponse.should_convert && parsedResponse.lead_data?.name && parsedResponse.lead_data?.phone) {
+      const args = parsedResponse.lead_data;
+      // Inserir lead no CRM via RPC
+      const { error: leadError } = await supabaseAdmin.rpc("submit_public_lead", {
+        _agency_slug: agencySlug,
+        _name: args.name,
+        _email: args.email || null,
+        _phone: args.phone,
+        _destination: args.insights || "Landing Page Chat",
+        _travel_start: null,
+        _travel_end: null,
+        _pax_count: 1,
+        _estimated_value: 0,
+        _source: "ai_landing_agent",
+        _notes: `[AI Capturado] Sessão: ${sessionId} | Resumo: ${args.insights}`,
+      });
+
+      if (leadError) console.error("Lead save error:", leadError);
+
+      return new Response(
+        JSON.stringify({
+          role: "assistant",
+          content: `Perfeito, ${args.name}! Já salvei seu contato. Um de nossos consultores vai te chamar no WhatsApp em instantes para continuarmos o atendimento com prioridade. Obrigado!`,
+          type: "conversion",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        role: "assistant",
+        content: parsedResponse.reply || "",
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+
   } catch (error: any) {
     console.error("AI Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {

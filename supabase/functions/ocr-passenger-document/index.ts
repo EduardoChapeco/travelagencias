@@ -1,34 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
-import { decode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-// AES Decryption for stored keys
-async function getCryptoKey(password: string) {
-  const enc = new TextEncoder();
-  return await crypto.subtle.importKey(
-    "raw",
-    enc.encode(password.padEnd(32, "0").substring(0, 32)),
-    { name: "AES-GCM" },
-    false,
-    ["encrypt", "decrypt"],
-  );
-}
-async function decryptData(encodedBase64: string, password: string) {
-  const key = await getCryptoKey(password);
-  const cleanBase64 = encodedBase64.startsWith("=====")
-    ? encodedBase64.substring(5)
-    : encodedBase64;
-  const payload = decode(cleanBase64);
-  const iv = payload.slice(0, 12);
-  const ciphertext = payload.slice(12);
-  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
-  return new TextDecoder().decode(decrypted);
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -53,7 +29,6 @@ serve(async (req) => {
     } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
     if (authError || !user) throw new Error("Unauthorized: Invalid JWT token.");
 
-    // Create service role client to query keys table and bypass RLS
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey ?? supabaseAnonKey, {
       auth: { persistSession: false },
     });
@@ -81,103 +56,39 @@ serve(async (req) => {
       throw new Error("Unauthorized: User does not belong to the requested agency.");
     }
 
-    // Obter chave API do Gemini (tenta carregar da agência ou do ENV)
-    let geminiApiKey = Deno.env.get("GEMINI_API_KEY");
-    if (agency_id) {
-      // Try to query using pick_active_api_key RPC first (same as orchestrator)
-      try {
-        const { data: rpcData } = await supabaseAdmin.rpc("pick_active_api_key", {
-          _provider: "gemini",
-          _agency_id: agency_id,
-        });
-        if (rpcData && rpcData.length > 0) {
-          let val = rpcData[0].key_value;
-          const keySecret = Deno.env.get("API_KEY_SECRET") || "travelos_default_secret_key_123!";
-          if (val && val.includes("=====")) {
-            val = await decryptData(val, keySecret);
-          }
-          if (val) geminiApiKey = val;
-        }
-      } catch (rpcErr) {
-        console.error(
-          "RPC pick_active_api_key failed, falling back to direct table select:",
-          rpcErr,
-        );
-      }
-
-      // Fallback to direct select via service role client (bypasses RLS)
-      if (!geminiApiKey) {
-        const { data: agencyKeyData } = await supabaseAdmin
-          .from("api_keys")
-          .select("key_value")
-          .eq("agency_id", agency_id)
-          .eq("provider", "gemini")
-          .maybeSingle();
-        if (agencyKeyData?.key_value) {
-          geminiApiKey = agencyKeyData.key_value;
-        }
-      }
-    }
-
-    if (!geminiApiKey) {
-      throw new Error("Chave do Gemini não configurada.");
-    }
-
-    const systemPrompt = `Você é uma Inteligência Artificial especializada em analisar documentos de viagens (Passaportes, Vistos Consulares, Passagens Aéreas).
-Sua tarefa é ler a imagem ou PDF do documento enviado e extrair de forma estruturada as seguintes informações em formato JSON restrito.
-
-Campos que você DEVE extrair (se aplicável para o tipo de documento):
-1. **document_number**: Número do documento (passaporte, visto, etc).
-2. **full_name**: Nome completo do titular do documento.
-3. **birth_date**: Data de nascimento (formato YYYY-MM-DD).
-4. **nationality**: Nacionalidade do titular.
-5. **expiration_date**: Data de validade/expiração do documento (formato YYYY-MM-DD).
-6. **issue_date**: Data de emissão (formato YYYY-MM-DD).
-7. **issuing_country**: País emissor do documento.
-
-Retorne APENAS um objeto JSON com essas chaves. Sem markdown. Se não encontrar um campo, retorne null.
-Exemplo de retorno esperado:
-{
-  "document_number": "FL123456",
-  "full_name": "JOÃO SILVA PINTO",
-  "birth_date": "1990-05-15",
-  "nationality": "Brasileira",
-  "expiration_date": "2030-10-22",
-  "issue_date": "2020-10-22",
-  "issuing_country": "Brasil"
-}
-`;
-
-    const parts = [
-      { text: systemPrompt },
-      {
-        inlineData: {
-          mimeType: mime || "image/jpeg",
-          data: file_base64,
-        },
-      },
-    ];
-
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
-    const aiResponse = await fetch(geminiUrl, {
+    // Invocação centralizada via central ai-orchestrator Edge Function
+    const orchestratorUrl = `${supabaseUrl}/functions/v1/ai-orchestrator`;
+    const aiResponse = await fetch(orchestratorUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.1 } }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceRoleKey}`,
+      },
+      body: JSON.stringify({
+        action: "completion",
+        agency_id,
+        prompt: "Por favor, extraia os dados deste documento de passageiro.",
+        file_base64,
+        mime,
+        jsonMode: true,
+        feature: "ocr_passenger",
+        module: "ocr-passenger-document",
+        capability: "ocr",
+      }),
     });
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
-      throw new Error(`Gemini API error: ${errorText}`);
+      throw new Error(`Erro no orquestrador de IA: ${errorText}`);
     }
 
     const aiData = await aiResponse.json();
-    let resultText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    let resultText = aiData.result;
 
     if (!resultText) {
       throw new Error("A IA não retornou nenhum texto.");
     }
 
-    // Limpar delimitadores de markdown json se houver
     resultText = resultText
       .replace(/\`\`\`json/gi, "")
       .replace(/\`\`\`/g, "")

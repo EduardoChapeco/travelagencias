@@ -6,7 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") || "";
 const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY") || ""; // Chave do Firecrawl
 
 async function checkMembership(
@@ -194,28 +193,28 @@ Regras:
 - Retorne apenas o array JSON, pronto para JSON.parse()
 - Gere pelo menos 5 blocos para uma boa página`;
 
-    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const orchestratorUrl = `${supabaseUrl}/functions/v1/ai-orchestrator`;
+    const aiRes = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-        "HTTP-Referer": "https://travelos.com",
-        "X-Title": "TravelOS CMS",
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: sourceContext },
-        ],
-        temperature: 0.3,
+        action: "completion",
+        agency_id: agency_id,
+        prompt: sourceContext,
+        systemPrompt,
+        jsonMode: true,
+        module: "generate_site_ai",
+        capability: "completion",
       }),
     });
 
-    if (!aiRes.ok) throw new Error("Erro na IA: " + (await aiRes.text()));
+    if (!aiRes.ok) throw new Error("Erro no orquestrador de IA: " + (await aiRes.text()));
 
     const aiData = await aiRes.json();
-    let rawText = aiData.choices[0].message.content.trim();
+    let rawText = aiData.result.trim();
 
     // Remover blocos markdown se o modelo for teimoso
     if (rawText.startsWith("```")) {
