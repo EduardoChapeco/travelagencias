@@ -1050,22 +1050,22 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   }
 
   async function handleDeleteOperator(operatorId: string, operatorName: string) {
-    const ok = await confirm({
+    confirm({
       title: `Remover operadora "${operatorName}"?`,
       description:
         "Todas as credenciais desta operadora serão removidas permanentemente. As reservas já importadas não serão afetadas.",
-      confirmLabel: "Sim, remover",
-      variant: "danger",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deleteOperator(agencyId, operatorId);
+          toast.success(`Operadora "${operatorName}" removida.`);
+          if (selectedOperatorId === operatorId) setSelectedOperatorId(null);
+          qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
+        } catch (err: any) {
+          toast.error(err.message || "Erro ao remover operadora");
+        }
+      },
     });
-    if (!ok) return;
-    try {
-      await deleteOperator(agencyId, operatorId);
-      toast.success(`Operadora "${operatorName}" removida.`);
-      if (selectedOperatorId === operatorId) setSelectedOperatorId(null);
-      qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao remover operadora");
-    }
   }
 
   async function handleTestConnection(operatorId: string) {

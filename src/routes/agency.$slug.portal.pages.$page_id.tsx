@@ -49,6 +49,7 @@ import {
   Smartphone,
   ExternalLink,
   PanelLeft,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
@@ -193,7 +194,7 @@ function PageEditorRoute() {
 
   const isNew = page_id === "new";
 
-  const { data: initialData, isLoading } = useQuery({
+  const { data: initialData, isLoading, isError, error } = useQuery({
     enabled: !!agency && !isNew,
     queryKey: ["portal-page", page_id],
     queryFn: () => fetchPortalPage(page_id),
@@ -544,6 +545,27 @@ function PageEditorRoute() {
   if (isLoading) {
     return <div className="p-8 text-sm text-muted-foreground">Carregando editor...</div>;
   }
+
+  if (isError || (!isNew && !initialData)) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Página</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-md">
+          {error instanceof Error ? error.message : "Página não encontrada ou acesso negado."}
+        </p>
+        <button
+          onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
+          className="mt-4 h-8 px-4 rounded-lg bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+        >
+          Voltar às Páginas
+        </button>
+      </div>
+    );
+  }
+
   if (!agency) return null;
 
   async function saveDraftInternal() {

@@ -15,6 +15,7 @@ import {
   Upload,
   Download,
   AlertTriangle,
+  AlertCircle,
   Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -275,6 +276,19 @@ function PassengersPage() {
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <ConfirmDialog />
+      {(list.isError || tripQ.isError || docsQ.isError) && (
+        <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+          <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+          </div>
+          <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Passageiros</h3>
+          <p className="text-xs text-red-600 mt-1">
+            {(list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) instanceof Error
+              ? ((list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) as Error).message
+              : "Erro desconhecido."}
+          </p>
+        </div>
+      )}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Rooming List</h1>

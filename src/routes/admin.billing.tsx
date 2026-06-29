@@ -4,6 +4,7 @@ import { fetchBillingSummary } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { money } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/admin/billing")({
   head: () => ({ meta: [{ title: "Faturamento · Admin" }] }),
@@ -22,6 +23,17 @@ function Page() {
         title="Faturamento"
         description="Receita, despesa e pendências globais por agência."
       />
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Faturamento</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
+
       {q.isLoading && (
         <div className="flex flex-col gap-2 mt-4">
           <Skeleton className="h-10 w-full" />

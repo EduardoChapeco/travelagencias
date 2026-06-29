@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Copy, Percent, X, PlusCircle } from "lucide-react";
+import { Plus, Trash2, Copy, Percent, X, PlusCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
   fetchTeamMembers,
@@ -175,6 +175,18 @@ function TeamPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        {(members.isError || invites.isError) && (
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Equipe</h3>
+            <p className="text-xs text-red-600 mt-1">
+              {members.isError && members.error instanceof Error ? members.error.message : invites.isError && invites.error instanceof Error ? invites.error.message : "Erro desconhecido."}
+            </p>
+          </div>
+        )}
+
         <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Membros
         </h3>

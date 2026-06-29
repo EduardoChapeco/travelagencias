@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Users, Search, Settings2 } from "lucide-react";
+import { Plus, Users, Search, Settings2, AlertCircle } from "lucide-react";
 import { fetchGroupTours } from "@/services/tours";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -104,8 +104,14 @@ function GroupToursPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
-        {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-        {filtered.length === 0 && !q.isLoading && (
+        {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
+        {q.isError && (
+          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
+            <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
+            <span>Erro ao carregar lista de excursões. Verifique sua conexão ou permissões.</span>
+          </div>
+        )}
+        {filtered.length === 0 && !q.isLoading && !q.isError && (
           <EmptyState
             title="Sem excursões"
             description="Crie uma excursão para abrir inscrições."

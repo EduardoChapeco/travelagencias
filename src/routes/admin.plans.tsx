@@ -18,6 +18,7 @@ import {
   Shield,
   ChevronDown,
   ChevronUp,
+  AlertCircle,
 } from "lucide-react";
 import { fetchPlans, deletePlan, togglePlanActive, savePlan } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
@@ -134,6 +135,23 @@ function Page() {
           </PrimaryButton>
         }
       />
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Planos</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
+
+      {q.isLoading && (
+        <div className="mt-6 flex flex-col gap-2">
+          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+        </div>
+      )}
 
       {!q.isLoading && plans.length === 0 && (
         <EmptyState

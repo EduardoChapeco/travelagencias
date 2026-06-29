@@ -302,6 +302,18 @@ function VouchersPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+            {vouchersQ.isError && (
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+                <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                </div>
+                <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Vouchers</h3>
+                <p className="text-xs text-red-600 mt-1">
+                  {vouchersQ.error instanceof Error ? vouchersQ.error.message : "Erro desconhecido."}
+                </p>
+              </div>
+            )}
+
             {vouchersQ.isLoading && (
               <div className="text-sm text-muted-foreground p-4">Carregando vouchers…</div>
             )}
@@ -518,6 +530,18 @@ function VouchersPage() {
 
           {/* Fila list table */}
           <div className="flex-1 overflow-auto p-4 md:p-6 min-h-0">
+            {flightsQ.isError && (
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
+                <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                </div>
+                <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Fila de Voos</h3>
+                <p className="text-xs text-red-600 mt-1">
+                  {flightsQ.error instanceof Error ? flightsQ.error.message : "Erro desconhecido."}
+                </p>
+              </div>
+            )}
+
             {flightsQ.isLoading && (
               <div className="text-sm text-muted-foreground p-4 animate-pulse">
                 Carregando fila operacional de voos…

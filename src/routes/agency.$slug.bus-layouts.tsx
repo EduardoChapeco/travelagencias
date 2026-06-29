@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
+import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({
   head: () => ({ meta: [{ title: "Frota & Ônibus · TravelOS" }] }),
@@ -23,6 +24,7 @@ function BusLayoutsPage() {
   const [qSearch, setQSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+  const [editingLayout, setEditingLayout] = useState<any | null>(null);
 
   const q = useQuery({
     enabled: !!agency,
@@ -126,6 +128,17 @@ function BusLayoutsPage() {
                     </div>
                   </div>
                 </div>
+                <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
+                   <button 
+                     onClick={(e) => { e.preventDefault(); setEditingLayout(l); }} 
+                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2 py-1 rounded-sm hover:bg-surface-alt"
+                   >
+                     <Settings2 className="h-3 w-3" /> Editar Cadastro
+                   </button>
+                   <span className="text-[11px] font-semibold text-brand flex items-center gap-1 px-2 py-1">
+                     Mapa de Assentos →
+                   </span>
+                </div>
               </Link>
             ))}
           </div>
@@ -150,6 +163,17 @@ function BusLayoutsPage() {
           moduleKey="bus-layouts"
           moduleName="Frota"
           agencyId={agency.id}
+        />
+      )}
+
+      {editingLayout && agency && (
+        <EditVehicleModal
+          layout={editingLayout}
+          onClose={() => setEditingLayout(null)}
+          onSaved={() => {
+            setEditingLayout(null);
+            qc.invalidateQueries({ queryKey: ["bus-layouts", agency.id] });
+          }}
         />
       )}
     </div>

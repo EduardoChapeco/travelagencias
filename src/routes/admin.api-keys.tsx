@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
-import { Plus, Trash2, KeyRound } from "lucide-react";
+import { Plus, Trash2, KeyRound, AlertCircle } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton, GhostButton } from "@/components/ui/form";
 import {
@@ -95,6 +95,16 @@ function Page() {
         title="Chaves Globais"
         description="Gerencie chaves de API padrão do sistema (Gemini, OpenAI, Resend, etc.) usadas como fallback quando as agências não fornecem chaves próprias."
       />
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Chaves</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 space-y-4 max-w-5xl">
         <form

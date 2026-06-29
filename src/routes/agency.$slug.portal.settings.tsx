@@ -13,6 +13,7 @@ import {
   Layout,
   Eye,
   ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -192,6 +193,18 @@ function PortalSettingsPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        {q.isError && (
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Configurações</h3>
+            <p className="text-xs text-red-600 mt-1">
+              {q.error instanceof Error ? q.error.message : "Erro desconhecido."}
+            </p>
+          </div>
+        )}
+
         <form onSubmit={save} id="portal-settings-form" className="space-y-0">
           {/* ── SEO GLOBAL ───────────────────────────────────────────── */}
           {tab === "seo" && (

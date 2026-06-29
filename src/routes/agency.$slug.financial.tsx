@@ -36,6 +36,7 @@ function FinancialLayout() {
     { to: "/agency/$slug/financial/invoices" as any, label: "Faturas" },
     { to: "/agency/$slug/financial/groups" as any, label: "Grupos e Excursões" },
     { to: "/agency/$slug/financial/ledger" as any, label: "Livro-Razão" },
+    { to: "/agency/$slug/financial/operators" as any, label: "Faturamento Operadoras" },
   ] as const;
 
   return (

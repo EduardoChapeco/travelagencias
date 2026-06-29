@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus } from "lucide-react";
+import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus, AlertCircle } from "lucide-react";
 import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -33,7 +33,7 @@ function SupportRoute() {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [ticketSheetOpen, setTicketSheetOpen] = useState(false);
 
-  const { data: tickets, isLoading } = useQuery({
+  const { data: tickets, isLoading, isError, error } = useQuery({
     queryKey: ["support_tickets_advanced", agency?.id],
     enabled: !!agency,
     queryFn: async () => {
@@ -136,6 +136,17 @@ function SupportRoute() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col space-y-4">
+        {isError && (
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 shrink-0">
+            <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
+              <AlertCircle className="h-5 w-5 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Tickets</h3>
+            <p className="text-xs text-red-600 mt-1 max-w-sm">
+              {error instanceof Error ? error.message : "Erro desconhecido ao buscar tickets."}
+            </p>
+          </div>
+        )}
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
           <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">

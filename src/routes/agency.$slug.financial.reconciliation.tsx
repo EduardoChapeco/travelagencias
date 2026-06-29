@@ -177,11 +177,13 @@ function ReconciliationPage() {
           agency_id: agency!.id,
           cash_register_id: regId,
           cash_session_id: sessId || null,
+          trip_id: target.payment_plan?.trip?.id || null,
+          payment_installment_id: target.id || null,
           amount: target.amount,
           type: "receipt",
           payment_method: target.payment_method || "pix",
           notes: `Conciliação Parcela #${target.number} - Viagem ${target.payment_plan?.trip?.code || "S/N"}`,
-        });
+        } as any);
 
         if (txErr) console.warn("Could not insert transaction, continuing:", txErr.message);
       } catch (err: any) {
@@ -273,6 +275,11 @@ function ReconciliationPage() {
       {receiptsQ.isLoading ? (
         <div className="text-center py-10 text-xs text-muted-foreground animate-pulse">
           Carregando comprovantes...
+        </div>
+      ) : receiptsQ.isError ? (
+        <div className="border border-red-200 bg-red-50 text-red-800 rounded-2xl p-6 text-center text-xs flex items-center justify-center gap-2">
+          <AlertCircle className="w-4 h-4 text-red-600" />
+          <span>Erro ao carregar os comprovantes pendentes. Por favor, recarregue a página ou verifique suas permissões.</span>
         </div>
       ) : filtered.length === 0 ? (
         <div className="border border-dashed border-border rounded-2xl py-12 text-center text-xs text-muted-foreground bg-surface">

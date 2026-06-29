@@ -13,6 +13,7 @@ import {
   Settings2,
   ChevronDown,
   BookOpen,
+  AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -163,6 +164,18 @@ function ContractsPage() {
 
             <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
+
+              {q.isError && (
+                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+                  <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                  </div>
+                  <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Contratos</h3>
+                  <p className="text-xs text-red-600 mt-1">
+                    {q.error instanceof Error ? q.error.message : "Erro desconhecido."}
+                  </p>
+                </div>
+              )}
 
               {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
                 <EmptyState

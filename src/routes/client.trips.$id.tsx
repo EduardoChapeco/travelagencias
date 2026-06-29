@@ -219,12 +219,11 @@ function ClientTripDetail() {
         return { accepted: true, doc: null };
       }
 
-      // 2. Verificar se o cliente já aceitou este documento específico
       const { data: records, error } = await supabase
         .from("legal_acceptances")
         .select("id")
         .eq("document_id", terms.id)
-        .eq("client_id", tripQ.data!.client_id)
+        .eq("client_id", tripQ.data!.client_id || "")
         .maybeSingle();
 
       if (error) {
@@ -446,7 +445,7 @@ function ClientTripDetail() {
       const { error } = await supabase.rpc("record_legal_acceptance", {
         _document_id: docId,
         _agency_id: tripQ.data!.agency_id,
-        _client_id: tripQ.data!.client_id,
+        _client_id: tripQ.data!.client_id || "",
         _context: "client_portal_trip",
       });
       if (error) throw error;

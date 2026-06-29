@@ -192,9 +192,77 @@ export async function createPaymentPlan(payload: CreatePlanPayload): Promise<voi
 }
 
 export async function markInstallmentPaid(instId: string): Promise<void> {
+  const { data: inst, error: instGetErr } = await supabase
+    .from("payment_installments")
+    .select("*, payment_plans(*, trips(*))")
+    .eq("id", instId)
+    .single();
+  if (instGetErr) throw new Error(instGetErr.message);
+
+  const agencyId = (inst.payment_plans as any)?.trips?.agency_id;
+  const tripId = (inst.payment_plans as any)?.trips?.id;
+  const tripCode = (inst.payment_plans as any)?.trips?.code;
+
+  if (!agencyId) throw new Error("Não foi possível encontrar a agência vinculada.");
+
+  // Update status
   const { error } = await supabase
     .from("payment_installments")
     .update({ status: "paid", paid_at: new Date().toISOString() } as never)
     .eq("id", instId);
   if (error) throw new Error(error.message);
+
+  // Find active cash session or bank account to register the cash flow
+  const { data: registers } = await supabase
+    .from("cash_registers")
+    .select("*")
+    .eq("agency_id", agencyId)
+    .eq("is_active", true);
+
+  if (!inst.is_third_party && registers && registers.length > 0) {
+    const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
+    let targetRegId = "";
+    let targetSessId = "";
+
+    if (physicalIds.length > 0) {
+      const { data: session } = await supabase
+        .from("cash_sessions")
+        .select("*")
+        .in("cash_register_id", physicalIds)
+        .eq("status", "open")
+        .limit(1)
+        .maybeSingle();
+      if (session) {
+        targetRegId = session.cash_register_id;
+        targetSessId = session.id;
+      }
+    }
+
+    if (!targetRegId) {
+      const bank = registers.find((r: any) => r.type === "bank_account");
+      if (bank) {
+        targetRegId = bank.id;
+      } else {
+        targetRegId = registers[0].id;
+      }
+    }
+
+    const { error: txErr } = await supabase
+      .from("cash_transactions")
+      .insert({
+        agency_id: agencyId,
+        cash_register_id: targetRegId,
+        cash_session_id: targetSessId || null,
+        trip_id: tripId,
+        payment_installment_id: instId,
+        amount: Number(inst.amount),
+        type: "receipt",
+        payment_method: inst.payment_method || "pix",
+        notes: `Pagamento Parcela #${inst.number} - Viagem ${tripCode || "S/N"}`,
+        transaction_date: new Date().toISOString()
+      } as any);
+    if (txErr) {
+      console.warn("Could not record cash transaction:", txErr.message);
+    }
+  }
 }

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2 } from "lucide-react";
+import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2, AlertCircle } from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
@@ -195,6 +195,18 @@ function VisasPage() {
       </HeaderPortal>
 
       <div className="flex-1 overflow-x-auto pb-4 scrollbar-thin px-4 md:px-6 pt-4">
+        {(stagesQ.isError || visasQ.isError) && (
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Processos de Vistos</h3>
+            <p className="text-xs text-red-600 mt-1">
+              {stagesQ.isError && stagesQ.error instanceof Error ? stagesQ.error.message : visasQ.isError && visasQ.error instanceof Error ? visasQ.error.message : "Erro desconhecido."}
+            </p>
+          </div>
+        )}
+
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}

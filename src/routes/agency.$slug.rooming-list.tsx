@@ -611,6 +611,22 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       {expanded && (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
           <div className="p-5 space-y-6 bg-surface/10 border-b border-border">
+            {(roomsQ.isLoading || enrolQ.isLoading) && (
+              <div className="text-center py-4 text-xs text-muted-foreground animate-pulse">
+                Carregando dados dos quartos e passageiros...
+              </div>
+            )}
+
+            {(roomsQ.isError || enrolQ.isError) && (
+              <div className="flex items-center gap-2 p-3 text-xs border border-red-200 bg-red-50 text-red-700 rounded-lg">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>
+                  Falha ao carregar dados dos quartos:{" "}
+                  {roomsQ.isError && roomsQ.error instanceof Error ? roomsQ.error.message : enrolQ.isError && enrolQ.error instanceof Error ? enrolQ.error.message : "Erro desconhecido."}
+                </span>
+              </div>
+            )}
+
             {/* Unallocated section */}
             <DroppableUnallocated>
               <div className="flex items-center justify-between mb-3">
@@ -1161,6 +1177,18 @@ function RoomingListDashboard() {
 
       {/* Content list */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+        {toursQ.isError && (
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Grupos</h3>
+            <p className="text-xs text-red-600 mt-1">
+              {toursQ.error instanceof Error ? toursQ.error.message : "Erro desconhecido."}
+            </p>
+          </div>
+        )}
+
         {toursQ.isLoading && (
           <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent" />

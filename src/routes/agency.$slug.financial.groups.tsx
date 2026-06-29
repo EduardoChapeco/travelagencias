@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useState } from "react";
 import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/financial/groups")({
@@ -246,8 +246,14 @@ export function GroupFinancialsDashboard() {
             </div>
           ) : null}
 
-          <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+          {paginatedToursQ.isError ? (
+            <div className="p-8 text-center text-xs text-red-800 bg-red-50/20 flex items-center justify-center gap-2 border border-red-100 rounded-xl m-4">
+              <AlertCircle className="w-4 h-4 text-red-650" />
+              <span>Erro ao carregar a listagem comparativa de grupos. Verifique sua conexão ou permissões.</span>
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Excursão</th>
                 <th className="px-5 py-3">Período</th>
@@ -337,8 +343,9 @@ export function GroupFinancialsDashboard() {
                   </tr>
                 ))
               )}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Pagination Footer */}
@@ -348,23 +355,23 @@ export function GroupFinancialsDashboard() {
               Mostrando {toursDataMap.length} de {totalCount} resultados
             </span>
             <div className="flex items-center gap-2">
-              <button
+              <GhostButton
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Anterior
-              </button>
+              </GhostButton>
               <span className="text-xs text-muted-foreground font-semibold">
                 Página {page} de {totalPages}
               </span>
-              <button
+              <GhostButton
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Próxima
-              </button>
+              </GhostButton>
             </div>
           </div>
         )}
@@ -395,7 +402,16 @@ export function GroupFinancialsDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {ledger.length === 0 ? (
+              {ledgerQ.isError ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-xs text-red-800 bg-red-50/20">
+                    <div className="flex items-center justify-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-650" />
+                      <span>Erro ao carregar o extrato de lançamentos de viagens em grupo.</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : ledger.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-5 py-8 text-center text-xs text-muted-foreground">
                     Nenhuma transação financeira vinculada a grupos encontrada.

@@ -12,6 +12,7 @@ import {
   Download,
   ExternalLink,
   Eye,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -573,6 +574,21 @@ function TripContract() {
 
   if (tripQ.isLoading || contractQ.isLoading) {
     return <div className="p-6 text-sm text-muted-foreground">Carregando…</div>;
+  }
+
+  if (tripQ.isError || contractQ.isError) {
+    const errMsg = tripQ.isError
+      ? tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"
+      : contractQ.error instanceof Error ? contractQ.error.message : "Erro desconhecido";
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Contrato</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-md">{errMsg}</p>
+      </div>
+    );
   }
 
   if (!tripQ.data) {

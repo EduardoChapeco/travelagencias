@@ -10,6 +10,7 @@ import {
   FileText,
   Loader2,
   CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
@@ -228,6 +229,21 @@ function TripFinancial() {
   });
 
   if (tripQ.isLoading) return <div className="p-4 text-sm text-muted-foreground">Carregando…</div>;
+
+  if (tripQ.isError || recordsQ.isError || planQ.isError) {
+    const errQ = tripQ.isError ? tripQ : recordsQ.isError ? recordsQ : planQ;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 m-6">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Dados Financeiros</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-sm">
+          {errQ.error instanceof Error ? errQ.error.message : "Erro desconhecido."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">

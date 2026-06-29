@@ -248,6 +248,21 @@ function PublicProposalView() {
       </div>
     );
   }
+
+  if (q.isError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-alt/30 px-6 text-center">
+        <div className="max-w-md rounded-2xl border border-red-200 bg-red-50/50 p-8 flex flex-col items-center">
+          <AlertCircle className="mx-auto h-12 w-12 text-red-650 mb-4" />
+          <h1 className="text-xl font-bold tracking-tight text-red-800">Falha na Conexão</h1>
+          <p className="mt-2 text-sm text-red-650 leading-relaxed">
+            {q.error instanceof Error ? q.error.message : "Erro ao obter dados da proposta do servidor."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!q.data) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-alt/30 px-6 text-center">

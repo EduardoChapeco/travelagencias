@@ -162,21 +162,21 @@ function QuoteDetailWorkspacePage() {
   });
 
   // 1. Fetch Quote Details
-  const { data: quote, isLoading: isQuoteLoading } = useQuery({
+  const { data: quote, isLoading: isQuoteLoading, isError: isQuoteError, error: quoteError } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-details", id],
     queryFn: () => fetchQuoteRequestDetails(id),
   });
 
   // 2. Fetch Package Candidates
-  const { data: candidates = [], isLoading: isCandidatesLoading } = useQuery({
+  const { data: candidates = [], isLoading: isCandidatesLoading, isError: isCandidatesError, error: candidatesError } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-candidates", id],
     queryFn: () => fetchPackageCandidates(id),
   });
 
   // 2.2. Fetch Simulation Runs
-  const { data: simulationRuns = [], isLoading: isSimsLoading } = useQuery({
+  const { data: simulationRuns = [], isLoading: isSimsLoading, isError: isSimsError, error: simsError } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-simulations", id],
     queryFn: () => fetchSimulationRunsForQuote(id),
@@ -588,6 +588,21 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
     );
   }
 
+  if (isQuoteError) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center gap-2 p-6 text-center">
+        <AlertTriangle className="h-8 w-8 text-danger" />
+        <h1 className="text-lg font-semibold">Falha ao carregar cotação</h1>
+        <p className="text-xs text-muted-foreground max-w-sm">
+          {quoteError instanceof Error ? quoteError.message : "Erro desconhecido ao carregar cotação."}
+        </p>
+        <Link to="/agency/$slug/quotes" params={{ slug }} className="text-xs text-brand underline mt-2">
+          Voltar para Cotações
+        </Link>
+      </div>
+    );
+  }
+
   if (!quote) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center gap-2 p-6 text-center">
@@ -905,7 +920,15 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
           {rightTab === "matrix" ? (
             <div className="flex-1 overflow-x-auto overflow-y-hidden bg-surface flex py-6 px-6 gap-6">
-              {candidates.length === 0 ? (
+              {isCandidatesError ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-lg">
+                  <AlertTriangle className="h-8 w-8 text-red-655 mb-2" />
+                  <h3 className="text-sm font-semibold text-red-800">Falha ao carregar pacotes qualificados</h3>
+                  <p className="text-xs text-red-600 mt-1 max-w-sm">
+                    {candidatesError instanceof Error ? candidatesError.message : "Erro desconhecido"}
+                  </p>
+                </div>
+              ) : candidates.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
                   <TrendingUp className="h-12 w-12 text-muted-foreground/40 mb-3" />
                   <h3 className="text-sm font-semibold text-foreground">
@@ -1152,7 +1175,17 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 </PrimaryButton>
               </div>
 
-              {simulationRuns.length === 0 ? (
+              {isSimsError ? (
+                <div className="flex-1 border border-dashed border-red-200 rounded-xl flex flex-col items-center justify-center text-center p-8 bg-red-50/20">
+                  <AlertTriangle className="h-10 w-10 text-red-650 mb-2" />
+                  <h4 className="text-sm font-semibold text-red-800">
+                    Falha ao carregar simulação
+                  </h4>
+                  <p className="text-xs text-red-600 mt-1 max-w-sm">
+                    {simsError instanceof Error ? simsError.message : "Erro desconhecido"}
+                  </p>
+                </div>
+              ) : simulationRuns.length === 0 ? (
                 <div className="flex-1 border border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center p-8 bg-surface">
                   <Sparkles className="h-10 w-10 text-muted-foreground/30 mb-2 animate-pulse" />
                   <h4 className="text-sm font-semibold text-foreground">

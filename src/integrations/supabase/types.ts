@@ -39,54 +39,38 @@ export type Database = {
   }
   public: {
     Tables: {
-      ai_api_credentials: {
+      chatbot_flows: {
         Row: {
           id: string
           agency_id: string
-          provider: string
-          secret_reference: string
-          status: string
-          priority: number
-          fingerprint: string
-          cooldown_until: string | null
-          last_error_at: string | null
-          last_error_code: string | null
-          last_used_at: string | null
+          definition: Json
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           agency_id: string
-          provider: string
-          secret_reference: string
-          status?: string
-          priority?: number
-          fingerprint: string
-          cooldown_until?: string | null
-          last_error_at?: string | null
-          last_error_code?: string | null
-          last_used_at?: string | null
+          definition?: Json
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           agency_id?: string
-          provider?: string
-          secret_reference?: string
-          status?: string
-          priority?: number
-          fingerprint?: string
-          cooldown_until?: string | null
-          last_error_at?: string | null
-          last_error_code?: string | null
-          last_used_at?: string | null
+          definition?: Json
           created_at?: string
           updated_at?: string
         }
-        Relationships: []
-      }
+        Relationships: [
+          {
+            foreignKeyName: "chatbot_flows_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: true
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          }
+        ]
+      },
       ai_request_logs: {
         Row: {
           request_id: string
@@ -138,48 +122,6 @@ export type Database = {
           success?: boolean
           error_message?: string | null
           created_at?: string
-        }
-        Relationships: []
-      }
-      api_keys: {
-        Row: {
-          id: string
-          agency_id: string
-          provider: string
-          key_value: string
-          is_active: boolean
-          created_at: string
-          updated_at: string
-          category: string
-          operator_id: string | null
-          operator_name: string | null
-          metadata: Json | null
-        }
-        Insert: {
-          id?: string
-          agency_id: string
-          provider: string
-          key_value: string
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-          category?: string
-          operator_id?: string | null
-          operator_name?: string | null
-          metadata?: Json | null
-        }
-        Update: {
-          id?: string
-          agency_id?: string
-          provider?: string
-          key_value?: string
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-          category?: string
-          operator_id?: string | null
-          operator_name?: string | null
-          metadata?: Json | null
         }
         Relationships: []
       }
@@ -1150,6 +1092,10 @@ export type Database = {
           provider: string
           updated_at: string
           used_count: number
+          category: string
+          operator_id: string | null
+          operator_name: string | null
+          metadata: Json | null
         }
         Insert: {
           agency_id?: string | null
@@ -1163,6 +1109,10 @@ export type Database = {
           provider: string
           updated_at?: string
           used_count?: number
+          category?: string
+          operator_id?: string | null
+          operator_name?: string | null
+          metadata?: Json | null
         }
         Update: {
           agency_id?: string | null
@@ -1176,6 +1126,10 @@ export type Database = {
           provider?: string
           updated_at?: string
           used_count?: number
+          category?: string
+          operator_id?: string | null
+          operator_name?: string | null
+          metadata?: Json | null
         }
         Relationships: []
       }

@@ -11,8 +11,9 @@ import {
   ArrowUpCircle,
   Scale,
   RefreshCw,
+  AlertCircle,
 } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/financial/ledger")({
@@ -216,13 +217,13 @@ export function LedgerDashboard() {
 
             {/* Reset button */}
             {(search || accountCode) && (
-              <button
+              <GhostButton
                 onClick={resetFilters}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition cursor-pointer"
+                className="h-8 !px-2.5 hover:bg-surface-alt transition cursor-pointer"
                 title="Limpar filtros"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-              </button>
+              </GhostButton>
             )}
           </div>
         </div>
@@ -247,7 +248,16 @@ export function LedgerDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {entries.length === 0 ? (
+              {ledgerQ.isError ? (
+                <tr>
+                  <td colSpan={6} className="px-5 py-8 text-center text-xs text-red-800 bg-red-50/20">
+                    <div className="flex items-center justify-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-600" />
+                      <span>Erro ao carregar o razão contábil. Verifique suas permissões de acesso.</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : entries.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-8 text-center text-xs text-muted-foreground">
                     Nenhum lançamento contábil encontrado para os filtros informados.
@@ -294,23 +304,23 @@ export function LedgerDashboard() {
               Mostrando {entries.length} de {totalCount} resultados
             </span>
             <div className="flex items-center gap-2">
-              <button
+              <GhostButton
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Anterior
-              </button>
+              </GhostButton>
               <span className="text-xs text-muted-foreground font-semibold">
                 Página {page} de {totalPages}
               </span>
-              <button
+              <GhostButton
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="inline-flex h-8 items-center justify-center rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt disabled:opacity-50 transition cursor-pointer"
+                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Próxima
-              </button>
+              </GhostButton>
             </div>
           </div>
         )}

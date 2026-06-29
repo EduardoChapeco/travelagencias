@@ -37,6 +37,7 @@ import {
   AlertTriangle,
   Settings2,
   Plug,
+  AlertCircle,
 } from "lucide-react";
 import {
   Sheet,
@@ -151,7 +152,7 @@ function InboxModule() {
   }, []);
 
   // ── Fetch channels (Para filtros e modal Sheet) ────────────────────────────
-  const { data: channels = [], isLoading: isLoadingChannels } = useQuery({
+  const { data: channels = [], isLoading: isLoadingChannels, isError: isErrorChannels, error: errorChannels } = useQuery({
     queryKey: ["inbox-channels", agency?.id],
     queryFn: async () => {
       if (!agency?.id) return [];
@@ -166,7 +167,7 @@ function InboxModule() {
   });
 
   // ── Fetch Conversations ────────────────────────────────────────────────────
-  const { data: conversations = [], isLoading: isLoadingConversations } = useQuery({
+  const { data: conversations = [], isLoading: isLoadingConversations, isError: isErrorConversations, error: errorConversations } = useQuery({
     queryKey: ["conversations", agency?.id, filterChannel, mySessionsOnly],
     queryFn: async () => {
       if (!agency?.id) return [];
@@ -646,6 +647,19 @@ function InboxModule() {
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] w-full overflow-hidden bg-background">
+      {(isErrorChannels || isErrorConversations) && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
+          <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
+          <div>
+            <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
+            <p className="text-[11px] text-red-600">
+              {isErrorChannels && errorChannels instanceof Error ? errorChannels.message
+               : isErrorConversations && errorConversations instanceof Error ? errorConversations.message
+               : "Verifique as permissões e tente novamente."}
+            </p>
+          </div>
+        </div>
+      )}
       {/* ── LEFT COLUMN: Conversations List (Width 320px) ────────────────────── */}
       <aside className={cn(
         "flex flex-col border-r border-border shrink-0 bg-surface w-full md:w-[320px] h-full",

@@ -197,7 +197,7 @@ function BusLayoutEditorPage() {
   );
 }
 
-function EditVehicleModal({
+export function EditVehicleModal({
   layout,
   onClose,
   onSaved,
@@ -224,7 +224,7 @@ function EditVehicleModal({
     };
 
     // Ajuste adaptativo inteligente do seat_map se as dimensões mudaram
-    const dimChanged = rows !== layout.rows || cols !== layout.cols;
+    const dimChanged = Number(rows) !== Number(layout.rows) || Number(cols) !== Number(layout.cols);
     if (dimChanged && Array.isArray(layout.seat_map)) {
       const oldMap = layout.seat_map as SeatCell[];
       const oldCells = new Map(oldMap.map(cell => [`${cell.r}-${cell.c}`, cell]));
@@ -312,7 +312,7 @@ function EditVehicleModal({
           </Field>
         </div>
         <p className="text-xs text-muted-foreground pt-2">
-          Aviso: Alterar o número de fileiras ou colunas não altera automaticamente o mapa de assentos atual. Se desejar aplicar as novas dimensões ao mapa de assentos, utilize o botão "Recriar Matriz" na tela principal.
+          Aviso: Alterar o número de fileiras ou colunas preservará as poltronas existentes e adaptará a grade automaticamente.
         </p>
         <div className="flex justify-end gap-2 pt-4">
           <GhostButton type="button" onClick={onClose}>

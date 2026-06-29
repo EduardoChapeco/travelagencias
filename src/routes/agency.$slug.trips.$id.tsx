@@ -25,6 +25,7 @@ import {
   RefreshCw,
   Loader2,
   Download,
+  AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
@@ -257,6 +258,21 @@ function TripLayout() {
   });
 
   if (tripQ.isLoading) return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
+
+  if (tripQ.isError) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Viagem</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-md">
+          {tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"}
+        </p>
+      </div>
+    );
+  }
+
   if (!tripQ.data)
     return <div className="text-sm text-muted-foreground p-6">Viagem não encontrada.</div>;
 

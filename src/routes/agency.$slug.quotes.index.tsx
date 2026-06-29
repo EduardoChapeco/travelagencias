@@ -138,7 +138,7 @@ function QuotesIndexPage() {
   const [budget, setBudget] = useState(10000);
 
   // Queries
-  const { data: quotes = [], isLoading } = useQuery({
+  const { data: quotes = [], isLoading, isError: isQuotesError, error: quotesError } = useQuery({
     enabled: !!agency && activeTab === "quotes",
     queryKey: ["quote-requests", agency?.id],
     queryFn: () => fetchQuoteRequestsList(agency!.id),
@@ -177,7 +177,7 @@ function QuotesIndexPage() {
   const isSuperAdmin = userRole === "super_admin";
 
   // Query existing RAG documents
-  const { data: knowledgeDocs = [], isLoading: isDocsLoading } = useQuery({
+  const { data: knowledgeDocs = [], isLoading: isDocsLoading, isError: isDocsError, error: docsError } = useQuery({
     enabled: !!agency && activeTab === "knowledge",
     queryKey: ["knowledge-documents", agency?.id],
     queryFn: async () => {
@@ -191,26 +191,26 @@ function QuotesIndexPage() {
   });
 
   // ── Rules & AI tab queries ──────────────────────────────────────────────
-  const { data: agencyRules = [], isLoading: isRulesLoading } = useQuery({
+  const { data: agencyRules = [], isLoading: isRulesLoading, isError: isRulesError, error: rulesError } = useQuery({
     enabled: !!agency && activeTab === "rules",
     queryKey: ["agency-rules", agency?.id],
     queryFn: () => fetchAgencyRules(agency!.id),
   });
 
-  const { data: ruleCandidates = [], isLoading: isCandidatesLoading } = useQuery({
+  const { data: ruleCandidates = [], isLoading: isCandidatesLoading, isError: isCandidatesError, error: candidatesError } = useQuery({
     enabled: !!agency && activeTab === "rules",
     queryKey: ["rule-candidates", agency?.id],
     queryFn: () => fetchRuleCandidates(agency!.id),
   });
 
   // ── Promotions tab queries ──────────────────────────────────────────────
-  const { data: watchProfiles = [], isLoading: isWatchersLoading } = useQuery({
+  const { data: watchProfiles = [], isLoading: isWatchersLoading, isError: isWatchersError, error: watchersError } = useQuery({
     enabled: !!agency && activeTab === "promotions",
     queryKey: ["watch-profiles", agency?.id],
     queryFn: () => fetchWatchProfiles(agency!.id),
   });
 
-  const { data: promotionCandidates = [], isLoading: isPromotionsLoading } = useQuery({
+  const { data: promotionCandidates = [], isLoading: isPromotionsLoading, isError: isPromotionsError, error: promotionsError } = useQuery({
     enabled: !!agency && activeTab === "promotions",
     queryKey: ["promotion-candidates", agency?.id],
     queryFn: () => fetchPromotionCandidates(agency!.id),
@@ -691,7 +691,12 @@ Texto: "${aiText}"`;
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         {activeTab === "quotes" ? (
-          isLoading ? (
+          isQuotesError ? (
+            <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
+              <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+              <span>Erro ao obter workspace de cotações: {quotesError instanceof Error ? quotesError.message : "Erro desconhecido"}</span>
+            </div>
+          ) : isLoading ? (
             <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando cotações...
             </div>
@@ -797,7 +802,12 @@ Texto: "${aiText}"`;
             </div>
           )
         ) : /* Tab: RAG Knowledge Management */
-        isDocsLoading ? (
+        isDocsError ? (
+          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
+            <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+            <span>Erro ao carregar cérebro semântico: {docsError instanceof Error ? docsError.message : "Erro desconhecido"}</span>
+          </div>
+        ) : isDocsLoading ? (
           <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando cérebro semântico...
           </div>
@@ -889,6 +899,12 @@ Texto: "${aiText}"`;
         {/* ── Tab: Regras & IA ─────────────────────────────────────────────── */}
         {activeTab === "rules" && (
           <div className="p-4 md:p-6 space-y-8">
+            {(isRulesError || isCandidatesError) && (
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+                <span>Erro ao carregar regras ou sugestões de regras.</span>
+              </div>
+            )}
 
             {/* Sugestões da IA — rule_candidates pendentes */}
             <div>
@@ -1062,6 +1078,12 @@ Texto: "${aiText}"`;
         {/* ── Tab: Monitor de Promoções ────────────────────────────────────── */}
         {activeTab === "promotions" && (
           <div className="p-4 md:p-6 space-y-8">
+            {(isWatchersError || isPromotionsError) && (
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+                <span>Erro ao carregar monitor de alertas e promoções.</span>
+              </div>
+            )}
 
             {/* Alertas de Monitoramento — promotion_watch_profiles */}
             <div>

@@ -8,6 +8,7 @@ import {
   Ban,
   CreditCard,
   ShieldAlert,
+  AlertCircle,
 } from "lucide-react";
 import {
   fetchAdminAgencyDetail,
@@ -37,7 +38,27 @@ function Page() {
     queryFn: () => fetchAdminAgencyDetail(id),
   });
 
-  if (!q.data)
+  if (q.isError) {
+    return (
+      <div className="p-6">
+        <Link
+          to="/admin/agencies"
+          className="mb-3 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-3 w-3" /> Voltar para lista
+        </Link>
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-6 w-6 text-red-600 mb-2" />
+          <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Agência</h3>
+          <p className="text-xs text-red-600 mt-1">
+            {q.error instanceof Error ? q.error.message : "Erro ao carregar detalhes da agência."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (q.isLoading || !q.data)
     return (
       <div className="text-sm text-muted-foreground p-6">
         Carregando dados completos da agência…
@@ -46,7 +67,15 @@ function Page() {
   const { agency, priv, members, tripsCount, income, expense, subscription, plans } = q.data;
   if (!agency)
     return (
-      <div className="text-sm text-muted-foreground p-6">Agência não encontrada no sistema.</div>
+      <div className="p-6">
+        <Link
+          to="/admin/agencies"
+          className="mb-3 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-3 w-3" /> Voltar para lista
+        </Link>
+        <div className="text-sm text-muted-foreground mt-4">Agência não encontrada no sistema.</div>
+      </div>
     );
 
   const currentPlan = plans.find((p) => p.id === subscription?.plan_id);

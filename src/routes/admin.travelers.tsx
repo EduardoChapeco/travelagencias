@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { fetchAdminTravelers } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, Input, GhostButton } from "@/components/ui/form";
@@ -52,9 +52,21 @@ function Page() {
           </div>
         }
       />
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Viajantes</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
+
       {q.isLoading && !q.data && (
         <div className="text-sm text-muted-foreground p-6 text-center">Carregando viajantes...</div>
       )}
+
       {!q.isLoading && totalCount === 0 && (
         <EmptyState title={search ? "Nenhum viajante encontrado" : "Sem viajantes"} />
       )}

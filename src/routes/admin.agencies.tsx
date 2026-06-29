@@ -5,7 +5,7 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate } from "@/components/ui/form";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -96,6 +96,16 @@ function Page() {
           <Plus className="h-4 w-4" /> Nova Agência
         </button>
       </div>
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Agências</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
 
       {open && (
         <div

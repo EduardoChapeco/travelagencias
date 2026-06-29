@@ -14,6 +14,7 @@ import {
   Archive,
   Settings2,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -539,6 +540,17 @@ function TripsList() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 container">
+        {list.isError && (
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-4">
+            <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
+              <AlertCircle className="h-5 w-5 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Viagens</h3>
+            <p className="text-xs text-red-600 mt-1 max-w-sm">
+              {list.error instanceof Error ? list.error.message : "Erro desconhecido ao buscar viagens."}
+            </p>
+          </div>
+        )}
         {list.isLoading && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">

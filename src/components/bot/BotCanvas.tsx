@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -14,6 +14,9 @@ import 'reactflow/dist/style.css';
 import { Button } from '@/components/ui/button';
 import { Save, MessageSquare, HelpCircle, ArrowRightLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAgency } from '@/lib/agency-context';
 
 // Custom Nodes can be defined here in the future
 const initialNodes: Node[] = [
@@ -23,8 +26,64 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = [{ id: 'e1-2', source: '1', target: '2', animated: true }];
 
 export function BotCanvas() {
+  const { agency } = useAgency();
+  const qc = useQueryClient();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const q = useQuery({
+    queryKey: ["chatbot-flow", agency?.id],
+    enabled: !!agency?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("chatbot_flows")
+        .select("definition")
+        .eq("agency_id", agency!.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data?.definition) {
+        const def = data.definition as any;
+        return {
+          nodes: (def.nodes || []) as Node[],
+          edges: (def.edges || []) as Edge[],
+        };
+      }
+      return { nodes: initialNodes, edges: initialEdges };
+    },
+  });
+
+  useEffect(() => {
+    if (q.data) {
+      setNodes(q.data.nodes);
+      setEdges(q.data.edges);
+    }
+  }, [q.data, setNodes, setEdges]);
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (!agency?.id) throw new Error("Sem agência selecionada.");
+      const flow = { nodes, edges };
+      const { error } = await supabase
+        .from("chatbot_flows")
+        .upsert({
+          agency_id: agency.id,
+          definition: flow as any,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: "agency_id",
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Fluxo do chatbot salvo com sucesso!");
+      qc.invalidateQueries({ queryKey: ["chatbot-flow", agency?.id] });
+    },
+    onError: (err: any) => {
+      toast.error(`Erro ao salvar fluxo: ${err.message}`);
+    },
+  });
 
   const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
@@ -38,11 +97,16 @@ export function BotCanvas() {
   };
 
   const handleSave = () => {
-    const flow = { nodes, edges };
-    // Here we will save the flow to public.chatbot_flows.definition via Supabase
-    console.log("Saving flow:", flow);
-    toast.success("Fluxo salvo com sucesso!");
+    mutation.mutate();
   };
+
+  if (q.isLoading) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-background border rounded-md">
+        <span className="text-sm text-muted-foreground animate-pulse">Carregando fluxo do chatbot...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col bg-background border rounded-md overflow-hidden relative">

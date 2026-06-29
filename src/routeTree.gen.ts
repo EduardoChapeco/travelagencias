@@ -124,6 +124,7 @@ import { Route as AgencySlugPortalPagesRouteImport } from './routes/agency.$slug
 import { Route as AgencySlugPortalBlogRouteImport } from './routes/agency.$slug.portal.blog'
 import { Route as AgencySlugGroupToursIdRouteImport } from './routes/agency.$slug.group-tours.$id'
 import { Route as AgencySlugFinancialReconciliationRouteImport } from './routes/agency.$slug.financial.reconciliation'
+import { Route as AgencySlugFinancialOperatorsRouteImport } from './routes/agency.$slug.financial.operators'
 import { Route as AgencySlugFinancialLedgerRouteImport } from './routes/agency.$slug.financial.ledger'
 import { Route as AgencySlugFinancialInvoicesRouteImport } from './routes/agency.$slug.financial.invoices'
 import { Route as AgencySlugFinancialGroupsRouteImport } from './routes/agency.$slug.financial.groups'
@@ -743,6 +744,12 @@ const AgencySlugFinancialLedgerRoute =
     path: '/ledger',
     getParentRoute: () => AgencySlugFinancialRoute,
   } as any)
+const AgencySlugFinancialOperatorsRoute =
+  AgencySlugFinancialOperatorsRouteImport.update({
+    id: '/operators',
+    path: '/operators',
+    getParentRoute: () => AgencySlugFinancialRoute,
+  } as any)
 const AgencySlugFinancialInvoicesRoute =
   AgencySlugFinancialInvoicesRouteImport.update({
     id: '/invoices',
@@ -976,6 +983,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/ledger': typeof AgencySlugFinancialLedgerRoute
+  '/agency/$slug/financial/operators': typeof AgencySlugFinancialOperatorsRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
@@ -1108,6 +1116,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/ledger': typeof AgencySlugFinancialLedgerRoute
+  '/agency/$slug/financial/operators': typeof AgencySlugFinancialOperatorsRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
@@ -1248,6 +1257,7 @@ export interface FileRoutesById {
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
   '/agency/$slug/financial/invoices': typeof AgencySlugFinancialInvoicesRoute
   '/agency/$slug/financial/ledger': typeof AgencySlugFinancialLedgerRoute
+  '/agency/$slug/financial/operators': typeof AgencySlugFinancialOperatorsRoute
   '/agency/$slug/financial/reconciliation': typeof AgencySlugFinancialReconciliationRoute
   '/agency/$slug/group-tours/$id': typeof AgencySlugGroupToursIdRoute
   '/agency/$slug/portal/blog': typeof AgencySlugPortalBlogRoute
@@ -1391,6 +1401,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/ledger'
+    | '/agency/$slug/financial/operators'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
     | '/agency/$slug/portal/blog'
@@ -1523,6 +1534,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/ledger'
+    | '/agency/$slug/financial/operators'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
     | '/agency/$slug/portal/blog'
@@ -1662,6 +1674,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/financial/groups'
     | '/agency/$slug/financial/invoices'
     | '/agency/$slug/financial/ledger'
+    | '/agency/$slug/financial/operators'
     | '/agency/$slug/financial/reconciliation'
     | '/agency/$slug/group-tours/$id'
     | '/agency/$slug/portal/blog'
@@ -2545,6 +2558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugFinancialLedgerRouteImport
       parentRoute: typeof AgencySlugFinancialRoute
     }
+    '/agency/$slug/financial/operators': {
+      id: '/agency/$slug/financial/operators'
+      path: '/operators'
+      fullPath: '/agency/$slug/financial/operators'
+      preLoaderRoute: typeof AgencySlugFinancialOperatorsRouteImport
+      parentRoute: typeof AgencySlugFinancialRoute
+    }
     '/agency/$slug/financial/invoices': {
       id: '/agency/$slug/financial/invoices'
       path: '/invoices'
@@ -2867,6 +2887,7 @@ interface AgencySlugFinancialRouteChildren {
   AgencySlugFinancialGroupsRoute: typeof AgencySlugFinancialGroupsRoute
   AgencySlugFinancialInvoicesRoute: typeof AgencySlugFinancialInvoicesRoute
   AgencySlugFinancialLedgerRoute: typeof AgencySlugFinancialLedgerRoute
+  AgencySlugFinancialOperatorsRoute: typeof AgencySlugFinancialOperatorsRoute
   AgencySlugFinancialReconciliationRoute: typeof AgencySlugFinancialReconciliationRoute
 }
 
@@ -2876,6 +2897,7 @@ const AgencySlugFinancialRouteChildren: AgencySlugFinancialRouteChildren = {
   AgencySlugFinancialGroupsRoute: AgencySlugFinancialGroupsRoute,
   AgencySlugFinancialInvoicesRoute: AgencySlugFinancialInvoicesRoute,
   AgencySlugFinancialLedgerRoute: AgencySlugFinancialLedgerRoute,
+  AgencySlugFinancialOperatorsRoute: AgencySlugFinancialOperatorsRoute,
   AgencySlugFinancialReconciliationRoute:
     AgencySlugFinancialReconciliationRoute,
 }

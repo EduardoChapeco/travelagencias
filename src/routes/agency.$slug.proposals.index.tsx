@@ -15,6 +15,7 @@ import {
   History,
   Settings2,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
@@ -207,8 +208,14 @@ function ProposalsList() {
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
+        {list.isError && (
+          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
+            <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
+            <span>Erro ao carregar lista de propostas. Verifique sua conexão ou permissões.</span>
+          </div>
+        )}
 
-        {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
+        {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" && !list.isError ? (
           <EmptyState
             title="Nenhuma cotação ainda"
             description="Crie sua primeira proposta comercial."

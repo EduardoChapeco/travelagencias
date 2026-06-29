@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useCallback } from "react";
-import { Link2, Send, PlaneTakeoff } from "lucide-react";
+import { Link2, Send, PlaneTakeoff, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -199,8 +199,23 @@ function ProposalEditor() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao converter"),
   });
 
+  if (propQ.isError) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-xl border border-red-200 bg-red-50/50 m-6">
+        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+        </div>
+        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Proposta</h3>
+        <p className="text-xs text-red-600 mt-1 max-w-md">
+          {propQ.error instanceof Error ? propQ.error.message : "Erro desconhecido"}
+        </p>
+      </div>
+    );
+  }
+
   if (propQ.isLoading || !draft)
     return <div className="p-6 text-sm text-muted-foreground">Carregando proposta…</div>;
+
   if (!propQ.data) return <div className="p-6">Proposta não encontrada</div>;
 
   const publicUrl =

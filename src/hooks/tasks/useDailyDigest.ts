@@ -58,9 +58,13 @@ export function useDailyDigest(date: string) {
       // Se RPC retornou null/undefined (possível em banco vazio)
       if (!result) return emptyDigest(date);
 
+      const fullName = user.user?.user_metadata?.full_name || user.user?.user_metadata?.name || "";
+      const firstName = fullName.trim().split(" ")[0];
+      const greeting = firstName ? `Bom dia, ${firstName}!` : "Bom dia!";
+
       const digest: DailyDigest = {
         date: result.date || date,
-        greeting: `Bom dia!`, // TODO: usar nome real do usuário
+        greeting,
         summary: {
           tasks_today: result.tasks_today?.length || 0,
           meetings_today: result.agenda_events?.length || 0,

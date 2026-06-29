@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History } from "lucide-react";
+import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History, AlertCircle } from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
 import {
   Field,
@@ -129,6 +129,22 @@ function Page() {
         title="Politicas LGPD"
         description="Documentos juridicos e de conformidade da plataforma. Edite e publique Politica de Privacidade, Termos de Uso e DPA."
       />
+
+      {q.isError && (
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+          <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
+          <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Políticas</h3>
+          <p className="text-[11px] text-red-600 mt-0.5">
+            {q.error instanceof Error ? q.error.message : "Erro de conexão."}
+          </p>
+        </div>
+      )}
+
+      {q.isLoading && (
+        <div className="mt-6 flex flex-col gap-2">
+          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
         <nav className="space-y-1">

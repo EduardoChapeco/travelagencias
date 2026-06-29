@@ -194,8 +194,34 @@ function LeadDetailPage() {
     },
   });
 
-  if (!leadQ.data && !leadQ.isLoading) {
-    return null;
+  if (leadQ.isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+        <div className="p-6 text-sm text-muted-foreground">Carregando lead…</div>
+      </div>
+    );
+  }
+
+  if (leadQ.isError || !leadQ.data) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-3 p-8 rounded-2xl border border-red-200 bg-red-50 text-center max-w-sm">
+          <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+          </div>
+          <h3 className="font-bold text-red-800">Falha ao Carregar Lead</h3>
+          <p className="text-xs text-red-600">
+            {leadQ.isError && leadQ.error instanceof Error ? leadQ.error.message : "Lead não encontrado ou acesso negado."}
+          </p>
+          <button
+            onClick={() => navigate({ to: "/agency/$slug/crm", params: { slug } })}
+            className="mt-1 h-8 px-4 rounded-lg bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+          >
+            Voltar ao CRM
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const lead = leadQ.data as Lead;

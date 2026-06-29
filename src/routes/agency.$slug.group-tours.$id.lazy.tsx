@@ -95,6 +95,7 @@ function TourDetailPage() {
   const { id } = useParams({ from: "/agency/$slug/group-tours/$id" });
   const { agency } = useAgency();
   const qc = useQueryClient();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -275,6 +276,39 @@ function TourDetailPage() {
     },
     onError: (err: any) => {
       toast.error(`Erro ao aprovar inscrição: ${err.message}`);
+    },
+  });
+
+  const cancelEnrollment = useMutation({
+    mutationFn: async (e: any) => {
+      // 1. Update status to cancelled
+      const { error: err } = await supabase
+        .from("group_tour_enrollments")
+        .update({ status: "cancelled" })
+        .eq("id", e.id);
+      if (err) throw err;
+
+      // 2. Decrement reserved_seats on group_tours
+      const { data: tour } = await supabase
+        .from("group_tours")
+        .select("reserved_seats")
+        .eq("id", id)
+        .maybeSingle();
+      if (tour) {
+        const current = tour.reserved_seats || 0;
+        await supabase
+          .from("group_tours")
+          .update({ reserved_seats: Math.max(0, current - 1) })
+          .eq("id", id);
+      }
+    },
+    onSuccess: () => {
+      toast.success("Inscrição cancelada com sucesso!");
+      qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
+      qc.invalidateQueries({ queryKey: ["group-tour", id] });
+    },
+    onError: (err: any) => {
+      toast.error(`Erro ao cancelar: ${err.message}`);
     },
   });
 
@@ -685,37 +719,70 @@ function TourDetailPage() {
                           </td>
                           <td className="px-3 py-2.5 text-center flex items-center justify-center gap-1.5">
                             {e.status === "confirmed" && (
-                              <button
-                                onClick={() =>
-                                  setReceiptData({
-                                    payerName: e.passenger_name,
-                                    payerCpf: e.passenger_cpf,
-                                    amount: Number(e.total_paid) || Number(t.base_price) || 0,
-                                    paymentMethod: "pix",
-                                    paymentDate: e.created_at,
-                                    tripTitle: t.title,
-                                    seatNumber: e.seat_number,
-                                    agencyName: agency?.name || "",
-                                    agencyLogo: agency?.logo_url,
-                                    description: `Inscrição confirmada na excursão para ${t.destination || t.title}.`,
-                                    receiptId: e.id,
-                                    agencyId: agency?.id || "",
-                                    enrollmentId: e.id,
-                                  })
-                                }
-                                className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-brand/5 text-brand hover:bg-brand/10 text-[10px] font-bold transition-all cursor-pointer animate-pulse-once"
-                              >
-                                Recibo
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() =>
+                                    setReceiptData({
+                                      payerName: e.passenger_name,
+                                      payerCpf: e.passenger_cpf,
+                                      amount: Number(e.total_paid) || Number(t.base_price) || 0,
+                                      paymentMethod: "pix",
+                                      paymentDate: e.created_at,
+                                      tripTitle: t.title,
+                                      seatNumber: e.seat_number,
+                                      agencyName: agency?.name || "",
+                                      agencyLogo: agency?.logo_url,
+                                      description: `Inscrição confirmada na excursão para ${t.destination || t.title}.`,
+                                      receiptId: e.id,
+                                      agencyId: agency?.id || "",
+                                      enrollmentId: e.id,
+                                    })
+                                  }
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-brand/5 text-brand hover:bg-brand/10 text-[10px] font-bold transition-all cursor-pointer"
+                                >
+                                  Recibo
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    confirm({
+                                      title: "Cancelar Inscrição Confirmada",
+                                      description: `Atenção: A inscrição de "${e.passenger_name}" já foi confirmada. Deseja realmente cancelar? O assento será desocupado e a vaga liberada.`,
+                                      variant: "destructive",
+                                      onConfirm: () => cancelEnrollment.mutate(e),
+                                    });
+                                  }}
+                                  disabled={cancelEnrollment.isPending}
+                                  className="inline-flex h-7 w-7 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 transition-all cursor-pointer disabled:opacity-50"
+                                  title="Cancelar Inscrição"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             )}
                             {e.status === "pending" && (
-                              <button
-                                onClick={() => approveEnrollment.mutate(e)}
-                                disabled={approveEnrollment.isPending}
-                                className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
-                              >
-                                {approveEnrollment.isPending ? "Aprovando…" : "Aprovar"}
-                              </button>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() => approveEnrollment.mutate(e)}
+                                  disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                                >
+                                  Aprovar
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    confirm({
+                                      title: "Rejeitar Inscrição",
+                                      description: `Deseja rejeitar e cancelar a inscrição de "${e.passenger_name}"? O assento será liberado.`,
+                                      variant: "destructive",
+                                      onConfirm: () => cancelEnrollment.mutate(e),
+                                    });
+                                  }}
+                                  disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                                >
+                                  Rejeitar
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>
@@ -1073,6 +1140,7 @@ function TourDetailPage() {
           data={receiptData}
         />
       )}
+      <ConfirmDialog />
     </div>
   );
 }
@@ -2280,6 +2348,7 @@ function BusSeatManager({
   passengers: { id: string; passenger_name: string; seat_number: string | null }[];
   onChange: () => void;
 }) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [selectedSeat, setSelectedSeat] = useState<SeatCell | null>(null);
   const [selectedPax, setSelectedPax] = useState("");
 
@@ -2297,22 +2366,37 @@ function BusSeatManager({
 
   async function assignSeat() {
     if (!selectedSeat || !selectedPax) return toast.error("Selecione o assento e o passageiro.");
-    await supabase
-      .from("group_tour_enrollments")
-      .update({ seat_number: null })
-      .eq("group_tour_id", tourId)
-      .eq("seat_number", selectedSeat.label);
-    if (selectedPax !== "remove") {
-      const { error } = await supabase
+
+    const executeSeatAssignment = async () => {
+      await supabase
         .from("group_tour_enrollments")
-        .update({ seat_number: selectedSeat.label })
-        .eq("id", selectedPax);
-      if (error) return toast.error(error.message);
+        .update({ seat_number: null })
+        .eq("group_tour_id", tourId)
+        .eq("seat_number", selectedSeat.label);
+      if (selectedPax !== "remove") {
+        const { error } = await supabase
+          .from("group_tour_enrollments")
+          .update({ seat_number: selectedSeat.label })
+          .eq("id", selectedPax);
+        if (error) return toast.error(error.message);
+      }
+      toast.success("Assento atualizado!");
+      setSelectedSeat(null);
+      setSelectedPax("");
+      onChange();
+    };
+
+    const currentOccupant = passengers.find((p) => p.seat_number === selectedSeat.label);
+    if (currentOccupant && selectedPax !== "remove" && currentOccupant.id !== selectedPax) {
+      confirm({
+        title: "Assento já ocupado",
+        description: `O assento ${selectedSeat.label} já está reservado para "${currentOccupant.passenger_name}". Deseja substituí-lo por "${passengers.find((p) => p.id === selectedPax)?.passenger_name}"? O passageiro anterior ficará sem assento.`,
+        variant: "destructive",
+        onConfirm: executeSeatAssignment,
+      });
+    } else {
+      await executeSeatAssignment();
     }
-    toast.success("Assento atualizado!");
-    setSelectedSeat(null);
-    setSelectedPax("");
-    onChange();
   }
 
   if (qMap.isLoading)
@@ -2323,7 +2407,8 @@ function BusSeatManager({
     );
 
   const mapData = (qMap.data.seat_map as unknown as SeatCell[]) || [];
-  const cols = qMap.data.cols;
+  const maxCol = mapData.length > 0 ? Math.max(...mapData.map((c) => c.c)) + 1 : 5;
+  const cols = qMap.data.cols || maxCol;
 
   const validSeatLabels = new Set(mapData.filter((c) => c.type === "seat").map((c) => c.label));
   const orphans = passengers.filter(
@@ -2465,6 +2550,7 @@ function BusSeatManager({
           </div>
         </div>
       </div>
+      <ConfirmDialog />
     </div>
   );
 }

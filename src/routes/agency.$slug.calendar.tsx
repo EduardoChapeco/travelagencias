@@ -19,6 +19,7 @@ import {
   Sparkles,
   RefreshCw,
   Settings2,
+  AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -296,6 +297,18 @@ function CalendarPage() {
       </div>
 
       <div className="flex-1 overflow-auto bg-background p-2">
+        {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Agenda</h3>
+            <p className="text-xs text-red-600 mt-1">
+              {meetingsQ.isError && meetingsQ.error instanceof Error ? meetingsQ.error.message : usersQ.isError && usersQ.error instanceof Error ? usersQ.error.message : leadsQ.isError && leadsQ.error instanceof Error ? leadsQ.error.message : "Erro desconhecido."}
+            </p>
+          </div>
+        )}
+
         <div className="bg-surface border border-border/70 rounded-xl overflow-hidden h-full flex flex-col">
           <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
             {WEEKDAYS.map((day) => (

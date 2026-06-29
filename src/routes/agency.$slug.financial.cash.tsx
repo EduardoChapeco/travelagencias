@@ -345,6 +345,18 @@ function CashPage() {
     }
   };
 
+  if (registersQ.isError) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-surface-alt">
+        <div className="text-center space-y-3 max-w-md bg-surface p-6 rounded-xl border border-red-200 text-red-800">
+          <AlertCircle className="w-8 h-8 mx-auto text-red-600" />
+          <h3 className="text-sm font-bold">Erro ao carregar caixas</h3>
+          <p className="text-xs text-red-700">Não foi possível recuperar a lista de caixas da agência. Verifique sua conexão ou suas credenciais de acesso.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!registersQ.isLoading && registers.length === 0) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-background">
@@ -525,8 +537,16 @@ function CashPage() {
           </div>
         </div>
 
+        {/* Verification Error */}
+        {activeReg?.type === "physical" && sessionQ.isError && (
+          <div className="rounded-xl border border-red-200 bg-red-50/50 p-6 text-center text-red-800 flex items-center justify-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span className="text-xs font-semibold">Falha ao verificar status da sessão de caixa. Recarregue a página.</span>
+          </div>
+        )}
+
         {/* Closed Physical Register */}
-        {activeReg?.type === "physical" && !activeSession && !sessionQ.isLoading && (
+        {activeReg?.type === "physical" && !activeSession && !sessionQ.isLoading && !sessionQ.isError && (
           <div className="rounded-xl border border-dashed border-border bg-surface p-12 text-center">
             <Lock className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
             <h3 className="text-sm font-bold text-foreground">O caixa está fechado</h3>
@@ -565,6 +585,11 @@ function CashPage() {
 
             {transactionsQ.isLoading ? (
               <div className="p-8 text-center text-xs text-muted-foreground">Carregando...</div>
+            ) : transactionsQ.isError ? (
+              <div className="p-8 text-center text-xs text-red-700 flex items-center justify-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-red-600" />
+                <span>Erro ao carregar as movimentações do caixa.</span>
+              </div>
             ) : txList.length === 0 ? (
               <div className="p-8 text-center text-xs text-muted-foreground">
                 Nenhum lançamento registrado neste período.
