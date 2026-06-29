@@ -18,11 +18,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { cn } from "@/lib/utils";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 export function ListView({ filters }: { filters: TaskFiltersState }) {
   const qc = useQueryClient();
   const { data: tasks = [], isLoading, error } = useTasksQuery(filters);
   const { createTask } = useTaskMutations();
+  const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
 
   const toggleStatus = async (taskId: string, currentStatus: TaskStatus) => {
     const nextStatus: TaskStatus = currentStatus === "done" ? "todo" : "done";
@@ -80,6 +82,11 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
 
   return (
     <div className="space-y-6">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       {Object.entries(TASK_STATUSES).map(([statusKey, cfg]) => {
         const groupTasks = tasks.filter((t) => t.status === statusKey);
         
@@ -158,10 +165,14 @@ function StatusGroupSection({
                 {tasks.map((task) => {
                   const priorityCfg = TASK_PRIORITIES[task.priority] || { label: task.priority, color: "var(--muted)" };
                   return (
-                    <tr key={task.id} className={cn("hover:bg-[var(--surface-alt)]/20 transition-colors", task.status === "done" && "opacity-60 line-through")}>
+                    <tr
+                      key={task.id}
+                      onClick={() => setSelectedTask(task)}
+                      className={cn("hover:bg-[var(--surface-alt)]/30 transition-colors cursor-pointer", task.status === "done" && "opacity-60")}
+                    >
                       <td className="p-3 text-center">
                         <button
-                          onClick={() => toggleStatus(task.id, task.status as TaskStatus)}
+                          onClick={(e) => { e.stopPropagation(); toggleStatus(task.id, task.status as TaskStatus); }}
                           className={cn(
                             "flex h-4.5 w-4.5 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
                             task.status === "done" ? "bg-[var(--success)] border-[var(--success)] text-white" : "border-border hover:border-brand text-transparent"
@@ -171,7 +182,7 @@ function StatusGroupSection({
                         </button>
                       </td>
                       <td className="p-3 font-semibold text-foreground">
-                        {task.title}
+                        <span className="hover:text-brand transition-colors">{task.title}</span>
                       </td>
                       <td className="p-3">
                         <Badge variant="outline" style={{ color: priorityCfg.color, borderColor: `${priorityCfg.color}20`, backgroundColor: `${priorityCfg.color}05` }} className="text-[9px] font-bold">

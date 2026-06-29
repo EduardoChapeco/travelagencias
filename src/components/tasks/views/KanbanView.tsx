@@ -50,13 +50,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NewTaskModal } from "../NewTaskModal";
 import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 // ── KanbanCard ─────────────────────────────────────────────────────────────
-function KanbanCard({ task }: { task: TaskWithRelations }) {
+function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: TaskWithRelations) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: { type: "Task", task },
   });
+
+  // Distinguish click from drag
+  const dragMoved = useMemo(() => ({ moved: false }), [task.id]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -71,9 +75,11 @@ function KanbanCard({ task }: { task: TaskWithRelations }) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
+      onPointerDown={() => { dragMoved.moved = false; }}
+      onPointerMove={() => { dragMoved.moved = true; }}
+      onClick={() => { if (!dragMoved.moved && !isDragging) onOpen(task); }}
       className={cn(
-        "p-3 mb-2 bg-card border border-border/80 hover:border-border rounded-xl shadow-xs text-xs cursor-grab active:cursor-grabbing transition-all group",
+        "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-xl shadow-xs text-xs cursor-pointer active:cursor-grabbing transition-all group",
         isDragging && "opacity-40 scale-95"
       )}
     >
@@ -104,6 +110,15 @@ function KanbanCard({ task }: { task: TaskWithRelations }) {
             title={priorityDef.label}
           />
         )}
+      </div>
+      {/* Drag handle — on top to allow drag */}
+      <div
+        {...listeners}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-40 hover:!opacity-80 cursor-grab active:cursor-grabbing p-0.5 rounded transition-all"
+        title="Arrastar"
+      >
+        <GripVertical className="h-3 w-3 text-muted-foreground" />
       </div>
     </div>
   );
@@ -180,13 +195,13 @@ function QuickAddCard({
   );
 }
 
-// ── KanbanColumn ─────────────────────────────────────────────────────────────
 function KanbanColumn({
   status,
   tasks,
   onHide,
   onQuickAdd,
   onOpenNewTask,
+  onOpenTask,
   customLabel,
   onRename,
 }: {
@@ -195,6 +210,7 @@ function KanbanColumn({
   onHide: () => void;
   onQuickAdd: (title: string, status: TaskStatus) => void;
   onOpenNewTask: () => void;
+  onOpenTask: (t: TaskWithRelations) => void;
   customLabel?: string;
   onRename: (status: TaskStatus, newLabel: string) => void;
 }) {
@@ -330,14 +346,14 @@ function KanbanColumn({
         </div>
       </div>
 
-      {/* Column Cards — drop zone para tasks (use setColRef on outer for detection) */}
+      {/* Column Cards */}
       <div
         data-column-status={status}
         className="p-2 flex-1 overflow-y-auto min-h-0 bg-surface/50 rounded-b-xl"
       >
         <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
           {tasks.map((task) => (
-            <KanbanCard key={task.id} task={task} />
+            <KanbanCard key={task.id} task={task} onOpen={onOpenTask} />
           ))}
         </SortableContext>
 
@@ -369,6 +385,7 @@ export function KanbanView({
   const [tasks, setTasks] = useState<TaskWithRelations[]>([]);
   const [activeTask, setActiveTask] = useState<TaskWithRelations | null>(null);
   const [activeColumnId, setActiveColumnId] = useState<TaskStatus | null>(null);
+  const [detailTask, setDetailTask] = useState<TaskWithRelations | null>(null);
 
   // Modal de nova tarefa com status pré-selecionado
   const [newTaskModal, setNewTaskModal] = useState<{ open: boolean; defaultStatus: TaskStatus }>({
@@ -730,6 +747,13 @@ export function KanbanView({
 
   return (
     <>
+      {/* Detail Drawer */}
+      <TaskDetailDrawer
+        task={detailTask}
+        open={!!detailTask}
+        onClose={() => setDetailTask(null)}
+      />
+
       {/* Modal de nova tarefa com status pré-selecionado */}
       <NewTaskModal
         open={newTaskModal.open}
@@ -758,6 +782,7 @@ export function KanbanView({
                   customLabel={customColumnLabels[col]}
                   onRename={handleColumnRename}
                   onOpenNewTask={() => setNewTaskModal({ open: true, defaultStatus: col })}
+                  onOpenTask={(t) => setDetailTask(t)}
                 />
               ))}
 

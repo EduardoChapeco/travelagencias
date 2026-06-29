@@ -1,8 +1,10 @@
-import { TaskFiltersState } from "@/lib/tasks/task.types";
+import { useState } from "react";
+import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 import { useDailyDigest } from "@/hooks/tasks/useDailyDigest";
 import { format } from "date-fns";
 import { CheckCircle2, Clock, CalendarDays, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 interface MyDayViewProps {
   filters: TaskFiltersState;
@@ -11,6 +13,7 @@ interface MyDayViewProps {
 export function MyDayView({ filters }: MyDayViewProps) {
   const today = format(new Date(), "yyyy-MM-dd");
   const { data: digest, isLoading, error } = useDailyDigest(today);
+  const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
 
   if (isLoading) {
     return (
@@ -40,6 +43,11 @@ export function MyDayView({ filters }: MyDayViewProps) {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* KPI Cards */}
         <div className="p-5 rounded-[var(--radius-lg)] border bg-[var(--surface)] flex flex-col justify-between">
@@ -90,13 +98,21 @@ export function MyDayView({ filters }: MyDayViewProps) {
               <div className="space-y-3">
                 {/* Aqui entrará o componente TaskRowComponent mapeando as tasks */}
                 {digest?.tasks_with_time.map(t => (
-                  <div key={t.id} className="p-3 border rounded-md bg-[var(--surface-alt)] flex justify-between items-center">
+                  <div
+                    key={t.id}
+                    onClick={() => setSelectedTask(t)}
+                    className="p-3 border rounded-md bg-[var(--surface-alt)] flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/80 transition-all"
+                  >
                     <span className="font-medium text-sm">{t.title}</span>
                     <span className="text-xs text-[var(--muted-foreground)]">{t.due_time}</span>
                   </div>
                 ))}
                 {digest?.tasks_without_time.map(t => (
-                  <div key={t.id} className="p-3 border rounded-md flex justify-between items-center">
+                  <div
+                    key={t.id}
+                    onClick={() => setSelectedTask(t)}
+                    className="p-3 border rounded-md flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/40 transition-all"
+                  >
                     <span className="font-medium text-sm">{t.title}</span>
                     <span className="text-xs text-[var(--muted-foreground)]">{t.priority}</span>
                   </div>
@@ -117,7 +133,11 @@ export function MyDayView({ filters }: MyDayViewProps) {
             ) : (
               <div className="space-y-2">
                 {digest?.overdue_tasks.map(t => (
-                  <div key={t.id} className="text-sm p-2 border border-[var(--danger)]/20 bg-[var(--danger-bg)]/50 rounded">
+                  <div
+                    key={t.id}
+                    onClick={() => setSelectedTask(t)}
+                    className="text-sm p-2 border border-[var(--danger)]/20 bg-[var(--danger-bg)]/50 rounded cursor-pointer hover:border-[var(--danger)]/40 transition-all"
+                  >
                     {t.title}
                   </div>
                 ))}
