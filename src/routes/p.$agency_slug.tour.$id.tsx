@@ -805,7 +805,7 @@ function Page() {
                     className="p-4 border border-slate-100 rounded-xl bg-slate-50/50"
                     style={{
                       display: "grid",
-                      gridTemplateColumns: `repeat(${layout.cols}, minmax(0, 1fr))`,
+                      gridTemplateColumns: `repeat(${layout?.cols ?? 5}, minmax(0, 1fr))`,
                       gap: "8px",
                     }}
                   >

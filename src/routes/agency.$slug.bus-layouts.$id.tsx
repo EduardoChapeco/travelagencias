@@ -215,14 +215,57 @@ function EditVehicleModal({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
+
+    const updates: any = {
+      name,
+      vehicle_type: type,
+      rows,
+      cols,
+    };
+
+    // Ajuste adaptativo inteligente do seat_map se as dimensões mudaram
+    const dimChanged = rows !== layout.rows || cols !== layout.cols;
+    if (dimChanged && Array.isArray(layout.seat_map)) {
+      const oldMap = layout.seat_map as SeatCell[];
+      const oldCells = new Map(oldMap.map(cell => [`${cell.r}-${cell.c}`, cell]));
+      const newMap: SeatCell[] = [];
+      let nextSeatNumber = 1;
+      
+      oldMap.forEach(cell => {
+        if (cell.type === "seat") {
+          const num = parseInt(cell.label, 10);
+          if (!isNaN(num) && num >= nextSeatNumber) {
+            nextSeatNumber = num + 1;
+          }
+        }
+      });
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const key = `${r}-${c}`;
+          if (oldCells.has(key)) {
+            newMap.push({
+              ...oldCells.get(key)!,
+              r,
+              c
+            });
+          } else {
+            const isAisle = cols > 2 && c === Math.floor(cols / 2);
+            newMap.push({
+              r,
+              c,
+              type: isAisle ? "aisle" : "seat",
+              label: isAisle ? "" : String(nextSeatNumber++).padStart(2, "0"),
+            });
+          }
+        }
+      }
+      updates.seat_map = newMap;
+    }
+
     const { error } = await supabase
       .from("bus_layouts")
-      .update({
-        name,
-        vehicle_type: type,
-        rows,
-        cols,
-      })
+      .update(updates)
       .eq("id", layout.id);
     setSubmitting(false);
     if (error) return toast.error(error.message);

@@ -174,17 +174,32 @@ function NewLayout({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
+
+    const seat_map = [];
+    let seatNumber = 1;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const isAisle = cols > 2 && c === Math.floor(cols / 2);
+        seat_map.push({
+          r,
+          c,
+          type: isAisle ? "aisle" : "seat",
+          label: isAisle ? "" : String(seatNumber++).padStart(2, "0"),
+        });
+      }
+    }
+
     const { error } = await supabase.from("bus_layouts").insert({
       agency_id: agencyId,
       name,
       vehicle_type: type,
       rows,
       cols,
-      seat_map: [],
+      seat_map,
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
-    toast.success("Layout criado");
+    toast.success("Layout criado com matriz padrão persistida!");
     onCreated();
   }
 
