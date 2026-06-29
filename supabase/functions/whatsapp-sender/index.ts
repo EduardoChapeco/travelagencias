@@ -67,21 +67,27 @@ serve(async (req) => {
     // Buscar o Canal
     const { data: channel } = await supabase
       .from("channels")
-      .select("id, type, credentials_encrypted, external_id")
+      .select("id, type, credentials_encrypted, external_id, agency_id")
       .eq("id", conversation.channel_id)
       .eq("is_active", true)
       .single();
 
     if (!channel) throw new Error("Active channel not found for this conversation");
 
-    let token = "";
-    if (channel.credentials_encrypted) {
-       // Em produção, descriptografa com o segredo
-       token = Deno.env.get("META_APP_SECRET") || ""; 
-    }
+    // Buscar a conexão correspondente para recuperar o token_reference de forma dinâmica
+    const { data: connection } = await supabase
+      .from("whatsapp_connections")
+      .select("token_reference")
+      .eq("agency_id", channel.agency_id)
+      .eq(channel.type === "instagram" ? "instagram_account_id" : "waba_id", channel.external_id)
+      .eq("status", "active")
+      .maybeSingle();
 
-    // Fallback provisório de token se não descriptografou
-    const finalToken = token || Deno.env.get("META_VERIFY_TOKEN") || ""; 
+    const finalToken = connection?.token_reference || Deno.env.get("META_VERIFY_TOKEN") || "";
+
+    if (!finalToken) {
+      throw new Error(`Nenhum token de acesso encontrado para o canal ${channel.id}.`);
+    } 
 
     let success = false;
     let externalId = null;

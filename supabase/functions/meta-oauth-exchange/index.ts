@@ -72,37 +72,81 @@ serve(async (req) => {
     const targetWabaId = debugData.data?.profile_id || "";
 
     // 6. Criar ou Atualizar a Conexão Meta na tabela canônica
-    const { data: connection, error: connErr } = await supabase
+    const { data: existingConnection } = await supabase
       .from("whatsapp_connections")
-      .upsert({
-        agency_id,
-        connection_name: `WhatsApp Oficial (${targetWabaId || "Nova Conexão"})`,
-        waba_id: targetWabaId,
-        phone_number_id: "pending",
-        display_phone_number: "pending",
-        app_id: appId,
-        status: "active",
-        provider: "whatsapp",
-        connection_mode: "whatsapp_cloud_api",
-        scopes_authorized: debugData.data?.scopes || [],
-      }, { onConflict: "id" })
-      .select()
-      .single();
+      .select("id")
+      .eq("agency_id", agency_id)
+      .eq("waba_id", targetWabaId)
+      .maybeSingle();
 
-    if (connErr) {
-      throw new Error(`Erro ao persistir conexão no banco: ${connErr.message}`);
+    const connectionPayload = {
+      agency_id,
+      connection_name: `WhatsApp Oficial (${targetWabaId || "Nova Conexão"})`,
+      waba_id: targetWabaId,
+      phone_number_id: "pending",
+      display_phone_number: "pending",
+      app_id: appId,
+      status: "active",
+      provider: "whatsapp",
+      connection_mode: "whatsapp_cloud_api",
+      scopes_authorized: debugData.data?.scopes || [],
+      token_reference: accessToken, // Salvar token de acesso da Meta
+      updated_at: new Date().toISOString(),
+    };
+
+    let connectionResult;
+    if (existingConnection?.id) {
+      connectionResult = await supabase
+        .from("whatsapp_connections")
+        .update(connectionPayload)
+        .eq("id", existingConnection.id)
+        .select()
+        .single();
+    } else {
+      connectionResult = await supabase
+        .from("whatsapp_connections")
+        .insert(connectionPayload)
+        .select()
+        .single();
+    }
+
+    const { data: connection, error: connErr } = connectionResult;
+
+    if (connErr || !connection) {
+      throw new Error(`Erro ao persistir conexão no banco: ${connErr?.message || "Conexão nula"}`);
     }
 
     // 7. Salvar o token de acesso na tabela channels correspondente
-    const { error: channelErr } = await supabase
+    const { data: existingChannel } = await supabase
       .from("channels")
-      .upsert({
-        agency_id,
-        type: "whatsapp",
-        display_name: `WhatsApp Oficial (${targetWabaId || "Meta"})`,
-        external_id: targetWabaId || "pending",
-        is_active: true,
-      }, { onConflict: "id" });
+      .select("id")
+      .eq("agency_id", agency_id)
+      .eq("type", "whatsapp")
+      .eq("external_id", targetWabaId)
+      .maybeSingle();
+
+    const channelPayload = {
+      agency_id,
+      type: "whatsapp",
+      display_name: `WhatsApp Oficial (${targetWabaId || "Meta"})`,
+      external_id: targetWabaId || "pending",
+      is_active: true,
+      updated_at: new Date().toISOString(),
+    };
+
+    let channelResult;
+    if (existingChannel?.id) {
+      channelResult = await supabase
+        .from("channels")
+        .update(channelPayload)
+        .eq("id", existingChannel.id);
+    } else {
+      channelResult = await supabase
+        .from("channels")
+        .insert(channelPayload);
+    }
+
+    const { error: channelErr } = channelResult;
 
     if (channelErr) {
       throw new Error(`Erro ao registrar canal: ${channelErr.message}`);
