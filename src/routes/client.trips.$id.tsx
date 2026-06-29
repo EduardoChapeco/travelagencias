@@ -206,14 +206,35 @@ function ClientTripDetail() {
     enabled: !!tripQ.data,
     queryKey: ["client-lgpd-acceptance", tripQ.data?.client_id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("legal_acceptances" as any)
-        .select("*")
-        .eq("client_id", tripQ.data!.client_id)
-        .eq("terms_type", "lgpd_memories")
+      // 1. Buscar o documento legal do tipo 'terms' mais recente
+      const { data: terms } = await supabase
+        .from("policy_documents")
+        .select("id, version, content_md, effective_at")
+        .eq("kind", "terms")
+        .order("effective_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
-      if (error) return null;
-      return data;
+
+      if (!terms) {
+        return { accepted: true, doc: null };
+      }
+
+      // 2. Verificar se o cliente já aceitou este documento específico
+      const { data: records, error } = await supabase
+        .from("legal_acceptances")
+        .select("id")
+        .eq("document_id", terms.id)
+        .eq("client_id", tripQ.data!.client_id)
+        .maybeSingle();
+
+      if (error) {
+        return { accepted: false, doc: terms };
+      }
+
+      return {
+        accepted: !!records,
+        doc: terms,
+      };
     },
   });
 
@@ -419,14 +440,15 @@ function ClientTripDetail() {
 
   const acceptLgpd = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
-        .from("legal_acceptances" as any)
-        .insert({
-          client_id: tripQ.data!.client_id,
-          agency_id: tripQ.data!.agency_id,
-          terms_type: "lgpd_memories",
-          user_agent: navigator.userAgent,
-        });
+      const docId = lgpdQ.data?.doc?.id;
+      if (!docId) throw new Error("Documento de termos legais não localizado");
+
+      const { error } = await supabase.rpc("record_legal_acceptance", {
+        _document_id: docId,
+        _agency_id: tripQ.data!.agency_id,
+        _client_id: tripQ.data!.client_id,
+        _context: "client_portal_trip",
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -876,7 +898,7 @@ function ClientTripDetail() {
           <TabMemorias
             tripId={id}
             memories={memories}
-            lgpdAccepted={!!lgpdQ.data}
+            lgpdAccepted={!!lgpdQ.data?.accepted}
             lgpdLoading={lgpdQ.isLoading}
             acceptLgpdPending={acceptLgpd.isPending}
             uploadMemoryPending={uploadMemory.isPending}
