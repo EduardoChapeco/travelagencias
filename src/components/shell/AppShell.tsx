@@ -86,56 +86,65 @@ export function AppShell({
       <CommandMenu />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-[58px] shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden shrink-0"
-            aria-label="Abrir menu"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-          <nav className="hidden sm:flex min-w-0 items-center gap-1 ds-meta">
-            {crumbs
-              .filter((c) => c !== "agency" && c !== agency?.slug)
-              .map((c, i, arr) => {
-                let label =
-                  DEFAULT_MODULE_NAMES[c] !== undefined
-                    ? getModuleName(c, agency)
-                    : decodeURIComponent(c);
+        <header className="flex h-[58px] shrink-0 items-center justify-between gap-4 border-b border-border bg-surface px-4">
+          {/* Zona Esquerda: Mobile Menu, Breadcrumbs e Título da Página */}
+          <div className="flex min-w-0 items-center gap-2 flex-1 md:flex-initial">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden shrink-0"
+              aria-label="Abrir menu"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+            
+            <nav className="hidden lg:flex min-w-0 items-center gap-1 ds-meta">
+              {crumbs
+                .filter((c) => c !== "agency" && c !== agency?.slug)
+                .map((c, i, arr) => {
+                  let label =
+                    DEFAULT_MODULE_NAMES[c] !== undefined
+                      ? getModuleName(c, agency)
+                      : decodeURIComponent(c);
 
-                // Truncate UUID-like strings in crumbs to keep header clean and prevent overlap
-                if (label.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
-                  label = label.substring(0, 8) + "...";
-                }
+                  // Truncate UUID-like strings in crumbs to keep header clean and prevent overlap
+                  if (label.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+                    label = label.substring(0, 8) + "...";
+                  }
 
-                const isLast = i === arr.length - 1;
-                return (
-                  <span key={i} className="flex min-w-0 items-center gap-1">
-                    {i > 0 && <span className="opacity-30 shrink-0">/</span>}
-                    <span
-                      className={
-                        isLast ? "text-foreground font-medium truncate" : "truncate opacity-60"
-                      }
-                    >
-                      {label}
+                  const isLast = i === arr.length - 1;
+                  return (
+                    <span key={i} className="flex min-w-0 items-center gap-1">
+                      {i > 0 && <span className="opacity-30 shrink-0">/</span>}
+                      <span
+                        className={
+                          isLast ? "text-foreground font-medium truncate" : "truncate opacity-60"
+                        }
+                      >
+                        {label}
+                      </span>
                     </span>
-                  </span>
-                );
-              })}
-          </nav>
+                  );
+                })}
+            </nav>
 
-          <div className="ml-2">
-            {title && <h1 className="ds-h3 text-foreground whitespace-nowrap">{title}</h1>}
+            <div className="min-w-0 ml-1">
+              {title && (
+                <h1 className="ds-h3 text-foreground whitespace-nowrap truncate max-w-[140px] xs:max-w-[200px] sm:max-w-[300px] md:max-w-none">
+                  {title}
+                </h1>
+              )}
+            </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-end gap-3 min-w-0">
+          {/* Zona Direita: Portal Dinâmico + Ações Globais */}
+          <div className="flex items-center gap-2 md:gap-3 shrink-0 ml-auto min-w-0 max-w-full">
             <div
               id="app-header-portal"
-              className="flex items-center gap-2.5 min-w-0"
+              className="flex items-center gap-1.5 md:gap-2.5 min-w-0"
             />
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
               <div
                 className="hidden items-center gap-2 rounded border border-border bg-surface px-2 py-1.5 md:flex cursor-pointer hover:border-brand/50 transition-colors group"
                 onClick={() =>
@@ -143,7 +152,7 @@ export function AppShell({
                 }
               >
                 <Search className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground" />
-                <div className="w-44 ds-meta group-hover:text-foreground flex items-center justify-between">
+                <div className="w-32 lg:w-44 ds-meta group-hover:text-foreground flex items-center justify-between">
                   <span>Buscar...</span>
                   <span className="bg-surface-alt px-1 rounded border border-border text-[10px]">
                     ⌘K
@@ -160,8 +169,8 @@ export function AppShell({
                     : "bg-surface text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                IA
+                <Sparkles className="h-3.5 w-3.5 text-brand animate-pulse-slow" />
+                <span className="hidden sm:inline">IA</span>
               </button>
             </div>
           </div>
