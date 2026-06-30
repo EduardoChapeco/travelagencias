@@ -2,6 +2,9 @@ import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-r
 import { useEffect, useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { TaskDetailDrawer } from "@/components/tasks/TaskDetailDrawer";
+import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import {
   ChevronLeft,
   ChevronRight,
@@ -85,6 +88,7 @@ function CalendarPage() {
   const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any | null>(null);
 
   // Filters state
   const [filterType, setFilterType] = useState<string>("all");
@@ -105,6 +109,31 @@ function CalendarPage() {
     enabled: !!agency?.id,
     queryKey: ["agency-meetings", agency?.id],
     queryFn: () => fetchAgencyMeetings(agency!.id),
+  });
+
+  const tasksQ = useQuery({
+    enabled: !!agency?.id,
+    queryKey: ["calendar-tasks", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tasks")
+        .select(`
+          id,
+          title,
+          status,
+          priority,
+          due_date,
+          assigned_to,
+          agency_id,
+          created_at,
+          assignee:profiles(id, full_name, avatar_url)
+        `)
+        .eq("agency_id", agency!.id)
+        .eq("is_deleted", false)
+        .not("due_date", "is", null);
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   const usersQ = useQuery({
@@ -215,6 +244,12 @@ function CalendarPage() {
 
   return (
     <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onUpdated={() => tasksQ.refetch()}
+      />
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {/* Actions */}
@@ -324,7 +359,9 @@ function CalendarPage() {
           <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-border/50 bg-border/20">
             {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
               const dateMeetings = getMeetingsForDate(date, filteredMeetings);
+              const dateTasks = getTasksForDate(date, tasksQ.data || []);
               const today = isToday(date);
+              const totalEventsCount = dateMeetings.length + dateTasks.length;
               return (
                 <div
                   key={idx}
@@ -335,7 +372,7 @@ function CalendarPage() {
                 >
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
+                       className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
                         today
                           ? "bg-brand text-brand-foreground font-black"
                           : isCurrentMonth
@@ -345,15 +382,16 @@ function CalendarPage() {
                     >
                       {day}
                     </span>
-                    {dateMeetings.length > 0 && (
+                    {totalEventsCount > 0 && (
                       <span className="text-[8px] font-extrabold px-1 py-0.5 rounded bg-brand/5 border border-brand/10 text-brand">
-                        {dateMeetings.length}
+                        {totalEventsCount}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex-1 mt-2.5 space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
-                    {dateMeetings.slice(0, 3).map((meeting: any) => {
+                  <div className="flex-1 mt-2.5 space-y-1 overflow-y-auto max-h-[80px] no-scrollbar">
+                    {/* Render Meetings */}
+                    {dateMeetings.slice(0, 2).map((meeting: any) => {
                       const typeColor =
                         MEETING_TYPE_COLORS[meeting.meeting_type] ||
                         "bg-muted text-muted-foreground border-border";
@@ -366,10 +404,10 @@ function CalendarPage() {
                             setSelectedMeeting(meeting);
                           }}
                           className={`text-[9px] font-bold p-1 rounded border truncate flex items-center justify-between gap-1 transition-all ${typeColor}`}
-                          title={`${meeting.title} - ${meeting.leads?.name || "Sem Nome"}`}
+                          title={`Compromisso: ${meeting.title}`}
                         >
                           <span className="truncate flex-1">
-                            {meeting.title} ({meeting.leads?.name || "Lead"})
+                            {meeting.title}
                           </span>
                           {isGoogle && (
                             <span className="shrink-0 text-[7px] font-bold px-0.5 rounded bg-success/10 text-success border border-success/20">
@@ -379,9 +417,35 @@ function CalendarPage() {
                         </div>
                       );
                     })}
-                    {dateMeetings.length > 3 && (
+
+                    {/* Render Tasks */}
+                    {dateTasks.slice(0, 2).map((t: any) => {
+                      const priorityCfg = TASK_PRIORITIES[t.priority as keyof typeof TASK_PRIORITIES] || { color: "var(--muted)", label: t.priority };
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedTask(t);
+                          }}
+                          className="text-[9px] font-bold p-1 rounded border truncate flex items-center justify-between gap-1 transition-all bg-[var(--surface-alt)] hover:bg-[var(--surface-alt)]/80 text-foreground cursor-pointer"
+                          style={{
+                            borderLeftWidth: "3px",
+                            borderLeftColor: priorityCfg.color,
+                            borderColor: "rgba(0,0,0,0.08)",
+                          }}
+                          title={`Tarefa: ${t.title} [${priorityCfg.label}]`}
+                        >
+                          <span className="truncate flex-1">
+                            📝 {t.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+
+                    {totalEventsCount > 4 && (
                       <div className="text-[8px] font-bold text-muted-foreground text-center pt-0.5">
-                        + {dateMeetings.length - 3} mais
+                        + {totalEventsCount - 4} mais
                       </div>
                     )}
                   </div>
@@ -697,4 +761,9 @@ function getMeetingsForDate(date: Date, meetingsList: any[]) {
       mDate.getDate() === date.getDate()
     );
   });
+}
+
+function getTasksForDate(date: Date, tasksList: any[]) {
+  const targetStr = format(date, "yyyy-MM-dd");
+  return tasksList.filter((t) => t.due_date === targetStr);
 }

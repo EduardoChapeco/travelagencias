@@ -104,6 +104,7 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
             tasks={groupTasks}
             toggleStatus={toggleStatus}
             onQuickAdd={handleQuickAdd}
+            onOpen={setSelectedTask}
           />
         );
       })}
@@ -125,6 +126,7 @@ function StatusGroupSection({
   tasks: TaskWithRelations[];
   toggleStatus: (id: string, current: TaskStatus) => void;
   onQuickAdd: (title: string, status: TaskStatus) => void;
+  onOpen: (task: TaskWithRelations) => void;
 }) {
   const [quickTitle, setQuickTitle] = useState("");
 
@@ -167,7 +169,7 @@ function StatusGroupSection({
                   return (
                     <tr
                       key={task.id}
-                      onClick={() => setSelectedTask(task)}
+                      onClick={() => onOpen(task)}
                       className={cn("hover:bg-[var(--surface-alt)]/30 transition-colors cursor-pointer", task.status === "done" && "opacity-60")}
                     >
                       <td className="p-3 text-center">

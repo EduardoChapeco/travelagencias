@@ -16,9 +16,11 @@ import { ChevronLeft, ChevronRight, CalendarDays, AlertCircle } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 export function CalendarView({ filters }: { filters: TaskFiltersState }) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
   
   // Modificar filtros de data dinamicamente com base no mês exibido
   const monthStart = format(startOfMonth(currentDate), "yyyy-MM-dd");
@@ -74,6 +76,11 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
 
   return (
     <div className="bg-[var(--surface)] rounded-2xl border p-6 flex flex-col h-full min-h-[600px]">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       {/* Controles do Cabeçalho */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div className="flex items-center gap-2">
@@ -132,9 +139,10 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
                 {dayTasks.map(task => {
                   const priorityCfg = TASK_PRIORITIES[task.priority] || { color: "var(--muted)" };
                   return (
-                    <div 
-                      key={task.id} 
-                      className="text-[10px] px-1.5 py-0.5 rounded-md font-semibold truncate border text-[var(--foreground)] cursor-pointer"
+                    <div
+                      key={task.id}
+                      onClick={() => setSelectedTask(task)}
+                      className="text-[10px] px-1.5 py-0.5 rounded-md font-semibold truncate border text-[var(--foreground)] cursor-pointer hover:brightness-95 transition-all"
                       style={{ 
                         borderColor: `${priorityCfg.color}20`,
                         backgroundColor: `${priorityCfg.color}08`,

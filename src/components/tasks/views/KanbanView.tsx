@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TaskFiltersState, TaskWithRelations, TaskStatus } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";
@@ -59,8 +59,8 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
     data: { type: "Task", task },
   });
 
-  // Distinguish click from drag
-  const dragMoved = useMemo(() => ({ moved: false }), [task.id]);
+  // Distinguish click from drag using pointer position delta
+  const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -70,16 +70,28 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
   const statusDef = TASK_STATUSES[task.status as TaskStatus];
   const priorityDef = TASK_PRIORITIES[task.priority as keyof typeof TASK_PRIORITIES];
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerDownPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!pointerDownPos.current || isDragging) return;
+    const dx = e.clientX - pointerDownPos.current.x;
+    const dy = e.clientY - pointerDownPos.current.y;
+    const delta = Math.sqrt(dx * dx + dy * dy);
+    // Only fire if movement was < 5px (true click, not drag)
+    if (delta < 5) onOpen(task);
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      onPointerDown={() => { dragMoved.moved = false; }}
-      onPointerMove={() => { dragMoved.moved = true; }}
-      onClick={() => { if (!dragMoved.moved && !isDragging) onOpen(task); }}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
       className={cn(
-        "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-xl shadow-xs text-xs cursor-pointer active:cursor-grabbing transition-all group",
+        "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-xl shadow-xs text-xs cursor-pointer transition-all group",
         isDragging && "opacity-40 scale-95"
       )}
     >
@@ -88,9 +100,9 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
       {task.assignee && (
         <div className="text-[10px] text-muted-foreground truncate mb-1.5 flex items-center gap-1">
           <div className="w-3.5 h-3.5 rounded-full bg-surface-alt border border-border flex items-center justify-center text-[8px] font-bold uppercase text-muted-foreground shrink-0">
-            {((task.assignee as any).name || "?")[0]}
+            {task.assignee.name?.charAt(0) || "?"}
           </div>
-          {(task.assignee as any).name}
+          {task.assignee.name}
         </div>
       )}
 
@@ -111,14 +123,16 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
           />
         )}
       </div>
-      {/* Drag handle — on top to allow drag */}
+
+      {/* Drag handle — only this uses dnd-kit listeners so card click doesn't trigger drag */}
       <div
         {...listeners}
+        onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
-        className="absolute top-2 right-2 opacity-0 group-hover:opacity-40 hover:!opacity-80 cursor-grab active:cursor-grabbing p-0.5 rounded transition-all"
-        title="Arrastar"
+        className="absolute top-2 right-2 opacity-0 group-hover:opacity-60 hover:!opacity-100 cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-surface-alt transition-all"
+        title="Arrastar card"
       >
-        <GripVertical className="h-3 w-3 text-muted-foreground" />
+        <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
       </div>
     </div>
   );

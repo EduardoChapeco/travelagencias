@@ -43,7 +43,7 @@ function SupportRoute() {
           `
           *,
           client:clients(full_name, email),
-          assignee:agency_members(users(raw_user_meta_data))
+          assignee:profiles(id, full_name, avatar_url)
         `,
         )
         .eq("agency_id", agency!.id)
@@ -282,7 +282,7 @@ function SupportRoute() {
                     </td>
                     <td className="px-4 py-4">
                       <span className="text-xs font-medium text-muted-foreground">
-                        {(t.assignee?.users as any)?.raw_user_meta_data?.name || "Não atribuído"}
+                        {t.assignee?.full_name || "Não atribuído"}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-xs text-muted-foreground">

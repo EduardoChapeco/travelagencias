@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { AlertCircle, Users, BarChart3, Clock, CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
+  const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
   // Puxar todas as tarefas ativas e concluídas para calcular a carga
   const allTasksFilters: TaskFiltersState = {
     ...filters,
@@ -39,7 +42,6 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
   // Agrupar tarefas por responsável
   const workloadMap: Record<string, { 
     name: string; 
-    email: string;
     tasks: TaskWithRelations[]; 
     doneCount: number; 
     pendingCount: number; 
@@ -49,13 +51,12 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
 
   tasks?.forEach(task => {
     const userId = task.assigned_to || "unassigned";
-    const userName = task.assignee?.email?.split("@")[0] || "Não Atribuído";
-    const userEmail = task.assignee?.email || "Sem e-mail";
+    // Corrected: UserProfile has 'name', not 'email'
+    const userName = task.assignee?.name || "Não Atribuído";
 
     if (!workloadMap[userId]) {
       workloadMap[userId] = {
         name: userName,
-        email: userEmail,
         tasks: [],
         doneCount: 0,
         pendingCount: 0,
@@ -84,6 +85,11 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
 
   return (
     <div className="bg-[var(--surface)] rounded-2xl border p-6 flex flex-col h-full">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       <div className="flex items-center gap-2 mb-6 shrink-0">
         <Users className="h-5 w-5 text-[var(--brand)]" />
         <h2 className="text-lg font-bold text-[var(--foreground)]">
@@ -105,7 +111,7 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-[var(--foreground)] capitalize">{w.name}</h3>
-                    <p className="text-[11px] text-[var(--muted-foreground)]">{w.email}</p>
+                    <p className="text-[11px] text-[var(--muted-foreground)]">{w.tasks.length} tarefa{w.tasks.length !== 1 ? "s" : ""}</p>
                   </div>
                 </div>
 

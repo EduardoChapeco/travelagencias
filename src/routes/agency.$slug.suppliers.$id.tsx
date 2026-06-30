@@ -715,8 +715,10 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
         },
       );
       if (!res.ok) throw new Error(await res.text());
-      const { result } = await res.json();
-      await supabase.from("supplier_files").update({ ocr_data: result }).eq("id", fileId);
+      const resJson = await res.json();
+      const extractedData = resJson.data || resJson.result;
+      if (!extractedData) throw new Error("A extração retornou vazia");
+      await supabase.from("supplier_files").update({ ocr_data: extractedData }).eq("id", fileId);
       toast.success("Dados extraídos! Revise abaixo.");
       qc.invalidateQueries({ queryKey: ["supplier_files", supplierId] });
     } catch (e: any) {

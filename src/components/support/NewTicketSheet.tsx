@@ -22,7 +22,7 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
-  const [type, setType] = useState("trip");
+  const [type, setType] = useState("general");
 
   useEffect(() => {
     if (isOpen) {
@@ -101,7 +101,7 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
       setTitle("");
       setDescription("");
       setPriority("medium");
-      setType("trip");
+      setType("general");
       // Invalidate support query
       qc.invalidateQueries({ queryKey: ["support_tickets_advanced", agency?.id] });
       onClose();
@@ -199,11 +199,12 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
 
             <Field label="Tipo do Ticket">
               <Select value={type} onChange={(e) => setType(e.target.value)}>
-                <option value="trip">Viagem</option>
-                <option value="financial">Financeiro</option>
+                <option value="general">Geral / Outros</option>
+                <option value="flight_change">Alteração de Voo</option>
+                <option value="cancellation">Cancelamento</option>
                 <option value="complaint">Reclamação</option>
+                <option value="request">Solicitação</option>
                 <option value="refund">Reembolso</option>
-                <option value="other">Outros / Operacional</option>
               </Select>
             </Field>
           </div>

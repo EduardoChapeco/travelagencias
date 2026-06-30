@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TaskFiltersState } from "@/lib/tasks/task.types";
+import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { 
   format, 
@@ -13,9 +13,11 @@ import { ptBR } from "date-fns/locale";
 import { AlertCircle, CalendarDays } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
+import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 export function TimelineView({ filters }: { filters: TaskFiltersState }) {
   const { data: tasks, isLoading, error } = useTasksQuery(filters);
+  const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
 
   // Mapear um intervalo de 14 dias a partir de hoje
   const today = startOfDay(new Date());
@@ -50,6 +52,11 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
 
   return (
     <div className="bg-[var(--surface)] rounded-2xl border p-6 overflow-hidden flex flex-col h-full">
+      <TaskDetailDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
       <div className="flex items-center gap-2 mb-6 shrink-0">
         <CalendarDays className="h-5 w-5 text-[var(--brand)]" />
         <h2 className="text-lg font-bold text-[var(--foreground)]">
@@ -86,7 +93,11 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
               const dueDate = rawStartDate <= rawDueDate ? rawDueDate : rawStartDate;
               
               return (
-                <div key={task.id} className="grid grid-cols-12 text-sm hover:bg-[var(--surface-alt)]/20 transition-colors items-center">
+                <div
+                  key={task.id}
+                  onClick={() => setSelectedTask(task)}
+                  className="grid grid-cols-12 text-sm hover:bg-[var(--surface-alt)]/30 transition-colors items-center cursor-pointer"
+                >
                   {/* Nome da Tarefa */}
                   <div className="col-span-4 p-3 border-r font-medium text-[var(--foreground)] truncate">
                     {task.title}
