@@ -32,15 +32,44 @@ export const Route = createFileRoute("/agency/$slug")({
       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando agência...
     </div>
   ),
-  errorComponent: ({ error }) => (
-    <div className="flex h-screen flex-col items-center justify-center gap-2 px-6 text-center">
-      <h1 className="text-lg font-semibold">Agência não encontrada</h1>
-      <p className="text-sm text-muted-foreground">{error.message}</p>
-      <a href="/auth/login" className="mt-3 text-xs font-medium underline">
-        Voltar para entrar
-      </a>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    const loc = typeof window !== "undefined" ? window.location.pathname : "";
+    const parts = loc.split("/");
+    const slug = parts[2] || "";
+
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3 px-6 text-center bg-background text-foreground">
+        <div className="h-12 w-12 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mb-2">
+          <AlertOctagon className="h-6 w-6" />
+        </div>
+        <h1 className="text-xl font-bold tracking-tight">Ocorreu um erro no módulo</h1>
+        <p className="text-sm text-muted-foreground max-w-md">
+          {error.message || "Erro desconhecido ao carregar esta página."}
+        </p>
+        <div className="mt-4 flex gap-3">
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined") window.location.reload();
+            }}
+            className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-white shadow transition-colors hover:bg-brand/90 cursor-pointer"
+          >
+            Recarregar Página
+          </button>
+          {slug && (
+            <a
+              href={`/agency/${slug}`}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-surface-alt"
+            >
+              Voltar ao Início
+            </a>
+          )}
+        </div>
+        <a href="/auth/login" className="mt-8 text-xs text-muted-foreground hover:underline">
+          Entrar com outra conta
+        </a>
+      </div>
+    );
+  },
   component: Layout,
 });
 

@@ -21,6 +21,7 @@ import { Route as AuthIndexRouteImport } from './routes/auth.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VerifySerialRouteImport } from './routes/verify.$serial'
 import { Route as PAgency_slugRouteImport } from './routes/p.$agency_slug'
+import { Route as InboxOauthCallbackRouteImport } from './routes/inbox.oauth-callback'
 import { Route as ClientTripsRouteImport } from './routes/client.trips'
 import { Route as ClientProfileRouteImport } from './routes/client.profile'
 import { Route as ClientPaymentsRouteImport } from './routes/client.payments'
@@ -208,6 +209,11 @@ const VerifySerialRoute = VerifySerialRouteImport.update({
 const PAgency_slugRoute = PAgency_slugRouteImport.update({
   id: '/p/$agency_slug',
   path: '/p/$agency_slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InboxOauthCallbackRoute = InboxOauthCallbackRouteImport.update({
+  id: '/inbox/oauth-callback',
+  path: '/inbox/oauth-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientTripsRoute = ClientTripsRouteImport.update({
@@ -921,6 +927,7 @@ export interface FileRoutesByFullPath {
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/verify/$serial': typeof VerifySerialRoute
   '/admin/': typeof AdminIndexRoute
@@ -1059,6 +1066,7 @@ export interface FileRoutesByTo {
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/verify/$serial': typeof VerifySerialRoute
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
@@ -1195,6 +1203,7 @@ export interface FileRoutesById {
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/verify/$serial': typeof VerifySerialRoute
   '/admin/': typeof AdminIndexRoute
@@ -1339,6 +1348,7 @@ export interface FileRouteTypes {
     | '/client/payments'
     | '/client/profile'
     | '/client/trips'
+    | '/inbox/oauth-callback'
     | '/p/$agency_slug'
     | '/verify/$serial'
     | '/admin/'
@@ -1477,6 +1487,7 @@ export interface FileRouteTypes {
     | '/client/payments'
     | '/client/profile'
     | '/client/trips'
+    | '/inbox/oauth-callback'
     | '/verify/$serial'
     | '/admin'
     | '/auth'
@@ -1612,6 +1623,7 @@ export interface FileRouteTypes {
     | '/client/payments'
     | '/client/profile'
     | '/client/trips'
+    | '/inbox/oauth-callback'
     | '/p/$agency_slug'
     | '/verify/$serial'
     | '/admin/'
@@ -1729,6 +1741,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AgencySlugRoute: typeof AgencySlugRouteWithChildren
   BuilderAiRoute: typeof BuilderAiRoute
+  InboxOauthCallbackRoute: typeof InboxOauthCallbackRoute
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
   VerifySerialRoute: typeof VerifySerialRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
@@ -1828,6 +1841,13 @@ declare module '@tanstack/react-router' {
       path: '/p/$agency_slug'
       fullPath: '/p/$agency_slug'
       preLoaderRoute: typeof PAgency_slugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inbox/oauth-callback': {
+      id: '/inbox/oauth-callback'
+      path: '/inbox/oauth-callback'
+      fullPath: '/inbox/oauth-callback'
+      preLoaderRoute: typeof InboxOauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client/trips': {
@@ -3173,6 +3193,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AgencySlugRoute: AgencySlugRouteWithChildren,
   BuilderAiRoute: BuilderAiRoute,
+  InboxOauthCallbackRoute: InboxOauthCallbackRoute,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
   VerifySerialRoute: VerifySerialRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,

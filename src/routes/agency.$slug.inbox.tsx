@@ -140,6 +140,7 @@ function InboxModule() {
   const [evolutionKey, setEvolutionKey] = useState("");
   const [gmailAddress, setGmailAddress] = useState("");
   const [resendApiKey, setResendApiKey] = useState("");
+  const [gmailSubTab, setGmailSubTab] = useState<"oauth" | "smtp">("oauth");
   const [instaAccountId, setInstaAccountId] = useState("");
   const [instaToken, setInstaToken] = useState("");
   const [submittingConfig, setSubmittingConfig] = useState(false);
@@ -782,73 +783,146 @@ function InboxModule() {
                       </div>
 
                       {connectType === "gmail" && (
-                        <form onSubmit={async (e) => {
-                          e.preventDefault();
-                          if (!gmailAddress.trim() || !resendApiKey.trim()) {
-                            toast.error("Preencha todos os campos obrigatórios.");
-                            return;
-                          }
-                          setSubmittingConfig(true);
-                          try {
-                            await supabase.functions.invoke("ai-orchestrator", {
-                              body: {
-                                action: "save-credential",
-                                agency_id: agency!.id,
-                                provider: "resend_api_key",
-                                key_value: resendApiKey.trim(),
-                                label: "Resend Email Key",
-                              },
-                            });
-
-                            await db.from("channels").insert({
-                              agency_id: agency!.id,
-                              type: "email",
-                              display_name: `Gmail (${gmailAddress.trim()})`,
-                              external_id: `gmail-${gmailAddress.trim()}`,
-                              is_active: true,
-                            });
-
-                            toast.success("Gmail conectado com sucesso!");
-                            setConnectType(null);
-                            setGmailAddress("");
-                            setResendApiKey("");
-                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
-                          } catch (err: any) {
-                            toast.error("Erro ao configurar: " + err.message);
-                          } finally {
-                            setSubmittingConfig(false);
-                          }
-                        }} className="space-y-3">
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
-                            <input
-                              type="email"
-                              required
-                              placeholder="exemplo@gmail.com"
-                              value={gmailAddress}
-                              onChange={(e) => setGmailAddress(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
-                            />
+                        <div className="space-y-4">
+                          <div className="flex gap-2 p-1 bg-surface-alt rounded-lg border border-border">
+                            <button
+                              type="button"
+                              onClick={() => setGmailSubTab("oauth")}
+                              className={cn(
+                                "flex-1 text-center py-1 text-[11px] font-bold rounded-md transition-all cursor-pointer",
+                                gmailSubTab === "oauth"
+                                  ? "bg-brand text-white shadow-xs"
+                                  : "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              Conta Google (OAuth)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setGmailSubTab("smtp")}
+                              className={cn(
+                                "flex-1 text-center py-1 text-[11px] font-bold rounded-md transition-all cursor-pointer",
+                                gmailSubTab === "smtp"
+                                  ? "bg-brand text-white shadow-xs"
+                                  : "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              Resend (SMTP)
+                            </button>
                           </div>
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Resend API Key *</label>
-                            <input
-                              type="password"
-                              required
-                              placeholder="re_..."
-                              value={resendApiKey}
-                              onChange={(e) => setResendApiKey(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
-                            />
-                          </div>
-                          <button
-                            type="submit"
-                            disabled={submittingConfig}
-                            className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
-                          >
-                            {submittingConfig ? "Salvando..." : "Conectar Canal"}
-                          </button>
-                        </form>
+
+                          {gmailSubTab === "oauth" ? (
+                            <div className="space-y-3 pt-1">
+                              <p className="text-[11px] text-muted-foreground leading-normal font-sans">
+                                Conecte seu e-mail do Gmail de forma segura usando o protocolo OAuth oficial do Google. Você será redirecionado para a página de consentimento do Google.
+                              </p>
+                              <button
+                                type="button"
+                                disabled={submittingConfig}
+                                onClick={async () => {
+                                  setSubmittingConfig(true);
+                                  try {
+                                    const { data: { user } } = await supabase.auth.getUser();
+                                    if (!user) throw new Error("Usuário não autenticado no Supabase.");
+
+                                    const { data, error } = await supabase.functions.invoke("gmail-oauth", {
+                                      method: "GET",
+                                      queryString: `action=get_url&org_id=${agency!.id}&user_id=${user.id}&account_type=personal`,
+                                    });
+
+                                    if (error || !data?.url) {
+                                      throw new Error(error?.message || "Não foi possível gerar a URL de autorização.");
+                                    }
+
+                                    // Redireciona para o consentimento do Google
+                                    window.location.href = data.url;
+                                  } catch (err: any) {
+                                    toast.error("Erro ao iniciar login Google: " + err.message);
+                                  } finally {
+                                    setSubmittingConfig(false);
+                                  }
+                                }}
+                                className="w-full h-9 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                              >
+                                {submittingConfig ? (
+                                  <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Gerando link...
+                                  </>
+                                ) : (
+                                  "Entrar com o Google"
+                                )}
+                              </button>
+                            </div>
+                          ) : (
+                            <form onSubmit={async (e) => {
+                              e.preventDefault();
+                              if (!gmailAddress.trim() || !resendApiKey.trim()) {
+                                toast.error("Preencha todos os campos obrigatórios.");
+                                return;
+                              }
+                              setSubmittingConfig(true);
+                              try {
+                                await supabase.functions.invoke("ai-orchestrator", {
+                                  body: {
+                                    action: "save-credential",
+                                    agency_id: agency!.id,
+                                    provider: "resend_api_key",
+                                    key_value: resendApiKey.trim(),
+                                    label: "Resend Email Key",
+                                  },
+                                });
+
+                                await db.from("channels").insert({
+                                  agency_id: agency!.id,
+                                  type: "email",
+                                  display_name: `Gmail (${gmailAddress.trim()})`,
+                                  external_id: `gmail-${gmailAddress.trim()}`,
+                                  is_active: true,
+                                });
+
+                                toast.success("Canal Resend conectado com sucesso!");
+                                setConnectType(null);
+                                setGmailAddress("");
+                                setResendApiKey("");
+                                queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                              } catch (err: any) {
+                                toast.error("Erro ao configurar: " + err.message);
+                              } finally {
+                                setSubmittingConfig(false);
+                              }
+                            }} className="space-y-3">
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
+                                <input
+                                  type="email"
+                                  required
+                                  placeholder="exemplo@gmail.com"
+                                  value={gmailAddress}
+                                  onChange={(e) => setGmailAddress(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Resend API Key *</label>
+                                <input
+                                  type="password"
+                                  required
+                                  placeholder="re_..."
+                                  value={resendApiKey}
+                                  onChange={(e) => setResendApiKey(e.target.value)}
+                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                />
+                              </div>
+                              <button
+                                type="submit"
+                                disabled={submittingConfig}
+                                className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
+                              >
+                                {submittingConfig ? "Salvando..." : "Conectar Canal Resend"}
+                              </button>
+                            </form>
+                          )}
+                        </div>
                       )}
 
                       {connectType === "whatsapp" && (

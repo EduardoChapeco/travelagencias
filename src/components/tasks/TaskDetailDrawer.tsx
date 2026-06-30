@@ -134,11 +134,6 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
     setIsDirty(isDraftDirty(draft, task));
   }, [draft, task]);
 
-  if (!task) return null;
-
-  const statusDef = TASK_STATUSES[draft.status] || { label: draft.status, color: "var(--muted)" };
-  const priorityDef = TASK_PRIORITIES[draft.priority] || { label: draft.priority, color: "var(--muted)" };
-
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["tasks"] });
     qc.invalidateQueries({ queryKey: ["daily_digest"] });
@@ -323,6 +318,11 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
   const doneCount = checklist.filter((c) => c.is_done).length;
   const checkProgress = checklist.length > 0 ? (doneCount / checklist.length) * 100 : 0;
+
+  if (!task) return null;
+
+  const statusDef = TASK_STATUSES[draft.status] || { label: draft.status, color: "var(--muted)" };
+  const priorityDef = TASK_PRIORITIES[draft.priority] || { label: draft.priority, color: "var(--muted)" };
 
   return (
     <>

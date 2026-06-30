@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { TaskFiltersState, TaskWithRelations, TaskStatus } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
 import { useTaskMutations } from "@/hooks/tasks/useTaskMutations";

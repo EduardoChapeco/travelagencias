@@ -26,6 +26,7 @@ function BusLayoutEditorPage() {
   const [map, setMap] = useState<SeatCell[]>([]);
   const [saving, setSaving] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [activeTool, setActiveTool] = useState<SeatType>("seat");
 
   const q = useQuery({
     enabled: !!agency,
@@ -73,22 +74,39 @@ function BusLayoutEditorPage() {
     const newMap = [...map];
     const cell = newMap[index];
 
-    // Cycle: seat -> aisle -> wc -> door -> seat
-    if (cell.type === "seat") {
-      cell.type = "aisle";
+    // Paint cell with active tool type
+    cell.type = activeTool;
+    if (activeTool === "seat") {
+      // Find highest seat number to auto-suggest
+      let maxSeat = 0;
+      newMap.forEach((c) => {
+        if (c.type === "seat" && c.label) {
+          const num = parseInt(c.label, 10);
+          if (!isNaN(num) && num > maxSeat) maxSeat = num;
+        }
+      });
+      cell.label = String(maxSeat + 1).padStart(2, "0");
+    } else if (activeTool === "aisle") {
       cell.label = "";
-    } else if (cell.type === "aisle") {
-      cell.type = "wc";
-      cell.label = "WC";
-    } else if (cell.type === "wc") {
-      cell.type = "door";
+    } else if (activeTool === "wc") {
+      cell.label = "Banheiro";
+    } else if (activeTool === "door") {
       cell.label = "Porta";
-    } else if (cell.type === "door") {
-      cell.type = "seat";
-      cell.label = "00";
     }
 
     setMap(newMap);
+  }
+
+  function autoNumberSeats() {
+    const newMap = [...map];
+    let seatNum = 1;
+    newMap.forEach((cell) => {
+      if (cell.type === "seat") {
+        cell.label = String(seatNum++).padStart(2, "0");
+      }
+    });
+    setMap(newMap);
+    toast.success("Poltronas autonumeradas com sucesso!");
   }
 
   function handleLabelChange(index: number, val: string) {
@@ -139,8 +157,49 @@ function BusLayoutEditorPage() {
 
       <PageHeader
         title={l.name}
-        description="Clique nas células para alternar entre: Poltrona → Corredor → Banheiro → Porta."
+        description="Selecione uma ferramenta na barra de edição e clique nas células do veículo para pintar."
       />
+
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-xl shadow-xs">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold text-muted-foreground mr-2">Ferramenta Ativa:</span>
+          {(["seat", "aisle", "wc", "door"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setActiveTool(t)}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
+                activeTool === t
+                  ? "bg-brand text-white border-brand shadow-xs"
+                  : "bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+              )}
+            >
+              {t === "seat" && "💺 Poltrona"}
+              {t === "aisle" && "⬜ Corredor"}
+              {t === "wc" && "🚻 Banheiro"}
+              {t === "door" && "🚪 Porta"}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <GhostButton
+            type="button"
+            onClick={autoNumberSeats}
+            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt flex items-center gap-1 font-bold"
+          >
+            🔢 Autonumerar
+          </GhostButton>
+          <GhostButton
+            type="button"
+            onClick={() => generateDefaultMap(l.rows, l.cols)}
+            className="text-xs h-8 text-destructive border border-transparent hover:border-destructive/20 hover:bg-destructive/10 flex items-center gap-1 font-bold"
+          >
+            🗑️ Reiniciar Layout
+          </GhostButton>
+        </div>
+      </div>
 
       <div className="flex justify-center mt-6">
         <div
@@ -172,8 +231,10 @@ function BusLayoutEditorPage() {
                   <input
                     type="text"
                     value={cell.label}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
                     onChange={(e) => handleLabelChange(idx, e.target.value)}
-                    className="w-10 text-center bg-transparent font-mono text-sm focus:outline-none pointer-events-auto selection:bg-brand/20"
+                    className="w-10 text-center bg-transparent font-mono text-sm focus:outline-none pointer-events-auto selection:bg-brand/20 font-bold text-brand"
                     maxLength={4}
                   />
                 </div>
