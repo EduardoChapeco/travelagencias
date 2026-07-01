@@ -82,7 +82,7 @@ function IntegrationsPage() {
   if (!agency) return null;
 
   return (
-    <>
+    <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 bg-background">
       <Tabs defaultValue="ai" className="max-w-4xl">
         <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex mb-6">
           <TabsTrigger
@@ -148,7 +148,7 @@ function IntegrationsPage() {
           <InfotravelTab agencyId={agency.id} />
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   );
 }
 
@@ -387,6 +387,19 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     e.preventDefault();
     setBusy(true);
     try {
+      // Frontend Defensivo: Validar formatos de API antes de persistir no banco
+      if (config.preferred_provider === "meta_official") {
+        if (config.whatsapp_phone_id && !/^\d+$/.test(config.whatsapp_phone_id.trim())) {
+          throw new Error("O WhatsApp Phone ID deve conter apenas números.");
+        }
+      }
+
+      if (config.preferred_provider === "evolution_api") {
+        if (config.evolution_api_url && !/^https?:\/\/.+/.test(config.evolution_api_url.trim())) {
+          throw new Error("A URL da Evolution API deve começar com http:// ou https://");
+        }
+      }
+
       const existingConfig = (agencyData as any)?.integrations_config || {};
       const nonSecrets = {
         ...existingConfig,

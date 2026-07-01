@@ -27,21 +27,26 @@ SET search_path = public
 AS $$
 DECLARE
   v_client_id uuid;
+  v_trip_rec record;
 BEGIN
+  -- Obter a viagem
+  SELECT * INTO v_trip_rec
+  FROM public.trips
+  WHERE id = p_trip_id AND deleted_at IS NULL;
+
+  IF NOT FOUND THEN
+    RETURN;
+  END IF;
+
   -- Obter o ID de cliente associado ao usuário logado
   SELECT c.id INTO v_client_id
   FROM public.clients c
   WHERE c.user_id = auth.uid();
 
-  IF v_client_id IS NULL THEN
-    RETURN;
-  END IF;
-
-  -- Confirmar se o cliente é o titular da viagem e se ela não foi deletada
-  IF EXISTS (
-    SELECT 1 FROM public.trips t
-    WHERE t.id = p_trip_id AND t.client_id = v_client_id AND t.deleted_at IS NULL
-  ) THEN
+  -- Se for o próprio cliente OU for membro da agência dona da viagem:
+  IF (v_client_id IS NOT NULL AND v_trip_rec.client_id = v_client_id)
+     OR public.is_agency_member(auth.uid(), v_trip_rec.agency_id)
+  THEN
     RETURN QUERY
     SELECT 
       bc.id, 

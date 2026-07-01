@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS public.task_comments (
   task_id         UUID NOT NULL REFERENCES public.tasks(id) ON DELETE CASCADE,
   agency_id       UUID NOT NULL REFERENCES public.agencies(id) ON DELETE CASCADE,
   parent_id       UUID REFERENCES public.task_comments(id) ON DELETE CASCADE, -- para replies
-  user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id         UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   content         JSONB NOT NULL,         -- rich text
   is_edited       BOOL DEFAULT false,
   edited_at       TIMESTAMPTZ,

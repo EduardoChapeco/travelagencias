@@ -219,7 +219,7 @@ async function callProviderApi(
       });
     }
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${key}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
@@ -674,11 +674,29 @@ serve(async (req) => {
         if (feature === "ocr_proposal") {
           systemPrompt = `Você é um Assistente B2B de Turismo (TravelOS AI). Extraia e estruture os dados em formato JSON restrito. Remova emails, telefones B2B, comissionamento e markup.`;
         } else if (feature === "ocr_passenger") {
-          systemPrompt = `Extraia dados do documento de viagem em JSON restrito: document_number, full_name, birth_date, nationality, expiration_date, issue_date, issuing_country.`;
+          systemPrompt = `Você é um especialista em OCR e análise documental. Extraia os dados do documento de viagem fornecido em um objeto JSON estrito com o seguinte formato:
+{
+  "document_number": "número do passaporte, RG ou documento identificador",
+  "full_name": "nome completo do passageiro em letras maiúsculas",
+  "birth_date": "data de nascimento no formato YYYY-MM-DD",
+  "nationality": "nacionalidade do passageiro",
+  "expiration_date": "data de expiração no formato YYYY-MM-DD ou null",
+  "issue_date": "data de emissão no formato YYYY-MM-DD ou null",
+  "issuing_country": "país de emissão em código de 3 letras ISO ou nome por extenso"
+}`;
         } else if (feature === "ocr_boleto") {
           systemPrompt = `Extraia dados do boleto em JSON: barcode, dueDate, amount, beneficiary, payer, payment_warning.`;
         } else if (feature === "ocr_voucher") {
-          systemPrompt = `Extraia dados do voucher em JSON: title, category (flight, hotel, transfer, activity, insurance, other), locator, provider, date_start, date_end, passengers.`;
+          systemPrompt = `Você é um extrator de inteligência de viagem. Analise o voucher enviado e extraia todos os dados relevantes em um objeto JSON estrito no seguinte formato:
+{
+  "title": "título curto e claro descrevendo o serviço (ex: Aéreo Confirmado, Hospedagem Hotel Exemplo)",
+  "category": "flight" | "hotel" | "transfer" | "activity" | "insurance" | "other",
+  "locator": "código localizador da reserva/bilhete",
+  "provider": "nome do fornecedor ou operadora parceira",
+  "date_start": "data e hora de início no formato YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD",
+  "date_end": "data e hora de término no formato YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD ou null",
+  "passengers": ["nome do passageiro 1", "nome do passageiro 2"]
+}`;
         }
       }
 
@@ -965,6 +983,18 @@ serve(async (req) => {
         .eq("code", provider)
         .single();
       if (provErr || !prov) throw new Error("Unsupported provider: " + provider);
+
+      if (provider === "resend_api_key") {
+        const testRes = await fetch("https://api.resend.com/domains", {
+          headers: {
+            "Authorization": `Bearer ${key_value}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!testRes.ok) {
+          throw new Error("Chave de API do Resend inválida ou não autorizada. Verifique suas credenciais.");
+        }
+      }
 
       const keySecret = Deno.env.get("API_KEY_SECRET");
       if (!keySecret) throw new Error("API_KEY_SECRET is not configured.");

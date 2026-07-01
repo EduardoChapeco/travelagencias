@@ -15,6 +15,28 @@ export async function fetchClientAgencies() {
     .select("id, agency_id")
     .eq("user_id", user.id);
   if (error) throw error;
+
+  // Fallback for agency administrators/staff previewing the client area
+  if (!data || data.length === 0) {
+    const { data: memberOf } = await supabase
+      .from("user_roles")
+      .select("agency_id")
+      .eq("user_id", user.id)
+      .limit(1);
+    
+    if (memberOf && memberOf.length > 0) {
+      const { data: firstClient } = await supabase
+        .from("clients")
+        .select("id, agency_id")
+        .eq("agency_id", memberOf[0].agency_id)
+        .limit(1)
+        .maybeSingle();
+      if (firstClient) {
+        return [firstClient];
+      }
+    }
+  }
+
   return data || [];
 }
 

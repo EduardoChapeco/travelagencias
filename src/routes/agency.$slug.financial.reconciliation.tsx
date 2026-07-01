@@ -246,8 +246,9 @@ function ReconciliationPage() {
   });
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
-      <div className="mb-6">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
+        <div className="mb-2">
         <h2 className="text-lg font-bold text-foreground">Conciliação Diária de Recibos</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
           Audite, aprove ou recuse comprovantes Pix e depósitos enviados pelos viajantes.
@@ -542,6 +543,7 @@ function ReconciliationPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -115,7 +115,8 @@ export function LedgerDashboard() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto bg-surface-alt p-4 md:p-6 space-y-6">
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
       {/* Title block */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-xl p-4">
         <div>
@@ -324,6 +325,7 @@ export function LedgerDashboard() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

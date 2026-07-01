@@ -11,6 +11,7 @@ import {
   closestCorners,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragStartEvent,
@@ -72,6 +73,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
 
   const handlePointerDown = (e: React.PointerEvent) => {
     pointerDownPos.current = { x: e.clientX, y: e.clientY };
+    listeners?.onPointerDown(e);
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -88,6 +90,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
       ref={setNodeRef}
       style={style}
       {...attributes}
+      {...listeners}
       onPointerDown={handlePointerDown}
       onClick={handleClick}
       className={cn(
@@ -548,6 +551,7 @@ export function KanbanView({
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 

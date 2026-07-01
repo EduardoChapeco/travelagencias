@@ -19,6 +19,7 @@ DECLARE
   v_pax        jsonb;
   v_lead       leads%ROWTYPE;
   v_plan_id    uuid;
+  v_client_id  uuid;
 BEGIN
   -- 1. Fetch proposal
   SELECT * INTO v_proposal
@@ -28,6 +29,18 @@ BEGIN
 
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Proposta % não encontrada ou não pertence à agência.', p_proposal_id;
+  END IF;
+
+  v_client_id := v_proposal.client_id;
+
+  -- Promote lead to client if client is not set and lead is linked
+  IF v_client_id IS NULL AND v_proposal.lead_id IS NOT NULL THEN
+    v_client_id := public.promote_lead_to_client_v2(v_proposal.lead_id, '{}'::jsonb);
+    
+    -- Also update the proposal's client_id so it stays linked
+    UPDATE proposals
+       SET client_id = v_client_id
+     WHERE id = p_proposal_id;
   END IF;
 
   -- 2. Generate sequential trip number
@@ -71,7 +84,7 @@ BEGIN
     p_agency_id,
     p_proposal_id,
     v_proposal.lead_id,
-    v_proposal.client_id,
+    v_client_id,
     v_number,
     v_proposal.title,
     v_proposal.destination,
@@ -105,7 +118,7 @@ BEGIN
       description, amount, currency, status, due_date, is_third_party
     ) VALUES (
       p_agency_id,
-      v_proposal.client_id,
+      v_client_id,
       v_trip_id,
       'income',
       'Vendas',
@@ -128,7 +141,7 @@ BEGIN
     ) VALUES (
       p_agency_id,
       v_trip_id,
-      v_proposal.client_id,
+      v_client_id,
       v_proposal.total,
       1,
       'active'

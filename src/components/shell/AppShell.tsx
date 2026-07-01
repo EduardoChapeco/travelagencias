@@ -40,33 +40,7 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
 
-  const isFullPage =
-    pathname.endsWith("/crm") ||
-    pathname.includes("/crm/") ||
-    pathname.includes("/proposals") ||
-    pathname.includes("/trips") ||
-    pathname.includes("/corporate") ||
-    pathname.includes("/vouchers") ||
-    pathname.endsWith("/omnichannel") ||
-    pathname.includes("/boarding") ||
-    pathname.includes("/calendar") ||
-    pathname.includes("/daily-tasks") ||
-    pathname.includes("/visas") ||
-    pathname.includes("/clients") ||
-    pathname.includes("/suppliers") ||
-    pathname.includes("/group-tours") ||
-    pathname.includes("/rooming-list") ||
-    pathname.includes("/bus-layouts") ||
-    pathname.includes("/contracts") ||
-    pathname.includes("/financial") ||
-    pathname.includes("/company") ||
-    pathname.includes("/team") ||
-    pathname.includes("/settings") ||
-    pathname.includes("/portal") ||
-    pathname.includes("/design-system") ||
-    pathname.includes("/support") ||
-    pathname.includes("/knowledge") ||
-    pathname.includes("/brand");
+  const isFullPage = crumbs.length > 2;
 
   const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
 

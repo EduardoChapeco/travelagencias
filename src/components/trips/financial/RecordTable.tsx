@@ -1,14 +1,16 @@
-import { Trash2 } from "lucide-react";
+import { Trash2, Check } from "lucide-react";
 import { StatusBadge, money, fmtDate } from "@/components/ui/form";
 import { type FinancialRecord } from "@/services/trips";
 
 export function RecordTable({
   records,
   onDelete,
+  onConfirm,
   currency = "BRL",
 }: {
   records: FinancialRecord[];
   onDelete: (id: string) => void;
+  onConfirm?: (id: string) => void;
   currency?: string | undefined;
 }) {
   if (records.length === 0) {
@@ -24,7 +26,7 @@ export function RecordTable({
           <th className="pb-2 font-medium text-foreground">Vencimento</th>
           <th className="pb-2 font-medium text-foreground">Status</th>
           <th className="pb-2 text-right font-medium text-foreground">Valor</th>
-          <th className="pb-2 w-8" />
+          <th className="pb-2 w-16" />
         </tr>
       </thead>
       <tbody>
@@ -42,13 +44,24 @@ export function RecordTable({
               {money(r.amount_brl ?? r.amount, currency)}
             </td>
             <td className="py-2 text-right">
-              <button
-                onClick={() => onDelete(r.id)}
-                className="text-muted-foreground hover:text-danger cursor-pointer"
-                title="Cancelar lançamento"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex justify-end items-center gap-2">
+                {r.status !== "confirmed" && onConfirm && (
+                  <button
+                    onClick={() => onConfirm(r.id)}
+                    className="text-muted-foreground hover:text-emerald-600 cursor-pointer"
+                    title="Marcar como Pago/Recebido"
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                <button
+                  onClick={() => onDelete(r.id)}
+                  className="text-muted-foreground hover:text-danger cursor-pointer"
+                  title="Cancelar lançamento"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </td>
           </tr>
         ))}

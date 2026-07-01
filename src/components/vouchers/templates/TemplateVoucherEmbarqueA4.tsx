@@ -1,10 +1,14 @@
-/**
- * TemplateVoucherEmbarqueA4 — Voucher A4 premium de embarque
- * Exibido dentro do StudioFrame com canvas_format = "a4-portrait"
- * Usado no VoucherStudio (Sprint 3)
- */
 import { type Voucher } from "@/services/vouchers";
 import { type BrandKit, type CompanyProfile } from "@/lib/agency-context";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Languages,
+  DollarSign,
+  Plug,
+  Clock,
+  Compass,
+} from "lucide-react";
 
 interface Props {
   voucher: Voucher;
@@ -54,6 +58,22 @@ export default function TemplateVoucherEmbarqueA4({
   brandKit,
   companyProfile,
 }: Props) {
+  const { data: dest } = useQuery({
+    queryKey: ["destination-info-voucher", v.destination],
+    queryFn: async () => {
+      if (!v.destination) return null;
+      const { data, error } = await supabase
+        .from("destination_info")
+        .select("*")
+        .ilike("destination", `%${v.destination}%`)
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!v.destination,
+  });
+
   const primaryColor =
     brandKit?.primary_color || brandKit?.brand_color || agency.brand_color || "#1a56db";
   const secondaryColor = brandKit?.secondary_color || "#D4AF37";
@@ -253,6 +273,90 @@ export default function TemplateVoucherEmbarqueA4({
               {c.role && <span className="text-slate-400 text-[10px]">{c.role}</span>}
             </div>
           ))}
+        </Section>
+      )}
+
+      {/* GUIA DE DESTINO ADICIONAL */}
+      {dest && (
+        <Section title="Guia do Destino">
+          <div className="bg-slate-50 border border-slate-100 rounded-lg p-4 space-y-3">
+            <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 mb-1">
+              <Compass className="h-4 w-4 text-slate-500" style={{ color: brand }} />
+              <span className="font-bold text-xs text-slate-800 tracking-wide">
+                Informações Úteis para Viagem — {dest.destination}
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2.5">
+              <div className="flex items-start gap-1.5 text-[11px]">
+                <Languages className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Idioma</span>
+                  <span className="text-slate-800 font-medium">{dest.language || "Português"}</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-1.5 text-[11px]">
+                <DollarSign className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Moeda</span>
+                  <span className="text-slate-800 font-medium">{dest.currency || "Real (BRL)"}</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-1.5 text-[11px]">
+                <Plug className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Tomada</span>
+                  <span className="text-slate-800 font-medium">{dest.plug_type || "Tipo N / C"}</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-1.5 text-[11px]">
+                <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Fuso Horário</span>
+                  <span className="text-slate-800 font-medium">{dest.time_zone || "Brasília (UTC -3)"}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 border-t border-slate-100 pt-2 text-[11px]">
+              {dest.visa_required != null && (
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Visto Necessário?</span>
+                  <span className="text-slate-800 font-medium">
+                    {dest.visa_required ? "⚠️ Sim" : "✓ Não"}
+                    {dest.visa_info && ` — ${dest.visa_info}`}
+                  </span>
+                </div>
+              )}
+              {dest.entry_requirements && (
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Requisitos de Entrada</span>
+                  <span className="text-slate-800">{dest.entry_requirements}</span>
+                </div>
+              )}
+              {dest.vaccinations_required && dest.vaccinations_required.length > 0 && (
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Vacinas Obrigatórias</span>
+                  <span className="text-slate-800">{dest.vaccinations_required.join(", ")}</span>
+                </div>
+              )}
+              {dest.safety_level && (
+                <div>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Segurança</span>
+                  <span className="text-slate-800">
+                    Nível: <strong className="text-slate-700">{dest.safety_level}</strong>
+                    {dest.safety_notes && ` — ${dest.safety_notes}`}
+                  </span>
+                </div>
+              )}
+              {dest.cultural_tips && (
+                <div className="col-span-1 md:col-span-2">
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Dicas Culturais</span>
+                  <span className="text-slate-800">{dest.cultural_tips}</span>
+                </div>
+              )}
+            </div>
+          </div>
         </Section>
       )}
 

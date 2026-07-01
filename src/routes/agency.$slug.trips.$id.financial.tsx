@@ -22,6 +22,7 @@ import {
   fetchPaymentPlan,
   cancelFinancialRecord,
   markInstallmentPaid,
+  confirmFinancialRecord,
 } from "@/services/trips";
 
 import { FinancialKpis } from "@/components/trips/financial/FinancialKpis";
@@ -218,6 +219,16 @@ function TripFinancial() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
 
+  const confirmRecord = useMutation({
+    mutationFn: (id: string) => confirmFinancialRecord(id),
+    onSuccess: () => {
+      toast.success("Lançamento marcado como Pago!");
+      qc.invalidateQueries({ queryKey: ["financial_records_trip", tripId] });
+      qc.invalidateQueries({ queryKey: ["trip", tripId] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao confirmar lançamento"),
+  });
+
   const markPaid = useMutation({
     mutationFn: (instId: string) => markInstallmentPaid(instId),
     onSuccess: () => {
@@ -301,6 +312,7 @@ function TripFinancial() {
         <RecordTable
           records={income}
           onDelete={(id) => deleteRecord.mutate(id)}
+          onConfirm={(id) => confirmRecord.mutate(id)}
           currency={trip?.currency}
         />
       </Section>
@@ -315,6 +327,7 @@ function TripFinancial() {
         <RecordTable
           records={thirdPartyIncome}
           onDelete={(id) => deleteRecord.mutate(id)}
+          onConfirm={(id) => confirmRecord.mutate(id)}
           currency={trip?.currency}
         />
       </Section>
@@ -334,6 +347,7 @@ function TripFinancial() {
         <RecordTable
           records={expenses}
           onDelete={(id) => deleteRecord.mutate(id)}
+          onConfirm={(id) => confirmRecord.mutate(id)}
           currency={trip?.currency}
         />
       </Section>

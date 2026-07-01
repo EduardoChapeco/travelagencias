@@ -38,6 +38,7 @@ import {
   Settings2,
   Plug,
   AlertCircle,
+  Link2,
 } from "lucide-react";
 import {
   Sheet,
@@ -147,6 +148,60 @@ function InboxModule() {
   const [mySessionsOnly, setMySessionsOnly] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [analyzing, setAnalyzing] = useState(false);
+
+  const [crmSearchQuery, setCrmSearchQuery] = useState("");
+  const [crmSearchType, setCrmSearchType] = useState<"lead" | "client">("lead");
+  const [isLinkingOpen, setIsLinkingOpen] = useState(false);
+
+  const { data: crmSearchResults = [] } = useQuery({
+    enabled: isLinkingOpen && crmSearchQuery.length > 2 && !!agency,
+    queryKey: ["inbox-crm-search", crmSearchType, crmSearchQuery, agency?.id],
+    queryFn: async () => {
+      if (crmSearchType === "lead") {
+        const { data, error } = await db
+          .from("crm_leads")
+          .select("id, name, email, phone")
+          .eq("agency_id", agency!.id)
+          .ilike("name", `%${crmSearchQuery}%`)
+          .limit(10);
+        if (error) throw error;
+        return data || [];
+      } else {
+        const { data, error } = await db
+          .from("clients")
+          .select("id, full_name, email, phone")
+          .eq("agency_id", agency!.id)
+          .ilike("full_name", `%${crmSearchQuery}%`)
+          .limit(10);
+        if (error) throw error;
+        return (data || []).map((d: any) => ({
+          id: d.id,
+          name: d.full_name,
+          email: d.email,
+          phone: d.phone
+        }));
+      }
+    }
+  });
+
+  const linkContactToCrm = async (leadId: string | null, clientId: string | null) => {
+    if (!selectedConversation?.contacts?.id) return;
+    const { error } = await db
+      .from("contacts")
+      .update({ lead_id: leadId, client_id: clientId })
+      .eq("id", selectedConversation.contacts.id);
+
+    if (error) {
+      toast.error("Erro ao vincular contato: " + error.message);
+    } else {
+      toast.success("Vínculo atualizado com sucesso!");
+      setIsLinkingOpen(false);
+      setCrmSearchQuery("");
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ["inbox-matched-lead", selectedId] });
+      queryClient.invalidateQueries({ queryKey: ["inbox-matched-client", selectedId] });
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setCurrentUser(data.user));
@@ -260,11 +315,18 @@ function InboxModule() {
   // ── Match CRM info ──────────────────────────────────────────────────────────
   const matchedContactEmail = selectedConversation?.contacts?.email;
   const matchedContactPhone = selectedConversation?.contacts?.phone;
+  const explicitLeadId = selectedConversation?.contacts?.lead_id;
+  const explicitClientId = selectedConversation?.contacts?.client_id;
 
   const { data: matchedLead } = useQuery({
-    enabled: !!agency && (!!matchedContactEmail || !!matchedContactPhone),
-    queryKey: ["inbox-matched-lead", selectedId, matchedContactEmail, matchedContactPhone],
+    enabled: !!agency && (!!explicitLeadId || !!matchedContactEmail || !!matchedContactPhone),
+    queryKey: ["inbox-matched-lead", selectedId, matchedContactEmail, matchedContactPhone, explicitLeadId],
     queryFn: async () => {
+      if (explicitLeadId) {
+        const { data } = await db.from("crm_leads").select("*").eq("id", explicitLeadId).maybeSingle();
+        if (data) return data;
+      }
+      if (!matchedContactEmail && !matchedContactPhone) return null;
       let q = db.from("crm_leads").select("*").eq("agency_id", agency!.id);
       if (matchedContactEmail) {
         q = q.eq("email", matchedContactEmail);
@@ -278,9 +340,14 @@ function InboxModule() {
   });
 
   const { data: matchedClient } = useQuery({
-    enabled: !!agency && (!!matchedContactEmail || !!matchedContactPhone),
-    queryKey: ["inbox-matched-client", selectedId, matchedContactEmail, matchedContactPhone],
+    enabled: !!agency && (!!explicitClientId || !!matchedContactEmail || !!matchedContactPhone),
+    queryKey: ["inbox-matched-client", selectedId, matchedContactEmail, matchedContactPhone, explicitClientId],
     queryFn: async () => {
+      if (explicitClientId) {
+        const { data } = await db.from("clients").select("*").eq("id", explicitClientId).maybeSingle();
+        if (data) return data;
+      }
+      if (!matchedContactEmail && !matchedContactPhone) return null;
       let q = db.from("clients").select("*").eq("agency_id", agency!.id);
       if (matchedContactEmail) {
         q = q.eq("email", matchedContactEmail);
@@ -860,6 +927,16 @@ function InboxModule() {
                                 toast.error("Preencha todos os campos obrigatórios.");
                                 return;
                               }
+                              const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                              if (!emailPattern.test(gmailAddress.trim())) {
+                                toast.error("Formato de e-mail inválido.");
+                                return;
+                              }
+                              const resendKeyPattern = /^re_[a-zA-Z0-9]{8}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{12}$/;
+                              if (!resendKeyPattern.test(resendApiKey.trim())) {
+                                toast.error("Chave de API do Resend inválida. A chave deve começar com 're_' e seguir o padrão oficial do Resend.");
+                                return;
+                              }
                               setSubmittingConfig(true);
                               try {
                                 await supabase.functions.invoke("ai-orchestrator", {
@@ -935,6 +1012,14 @@ function InboxModule() {
                                 toast.error("Preencha o Phone ID e Token.");
                                 return;
                               }
+                              if (!/^\d+$/.test(waPhoneId.trim())) {
+                                toast.error("O Phone ID deve conter apenas números.");
+                                return;
+                              }
+                              if (waToken.trim().length < 32) {
+                                toast.error("O Token da API do WhatsApp parece inválido (muito curto).");
+                                return;
+                              }
                               await Promise.all([
                                 supabase.functions.invoke("ai-orchestrator", {
                                   body: {
@@ -966,6 +1051,14 @@ function InboxModule() {
                             } else {
                               if (!evolutionUrl.trim() || !evolutionKey.trim()) {
                                 toast.error("Preencha a URL e a API Key da Evolution.");
+                                return;
+                              }
+                              if (!/^https?:\/\/.+/.test(evolutionUrl.trim())) {
+                                toast.error("A URL da Evolution API deve ser válida e começar com http:// ou https://");
+                                return;
+                              }
+                              if (evolutionKey.trim().length < 8) {
+                                toast.error("A API Key da Evolution deve ter pelo menos 8 caracteres.");
                                 return;
                               }
                               await supabase.functions.invoke("ai-orchestrator", {
@@ -1608,49 +1701,165 @@ function InboxModule() {
                 </div>
 
                 {/* CRM Sync details */}
-                <div className="bg-surface-alt/40 border border-border rounded-xl p-3 space-y-2">
-                  {matchedLead ? (
-                    <div className="space-y-1">
+                <div className="bg-surface-alt/40 border border-border rounded-xl p-3 space-y-3">
+                  {isLinkingOpen ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
+                        <span className="text-[9px] font-extrabold uppercase tracking-wide text-foreground">
+                          Vincular Contato ao CRM
+                        </span>
+                        <button
+                          onClick={() => {
+                            setIsLinkingOpen(false);
+                            setCrmSearchQuery("");
+                          }}
+                          className="text-[9px] font-bold text-muted-foreground hover:text-foreground"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+
+                      <div className="flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setCrmSearchType("lead")}
+                          className={cn(
+                            "flex-1 py-1 text-[9px] font-bold rounded",
+                            crmSearchType === "lead"
+                              ? "bg-brand text-brand-foreground"
+                              : "bg-surface-alt text-muted-foreground hover:bg-surface-alt/80 border border-border/50"
+                          )}
+                        >
+                          Lead
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCrmSearchType("client")}
+                          className={cn(
+                            "flex-1 py-1 text-[9px] font-bold rounded",
+                            crmSearchType === "client"
+                              ? "bg-brand text-brand-foreground"
+                              : "bg-surface-alt text-muted-foreground hover:bg-surface-alt/80 border border-border/50"
+                          )}
+                        >
+                          Cliente
+                        </button>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={crmSearchQuery}
+                        onChange={(e) => setCrmSearchQuery(e.target.value)}
+                        placeholder="Buscar por nome (min. 3 letras)..."
+                        className="w-full text-xs h-8 px-2.5 rounded border border-border bg-surface text-foreground outline-none focus:border-brand"
+                      />
+
+                      {crmSearchQuery.length > 2 && crmSearchResults.length === 0 && (
+                        <p className="text-[10px] text-muted-foreground text-center py-1">
+                          Nenhum resultado encontrado.
+                        </p>
+                      )}
+
+                      {crmSearchResults.length > 0 && (
+                        <div className="max-h-28 overflow-y-auto border border-border/50 rounded bg-surface divide-y divide-border/30">
+                          {crmSearchResults.map((res: any) => (
+                            <button
+                              key={res.id}
+                              type="button"
+                              onClick={() => {
+                                if (crmSearchType === "lead") {
+                                  linkContactToCrm(res.id, null);
+                                } else {
+                                  linkContactToCrm(null, res.id);
+                                }
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 hover:bg-surface-alt/40 text-[10px] text-foreground flex flex-col cursor-pointer"
+                            >
+                              <span className="font-semibold">{res.name}</span>
+                              <span className="text-[8px] text-muted-foreground">
+                                {res.email || ""} {res.phone ? `(${res.phone})` : ""}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {(explicitLeadId || explicitClientId) && (
+                        <button
+                          type="button"
+                          onClick={() => linkContactToCrm(null, null)}
+                          className="w-full text-center py-1 border border-danger/30 text-danger bg-danger/5 hover:bg-danger/10 text-[9px] font-bold rounded mt-1"
+                        >
+                          Remover Vínculo Atual
+                        </button>
+                      )}
+                    </div>
+                  ) : matchedLead ? (
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] font-extrabold uppercase tracking-wide text-brand">
                           Lead no CRM
                         </span>
-                        <Link
-                          to="/agency/$slug/crm/$lead_id"
-                          params={{ slug: agency?.slug || "", lead_id: (matchedLead as any).id }}
-                          className="text-[9px] font-bold text-brand hover:underline flex items-center gap-0.5"
-                        >
-                          Ver Ficha <ExternalLink className="w-2.5 h-2.5" />
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setIsLinkingOpen(true)}
+                            className="text-[9px] font-bold text-muted-foreground hover:text-brand hover:underline"
+                          >
+                            Alterar vínculo
+                          </button>
+                          <Link
+                            to="/agency/$slug/crm/$lead_id"
+                            params={{ slug: agency?.slug || "", lead_id: (matchedLead as any).id }}
+                            className="text-[9px] font-bold text-brand hover:underline flex items-center gap-0.5"
+                          >
+                            Ver Ficha <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
                       </div>
                       <p className="text-xs font-bold text-foreground leading-snug">{(matchedLead as any).name}</p>
                       {(matchedLead as any).email && <p className="text-[10px] text-muted-foreground">{(matchedLead as any).email}</p>}
                     </div>
                   ) : matchedClient ? (
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] font-extrabold uppercase tracking-wide text-emerald-600">
                           Cliente Cadastrado
                         </span>
-                        <Link
-                          to="/agency/$slug/clients/$id"
-                          params={{ slug: agency?.slug || "", id: (matchedClient as any).id }}
-                          className="text-[9px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5"
-                        >
-                          Ver Perfil <ExternalLink className="w-2.5 h-2.5" />
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setIsLinkingOpen(true)}
+                            className="text-[9px] font-bold text-muted-foreground hover:text-emerald-600 hover:underline"
+                          >
+                            Alterar vínculo
+                          </button>
+                          <Link
+                            to="/agency/$slug/clients/$id"
+                            params={{ slug: agency?.slug || "", id: (matchedClient as any).id }}
+                            className="text-[9px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5"
+                          >
+                            Ver Perfil <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
                       </div>
                       <p className="text-xs font-bold text-foreground leading-snug">{(matchedClient as any).full_name}</p>
                     </div>
                   ) : (
                     <div className="space-y-2 text-center py-1">
                       <p className="text-[10px] text-muted-foreground">Não localizado no CRM</p>
-                      <button
-                        onClick={createLeadFromSession}
-                        className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
-                      >
-                        <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
-                      </button>
+                      <div className="flex flex-col gap-1.5">
+                        <button
+                          onClick={createLeadFromSession}
+                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
+                        </button>
+                        <button
+                          onClick={() => setIsLinkingOpen(true)}
+                          className="w-full text-[10px] font-bold border border-border text-muted-foreground bg-surface hover:text-foreground hover:bg-surface-alt/25 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                        >
+                          <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>

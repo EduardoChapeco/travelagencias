@@ -14,6 +14,48 @@ const pwaPlugins = VitePWA({
   workbox: {
     globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
     cleanupOutdatedCaches: true,
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "supabase-storage-cache",
+          expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 dias
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/sign\/.*/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "supabase-signed-assets-cache",
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 60 * 60 * 24 * 7, // 7 dias
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /.*\/functions\/v1\/.*/i,
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "supabase-functions-cache",
+          expiration: {
+            maxEntries: 20,
+            maxAgeSeconds: 60 * 60 * 24, // 24 horas
+          },
+          networkTimeoutSeconds: 5,
+        },
+      },
+    ],
   },
 });
 

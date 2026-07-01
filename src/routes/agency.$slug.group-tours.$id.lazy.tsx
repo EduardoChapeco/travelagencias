@@ -3126,7 +3126,7 @@ function RoomingListManager({
     useSensor(TouchSensor, {
       activationConstraint: {
         delay: 250,
-        tolerance: 5,
+        tolerance: 8,
       },
     }),
   );

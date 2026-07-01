@@ -236,15 +236,23 @@ function ContractsPage() {
 
                     <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-xl p-4 border border-border/50">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2 text-muted-foreground font-medium">
+                        <span className="flex items-center gap-2 text-muted-foreground font-medium whitespace-nowrap">
                           <User className="h-4 w-4" /> Cliente
                         </span>
-                        <span
-                          className="font-semibold text-foreground truncate max-w-[140px]"
-                          title={c.client_data?.name}
-                        >
-                          {c.client_data?.name ?? "Não identificado"}
-                        </span>
+                        {(() => {
+                          const clientNames = Array.isArray(c.client_data)
+                            ? c.client_data.map((x: any) => x.name || x.full_name || "").filter(Boolean).join(", ")
+                            : (c.client_data as any)?.name;
+                          const displayNames = clientNames || "Não identificado";
+                          return (
+                            <span
+                              className="font-semibold text-foreground truncate max-w-[150px] text-right"
+                              title={displayNames}
+                            >
+                              {displayNames}
+                            </span>
+                          );
+                        })()}
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 text-muted-foreground font-medium">

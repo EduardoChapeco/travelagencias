@@ -209,7 +209,6 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   const roomsQ = useQuery({
     queryKey: ["rooming-list", tour.id],
     queryFn: () => fetchRoomingListByTour(tour.id),
-    enabled: expanded,
   });
 
   const enrolQ = useQuery({
@@ -223,7 +222,6 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       if (error) throw error;
       return data ?? [];
     },
-    enabled: expanded,
   });
 
   const rooms = roomsQ.data ?? tour.rooms ?? [];
@@ -482,7 +480,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   // DND Handlers
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
@@ -588,13 +586,22 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
           <div className="text-[10px] text-muted-foreground font-semibold flex gap-2">
             <span>
-              Quartos: <strong className="text-foreground">{rooms.length}</strong>
+              Quartos:{" "}
+              {roomsQ.isLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                <strong className="text-foreground">{rooms.length}</strong>
+              )}
             </span>
             <span>
               Alocados:{" "}
-              <strong className="text-brand">
-                {totalOccupied}/{passengers.length}
-              </strong>
+              {roomsQ.isLoading || enrolQ.isLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                <strong className="text-brand">
+                  {totalOccupied}/{passengers.length}
+                </strong>
+              )}
             </span>
           </div>
 
@@ -1081,15 +1088,13 @@ function RoomingListDashboard() {
   // Query: Group Tours
   const toursQ = useQuery({
     enabled: !!agency,
-    queryKey: ["group-tours", agency?.id],
+    queryKey: ["group-tours-basic", agency?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase
+      const { data, error } = await supabase
         .from("group_tours")
         .select(`
-          id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id,
-          rooms:boarding_rooming_list(id, room_number, room_type, passengers, is_confirmed, hotel_name, checkin_date, checkout_date, notes),
-          enrollments:group_tour_enrollments(id, passenger_name, status)
-        `) as any)
+          id, title, slug, departure_date, return_date, destination, rooming_list_status, rooming_list_sent_hotel, rooming_list_sent_bus, agency_id
+        `)
         .eq("agency_id", agency!.id)
         .order("departure_date", { ascending: true });
       if (error) throw error;

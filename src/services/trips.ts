@@ -130,8 +130,124 @@ export async function addFinancialRecord(payload: AddRecordPayload): Promise<voi
     payment_method: payload.payment_method,
     status: payload.status,
     due_date: payload.due_date,
+    paid_at: payload.status === "confirmed" ? new Date().toISOString() : null,
   });
   if (error) throw new Error(error.message);
+
+  if (payload.status === "confirmed") {
+    const { data: registers } = await supabase
+      .from("cash_registers")
+      .select("*")
+      .eq("agency_id", payload.agencyId)
+      .eq("is_active", true);
+
+    if (registers && registers.length > 0) {
+      const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
+      let targetRegId = "";
+      let targetSessId = "";
+
+      if (physicalIds.length > 0) {
+        const { data: session } = await supabase
+          .from("cash_sessions")
+          .select("*")
+          .in("cash_register_id", physicalIds)
+          .eq("status", "open")
+          .limit(1)
+          .maybeSingle();
+        if (session) {
+          targetRegId = session.cash_register_id;
+          targetSessId = session.id;
+        }
+      }
+
+      if (!targetRegId) {
+        const bank = registers.find((r: any) => r.type === "bank_account");
+        if (bank) {
+          targetRegId = bank.id;
+        } else {
+          targetRegId = registers[0].id;
+        }
+      }
+
+      await supabase.from("cash_transactions").insert({
+        agency_id: payload.agencyId,
+        cash_register_id: targetRegId,
+        cash_session_id: targetSessId || null,
+        trip_id: payload.tripId,
+        amount: Number(payload.amount),
+        type: payload.type === "income" ? "receipt" : "payment",
+        payment_method: payload.payment_method || "pix",
+        notes: `Lançamento manual confirmado: ${payload.description}`,
+        transaction_date: new Date().toISOString(),
+      });
+    }
+  }
+}
+
+export async function confirmFinancialRecord(id: string): Promise<void> {
+  const { data: rec, error: getErr } = await supabase
+    .from("financial_records")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (getErr) throw new Error(getErr.message);
+
+  if (rec.status === "confirmed") {
+    throw new Error("Lançamento já está confirmado.");
+  }
+
+  const { error } = await supabase
+    .from("financial_records")
+    .update({ status: "confirmed", paid_at: new Date().toISOString() } as never)
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  const { data: registers } = await supabase
+    .from("cash_registers")
+    .select("*")
+    .eq("agency_id", rec.agency_id)
+    .eq("is_active", true);
+
+  if (!rec.is_third_party && registers && registers.length > 0) {
+    const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
+    let targetRegId = "";
+    let targetSessId = "";
+
+    if (physicalIds.length > 0) {
+      const { data: session } = await supabase
+        .from("cash_sessions")
+        .select("*")
+        .in("cash_register_id", physicalIds)
+        .eq("status", "open")
+        .limit(1)
+        .maybeSingle();
+      if (session) {
+        targetRegId = session.cash_register_id;
+        targetSessId = session.id;
+      }
+    }
+
+    if (!targetRegId) {
+      const bank = registers.find((r: any) => r.type === "bank_account");
+      if (bank) {
+        targetRegId = bank.id;
+      } else {
+        targetRegId = registers[0].id;
+      }
+    }
+
+    await supabase.from("cash_transactions").insert({
+      agency_id: rec.agency_id,
+      cash_register_id: targetRegId,
+      cash_session_id: targetSessId || null,
+      trip_id: rec.trip_id,
+      amount: Number(rec.amount),
+      type: rec.type === "income" ? "receipt" : "payment",
+      payment_method: rec.payment_method || "pix",
+      notes: `Lançamento manual confirmado: ${rec.description}`,
+      transaction_date: new Date().toISOString(),
+    });
+  }
 }
 
 export async function cancelFinancialRecord(id: string): Promise<void> {

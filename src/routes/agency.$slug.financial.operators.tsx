@@ -142,8 +142,9 @@ function OperatorsFinancial() {
   const errQ = recordsQ.isError ? recordsQ : installmentsQ;
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
+        {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
           <Building2 className="h-5 w-5 text-brand" />
@@ -418,6 +419,7 @@ function OperatorsFinancial() {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }

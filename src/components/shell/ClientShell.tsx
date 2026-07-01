@@ -10,6 +10,7 @@ import {
   User,
   LogOut,
   Shield,
+  Menu,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +35,7 @@ export function ClientShell() {
   const [authed, setAuthed] = useState(false);
   const [authenticatingToken, setAuthenticatingToken] = useState(false);
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     let cancel = false;
@@ -107,9 +109,24 @@ export function ClientShell() {
     );
 
   return (
-    <div className="flex h-screen w-full bg-background text-foreground">
+    <div className="flex h-screen w-full bg-background text-foreground flex-col md:flex-row">
+      {/* Mobile Top Header */}
+      <header className="flex h-[58px] shrink-0 items-center justify-between border-b border-border bg-surface px-4 md:hidden">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+          aria-label="Abrir menu"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+        <span className="text-sm font-semibold">Meu Painel</span>
+        <div className="w-8" /> {/* Balance spacer */}
+      </header>
+
       <SlimSidebar
         items={items as SlimSidebarItem[]}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
         brand={
           <>
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">

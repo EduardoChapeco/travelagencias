@@ -20,6 +20,7 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   closestCorners,
@@ -94,7 +95,10 @@ function BoardingKanbanPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["boarding", agency?.id] }),
   });
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
+  );
 
   const stagesById = useMemo(() => {
     const map: Record<string, Card[]> = {};

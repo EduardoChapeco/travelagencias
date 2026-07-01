@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field, Input, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
@@ -71,6 +71,20 @@ function Page() {
   const [c, setC] = useState<Contract | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [signing, setSigning] = useState(false);
+  const [selectedSignerIndex, setSelectedSignerIndex] = useState<string>("");
+
+  const pendingSigners = useMemo(() => {
+    if (!c || !Array.isArray(c.client_data)) return [];
+    const cleanDoc = (d: string) => (d || "").replace(/\D/g, "");
+    return c.client_data.filter((cl: any) => {
+      const clCpf = cleanDoc(cl.cpf || cl.document);
+      return !c.signatures?.some((sig: any) => cleanDoc(sig.signer_document) === clCpf);
+    });
+  }, [c]);
+
+  const fullySigned = useMemo(() => {
+    return pendingSigners.length === 0;
+  }, [pendingSigners]);
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
   const [selfie, setSelfie] = useState<string | null>(null);
@@ -215,6 +229,13 @@ function Page() {
       setFacialMatching(false);
     }
   }, [selfie, documentFront, documentBack]);
+
+  useEffect(() => {
+    if (pendingSigners.length === 1) {
+      setName(pendingSigners[0].name || "");
+      setDoc(pendingSigners[0].cpf || pendingSigners[0].document || "");
+    }
+  }, [pendingSigners]);
 
   const handleTermsScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (readConfirmed) return;
@@ -572,8 +593,10 @@ function Page() {
       if (error) throw error;
       const serialNumber = serial as unknown as string;
 
-      // 8. Atualizar o estado local com o serial gerado para re-renderizar a Chancela na tela
-      const finalSignatures = [
+      // 8. Atualizar o estado local com a nova assinatura e recalcular conformidade
+      const willBeFullySigned = pendingSigners.length <= 1;
+      const updatedSignatures = [
+        ...(c.signatures || []),
         {
           signer_name: name,
           signer_document: doc,
@@ -590,49 +613,55 @@ function Page() {
 
       setC({
         ...(c as Contract),
-        status: "signed",
-        signed_at: timestamp,
+        status: willBeFullySigned ? "signed" : "pending_signature",
+        signed_at: willBeFullySigned ? timestamp : null,
         content_hash: hash,
-        certificate: {
-          serial: serialNumber,
-          issued_at: timestamp,
-          client_hash: hash,
-          issuer: "TravelOS Assinaturas",
-        },
-        signatures: finalSignatures,
+        certificate: willBeFullySigned
+          ? {
+              serial: serialNumber,
+              issued_at: timestamp,
+              client_hash: hash,
+              issuer: "TravelOS Assinaturas",
+            }
+          : null,
+        signatures: updatedSignatures,
       });
       fetchAuditTrail();
 
-      // 9. Pequeno delay para garantir que o componente renderize com o certificado e imagens
-      await new Promise((r) => setTimeout(r, 800));
+      if (willBeFullySigned) {
+        // 9. Pequeno delay para garantir que o componente renderize com o certificado e imagens
+        await new Promise((r) => setTimeout(r, 800));
 
-      // 10. Snapshot PDF final completo chancelado (com o QR Code, selfie, etc.)
-      const finalPdfBlob = await generateContractPdf("contract-document");
+        // 10. Snapshot PDF final completo chancelado (com o QR Code, selfie, etc.)
+        const finalPdfBlob = await generateContractPdf("contract-document");
 
-      // 11. Upload do PDF assinado chancelado para o Storage
-      const finalPdfPath = `${c!.agency_id}/${token}/contrato-assinado-${Date.now()}.pdf`;
-      const { error: uploadErr } = await supabase.storage
-        .from("contract-pdfs")
-        .upload(finalPdfPath, finalPdfBlob, {
-          contentType: "application/pdf",
-          upsert: true,
+        // 11. Upload do PDF assinado chancelado para o Storage
+        const finalPdfPath = `${c!.agency_id}/${token}/contrato-assinado-${Date.now()}.pdf`;
+        const { error: uploadErr } = await supabase.storage
+          .from("contract-pdfs")
+          .upload(finalPdfPath, finalPdfBlob, {
+            contentType: "application/pdf",
+            upsert: true,
+          });
+
+        if (uploadErr) {
+          throw new Error("Erro ao salvar o documento final no cofre: " + uploadErr.message);
+        }
+
+        // 12. Registrar o caminho do PDF assinado chancelado na base
+        const { error: updatePdfErr } = await supabase.rpc("update_contract_pdf_path", {
+          _contract_id: c!.id,
+          _pdf_path: finalPdfPath,
         });
 
-      if (uploadErr) {
-        throw new Error("Erro ao salvar o documento final no cofre: " + uploadErr.message);
+        if (updatePdfErr) {
+          console.warn("Aviso ao vincular PDF assinado no banco:", updatePdfErr.message);
+        }
+
+        toast.success("Contrato assinado digitalmente com sucesso!", { id: "signing" });
+      } else {
+        toast.success("Sua assinatura foi registrada! Aguardando os demais signatários.", { id: "signing" });
       }
-
-      // 12. Registrar o caminho do PDF assinado chancelado na base
-      const { error: updatePdfErr } = await supabase.rpc("update_contract_pdf_path", {
-        _contract_id: c!.id,
-        _pdf_path: finalPdfPath,
-      });
-
-      if (updatePdfErr) {
-        console.warn("Aviso ao vincular PDF assinado no banco:", updatePdfErr.message);
-      }
-
-      toast.success("Contrato assinado digitalmente!", { id: "signing" });
     } catch (e: any) {
       toast.error(e.message || "Erro inesperado ao assinar", { id: "signing" });
     } finally {
@@ -659,69 +688,89 @@ function Page() {
   );
 
   return (
-    <div className="mx-auto min-h-screen max-w-3xl px-4 py-8 md:py-12" id="contract-document">
-      <header className="mb-8 flex items-center gap-4">
+    <div className="mx-auto min-h-screen max-w-3xl px-4 py-8 md:py-12 print:px-0 print:py-4 print:max-w-none print:text-black" id="contract-document">
+      <header className="mb-8 flex items-center gap-4 border-b border-border/10 pb-4 print:border-black">
         {c.agency_logo ? (
           <img
             src={c.agency_logo}
             alt={c.agency_name}
-            className="h-12 w-12 rounded-xl object-cover  ring-1 ring-border/50"
+            className="h-12 w-12 rounded-xl object-cover ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-alt font-bold text-muted-foreground  ring-1 ring-border/50">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-alt font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
             {c.agency_name.charAt(0)}
           </div>
         )}
         <div>
-          <div className="text-xs font-semibold uppercase tracking-widest text-brand">
+          <div className="text-xs font-semibold uppercase tracking-widest text-brand print:text-black">
             {c.agency_name}
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
+          <h1 className="text-xl font-bold tracking-tight text-foreground print:text-black print:text-lg">
             Contrato de Prestação de Serviços Turísticos
           </h1>
         </div>
       </header>
 
-      <section className="mb-6 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50">
-        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+      <section className="mb-6 overflow-hidden rounded-xl bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
+        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Contratante(s) / Pagante(s)
           </h2>
         </div>
-        <div className="p-5 flex flex-col gap-3">
+        <div className="p-5 flex flex-col gap-3 print:p-0 print:pt-4">
           {Array.isArray(c.client_data) && c.client_data.length > 0 ? (
-            c.client_data.map((client: any, i: number) => (
-              <div key={i} className="text-sm">
-                <span className="font-semibold text-foreground">{client.name}</span>
-                {client.cpf && (
-                  <span className="text-muted-foreground ml-2">Doc: {client.cpf}</span>
-                )}
-              </div>
-            ))
+            c.client_data.map((client: any, i: number) => {
+              const cleanDoc = (d: string) => (d || "").replace(/\D/g, "");
+              const clDoc = cleanDoc(client.cpf || client.document);
+              const alreadySigned = c.signatures?.some(
+                (sig: any) => cleanDoc(sig.signer_document) === clDoc
+              );
+              return (
+                <div key={i} className="flex items-center justify-between text-sm py-1 border-b border-border/10 last:border-b-0 last:pb-0 print:border-black/10 print:text-black">
+                  <div>
+                    <span className="font-semibold text-foreground print:text-black">{client.name}</span>
+                    {client.cpf && (
+                      <span className="text-muted-foreground ml-2 text-xs print:text-black">CPF/Doc: {client.cpf}</span>
+                    )}
+                  </div>
+                  <div>
+                    {alreadySigned ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-semibold text-success print:bg-transparent print:p-0 print:text-success">
+                        <Check className="h-3 w-3 print:hidden" /> Assinado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-warning/15 px-2.5 py-0.5 text-xs font-semibold text-warning print:bg-transparent print:p-0 print:text-warning no-print">
+                        <Lock className="h-3 w-3 print:hidden" /> Pendente
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })
           ) : (
-            <div className="text-sm">
-              <span className="font-semibold text-foreground">
+            <div className="text-sm print:text-black">
+              <span className="font-semibold text-foreground print:text-black">
                 {(c.client_data as any)?.name || "—"}
               </span>
             </div>
           )}
         </div>
 
-        <div className="border-b border-t border-border/50 bg-surface-alt/30 px-5 py-3">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+        <div className="border-b border-t border-border/50 bg-surface-alt/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Resumo Executivo
           </h2>
         </div>
-        <div className="p-5">
-          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+        <div className="p-5 print:p-0 print:pt-4">
+          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80 print:text-black print:text-[11px]">
             {c.package_summary || "—"}
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-surface-alt/30 p-4">
+          <div className="mt-5 grid grid-cols-2 gap-4 rounded-lg bg-surface-alt/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Valor total
               </div>
-              <div className="mt-1 font-mono text-base font-semibold">
+              <div className="mt-1 font-mono text-base font-semibold print:text-black print:text-sm">
                 {Number(c.total_value || 0).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -729,26 +778,26 @@ function Page() {
               </div>
             </div>
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Pagamento
               </div>
-              <div className="mt-1 text-sm font-medium">{c.payment_terms || "—"}</div>
+              <div className="mt-1 text-sm font-medium print:text-black print:text-xs">{c.payment_terms || "—"}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mb-8 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50">
-        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 flex items-center justify-between">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+      <section className="mb-8 overflow-hidden rounded-xl bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
+        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Termos e Cláusulas
           </h2>
           {readConfirmed ? (
-            <span className="text-[10px] font-bold text-success flex items-center gap-1">
+            <span className="text-[10px] font-bold text-success flex items-center gap-1 no-print">
               <Check className="h-3.5 w-3.5" /> Lido
             </span>
           ) : (
-            <span className="text-[10px] font-medium text-warning flex items-center gap-1 animate-pulse">
+            <span className="text-[10px] font-medium text-warning flex items-center gap-1 animate-pulse no-print">
               <Eye className="h-3.5 w-3.5" /> Role para ler tudo
             </span>
           )}
@@ -756,11 +805,11 @@ function Page() {
         <div
           ref={termsRef}
           onScroll={handleTermsScroll}
-          className="max-h-[500px] overflow-y-auto p-5 space-y-5 no-scrollbar scroll-smooth"
+          className="max-h-[500px] overflow-y-auto p-5 space-y-5 no-scrollbar scroll-smooth print:max-h-none print:overflow-visible print:p-0 print:pt-4"
         >
           {all.map((cl) => (
-            <div key={cl.number} className="text-xs leading-relaxed text-foreground/80">
-              <span className="font-bold text-foreground">
+            <div key={cl.number} className="text-xs leading-relaxed text-foreground/80 print:text-black print:text-[11px] print:break-inside-avoid print:mb-4">
+              <span className="font-bold text-foreground print:text-black">
                 Cláusula {cl.number} — {cl.section}:{" "}
               </span>
               {cl.clause_text}
@@ -769,138 +818,154 @@ function Page() {
         </div>
       </section>
 
-      {signed && c.certificate ? (
-        <div className="space-y-6 animate-in fade-in duration-500">
+      {c.signatures && c.signatures.length > 0 && (
+        <div className="space-y-6 animate-in fade-in duration-500 mb-6 print:mt-10">
           <section
-            className="overflow-hidden rounded-2xl border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8"
+            className="overflow-hidden rounded-2xl border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8 print:ring-0 print:border-0 print:bg-transparent print:p-0 print:shadow-none print:break-inside-avoid print:mt-8"
             id="signature-chancery"
           >
             {/* Header: Certificate Title & Seal */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-success/20 pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-success/20 pb-5 print:border-black print:pb-3">
               <div className="flex items-center gap-3.5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-success/20 text-success">
-                  <CheckCircle2 className="h-7 w-7" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-success/20 text-success print:h-10 print:w-10 print:border print:bg-transparent">
+                  <CheckCircle2 className="h-7 w-7 print:h-5 print:w-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm md:text-base font-extrabold text-success uppercase tracking-wider font-sans">
+                  <h2 className="text-sm md:text-base font-extrabold text-success uppercase tracking-wider font-sans print:text-black print:text-xs">
                     Certificado de Conformidade Legal
                   </h2>
-                  <p className="text-[10px] md:text-xs text-muted-foreground font-sans mt-0.5">
+                  <p className="text-[10px] md:text-xs text-muted-foreground font-sans mt-0.5 print:text-black">
                     Assinatura eletrônica autenticada e criptografada via TravelOS Trust Hub.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-3.5 py-1 text-xs font-bold text-success w-fit">
+              <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-3.5 py-1 text-xs font-bold text-success w-fit print:bg-transparent print:border print:border-black print:text-black">
                 <Shield className="h-3.5 w-3.5" /> ICP-Brasil Ativa
               </div>
             </div>
 
-            {/* Main Info Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-foreground/80">
-              {/* Signatory Data */}
-              <div className="space-y-3 bg-surface-alt/30 p-4 rounded-xl border border-border/40 hover:border-success/20 transition-colors">
-                <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px]">
-                  Signatário Autorizado
-                </div>
-                <div className="font-extrabold text-sm text-foreground">
-                  {c.signatures?.[0]?.signer_name}
-                </div>
-                <div className="space-y-1 text-muted-foreground text-[11px]">
-                  <div>Doc: {c.signatures?.[0]?.signer_document}</div>
-                  <div>
-                    IP:{" "}
-                    <span className="font-mono text-foreground font-medium">
-                      {c.signatures?.[0]?.ip}
-                    </span>
+            {/* Loop through signatures collected */}
+            <div className="space-y-6">
+              {c.signatures.map((sig: any, index: number) => (
+                <div key={index} className="space-y-4 border-b border-border/10 pb-6 last:border-0 last:pb-0 print:border-black/20 print:pb-4 print:break-inside-avoid">
+                  <div className="text-xs font-bold text-foreground/70 uppercase tracking-widest border-l-2 border-success pl-2 mb-2 print:text-black print:border-black">
+                    Assinatura Coletada {index + 1} de {Array.isArray(c.client_data) ? c.client_data.length : 1}
                   </div>
-                  <div>Data: {new Date(c.signed_at!).toLocaleString("pt-BR")}</div>
-                </div>
-              </div>
-
-              {/* Biometrics & KYC */}
-              <div className="space-y-3 bg-surface-alt/30 p-4 rounded-xl border border-border/40 hover:border-success/20 transition-colors flex flex-col justify-between">
-                <div>
-                  <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5">
-                    Validação Biométrica (KYC)
-                  </div>
-                  {c.signatures?.[0]?.selfie_image ? (
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={
-                          c.signatures[0].selfie_image.startsWith("http")
-                            ? c.signatures[0].selfie_image
-                            : supabase.storage
-                                .from("contract-pdfs")
-                                .getPublicUrl(c.signatures[0].selfie_image).data.publicUrl
-                        }
-                        alt="Selfie KYC"
-                        className="h-11 w-11 rounded-full object-cover border border-success/30 ring-2 ring-success/10"
-                      />
-                      <div>
-                        <span className="text-[10px] font-bold text-success block">
-                          Selfie Auditada
-                        </span>
-                        <span className="text-[9px] text-muted-foreground block font-sans">
-                          Match Facial: 98.4%
-                        </span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-foreground/80 print:gap-4 print:text-black">
+                    {/* Signatory Data */}
+                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-xl border border-border/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
+                      <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] print:text-black">
+                        Signatário Autorizado
+                      </div>
+                      <div className="font-extrabold text-sm text-foreground print:text-black print:text-xs">
+                        {sig.signer_name}
+                      </div>
+                      <div className="space-y-1 text-muted-foreground text-[11px] print:text-black">
+                        <div>Doc: {sig.signer_document}</div>
+                        <div>
+                          IP:{" "}
+                          <span className="font-mono text-foreground font-medium print:text-black">
+                            {sig.ip}
+                          </span>
+                        </div>
+                        <div>Data: {new Date(sig.signed_at).toLocaleString("pt-BR")}</div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="text-muted-foreground text-[10px]">Sem selfie arquivada</div>
+
+                    {/* Biometrics & KYC */}
+                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-xl border border-border/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
+                      <div>
+                        <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5 print:text-black">
+                          Validação Biométrica (KYC)
+                        </div>
+                        {sig.selfie_image ? (
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={
+                                sig.selfie_image.startsWith("http")
+                                  ? sig.selfie_image
+                                  : supabase.storage
+                                      .from("contract-pdfs")
+                                      .getPublicUrl(sig.selfie_image).data.publicUrl
+                              }
+                              alt="Selfie KYC"
+                              className="h-11 w-11 rounded-full object-cover border border-success/30 ring-2 ring-success/10 print:h-10 print:w-10 print:ring-0 print:border-black"
+                            />
+                            <div>
+                              <span className="text-[10px] font-bold text-success block print:text-black">
+                                Selfie Auditada
+                              </span>
+                              <span className="text-[9px] text-muted-foreground block font-sans print:text-black">
+                                Match Facial: 98.4%
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-muted-foreground text-[10px] print:text-black">Sem selfie arquivada</div>
+                        )}
+                      </div>
+                      <div className="text-[9px] font-mono leading-none break-all text-muted-foreground bg-surface/80 p-2 rounded border border-border/20 mt-2 print:bg-transparent print:border-black print:text-black">
+                        Hash: {c.content_hash?.slice(0, 32)}...
+                      </div>
+                    </div>
+
+                    {/* Signature Image */}
+                    <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-xl p-4 hover:border-success/20 transition-colors print:border-black print:bg-transparent">
+                      {sig.signature_image ? (
+                        <img
+                          src={
+                            sig.signature_image.startsWith("http")
+                              ? sig.signature_image
+                              : supabase.storage
+                                  .from("contract-pdfs")
+                                  .getPublicUrl(sig.signature_image).data.publicUrl
+                          }
+                          alt="Assinatura"
+                          className="max-h-16 object-contain bg-white"
+                        />
+                      ) : (
+                        <span className="text-muted-foreground text-[10px] print:text-black">Sem rubrica eletrônica</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Video KYC */}
+                  {sig.video_kyc && (
+                    <div className="border-t border-success/10 pt-3 no-print">
+                      <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5">
+                        Provas Adicionais em Custódia (Vídeo KYC)
+                      </div>
+                      <video
+                        src={
+                          sig.video_kyc.startsWith("http")
+                            ? sig.video_kyc
+                            : supabase.storage
+                                .from("contract-pdfs")
+                                .getPublicUrl(sig.video_kyc).data.publicUrl
+                        }
+                        controls
+                        className="h-28 rounded-xl border border-border bg-black max-w-[200px]"
+                      />
+                    </div>
                   )}
                 </div>
-                <div className="text-[9px] font-mono leading-none break-all text-muted-foreground bg-surface/80 p-2 rounded border border-border/20 mt-2">
-                  Hash: {c.content_hash?.slice(0, 32)}...
-                </div>
-              </div>
-
-              {/* QR Verification */}
-              <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-xl p-4 hover:border-success/20 transition-colors">
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(`${window.location.origin}/verify/${c.certificate.serial}`)}`}
-                  alt="QR Code de Verificação"
-                  className="h-20 w-20 border border-border/40 rounded p-1 bg-white"
-                />
-                <span className="text-[8px] text-muted-foreground mt-2 text-center font-mono uppercase tracking-wider block">
-                  Serial: {c.certificate.serial}
-                </span>
-              </div>
+              ))}
             </div>
-
-            {/* Video KYC */}
-            {c.signatures?.[0]?.video_kyc && (
-              <div className="border-t border-success/15 pt-5">
-                <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5">
-                  Provas Adicionais em Custódia (Vídeo KYC)
-                </div>
-                <video
-                  src={
-                    c.signatures[0].video_kyc.startsWith("http")
-                      ? c.signatures[0].video_kyc
-                      : supabase.storage
-                          .from("contract-pdfs")
-                          .getPublicUrl(c.signatures[0].video_kyc).data.publicUrl
-                  }
-                  controls
-                  className="h-32 rounded-xl border border-border bg-black max-w-[240px]"
-                />
-              </div>
-            )}
 
             {/* Audit Chain Ledger Trail */}
             {auditTrail.length > 0 && (
-              <div className="border-t border-success/15 pt-5">
-                <h3 className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-3">
+              <div className="border-t border-success/15 pt-5 print:border-t-black print:pt-4 print:break-inside-avoid">
+                <h3 className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-3 print:text-black">
                   Rastreabilidade Criptográfica (Ledger Trail)
                 </h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto no-scrollbar pr-2">
+                <div className="space-y-2 max-h-48 overflow-y-auto no-scrollbar pr-2 print:max-h-none print:overflow-visible print:pr-0">
                   {auditTrail.map((log) => (
                     <div
                       key={log.id}
-                      className="flex items-start justify-between text-[11px] py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-lg transition-colors"
+                      className="flex items-start justify-between text-[11px] py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-lg transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
                     >
                       <div className="flex items-start gap-2.5">
-                        <span className="inline-block mt-0.5 rounded-full bg-success/15 text-success p-0.5">
+                        <span className="inline-block mt-0.5 rounded-full bg-success/15 text-success p-0.5 print:hidden">
                           <Check className="h-3 w-3" />
                         </span>
                         <div>
@@ -932,31 +997,31 @@ function Page() {
             )}
 
             {/* Direct Downloads Actions */}
-            <div className="border-t border-success/20 pt-5 flex flex-col sm:flex-row gap-3">
-              {c.pdf_url && (
-                <a
-                  href={
-                    supabase.storage.from("contract-pdfs").getPublicUrl(c.pdf_url).data.publicUrl
-                  }
-                  download
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-xl hover:bg-success/90 transition-all active:scale-[0.98] cursor-pointer"
+            {fullySigned && c.certificate && (
+              <div className="border-t border-success/20 pt-5 flex flex-col sm:flex-row gap-3 no-print">
+                {c.pdf_url && (
+                  <a
+                    href={
+                      supabase.storage.from("contract-pdfs").getPublicUrl(c.pdf_url).data.publicUrl
+                    }
+                    download
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-xl hover:bg-success/90 transition-all active:scale-[0.98] cursor-pointer"
+                  >
+                    <FileCheck className="h-4.5 w-4.5" /> Baixar Contrato Assinado (.PDF)
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={downloadLegalZip}
+                  className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-xl hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
                 >
-                  <FileCheck className="h-4.5 w-4.5" /> Baixar Contrato Assinado (.PDF)
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={downloadLegalZip}
-                className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-xl hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
-              >
-                <FileArchive className="h-4.5 w-4.5" /> Baixar Pacote Jurídico (.ZIP)
-              </button>
-            </div>
+                  <FileArchive className="h-4.5 w-4.5" /> Baixar Pacote Jurídico (.ZIP)
+                </button>
+              </div>
+            )}
           </section>
-
-          {/* Aditivos e Retificações de Contrato para Cliente */}
           {addendums.length > 0 && (
             <section className="overflow-hidden rounded-xl bg-surface ring-1 ring-border/50">
               <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
@@ -994,7 +1059,7 @@ function Page() {
                           )}
                         </div>
                       ) : (
-                        <div className="pt-3 border-t border-border/20 space-y-3">
+                        <div className="pt-3 border-t border-border/20 space-y-3 no-print">
                           <div className="text-[10px] text-warning font-semibold font-sans">
                             Este aditivo requer sua assinatura eletrônica.
                           </div>
@@ -1016,9 +1081,10 @@ function Page() {
             </section>
           )}
         </div>
-      ) : (
+      )}
+      {!fullySigned && (
         <section
-          className="overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50"
+          className="overflow-hidden rounded-xl bg-surface ring-1 ring-border/50 mt-6"
           id="interactive-signature-form"
         >
           <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
@@ -1027,12 +1093,46 @@ function Page() {
             </h2>
           </div>
           <div className="p-5 space-y-5">
+            {pendingSigners.length > 1 && (
+              <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 space-y-2">
+                <label className="text-xs font-bold text-brand uppercase tracking-wider block">
+                  Quem está assinando este documento agora?
+                </label>
+                <select
+                  value={selectedSignerIndex}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedSignerIndex(val);
+                    if (val !== "") {
+                      const signer = pendingSigners[Number(val)];
+                      if (signer) {
+                        setName(signer.name || "");
+                        setDoc(signer.cpf || signer.document || "");
+                      }
+                    } else {
+                      setName("");
+                      setDoc("");
+                    }
+                  }}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-sm outline-none focus:border-brand text-foreground"
+                >
+                  <option value="">Selecione seu nome da lista...</option>
+                  {pendingSigners.map((cl: any, idx: number) => (
+                    <option key={idx} value={idx}>
+                      {cl.name} ({cl.cpf || cl.document})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <Field label="Nome Completo do Signatário">
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="João da Silva"
+                  disabled={true}
                 />
               </Field>
               <Field label="Documento (CPF / RG / Passaporte)">
@@ -1040,6 +1140,7 @@ function Page() {
                   value={doc}
                   onChange={(e) => setDoc(e.target.value)}
                   placeholder="000.000.000-00"
+                  disabled={true}
                 />
               </Field>
             </div>
@@ -1528,7 +1629,7 @@ function AdendumSignerPanel({
   }
 
   return (
-    <div className="space-y-3 bg-surface p-3 rounded-lg border border-border/80">
+    <div className="space-y-3 bg-surface p-3 rounded-lg border border-border/80 no-print">
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
         Desenhe sua assinatura no quadro abaixo para assinar este aditivo
       </div>

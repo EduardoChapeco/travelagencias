@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import {
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
@@ -31,7 +32,10 @@ export function useCrmKanban({
 }: UseCrmKanbanProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
+  );
 
   const stagesById = useMemo(() => {
     const map: Record<string, Lead[]> = {};

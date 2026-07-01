@@ -111,35 +111,37 @@ function BusLayoutsPage() {
         {filtered.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((l) => (
-              <Link
+              <div
                 key={l.id}
-                to="/agency/$slug/bus-layouts/$id"
-                params={{ slug, id: l.id }}
-                className="flex flex-col justify-between rounded-lg border border-border bg-surface p-5 hover:border-border-strong"
+                className="flex flex-col justify-between rounded-lg border border-border bg-surface p-5 hover:border-border-strong transition-all shadow-xs"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-alt">
                     <Bus className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 text-right">
-                    <div className="font-semibold text-base">{l.name}</div>
+                    <div className="font-semibold text-base text-foreground">{l.name}</div>
                     <div className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">
-                      {l.vehicle_type} · {l.rows}x{l.cols}
+                      {l.vehicle_type === "bus" ? "Ônibus" : l.vehicle_type === "van" ? "Van" : "Avião"} · {l.rows}x{l.cols}
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
                    <button 
-                     onClick={(e) => { e.preventDefault(); setEditingLayout(l); }} 
-                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2 py-1 rounded-sm hover:bg-surface-alt"
+                     onClick={() => setEditingLayout(l)} 
+                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-md hover:bg-surface-alt cursor-pointer border border-border bg-surface"
                    >
-                     <Settings2 className="h-3 w-3" /> Editar Cadastro
+                     <Settings2 className="h-3 w-3" /> Cadastro
                    </button>
-                   <span className="text-[11px] font-semibold text-brand flex items-center gap-1 px-2 py-1">
-                     Mapa de Assentos →
-                   </span>
+                   <Link
+                     to="/agency/$slug/bus-layouts/$id"
+                     params={{ slug, id: l.id }}
+                     className="text-[11px] font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-md bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
+                   >
+                     💺 Desenhar Mapa
+                   </Link>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
