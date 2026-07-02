@@ -126,7 +126,7 @@ function CalendarPage() {
           assigned_to,
           agency_id,
           created_at,
-          assignee:profiles(id, full_name, avatar_url)
+          assignee:profiles!tasks_assigned_to_fkey(id, full_name, avatar_url)
         `)
         .eq("agency_id", agency!.id)
         .eq("is_deleted", false)

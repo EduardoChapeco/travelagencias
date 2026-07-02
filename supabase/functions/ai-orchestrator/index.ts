@@ -672,7 +672,65 @@ serve(async (req) => {
       if (feature) {
         jsonMode = true;
         if (feature === "ocr_proposal") {
-          systemPrompt = `Você é um Assistente B2B de Turismo (TravelOS AI). Extraia e estruture os dados em formato JSON restrito. Remova emails, telefones B2B, comissionamento e markup.`;
+          systemPrompt = `Você é um Assistente B2B de Turismo (TravelOS AI) especialista em leitura e estruturação de orçamentos, cotações e itinerários de viagem. 
+Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviços em um objeto JSON estrito com a seguinte estrutura de chaves:
+{
+  "destination": "Nome do destino principal da viagem",
+  "flights": [
+    {
+      "origin": "Cidade ou aeroporto de partida",
+      "destination": "Cidade ou aeroporto de chegada",
+      "date": "Data do voo no formato YYYY-MM-DD",
+      "departure_time": "Horário de partida (ex: 14:30)",
+      "arrival_time": "Horário de chegada",
+      "airline": "Nome da companhia aérea",
+      "flight_number": "Número do voo",
+      "stops": 0,
+      "price": 0.0
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Nome do hotel",
+      "city": "Cidade do hotel",
+      "checkin": "Data de checkin no formato YYYY-MM-DD",
+      "checkout": "Data de checkout no formato YYYY-MM-DD",
+      "meal_plan": "Regime de alimentação (ex: Café da manhã, Meia pensão, All inclusive)",
+      "rooms": [{ "type": "Tipo de quarto (ex: Standard Duplo, Luxo)", "qty": 1 }],
+      "price": 0.0
+    }
+  ],
+  "transfers": [
+    {
+      "description": "Descrição do transfer",
+      "date": "Data do transfer no formato YYYY-MM-DD",
+      "type": "private" ou "shared",
+      "vehicle": "Tipo de veículo",
+      "price": 0.0,
+      "notes": "Observações do transfer"
+    }
+  ],
+  "tours": [
+    {
+      "description": "Descrição da atividade ou passeio",
+      "date": "Data do passeio no formato YYYY-MM-DD",
+      "price": 0.0,
+      "notes": "Observações"
+    }
+  ],
+  "itinerary": [
+    {
+      "day": "Dia 1 ou Data DD/MM",
+      "title": "Resumo da atividade do dia",
+      "description": "Descrição detalhada do roteiro planejado para este dia"
+    }
+  ],
+  "includes": ["Item incluso 1", "Item incluso 2"],
+  "excludes": ["Item excluído 1", "Item excluído 2"],
+  "notes": "Observações gerais da cotação"
+}
+
+Importante: Remova qualquer menção a markups internos da agência, comissionamentos, tarifas internas, e e-mails/telefones de operadoras parceiras. Responda APENAS com o objeto JSON estruturado puro.`;
         } else if (feature === "ocr_passenger") {
           systemPrompt = `Você é um especialista em OCR e análise documental. Extraia os dados do documento de viagem fornecido em um objeto JSON estrito com o seguinte formato:
 {

@@ -314,7 +314,7 @@ export async function fetchProposalsList(
   let query = supabase
     .from("proposals")
     .select(
-      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility, is_public_template, client:clients(id, full_name), lead:leads(id, name)",
+      "id, number, title, status, destination, travel_start, travel_end, total, currency, created_at, valid_until, client_id, public_token, visibility, is_public_template, client:clients(id, full_name), lead:leads!proposals_lead_id_fkey(id, name)",
       { count: "exact" },
     )
     .eq("agency_id", agencyId)

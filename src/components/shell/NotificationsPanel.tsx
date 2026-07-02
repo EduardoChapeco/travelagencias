@@ -52,7 +52,12 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
       if (error) throw error;
 
       // Filter the ones for this user OR null (agency wide)
-      return (data ?? []).filter((n) => !n.user_id || n.user_id === user.id) as any as Notif[];
+      return (data ?? [])
+        .filter((n) => !n.user_id || n.user_id === user.id)
+        .map((n) => ({
+          ...n,
+          is_read: n.read_at !== null,
+        })) as any as Notif[];
     },
   });
 
@@ -87,7 +92,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("notifications")
-        .update({ is_read: true } as any)
+        .update({ read_at: new Date().toISOString() } as any)
         .eq("id", id);
       if (error) throw error;
     },
@@ -100,9 +105,9 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
     mutationFn: async () => {
       const { error } = await supabase
         .from("notifications")
-        .update({ is_read: true } as any)
+        .update({ read_at: new Date().toISOString() } as any)
         .eq("agency_id", agency!.id)
-        .eq("is_read" as any, false);
+        .is("read_at", null);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -236,13 +241,15 @@ export function NotificationBadge() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return 0;
-      const { count, error } = await supabase
+      const { data, error } = await supabase
         .from("notifications")
-        .select("id")
+        .select("id, user_id")
         .eq("agency_id", agency?.id as any)
-        .eq("is_read" as any, false);
+        .is("read_at", null);
       if (error) throw error;
-      return count ?? 0;
+      
+      const filtered = (data ?? []).filter((n) => !n.user_id || n.user_id === user.id);
+      return filtered.length;
     },
   });
 
