@@ -68,7 +68,7 @@ serve(async (req) => {
         action: "completion",
         agency_id,
         prompt: `Por favor, faça a análise financeira deste boleto/fatura.\n\nTexto OCR (se houver):\n${text || ""}`,
-        systemPrompt: "You are a financial OCR expert. You MUST return ONLY a raw, minified JSON object matching this schema. NO markdown, NO explanations.\\nSchema:\\n{\\n  \\"amount\\": number | null,\\n  \\"payment_method\\": string | null (e.g. 'bank_transfer', 'pix', 'credit_card', 'cash'),\\n  \\"description\\": string | null\\n}",
+        systemPrompt: `You are a financial OCR expert. You MUST return ONLY a raw, minified JSON object matching this schema. NO markdown, NO explanations.\nSchema:\n{\n  "amount": number | null,\n  "payment_method": string | null (e.g. 'bank_transfer', 'pix', 'credit_card', 'cash'),\n  "description": string | null\n}`,
         file_base64,
         mime,
         jsonMode: true,

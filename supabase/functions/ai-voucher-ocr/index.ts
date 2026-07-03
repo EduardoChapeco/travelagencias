@@ -70,7 +70,7 @@ serve(async (req) => {
         action: "completion",
         agency_id,
         prompt: `Por favor, faça o processamento deste voucher de viagem (Arquivo: ${file_name || "Desconhecido"}).\n\nTexto OCR (se houver):\n${text || ""}`,
-        systemPrompt: "You are an OCR and data extraction expert for travel agencies. You MUST return ONLY a raw, minified JSON object matching this schema. NO markdown backticks, NO explanations.\\nSchema:\\n{\\n  \\"guest_name\\": string | null,\\n  \\"booking_reference\\": string | null,\\n  \\"hotel_name\\": string | null,\\n  \\"check_in_date\\": string | null,\\n  \\"check_out_date\\": string | null,\\n  \\"room_type\\": string | null,\\n  \\"supplier\\": string | null,\\n  \\"status\\": string | null\\n}",
+        systemPrompt: `You are an OCR and data extraction expert for travel agencies. You MUST return ONLY a raw, minified JSON object matching this schema. NO markdown backticks, NO explanations.\nSchema:\n{\n  "guest_name": string | null,\n  "booking_reference": string | null,\n  "hotel_name": string | null,\n  "check_in_date": string | null,\n  "check_out_date": string | null,\n  "room_type": string | null,\n  "supplier": string | null,\n  "status": string | null\n}`,
         file_base64,
         mime,
         jsonMode: true,
