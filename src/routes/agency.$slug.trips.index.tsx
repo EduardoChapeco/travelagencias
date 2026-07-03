@@ -471,7 +471,7 @@ function TripsList() {
   ];
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button

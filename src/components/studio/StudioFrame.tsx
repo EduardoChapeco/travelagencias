@@ -5,7 +5,8 @@ export type CanvasFormat =
   | "a4-landscape"
   | "story-916"
   | "presentation-169"
-  | "letter-portrait";
+  | "letter-portrait"
+  | "vertical-scroll";
 
 export const CANVAS_DIMENSIONS: Record<CanvasFormat, { width: string; minHeight: string }> = {
   "a4-portrait": { width: "210mm", minHeight: "297mm" },
@@ -13,6 +14,7 @@ export const CANVAS_DIMENSIONS: Record<CanvasFormat, { width: string; minHeight:
   "story-916": { width: "1080px", minHeight: "1920px" },
   "presentation-169": { width: "1920px", minHeight: "1080px" },
   "letter-portrait": { width: "215.9mm", minHeight: "279.4mm" },
+  "vertical-scroll": { width: "1080px", minHeight: "3000px" },
 };
 
 interface StudioFrameProps {
@@ -103,9 +105,10 @@ export function StudioFrame({ format, children, zoomMode = "auto" }: StudioFrame
             top: 0,
             left: 0,
             zIndex: 1,
-            backgroundColor: "#ffffff",
           }}
-          className="canvas-page select-text flex flex-col overflow-hidden print:overflow-visible"
+          className={`canvas-page select-text flex flex-col ${
+            format === "vertical-scroll" ? "overflow-visible" : "overflow-hidden"
+          } print:overflow-visible`}
         >
           {/*
             IMPORTANT: Do not use overflow-hidden on internal blocks if you want html2pdf to split them.

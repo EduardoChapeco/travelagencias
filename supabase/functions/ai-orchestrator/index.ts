@@ -675,12 +675,12 @@ serve(async (req) => {
           systemPrompt = `Você é um Assistente B2B de Turismo (TravelOS AI) especialista em leitura e estruturação de orçamentos, cotações e itinerários de viagem. 
 Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviços em um objeto JSON estrito com a seguinte estrutura de chaves:
 {
-  "destination": "Nome do destino principal da viagem",
+  "destination": "Nome do destino principal da viagem ou null",
   "flights": [
     {
       "origin": "Cidade ou aeroporto de partida",
       "destination": "Cidade ou aeroporto de chegada",
-      "date": "Data do voo no formato YYYY-MM-DD",
+      "date": "Data do voo no formato estrito YYYY-MM-DD",
       "departure_time": "Horário de partida (ex: 14:30)",
       "arrival_time": "Horário de chegada",
       "airline": "Nome da companhia aérea",
@@ -693,8 +693,8 @@ Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviço
     {
       "name": "Nome do hotel",
       "city": "Cidade do hotel",
-      "checkin": "Data de checkin no formato YYYY-MM-DD",
-      "checkout": "Data de checkout no formato YYYY-MM-DD",
+      "checkin": "Data de checkin no formato estrito YYYY-MM-DD",
+      "checkout": "Data de checkout no formato estrito YYYY-MM-DD",
       "meal_plan": "Regime de alimentação (ex: Café da manhã, Meia pensão, All inclusive)",
       "rooms": [{ "type": "Tipo de quarto (ex: Standard Duplo, Luxo)", "qty": 1 }],
       "price": 0.0
@@ -703,7 +703,7 @@ Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviço
   "transfers": [
     {
       "description": "Descrição do transfer",
-      "date": "Data do transfer no formato YYYY-MM-DD",
+      "date": "Data do transfer no formato estrito YYYY-MM-DD",
       "type": "private" ou "shared",
       "vehicle": "Tipo de veículo",
       "price": 0.0,
@@ -713,7 +713,7 @@ Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviço
   "tours": [
     {
       "description": "Descrição da atividade ou passeio",
-      "date": "Data do passeio no formato YYYY-MM-DD",
+      "date": "Data do passeio no formato estrito YYYY-MM-DD",
       "price": 0.0,
       "notes": "Observações"
     }
@@ -730,20 +730,21 @@ Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviço
   "notes": "Observações gerais da cotação"
 }
 
-Importante: Remova qualquer menção a markups internos da agência, comissionamentos, tarifas internas, e e-mails/telefones de operadoras parceiras. Responda APENAS com o objeto JSON estruturado puro.`;
+Importante: Remova qualquer menção a markups internos da agência, comissionamentos, tarifas internas, e e-mails/telefones de operadoras parceiras. Responda APENAS com o objeto JSON estruturado puro. Se um campo não for encontrado, use valores numéricos padrão (ex: 0) ou strings vazias, nunca misture tipos.`;
         } else if (feature === "ocr_passenger") {
           systemPrompt = `Você é um especialista em OCR e análise documental. Extraia os dados do documento de viagem fornecido em um objeto JSON estrito com o seguinte formato:
 {
   "document_number": "número do passaporte, RG ou documento identificador",
   "full_name": "nome completo do passageiro em letras maiúsculas",
-  "birth_date": "data de nascimento no formato YYYY-MM-DD",
+  "birth_date": "data de nascimento no formato estrito YYYY-MM-DD",
   "nationality": "nacionalidade do passageiro",
-  "expiration_date": "data de expiração no formato YYYY-MM-DD ou null",
-  "issue_date": "data de emissão no formato YYYY-MM-DD ou null",
+  "expiration_date": "data de expiração no formato estrito YYYY-MM-DD ou null",
+  "issue_date": "data de emissão no formato estrito YYYY-MM-DD ou null",
   "issuing_country": "país de emissão em código de 3 letras ISO ou nome por extenso"
-}`;
+}
+Atenção: Datas DEVEM OBRIGATORIAMENTE ser formatadas como YYYY-MM-DD. Se a data for ilegível, retorne null e não strings de erro.`;
         } else if (feature === "ocr_boleto") {
-          systemPrompt = `Extraia dados do boleto em JSON: barcode, dueDate, amount, beneficiary, payer, payment_warning.`;
+          systemPrompt = `Extraia dados do boleto em JSON puro estrito, sem markdown: barcode, dueDate (YYYY-MM-DD), amount (float), beneficiary, payer, payment_warning.`;
         } else if (feature === "ocr_voucher") {
           systemPrompt = `Você é um extrator de inteligência de viagem. Analise o voucher enviado e extraia todos os dados relevantes em um objeto JSON estrito no seguinte formato:
 {
@@ -751,14 +752,15 @@ Importante: Remova qualquer menção a markups internos da agência, comissionam
   "category": "flight" | "hotel" | "transfer" | "activity" | "insurance" | "other",
   "locator": "código localizador da reserva/bilhete",
   "provider": "nome do fornecedor ou operadora parceira",
-  "date_start": "data e hora de início no formato YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD",
-  "date_end": "data e hora de término no formato YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD ou null",
+  "date_start": "data e hora de início no formato estrito YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD",
+  "date_end": "data e hora de término no formato estrito YYYY-MM-DDTHH:mm:ss ou YYYY-MM-DD ou null",
   "passengers": ["nome do passageiro 1", "nome do passageiro 2"]
-}`;
+}
+Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
         }
       }
 
-      const { result, provider } = await executeCompletionWithOrchestration(
+      let { result, provider } = await executeCompletionWithOrchestration(
         supabaseAdmin,
         agencyId,
         {
@@ -767,6 +769,18 @@ Importante: Remova qualquer menção a markups internos da agência, comissionam
           jsonMode,
         }
       );
+
+      if (jsonMode && typeof result === "string") {
+        try {
+          const cleaned = result
+            .replace(/\`\`\`json/gi, "")
+            .replace(/\`\`\`/g, "")
+            .trim();
+          result = JSON.parse(cleaned);
+        } catch (e) {
+          console.warn("[Orchestrator] Could not parse AI result as JSON, returning raw string:", e);
+        }
+      }
 
       return new Response(JSON.stringify({ result, provider }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

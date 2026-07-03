@@ -225,7 +225,7 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         entityId = quote.id;
         entityType = "proposal";
         resultMessage = `Cotação '${validatedData.title}' iniciada com sucesso.`;
-      } else if (actionCode === "create_proposal") {
+      } else if (actionCode === "update_quote_as_proposal") {
         const { error } = await supabase
           .from("proposals")
           .update({

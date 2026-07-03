@@ -5,13 +5,15 @@ import TemplateExecutivo from "./TemplateExecutivo";
 import TemplateDarkPremium from "./TemplateDarkPremium";
 import TemplateLandscape from "./TemplateLandscape";
 import TemplateGroupCatalog from "./TemplateGroupCatalog";
+import TemplateVerticalPremium from "./TemplateVerticalPremium";
 
 export type ProposalTemplateId =
   | "editorial-flat"
   | "executivo-b2b"
   | "dark-premium"
   | "landscape-presentation"
-  | "group-catalog";
+  | "group-catalog"
+  | "vertical-premium";
 
 export interface TemplateDefinition {
   id: ProposalTemplateId;
@@ -22,6 +24,13 @@ export interface TemplateDefinition {
 }
 
 export const PROPOSAL_TEMPLATES: TemplateDefinition[] = [
+  {
+    id: "vertical-premium",
+    label: "Roteiro Vertical Premium",
+    description: "Ideal para viagens terrestres, grupos, excursões e roteiros detalhados. Formato longo.",
+    formats: ["vertical-scroll"],
+    previewBg: "#F4F9FE",
+  },
   {
     id: "editorial-flat",
     label: "Editorial Premium",
@@ -63,6 +72,8 @@ export function getProposalTemplate(
   templateId: string,
 ): React.ComponentType<{ proposal: Proposal; agency: any }> {
   switch (templateId) {
+    case "vertical-premium":
+      return TemplateVerticalPremium;
     case "editorial-flat":
       return TemplateEditorialFlat;
     case "executivo-b2b":

@@ -125,8 +125,8 @@ export const ActionRegistry: Record<string, ActionDefinition<any>> = {
       travelDate: z.string().optional().nullable(),
     }),
   },
-  create_proposal: {
-    code: "create_proposal",
+  update_quote_as_proposal: {
+    code: "update_quote_as_proposal",
     name: "Criar Proposta",
     description: "Gera uma proposta comercial de viagem vinculada a uma cotação",
     domain: "trips",

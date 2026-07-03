@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TaskChecklistSection } from "./TaskChecklistSection";
 import { TaskCommentsSection } from "./TaskCommentsSection";
+import { DSTagPicker } from "@/components/ds/DSTagPicker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
@@ -55,6 +56,7 @@ interface DraftState {
   status: TaskStatus;
   priority: TaskPriority;
   due_date: string;
+  tags: string[];
 }
 
 function isDraftDirty(draft: DraftState, descValue: string, task: TaskWithRelations): boolean {
@@ -63,7 +65,8 @@ function isDraftDirty(draft: DraftState, descValue: string, task: TaskWithRelati
     descValue !== ((task.description as string) || "") ||
     draft.status !== task.status ||
     draft.priority !== task.priority ||
-    draft.due_date !== (task.due_date || "")
+    draft.due_date !== (task.due_date || "") ||
+    JSON.stringify(draft.tags) !== JSON.stringify(task.tags || [])
   );
 }
 
@@ -79,6 +82,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
     status: "todo",
     priority: "medium",
     due_date: "",
+    tags: [],
   });
   const [descValue, setDescValue] = useState("");
   const [isDirty, setIsDirty] = useState(false);
@@ -101,6 +105,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
       status: task.status as TaskStatus,
       priority: task.priority as TaskPriority,
       due_date: task.due_date || "",
+      tags: task.tags || [],
     };
     setDraft(initial);
     setDescValue((task.description as string) || "");
@@ -142,6 +147,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
           status: draft.status,
           priority: draft.priority,
           due_date: draft.due_date || null,
+          tags: draft.tags,
           updated_at: new Date().toISOString(),
           ...(draft.status === "done" && task.status !== "done"
             ? { resolved_at: new Date().toISOString() }
@@ -367,6 +373,19 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* ── Etiquetas / Tags ──────────────────────────────────────── */}
+              <div className="space-y-1 mt-4">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <Tag className="h-3 w-3" /> Etiquetas
+                </label>
+                <DSTagPicker
+                  value={draft.tags}
+                  onChange={(tags) => setDraft((d) => ({ ...d, tags }))}
+                  placeholder="Adicionar tags..."
+                  className="bg-[var(--surface-alt)]/20 border-border/40"
+                />
               </div>
 
               {/* ── Time & Complexity Stats ────────────────────────────────── */}

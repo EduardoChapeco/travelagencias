@@ -2,8 +2,10 @@ import { useState } from "react";
 import { type Proposal, type ItineraryDay } from "@/services/proposals";
 import { Accordion, Card, AddBtn, L, Inp } from "@/components/proposals/ProposalFormFields";
 import { replaceAt, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
+import { supabase } from "@/integrations/supabase/client";
+import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { refineItineraryText } from "@/services/proposals";
 
@@ -17,6 +19,32 @@ const BLANK: ItineraryDay = { id: "", day: "", title: "", description: "" };
 export function SectionItinerary({ draft, save }: Props) {
   const itinerary = draft.itinerary ?? [];
   const [refining, setRefining] = useState<number | null>(null);
+  const [uploadingImage, setUploadingImage] = useState<number | null>(null);
+  const [showUnsplash, setShowUnsplash] = useState<number | null>(null);
+
+  async function handleImageUpload(i: number, file: File) {
+    try {
+      setUploadingImage(i);
+      const uidVal = crypto.randomUUID();
+      const fileExt = file.name.split(".").pop();
+      const path = `${draft.agency_id}/studio/${draft.id}/itinerary-${i}-${uidVal}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage.from("agency-media").upload(path, file);
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from("agency-media").getPublicUrl(path);
+      const publicUrl = data.publicUrl;
+
+      const day = itinerary[i];
+      const newImages = [...(day.images || []), publicUrl];
+      upd(i, { images: newImages });
+      toast.success("Imagem enviada com sucesso!");
+    } catch (error: any) {
+      toast.error(`Erro no upload: ${error.message}`);
+    } finally {
+      setUploadingImage(null);
+    }
+  }
 
   function add() {
     const dayNum = itinerary.length + 1;
@@ -76,7 +104,120 @@ export function SectionItinerary({ draft, save }: Props) {
               onChange={(e) => upd(i, { description: e.target.value })}
             />
           </L>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            <L label="Cidade">
+              <Inp value={d.city ?? ""} onChange={(v) => upd(i, { city: v })} ph="Ex: Paris" />
+            </L>
+            <L label="Pernoite (Hotel)">
+              <Inp value={d.overnight ?? ""} onChange={(v) => upd(i, { overnight: v })} ph="Ex: Hotel Plaza" />
+            </L>
+            <L label="Refeições">
+              <Inp 
+                value={(d.meals ?? []).join(", ")} 
+                onChange={(v) => upd(i, { meals: v.split(",").map(m => m.trim()).filter(Boolean) })} 
+                ph="Ex: Café, Almoço" 
+              />
+            </L>
+          </div>
           <div className="mt-2">
+            <L label="Layout das Imagens">
+              <select
+                className={SMALL_INPUT}
+                value={d.imageLayout || "auto"}
+                onChange={(e) => upd(i, { imageLayout: e.target.value })}
+              >
+                <option value="auto">Automático (Baseado na qtde)</option>
+                <option value="none">Nenhuma Imagem</option>
+                <option value="single">Destaque Único</option>
+                <option value="stack">Mosaico (2 a 3)</option>
+              </select>
+            </L>
+          </div>
+          <div className="mt-2 space-y-2 border-t border-border/50 pt-3">
+            <div className="flex items-center justify-between">
+              <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">Galeria do Dia</span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowUnsplash(showUnsplash === i ? null : i)}
+                  className="flex h-6 items-center justify-center rounded border border-border/60 bg-surface px-2 text-[10px] hover:bg-surface-alt transition-colors"
+                  title="Buscar no Unsplash"
+                >
+                  <Search className="h-3 w-3 mr-1" /> Buscar
+                </button>
+                <label className="flex h-6 cursor-pointer items-center justify-center rounded bg-brand/10 px-2 text-[10px] font-bold text-brand hover:bg-brand/20 transition-colors">
+                  {uploadingImage === i ? "Enviando..." : "+ Fazer Upload"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(i, file);
+                    }}
+                    disabled={uploadingImage === i}
+                  />
+                </label>
+              </div>
+            </div>
+            
+            {showUnsplash === i && (
+              <div className="rounded-lg border border-border bg-surface p-3 mb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                    Buscar imagem para o dia
+                  </span>
+                  <button
+                    onClick={() => setShowUnsplash(null)}
+                    className="text-muted-foreground hover:text-foreground text-[10px]"
+                  >
+                    Fechar
+                  </button>
+                </div>
+                <StudioUnsplashPicker
+                  agencyId={draft.agency_id}
+                  proposalId={draft.id}
+                  slot={`itinerary-${i}`}
+                  defaultQuery={d.city || draft.destination || "travel destination"}
+                  onImageSelected={(url) => {
+                    const newImages = [...(d.images || []), url];
+                    upd(i, { images: newImages });
+                    setShowUnsplash(null);
+                  }}
+                />
+              </div>
+            )}
+
+            {d.images && d.images.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {d.images.map((url, imgIdx) => (
+                  <div key={imgIdx} className="relative h-12 w-12 overflow-hidden rounded border border-border">
+                    <img src={url} alt={`Dia ${i + 1}`} className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newArr = [...d.images!];
+                        newArr.splice(imgIdx, 1);
+                        upd(i, { images: newArr });
+                      }}
+                      className="absolute right-0 top-0 rounded bg-red-500/80 px-1 py-0.5 text-[8px] text-white hover:bg-red-500"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-[10px] text-muted-foreground/60 italic">Nenhuma imagem. As URLs também podem ser coladas abaixo.</div>
+            )}
+            <textarea
+              className={SMALL_INPUT + " h-10 resize-none py-1.5 text-xs"}
+              value={(d.images ?? []).join(",\n")}
+              placeholder="Ou cole URLs de imagens aqui (separadas por vírgula)..."
+              onChange={(e) => upd(i, { images: e.target.value.split(",").map(url => url.trim()).filter(Boolean) })}
+            />
+          </div>
+          <div className="mt-3">
             <button
               type="button"
               onClick={() => refineWithAI(i)}

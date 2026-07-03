@@ -1120,7 +1120,7 @@ function SupplierDetailsPage() {
   const Icon = cfg.icon;
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] overflow-hidden">
+    <div className="flex h-full overflow-hidden">
       {/* Main content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 md:p-6 max-w-4xl pb-20">

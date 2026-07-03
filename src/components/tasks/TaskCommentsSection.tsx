@@ -24,7 +24,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
     if (!taskId) return;
     setCommentsLoading(true);
     db.from("task_comments")
-      .select("*, profile:profiles(id, full_name, avatar_url)")
+      .select("*, profile:profiles!task_comments_user_id_fkey(id, full_name, avatar_url)")
       .eq("task_id", taskId)
       .eq("is_deleted", false)
       .order("created_at", { ascending: true })
@@ -55,7 +55,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
           is_edited: false,
           is_deleted: false,
         })
-        .select("*, profile:profiles(id, full_name, avatar_url)")
+        .select("*, profile:profiles!task_comments_user_id_fkey(id, full_name, avatar_url)")
         .single();
 
       if (error) throw error;

@@ -68,6 +68,7 @@ serve(async (req) => {
         action: "completion",
         agency_id,
         prompt: "Por favor, extraia os dados deste documento de passageiro.",
+        systemPrompt: "You are a document OCR expert. You MUST return ONLY a raw, minified JSON object matching this schema. NO markdown, NO explanations.\\nSchema:\\n{\\n  \\"full_name\\": string | null,\\n  \\"document_number\\": string | null,\\n  \\"document_type\\": string | null,\\n  \\"birth_date\\": string | null,\\n  \\"nationality\\": string | null\\n}",
         file_base64,
         mime,
         jsonMode: true,

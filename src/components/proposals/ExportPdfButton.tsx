@@ -91,9 +91,9 @@ export function ExportPdfButton({ proposal }: Props) {
         proposal.canvas_format === "presentation-169" || proposal.canvas_format === "a4-landscape";
       const orientation = isLandscape ? "landscape" : "portrait";
 
-      const pdf = new jsPDF({ orientation, unit: "mm", format: "a4" });
-      const pdfW = isLandscape ? 297 : 210;
-      const pdfH = isLandscape ? 210 : 297;
+      let pdf = new jsPDF({ orientation, unit: "mm", format: "a4" });
+      let pdfW = isLandscape ? 297 : 210;
+      let pdfH = isLandscape ? 210 : 297;
 
       if (pages.length > 0) {
         // Paginated flow: render each page individually
@@ -179,19 +179,26 @@ export function ExportPdfButton({ proposal }: Props) {
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
 
-        // Calculate the height of one A4 page in canvas pixels based on target PDF aspect ratio
-        const pageCanvasHeight = isLandscape ? imgWidth * 0.707 : imgWidth * 1.414;
-        const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
+        if (proposal.canvas_format === "vertical-scroll") {
+          // Re-instantiate pdf with custom height to fit the whole canvas as one single continuous page
+          const customHeight = pdfW * (imgHeight / imgWidth);
+          pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: [pdfW, customHeight] });
+          pdf.addImage(img, "JPEG", 0, 0, pdfW, customHeight);
+        } else {
+          // Calculate the height of one A4 page in canvas pixels based on target PDF aspect ratio
+          const pageCanvasHeight = isLandscape ? imgWidth * 0.707 : imgWidth * 1.414;
+          const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
 
-        // Calculate total PDF height if the image were rendered continuously
-        const totalPdfHeight = pdfW * (imgHeight / imgWidth);
+          // Calculate total PDF height if the image were rendered continuously
+          const totalPdfHeight = pdfW * (imgHeight / imgWidth);
 
-        for (let page = 0; page < totalPages; page++) {
-          if (page > 0) {
-            pdf.addPage("a4", orientation);
+          for (let page = 0; page < totalPages; page++) {
+            if (page > 0) {
+              pdf.addPage("a4", orientation);
+            }
+            const yOffset = -page * pdfH;
+            pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
           }
-          const yOffset = -page * pdfH;
-          pdf.addImage(img, "JPEG", 0, yOffset, pdfW, totalPdfHeight);
         }
       }
 

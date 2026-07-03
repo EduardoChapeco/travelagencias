@@ -30,7 +30,7 @@ export function TaskShell() {
     assignees: [],
     statuses: [],
     priorities: [],
-    labels: [],
+    tags: [],
     sources: [],
     show_subtasks: false,
     show_done: false,
@@ -87,7 +87,7 @@ export function TaskShell() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-var(--header-h))] overflow-hidden bg-[var(--surface-alt)]">
+    <div className="flex flex-col h-full overflow-hidden bg-[var(--surface-alt)]">
       {/* Modal de nova tarefa */}
       <NewTaskModal open={newTaskOpen} onClose={() => setNewTaskOpen(false)} />
 

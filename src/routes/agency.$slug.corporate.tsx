@@ -118,7 +118,7 @@ function CorporatePage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button

@@ -44,7 +44,17 @@ export async function processVoucherWithAI(
           );
         }
 
-        resolve(data.result as VoucherAIResult);
+        let parsedResult = data.result;
+        if (typeof parsedResult === "string") {
+          try {
+            const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+            parsedResult = JSON.parse(cleaned);
+          } catch (e) {
+            console.warn("Falha no parse fallback de OCR:", e);
+          }
+        }
+
+        resolve(parsedResult as VoucherAIResult);
       } catch (err) {
         reject(err);
       }

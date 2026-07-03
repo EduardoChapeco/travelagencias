@@ -17,7 +17,8 @@ import {
   Sparkles,
   Target,
   BadgePercent,
-  BadgeAlert
+  BadgeAlert,
+  Tag
 } from "lucide-react";
 import { money, fmtDate } from "@/components/ui/form";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -42,7 +43,7 @@ function Dashboard() {
         return { label: d.toLocaleString("pt-BR", { month: "short" }), start: d };
       });
 
-      const [leads, won, trips, groups, fin, flights] = await Promise.all([
+      const [leads, won, trips, groups, fin, flights, tasksWithTags] = await Promise.all([
         supabase
           .from("leads")
           .select("id, estimated_value", { count: "exact" })
@@ -80,6 +81,11 @@ function Dashboard() {
           .gte("date_time", now.toISOString())
           .lte("date_time", new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000).toISOString())
           .order("date_time", { ascending: true }),
+        supabase
+          .from("tasks")
+          .select("id, tags")
+          .eq("agency_id", agency!.id)
+          .not("tags", "eq", "{}"),
       ]);
 
       const totalLeads = leads.count ?? 0;
@@ -107,6 +113,24 @@ function Dashboard() {
       // Contagem de clientes viajando atualmente ou próximos baseada nos aéreos / viagens
       const travelingNowCount = (trips.data ?? []).length + (flights.data ?? []).slice(0, 3).length;
 
+      // Tag Analytics
+      const tagAnalytics = (tasksWithTags.data ?? []).reduce((acc: Record<string, number>, task: any) => {
+        const tags = Array.isArray(task.tags) ? task.tags : [];
+        tags.forEach((t: string) => {
+          const [name, color] = t.split(":");
+          if (name) {
+            if (!acc[name]) acc[name] = { count: 0, color: color || "#3b82f6" };
+            acc[name].count += 1;
+          }
+        });
+        return acc;
+      }, {} as Record<string, { count: number, color: string }>);
+
+      const topTags = Object.entries(tagAnalytics)
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 4)
+        .map(([name, data]) => ({ name, count: data.count, color: data.color }));
+
       return {
         totalLeads,
         wonLeads,
@@ -118,6 +142,7 @@ function Dashboard() {
         upcomingFlights: flights.data ?? [],
         revenueData,
         travelingNowCount,
+        topTags,
       };
     },
   });
@@ -370,6 +395,53 @@ function Dashboard() {
                       <div className="ds-meta mt-1">{fmtDate(t.travel_start)}</div>
                     </div>
                   </Link>
+                ))}
+              </div>
+            )}
+          </DSModule>
+
+          {/* Inteligência de Tags */}
+          <DSModule
+            kicker="Analytics Multimódulo"
+            title="Inteligência de Tags"
+            action={
+              <Link
+                to="/agency/$slug/daily-tasks"
+                params={{ slug }}
+                className="ds-label-caps text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              >
+                Detalhar <ChevronRight className="h-3 w-3" />
+              </Link>
+            }
+          >
+            {isLoading ? (
+              <LoadingSkeleton rows={2} />
+            ) : (s?.topTags ?? []).length === 0 ? (
+              <EmptyList icon={Tag} text="Nenhuma tag em uso." />
+            ) : (
+              <div className="space-y-3">
+                {s?.topTags.map((t, idx) => (
+                  <div key={idx} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-2.5 h-2.5 rounded-full ring-2 ring-background shadow-xs" 
+                        style={{ backgroundColor: t.color }}
+                      />
+                      <span className="text-sm font-semibold text-foreground">{t.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-16 bg-surface-alt rounded-full overflow-hidden">
+                        <div 
+                          className="h-full rounded-full" 
+                          style={{ 
+                            backgroundColor: t.color, 
+                            width: `${Math.max(10, Math.min(100, (t.count / (s?.topTags[0]?.count || 1)) * 100))}%` 
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold w-6 text-right">{t.count}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

@@ -55,6 +55,7 @@ export interface Task {
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+  tags?: string[];
 }
 
 export type TaskInsert = Omit<Task, "id" | "created_at" | "updated_at"> & Partial<Pick<Task, "id" | "created_at" | "updated_at">>;
@@ -295,7 +296,7 @@ export interface TaskFiltersState {
   assignees: string[];
   statuses: TaskStatus[];
   priorities: TaskPriority[];
-  labels: string[];
+  tags: string[];
   sources: TaskSource[];
   due_date_from?: string;
   due_date_to?: string;

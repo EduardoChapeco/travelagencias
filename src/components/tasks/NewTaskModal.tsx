@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Calendar, Flag, User, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DSTagPicker } from "@/components/ds/DSTagPicker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
@@ -46,7 +47,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [dueDate, setDueDate] = useState<string>("");
   const [sourceType, setSourceType] = useState<string>("manual");
-  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   // Sync default status when modal opens
   useEffect(() => {
@@ -58,7 +59,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
       setAssignedTo("");
       setDueDate("");
       setSourceType("manual");
-      setSelectedLabels([]);
+      setSelectedTags([]);
     }
   }, [open, defaultStatus]);
 
@@ -73,20 +74,6 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
         .select("id, full_name, avatar_url")
         .eq("agency_id", agency!.id);
       return (data || []) as Array<{ id: string; full_name: string; avatar_url: string | null }>;
-    },
-  });
-
-  // Carregar etiquetas (labels) da agência
-  const { data: availableLabels = [] } = useQuery({
-    queryKey: ["task-labels", agency?.id],
-    enabled: !!agency?.id && open,
-    staleTime: 60_000,
-    queryFn: async () => {
-      const { data } = await db
-        .from("task_labels")
-        .select("id, name, color")
-        .eq("agency_id", agency!.id);
-      return (data || []) as Array<{ id: string; name: string; color: string }>;
     },
   });
 
@@ -109,7 +96,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
         is_recurring: false,
         difficulty_score: 1,
         estimated_minutes: 60,
-        labels: selectedLabels,
+        tags: selectedTags,
       } as any,
       {
         onSuccess: (data: any) => {
@@ -280,41 +267,13 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
               <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 Etiquetas / Tags
               </label>
-              {availableLabels.length === 0 ? (
-                <p className="text-[10px] text-muted-foreground pt-2">Nenhuma etiqueta cadastrada.</p>
-              ) : (
-                <div className="flex flex-wrap gap-1 pt-1.5">
-                  {availableLabels.map((lbl) => {
-                    const isSelected = selectedLabels.includes(lbl.id);
-                    return (
-                      <button
-                        key={lbl.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedLabels((prev) =>
-                            prev.includes(lbl.id)
-                              ? prev.filter((id) => id !== lbl.id)
-                              : [...prev, lbl.id]
-                          );
-                        }}
-                        className={cn(
-                          "text-[9px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer",
-                          isSelected
-                            ? "shadow-xs scale-102 font-extrabold"
-                            : "opacity-60 hover:opacity-100"
-                        )}
-                        style={{
-                          color: lbl.color,
-                          borderColor: isSelected ? lbl.color : "var(--border)",
-                          backgroundColor: isSelected ? `${lbl.color}15` : "transparent",
-                        }}
-                      >
-                        {lbl.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="pt-1.5">
+                <DSTagPicker
+                  value={selectedTags}
+                  onChange={setSelectedTags}
+                  placeholder="Adicionar tags..."
+                />
+              </div>
             </div>
           </div>
 

@@ -208,7 +208,16 @@ function PassengersPage() {
           },
         );
         if (!ocrErr && ocrData?.result) {
-          extractedData = ocrData.result;
+          let parsedResult = ocrData.result;
+          if (typeof parsedResult === "string") {
+            try {
+              const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+              parsedResult = JSON.parse(cleaned);
+            } catch (e) {
+              console.warn("Falha no parse fallback de OCR Passenger:", e);
+            }
+          }
+          extractedData = parsedResult;
           if (extractedData.expiration_date) {
             expirationDate = extractedData.expiration_date;
           }

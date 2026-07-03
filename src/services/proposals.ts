@@ -55,7 +55,17 @@ export type Tour = {
   image_url: string;
   notes: string;
 };
-export type ItineraryDay = { id: string; day: string; title: string; description: string };
+export type ItineraryDay = { 
+  id: string; 
+  day: string; 
+  title: string; 
+  description: string;
+  images?: string[];
+  imageLayout?: string;
+  meals?: string[];
+  overnight?: string;
+  city?: string;
+};
 
 export type Proposal = {
   id: string;
@@ -171,7 +181,16 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
           if (error) {
             throw new Error(error.message || "Erro retornado pela Edge Function de OCR");
           }
-          resolve(data?.result ?? {});
+          let parsedResult = data?.result ?? {};
+          if (typeof parsedResult === "string") {
+            try {
+              const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+              parsedResult = JSON.parse(cleaned);
+            } catch (e) {
+              console.warn("Falha no parse fallback de OCR:", e);
+            }
+          }
+          resolve(parsedResult);
         } catch (err: any) {
           clearTimeout(timeoutId);
           const isTimeout = err.name === "AbortError";

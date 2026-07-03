@@ -224,7 +224,7 @@ function ProposalEditor() {
       : "";
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col bg-surface-alt/10">
+    <div className="flex h-full flex-col bg-surface-alt/10">
       <StudioToolbar
         title={draft.title}
         subtitle={`Cotação #${draft.number}`}

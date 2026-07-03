@@ -905,7 +905,7 @@ function TransactionForm({
     queryFn: async () => {
       const { data } = await supabase
         .from("user_roles")
-        .select("user_id, profiles(id, full_name)")
+        .select("user_id, profiles!user_roles_user_id_fkey(id, full_name)")
         .eq("agency_id", agencyId);
       return (data || []).map((au: any) => ({
         value: au.user_id,

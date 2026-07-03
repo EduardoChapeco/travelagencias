@@ -80,7 +80,7 @@ function SupportRoute() {
       : 0;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-var(--header-h))] bg-background overflow-hidden">
+    <div className="flex flex-col h-full bg-background overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <PrimaryButton

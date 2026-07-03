@@ -714,7 +714,7 @@ function InboxModule() {
   const activeChannelTypes = Array.from(new Set(channels.map((ch: any) => ch.type)));
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] w-full overflow-hidden bg-background">
+    <div className="flex h-full w-full overflow-hidden bg-background">
       {(isErrorChannels || isErrorConversations) && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />

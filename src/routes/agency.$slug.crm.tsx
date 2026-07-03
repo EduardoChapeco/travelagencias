@@ -180,7 +180,7 @@ function CRMPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">

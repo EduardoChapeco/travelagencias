@@ -140,7 +140,7 @@ function FinancialSettingsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_roles")
-        .select("user_id, profiles(full_name)")
+        .select("user_id, profiles!user_roles_user_id_fkey(full_name)")
         .eq("agency_id", agency!.id);
       if (error) throw error;
       return (data || []).map((d: any) => ({
@@ -156,7 +156,7 @@ function FinancialSettingsPage() {
     queryFn: async () => {
       const { data: plansData, error: plansErr } = await supabase
         .from("seller_commission_plans")
-        .select("*, seller_profiles:seller_id(full_name)")
+        .select("*, seller_profiles:profiles!seller_commission_plans_seller_id_fkey(full_name)")
         .eq("agency_id", agency!.id);
       if (plansErr) throw plansErr;
 
@@ -256,7 +256,7 @@ function FinancialSettingsPage() {
   if (!agency) return null;
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {activeTab === "commissions" && (

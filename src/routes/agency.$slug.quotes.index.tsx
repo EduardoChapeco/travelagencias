@@ -567,7 +567,7 @@ Texto: "${aiText}"`;
   });
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Top Bar / Header Contextual Unificado */}
       <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2.5 bg-surface border-b shrink-0 gap-4">
         <div className="overflow-x-auto no-scrollbar w-full md:w-auto">

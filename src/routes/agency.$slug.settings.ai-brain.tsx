@@ -60,7 +60,7 @@ function BrainPanel() {
   const inboundCount = inboxMessages.filter((m: any) => m.direction === 'inbound').length;
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-2">
            <Badge variant="outline" className="bg-brand/10 text-brand border-none">

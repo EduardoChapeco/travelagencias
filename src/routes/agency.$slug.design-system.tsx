@@ -279,7 +279,7 @@ function DesignSystemPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] overflow-hidden bg-background">
+    <div className="flex h-full overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-3">
           <StatusBadge tone="info">Documento Pétreo</StatusBadge>

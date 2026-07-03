@@ -238,7 +238,7 @@ function BoardingKanbanPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h))] flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       <HeaderPortal>
         <div className="flex items-center gap-4">
           <div className="flex items-center border border-border rounded-sm p-0.5 bg-surface-alt">
