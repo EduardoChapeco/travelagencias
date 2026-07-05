@@ -502,3 +502,11 @@
   font-weight: 500;
   color: var(--color-muted-foreground);
 }
+
+/* Ocultar barra de rolagem globalmente mas manter a funcionalidade de scroll intacta */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+*::-webkit-scrollbar {
+  display: none; /* Safari, Chrome e outros browsers Webkit */
+}

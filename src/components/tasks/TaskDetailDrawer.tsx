@@ -14,7 +14,7 @@ import {
   Timer, RotateCcw, MessageSquare, Trash2,
   AlertTriangle, Plus,
 } from "lucide-react";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -237,10 +237,18 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
         </AlertDialogContent>
       </AlertDialog>
 
-      <Sheet open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-        <SheetContent
-          side="right"
-          className="w-full sm:max-w-[620px] p-0 overflow-hidden flex flex-col bg-[var(--surface)] border-l border-border"
+      <div 
+        className={cn(
+          "fixed inset-0 z-50 flex items-end justify-center p-4 bg-overlay/30 backdrop-blur-xs transition-opacity duration-300",
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="absolute inset-0" onClick={handleClose} />
+        <div
+          className={cn(
+            "relative w-full max-w-3xl h-[85vh] sm:h-[80vh] flex flex-col bg-[var(--surface)] border border-border/80 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 transform",
+            open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+          )}
         >
           {/* ── Header ────────────────────────────────────────────────────── */}
           <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-border/60 bg-[var(--surface-alt)]/30 shrink-0">
@@ -531,8 +539,8 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
               </Button>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      </div>
     </>
   );
 }

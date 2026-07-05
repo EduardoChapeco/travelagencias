@@ -779,7 +779,7 @@ export function KanbanView({
         onClose={() => setNewTaskModal({ open: false, defaultStatus: "todo" })}
       />
 
-      <div className="h-full flex flex-col -mx-6 -mb-6">
+      <div className="h-full flex flex-col">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCorners}
@@ -789,7 +789,7 @@ export function KanbanView({
         >
           {/* ── Colunas ── SortableContext para arrastar colunas */}
           <SortableContext items={activeColumns} strategy={horizontalListSortingStrategy}>
-            <div className="flex-1 flex overflow-x-auto gap-4 p-6 min-h-0 bg-[var(--surface-alt)]/25">
+            <div className="flex-1 flex overflow-x-auto gap-4 pt-2 px-6 pb-6 min-h-0 bg-[var(--surface-alt)]/25">
               {activeColumns.map((col) => (
                 <KanbanColumn
                   key={col}

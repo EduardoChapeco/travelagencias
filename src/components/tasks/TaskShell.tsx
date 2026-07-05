@@ -230,7 +230,10 @@ export function TaskShell() {
         </div>
 
         {/* ── Content Area ──────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-auto p-6 bg-[var(--surface-alt)]/20">
+        <div 
+          className="flex-1 overflow-auto p-4 md:p-6 bg-[var(--surface-alt)]/20 data-[view=kanban]:p-0"
+          data-view={activeView}
+        >
           {activeView === "my-day" && <MyDayView filters={computedFilters} />}
           {activeView === "kanban" && (
             <KanbanView filters={computedFilters} onNewTask={() => setNewTaskOpen(true)} />
