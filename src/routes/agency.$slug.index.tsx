@@ -81,7 +81,7 @@ function Dashboard() {
           .gte("date_time", now.toISOString())
           .lte("date_time", new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000).toISOString())
           .order("date_time", { ascending: true }),
-        supabase
+        (supabase as any)
           .from("tasks")
           .select("id, tags")
           .eq("agency_id", agency!.id)
@@ -114,7 +114,7 @@ function Dashboard() {
       const travelingNowCount = (trips.data ?? []).length + (flights.data ?? []).slice(0, 3).length;
 
       // Tag Analytics
-      const tagAnalytics = (tasksWithTags.data ?? []).reduce((acc: Record<string, number>, task: any) => {
+      const tagAnalytics = (tasksWithTags.data ?? []).reduce((acc: Record<string, { count: number, color: string }>, task: any) => {
         const tags = Array.isArray(task.tags) ? task.tags : [];
         tags.forEach((t: string) => {
           const [name, color] = t.split(":");
@@ -126,7 +126,7 @@ function Dashboard() {
         return acc;
       }, {} as Record<string, { count: number, color: string }>);
 
-      const topTags = Object.entries(tagAnalytics)
+      const topTags = (Object.entries(tagAnalytics) as [string, { count: number, color: string }][])
         .sort((a, b) => b[1].count - a[1].count)
         .slice(0, 4)
         .map(([name, data]) => ({ name, count: data.count, color: data.color }));
@@ -408,6 +408,7 @@ function Dashboard() {
               <Link
                 to="/agency/$slug/daily-tasks"
                 params={{ slug }}
+                search={{ view: "my-day" }}
                 className="ds-label-caps text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
               >
                 Detalhar <ChevronRight className="h-3 w-3" />

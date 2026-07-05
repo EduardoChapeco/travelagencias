@@ -4,7 +4,7 @@ export async function uploadProposalMedia(
   agencyId: string,
   proposalId: string,
   file: File,
-  slot: "cover" | "map" | "agent_photo" | "hotel" | "tour",
+  slot: string,
   itemId?: string, // for hotels or tours specific ids
 ): Promise<string> {
   const extension = file.name.split(".").pop();
@@ -27,7 +27,7 @@ export async function uploadProposalMedia(
 export async function saveUnsplashImageToStorage(
   agencyId: string,
   proposalId: string,
-  slot: "cover" | "map" | "hotel" | "tour",
+  slot: string,
   unsplashUrl: string,
   itemId?: string,
 ): Promise<string> {

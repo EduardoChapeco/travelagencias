@@ -39,92 +39,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      chatbot_flows: {
-        Row: {
-          id: string
-          agency_id: string
-          definition: Json
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          agency_id: string
-          definition?: Json
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          agency_id?: string
-          definition?: Json
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chatbot_flows_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: true
-            referencedRelation: "agencies"
-            referencedColumns: ["id"]
-          }
-        ]
-      },
-      ai_request_logs: {
-        Row: {
-          request_id: string
-          agency_id: string
-          module: string
-          capability: string
-          provider: string
-          model: string
-          key_fingerprint: string | null
-          attempt: number
-          fallback_used: boolean
-          latency_ms: number | null
-          input_tokens: number | null
-          output_tokens: number | null
-          success: boolean
-          error_message: string | null
-          created_at: string
-        }
-        Insert: {
-          request_id?: string
-          agency_id: string
-          module: string
-          capability: string
-          provider: string
-          model: string
-          key_fingerprint?: string | null
-          attempt?: number
-          fallback_used?: boolean
-          latency_ms?: number | null
-          input_tokens?: number | null
-          output_tokens?: number | null
-          success?: boolean
-          error_message?: string | null
-          created_at?: string
-        }
-        Update: {
-          request_id?: string
-          agency_id?: string
-          module?: string
-          capability?: string
-          provider?: string
-          model?: string
-          key_fingerprint?: string | null
-          attempt?: number
-          fallback_used?: boolean
-          latency_ms?: number | null
-          input_tokens?: number | null
-          output_tokens?: number | null
-          success?: boolean
-          error_message?: string | null
-          created_at?: string
-        }
-        Relationships: []
-      }
       agencies: {
         Row: {
           brand_color: string | null
@@ -529,55 +443,88 @@ export type Database = {
           },
         ]
       }
-      agent_tasks: {
+      agent_productivity_scores: {
         Row: {
+          actual_h: number | null
           agency_id: string
-          agent_id: string | null
-          created_at: string
-          description: string | null
-          difficulty_score: number
-          due_date: string
+          ai_burnout_risk: number | null
+          ai_improvement: Json | null
+          ai_recommendations: Json | null
+          ai_strengths: Json | null
+          ai_trend: string | null
+          avg_completion_h: number | null
+          calculated_at: string
+          estimated_h: number | null
           id: string
-          reference_id: string | null
-          resolved_at: string | null
-          status: string
-          title: string
-          type: string
-          updated_at: string
+          period_date: string
+          period_type: string
+          score_complexity: number | null
+          score_consistency: number | null
+          score_quality: number | null
+          score_response: number | null
+          score_total: number | null
+          score_volume: number | null
+          tasks_completed: number | null
+          tasks_created: number | null
+          tasks_on_time: number | null
+          tasks_overdue: number | null
+          user_id: string
         }
         Insert: {
+          actual_h?: number | null
           agency_id: string
-          agent_id?: string | null
-          created_at?: string
-          description?: string | null
-          difficulty_score?: number
-          due_date?: string
+          ai_burnout_risk?: number | null
+          ai_improvement?: Json | null
+          ai_recommendations?: Json | null
+          ai_strengths?: Json | null
+          ai_trend?: string | null
+          avg_completion_h?: number | null
+          calculated_at?: string
+          estimated_h?: number | null
           id?: string
-          reference_id?: string | null
-          resolved_at?: string | null
-          status?: string
-          title: string
-          type?: string
-          updated_at?: string
+          period_date: string
+          period_type: string
+          score_complexity?: number | null
+          score_consistency?: number | null
+          score_quality?: number | null
+          score_response?: number | null
+          score_total?: number | null
+          score_volume?: number | null
+          tasks_completed?: number | null
+          tasks_created?: number | null
+          tasks_on_time?: number | null
+          tasks_overdue?: number | null
+          user_id: string
         }
         Update: {
+          actual_h?: number | null
           agency_id?: string
-          agent_id?: string | null
-          created_at?: string
-          description?: string | null
-          difficulty_score?: number
-          due_date?: string
+          ai_burnout_risk?: number | null
+          ai_improvement?: Json | null
+          ai_recommendations?: Json | null
+          ai_strengths?: Json | null
+          ai_trend?: string | null
+          avg_completion_h?: number | null
+          calculated_at?: string
+          estimated_h?: number | null
           id?: string
-          reference_id?: string | null
-          resolved_at?: string | null
-          status?: string
-          title?: string
-          type?: string
-          updated_at?: string
+          period_date?: string
+          period_type?: string
+          score_complexity?: number | null
+          score_consistency?: number | null
+          score_quality?: number | null
+          score_response?: number | null
+          score_total?: number | null
+          score_volume?: number | null
+          tasks_completed?: number | null
+          tasks_created?: number | null
+          tasks_on_time?: number | null
+          tasks_overdue?: number | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "agent_tasks_agency_id_fkey"
+            foreignKeyName: "agent_productivity_scores_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "agencies"
@@ -1079,57 +1026,131 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_request_logs: {
+        Row: {
+          agency_id: string | null
+          attempt: number
+          capability: string
+          created_at: string
+          error_message: string | null
+          estimated_cost: number | null
+          fallback_used: boolean
+          id: string
+          input_tokens: number | null
+          key_fingerprint: string | null
+          latency_ms: number
+          model: string
+          module: string
+          output_tokens: number | null
+          provider: string
+          request_id: string
+          success: boolean
+        }
+        Insert: {
+          agency_id?: string | null
+          attempt?: number
+          capability: string
+          created_at?: string
+          error_message?: string | null
+          estimated_cost?: number | null
+          fallback_used?: boolean
+          id?: string
+          input_tokens?: number | null
+          key_fingerprint?: string | null
+          latency_ms: number
+          model: string
+          module: string
+          output_tokens?: number | null
+          provider: string
+          request_id: string
+          success: boolean
+        }
+        Update: {
+          agency_id?: string | null
+          attempt?: number
+          capability?: string
+          created_at?: string
+          error_message?: string | null
+          estimated_cost?: number | null
+          fallback_used?: boolean
+          id?: string
+          input_tokens?: number | null
+          key_fingerprint?: string | null
+          latency_ms?: number
+          model?: string
+          module?: string
+          output_tokens?: number | null
+          provider?: string
+          request_id?: string
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_request_logs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_keys: {
         Row: {
           agency_id: string | null
+          category: string
           created_at: string
           created_by: string | null
           id: string
           is_active: boolean
           key_value: string
           label: string | null
+          last_sync_at: string | null
+          last_sync_error: string | null
+          metadata: Json
           monthly_limit: number | null
+          operator_id: string | null
+          operator_name: string | null
           provider: string
           updated_at: string
           used_count: number
-          category: string
-          operator_id: string | null
-          operator_name: string | null
-          metadata: Json | null
         }
         Insert: {
           agency_id?: string | null
+          category?: string
           created_at?: string
           created_by?: string | null
           id?: string
           is_active?: boolean
           key_value: string
           label?: string | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          metadata?: Json
           monthly_limit?: number | null
+          operator_id?: string | null
+          operator_name?: string | null
           provider: string
           updated_at?: string
           used_count?: number
-          category?: string
-          operator_id?: string | null
-          operator_name?: string | null
-          metadata?: Json | null
         }
         Update: {
           agency_id?: string | null
+          category?: string
           created_at?: string
           created_by?: string | null
           id?: string
           is_active?: boolean
           key_value?: string
           label?: string | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          metadata?: Json
           monthly_limit?: number | null
+          operator_id?: string | null
+          operator_name?: string | null
           provider?: string
           updated_at?: string
           used_count?: number
-          category?: string
-          operator_id?: string | null
-          operator_name?: string | null
-          metadata?: Json | null
         }
         Relationships: []
       }
@@ -1174,6 +1195,50 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          agency_id: string | null
+          created_at: string
+          entity: string
+          entity_id: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          agency_id?: string | null
+          created_at?: string
+          entity: string
+          entity_id: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          agency_id?: string | null
+          created_at?: string
+          entity?: string
+          entity_id?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       blog_posts: {
         Row: {
@@ -1884,6 +1949,59 @@ export type Database = {
           },
         ]
       }
+      calendar_events: {
+        Row: {
+          agency_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_time: string
+          id: string
+          is_video_call: boolean | null
+          location: string | null
+          meet_url: string | null
+          participants_count: number | null
+          start_time: string
+          title: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          is_video_call?: boolean | null
+          location?: string | null
+          meet_url?: string | null
+          participants_count?: number | null
+          start_time: string
+          title: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          is_video_call?: boolean | null
+          location?: string | null
+          meet_url?: string | null
+          participants_count?: number | null
+          start_time?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_audit_logs: {
         Row: {
           action: string
@@ -2051,9 +2169,11 @@ export type Database = {
           id: string
           notes: string | null
           operator_id: string | null
+          payment_installment_id: string | null
           payment_method: string
           receipt_url: string | null
           transaction_date: string
+          trip_id: string | null
           type: string
         }
         Insert: {
@@ -2068,9 +2188,11 @@ export type Database = {
           id?: string
           notes?: string | null
           operator_id?: string | null
+          payment_installment_id?: string | null
           payment_method?: string
           receipt_url?: string | null
           transaction_date?: string
+          trip_id?: string | null
           type: string
         }
         Update: {
@@ -2085,9 +2207,11 @@ export type Database = {
           id?: string
           notes?: string | null
           operator_id?: string | null
+          payment_installment_id?: string | null
           payment_method?: string
           receipt_url?: string | null
           transaction_date?: string
+          trip_id?: string | null
           type?: string
         }
         Relationships: [
@@ -2131,6 +2255,93 @@ export type Database = {
             columns: ["operator_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_payment_installment_id_fkey"
+            columns: ["payment_installment_id"]
+            isOneToOne: false
+            referencedRelation: "payment_installments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_transactions_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      channels: {
+        Row: {
+          agency_id: string
+          created_at: string | null
+          credentials_encrypted: string | null
+          display_name: string
+          external_id: string
+          id: string
+          is_active: boolean | null
+          type: Database["public"]["Enums"]["channel_type"]
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string | null
+          credentials_encrypted?: string | null
+          display_name: string
+          external_id: string
+          id?: string
+          is_active?: boolean | null
+          type: Database["public"]["Enums"]["channel_type"]
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string | null
+          credentials_encrypted?: string | null
+          display_name?: string
+          external_id?: string
+          id?: string
+          is_active?: boolean | null
+          type?: Database["public"]["Enums"]["channel_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channels_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chatbot_flows: {
+        Row: {
+          agency_id: string
+          created_at: string
+          definition: Json
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          definition?: Json
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          definition?: Json
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chatbot_flows_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: true
+            referencedRelation: "agencies"
             referencedColumns: ["id"]
           },
         ]
@@ -2580,6 +2791,64 @@ export type Database = {
         }
         Relationships: []
       }
+      contacts: {
+        Row: {
+          agency_id: string
+          client_id: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          lead_id: string | null
+          metadata: Json | null
+          name: string | null
+          phone: string | null
+        }
+        Insert: {
+          agency_id: string
+          client_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          phone?: string | null
+        }
+        Update: {
+          agency_id?: string
+          client_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          name?: string | null
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_addendums: {
         Row: {
           cancelled_at: string | null
@@ -2843,6 +3112,67 @@ export type Database = {
           viewed_at?: string | null
         }
         Relationships: []
+      }
+      conversations: {
+        Row: {
+          agency_id: string
+          ai_mode: boolean | null
+          assigned_team: string | null
+          assigned_user_id: string | null
+          channel_id: string
+          contact_id: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          status: Database["public"]["Enums"]["conversation_status"]
+        }
+        Insert: {
+          agency_id: string
+          ai_mode?: boolean | null
+          assigned_team?: string | null
+          assigned_user_id?: string | null
+          channel_id: string
+          contact_id: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          status?: Database["public"]["Enums"]["conversation_status"]
+        }
+        Update: {
+          agency_id?: string
+          ai_mode?: boolean | null
+          assigned_team?: string | null
+          assigned_user_id?: string | null
+          channel_id?: string
+          contact_id?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          status?: Database["public"]["Enums"]["conversation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       corporate_clients: {
         Row: {
@@ -3198,6 +3528,92 @@ export type Database = {
           },
         ]
       }
+      data_subject_request_evidence: {
+        Row: {
+          created_at: string
+          evidence_type: string
+          evidence_url: string | null
+          id: string
+          request_id: string
+        }
+        Insert: {
+          created_at?: string
+          evidence_type: string
+          evidence_url?: string | null
+          id?: string
+          request_id: string
+        }
+        Update: {
+          created_at?: string
+          evidence_type?: string
+          evidence_url?: string | null
+          id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_subject_request_evidence_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "data_subject_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_subject_requests: {
+        Row: {
+          agency_id: string | null
+          client_id: string | null
+          created_at: string
+          id: string
+          protocol_code: string
+          rejection_reason: string | null
+          request_type: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          protocol_code: string
+          rejection_reason?: string | null
+          request_type: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          protocol_code?: string
+          rejection_reason?: string | null
+          request_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_subject_requests_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_subject_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       decision_records: {
         Row: {
           created_at: string
@@ -3504,6 +3920,405 @@ export type Database = {
           },
         ]
       }
+      email_accounts: {
+        Row: {
+          access_token_enc: string
+          account_type: string
+          allowed_user_ids: string[] | null
+          can_send: boolean | null
+          connected_by: string | null
+          created_at: string | null
+          display_name: string | null
+          email_address: string
+          gmail_history_id: string | null
+          id: string
+          last_error: string | null
+          last_sync_at: string | null
+          org_id: string
+          profile_picture: string | null
+          pubsub_topic: string | null
+          purpose: string | null
+          refresh_token_enc: string
+          scopes: string[]
+          status: string | null
+          token_expires_at: string
+          updated_at: string | null
+          user_id: string | null
+          watch_expiry: string | null
+        }
+        Insert: {
+          access_token_enc: string
+          account_type: string
+          allowed_user_ids?: string[] | null
+          can_send?: boolean | null
+          connected_by?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          email_address: string
+          gmail_history_id?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          org_id: string
+          profile_picture?: string | null
+          pubsub_topic?: string | null
+          purpose?: string | null
+          refresh_token_enc: string
+          scopes?: string[]
+          status?: string | null
+          token_expires_at: string
+          updated_at?: string | null
+          user_id?: string | null
+          watch_expiry?: string | null
+        }
+        Update: {
+          access_token_enc?: string
+          account_type?: string
+          allowed_user_ids?: string[] | null
+          can_send?: boolean | null
+          connected_by?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          email_address?: string
+          gmail_history_id?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          org_id?: string
+          profile_picture?: string | null
+          pubsub_topic?: string | null
+          purpose?: string | null
+          refresh_token_enc?: string
+          scopes?: string[]
+          status?: string | null
+          token_expires_at?: string
+          updated_at?: string | null
+          user_id?: string | null
+          watch_expiry?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_accounts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_attachments: {
+        Row: {
+          content_type: string | null
+          created_at: string | null
+          email_id: string
+          filename: string
+          gmail_attach_id: string | null
+          id: string
+          is_downloaded: boolean | null
+          org_id: string
+          size_bytes: number | null
+          storage_bucket: string | null
+          storage_path: string | null
+        }
+        Insert: {
+          content_type?: string | null
+          created_at?: string | null
+          email_id: string
+          filename: string
+          gmail_attach_id?: string | null
+          id?: string
+          is_downloaded?: boolean | null
+          org_id: string
+          size_bytes?: number | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Update: {
+          content_type?: string | null
+          created_at?: string | null
+          email_id?: string
+          filename?: string
+          gmail_attach_id?: string | null
+          id?: string
+          is_downloaded?: boolean | null
+          org_id?: string
+          size_bytes?: number | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_attachments_email_id_fkey"
+            columns: ["email_id"]
+            isOneToOne: false
+            referencedRelation: "emails"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_attachments_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_link_history: {
+        Row: {
+          corrected_by: string | null
+          created_at: string | null
+          email_id: string
+          id: string
+          new_contact_id: string | null
+          new_embarque_id: string | null
+          new_method: string | null
+          new_task_id: string | null
+          new_ticket_id: string | null
+          old_confidence: number | null
+          old_contact_id: string | null
+          old_embarque_id: string | null
+          old_method: string | null
+          old_task_id: string | null
+          old_ticket_id: string | null
+          org_id: string
+          reason: string | null
+        }
+        Insert: {
+          corrected_by?: string | null
+          created_at?: string | null
+          email_id: string
+          id?: string
+          new_contact_id?: string | null
+          new_embarque_id?: string | null
+          new_method?: string | null
+          new_task_id?: string | null
+          new_ticket_id?: string | null
+          old_confidence?: number | null
+          old_contact_id?: string | null
+          old_embarque_id?: string | null
+          old_method?: string | null
+          old_task_id?: string | null
+          old_ticket_id?: string | null
+          org_id: string
+          reason?: string | null
+        }
+        Update: {
+          corrected_by?: string | null
+          created_at?: string | null
+          email_id?: string
+          id?: string
+          new_contact_id?: string | null
+          new_embarque_id?: string | null
+          new_method?: string | null
+          new_task_id?: string | null
+          new_ticket_id?: string | null
+          old_confidence?: number | null
+          old_contact_id?: string | null
+          old_embarque_id?: string | null
+          old_method?: string | null
+          old_task_id?: string | null
+          old_ticket_id?: string | null
+          org_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_link_history_email_id_fkey"
+            columns: ["email_id"]
+            isOneToOne: false
+            referencedRelation: "emails"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_link_history_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emails: {
+        Row: {
+          ai_category: string | null
+          ai_confidence: number | null
+          ai_extracted_entities: Json | null
+          ai_processed_at: string | null
+          ai_suggested_action: string | null
+          ai_summary: string | null
+          attachments_count: number | null
+          bcc_emails: Json | null
+          body_html: string | null
+          body_text: string | null
+          body_vector: string | null
+          cc_emails: Json | null
+          created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          direction: string
+          email_account_id: string
+          from_email: string
+          from_name: string | null
+          gmail_labels: string[] | null
+          gmail_message_id: string
+          gmail_thread_id: string
+          has_attachments: boolean | null
+          id: string
+          is_deleted: boolean | null
+          link_confidence: number | null
+          link_method: string | null
+          link_verified: boolean | null
+          linked_at: string | null
+          linked_by: string | null
+          linked_contact_id: string | null
+          linked_embarque_id: string | null
+          linked_task_id: string | null
+          linked_ticket_id: string | null
+          org_id: string
+          read_by: Json | null
+          received_at: string | null
+          reply_to: string | null
+          sent_at: string | null
+          snippet: string | null
+          subject: string | null
+          to_emails: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          ai_category?: string | null
+          ai_confidence?: number | null
+          ai_extracted_entities?: Json | null
+          ai_processed_at?: string | null
+          ai_suggested_action?: string | null
+          ai_summary?: string | null
+          attachments_count?: number | null
+          bcc_emails?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          body_vector?: string | null
+          cc_emails?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          direction: string
+          email_account_id: string
+          from_email: string
+          from_name?: string | null
+          gmail_labels?: string[] | null
+          gmail_message_id: string
+          gmail_thread_id: string
+          has_attachments?: boolean | null
+          id?: string
+          is_deleted?: boolean | null
+          link_confidence?: number | null
+          link_method?: string | null
+          link_verified?: boolean | null
+          linked_at?: string | null
+          linked_by?: string | null
+          linked_contact_id?: string | null
+          linked_embarque_id?: string | null
+          linked_task_id?: string | null
+          linked_ticket_id?: string | null
+          org_id: string
+          read_by?: Json | null
+          received_at?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          snippet?: string | null
+          subject?: string | null
+          to_emails?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          ai_category?: string | null
+          ai_confidence?: number | null
+          ai_extracted_entities?: Json | null
+          ai_processed_at?: string | null
+          ai_suggested_action?: string | null
+          ai_summary?: string | null
+          attachments_count?: number | null
+          bcc_emails?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          body_vector?: string | null
+          cc_emails?: Json | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          direction?: string
+          email_account_id?: string
+          from_email?: string
+          from_name?: string | null
+          gmail_labels?: string[] | null
+          gmail_message_id?: string
+          gmail_thread_id?: string
+          has_attachments?: boolean | null
+          id?: string
+          is_deleted?: boolean | null
+          link_confidence?: number | null
+          link_method?: string | null
+          link_verified?: boolean | null
+          linked_at?: string | null
+          linked_by?: string | null
+          linked_contact_id?: string | null
+          linked_embarque_id?: string | null
+          linked_task_id?: string | null
+          linked_ticket_id?: string | null
+          org_id?: string
+          read_by?: Json | null
+          received_at?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          snippet?: string | null
+          subject?: string | null
+          to_emails?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emails_email_account_id_fkey"
+            columns: ["email_account_id"]
+            isOneToOne: false
+            referencedRelation: "email_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_linked_contact_id_fkey"
+            columns: ["linked_contact_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_linked_embarque_id_fkey"
+            columns: ["linked_embarque_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_linked_task_id_fkey"
+            columns: ["linked_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_linked_ticket_id_fkey"
+            columns: ["linked_ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emails_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       external_entity_links: {
         Row: {
           agency_id: string
@@ -3553,6 +4368,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feature_flags: {
+        Row: {
+          agency_overrides: Json | null
+          enabled: boolean | null
+          key: string
+        }
+        Insert: {
+          agency_overrides?: Json | null
+          enabled?: boolean | null
+          key: string
+        }
+        Update: {
+          agency_overrides?: Json | null
+          enabled?: boolean | null
+          key?: string
+        }
+        Relationships: []
       }
       financial_categories: {
         Row: {
@@ -4961,6 +5794,47 @@ export type Database = {
           },
         ]
       }
+      kanban_settings: {
+        Row: {
+          agency_id: string
+          column_key: string
+          column_order: number | null
+          display_label: string
+          id: string
+          is_visible: boolean | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          agency_id: string
+          column_key: string
+          column_order?: number | null
+          display_label: string
+          id?: string
+          is_visible?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          agency_id?: string
+          column_key?: string
+          column_order?: number | null
+          display_label?: string
+          id?: string
+          is_visible?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kanban_settings_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_article_votes: {
         Row: {
           article_id: string
@@ -5768,6 +6642,62 @@ export type Database = {
           },
         ]
       }
+      legacy_agent_tasks: {
+        Row: {
+          agency_id: string
+          agent_id: string | null
+          created_at: string
+          description: string | null
+          difficulty_score: number
+          due_date: string
+          id: string
+          reference_id: string | null
+          resolved_at: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          agent_id?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_score?: number
+          due_date?: string
+          id?: string
+          reference_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          agent_id?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_score?: number
+          due_date?: string
+          id?: string
+          reference_id?: string | null
+          resolved_at?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_tasks_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_acceptances: {
         Row: {
           accepted_at: string
@@ -5822,6 +6752,53 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "policy_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          agency_id: string
+          body: string | null
+          conversation_id: string
+          created_at: string | null
+          direction: Database["public"]["Enums"]["message_direction"]
+          external_id: string | null
+          id: string
+          media_url: string | null
+          sender_user_id: string | null
+          status: Database["public"]["Enums"]["message_status"] | null
+        }
+        Insert: {
+          agency_id: string
+          body?: string | null
+          conversation_id: string
+          created_at?: string | null
+          direction: Database["public"]["Enums"]["message_direction"]
+          external_id?: string | null
+          id?: string
+          media_url?: string | null
+          sender_user_id?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+        }
+        Update: {
+          agency_id?: string
+          body?: string | null
+          conversation_id?: string
+          created_at?: string | null
+          direction?: Database["public"]["Enums"]["message_direction"]
+          external_id?: string | null
+          id?: string
+          media_url?: string | null
+          sender_user_id?: string | null
+          status?: Database["public"]["Enums"]["message_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
         ]
@@ -8633,28 +9610,44 @@ export type Database = {
           agent_id: string | null
           assignee_id: string | null
           attachments: string[]
+          booking_refs: string[] | null
           cancellation_credit_remaining: number | null
           cancellation_penalty_pct: number | null
           cancellation_penalty_value: number | null
           cancellation_refund_method: string | null
+          cia_aerea: string | null
           client_id: string | null
-          code: string
+          closed_at: string | null
           created_at: string
           csat_comment: string | null
           csat_score: number | null
           deleted_at: string | null
           description: string | null
           email_thread_id: string | null
+          financial_data: Json | null
+          first_response_at: string | null
+          flight_numbers: string[] | null
           id: string
+          internal_notes: Json | null
+          is_deleted: boolean | null
+          loc_codes: string[] | null
+          metadata: Json | null
+          passenger_names: string[] | null
           priority: string
           refund_amount: number | null
           refund_requested: boolean
           refund_status: string | null
+          reported_by_email: string | null
           resolved_at: string | null
           sla_breach_at: string | null
+          sla_breached: boolean | null
+          sla_breached_at: string | null
           sla_deadline: string | null
           stage: string | null
           status: string
+          tags: string[] | null
+          task_id: string | null
+          ticket_hash: string
           title: string
           trip_id: string | null
           type: string
@@ -8665,28 +9658,44 @@ export type Database = {
           agent_id?: string | null
           assignee_id?: string | null
           attachments?: string[]
+          booking_refs?: string[] | null
           cancellation_credit_remaining?: number | null
           cancellation_penalty_pct?: number | null
           cancellation_penalty_value?: number | null
           cancellation_refund_method?: string | null
+          cia_aerea?: string | null
           client_id?: string | null
-          code?: string
+          closed_at?: string | null
           created_at?: string
           csat_comment?: string | null
           csat_score?: number | null
           deleted_at?: string | null
           description?: string | null
           email_thread_id?: string | null
+          financial_data?: Json | null
+          first_response_at?: string | null
+          flight_numbers?: string[] | null
           id?: string
+          internal_notes?: Json | null
+          is_deleted?: boolean | null
+          loc_codes?: string[] | null
+          metadata?: Json | null
+          passenger_names?: string[] | null
           priority?: string
           refund_amount?: number | null
           refund_requested?: boolean
           refund_status?: string | null
+          reported_by_email?: string | null
           resolved_at?: string | null
           sla_breach_at?: string | null
+          sla_breached?: boolean | null
+          sla_breached_at?: string | null
           sla_deadline?: string | null
           stage?: string | null
           status?: string
+          tags?: string[] | null
+          task_id?: string | null
+          ticket_hash: string
           title: string
           trip_id?: string | null
           type?: string
@@ -8697,34 +9706,57 @@ export type Database = {
           agent_id?: string | null
           assignee_id?: string | null
           attachments?: string[]
+          booking_refs?: string[] | null
           cancellation_credit_remaining?: number | null
           cancellation_penalty_pct?: number | null
           cancellation_penalty_value?: number | null
           cancellation_refund_method?: string | null
+          cia_aerea?: string | null
           client_id?: string | null
-          code?: string
+          closed_at?: string | null
           created_at?: string
           csat_comment?: string | null
           csat_score?: number | null
           deleted_at?: string | null
           description?: string | null
           email_thread_id?: string | null
+          financial_data?: Json | null
+          first_response_at?: string | null
+          flight_numbers?: string[] | null
           id?: string
+          internal_notes?: Json | null
+          is_deleted?: boolean | null
+          loc_codes?: string[] | null
+          metadata?: Json | null
+          passenger_names?: string[] | null
           priority?: string
           refund_amount?: number | null
           refund_requested?: boolean
           refund_status?: string | null
+          reported_by_email?: string | null
           resolved_at?: string | null
           sla_breach_at?: string | null
+          sla_breached?: boolean | null
+          sla_breached_at?: string | null
           sla_deadline?: string | null
           stage?: string | null
           status?: string
+          tags?: string[] | null
+          task_id?: string | null
+          ticket_hash?: string
           title?: string
           trip_id?: string | null
           type?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_support_tickets_assignee_profile"
+            columns: ["assignee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_support_tickets_client"
             columns: ["client_id"]
@@ -8737,6 +9769,13 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -8832,6 +9871,728 @@ export type Database = {
           },
         ]
       }
+      task_activity_log: {
+        Row: {
+          action: string
+          agency_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          new_value: Json | null
+          old_value: Json | null
+          task_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          agency_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          task_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          agency_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          task_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_log_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_activity_log_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_activity_logs: {
+        Row: {
+          action: string
+          agency_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          new_value: Json | null
+          old_value: Json | null
+          task_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          agency_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          task_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          agency_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          task_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_logs_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_activity_logs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_checklist_items: {
+        Row: {
+          agency_id: string
+          created_at: string
+          created_by: string | null
+          done_at: string | null
+          done_by: string | null
+          id: string
+          is_done: boolean | null
+          position: number | null
+          task_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          is_done?: boolean | null
+          position?: number | null
+          task_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          done_by?: string | null
+          id?: string
+          is_done?: boolean | null
+          position?: number | null
+          task_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_checklist_items_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_checklist_items_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          agency_id: string
+          content: Json
+          created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          id: string
+          is_deleted: boolean | null
+          is_edited: boolean | null
+          parent_id: string | null
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agency_id: string
+          content: Json
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          parent_id?: string | null
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agency_id?: string
+          content?: Json
+          created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          parent_id?: string | null
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "task_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_dependencies: {
+        Row: {
+          agency_id: string
+          created_at: string
+          created_by: string | null
+          dep_type: string | null
+          depends_on_id: string
+          id: string
+          task_id: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          created_by?: string | null
+          dep_type?: string | null
+          depends_on_id: string
+          id?: string
+          task_id: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          created_by?: string | null
+          dep_type?: string | null
+          depends_on_id?: string
+          id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_dependencies_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_dependencies_depends_on_id_fkey"
+            columns: ["depends_on_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_dependencies_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_label_assignments: {
+        Row: {
+          label_id: string
+          task_id: string
+        }
+        Insert: {
+          label_id: string
+          task_id: string
+        }
+        Update: {
+          label_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_label_assignments_label_id_fkey"
+            columns: ["label_id"]
+            isOneToOne: false
+            referencedRelation: "task_labels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_label_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_labels: {
+        Row: {
+          agency_id: string
+          color: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          agency_id: string
+          color: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          agency_id?: string
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_labels_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_projects: {
+        Row: {
+          agency_id: string
+          color: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_deleted: boolean | null
+          name: string
+          position: number | null
+          source_module: string | null
+          space_id: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          name: string
+          position?: number | null
+          source_module?: string | null
+          space_id: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          name?: string
+          position?: number | null
+          source_module?: string | null
+          space_id?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_projects_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_projects_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "task_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_spaces: {
+        Row: {
+          agency_id: string
+          color: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_deleted: boolean | null
+          name: string
+          position: number | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          name: string
+          position?: number | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          name?: string
+          position?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_spaces_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_time_entries: {
+        Row: {
+          agency_id: string
+          created_at: string
+          description: string | null
+          duration_min: number | null
+          ended_at: string | null
+          id: string
+          is_manual: boolean | null
+          started_at: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          description?: string | null
+          duration_min?: number | null
+          ended_at?: string | null
+          id?: string
+          is_manual?: boolean | null
+          started_at: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          description?: string | null
+          duration_min?: number | null
+          ended_at?: string | null
+          id?: string
+          is_manual?: boolean | null
+          started_at?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_time_entries_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_time_entries_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_watchers: {
+        Row: {
+          created_at: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_watchers_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          actual_minutes: number | null
+          agency_id: string
+          ai_completion_pred: number | null
+          ai_complexity_score: number | null
+          ai_last_analyzed_at: string | null
+          ai_suggested_due_date: string | null
+          ai_suggested_priority: string | null
+          assigned_to: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: Json | null
+          difficulty_score: number
+          due_date: string | null
+          due_time: string | null
+          estimated_minutes: number | null
+          id: string
+          is_deleted: boolean | null
+          is_recurring: boolean | null
+          parent_task_id: string | null
+          position: number | null
+          priority: string
+          project_id: string | null
+          recurrence_parent_id: string | null
+          recurrence_rule: Json | null
+          resolved_at: string | null
+          source_id: string | null
+          source_metadata: Json | null
+          source_type: string
+          source_url: string | null
+          space_id: string | null
+          start_date: string | null
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actual_minutes?: number | null
+          agency_id: string
+          ai_completion_pred?: number | null
+          ai_complexity_score?: number | null
+          ai_last_analyzed_at?: string | null
+          ai_suggested_due_date?: string | null
+          ai_suggested_priority?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: Json | null
+          difficulty_score?: number
+          due_date?: string | null
+          due_time?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          is_deleted?: boolean | null
+          is_recurring?: boolean | null
+          parent_task_id?: string | null
+          position?: number | null
+          priority?: string
+          project_id?: string | null
+          recurrence_parent_id?: string | null
+          recurrence_rule?: Json | null
+          resolved_at?: string | null
+          source_id?: string | null
+          source_metadata?: Json | null
+          source_type?: string
+          source_url?: string | null
+          space_id?: string | null
+          start_date?: string | null
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actual_minutes?: number | null
+          agency_id?: string
+          ai_completion_pred?: number | null
+          ai_complexity_score?: number | null
+          ai_last_analyzed_at?: string | null
+          ai_suggested_due_date?: string | null
+          ai_suggested_priority?: string | null
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: Json | null
+          difficulty_score?: number
+          due_date?: string | null
+          due_time?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          is_deleted?: boolean | null
+          is_recurring?: boolean | null
+          parent_task_id?: string | null
+          position?: number | null
+          priority?: string
+          project_id?: string | null
+          recurrence_parent_id?: string | null
+          recurrence_rule?: Json | null
+          resolved_at?: string | null
+          source_id?: string | null
+          source_metadata?: Json | null
+          source_type?: string
+          source_url?: string | null
+          space_id?: string | null
+          start_date?: string | null
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "task_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_recurrence_parent_id_fkey"
+            columns: ["recurrence_parent_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "task_spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ticket_messages: {
         Row: {
           attachments: Json
@@ -8863,6 +10624,83 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_timeline: {
+        Row: {
+          actor_id: string | null
+          actor_type: string | null
+          attachments: Json | null
+          created_at: string | null
+          description: string | null
+          email_id: string | null
+          event_type: string
+          id: string
+          is_internal: boolean | null
+          new_value: Json | null
+          old_value: Json | null
+          org_id: string
+          ticket_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_type?: string | null
+          attachments?: Json | null
+          created_at?: string | null
+          description?: string | null
+          email_id?: string | null
+          event_type: string
+          id?: string
+          is_internal?: boolean | null
+          new_value?: Json | null
+          old_value?: Json | null
+          org_id: string
+          ticket_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          actor_type?: string | null
+          attachments?: Json | null
+          created_at?: string | null
+          description?: string | null
+          email_id?: string | null
+          event_type?: string
+          id?: string
+          is_internal?: boolean | null
+          new_value?: Json | null
+          old_value?: Json | null
+          org_id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_ticket_timeline_actor_profile"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_timeline_email_id_fkey"
+            columns: ["email_id"]
+            isOneToOne: false
+            referencedRelation: "emails"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_timeline_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_timeline_ticket_id_fkey"
             columns: ["ticket_id"]
             isOneToOne: false
             referencedRelation: "support_tickets"
@@ -9234,11 +11072,13 @@ export type Database = {
           rooms: Json
           status: Database["public"]["Enums"]["trip_status"]
           tags: string[]
+          ticket_ids: string[] | null
           title: string
           total_cost: number
           total_paid: number
           total_sale: number
           tours: Json | null
+          tracking_hash: string
           transfers: Json | null
           travel_end: string | null
           travel_start: string | null
@@ -9284,11 +11124,13 @@ export type Database = {
           rooms?: Json
           status?: Database["public"]["Enums"]["trip_status"]
           tags?: string[]
+          ticket_ids?: string[] | null
           title: string
           total_cost?: number
           total_paid?: number
           total_sale?: number
           tours?: Json | null
+          tracking_hash: string
           transfers?: Json | null
           travel_end?: string | null
           travel_start?: string | null
@@ -9334,11 +11176,13 @@ export type Database = {
           rooms?: Json
           status?: Database["public"]["Enums"]["trip_status"]
           tags?: string[]
+          ticket_ids?: string[] | null
           title?: string
           total_cost?: number
           total_paid?: number
           total_sale?: number
           tours?: Json | null
+          tracking_hash?: string
           transfers?: Json | null
           travel_end?: string | null
           travel_start?: string | null
@@ -9415,6 +11259,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_roles_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_task_preferences: {
+        Row: {
+          active_view: string | null
+          agency_id: string
+          calendar_view: string | null
+          kanban_filters: Json | null
+          list_columns: Json | null
+          list_sort: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_view?: string | null
+          agency_id: string
+          calendar_view?: string | null
+          kanban_filters?: Json | null
+          list_columns?: Json | null
+          list_sort?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_view?: string | null
+          agency_id?: string
+          calendar_view?: string | null
+          kanban_filters?: Json | null
+          list_columns?: Json | null
+          list_sort?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_task_preferences_agency_id_fkey"
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "agencies"
@@ -9843,77 +11728,113 @@ export type Database = {
       whatsapp_connections: {
         Row: {
           agency_id: string | null
-          app_id: string
-          business_id: string
+          app_id: string | null
+          business_id: string | null
           coexistence_enabled: boolean | null
+          connection_mode: string | null
           connection_name: string
           created_at: string
           created_by: string | null
-          display_phone_number: string
+          display_phone_number: string | null
           graph_api_version: string | null
           health_status: Json | null
           id: string
+          instagram_account_id: string | null
           last_error_at: string | null
+          last_error_message: string | null
+          last_event_received_at: string | null
+          last_health_check_at: string | null
           last_success_at: string | null
           last_webhook_at: string | null
-          phone_number_id: string
+          metadata_validated: Json | null
+          page_id: string | null
+          phone_number_id: string | null
+          provider: string
+          scopes_authorized: string[] | null
           secret_reference: string | null
           status: string
+          token_expiration: string | null
           token_reference: string | null
           updated_at: string
           updated_by: string | null
+          username: string | null
+          verified_name: string | null
           verify_token_reference: string | null
-          waba_id: string
+          waba_id: string | null
           webhook_status: string | null
         }
         Insert: {
           agency_id?: string | null
-          app_id: string
-          business_id: string
+          app_id?: string | null
+          business_id?: string | null
           coexistence_enabled?: boolean | null
+          connection_mode?: string | null
           connection_name: string
           created_at?: string
           created_by?: string | null
-          display_phone_number: string
+          display_phone_number?: string | null
           graph_api_version?: string | null
           health_status?: Json | null
           id?: string
+          instagram_account_id?: string | null
           last_error_at?: string | null
+          last_error_message?: string | null
+          last_event_received_at?: string | null
+          last_health_check_at?: string | null
           last_success_at?: string | null
           last_webhook_at?: string | null
-          phone_number_id: string
+          metadata_validated?: Json | null
+          page_id?: string | null
+          phone_number_id?: string | null
+          provider?: string
+          scopes_authorized?: string[] | null
           secret_reference?: string | null
           status?: string
+          token_expiration?: string | null
           token_reference?: string | null
           updated_at?: string
           updated_by?: string | null
+          username?: string | null
+          verified_name?: string | null
           verify_token_reference?: string | null
-          waba_id: string
+          waba_id?: string | null
           webhook_status?: string | null
         }
         Update: {
           agency_id?: string | null
-          app_id?: string
-          business_id?: string
+          app_id?: string | null
+          business_id?: string | null
           coexistence_enabled?: boolean | null
+          connection_mode?: string | null
           connection_name?: string
           created_at?: string
           created_by?: string | null
-          display_phone_number?: string
+          display_phone_number?: string | null
           graph_api_version?: string | null
           health_status?: Json | null
           id?: string
+          instagram_account_id?: string | null
           last_error_at?: string | null
+          last_error_message?: string | null
+          last_event_received_at?: string | null
+          last_health_check_at?: string | null
           last_success_at?: string | null
           last_webhook_at?: string | null
-          phone_number_id?: string
+          metadata_validated?: Json | null
+          page_id?: string | null
+          phone_number_id?: string | null
+          provider?: string
+          scopes_authorized?: string[] | null
           secret_reference?: string | null
           status?: string
+          token_expiration?: string | null
           token_reference?: string | null
           updated_at?: string
           updated_by?: string | null
+          username?: string | null
+          verified_name?: string | null
           verify_token_reference?: string | null
-          waba_id?: string
+          waba_id?: string | null
           webhook_status?: string | null
         }
         Relationships: [
@@ -10197,6 +12118,7 @@ export type Database = {
         Args: { _agency_id: string; _new_plan_id: string }
         Returns: Json
       }
+      calculate_task_progress: { Args: { p_task_id: string }; Returns: number }
       can_manage_agency_finances: {
         Args: { _agency_id: string }
         Returns: boolean
@@ -10301,6 +12223,8 @@ export type Database = {
         Args: { p_client_id: string }
         Returns: string
       }
+      generate_embarque_hash: { Args: never; Returns: string }
+      generate_ticket_hash: { Args: never; Returns: string }
       get_auth_user_id_by_email: { Args: { p_email: string }; Returns: string }
       get_client_boarding_card: {
         Args: { p_trip_id: string }
@@ -10344,6 +12268,10 @@ export type Database = {
           updated_at: string
           value: number
         }[]
+      }
+      get_daily_digest: {
+        Args: { p_agency_id: string; p_date?: string; p_user_id: string }
+        Returns: Json
       }
       get_lead_id_for_whatsapp: {
         Args: { _agency_id: string; _client_id: string; _trip_id: string }
@@ -10412,6 +12340,7 @@ export type Database = {
         Args: { p_id: string }
         Returns: Json
       }
+      get_task_agency: { Args: { _task_id: string }; Returns: string }
       global_search: {
         Args: { p_agency_id: string; p_term: string }
         Returns: Json
@@ -10428,6 +12357,10 @@ export type Database = {
       increment_post_views: { Args: { p_post_id: string }; Returns: undefined }
       is_agency_member: {
         Args: { _agency_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_task_watcher: {
+        Args: { _task_id: string; _user_id: string }
         Returns: boolean
       }
       log_audit_event: {
@@ -10892,7 +12825,9 @@ export type Database = {
         | "agent"
         | "client"
         | "agent_viewer"
+      channel_type: "whatsapp" | "email" | "webchat"
       client_kind: "individual" | "company"
+      conversation_status: "open" | "pending" | "snoozed" | "closed"
       lead_activity_type:
         | "note"
         | "stage_change"
@@ -10901,6 +12836,8 @@ export type Database = {
         | "whatsapp"
         | "meeting"
         | "task"
+      message_direction: "inbound" | "outbound"
+      message_status: "queued" | "sent" | "delivered" | "read" | "failed"
       passenger_kind: "adult" | "child" | "infant"
       proposal_item_kind:
         | "flight"
@@ -11076,7 +13013,9 @@ export const Constants = {
         "client",
         "agent_viewer",
       ],
+      channel_type: ["whatsapp", "email", "webchat"],
       client_kind: ["individual", "company"],
+      conversation_status: ["open", "pending", "snoozed", "closed"],
       lead_activity_type: [
         "note",
         "stage_change",
@@ -11086,6 +13025,8 @@ export const Constants = {
         "meeting",
         "task",
       ],
+      message_direction: ["inbound", "outbound"],
+      message_status: ["queued", "sent", "delivered", "read", "failed"],
       passenger_kind: ["adult", "child", "infant"],
       proposal_item_kind: [
         "flight",

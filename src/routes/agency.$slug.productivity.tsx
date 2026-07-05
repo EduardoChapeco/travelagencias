@@ -30,8 +30,8 @@ function ProductivityRoute() {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const { data: tasks, error } = await supabase
-        .from("agent_tasks")
-        .select("agent_id, difficulty_score, resolved_at")
+        .from("tasks")
+        .select("assigned_to, difficulty_score, resolved_at")
         .eq("agency_id", agency!.id)
         .eq("status", "done")
         .gte("resolved_at", thirtyDaysAgo.toISOString());
@@ -47,13 +47,13 @@ function ProductivityRoute() {
       const timeline: Record<string, number> = {};
 
       tasks.forEach((t) => {
-        if (!t.agent_id) return;
-        if (!scoreByAgent[t.agent_id]) scoreByAgent[t.agent_id] = { totalScore: 0, taskCount: 0 };
-        scoreByAgent[t.agent_id].totalScore += t.difficulty_score;
-        scoreByAgent[t.agent_id].taskCount += 1;
+        if (!t.assigned_to) return;
+        if (!scoreByAgent[t.assigned_to]) scoreByAgent[t.assigned_to] = { totalScore: 0, taskCount: 0 };
+        scoreByAgent[t.assigned_to].totalScore += t.difficulty_score || 0;
+        scoreByAgent[t.assigned_to].taskCount += 1;
 
         const d = new Date(t.resolved_at!).toLocaleDateString();
-        timeline[d] = (timeline[d] || 0) + t.difficulty_score;
+        timeline[d] = (timeline[d] || 0) + (t.difficulty_score || 0);
       });
 
       const timelineData = Object.entries(timeline)

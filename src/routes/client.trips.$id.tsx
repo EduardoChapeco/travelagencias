@@ -383,6 +383,7 @@ function ClientTripDetail() {
           priority: "urgent",
           type: "trip",
           status: "open",
+          ticket_hash: "",
         })
         .select("*")
         .single();

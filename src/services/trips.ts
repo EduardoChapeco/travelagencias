@@ -169,7 +169,7 @@ export async function addFinancialRecord(payload: AddRecordPayload): Promise<voi
         }
       }
 
-      await supabase.from("cash_transactions").insert({
+      await (supabase as any).from("cash_transactions").insert({
         agency_id: payload.agencyId,
         cash_register_id: targetRegId,
         cash_session_id: targetSessId || null,
@@ -236,7 +236,7 @@ export async function confirmFinancialRecord(id: string): Promise<void> {
       }
     }
 
-    await supabase.from("cash_transactions").insert({
+    await (supabase as any).from("cash_transactions").insert({
       agency_id: rec.agency_id,
       cash_register_id: targetRegId,
       cash_session_id: targetSessId || null,

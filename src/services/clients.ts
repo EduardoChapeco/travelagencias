@@ -129,7 +129,7 @@ export async function fetchClientLegalAcceptances(
 export async function fetchClientTickets(clientId: string): Promise<ClientTicket[]> {
   const { data, error } = await supabase
     .from("support_tickets")
-    .select("id, code, title, status, created_at")
+    .select("id, code:ticket_hash, title, status, created_at")
     .eq("client_id", clientId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);

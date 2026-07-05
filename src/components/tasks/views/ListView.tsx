@@ -119,6 +119,7 @@ function StatusGroupSection({
   tasks,
   toggleStatus,
   onQuickAdd,
+  onOpen,
 }: {
   status: TaskStatus;
   label: string;

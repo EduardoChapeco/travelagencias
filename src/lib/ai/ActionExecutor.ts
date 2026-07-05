@@ -460,16 +460,18 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
             : `Nenhuma viagem encontrada para '${validatedData.query}'.`;
       } else if (actionCode === "create_task") {
         const { data: task, error } = await supabase
-          .from("agent_tasks")
+          .from("tasks")
           .insert({
             agency_id: agencyId,
-            agent_id: validatedData.assignedTo || userId,
+            assigned_to: validatedData.assignedTo || userId,
             title: validatedData.title,
             due_date: validatedData.dueDate || new Date().toISOString().split("T")[0],
-            reference_id: validatedData.tripId || null,
-            type: validatedData.tripId ? "trip" : "manual",
+            source_id: validatedData.tripId || null,
+            source_type: validatedData.tripId ? "trip" : "manual",
             status: "todo",
-          } as any)
+            priority: "medium",
+            difficulty_score: 1,
+          })
           .select("id")
           .single();
 

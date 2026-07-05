@@ -115,7 +115,7 @@ function CalendarPage() {
     enabled: !!agency?.id,
     queryKey: ["calendar-tasks", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("tasks")
         .select(`
           id,

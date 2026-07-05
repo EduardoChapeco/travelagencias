@@ -359,7 +359,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
           {p.agent_photo_url ? (
             <img
               src={p.agent_photo_url}
-              alt={p.agent_name}
+              alt={p.agent_name || undefined}
               crossOrigin="anonymous"
               className="w-[80px] h-[80px] rounded-full object-cover border-4 border-white/20"
             />

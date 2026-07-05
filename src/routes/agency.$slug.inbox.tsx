@@ -39,6 +39,7 @@ import {
   Plug,
   AlertCircle,
   Link2,
+  Loader2,
 } from "lucide-react";
 import {
   Sheet,
@@ -72,6 +73,8 @@ type Conversation = {
     name: string | null;
     phone: string | null;
     email: string | null;
+    lead_id?: string | null;
+    client_id?: string | null;
     metadata?: any;
   } | null;
   channels?: {
@@ -892,10 +895,10 @@ function InboxModule() {
                                     const { data: { user } } = await supabase.auth.getUser();
                                     if (!user) throw new Error("Usuário não autenticado no Supabase.");
 
-                                    const { data, error } = await supabase.functions.invoke("gmail-oauth", {
-                                      method: "GET",
-                                      queryString: `action=get_url&org_id=${agency!.id}&user_id=${user.id}&account_type=personal`,
-                                    });
+                                    const { data, error } = await supabase.functions.invoke(
+                                      `gmail-oauth?action=get_url&org_id=${agency!.id}&user_id=${user.id}&account_type=personal`,
+                                      { method: "GET" }
+                                    );
 
                                     if (error || !data?.url) {
                                       throw new Error(error?.message || "Não foi possível gerar a URL de autorização.");

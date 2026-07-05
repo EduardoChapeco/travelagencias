@@ -86,6 +86,7 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
           type,
           status: "open",
           stage: "new",
+          ticket_hash: "",
         })
         .select()
         .single();

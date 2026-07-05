@@ -156,6 +156,7 @@ function TripsList() {
           total_cost: 0,
           currency: "BRL",
           status: "confirmed",
+          tracking_hash: "",
         })
         .select("id")
         .single();

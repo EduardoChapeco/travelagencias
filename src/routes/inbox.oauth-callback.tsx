@@ -60,7 +60,7 @@ function OAuthCallbackPage() {
         }
 
         // 3. Cadastra o canal no banco de dados para a Inbox
-        const { error: channelError } = await supabase.from("channels").insert({
+        const { error: channelError } = await (supabase as any).from("channels").insert({
           agency_id: account.org_id,
           type: "email",
           display_name: `Gmail (${account.email_address})`,

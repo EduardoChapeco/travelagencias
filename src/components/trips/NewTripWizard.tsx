@@ -216,6 +216,7 @@ export function NewTripWizard({
           currency: data.currency,
           total_sale: data.total_sale,
           owner_id: u.user?.id ?? null,
+          tracking_hash: "",
         })
         .select("id")
         .single();

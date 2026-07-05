@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type Props = {
   agencyId: string;
   proposalId: string;
-  slot: "cover" | "map" | "hotel" | "tour";
+  slot: string;
   itemId?: string; // used if it's a specific hotel or tour
   onImageSelected: (url: string) => void;
   defaultQuery?: string;

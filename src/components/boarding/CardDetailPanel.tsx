@@ -326,6 +326,7 @@ export function CardDetailPanel({
           priority: ticketPriority,
           type: ticketType,
           status: "open",
+          ticket_hash: "",
         })
         .select("*")
         .single();
@@ -365,6 +366,7 @@ export function CardDetailPanel({
           priority: "urgent",
           type: "trip",
           status: "open",
+          ticket_hash: "",
         })
         .select("*")
         .single();

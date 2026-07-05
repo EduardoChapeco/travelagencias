@@ -482,6 +482,10 @@ function Page() {
   }
 
   async function sign() {
+    if (!c) {
+      toast.error("Contrato não carregado.");
+      return;
+    }
     if (!name || !doc) return toast.error("Preencha nome e documento legal.");
     if (!selfie) return toast.error("Por favor, tire uma selfie de verificação (KYC).");
     if (!documentFront || !documentBack)

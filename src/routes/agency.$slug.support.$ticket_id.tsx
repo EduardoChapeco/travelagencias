@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,18 +82,20 @@ function TicketAdvancedRoute() {
       if (error) throw error;
       return data as any;
     },
-    onSuccess: (data: any) => {
-      // Sync metadata draft when ticket loads
-      setMetaDraft({
-        loc_codes: (data.loc_codes || []).join(", "),
-        passenger_names: (data.passenger_names || []).join(", "),
-        cia_aerea: data.cia_aerea || "",
-        refund_status: data.refund_status || "none",
-        extra_cost: data.financial_data?.extra_cost?.toString() || "",
-        supplier_penalty: data.financial_data?.supplier_penalty?.toString() || "",
-      });
-    },
   });
+
+  useEffect(() => {
+    if (ticket) {
+      setMetaDraft({
+        loc_codes: (ticket.loc_codes || []).join(", "),
+        passenger_names: (ticket.passenger_names || []).join(", "),
+        cia_aerea: ticket.cia_aerea || "",
+        refund_status: ticket.refund_status || "none",
+        extra_cost: ticket.financial_data?.extra_cost?.toString() || "",
+        supplier_penalty: ticket.financial_data?.supplier_penalty?.toString() || "",
+      });
+    }
+  }, [ticket]);
 
   // ── Load timeline ─────────────────────────────────────────────────────────
   const { data: timeline, refetch: refetchTimeline } = useQuery({

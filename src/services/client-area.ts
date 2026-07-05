@@ -28,7 +28,7 @@ export async function fetchClientAgencies() {
       const { data: firstClient } = await supabase
         .from("clients")
         .select("id, agency_id")
-        .eq("agency_id", memberOf[0].agency_id)
+        .eq("agency_id", memberOf[0].agency_id!)
         .limit(1)
         .maybeSingle();
       if (firstClient) {

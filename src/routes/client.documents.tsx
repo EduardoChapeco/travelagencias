@@ -4,6 +4,7 @@ import { FileText, Download } from "lucide-react";
 import { fetchClientDocuments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, StatusBadge } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/documents")({
   head: () => ({ meta: [{ title: "Documentos · TravelOS" }] }),

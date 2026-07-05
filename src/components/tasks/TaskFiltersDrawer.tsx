@@ -63,7 +63,7 @@ export function TaskFiltersDrawer({
       assignees: [],
       statuses: [],
       priorities: [],
-      labels: [],
+      tags: [],
       sources: [],
       show_subtasks: false,
       show_done: false,
