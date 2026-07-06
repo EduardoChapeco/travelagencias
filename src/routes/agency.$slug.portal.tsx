@@ -37,8 +37,8 @@ function Page() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 md:px-6 py-3 bg-surface/50 border-b border-border shrink-0 gap-2 no-margin-bottom">
-        <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 md:pl-[64px] md:pr-6 py-3 bg-transparent shrink-0 gap-2 no-margin-bottom">
+        <TabsList className="flex glass-pill p-0.5 text-xs gap-0.5 shrink-0 flex-nowrap">
           {tabs.map((tab) => {
             const active =
               pathname === tab.path ||

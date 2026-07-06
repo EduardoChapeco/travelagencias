@@ -528,7 +528,7 @@ function TripLayout() {
         )}
 
         {/* Tabs — pill format */}
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
+        <div className="flex glass-pill p-0.5 text-xs gap-0.5 shrink-0 overflow-x-auto no-scrollbar max-w-full">
           <Link
             to="/agency/$slug/trips/$id"
             params={{ slug, id }}

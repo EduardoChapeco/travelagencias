@@ -44,7 +44,7 @@ function FinancialLayout() {
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between px-4 md:pl-[64px] md:pr-6 py-3 shrink-0 no-margin-bottom bg-transparent">
         <Tabs defaultValue="cash" className="w-auto">
-          <TabsList className="h-8 bg-white/5 border border-white/5 rounded-full p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 glass-pill rounded-full p-0.5 flex-wrap gap-0 shrink-0">
             {tabs.map((t) => {
               const active = activeSubTab === "route" && pathname.endsWith(t.to.split("/").pop()!);
               return (

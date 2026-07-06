@@ -57,7 +57,7 @@ export function ModuleToolbar({
     >
       {/* ── Search Input ── */}
       {search && (
-        <div className="relative flex-1 min-w-0 max-w-[200px] sm:max-w-[240px]">
+        <div className="relative w-44 sm:w-56 shrink-0">
           <Search
             className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 pointer-events-none"
             strokeWidth={2}
@@ -149,8 +149,9 @@ export function ModuleActionButton({
       <button
         type="button"
         onClick={onClick}
+        style={{ borderRadius: "9999px" }}
         className={cn(
-          "h-9 w-9 flex items-center justify-center rounded-full",
+          "h-9 w-9 flex items-center justify-center rounded-full p-0",
           "glass-dock border border-white/20 text-white",
           "cursor-pointer hover:bg-white/15 hover:border-white/35",
           "transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.25)]",

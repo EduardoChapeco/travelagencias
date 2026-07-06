@@ -1188,7 +1188,7 @@ function SupplierDetailsPage() {
 
           {/* Tabs */}
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full mb-6">
+            <TabsList className="flex glass-pill p-0.5 text-xs gap-0.5 shrink-0 overflow-x-auto no-scrollbar max-w-full mb-6">
               {[
                 { value: "geral", label: "Geral", icon: Building2 },
                 { value: "catalogo", label: "Catálogo", icon: Package },
