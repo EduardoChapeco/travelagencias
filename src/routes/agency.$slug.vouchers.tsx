@@ -227,14 +227,16 @@ function VouchersPage() {
       <HeaderPortal>
         <ModuleToolbar
           title="Vouchers"
-          search={activeTab === "vouchers" ? {
-            value: qSearch,
-            onChange: setQSearch,
-            placeholder: "Buscar por destino ou localizador...",
-          } : undefined}
+          search={{
+            value: activeTab === "vouchers" ? qSearch : flightSearch,
+            onChange: activeTab === "vouchers" ? setQSearch : setFlightSearch,
+            placeholder: activeTab === "vouchers"
+              ? "Buscar por destino ou localizador..."
+              : "Buscar passageiro, rota ou localizador...",
+          }}
           filters={[
-            { label: "🎫 Vouchers", value: "vouchers" },
-            { label: "✈️ Conferência de Voos", value: "flight_audit" },
+            { label: "Vouchers", value: "vouchers" },
+            { label: "Conferência de Voos", value: "flight_audit" },
           ]}
           activeFilter={activeTab}
           onFilterChange={(v) => {
@@ -246,15 +248,34 @@ function VouchersPage() {
             }
           }}
           actions={
-            isAgencyAdmin && activeTab === "vouchers" ? (
-              <button
-                onClick={() => setAdminPanelOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                title="Administrar Vouchers"
-              >
-                <Settings2 className="h-3.5 w-3.5" />
-              </button>
-            ) : undefined
+            <div className="flex items-center gap-1">
+              {activeTab === "flight_audit" && [
+                { id: "all", label: "Todos" },
+                { id: "pending", label: "Pendentes" },
+                { id: "confirmed", label: "Conferidos" },
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  onClick={() => setStatusFilter(btn.id as any)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer transition-all ${
+                    statusFilter === btn.id
+                      ? "bg-white/15 text-white border border-white/20"
+                      : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+              {isAgencyAdmin && activeTab === "vouchers" && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Vouchers"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
           }
         />
       </HeaderPortal>
@@ -264,7 +285,7 @@ function VouchersPage() {
         // Vouchers Tab View
         // ========================================
         <>
-          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4 pb-24">
             {vouchersQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
@@ -412,87 +433,45 @@ function VouchersPage() {
         // Flight Audit Tab View
         // ========================================
         <>
-          {/* Audit top KPIs */}
-          <div className="border-b border-border bg-surface px-4 md:px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
-            <div className="rounded-[24px] border border-border bg-surface-alt/20 p-3 text-center">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
-                Total de Voos
-              </span>
-              <strong className="text-lg font-black text-foreground">
-                {flightsQ.data?.length ?? 0}
-              </strong>
-            </div>
-            <div className="rounded-[24px] border border-success/20 bg-success/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
-                Conferidos
-              </span>
-              <strong className="text-lg font-black text-success">
-                {(flightsQ.data || []).filter((f) => f.status === "confirmed").length}
-              </strong>
-            </div>
-            <div className="rounded-[24px] border border-warning/20 bg-warning/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
-                Pendentes
-              </span>
-              <strong className="text-lg font-black text-warning">
-                {(flightsQ.data || []).filter((f) => f.status !== "confirmed").length}
-              </strong>
-            </div>
-            <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-3 text-center">
-              <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
-                Taxa de Sucesso
-              </span>
-              <strong className="text-lg font-black text-brand">
-                {flightsQ.data && flightsQ.data.length > 0
-                  ? `${Math.round(((flightsQ.data || []).filter((f) => f.status === "confirmed").length / flightsQ.data.length) * 100)}%`
-                  : "0%"}
-              </strong>
-            </div>
-          </div>
-
-          {/* Filters and search */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center w-full md:w-auto">
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={flightSearch}
-                  onChange={(e) => setFlightSearch(e.target.value)}
-                  placeholder="Buscar passageiro, rota ou localizador..."
-                  className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-                />
-              </div>
-
-              {/* Status segment control */}
-              <div className="flex gap-1 bg-surface-alt p-0.5 rounded-2xl border border-border shrink-0">
-                {[
-                  { id: "all", label: "Todos" },
-                  { id: "pending", label: "Pendentes" },
-                  { id: "confirmed", label: "Conferidos" },
-                ].map((btn) => (
-                  <button
-                    key={btn.id}
-                    onClick={() => setStatusFilter(btn.id as any)}
-                    className={cn(
-                      "px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all",
-                      statusFilter === btn.id
-                        ? "bg-surface text-foreground border border-border shadow-sm"
-                        : "text-muted-foreground hover:text-foreground border border-transparent",
-                    )}
-                  >
-                    {btn.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <span className="text-xs text-muted-foreground whitespace-nowrap hidden md:inline">
-              Fila operacional de voos programados para os próximos 60 dias.
-            </span>
-          </div>
-
           {/* Fila list table */}
-          <div className="flex-1 overflow-auto p-4 md:p-6 min-h-0">
+          <div className="flex-1 overflow-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+            {/* KPI cards dentro do conteúdo */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="rounded-[24px] border border-border bg-surface-alt/20 p-3 text-center">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
+                  Total de Voos
+                </span>
+                <strong className="text-lg font-black text-foreground">
+                  {flightsQ.data?.length ?? 0}
+                </strong>
+              </div>
+              <div className="rounded-[24px] border border-success/20 bg-success/5 p-3 text-center">
+                <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
+                  Conferidos
+                </span>
+                <strong className="text-lg font-black text-success">
+                  {(flightsQ.data || []).filter((f) => f.status === "confirmed").length}
+                </strong>
+              </div>
+              <div className="rounded-[24px] border border-warning/20 bg-warning/5 p-3 text-center">
+                <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
+                  Pendentes
+                </span>
+                <strong className="text-lg font-black text-warning">
+                  {(flightsQ.data || []).filter((f) => f.status !== "confirmed").length}
+                </strong>
+              </div>
+              <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-3 text-center">
+                <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
+                  Taxa de Sucesso
+                </span>
+                <strong className="text-lg font-black text-brand">
+                  {flightsQ.data && flightsQ.data.length > 0
+                    ? `${Math.round(((flightsQ.data || []).filter((f) => f.status === "confirmed").length / flightsQ.data.length) * 100)}%`
+                    : "0%"}
+                </strong>
+              </div>
+            </div>
             {flightsQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

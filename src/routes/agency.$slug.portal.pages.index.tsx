@@ -29,6 +29,7 @@ import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/")({
   head: ({ context }: any) => ({ meta: [{ title: `Painel de Páginas do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -377,65 +378,37 @@ function PagesPage() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              setSelectedTemplateId("empty");
-              setNewPageTitle("");
-              setNewPageSlug("");
-              setCreateModalOpen(true);
-            }}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Nova Página
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Páginas do Portal"
+          search={activeTab !== "templates" ? {
+            value: searchQuery,
+            onChange: setSearchQuery,
+            placeholder: "Buscar por título ou link..."
+          } : undefined}
+          filters={[
+            { label: "Todas as Páginas", value: "all" },
+            { label: "Websites", value: "sites" },
+            { label: "Links na Bio", value: "biolinks" },
+            { label: "Landing Mobile", value: "mobile_landings" },
+            { label: "Templates", value: "templates" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between no-margin-bottom">
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
-          {(["all", "sites", "biolinks", "mobile_landings", "templates"] as const).map((tabId) => {
-            const labels = {
-              all: "Todas as Páginas",
-              sites: "Websites & Landing Pages",
-              biolinks: "Links na Bio",
-              mobile_landings: "Landing Pages Mobile (Ads)",
-              templates: "Biblioteca de Templates",
-            };
-            return (
-              <button
-                key={tabId}
-                onClick={() => setActiveTab(tabId)}
-                className={cn(
-                  "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer shrink-0",
-                  activeTab === tabId
-                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                    : "text-white/60 hover:text-white"
-                )}
-              >
-                {labels[tabId]}
-              </button>
-            );
-          })}
-        </div>
+      <ModuleActionButton
+        label="Nova Página"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => {
+          setSelectedTemplateId("empty");
+          setNewPageTitle("");
+          setNewPageSlug("");
+          setCreateModalOpen(true);
+        }}
+      />
 
-        {activeTab !== "templates" && (
-          <div className="relative w-full sm:w-64">
-            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none">
-              <Search className="h-3.5 w-3.5" />
-            </span>
-            <input
-              type="text"
-              placeholder="Buscar por título ou link..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {(q.isError || analyticsQ.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

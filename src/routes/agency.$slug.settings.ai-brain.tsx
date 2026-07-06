@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import {
   Brain, FileText, Database, ShieldAlert, Cpu, CheckCircle2, Zap
 } from "lucide-react";
@@ -62,14 +63,17 @@ function BrainPanel() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-           <Badge variant="outline" className="bg-brand/10 text-brand border-none">
-             <Zap className="w-3 h-3 mr-1" /> Cérebro Ativo (Gemini 2.5)
-           </Badge>
-         </div>
+        <ModuleToolbar
+          title="Cérebro Vetorial IA"
+          actions={
+            <Badge variant="outline" className="bg-brand/10 text-brand border-none">
+              <Zap className="w-3 h-3 mr-1" /> Gemini 2.5 Ativo
+            </Badge>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Brain className="h-5 w-5 text-brand" /> Cérebro Vetorial & Inbox IA

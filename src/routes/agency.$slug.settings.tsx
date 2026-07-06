@@ -6,6 +6,7 @@ import { Save, Building2, Link2, Mail, Phone, FileText, Shield } from "lucide-re
 import { fetchAgencySettings, saveSettings } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -118,20 +119,23 @@ function Page() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            type="submit"
-            form="settings-form"
-            disabled={isSubmitting}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            <Save className="h-3.5 w-3.5" />
-            {isSubmitting ? "Salvando..." : "Salvar configurações"}
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Configurações da Agência"
+          actions={
+            <button
+              type="submit"
+              form="settings-form"
+              disabled={isSubmitting}
+              className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
+            >
+              <Save className="h-3.5 w-3.5" />
+              <span>{isSubmitting ? "Salvando..." : "Salvar"}</span>
+            </button>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
           <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface px-5 py-4">

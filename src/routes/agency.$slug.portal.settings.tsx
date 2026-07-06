@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Textarea, Select, PrimaryButton } from "@/components/ui/form";
 
@@ -151,48 +152,37 @@ function PortalSettingsPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <a
-            href={portalUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
-          >
-            <Eye className="h-3.5 w-3.5" /> Ver portal
-          </a>
-          <button
-            type="submit"
-            form="portal-settings-form"
-            disabled={busy}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            <Save className="h-3.5 w-3.5" />
-            {busy ? "Salvando..." : "Salvar"}
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Configurações do Portal"
+          filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
+          activeFilter={tab}
+          onFilterChange={(v) => setTab(v as any)}
+          actions={
+            <div className="flex items-center gap-1.5">
+              <a
+                href={portalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Ver portal</span>
+              </a>
+              <button
+                type="submit"
+                form="portal-settings-form"
+                disabled={busy}
+                className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
+              >
+                <Save className="h-3.5 w-3.5" />
+                <span>{busy ? "Salvando..." : "Salvar"}</span>
+              </button>
+            </div>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap no-margin-bottom">
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTab(t.id)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                tab === t.id
-                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              <t.icon className="h-3.5 w-3.5" />
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
         {q.isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

@@ -34,6 +34,8 @@ import {
   GhostButton,
   StatusBadge,
 } from "@/components/ui/form";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
   head: ({ context }: any) => ({ meta: [{ title: `Informações de Destinos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -305,59 +307,34 @@ function DestinationIntelligencePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
+      <HeaderPortal>
+        <ModuleToolbar
+          title="Inteligência de Destinos"
+          search={{
+            value: searchQuery,
+            onChange: setSearchQuery,
+            placeholder: "Buscar destino…"
+          }}
+          actions={
+            <div className="flex items-center gap-1.5 text-[11px] text-white/50">
+              <span><strong className="text-white">{q.data?.length ?? 0}</strong> destinos</span>
+              <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.ai_generated_at).length ?? 0}</strong> com IA</span>
+              <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.visa_required).length ?? 0}</strong> exigem visto</span>
+            </div>
+          }
+        />
+      </HeaderPortal>
+
+      <ModuleActionButton
+        label="Novo Destino"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={openCreate}
+      />
+
       <ConfirmDialog />
 
-      {/* Top bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-        <div>
-          <h1 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-            <Globe className="h-4 w-4 text-brand" />
-            Informações de Destinos
-          </h1>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Banco de dados curado de destinos — visto, saúde, cultura, segurança.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar destino…"
-              className="h-8 rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand w-48"
-            />
-          </div>
-          <button
-            onClick={openCreate}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo Destino
-          </button>
-        </div>
-      </div>
-
-      {/* Stats bar */}
-      <div className="flex items-center gap-6 border-b border-border bg-surface/50 px-4 md:px-6 py-2 text-[11px] text-muted-foreground shrink-0 no-margin-bottom">
-        <span>
-          <strong className="text-foreground">{q.data?.length ?? 0}</strong> destinos cadastrados
-        </span>
-        <span>
-          <strong className="text-foreground">
-            {q.data?.filter((d) => d.ai_generated_at).length ?? 0}
-          </strong>{" "}
-          com dados de IA
-        </span>
-        <span>
-          <strong className="text-foreground">
-            {q.data?.filter((d) => d.visa_required).length ?? 0}
-          </strong>{" "}
-          exigem visto
-        </span>
-      </div>
-
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
         {q.isLoading ? (
           <div className="text-center py-12 text-sm text-muted-foreground animate-pulse">
             Carregando destinos…

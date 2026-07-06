@@ -18,6 +18,7 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   PrimaryButton,
@@ -120,64 +121,56 @@ function CorporatePage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
-            title="Nova RFP"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Nova RFP</span>
-          </button>
+        <ModuleToolbar
+          title="Corporativo B2B"
+          search={{
+            value: q,
+            onChange: (v) => {
+              setQ(v);
+              setPage(1);
+            },
+            placeholder: "Buscar RFP..."
+          }}
+          actions={
+            <div className="flex items-center gap-1">
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
+              >
+                <option value="all" className="bg-neutral-900 text-white">Todos os Status</option>
+                <option value="pending" className="bg-neutral-900 text-white">Pendente</option>
+                <option value="quoting" className="bg-neutral-900 text-white">Em Cotação</option>
+                <option value="sent_for_approval" className="bg-neutral-900 text-white">Aguardando</option>
+                <option value="approved" className="bg-neutral-900 text-white">Aprovado</option>
+                <option value="rejected" className="bg-neutral-900 text-white">Recusado</option>
+              </select>
 
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Corporativo"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+              {isAgencyAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Corporativo"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Buscar RFP..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="relative w-full sm:w-40">
-          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
-          >
-            <option value="all">Todos os Status</option>
-            <option value="pending">Pendente</option>
-            <option value="quoting">Em Cotação</option>
-            <option value="sent_for_approval">Aguardando</option>
-            <option value="approved">Aprovado</option>
-            <option value="rejected">Recusado</option>
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Nova RFP"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
         {!rfpsQ.isLoading && rfps.length === 0 && (
           <EmptyState
             title="Nenhuma requisição corporativa"

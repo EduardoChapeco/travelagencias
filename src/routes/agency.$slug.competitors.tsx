@@ -14,6 +14,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PrimaryButton, Input } from "@/components/ui/form";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
   head: ({ context }: any) => ({ meta: [{ title: `Espião de Mercado · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -108,16 +110,12 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
   }
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Radar className="w-6 h-6 text-brand" /> Espião de Mercado
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Forneça a URL do website oficial de uma agência concorrente para receber uma auditoria
-          instantânea competitiva.
-        </p>
-      </header>
+    <div className="flex h-full flex-col overflow-hidden">
+      <HeaderPortal>
+        <ModuleToolbar title="Espião de Mercado" />
+      </HeaderPortal>
+
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
 
       <form
         onSubmit={handleAnalyze}
@@ -253,6 +251,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

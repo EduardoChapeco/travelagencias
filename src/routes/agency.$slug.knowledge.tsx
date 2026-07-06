@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
   Field,
@@ -97,73 +98,31 @@ function KnowledgePage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {/* Actions */}
-          {tab === "articles" ? (
-            <button
-              onClick={() => setOpen(true)}
-              className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-              title="Novo Artigo"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Novo Artigo</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setPlaybookOpen(true)}
-              className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-              title="Novo Playbook"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Novo Playbook</span>
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Base de Conhecimento"
+          search={{
+            value: search,
+            onChange: setSearch,
+            placeholder: "Buscar..."
+          }}
+          filters={[
+            { label: "Guias", value: "articles" },
+            { label: "Playbooks", value: "playbooks" },
+          ]}
+          activeFilter={tab}
+          onFilterChange={(v) => setTab(v as any)}
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-        {/* Tab Switcher */}
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap w-full sm:w-auto justify-center sm:justify-start">
-          <button
-            onClick={() => setTab("articles")}
-            className={cn(
-              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap",
-              tab === "articles"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            )}
-          >
-            Guias
-          </button>
-          <button
-            onClick={() => setTab("playbooks")}
-            className={cn(
-              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap",
-              tab === "playbooks"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            )}
-          >
-            Playbooks
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
-          />
-        </div>
-      </div>
+      <ModuleActionButton
+        label={tab === "articles" ? "Novo Artigo" : "Novo Playbook"}
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => tab === "articles" ? setOpen(true) : setPlaybookOpen(true)}
+      />
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
           {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filtered.length === 0 && !q.isLoading && (
             <EmptyState
@@ -223,7 +182,7 @@ function KnowledgePage() {
 
       {/* PLAYBOOKS TAB */}
       {tab === "playbooks" && (
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
           {playbooksQ.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filteredPlaybooks.length === 0 && !playbooksQ.isLoading && (
             <EmptyState

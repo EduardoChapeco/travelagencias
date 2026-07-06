@@ -364,16 +364,15 @@ function CashPage() {
         <HeaderPortal>
           <ModuleToolbar
             title="Caixa Diário"
-            actions={
-              <PrimaryButton
-                onClick={() => setNewRegisterSheet(true)}
-                className="flex h-8 items-center gap-1.5 px-3 text-xs"
-              >
-                <Plus className="h-3.5 w-3.5" /> Criar Caixa
-              </PrimaryButton>
-            }
           />
         </HeaderPortal>
+        
+        <ModuleActionButton
+          label="Criar Caixa"
+          icon={<Plus className="h-3.5 w-3.5" />}
+          onClick={() => setNewRegisterSheet(true)}
+        />
+
         <div className="flex-1 flex items-center justify-center p-8">
           <EmptyState
             title="Nenhum caixa cadastrado"
@@ -452,17 +451,16 @@ function CashPage() {
                   </label>
                 </div>
               )}
-
-              <GhostButton
-                onClick={() => setNewRegisterSheet(true)}
-                className="h-7 px-2.5 rounded-full text-[11px] font-semibold border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <Plus className="h-3 w-3" /> Novo Caixa
-              </GhostButton>
             </div>
           }
         />
       </HeaderPortal>
+
+      <ModuleActionButton
+        label="Criar Caixa"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewRegisterSheet(true)}
+      />
 
       <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 space-y-5 pb-24">
         {/* Register Selector */}

@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import {
   Field,
   Input,
@@ -121,35 +122,29 @@ function BlogPage() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo artigo
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Blog do Portal"
+          search={{
+            value: filterStatus !== "all" ? filterStatus : "",
+            onChange: () => {},
+            placeholder: "Buscar artigos..."
+          }}
+          filters={["all", "published", "draft", "scheduled"].map((s) => ({
+            label: s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s),
+            value: s
+          }))}
+          activeFilter={filterStatus}
+          onFilterChange={setFilterStatus}
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
-        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
-          {["all", "published", "draft", "scheduled"].map((s) => (
-            <button
-              key={s}
-              onClick={() => setFilterStatus(s)}
-              className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
-                filterStatus === s
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s)}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Novo Artigo"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {q.isError && (
           <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

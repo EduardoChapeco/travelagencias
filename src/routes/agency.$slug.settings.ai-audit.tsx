@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import {
   Sparkles,
   Calendar,
@@ -99,19 +100,22 @@ function Page() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => auditQuery.refetch()}
-            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
-          >
-            <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
-            Atualizar logs
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Auditoria de IA"
+          actions={
+            <button
+              onClick={() => auditQuery.refetch()}
+              className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
+              <span className="hidden sm:inline">Atualizar</span>
+            </button>
+          }
+        />
       </HeaderPortal>
 
       {/* Main Container */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 font-sans space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 font-sans space-y-6 pb-24">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Shield className="h-5 w-5 text-brand" /> Painel de Auditoria de IA
