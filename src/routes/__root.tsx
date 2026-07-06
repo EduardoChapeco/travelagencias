@@ -30,7 +30,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Go home
           </Link>
@@ -66,13 +66,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
             Go home
           </a>
@@ -190,12 +190,12 @@ function RootComponent() {
 function PendingComponent() {
   return (
     <div className="flex h-full flex-col p-6 space-y-4 animate-pulse bg-background">
-      <div className="h-8 w-1/4 rounded-md bg-surface-alt border border-border" />
-      <div className="h-4 w-1/2 rounded-md bg-surface-alt border border-border" />
+      <div className="h-8 w-1/4 rounded-full bg-surface-alt border border-border" />
+      <div className="h-4 w-1/2 rounded-full bg-surface-alt border border-border" />
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
-        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
-        <div className="h-32 rounded-lg bg-surface-alt border border-border" />
+        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
+        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
+        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
       </div>
     </div>
   );

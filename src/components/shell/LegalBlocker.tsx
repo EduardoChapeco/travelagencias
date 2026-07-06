@@ -120,7 +120,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
                   acceptMutation.isPending ||
                   (!scrolledToBottom && data.doc.content_md.length > 500)
                 }
-                className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-md bg-brand px-8 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90 disabled:opacity-50"
+                className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-full bg-brand px-8 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90 disabled:opacity-50"
               >
                 {acceptMutation.isPending ? "Registrando..." : "Eu Li e Aceito"}
               </button>

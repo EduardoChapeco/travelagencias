@@ -158,13 +158,13 @@ export function AddRecordSheet({
       title={recordType === "income" ? "Nova Receita" : "Novo Custo"}
     >
       {/* Type toggle */}
-      <div className="mb-6 flex rounded-lg border border-border p-0.5 text-xs bg-surface-alt/10">
+      <div className="mb-6 flex rounded-2xl border border-border p-0.5 text-xs bg-surface-alt/10">
         {(["income", "expense"] as const).map((t) => (
           <button
             key={t}
             type="button"
             onClick={() => setRecordType(t)}
-            className={`flex-1 rounded-md py-1.5 font-medium transition-colors cursor-pointer ${
+            className={`flex-1 rounded-full py-1.5 font-medium transition-colors cursor-pointer ${
               recordType === t
                 ? "bg-primary text-primary-foreground font-bold"
                 : "text-muted-foreground hover:text-foreground"
@@ -237,14 +237,14 @@ export function AddRecordSheet({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 h-10 rounded-md bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
+            className="flex-1 h-10 rounded-full bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
           >
             {isSubmitting ? "Salvando…" : "Adicionar Lançamento"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 h-10 rounded-md border border-border text-sm font-medium hover:bg-surface-alt transition-colors cursor-pointer text-foreground bg-surface"
+            className="flex-1 h-10 rounded-full border border-border text-sm font-medium hover:bg-surface-alt transition-colors cursor-pointer text-foreground bg-surface"
           >
             Cancelar
           </button>

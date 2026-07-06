@@ -331,7 +331,7 @@ export function ExportPdfButton({ proposal }: Props) {
           href={serverPdfUrl}
           target="_blank"
           rel="noreferrer"
-          className="flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors text-brand"
+          className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors text-brand"
         >
           <ExternalLink className="h-3.5 w-3.5" />
           PDF Pronto
@@ -342,7 +342,7 @@ export function ExportPdfButton({ proposal }: Props) {
           <button
             type="button"
             disabled={busy}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap"
+            className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap"
           >
             <Download className="h-3.5 w-3.5" />
             {busy ? "Processando…" : "Exportar"}

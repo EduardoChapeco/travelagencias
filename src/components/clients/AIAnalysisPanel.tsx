@@ -129,7 +129,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </p>
               <button
                 onClick={runAnalysis}
-                className="flex items-center gap-1.5 mx-auto h-9 rounded-lg bg-brand text-white px-4 text-xs font-bold hover:opacity-90 cursor-pointer"
+                className="flex items-center gap-1.5 mx-auto h-9 rounded-2xl bg-brand text-white px-4 text-xs font-bold hover:opacity-90 cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5" /> Analisar Perfil
               </button>
@@ -145,7 +145,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
 
           {analysis && (
             <div className="pt-4 space-y-4">
-              <div className="rounded-xl bg-surface border border-border p-4">
+              <div className="rounded-[24px] bg-surface border border-border p-4">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
                   Resumo
                 </div>
@@ -153,7 +153,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </div>
 
               <div
-                className={`rounded-xl border p-4 ${
+                className={`rounded-[24px] border p-4 ${
                   analysis.retentionScore === "alto"
                     ? "border-success/30 bg-success/5"
                     : analysis.retentionScore === "médio"
@@ -189,7 +189,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
                 ))}
               </div>
 
-              <div className="rounded-xl border border-brand/30 bg-brand/5 p-4">
+              <div className="rounded-[24px] border border-brand/30 bg-brand/5 p-4">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
                   Próxima ação recomendada
                 </div>

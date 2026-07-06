@@ -55,7 +55,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
       </div>
 
       {/* DADOS DO CLIENTE */}
-      <div className="border border-slate-200 rounded-xl p-8 mb-16 break-inside-avoid">
+      <div className="border border-slate-200 rounded-[24px] p-8 mb-16 break-inside-avoid">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
@@ -100,7 +100,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
             </h2>
             <div className="space-y-4">
               {p.flights!.map((f, i) => (
-                <div key={i} className="border border-slate-200 rounded-xl p-5 break-inside-avoid">
+                <div key={i} className="border border-slate-200 rounded-[24px] p-5 break-inside-avoid">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
                       {f.airline || "Cia Aérea"}
@@ -144,10 +144,10 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               {p.hotels!.map((h, i) => (
                 <div
                   key={i}
-                  className="border border-slate-200 rounded-xl p-5 break-inside-avoid flex gap-6"
+                  className="border border-slate-200 rounded-[24px] p-5 break-inside-avoid flex gap-6"
                 >
                   {h.images?.[0] && (
-                    <div className="w-32 h-32 shrink-0 rounded-lg overflow-hidden">
+                    <div className="w-32 h-32 shrink-0 rounded-2xl overflow-hidden">
                       <img
                         src={h.images[0]}
                         crossOrigin="anonymous"
@@ -205,7 +205,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               {p.transfers!.map((t, i) => (
                 <div
                   key={i}
-                  className="border border-slate-200 rounded-lg p-4 flex items-center gap-4 break-inside-avoid"
+                  className="border border-slate-200 rounded-2xl p-4 flex items-center gap-4 break-inside-avoid"
                 >
                   <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                     <Car className="w-4 h-4 text-slate-500" />
@@ -222,7 +222,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               {p.tours!.map((t, i) => (
                 <div
                   key={i}
-                  className="border border-slate-200 rounded-lg p-4 flex items-center gap-4 break-inside-avoid"
+                  className="border border-slate-200 rounded-2xl p-4 flex items-center gap-4 break-inside-avoid"
                 >
                   <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                     <Compass className="w-4 h-4 text-slate-500" />
@@ -267,7 +267,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               </div>
 
               <div className="w-full md:w-[45%] space-y-4">
-                <div className="bg-white/10 border border-white/20 rounded-xl p-5">
+                <div className="bg-white/10 border border-white/20 rounded-[24px] p-5">
                   <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
                     Cartão de Crédito
                   </div>
@@ -277,7 +277,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                 </div>
 
                 <div
-                  className="bg-white rounded-xl p-5 text-slate-900 border-2"
+                  className="bg-white rounded-[24px] p-5 text-slate-900 border-2"
                   style={{ borderColor: brand === "#0f172a" ? "#38bdf8" : brand }}
                 >
                   <div className="flex justify-between items-start mb-2">

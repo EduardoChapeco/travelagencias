@@ -178,13 +178,13 @@ function VisasPage() {
           <Link
             to="/agency/$slug/visas-catalog"
             params={{ slug }}
-            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors border border-border px-3 py-1.5 rounded-md bg-surface-alt/50"
+            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors border border-border px-3 py-1.5 rounded-full bg-surface-alt/50"
           >
             <FileText className="w-3.5 h-3.5" /> Catálogo
           </Link>
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Novo Processo
           </button>
@@ -192,7 +192,7 @@ function VisasPage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Vistos"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -203,7 +203,7 @@ function VisasPage() {
 
       <div className="flex-1 overflow-x-auto pb-4 scrollbar-thin px-4 md:px-6 pt-4">
         {(stagesQ.isError || visasQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -259,7 +259,7 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
   return (
     <div
       ref={setNodeRef}
-      className="flex h-full w-80 shrink-0 flex-col rounded-xl bg-surface-alt/50 border border-border"
+      className="flex h-full w-80 shrink-0 flex-col rounded-[24px] bg-surface-alt/50 border border-border"
     >
       <div className="flex items-center justify-between border-b border-border p-3">
         <div className="flex items-center gap-2">
@@ -305,7 +305,7 @@ function SortableVisa({ visa }: { visa: Visa }) {
 function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
   return (
     <div
-      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-lg border bg-surface p-3 text-left active:cursor-grabbing hover:border-border-strong ${
+      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-2xl border bg-surface p-3 text-left active:cursor-grabbing hover:border-border-strong ${
         isOverlay ? "rotate-2 scale-105 border-brand/50 " : "border-border"
       }`}
     >

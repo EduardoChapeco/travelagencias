@@ -119,7 +119,7 @@ function RegisterPage() {
 
         {/* Header */}
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
           <span className="text-base font-black tracking-tight text-foreground">Turis</span>
@@ -142,7 +142,7 @@ function RegisterPage() {
           </div>
 
           {/* Floating Benefit Card */}
-          <div className="bg-surface border border-border rounded-xl p-6 space-y-4 shadow-none">
+          <div className="bg-surface border border-border rounded-[24px] p-6 space-y-4 shadow-none">
             <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
               Módulos Inclusos na sua Conta
             </h4>
@@ -178,7 +178,7 @@ function RegisterPage() {
         <div className="w-full max-w-sm relative z-10 space-y-8">
           {/* Logo on Mobile */}
           <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
             <span className="text-sm font-black text-foreground">Turis</span>
@@ -198,7 +198,7 @@ function RegisterPage() {
               <Input
                 placeholder="Seu nome completo"
                 {...register("fullName")}
-                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -208,7 +208,7 @@ function RegisterPage() {
                 placeholder="nome@suaagencia.com.br"
                 autoComplete="email"
                 {...register("email")}
-                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -218,7 +218,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Mínimo de 8 caracteres"
                 {...register("password")}
-                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -228,7 +228,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Repita sua senha"
                 {...register("confirmPassword")}
-                className="h-11 text-xs rounded-sm bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -266,7 +266,7 @@ function RegisterPage() {
             <PrimaryButton
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-sm bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6"
+              className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-full bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
             >
               {isSubmitting ? "Criando conta…" : "Criar conta"}
             </PrimaryButton>

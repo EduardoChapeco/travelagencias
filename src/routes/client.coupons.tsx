@@ -33,7 +33,7 @@ function Page() {
           {q.data?.map((c) => (
             <div
               key={c.id}
-              className="rounded-lg border border-dashed border-border bg-surface p-4"
+              className="rounded-2xl border border-dashed border-border bg-surface p-4"
             >
               <div className="flex items-center justify-between">
                 <span className="rounded bg-primary/10 px-3 py-1 font-mono text-sm font-semibold text-primary">

@@ -40,7 +40,7 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
           <input 
             type="text" 
             placeholder="Buscar contatos ou telefones..." 
-            className="w-full h-9 pl-3 pr-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full h-9 pl-3 pr-4 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>

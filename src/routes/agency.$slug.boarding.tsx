@@ -241,10 +241,10 @@ function BoardingKanbanPage() {
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
       <HeaderPortal>
         <div className="flex items-center gap-4">
-          <div className="flex items-center border border-border rounded-sm p-0.5 bg-surface-alt">
+          <div className="flex items-center border border-border rounded-full p-0.5 bg-surface-alt">
             <button
               onClick={() => setViewMode("kanban")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
                 viewMode === "kanban"
                   ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
@@ -256,7 +256,7 @@ function BoardingKanbanPage() {
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
                 viewMode === "list"
                   ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
@@ -268,7 +268,7 @@ function BoardingKanbanPage() {
             </button>
             <button
               onClick={() => setViewMode("calendar")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-sm transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
                 viewMode === "calendar"
                   ? "bg-surface text-foreground shadow-none"
                   : "text-muted-foreground hover:text-foreground"
@@ -282,14 +282,14 @@ function BoardingKanbanPage() {
 
           <PrimaryButton
             onClick={() => setOpen(true)}
-            className="gap-1.5 text-xs font-semibold h-8 rounded-sm animate-in fade-in duration-200"
+            className="gap-1.5 text-xs font-semibold h-8 rounded-full animate-in fade-in duration-200"
           >
             <Plus className="h-3.5 w-3.5" /> Cadastrar Localizador
           </PrimaryButton>
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Embarques"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -299,7 +299,7 @@ function BoardingKanbanPage() {
             <button
               onClick={handleExportExcel}
               disabled={exporting}
-              className="flex h-8 items-center gap-1.5 px-3 rounded-sm border border-border bg-surface text-foreground text-xs font-semibold hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex h-8 items-center gap-1.5 px-3 rounded-full border border-border bg-surface text-foreground text-xs font-semibold hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               title="Exportar Lista de Embarque (.xlsx)"
             >
               <Download className="h-3.5 w-3.5" />
@@ -322,7 +322,7 @@ function BoardingKanbanPage() {
 
       {q.isError && (
         <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-md border border-danger/20">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-full border border-danger/20">
             <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
               <X className="h-6 w-6" />
             </div>
@@ -330,7 +330,7 @@ function BoardingKanbanPage() {
             <p className="text-sm text-muted-foreground">
               Não foi possível carregar as informações. O banco de dados pode estar desatualizado.
             </p>
-            <div className="w-full text-left bg-background p-3 rounded-sm text-xs font-mono text-danger/80 break-words mt-4">
+            <div className="w-full text-left bg-background p-3 rounded-full text-xs font-mono text-danger/80 break-words mt-4">
               <strong>Query Error:</strong> {(q.error as Error).message}
             </div>
           </div>
@@ -371,11 +371,11 @@ function BoardingKanbanPage() {
           {viewMode === "list" && (
             <div className="flex-1 overflow-y-auto p-4 md:p-6 animate-in fade-in duration-300">
               {localCards.length === 0 ? (
-                <div className="text-center py-12 border border-dashed rounded-xl text-sm text-muted-foreground">
+                <div className="text-center py-12 border border-dashed rounded-[24px] text-sm text-muted-foreground">
                   Nenhum localizador de embarque cadastrado.
                 </div>
               ) : (
-                <div className="overflow-x-auto border border-border rounded-sm bg-surface">
+                <div className="overflow-x-auto border border-border rounded-full bg-surface">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
                       <tr className="border-b border-border bg-surface-alt font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
@@ -456,19 +456,19 @@ function BoardingKanbanPage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={handlePrevMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setCurrentMonth(new Date())}
-                    className="h-8 px-3 text-xs font-semibold rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="h-8 px-3 text-xs font-semibold rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Hoje
                   </button>
                   <button
                     onClick={handleNextMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>

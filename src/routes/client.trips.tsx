@@ -32,7 +32,7 @@ function ClientTripsPage() {
             key={t.id}
             to="/client/trips/$id"
             params={{ id: t.id }}
-            className="rounded-lg border border-border bg-surface p-4 hover:border-border-strong"
+            className="rounded-2xl border border-border bg-surface p-4 hover:border-border-strong"
           >
             <div className="flex items-start justify-between">
               <div>

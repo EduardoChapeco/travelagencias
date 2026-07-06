@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-border bg-surface">
+      <div className="rounded-full border border-border bg-surface">
         <Table>
           <TableHeader className="bg-surface-alt/50">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -192,7 +192,7 @@ export function DataTableColumnHeader<TData, TValue>({
     <div className={`flex items-center space-x-2 ${className}`}>
       <button
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-md transition-colors"
+        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors"
       >
         <span>{title}</span>
         {column.getIsSorted() === "desc" ? (

@@ -333,7 +333,7 @@ function CalendarPage() {
 
       <div className="flex-1 overflow-auto bg-background p-2">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -344,7 +344,7 @@ function CalendarPage() {
           </div>
         )}
 
-        <div className="bg-surface border border-border/70 rounded-xl overflow-hidden h-full flex flex-col">
+        <div className="bg-surface border border-border/70 rounded-[24px] overflow-hidden h-full flex flex-col">
           <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
             {WEEKDAYS.map((day) => (
               <div
@@ -489,7 +489,7 @@ function CalendarPage() {
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                     Notas / Descrição
                   </span>
-                  <p className="bg-surface-alt/20 p-2.5 rounded-lg border border-border/50 text-foreground/80 leading-relaxed">
+                  <p className="bg-surface-alt/20 p-2.5 rounded-2xl border border-border/50 text-foreground/80 leading-relaxed">
                     {selectedMeeting.description}
                   </p>
                 </div>
@@ -519,7 +519,7 @@ function CalendarPage() {
                 </div>
               </div>
 
-              <div className="bg-surface-alt/10 border border-border p-3.5 rounded-xl flex items-center justify-between gap-4">
+              <div className="bg-surface-alt/10 border border-border p-3.5 rounded-[24px] flex items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                     Lead Associado
@@ -532,7 +532,7 @@ function CalendarPage() {
                   <Link
                     to="/agency/$slug/crm/$lead_id"
                     params={{ slug, lead_id: selectedMeeting.lead_id }}
-                    className="inline-flex h-8 items-center gap-1 px-3 bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold rounded-lg border border-brand/15 transition-colors"
+                    className="inline-flex h-8 items-center gap-1 px-3 bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold rounded-2xl border border-brand/15 transition-colors"
                   >
                     Abrir Lead <ExternalLink className="h-3.5 w-3.5" />
                   </Link>
@@ -552,7 +552,7 @@ function CalendarPage() {
                       toast.error(err.message || "Erro na sincronização", { id: toastId });
                     }
                   }}
-                  className={`flex-1 h-9 rounded-lg font-bold text-xs uppercase border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 h-9 rounded-2xl font-bold text-xs uppercase border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                     selectedMeeting.google_event_id
                       ? "bg-success/5 text-success border-success/25 cursor-default"
                       : "bg-surface border-border hover:border-brand/40 text-muted-foreground hover:text-foreground"
@@ -585,7 +585,7 @@ function CalendarPage() {
                     onConfirm: () => delMut.mutate(),
                   });
                 }}
-                className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-2xl transition-colors cursor-pointer"
               >
                 <Trash className="h-3.5 w-3.5" /> Excluir
               </button>

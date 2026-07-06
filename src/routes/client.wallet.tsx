@@ -46,43 +46,13 @@ function ClientWallet() {
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
-      // Se a tabela ainda não existe no ambiente dev local (não foi feito push), tratamos graciosamente
+      // Tabela ainda não existente no ambiente (migration pendente): falha visível, não silenciosa
       if (error && error.code === '42P01') {
-         return []; // Tabela missing
+        throw new Error("[wallet] Tabela 'client_wallet_passes' não encontrada. Execute: supabase db push");
       }
       if (error) throw error;
-      
-      // MOCK FALLBACK (se não houver passes e estivermos testando a UI)
-      if (!data || data.length === 0) {
-        return [
-          {
-            id: "mock1",
-            pass_type: "boarding_pass",
-            title: "Voo G3 1928 - Paris",
-            subtitle: "Assento 12A • Portão 4",
-            color: "#f97316", // orange
-            barcode_value: "AZ992811",
-          },
-          {
-            id: "mock2",
-            pass_type: "voucher",
-            title: "Hotel Ritz Paris",
-            subtitle: "Check-in 14:00 • Suíte Master",
-            color: "#0f172a", // slate
-            barcode_value: "HTL-88229",
-          },
-          {
-            id: "mock3",
-            pass_type: "insurance",
-            title: "Allianz Travel Premium",
-            subtitle: "Cobertura Completa Europa",
-            color: "#2563eb", // blue
-            barcode_value: "INS-00912",
-          }
-        ];
-      }
 
-      return data;
+      return data ?? [];
     },
   });
 
@@ -101,7 +71,7 @@ function ClientWallet() {
       )}
 
       {!q.isLoading && q.data?.length === 0 && (
-        <div className="rounded-xl border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50 mt-10">
+        <div className="rounded-[24px] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50 mt-10">
           <WalletCards className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-semibold text-foreground mb-1">Carteira Vazia</h3>
           <p className="text-sm">Os documentos das suas próximas viagens aparecerão aqui magicamente.</p>
@@ -150,7 +120,7 @@ function ClientWallet() {
               </div>
 
               {isSelected && (
-                <div className="absolute bottom-6 left-6 right-6 bg-white text-black rounded-xl p-6 flex flex-col items-center shadow-inner animate-in fade-in slide-in-from-bottom-10 duration-500">
+                <div className="absolute bottom-6 left-6 right-6 bg-white text-black rounded-[24px] p-6 flex flex-col items-center shadow-inner animate-in fade-in slide-in-from-bottom-10 duration-500">
                   <QrCode className="h-48 w-48 text-zinc-900" strokeWidth={1} />
                   <div className="mt-4 text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1">Código do Bilhete</p>

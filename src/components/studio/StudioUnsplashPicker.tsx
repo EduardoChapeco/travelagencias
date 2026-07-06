@@ -94,7 +94,7 @@ export function StudioUnsplashPicker({
             {photos.map((photo) => (
               <div
                 key={photo.id}
-                className="group relative aspect-video cursor-pointer overflow-hidden rounded-md bg-muted"
+                className="group relative aspect-video cursor-pointer overflow-hidden rounded-full bg-muted"
                 onClick={() => !savingId && handleSelect(photo)}
               >
                 <img
@@ -110,7 +110,7 @@ export function StudioUnsplashPicker({
                       📸 {photo.photographer}
                     </span>
                   </div>
-                  <span className="text-[10px] font-medium text-white flex items-center justify-center h-6 w-full bg-primary/90 rounded-sm scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all">
+                  <span className="text-[10px] font-medium text-white flex items-center justify-center h-6 w-full bg-primary/90 rounded-full scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all">
                     Usar Imagem
                   </span>
                 </div>

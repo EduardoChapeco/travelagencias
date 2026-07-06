@@ -139,7 +139,7 @@ function ClientQuoteView() {
       />
 
       {isPending && (
-        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-[24px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Clock className="h-5 w-5 shrink-0" />
             <div>
@@ -151,14 +151,14 @@ function ClientQuoteView() {
             <button
               onClick={() => decide.mutate("rejected")}
               disabled={decide.isPending || isSigning}
-              className="px-4 py-2 text-sm font-semibold text-red-600 bg-red-100 hover:bg-red-200 rounded-md transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-semibold text-red-600 bg-red-100 hover:bg-red-200 rounded-full transition-colors disabled:opacity-50"
             >
               Recusar
             </button>
             <button
               onClick={() => setIsSigning(true)}
               disabled={decide.isPending || isSigning}
-              className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md flex items-center gap-2 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-full flex items-center gap-2 transition-colors disabled:opacity-50"
             >
               <Check className="h-4 w-4" /> Aceitar Proposta
             </button>
@@ -167,13 +167,13 @@ function ClientQuoteView() {
       )}
 
       {isSigning && (
-        <div className="bg-surface rounded-xl p-4 shadow-sm border border-border">
+        <div className="bg-surface rounded-[24px] p-4 shadow-sm border border-border">
           <KycSignature onSign={handleKycSign} isLoading={decide.isPending} />
         </div>
       )}
 
       {quote.status === "approved" && (
-        <div className="bg-green-500/10 border border-green-500/20 text-green-600 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-green-500/10 border border-green-500/20 text-green-600 rounded-[24px] p-4 flex items-center gap-3">
           <Check className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold text-sm">Você aceitou esta proposta!</p>
@@ -183,13 +183,13 @@ function ClientQuoteView() {
       )}
 
       {quote.status === "rejected" && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-[24px] p-4 flex items-center gap-3">
           <X className="h-5 w-5 shrink-0" />
           <p className="font-semibold text-sm">Esta proposta foi recusada.</p>
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+      <div className="bg-white rounded-[24px] shadow-sm border border-border overflow-hidden">
         <div className="p-4 bg-surface border-b border-border flex items-center gap-2 text-muted-foreground text-sm font-medium">
           <FileText className="h-4 w-4" /> Visualização do Documento
         </div>

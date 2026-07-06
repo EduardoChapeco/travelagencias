@@ -264,7 +264,7 @@ function TicketAdvancedRoute() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-foreground flex items-start gap-2 flex-wrap">
                 <span className="flex-1 min-w-0">{ticket.title}</span>
-                <span className="text-sm font-mono font-normal text-muted-foreground bg-surface-muted px-2 py-1 rounded-md border border-border shrink-0">
+                <span className="text-sm font-mono font-normal text-muted-foreground bg-surface-muted px-2 py-1 rounded-full border border-border shrink-0">
                   {ticket.ticket_hash}
                 </span>
               </h1>
@@ -303,7 +303,7 @@ function TicketAdvancedRoute() {
           <div className="flex gap-2 flex-wrap">
             {ticket.sla_deadline && (
               <div className={cn(
-                "px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5",
+                "px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5",
                 isSlaBreached
                   ? "bg-destructive/10 text-destructive border border-destructive/20"
                   : "bg-warning/10 text-warning border border-warning/20"
@@ -314,13 +314,13 @@ function TicketAdvancedRoute() {
               </div>
             )}
             {ticket.refund_requested && (
-              <div className="px-3 py-1.5 bg-blue-100 text-blue-800 border border-blue-200 rounded-md text-xs font-medium flex items-center gap-1.5">
+              <div className="px-3 py-1.5 bg-blue-100 text-blue-800 border border-blue-200 rounded-full text-xs font-medium flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
                 Reembolso: {REFUND_STATUS_OPTIONS.find(o => o.value === ticket.refund_status)?.label || "Pendente"}
               </div>
             )}
             {(ticket.tags as string[] || []).map((tag: string) => (
-              <div key={tag} className="px-2 py-1 bg-surface-alt border border-border rounded-md text-xs text-muted-foreground flex items-center gap-1">
+              <div key={tag} className="px-2 py-1 bg-surface-alt border border-border rounded-full text-xs text-muted-foreground flex items-center gap-1">
                 <Tag className="w-3 h-3" /> {tag}
               </div>
             ))}
@@ -331,7 +331,7 @@ function TicketAdvancedRoute() {
         <div className="flex-1 overflow-y-auto p-6 bg-surface-muted/30">
           <div className="max-w-3xl mx-auto space-y-6">
             {(!timeline || timeline.length === 0) ? (
-              <div className="text-center text-muted-foreground p-8 rounded-xl border border-dashed border-border">
+              <div className="text-center text-muted-foreground p-8 rounded-[24px] border border-dashed border-border">
                 <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">Nenhum evento na timeline ainda.</p>
               </div>
@@ -362,7 +362,7 @@ function TicketAdvancedRoute() {
                     )}
                   </div>
                   <div className={cn(
-                    "flex-1 rounded-xl p-4 border shadow-xs",
+                    "flex-1 rounded-[24px] p-4 border shadow-xs",
                     ev.is_internal
                       ? "bg-amber-50/60 border-amber-200"
                       : "bg-card border-border"
@@ -411,7 +411,7 @@ function TicketAdvancedRoute() {
                   key={type}
                   onClick={() => setReplyType(type)}
                   className={cn(
-                    "text-xs px-3 py-1.5 rounded-lg font-semibold transition-all",
+                    "text-xs px-3 py-1.5 rounded-2xl font-semibold transition-all",
                     replyType === type
                       ? type === "internal"
                         ? "bg-amber-500 text-white"
@@ -469,7 +469,7 @@ function TicketAdvancedRoute() {
           {/* Responsável */}
           <div className="space-y-1">
             <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Responsável</h4>
-            <div className="flex items-center gap-2 p-2 rounded-lg bg-surface border border-border">
+            <div className="flex items-center gap-2 p-2 rounded-2xl bg-surface border border-border">
               <div className="h-7 w-7 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black uppercase shrink-0">
                 {assigneeName.charAt(0)}
               </div>

@@ -288,7 +288,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                       <div className="text-[18px] text-slate-600 flex items-center gap-2 mb-4">
                         <MapPin className="w-5 h-5 text-slate-400" /> {h.city}
                       </div>
-                      <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-[24px] border border-slate-100">
                         <div>
                           <span className="block text-[14px] uppercase font-bold text-slate-400">Check-in</span>
                           <span className="text-[18px] font-semibold text-slate-800">{fmtDate(h.checkin)}</span>

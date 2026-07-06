@@ -692,7 +692,7 @@ Texto: "${aiText}"`;
       <div className="flex-1 overflow-y-auto">
         {activeTab === "quotes" ? (
           isQuotesError ? (
-            <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
+            <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
               <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
               <span>Erro ao obter workspace de cotações: {quotesError instanceof Error ? quotesError.message : "Erro desconhecido"}</span>
             </div>
@@ -803,7 +803,7 @@ Texto: "${aiText}"`;
           )
         ) : /* Tab: RAG Knowledge Management */
         isDocsError ? (
-          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
+          <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
             <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
             <span>Erro ao carregar cérebro semântico: {docsError instanceof Error ? docsError.message : "Erro desconhecido"}</span>
           </div>
@@ -900,7 +900,7 @@ Texto: "${aiText}"`;
         {activeTab === "rules" && (
           <div className="p-4 md:p-6 space-y-8">
             {(isRulesError || isCandidatesError) && (
-              <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
+              <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
                 <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
                 <span>Erro ao carregar regras ou sugestões de regras.</span>
               </div>
@@ -1079,7 +1079,7 @@ Texto: "${aiText}"`;
         {activeTab === "promotions" && (
           <div className="p-4 md:p-6 space-y-8">
             {(isWatchersError || isPromotionsError) && (
-              <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
+              <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
                 <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
                 <span>Erro ao carregar monitor de alertas e promoções.</span>
               </div>

@@ -215,7 +215,7 @@ function LeadDetailPage() {
           </p>
           <button
             onClick={() => navigate({ to: "/agency/$slug/crm", params: { slug } })}
-            className="mt-1 h-8 px-4 rounded-lg bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+            className="mt-1 h-8 px-4 rounded-2xl bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
           >
             Voltar ao CRM
           </button>
@@ -450,7 +450,7 @@ function LeadDetailPage() {
         <div className="space-y-6">
           <ConfirmDialog />
           {/* Header Actions Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-xl">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-[24px]">
             <div className="flex items-center gap-3">
               {lead.avatar_url ? (
                 <div className="relative group h-12 w-12 rounded-full overflow-hidden border border-border">
@@ -499,7 +499,7 @@ function LeadDetailPage() {
                 <a
                   href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
                   target="_blank"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
                   title="WhatsApp Rápido"
                 >
                   <Send className="h-3.5 w-3.5" /> WhatsApp
@@ -508,7 +508,7 @@ function LeadDetailPage() {
               {lead.phone && (
                 <button
                   onClick={handleShareFormWhatsApp}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-md border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                   title="Enviar Formulário via WhatsApp"
                 >
                   <MessageSquare className="h-3.5 w-3.5" /> Enviar Form WA
@@ -516,7 +516,7 @@ function LeadDetailPage() {
               )}
               <button
                 onClick={handleCopyFormLink}
-                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
                 title="Copiar Link do Formulário"
               >
                 <FileText className="h-3.5 w-3.5" /> Link Form
@@ -542,7 +542,7 @@ function LeadDetailPage() {
                   <UserCheck className="h-4 w-4" /> Converter em Cliente
                 </PrimaryButton>
               ) : (
-                <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-md px-4 py-1.5 flex items-center gap-1">
+                <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-full px-4 py-1.5 flex items-center gap-1">
                   <Check className="h-3.5 w-3.5" /> Convertido
                 </span>
               )}
@@ -617,7 +617,7 @@ function LeadDetailPage() {
               <TabsContent value="general" className="space-y-6">
                 {/* Staleness Quiz if stale */}
                 {diffDays >= 5 && lead.staleness_status === "active" && (
-                  <div className="bg-warning/5 border border-warning/15 p-4 rounded-xl space-y-2.5">
+                  <div className="bg-warning/5 border border-warning/15 p-4 rounded-[24px] space-y-2.5">
                     <div className="flex items-center gap-2 text-warning text-xs font-bold">
                       <AlertCircle className="h-4 w-4" />
                       <span>O lead está sem contato há {diffDays} dias! O que aconteceu?</span>
@@ -651,7 +651,7 @@ function LeadDetailPage() {
                               toast.error("Falha ao salvar");
                             }
                           }}
-                          className="text-[10px] font-bold bg-background border border-border px-3 py-1.5 rounded-lg hover:border-brand/40 transition-colors cursor-pointer"
+                          className="text-[10px] font-bold bg-background border border-border px-3 py-1.5 rounded-2xl hover:border-brand/40 transition-colors cursor-pointer"
                         >
                           {opt.label}
                         </button>
@@ -662,7 +662,7 @@ function LeadDetailPage() {
 
                 {/* Stale status notification with reactivation option */}
                 {lead.staleness_status && lead.staleness_status !== "active" && (
-                  <div className="bg-muted/50 border border-border p-4 rounded-xl flex items-center justify-between gap-4">
+                  <div className="bg-muted/50 border border-border p-4 rounded-[24px] flex items-center justify-between gap-4">
                     <div>
                       <span className="text-xs font-bold text-foreground block">
                         Lead Classificado como Inativo
@@ -693,7 +693,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao reativar");
                         }
                       }}
-                      className="text-xs font-bold h-8 px-3 rounded-lg"
+                      className="text-xs font-bold h-8 px-3 rounded-2xl"
                     >
                       Re-ativar Lead
                     </GhostButton>
@@ -707,7 +707,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Consentimento LGPD */}
-                <div className="rounded-xl border border-border bg-surface p-5 flex items-center justify-between gap-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 flex items-center justify-between gap-4">
                   <div>
                     <h4 className="font-bold text-foreground text-sm flex items-center gap-1.5">
                       Consentimento LGPD
@@ -730,14 +730,14 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Stage and Owner Dropdowns Card */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-xl border border-border">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-[24px] border border-border">
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                       Estágio do Funil
                     </label>
                     <Select
                       value={lead.stage_id}
-                      className="rounded-xl border-border bg-background h-10 w-full text-xs"
+                      className="rounded-[24px] border-border bg-background h-10 w-full text-xs"
                       onChange={async (e) => {
                         const newStage = e.target.value;
                         if (newStage === lead.stage_id) return;
@@ -774,7 +774,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.owner_id || ""}
-                      className="rounded-xl border-border bg-background h-10 w-full text-xs"
+                      className="rounded-[24px] border-border bg-background h-10 w-full text-xs"
                       onChange={async (e) => {
                         const val = e.target.value || null;
                         try {
@@ -799,7 +799,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Tag pill list and creator */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
                     Tags do Lead
                   </h4>
@@ -836,7 +836,7 @@ function LeadDetailPage() {
                       placeholder="Nome da tag..."
                       value={newTagName}
                       onChange={(e) => setNewTagName(e.target.value)}
-                      className="h-8 text-xs rounded-lg"
+                      className="h-8 text-xs rounded-2xl"
                     />
 
                     <div className="flex flex-wrap gap-1.5">
@@ -859,7 +859,7 @@ function LeadDetailPage() {
                     <GhostButton
                       onClick={addTag}
                       disabled={!newTagName.trim()}
-                      className="w-full h-8 rounded-lg text-xs font-bold"
+                      className="w-full h-8 rounded-2xl text-xs font-bold"
                     >
                       <Plus className="h-3.5 w-3.5 mr-1 inline" /> Criar Tag
                     </GhostButton>
@@ -868,7 +868,7 @@ function LeadDetailPage() {
 
                 {/* General notes */}
                 {lead.notes && (
-                  <div className="rounded-xl border border-border bg-surface p-5">
+                  <div className="rounded-[24px] border border-border bg-surface p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 mb-3">
                       Anotações de Cadastro
                     </h4>
@@ -881,7 +881,7 @@ function LeadDetailPage() {
 
               <TabsContent value="pax" className="space-y-6">
                 {/* Magic Client Link */}
-                <div className="bg-brand/[0.03] border border-brand/15 p-5 rounded-xl space-y-2.5">
+                <div className="bg-brand/[0.03] border border-brand/15 p-5 rounded-[24px] space-y-2.5">
                   <div className="flex items-center gap-2 text-brand text-xs font-bold">
                     <Sparkles className="h-4 w-4" />
                     <span>Link Mágico de Cadastro do Cliente</span>
@@ -894,14 +894,14 @@ function LeadDetailPage() {
                   <div className="flex gap-2">
                     <GhostButton
                       onClick={handleCopyFormLink}
-                      className="h-8 px-3 rounded-lg text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
+                      className="h-8 px-3 rounded-2xl text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
                     >
                       <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
                     </GhostButton>
                     {lead.phone && (
                       <button
                         onClick={handleShareFormWhatsApp}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                       >
                         <MessageSquare className="h-3.5 w-3.5" /> Enviar Form no WhatsApp
                       </button>
@@ -910,7 +910,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Travelers List */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Viajantes Vinculados / Acompanhantes
@@ -929,7 +929,7 @@ function LeadDetailPage() {
                       {lead.pax_list.map((pax, index) => (
                         <div
                           key={index}
-                          className="border border-border/60 p-4 rounded-xl bg-surface-alt/15 relative hover:border-border transition-colors"
+                          className="border border-border/60 p-4 rounded-[24px] bg-surface-alt/15 relative hover:border-border transition-colors"
                         >
                           <button
                             onClick={() => {
@@ -990,7 +990,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Add Traveler form */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <button
                     onClick={() => setPaxFormOpen((o) => !o)}
                     className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
@@ -1023,7 +1023,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao salvar acompanhante");
                         }
                       }}
-                      className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
+                      className="border border-border p-4 rounded-[24px] bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Nome Completo *">
                         <Input
@@ -1092,7 +1092,7 @@ function LeadDetailPage() {
 
               <TabsContent value="meetings" className="space-y-6">
                 {/* Meeting Scheduler and Follow-ups */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Compromissos & Reuniões Agendadas
@@ -1135,7 +1135,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao criar compromisso");
                         }
                       }}
-                      className="border border-border p-4 rounded-xl bg-surface-alt/10 space-y-3"
+                      className="border border-border p-4 rounded-[24px] bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Título do Compromisso *">
                         <Input
@@ -1218,7 +1218,7 @@ function LeadDetailPage() {
                       {meetingsQ.data.map((meeting: LeadMeeting) => (
                         <div
                           key={meeting.id}
-                          className="bg-surface-alt/20 border border-border/60 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                          className="bg-surface-alt/20 border border-border/60 rounded-[24px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
                         >
                           <div className="space-y-1 min-w-0">
                             <span className="text-xs font-bold text-foreground block truncate">
@@ -1249,7 +1249,7 @@ function LeadDetailPage() {
                                 navigator.clipboard.writeText(inviteText);
                                 toast.success("Convite copiado!");
                               }}
-                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-2xl transition-colors cursor-pointer"
                               title="Copiar texto de convite para enviar por email ou whats"
                             >
                               Copiar Convite
@@ -1269,7 +1269,7 @@ function LeadDetailPage() {
                                   });
                                 }
                               }}
-                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-2xl transition-colors cursor-pointer ${
                                 meeting.google_event_id
                                   ? "bg-success/10 text-success border border-success/20 cursor-default"
                                   : "bg-surface border border-border/80 hover:border-brand/40 text-muted-foreground hover:text-foreground"
@@ -1298,7 +1298,7 @@ function LeadDetailPage() {
                                   },
                                 });
                               }}
-                              className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-2xl transition-colors cursor-pointer"
                               title="Deletar"
                             >
                               <Trash className="h-3.5 w-3.5" />
@@ -1313,7 +1313,7 @@ function LeadDetailPage() {
 
               <TabsContent value="proposals" className="space-y-6">
                 {/* Proposals Integration */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Propostas de Venda
@@ -1339,7 +1339,7 @@ function LeadDetailPage() {
                       {proposalsQ.data.map((prop) => (
                         <li
                           key={prop.id}
-                          className="bg-surface-alt/30 border border-border/50 rounded-lg p-2.5 flex flex-col gap-1 text-xs"
+                          className="bg-surface-alt/30 border border-border/50 rounded-2xl p-2.5 flex flex-col gap-1 text-xs"
                         >
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-foreground truncate">{prop.title}</span>
@@ -1362,12 +1362,12 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Attachments Section */}
-                <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
                     <Paperclip className="h-4 w-4 text-brand" /> Documentos e Anexos
                   </h4>
 
-                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
+                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-[24px] p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
                     <Paperclip className="h-5 w-5 text-muted-foreground mb-1.5" />
                     <span className="text-xs font-bold text-foreground">
                       {uploading ? "Enviando arquivo..." : "Clique para anexar um arquivo"}
@@ -1541,7 +1541,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Acessibilidade */}
-                <div className="border border-border p-4 rounded-xl space-y-3 bg-surface-alt/10">
+                <div className="border border-border p-4 rounded-[24px] space-y-3 bg-surface-alt/10">
                   <span className="text-xs font-bold text-foreground block">
                     Acessibilidade & Cuidados Especiais
                   </span>

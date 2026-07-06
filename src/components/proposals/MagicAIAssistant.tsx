@@ -70,7 +70,7 @@ Não inclua crases markdown nem texto adicional.`;
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-9 items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
+        className="flex h-9 items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
       >
         <Sparkles className="h-3.5 w-3.5" /> Assistente de Escrita
       </button>
@@ -94,7 +94,7 @@ Não inclua crases markdown nem texto adicional.`;
               rows={4}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
+              className="w-full rounded-[24px] border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
               placeholder="Como o assistente deve reescrever esta proposta?"
             />
           </div>
@@ -102,7 +102,7 @@ Não inclua crases markdown nem texto adicional.`;
           <button
             onClick={handleMagic}
             disabled={busy}
-            className="w-full flex h-10 items-center justify-center gap-2 rounded-xl bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
+            className="w-full flex h-10 items-center justify-center gap-2 rounded-[24px] bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
           >
             {busy ? (
               <>

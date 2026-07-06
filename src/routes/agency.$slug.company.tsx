@@ -399,13 +399,13 @@ function Page() {
             href={portalUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
           >
             <Eye className="h-3.5 w-3.5" /> Ver portal
           </a>
           <button
             onClick={() => setPreviewOpen(!previewOpen)}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
           >
             <Globe className="h-3.5 w-3.5" />
             {previewOpen ? "Fechar prévia" : "Prévia"}
@@ -414,7 +414,7 @@ function Page() {
             type="submit"
             form="company-form"
             disabled={busy}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" />
             {busy ? "Salvando..." : "Salvar"}
@@ -423,13 +423,13 @@ function Page() {
       </HeaderPortal>
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
-        <div className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
+        <div className="flex gap-1 overflow-x-auto rounded-2xl border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
           {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
                 tab === t.id
                   ? "bg-surface-alt text-foreground border border-border/50"
                   : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
@@ -450,7 +450,7 @@ function Page() {
               <form onSubmit={save} id="company-form" className="space-y-0">
                 {/* TAB: IDENTITY */}
                 {tab === "identity" && (
-                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Identidade da empresa</h3>
                     <Field label="Nome comercial *">
                       <Input
@@ -498,7 +498,7 @@ function Page() {
 
                 {/* TAB: CONTACT */}
                 {tab === "contact" && (
-                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Contato</h3>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Field label="E-mail comercial">
@@ -538,7 +538,7 @@ function Page() {
 
                 {/* TAB: LOCATION */}
                 {tab === "location" && (
-                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Localização</h3>
                     <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
                       <Field label="Rua / Avenida">
@@ -603,13 +603,13 @@ function Page() {
                           type="button"
                           onClick={syncGbp}
                           disabled={gbpSyncing}
-                          className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
                         >
                           <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
                           {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
                         </button>
                       </div>
-                      <div className="mb-3 flex items-start gap-2 rounded-md border border-border/50 bg-surface-alt px-3 py-2">
+                      <div className="mb-3 flex items-start gap-2 rounded-full border border-border/50 bg-surface-alt px-3 py-2">
                         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <p className="text-[11px] text-muted-foreground">
                           Preencha o Google Business ID e o Maps URL para sincronizar dados com o
@@ -651,7 +651,7 @@ function Page() {
 
                 {/* TAB: SOCIAL */}
                 {tab === "social" && (
-                  <div className="space-y-5 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Redes sociais e canais</h3>
                     <div className="grid gap-3 sm:grid-cols-2">
                       {(
@@ -680,7 +680,7 @@ function Page() {
                         </Field>
                       ))}
                     </div>
-                    <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
+                    <div className="rounded-full border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
                       <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
                       <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
                       <a
@@ -697,7 +697,7 @@ function Page() {
 
                 {/* TAB: MEDIA */}
                 {tab === "media" && (
-                  <div className="space-y-6 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-6 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Mídia e identidade visual</h3>
                     <div className="space-y-4">
                       <FileUploader
@@ -733,7 +733,7 @@ function Page() {
 
                 {/* TAB: HOURS */}
                 {tab === "hours" && (
-                  <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
+                  <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
                     <h3 className="text-sm font-semibold">Horários de atendimento</h3>
                     <p className="text-xs text-muted-foreground">
                       Exibidos no portal público e sincronizados com o Google.
@@ -796,7 +796,7 @@ function Page() {
 
           {/* PORTAL PREVIEW PANEL */}
           {previewOpen && (
-            <aside className="shrink-0 rounded-lg border border-border bg-surface overflow-hidden h-fit sticky top-4">
+            <aside className="shrink-0 rounded-2xl border border-border bg-surface overflow-hidden h-fit sticky top-4">
               <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Prévia do portal
@@ -825,7 +825,7 @@ function Page() {
                       <img
                         src={form.logo_url}
                         alt=""
-                        className="mb-2 h-10 w-10 rounded-lg object-contain border border-border bg-surface"
+                        className="mb-2 h-10 w-10 rounded-2xl object-contain border border-border bg-surface"
                       />
                     )}
                     <div className="font-bold text-sm leading-tight">
@@ -878,12 +878,12 @@ function Page() {
                   </div>
                   <div className="flex gap-2">
                     <div
-                      className="h-8 w-8 rounded-md border border-border"
+                      className="h-8 w-8 rounded-full border border-border"
                       style={{ background: agency.brand_color || "#1E293B" }}
                       title="Primária"
                     />
                     <div
-                      className="h-8 w-8 rounded-md border border-border"
+                      className="h-8 w-8 rounded-full border border-border"
                       style={{ background: agency.brand_color_light || "#F1F5F9" }}
                       title="Fundo claro"
                     />

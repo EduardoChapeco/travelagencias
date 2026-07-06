@@ -64,7 +64,7 @@ function AcceptInvitePage() {
   const emailMismatch = userEmail && userEmail.toLowerCase() !== invite.email.toLowerCase();
 
   return (
-    <div className="mx-auto mt-16 max-w-md rounded-lg border border-border bg-surface p-6">
+    <div className="mx-auto mt-16 max-w-md rounded-2xl border border-border bg-surface p-6">
       <h1 className="text-xl font-semibold">Convite para {agencyName || "a agência"}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Você foi convidado para entrar como <strong>{invite.role}</strong> usando o email{" "}

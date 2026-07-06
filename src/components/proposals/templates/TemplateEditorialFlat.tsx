@@ -214,7 +214,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                     </div>
                     <div className="p-6">
                       <h3 className="text-2xl font-bold text-slate-900 mb-6">{h.name}</h3>
-                      <div className="grid grid-cols-3 gap-px bg-slate-200 border border-slate-200 rounded-xl overflow-hidden">
+                      <div className="grid grid-cols-3 gap-px bg-slate-200 border border-slate-200 rounded-[24px] overflow-hidden">
                         <div className="bg-slate-50 p-4">
                           <div className="text-[10px] uppercase text-slate-500 font-bold mb-1">
                             Check-in
@@ -265,7 +265,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                       </div>
                       <div className="flex items-center gap-3 mb-3">
                         <span
-                          className="px-3 py-1 rounded-md text-[10px] font-bold uppercase text-white"
+                          className="px-3 py-1 rounded-full text-[10px] font-bold uppercase text-white"
                           style={{ backgroundColor: brand }}
                         >
                           {d.day || `Dia ${i + 1}`}

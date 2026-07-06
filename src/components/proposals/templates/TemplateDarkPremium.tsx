@@ -215,7 +215,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                     <h3 className="text-2xl font-bold text-slate-900 mb-1">{h.name}</h3>
                     <div className="text-sm text-slate-500 mb-6">{h.city}</div>
 
-                    <div className="flex gap-8 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div className="flex gap-8 mb-6 bg-slate-50 p-4 rounded-[24px] border border-slate-100">
                       <div>
                         <div className="text-[10px] uppercase font-bold text-slate-400">
                           Check-in

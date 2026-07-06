@@ -151,7 +151,7 @@ function ProposalsList() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-sm bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
             title="Nova cotação"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -160,7 +160,7 @@ function ProposalsList() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Cotações"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -175,7 +175,7 @@ function ProposalsList() {
           <input
             type="text"
             placeholder="Buscar cotação..."
-            className="h-8 w-full rounded-sm border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -186,7 +186,7 @@ function ProposalsList() {
         <div className="relative w-full sm:w-44">
           <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <select
-            className="h-8 w-full appearance-none rounded-sm border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
@@ -209,7 +209,7 @@ function ProposalsList() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
-          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
+          <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
             <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
             <span>Erro ao carregar lista de propostas. Verifique sua conexão ou permissões.</span>
           </div>
@@ -222,7 +222,7 @@ function ProposalsList() {
           />
         ) : (
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-md border border-border bg-surface">
+            <div className="overflow-hidden rounded-full border border-border bg-surface">
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">

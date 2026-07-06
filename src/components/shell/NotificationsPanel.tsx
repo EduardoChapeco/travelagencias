@@ -122,7 +122,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-xl border border-border bg-surface "
+      className="absolute right-4 top-14 z-50 flex w-80 flex-col overflow-hidden rounded-[24px] border border-border bg-surface "
     >
       <div className="flex items-center justify-between border-b border-border bg-surface-alt/50 px-4 py-3">
         <div className="flex items-center gap-2">
@@ -177,7 +177,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
           return (
             <div
               key={n.id}
-              className={`relative mb-1 flex gap-3 rounded-lg p-3 transition-colors ${isUnread ? "bg-surface-alt/50 hover:bg-surface-alt" : "hover:bg-surface-alt/30 opacity-70"}`}
+              className={`relative mb-1 flex gap-3 rounded-2xl p-3 transition-colors ${isUnread ? "bg-surface-alt/50 hover:bg-surface-alt" : "hover:bg-surface-alt/30 opacity-70"}`}
             >
               <div className={`mt-0.5 shrink-0 ${iconColor}`}>
                 <Icon className="h-4 w-4" />
@@ -257,7 +257,7 @@ export function NotificationBadge() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`relative flex h-8 w-8 items-center justify-center rounded-md border border-border text-xs font-medium ${
+        className={`relative flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-medium ${
           open
             ? "bg-surface-alt text-foreground"
             : "bg-surface text-muted-foreground hover:text-foreground"

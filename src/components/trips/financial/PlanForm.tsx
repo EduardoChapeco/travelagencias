@@ -74,7 +74,7 @@ export function PlanForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 rounded-lg border border-border p-4 space-y-3 bg-surface"
+      className="mt-4 rounded-2xl border border-border p-4 space-y-3 bg-surface"
     >
       <h3 className="text-sm font-semibold text-foreground">Novo plano de parcelamento</h3>
       <div className="grid grid-cols-2 gap-3">
@@ -126,14 +126,14 @@ export function PlanForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="h-8 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
+          className="h-8 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
         >
           {isSubmitting ? "Criando…" : "Criar plano"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="h-8 rounded-md border border-border px-4 text-xs cursor-pointer text-foreground bg-surface"
+          className="h-8 rounded-full border border-border px-4 text-xs cursor-pointer text-foreground bg-surface"
         >
           Cancelar
         </button>

@@ -331,7 +331,7 @@ function NewProposal() {
         )}
 
         {extractedItems && (
-          <div className="mt-4 rounded-xl bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
+          <div className="mt-4 rounded-[24px] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
               <p className="text-[10px] text-muted-foreground mt-0.5">
@@ -353,7 +353,7 @@ function NewProposal() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-2xl space-y-3 rounded-lg border border-border bg-surface p-5"
+        className="max-w-2xl space-y-3 rounded-2xl border border-border bg-surface p-5"
       >
         <Field label="Título *" error={errors.title?.message}>
           <Input {...register("title")} placeholder="Ex: Lua de mel em Maldivas" />

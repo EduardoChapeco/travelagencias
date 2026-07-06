@@ -99,7 +99,7 @@ function ClientCombobox({
           setOpen((v) => !v);
           setQuery("");
         }}
-        className="flex h-9 w-full items-center justify-between rounded-md border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
+        className="flex h-9 w-full items-center justify-between rounded-full border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
       >
         <span className={selectedName ? "text-foreground" : "text-muted-foreground"}>
           {selectedName || "— selecionar cliente —"}
@@ -119,7 +119,7 @@ function ClientCombobox({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface">
+        <div className="absolute z-50 mt-1 w-full rounded-2xl border border-border bg-surface">
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -258,7 +258,7 @@ function LeadCombobox({
           setOpen((v) => !v);
           setQuery("");
         }}
-        className="flex h-9 w-full items-center justify-between rounded-md border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
+        className="flex h-9 w-full items-center justify-between rounded-full border border-border bg-surface-alt px-3 text-xs text-left hover:border-brand/50 focus:outline-none focus:ring-1 focus:ring-brand"
       >
         <span className={selectedName ? "text-foreground" : "text-muted-foreground"}>
           {selectedName || "— nenhum lead —"}
@@ -278,7 +278,7 @@ function LeadCombobox({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-surface">
+        <div className="absolute z-50 mt-1 w-full rounded-2xl border border-border bg-surface">
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <input
@@ -582,7 +582,7 @@ export function NewProposalSheet({
       </p>
 
       {/* OCR Drag-and-Drop Area */}
-      <div className="mb-5 rounded-xl border border-dashed border-border bg-surface-alt/40 p-4 text-center transition-all hover:border-brand/40">
+      <div className="mb-5 rounded-[24px] border border-dashed border-border bg-surface-alt/40 p-4 text-center transition-all hover:border-brand/40">
         {ocrLoading ? (
           <div className="flex flex-col items-center justify-center py-2 space-y-2">
             <Loader2 className="h-6 w-6 animate-spin text-brand" />
@@ -614,7 +614,7 @@ export function NewProposalSheet({
         )}
 
         {extractedItems && (
-          <div className="mt-3 rounded-lg bg-success/5 border border-success/20 p-2 text-[10px] text-success flex items-center justify-between">
+          <div className="mt-3 rounded-2xl bg-success/5 border border-success/20 p-2 text-[10px] text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold">✨ Dados extraídos com sucesso!</span>
               <p className="text-[9px] text-muted-foreground">

@@ -95,10 +95,10 @@ function ContractsPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
             <TabsTrigger
               value="list"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
             >
               Lista de Contratos
             </TabsTrigger>
@@ -106,13 +106,13 @@ function ContractsPage() {
               <>
                 <TabsTrigger
                   value="clauses"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Biblioteca de Cláusulas
                 </TabsTrigger>
                 <TabsTrigger
                   value="admin"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Configurações
                 </TabsTrigger>
@@ -130,7 +130,7 @@ function ContractsPage() {
                 <input
                   type="text"
                   placeholder="Buscar por pacote..."
-                  className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+                  className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -146,7 +146,7 @@ function ContractsPage() {
                     setStatusFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+                  className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
                 >
                   <option value="all">Todos os Status</option>
                   <option value="draft">Rascunho</option>
@@ -166,7 +166,7 @@ function ContractsPage() {
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
               {q.isError && (
-                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                   <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                     <AlertCircle className="h-4 w-4 text-red-600" />
                   </div>
@@ -204,7 +204,7 @@ function ContractsPage() {
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-xl border border-border",
+                            "flex h-10 w-10 items-center justify-center rounded-[24px] border border-border",
                             c.status === "signed"
                               ? "bg-success/10 text-success"
                               : "bg-surface-alt text-muted-foreground",
@@ -234,7 +234,7 @@ function ContractsPage() {
                       </p>
                     )}
 
-                    <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-xl p-4 border border-border/50">
+                    <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-[24px] p-4 border border-border/50">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 text-muted-foreground font-medium whitespace-nowrap">
                           <User className="h-4 w-4" /> Cliente

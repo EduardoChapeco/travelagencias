@@ -117,7 +117,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       to="/agency/$slug/suppliers/$id"
       params={{ slug, id: s.id }}
       className={cn(
-        "group flex flex-col rounded-xl border border-border bg-white p-5 transition-all duration-200",
+        "group flex flex-col rounded-[24px] border border-border bg-white p-5 transition-all duration-200",
         "hover:border-[--brand-primary,theme(colors.pink.400)] hover:bg-gray-50/40",
         !s.is_active && "opacity-60",
       )}
@@ -125,9 +125,9 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] border border-border bg-surface">
             {s.logo_url ? (
-              <img src={s.logo_url} alt={s.name} className="h-8 w-8 object-contain rounded-lg" />
+              <img src={s.logo_url} alt={s.name} className="h-8 w-8 object-contain rounded-2xl" />
             ) : (
               <Icon className={cn("h-5 w-5", cfg.color)} />
             )}
@@ -181,7 +181,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
           {s.tags.slice(0, 3).map((t) => (
             <span
               key={t}
-              className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
+              className="rounded-full border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
             >
               {t}
             </span>
@@ -215,7 +215,7 @@ function SupplierRow({ s, slug }: { s: Supplier; slug: string }) {
         !s.is_active && "opacity-60",
       )}
     >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface">
         {s.logo_url ? (
           <img src={s.logo_url} alt={s.name} className="h-6 w-6 object-contain rounded" />
         ) : (
@@ -311,7 +311,7 @@ function SuppliersPage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -333,7 +333,7 @@ function SuppliersPage() {
                   key={f.value}
                   onClick={() => setKindFilter(f.value)}
                   className={cn(
-                    "w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors text-left",
+                    "w-full flex items-center gap-2 rounded-full px-2.5 py-1.5 text-xs transition-colors text-left",
                     kindFilter === f.value
                       ? "bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)] font-semibold"
                       : "text-foreground hover:bg-surface-alt",
@@ -357,15 +357,15 @@ function SuppliersPage() {
               Visão Geral
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-lg border border-border bg-white p-2 text-center">
+              <div className="rounded-2xl border border-border bg-white p-2 text-center">
                 <div className="text-lg font-bold text-foreground">{stats.total}</div>
                 <div className="text-[10px] text-muted-foreground">Total</div>
               </div>
-              <div className="rounded-lg border border-border bg-white p-2 text-center">
+              <div className="rounded-2xl border border-border bg-white p-2 text-center">
                 <div className="text-lg font-bold text-green-600">{stats.active}</div>
                 <div className="text-[10px] text-muted-foreground">Ativos</div>
               </div>
-              <div className="col-span-2 rounded-lg border border-border bg-white p-2 text-center">
+              <div className="col-span-2 rounded-2xl border border-border bg-white p-2 text-center">
                 <div className="text-lg font-bold text-[--brand-primary,theme(colors.pink.500)] font-mono">
                   {stats.avgCommission}%
                 </div>
@@ -386,7 +386,7 @@ function SuppliersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar fornecedor, cidade, país..."
-                className="h-8 w-full rounded-md border border-border bg-white pl-8 pr-3 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground placeholder:text-muted-foreground"
+                className="h-8 w-full rounded-full border border-border bg-white pl-8 pr-3 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
@@ -396,7 +396,7 @@ function SuppliersPage() {
               <select
                 value={kindFilter}
                 onChange={(e) => setKindFilter(e.target.value)}
-                className="h-8 w-full appearance-none rounded-md border border-border bg-white pl-8 pr-8 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground"
+                className="h-8 w-full appearance-none rounded-full border border-border bg-white pl-8 pr-8 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground"
               >
                 {KIND_FILTERS.map((f) => (
                   <option key={f.value} value={f.value}>
@@ -412,7 +412,7 @@ function SuppliersPage() {
               <button
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
+                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
                   viewMode === "grid"
                     ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
                     : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
@@ -424,7 +424,7 @@ function SuppliersPage() {
               <button
                 onClick={() => setViewMode("list")}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-md border transition-colors",
+                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
                   viewMode === "list"
                     ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
                     : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
@@ -443,7 +443,7 @@ function SuppliersPage() {
           {/* Main list/grid */}
           <div className="flex-1 overflow-y-auto p-4 md:p-5">
             {q.isError && (
-              <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-6">
+              <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
                 <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
                   <AlertCircle className="h-5 w-5 text-red-600" />
                 </div>
@@ -474,7 +474,7 @@ function SuppliersPage() {
             )}
 
             {filtered.length > 0 && viewMode === "list" && (
-              <div className="rounded-xl border border-border overflow-hidden pb-10">
+              <div className="rounded-[24px] border border-border overflow-hidden pb-10">
                 {/* List header */}
                 <div className="flex items-center gap-4 bg-surface px-5 py-2 border-b border-border">
                   <div className="w-8 shrink-0" />

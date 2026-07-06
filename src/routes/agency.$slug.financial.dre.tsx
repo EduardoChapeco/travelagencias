@@ -63,19 +63,19 @@ function DREPage() {
 
       <div className="px-4 md:px-6 pt-4 md:pt-6 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
             <div className="mt-1 font-mono text-xl font-semibold text-success">
               {money(q.data?.income ?? 0)}
             </div>
           </div>
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
             <div className="mt-1 font-mono text-xl font-semibold text-danger">
               {money(q.data?.expense ?? 0)}
             </div>
           </div>
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="rounded-2xl border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
               Resultado
             </div>
@@ -89,7 +89,7 @@ function DREPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
-        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>

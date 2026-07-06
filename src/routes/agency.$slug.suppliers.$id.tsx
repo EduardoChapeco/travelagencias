@@ -244,7 +244,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       </div>
 
       {adding && (
-        <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
+        <div className="rounded-[24px] border border-border bg-surface p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Nome *">
               <Input
@@ -320,7 +320,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       )}
 
       {q.data?.length === 0 && !adding && (
-        <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+        <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
           Nenhum contato cadastrado. Adicione contatos de reservas, emergência ou financeiro.
         </div>
       )}
@@ -329,7 +329,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
         {q.data?.map((c: any) => (
           <div
             key={c.id}
-            className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4"
+            className="flex items-start gap-3 rounded-[24px] border border-border bg-surface p-4"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-alt border border-border">
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -478,7 +478,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       </div>
 
       {adding && (
-        <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
+        <div className="rounded-[24px] border border-border bg-surface p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Nome do Produto *">
               <Input
@@ -570,7 +570,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
       )}
 
       {q.data?.length === 0 && !adding && (
-        <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+        <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
           Nenhum produto cadastrado. Adicione hotéis, tours, transfers e ingressos.
         </div>
       )}
@@ -581,7 +581,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
           return (
             <div
               key={p.id}
-              className="flex items-start gap-3 rounded-xl border border-border bg-white p-4 hover:bg-surface transition-colors"
+              className="flex items-start gap-3 rounded-[24px] border border-border bg-white p-4 hover:bg-surface transition-colors"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -765,16 +765,16 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
       </div>
 
       {q.data?.length === 0 && (
-        <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+        <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
           Nenhum arquivo. Envie tarifários, contratos, políticas e use IA para extrair dados.
         </div>
       )}
 
       <div className="space-y-2">
         {q.data?.map((f: any) => (
-          <div key={f.id} className="rounded-xl border border-border bg-white p-4 space-y-3">
+          <div key={f.id} className="rounded-[24px] border border-border bg-white p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface">
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
@@ -824,7 +824,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
               </div>
             </div>
             {f.ocr_data && !f.ocr_reviewed && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs">
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs">
                 <div className="flex items-center gap-1.5 font-semibold text-amber-700 mb-2">
                   <AlertCircle className="h-3.5 w-3.5" /> Dados Extraídos por IA — Aguardando
                   revisão
@@ -957,7 +957,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
       </div>
 
       {adding && (
-        <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
+        <div className="rounded-[24px] border border-border bg-surface p-4 space-y-3">
           <Field label="Nota">
             <StarRatingInput
               value={form.rating}
@@ -1000,7 +1000,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
       )}
 
       {q.data?.length === 0 && !adding && (
-        <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+        <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
           Nenhuma avaliação registrada. Avalie este parceiro após viagens para construir
           inteligência interna.
         </div>
@@ -1008,7 +1008,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
 
       <div className="space-y-3">
         {q.data?.map((r) => (
-          <div key={r.id} className="rounded-xl border border-border bg-white p-4">
+          <div key={r.id} className="rounded-[24px] border border-border bg-white p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-0.5">
@@ -1027,7 +1027,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
                   {r.tags?.map((t: string) => (
                     <span
                       key={t}
-                      className="rounded-sm border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                      className="rounded-full border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground"
                     >
                       {t}
                     </span>
@@ -1141,7 +1141,7 @@ function SupplierDetailsPage() {
           </Link>
 
           {/* Header com logo / cover */}
-          <div className="rounded-xl border border-border overflow-hidden mb-6">
+          <div className="rounded-[24px] border border-border overflow-hidden mb-6">
             {supplier.cover_url ? (
               <div
                 className="h-28 bg-cover bg-center"
@@ -1160,7 +1160,7 @@ function SupplierDetailsPage() {
                   <img
                     src={supplier.logo_url}
                     alt={supplier.name}
-                    className="h-12 w-12 object-contain rounded-xl"
+                    className="h-12 w-12 object-contain rounded-[24px]"
                   />
                 ) : (
                   <Icon className={cn("h-8 w-8", cfg.color)} />
@@ -1209,7 +1209,7 @@ function SupplierDetailsPage() {
 
             {/* TAB: GERAL */}
             <TabsContent value="geral" className="space-y-4">
-              <div className="rounded-xl border border-border bg-white p-5">
+              <div className="rounded-[24px] border border-border bg-white p-5">
                 <h3 className="mb-4 text-sm font-semibold">Informações da Empresa</h3>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
@@ -1239,7 +1239,7 @@ function SupplierDetailsPage() {
               </div>
 
               {/* Links */}
-              <div className="rounded-xl border border-border bg-white p-5">
+              <div className="rounded-[24px] border border-border bg-white p-5">
                 <h3 className="mb-4 text-sm font-semibold">Links & Redes</h3>
                 <div className="flex flex-wrap gap-3">
                   {supplier.website && (
@@ -1247,7 +1247,7 @@ function SupplierDetailsPage() {
                       href={supplier.website}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                      className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-border rounded-2xl px-3 py-2 bg-surface"
                     >
                       <Globe className="h-3.5 w-3.5" /> Portal B2B
                     </a>
@@ -1257,7 +1257,7 @@ function SupplierDetailsPage() {
                       href={`https://instagram.com/${supplier.instagram.replace("@", "")}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-xs text-pink-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                      className="flex items-center gap-1.5 text-xs text-pink-600 hover:underline border border-border rounded-2xl px-3 py-2 bg-surface"
                     >
                       <Instagram className="h-3.5 w-3.5" /> Instagram
                     </a>
@@ -1267,7 +1267,7 @@ function SupplierDetailsPage() {
                       href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, "")}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-xs text-green-600 hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                      className="flex items-center gap-1.5 text-xs text-green-600 hover:underline border border-border rounded-2xl px-3 py-2 bg-surface"
                     >
                       <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                     </a>
@@ -1275,7 +1275,7 @@ function SupplierDetailsPage() {
                   {supplier.email && (
                     <a
                       href={`mailto:${supplier.email}`}
-                      className="flex items-center gap-1.5 text-xs text-foreground hover:underline border border-border rounded-lg px-3 py-2 bg-surface"
+                      className="flex items-center gap-1.5 text-xs text-foreground hover:underline border border-border rounded-2xl px-3 py-2 bg-surface"
                     >
                       <Mail className="h-3.5 w-3.5" /> {supplier.email}
                     </a>
@@ -1285,7 +1285,7 @@ function SupplierDetailsPage() {
 
               {/* Notas */}
               {supplier.notes && (
-                <div className="rounded-xl border border-border bg-white p-5">
+                <div className="rounded-[24px] border border-border bg-white p-5">
                   <h3 className="mb-2 text-sm font-semibold">
                     Observações & Política de Comissionamento
                   </h3>
@@ -1297,7 +1297,7 @@ function SupplierDetailsPage() {
 
               {/* Tags */}
               {supplier.tags && supplier.tags.length > 0 && (
-                <div className="rounded-xl border border-border bg-white p-5">
+                <div className="rounded-[24px] border border-border bg-white p-5">
                   <h3 className="mb-3 text-sm font-semibold flex items-center gap-1.5">
                     <Tag className="h-3.5 w-3.5" /> Tags
                   </h3>
@@ -1305,7 +1305,7 @@ function SupplierDetailsPage() {
                     {supplier.tags.map((t: string) => (
                       <span
                         key={t}
-                        className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground"
+                        className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted-foreground"
                       >
                         {t}
                       </span>
@@ -1383,7 +1383,7 @@ function SupplierDetailsPage() {
                 href={`tel:${supplier.phone}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-2xl border border-border bg-white">
                   <PhoneCall className="h-3.5 w-3.5" />
                 </div>
                 {supplier.phone}
@@ -1396,7 +1396,7 @@ function SupplierDetailsPage() {
                 rel="noreferrer"
                 className="flex items-center gap-2.5 text-sm text-green-700 hover:underline"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-2xl border border-border bg-white">
                   <MessageCircle className="h-3.5 w-3.5 text-green-600" />
                 </div>
                 WhatsApp
@@ -1407,7 +1407,7 @@ function SupplierDetailsPage() {
                 href={`mailto:${supplier.email}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors truncate"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-border bg-white shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-2xl border border-border bg-white shrink-0">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 <span className="truncate">{supplier.email}</span>
@@ -1423,17 +1423,17 @@ function SupplierDetailsPage() {
               Métricas do Parceiro
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-xl border border-border bg-surface-alt">
+              <div className="p-3 rounded-[24px] border border-border bg-surface-alt">
                 <div className="text-[10px] text-muted-foreground uppercase font-bold">Vendas</div>
                 <div className="text-lg font-bold text-foreground mt-0.5">{stats.usageCount}</div>
               </div>
-              <div className="p-3 rounded-xl border border-border bg-surface-alt">
+              <div className="p-3 rounded-[24px] border border-border bg-surface-alt">
                 <div className="text-[10px] text-muted-foreground uppercase font-bold">Produtos</div>
                 <div className="text-lg font-bold text-foreground mt-0.5">{stats.productsCount}</div>
               </div>
             </div>
             
-            <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-surface-alt">
+            <div className="flex items-center justify-between p-3 rounded-[24px] border border-border bg-surface-alt">
               <div className="text-[10px] text-muted-foreground uppercase font-bold">Avaliação Média</div>
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />

@@ -91,14 +91,14 @@ function Page() {
         <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" /> Nova Agência
         </button>
       </div>
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Agências</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -132,7 +132,7 @@ function Page() {
                     </label>
                     <input
                       {...register("name")}
-                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
                       placeholder="Ex: Viagens Inc."
                     />
                     {errors.name && (
@@ -145,7 +145,7 @@ function Page() {
                     </label>
                     <input
                       {...register("slug")}
-                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
                       placeholder="Ex: viagens-inc"
                     />
                     {errors.slug && (
@@ -159,7 +159,7 @@ function Page() {
                     <input
                       type="email"
                       {...register("email")}
-                      className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
                       placeholder="dono@agencia.com"
                     />
                     {errors.email && (
@@ -173,7 +173,7 @@ function Page() {
                       </label>
                       <input
                         {...register("cnpj")}
-                        className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
                       />
                     </div>
                     <div>
@@ -182,21 +182,21 @@ function Page() {
                       </label>
                       <input
                         {...register("phone")}
-                        className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
                       />
                     </div>
                   </div>
                   <button
                     disabled={loading}
                     type="submit"
-                    className="mt-2 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                    className="mt-2 w-full rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
                   >
                     {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
                   </button>
                 </form>
               ) : (
                 <div className="mt-4 flex flex-col gap-4">
-                  <div className="rounded-md border border-success/20 bg-success/10 p-4 text-sm text-success">
+                  <div className="rounded-full border border-success/20 bg-success/10 p-4 text-sm text-success">
                     Agência provisionada no banco de dados! Envie o link abaixo para o proprietário
                     definir a senha e acessar a plataforma.
                   </div>
@@ -208,11 +208,11 @@ function Page() {
                       <input
                         readOnly
                         value={inviteUrl}
-                        className="flex-1 rounded-md border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
+                        className="flex-1 rounded-full border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
                       />
                       <button
                         onClick={handleCopy}
-                        className="rounded-md border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
+                        className="rounded-full border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
                       >
                         Copiar
                       </button>
@@ -224,7 +224,7 @@ function Page() {
                       setOpen(false);
                       setInviteUrl(null);
                     }}
-                    className="mt-4 w-full rounded-md border border-border px-4 py-2 text-sm hover:bg-surface-alt"
+                    className="mt-4 w-full rounded-full border border-border px-4 py-2 text-sm hover:bg-surface-alt"
                   >
                     Fechar
                   </button>
@@ -236,13 +236,13 @@ function Page() {
       )}
       {q.isLoading && (
         <div className="mt-6 flex flex-col gap-2">
-          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
-          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-full bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-full bg-primary/10"></div>
         </div>
       )}
       {q.data && q.data.length === 0 && <EmptyState title="Sem agências" />}
       {q.data && q.data.length > 0 && (
-        <div className="mt-6 overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground">
               <tr>

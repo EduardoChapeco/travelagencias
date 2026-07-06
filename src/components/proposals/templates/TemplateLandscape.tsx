@@ -155,7 +155,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                     >
                       <div className="flex items-center gap-3">
                         <span
-                          className="px-3 py-1 rounded-md text-xs font-black uppercase text-white shrink-0"
+                          className="px-3 py-1 rounded-full text-xs font-black uppercase text-white shrink-0"
                           style={{ backgroundColor: brand !== "#18181b" ? brand : "#38bdf8" }}
                         >
                           Dia {d.day || absoluteDayNumber}
@@ -236,7 +236,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                           </div>
                         </div>
                       </div>
-                      <div className="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60 text-center text-xs font-bold text-amber-400 self-start mt-2">
+                      <div className="bg-slate-800/80 px-3 py-1.5 rounded-2xl border border-slate-700/60 text-center text-xs font-bold text-amber-400 self-start mt-2">
                         Regime: {h.meal_plan || "Café da Manhã"}
                       </div>
                     </div>

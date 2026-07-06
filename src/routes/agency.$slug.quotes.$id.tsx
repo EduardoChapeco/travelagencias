@@ -863,7 +863,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
           {/* Banner: GDS não configurado */}
           {apiNotConfigured && (
-            <div className="mb-4 p-3 bg-warning/5 border border-warning/30 rounded-lg">
+            <div className="mb-4 p-3 bg-warning/5 border border-warning/30 rounded-2xl">
               <div className="flex items-start gap-2.5">
                 <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                 <div>
@@ -897,7 +897,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           <div className="border-b border-border bg-surface-alt/20 px-6 py-2 shrink-0 flex items-center gap-4">
             <button
               onClick={() => setRightTab("matrix")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
                 rightTab === "matrix"
                   ? "bg-brand text-brand-foreground border-brand shadow-sm"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-alt"
@@ -907,7 +907,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             </button>
             <button
               onClick={() => setRightTab("simulation")}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all flex items-center gap-1.5 ${
                 rightTab === "simulation"
                   ? "bg-brand text-brand-foreground border-brand shadow-sm"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-alt"
@@ -921,7 +921,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           {rightTab === "matrix" ? (
             <div className="flex-1 overflow-x-auto overflow-y-hidden bg-surface flex py-6 px-6 gap-6">
               {isCandidatesError ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-lg">
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-2xl">
                   <AlertTriangle className="h-8 w-8 text-red-655 mb-2" />
                   <h3 className="text-sm font-semibold text-red-800">Falha ao carregar pacotes qualificados</h3>
                   <p className="text-xs text-red-600 mt-1 max-w-sm">
@@ -1143,7 +1143,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           ) : (
             <div className="flex-1 flex flex-col overflow-y-auto bg-surface-alt/10 p-6 gap-6">
               {/* Header inside Tab */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border rounded-xl p-5 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-5 shadow-xs">
                 <div>
                   <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                     <Sparkles className="h-4 w-4 text-brand" />
@@ -1176,7 +1176,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               </div>
 
               {isSimsError ? (
-                <div className="flex-1 border border-dashed border-red-200 rounded-xl flex flex-col items-center justify-center text-center p-8 bg-red-50/20">
+                <div className="flex-1 border border-dashed border-red-200 rounded-[24px] flex flex-col items-center justify-center text-center p-8 bg-red-50/20">
                   <AlertTriangle className="h-10 w-10 text-red-650 mb-2" />
                   <h4 className="text-sm font-semibold text-red-800">
                     Falha ao carregar simulação
@@ -1186,7 +1186,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </p>
                 </div>
               ) : simulationRuns.length === 0 ? (
-                <div className="flex-1 border border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center p-8 bg-surface">
+                <div className="flex-1 border border-dashed border-border rounded-[24px] flex flex-col items-center justify-center text-center p-8 bg-surface">
                   <Sparkles className="h-10 w-10 text-muted-foreground/30 mb-2 animate-pulse" />
                   <h4 className="text-sm font-semibold text-foreground">
                     Nenhuma Simulação Registrada
@@ -1199,7 +1199,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                   {/* Heatmap Matrix Table */}
-                  <div className="xl:col-span-2 bg-surface border border-border rounded-xl p-5 shadow-xs flex flex-col">
+                  <div className="xl:col-span-2 bg-surface border border-border rounded-[24px] p-5 shadow-xs flex flex-col">
                     <div className="flex items-center justify-between mb-4 border-b border-border/80 pb-3">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                         Matriz de Calor (Heatmap)
@@ -1296,7 +1296,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </div>
 
                   {/* Detail Panel */}
-                  <div className="bg-surface border border-border rounded-xl p-5 shadow-xs">
+                  <div className="bg-surface border border-border rounded-[24px] p-5 shadow-xs">
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 border-b border-border pb-3">
                       Detalhes da Persona
                     </h4>
@@ -1413,7 +1413,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               </div>
 
               <div className="space-y-6">
-                <div className="bg-surface-alt/40 border border-border/50 rounded-xl p-4 space-y-4">
+                <div className="bg-surface-alt/40 border border-border/50 rounded-[24px] p-4 space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                     Pesos de Scoring (Soma deve ser 100%)
                   </h3>
@@ -1479,7 +1479,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </div>
                 </div>
 
-                <div className="bg-surface-alt/40 border border-border/50 rounded-xl p-4 space-y-3">
+                <div className="bg-surface-alt/40 border border-border/50 rounded-[24px] p-4 space-y-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                     Restrições Logísticas Ativas
                   </h3>

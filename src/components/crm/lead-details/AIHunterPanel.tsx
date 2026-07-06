@@ -268,7 +268,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         <button
           onClick={triggerAnalysis}
           disabled={analyzing}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand bg-brand/5 rounded-lg hover:bg-brand/10 transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand bg-brand/5 rounded-2xl hover:bg-brand/10 transition-colors disabled:opacity-50"
         >
           <Bot className="h-3.5 w-3.5" />
           {analyzing ? "Analisando..." : "Analisar Agora"}
@@ -276,7 +276,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       </div>
 
       {/* Bloco de Criação de Cotação por IA */}
-      <div className="rounded-xl border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
+      <div className="rounded-[24px] border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
             <Sparkles className="h-4 w-4" /> Sugestão de Proposta
@@ -300,7 +300,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
           <button
             onClick={generateAIProposal}
             disabled={generatingProposal}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
           >
             <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? "animate-spin" : ""}`} />
             {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta automaticamente"}
@@ -310,7 +310,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             <>
               <button
                 onClick={editProposal}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
+                className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
               >
                 <Pencil className="h-3.5 w-3.5" /> Editar no Studio
               </button>
@@ -318,7 +318,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
               <button
                 onClick={sendProposalToWhatsApp}
                 disabled={sendingWa}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 px-3 text-xs font-bold transition-all disabled:opacity-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 px-3 text-xs font-bold transition-all disabled:opacity-50"
               >
                 <Send className="h-3.5 w-3.5" />
                 {sendingWa ? "Enviando..." : "Enviar por WhatsApp"}
@@ -326,7 +326,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
 
               <button
                 onClick={copyProposalLink}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
+                className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
               >
                 <FileText className="h-3.5 w-3.5" /> Copiar Link
               </button>
@@ -335,7 +335,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
                 href={`${window.location.origin}/m/proposal/${createdProposal.publicToken}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
+                className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
               >
                 <ExternalLink className="h-3.5 w-3.5" /> Visualizar
               </a>
@@ -345,7 +345,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       </div>
 
       {!insights ? (
-        <div className="rounded-xl border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
+        <div className="rounded-[24px] border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
           <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
           <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
           <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
@@ -356,7 +356,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       ) : (
         <div className="space-y-4">
           {insights.general_profile && (
-            <div className="rounded-xl border border-brand/20 bg-brand/5 p-5 space-y-2">
+            <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-5 space-y-2">
               <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
                 <Bot className="h-4 w-4" /> Perfil Comportamental
               </div>
@@ -400,7 +400,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             ].map(({ title, items, icon, cls, color }) => (
               <div
                 key={title}
-                className="rounded-xl border border-border/80 bg-surface p-5 space-y-3"
+                className="rounded-[24px] border border-border/80 bg-surface p-5 space-y-3"
               >
                 <div
                   className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}
@@ -419,7 +419,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
           </div>
 
           {insights.next_best_action && (
-            <div className="rounded-xl border border-success/30 bg-success/5 p-5 space-y-2">
+            <div className="rounded-[24px] border border-success/30 bg-success/5 p-5 space-y-2">
               <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
                 <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
               </div>

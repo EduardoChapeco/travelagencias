@@ -261,7 +261,7 @@ function TripLayout() {
 
   if (tripQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[24px] border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -328,7 +328,7 @@ function TripLayout() {
           <div className="flex items-center gap-2">
             {/* Controle de Conexão GDS */}
             {linkQ.data ? (
-              <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 h-8 rounded-md text-xs font-semibold text-emerald-600">
+              <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 h-8 rounded-full text-xs font-semibold text-emerald-600">
                 <Wifi className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                 <span>Localizador: {linkQ.data.external_id}</span>
                 <button
@@ -347,7 +347,7 @@ function TripLayout() {
                     onClick={() => setShowEmitModal(true)}
                     disabled={bookingBusy || syncBusy}
                     title="Emitir viagem na operadora parceira"
-                    className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-brand bg-brand/5 px-2 sm:px-3 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-brand bg-brand/5 px-2 sm:px-3 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {bookingBusy ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -361,7 +361,7 @@ function TripLayout() {
                     onClick={() => setShowImportModal(true)}
                     disabled={bookingBusy || syncBusy}
                     title="Vincular viagem a um localizador de reserva existente"
-                    className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>Vincular Localizador</span>
@@ -374,7 +374,7 @@ function TripLayout() {
             <button
               onClick={() => window.open(`/client/trips/${id}`, "_blank")}
               title="Ver como cliente"
-              className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+              className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
             >
               <Eye className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Ver como Cliente</span>
@@ -384,7 +384,7 @@ function TripLayout() {
             <button
               onClick={handleSendToClient}
               title="Enviar link da viagem ao cliente via WhatsApp"
-              className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/5 px-2 sm:px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 transition-colors cursor-pointer"
+              className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-2 sm:px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 transition-colors cursor-pointer"
             >
               <Send className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Enviar ao Cliente</span>
@@ -393,7 +393,7 @@ function TripLayout() {
             {/* Menu de ações */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
+                <button className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -477,7 +477,7 @@ function TripLayout() {
         {t.status !== "cancelled" && daysToTrip !== null && (
           <div
             className={cn(
-              "flex items-center gap-3 rounded-xl border px-4 py-2.5 text-xs",
+              "flex items-center gap-3 rounded-[24px] border px-4 py-2.5 text-xs",
               isToday
                 ? "border-warning/30 bg-warning/5 text-warning-foreground"
                 : isFuture
@@ -518,12 +518,12 @@ function TripLayout() {
 
         {/* Tabs */}
         <div className="border-b border-border bg-[var(--surface)] px-4 py-2 shrink-0 overflow-x-auto no-scrollbar">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 inline-flex flex-nowrap gap-0">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 inline-flex flex-nowrap gap-0">
             <Link
               to="/agency/$slug/trips/$id"
               params={{ slug, id }}
               activeOptions={{ exact: true }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <ReceiptText className="h-3.5 w-3.5" />
               Visão Geral
@@ -531,7 +531,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/passengers"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Users className="h-3.5 w-3.5" />
               Passageiros ({paxQ.data?.length ?? 0})
@@ -539,7 +539,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/financial"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <span className="text-[11px] font-extrabold">R$</span>
               Financeiro
@@ -547,7 +547,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/flights"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Plane className="h-3.5 w-3.5" />
               Aéreos
@@ -555,7 +555,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/reaccommodation"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Clock className="h-3.5 w-3.5 text-rose-500" />
               Reacomodação
@@ -563,7 +563,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/lodging"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Hotel className="h-3.5 w-3.5" />
               Hospedagem
@@ -571,7 +571,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/contract"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <FileSignature className="h-3.5 w-3.5" />
               Contrato
@@ -579,7 +579,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/confirmation"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
               Confirmação
@@ -587,7 +587,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/vouchers"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Ticket className="h-3.5 w-3.5" />
               Voucher
@@ -595,7 +595,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/boarding"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Navigation className="h-3.5 w-3.5" />
               Check-in & Embarque
@@ -603,7 +603,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/destination"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <MapPin className="h-3.5 w-3.5" />
               Destino & Segurança
@@ -611,7 +611,7 @@ function TripLayout() {
             <Link
               to="/agency/$slug/trips/$id/history"
               params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-md transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
+              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
             >
               <Clock className="h-3.5 w-3.5" />
               Histórico
@@ -649,7 +649,7 @@ function TripLayout() {
                 placeholder="Ex: 849372"
                 value={importBookingId}
                 onChange={(e) => setImportBookingId(e.target.value)}
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
+                className="h-10 w-full rounded-[24px] border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
               />
             </div>
 
@@ -660,7 +660,7 @@ function TripLayout() {
                   setShowImportModal(false);
                   setImportBookingId("");
                 }}
-                className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
                 Cancelar
               </button>
@@ -668,7 +668,7 @@ function TripLayout() {
                 type="button"
                 disabled={!importBookingId.trim() || importGdsMut.isPending}
                 onClick={() => importGdsMut.mutate(importBookingId)}
-                className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {importGdsMut.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -699,7 +699,7 @@ function TripLayout() {
                   </p>
                 </div>
 
-                <div className="max-h-40 overflow-y-auto border border-border rounded-xl p-3 bg-surface-alt space-y-2">
+                <div className="max-h-40 overflow-y-auto border border-border rounded-[24px] p-3 bg-surface-alt space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
                     Passageiros Vinculados
                   </span>
@@ -726,7 +726,7 @@ function TripLayout() {
                   )}
                 </div>
 
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-xs text-amber-700 leading-relaxed">
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[24px] p-3 text-xs text-amber-700 leading-relaxed">
                   <strong>Aviso de Tarifas:</strong> Esta etapa fará a verificação em tempo real da
                   disponibilidade e tarifas vigentes junto à operadora parceira.
                 </div>
@@ -738,7 +738,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -746,7 +746,7 @@ function TripLayout() {
                     type="button"
                     disabled={!paxQ.data || paxQ.data.length === 0}
                     onClick={() => setEmitStep(2)}
-                    className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     Validar e Avançar
                   </button>
@@ -765,7 +765,7 @@ function TripLayout() {
                   </p>
                 </div>
 
-                <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 text-xs text-rose-700 leading-relaxed font-medium">
+                <div className="bg-rose-500/10 border border-rose-500/20 rounded-[24px] p-3 text-xs text-rose-700 leading-relaxed font-medium">
                   ⚠️ <strong>Atenção:</strong> A emissão gera cobranças reais e passará a constar no
                   faturamento junto à operadora parceira. Esta ação é definitiva e não poderá ser
                   desfeita pelo painel.
@@ -775,7 +775,7 @@ function TripLayout() {
                   <button
                     type="button"
                     onClick={() => setEmitStep(1)}
-                    className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Voltar
                   </button>
@@ -787,7 +787,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-10 rounded-[24px] bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {bookGdsMut.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

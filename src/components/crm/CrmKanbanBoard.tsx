@@ -160,7 +160,7 @@ function Column({
             />
           ))}
           {leads.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-lg border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
+            <div className="flex h-24 items-center justify-center rounded-2xl border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
               Solte leads aqui
             </div>
           )}
@@ -183,7 +183,7 @@ function MobileStageAccordion({
   const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
 
   return (
-    <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-none">
+    <div className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-none">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 bg-surface-alt/10 text-left border-b border-border/40 focus:outline-none"
@@ -226,7 +226,7 @@ function MobileStageAccordion({
             />
           ))}
           {leads.length === 0 && (
-            <div className="py-6 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground border border-dashed border-border/40 rounded-lg">
+            <div className="py-6 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground border border-dashed border-border/40 rounded-2xl">
               Sem leads neste estágio
             </div>
           )}

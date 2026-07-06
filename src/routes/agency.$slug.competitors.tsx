@@ -121,7 +121,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
       <form
         onSubmit={handleAnalyze}
-        className="relative flex items-center rounded-xl bg-surface border border-border p-2"
+        className="relative flex items-center rounded-[24px] bg-surface border border-border p-2"
       >
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
         <input
@@ -132,7 +132,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           type="url"
           required
         />
-        <PrimaryButton type="submit" disabled={loading} className="gap-2 shrink-0 rounded-lg px-6">
+        <PrimaryButton type="submit" disabled={loading} className="gap-2 shrink-0 rounded-2xl px-6">
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Radar className="w-4 h-4" />}
           {loading ? "Espiando..." : "Analisar Concorrente"}
         </PrimaryButton>

@@ -478,14 +478,14 @@ export function AppSidebar({
           contextTitle={contextTitle}
           aiActions={aiActions}
           brand={
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground font-sans">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-brand-foreground font-sans">
               {(agency?.name ?? "T").charAt(0).toUpperCase()}
             </div>
           }
           footer={
             <button
               onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               title="Sair da conta"
             >
               <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />

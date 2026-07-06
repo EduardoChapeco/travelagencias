@@ -131,7 +131,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Políticas</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -142,7 +142,7 @@ function Page() {
 
       {q.isLoading && (
         <div className="mt-6 flex flex-col gap-2">
-          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-full bg-primary/10"></div>
         </div>
       )}
 
@@ -155,7 +155,7 @@ function Page() {
                 key={doc.kind}
                 onClick={() => setActiveKind(doc.kind)}
                 className={
-                  "flex w-full items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors " +
+                  "flex w-full items-center gap-2.5 rounded-2xl border px-3 py-2.5 text-left text-sm transition-colors " +
                   (activeKind === doc.kind
                     ? "border-brand/30 bg-brand/5 text-brand font-semibold"
                     : "border-transparent hover:bg-surface-alt text-foreground")
@@ -179,7 +179,7 @@ function Page() {
             <div className="text-[10px] text-muted-foreground px-3 font-semibold uppercase tracking-wide mb-2">
               Atencao LGPD
             </div>
-            <div className="rounded-lg bg-warning-bg border border-warning/20 p-3 text-xs text-warning">
+            <div className="rounded-2xl bg-warning-bg border border-warning/20 p-3 text-xs text-warning">
               Publique todos os documentos antes de producao com usuarios reais.
             </div>
           </div>
@@ -212,7 +212,7 @@ function Page() {
                 <button
                   type="button"
                   onClick={() => setPreviewMode((v) => !v)}
-                  className="flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt"
+                  className="flex h-8 items-center gap-1.5 rounded-full border border-border px-2.5 text-xs hover:bg-surface-alt"
                 >
                   {previewMode ? (
                     <EyeOff className="h-3.5 w-3.5" />
@@ -251,7 +251,7 @@ function Page() {
             </div>
 
             {previewMode ? (
-              <div className="rounded-lg border border-border bg-surface p-6 prose prose-sm max-w-none prose-headings:font-bold prose-a:text-brand hover:prose-a:underline">
+              <div className="rounded-2xl border border-border bg-surface p-6 prose prose-sm max-w-none prose-headings:font-bold prose-a:text-brand hover:prose-a:underline">
                 <div
                   className="text-sm leading-relaxed"
                   style={{ fontFamily: "system-ui, sans-serif" }}
@@ -259,7 +259,7 @@ function Page() {
                 />
               </div>
             ) : (
-              <div className="rounded-lg border border-border bg-surface overflow-hidden">
+              <div className="rounded-2xl border border-border bg-surface overflow-hidden">
                 <div className="border-b border-border px-4 py-2 flex items-center justify-between bg-surface-alt/40">
                   <span className="text-xs font-semibold">{activeDoc.title}</span>
                 </div>
@@ -270,7 +270,7 @@ function Page() {
               </div>
             )}
 
-            <div className="rounded-lg border border-border bg-surface-alt/40 p-3 text-xs">
+            <div className="rounded-2xl border border-border bg-surface-alt/40 p-3 text-xs">
               <span className="font-semibold">URL publica quando publicado: </span>
               <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-muted-foreground">
                 {window.location.origin}/{activeDoc.slug}

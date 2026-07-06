@@ -121,7 +121,7 @@ export function NewCard({
             placeholder="Passaporte do João vence em 30 dias\nVisto pendente para EUA"
           />
         </Field>
-        <div className="rounded-lg border border-border bg-surface-alt/40 p-3">
+        <div className="rounded-2xl border border-border bg-surface-alt/40 p-3">
           <div className="mb-1.5 text-[11px] font-semibold text-muted-foreground">
             {passengersList.length > 0
               ? `Checklist gerado de ${passengersList.length} passageiros reais:`

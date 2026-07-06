@@ -151,7 +151,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
 
             {/* BOTÃO FALSO PARA MOSTRAR QUE É UM CATALOGO */}
             <div
-              className="w-full py-4 rounded-xl text-center text-white font-black uppercase tracking-widest text-lg border-b-4 opacity-90"
+              className="w-full py-4 rounded-[24px] text-center text-white font-black uppercase tracking-widest text-lg border-b-4 opacity-90"
               style={{ backgroundColor: brand, borderBottomColor: "rgba(0,0,0,0.2)" }}
             >
               Garantir Vaga

@@ -123,7 +123,7 @@ function Page() {
             type="submit"
             form="settings-form"
             disabled={isSubmitting}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Save className="h-3.5 w-3.5" />
             {isSubmitting ? "Salvando..." : "Salvar configurações"}
@@ -134,9 +134,9 @@ function Page() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
-          <div className="flex items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4">
+          <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface px-5 py-4">
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl font-bold text-white"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[24px] text-2xl font-bold text-white"
               style={{ background: agency.brand_color || "#334155" }}
             >
               {agency.name.charAt(0).toUpperCase()}
@@ -155,7 +155,7 @@ function Page() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} id="settings-form" className="space-y-6">
             {/* Identificação */}
-            <section className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Building2 className="h-4 w-4 text-brand" /> Identificação
               </div>
@@ -191,7 +191,7 @@ function Page() {
             </section>
 
             {/* Dados Legais */}
-            <section className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Shield className="h-4 w-4 text-brand" /> Dados Legais
               </div>
@@ -206,7 +206,7 @@ function Page() {
             </section>
 
             {/* Contato */}
-            <section className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Mail className="h-4 w-4 text-brand" /> Contato Oficial
               </div>
@@ -222,7 +222,7 @@ function Page() {
 
             {/* Aviso sobre slug */}
             {watch("slug") !== q.data?.agency?.slug && (
-              <div className="flex items-start gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-xs text-yellow-700 dark:text-yellow-400">
+              <div className="flex items-start gap-2 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-xs text-yellow-700 dark:text-yellow-400">
                 <Link2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <span>
                   Atenção: alterar o endereço web mudará o link de acesso da agência de{" "}

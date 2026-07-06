@@ -25,7 +25,7 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
     return (
       <div className="space-y-3">
         <h3 className="font-bold text-lg">Loja de Viagens</h3>
-        <div className="w-full h-40 bg-surface border border-border rounded-xl animate-pulse"></div>
+        <div className="w-full h-40 bg-surface border border-border rounded-[24px] animate-pulse"></div>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {tours.map((tour) => (
-          <div key={tour.id} className="w-full bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col hover:border-primary/50 transition-colors">
+          <div key={tour.id} className="w-full bg-surface border border-border rounded-[24px] shadow-sm overflow-hidden flex flex-col hover:border-primary/50 transition-colors">
             <div className="flex-1 min-h-[140px] bg-accent relative">
               {tour.cover_image_url ? (
                 <img src={tour.cover_image_url} alt={tour.title} className="w-full h-full object-cover" />
@@ -69,7 +69,7 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
               </p>
               
               <button 
-                className="w-full mt-3 h-8 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition-colors text-white hover:opacity-90"
+                className="w-full mt-3 h-8 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-colors text-white hover:opacity-90"
                 style={{ backgroundColor: themeColor }}
               >
                 <ShoppingCart className="h-3 w-3" /> Comprar Agora

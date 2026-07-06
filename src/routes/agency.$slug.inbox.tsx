@@ -719,7 +719,7 @@ function InboxModule() {
   return (
     <div className="flex h-full w-full overflow-hidden bg-background">
       {(isErrorChannels || isErrorConversations) && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[24px] border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
           <div>
             <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
@@ -773,7 +773,7 @@ function InboxModule() {
                       <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
                     </div>
                   ) : channels.length === 0 ? (
-                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-lg text-center bg-surface-alt/20">
+                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-2xl text-center bg-surface-alt/20">
                       Nenhum canal ou conta conectada ainda.
                     </p>
                   ) : (
@@ -781,7 +781,7 @@ function InboxModule() {
                       {channels.map((c: any) => {
                         const Icon = CHANNEL_ICONS[c.type] ?? MessageSquare;
                         return (
-                          <div key={c.id} className="flex items-center justify-between p-2.5 border border-border rounded-xl bg-surface-alt/40">
+                          <div key={c.id} className="flex items-center justify-between p-2.5 border border-border rounded-[24px] bg-surface-alt/40">
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface border border-border">
                                 <Icon className={cn("w-3.5 h-3.5", CHANNEL_COLORS[c.type])} />
@@ -807,7 +807,7 @@ function InboxModule() {
                       
                       <button 
                         onClick={() => setConnectType("gmail")}
-                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Mail className="w-4 h-4 text-blue-500 shrink-0" />
                         <div>
@@ -818,7 +818,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("whatsapp")}
-                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Phone className="w-4 h-4 text-green-500 shrink-0" />
                         <div>
@@ -829,7 +829,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("instagram")}
-                        className="flex items-center gap-3 w-full text-left rounded-xl border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
                         <div>
@@ -854,12 +854,12 @@ function InboxModule() {
 
                       {connectType === "gmail" && (
                         <div className="space-y-4">
-                          <div className="flex gap-2 p-1 bg-surface-alt rounded-lg border border-border">
+                          <div className="flex gap-2 p-1 bg-surface-alt rounded-2xl border border-border">
                             <button
                               type="button"
                               onClick={() => setGmailSubTab("oauth")}
                               className={cn(
-                                "flex-1 text-center py-1 text-[11px] font-bold rounded-md transition-all cursor-pointer",
+                                "flex-1 text-center py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "oauth"
                                   ? "bg-brand text-white shadow-xs"
                                   : "text-muted-foreground hover:text-foreground"
@@ -871,7 +871,7 @@ function InboxModule() {
                               type="button"
                               onClick={() => setGmailSubTab("smtp")}
                               className={cn(
-                                "flex-1 text-center py-1 text-[11px] font-bold rounded-md transition-all cursor-pointer",
+                                "flex-1 text-center py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "smtp"
                                   ? "bg-brand text-white shadow-xs"
                                   : "text-muted-foreground hover:text-foreground"
@@ -912,7 +912,7 @@ function InboxModule() {
                                     setSubmittingConfig(false);
                                   }
                                 }}
-                                className="w-full h-9 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                                className="w-full h-9 rounded-[24px] bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
                               >
                                 {submittingConfig ? (
                                   <>
@@ -1344,7 +1344,7 @@ function InboxModule() {
           {isLoadingConversations && (
             <div className="space-y-2 p-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 rounded-lg bg-surface-alt/50 animate-pulse" />
+                <div key={i} className="h-16 rounded-2xl bg-surface-alt/50 animate-pulse" />
               ))}
             </div>
           )}
@@ -1430,7 +1430,7 @@ function InboxModule() {
             <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-surface shrink-0">
               <button
                 onClick={() => setSelectedId(null)}
-                className="md:hidden flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="md:hidden flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 title="Voltar para a lista"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -1469,7 +1469,7 @@ function InboxModule() {
                 <button
                   onClick={generateAiSuggestion}
                   disabled={generatingAi}
-                  className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-semibold text-brand bg-surface hover:bg-surface-alt transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1.5 text-xs font-semibold text-brand bg-surface hover:bg-surface-alt transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className={cn("h-3.5 w-3.5", generatingAi && "animate-pulse")} />
                   <span>{generatingAi ? "Sugerindo..." : "IA Resposta"}</span>
@@ -1478,7 +1478,7 @@ function InboxModule() {
                 <button
                   onClick={() => setShowDetails(!showDetails)}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-md border border-border transition-colors hover:bg-surface-alt cursor-pointer",
+                    "flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors hover:bg-surface-alt cursor-pointer",
                     showDetails ? "bg-surface-alt text-brand" : "text-muted-foreground bg-surface"
                   )}
                   title="Ocultar/Mostrar painel do contato"
@@ -1490,7 +1490,7 @@ function InboxModule() {
 
             {/* AI Suggestion Banner */}
             {aiSuggestion && (
-              <div className="mx-4 mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3 shrink-0">
+              <div className="mx-4 mt-3 rounded-2xl border border-brand/20 bg-brand/5 p-3 shrink-0">
                 <div className="flex items-start gap-2">
                   <Sparkles className="h-4 w-4 text-brand mt-0.5 shrink-0" />
                   <div className="flex-1">
@@ -1538,7 +1538,7 @@ function InboxModule() {
                         {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
                           <audio src={m.media_url} controls className="max-w-full h-10" />
                         ) : (
-                          <img src={m.media_url} alt="Media" className="rounded-lg max-w-full object-contain max-h-48" />
+                          <img src={m.media_url} alt="Media" className="rounded-2xl max-w-full object-contain max-h-48" />
                         )}
                       </div>
                     )}
@@ -1566,7 +1566,7 @@ function InboxModule() {
               <div className="flex items-end gap-2">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] border border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
@@ -1576,7 +1576,7 @@ function InboxModule() {
                 <button
                   onClick={recording ? stopRecording : startRecording}
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-all cursor-pointer",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] border transition-all cursor-pointer",
                     recording
                       ? "bg-red-500 border-red-500 text-white animate-pulse"
                       : "border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground"
@@ -1598,7 +1598,7 @@ function InboxModule() {
                   placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem…"}
                   rows={2}
                   disabled={recording}
-                  className="flex-1 resize-none rounded-xl border border-border bg-surface-alt px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
+                  className="flex-1 resize-none rounded-[24px] border border-border bg-surface-alt px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
                 />
                 
                 <button
@@ -1606,7 +1606,7 @@ function InboxModule() {
                     if (reply.trim()) sendReplyMutation.mutate(reply);
                   }}
                   disabled={sendingReply || !reply.trim() || recording}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-foreground hover:bg-brand/90 disabled:opacity-50 transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] bg-brand text-brand-foreground hover:bg-brand/90 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   <Send className="h-4 w-4" />
                 </button>
@@ -1704,7 +1704,7 @@ function InboxModule() {
                 </div>
 
                 {/* CRM Sync details */}
-                <div className="bg-surface-alt/40 border border-border rounded-xl p-3 space-y-3">
+                <div className="bg-surface-alt/40 border border-border rounded-[24px] p-3 space-y-3">
                   {isLinkingOpen ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
@@ -1852,13 +1852,13 @@ function InboxModule() {
                       <div className="flex flex-col gap-1.5">
                         <button
                           onClick={createLeadFromSession}
-                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-2xl flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
                         </button>
                         <button
                           onClick={() => setIsLinkingOpen(true)}
-                          className="w-full text-[10px] font-bold border border-border text-muted-foreground bg-surface hover:text-foreground hover:bg-surface-alt/25 py-1.5 rounded-lg flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full text-[10px] font-bold border border-border text-muted-foreground bg-surface hover:text-foreground hover:bg-surface-alt/25 py-1.5 rounded-2xl flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
                         </button>
@@ -1876,7 +1876,7 @@ function InboxModule() {
                     {matchedLead && (
                       <button
                         onClick={generateAiProposalForLead}
-                        className="flex items-center gap-2 w-full text-left rounded-lg border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
+                        className="flex items-center gap-2 w-full text-left rounded-2xl border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Gerar Proposta IA</span>
@@ -1888,7 +1888,7 @@ function InboxModule() {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato: ${window.location.origin}/m/contract/assinar-aqui`);
                         toast.success("Link do contrato copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
+                      className="flex items-center gap-2 w-full text-left rounded-2xl border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
                     >
                       <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>Enviar Contrato</span>
@@ -1899,7 +1899,7 @@ function InboxModule() {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem e vouchers direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
                         toast.success("Link do portal de cliente copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
+                      className="flex items-center gap-2 w-full text-left rounded-2xl border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>MagicLink Portal</span>
@@ -1917,7 +1917,7 @@ function InboxModule() {
                 </h4>
 
                 {matchedClientId ? (
-                  <div className="p-3 border border-border rounded-xl bg-surface-alt/40 space-y-3">
+                  <div className="p-3 border border-border rounded-[24px] bg-surface-alt/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
                       <select
@@ -1938,7 +1938,7 @@ function InboxModule() {
                       <button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
-                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-lg flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground bg-surface hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
+                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-2xl flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground bg-surface hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
                       >
                         <Plus className="h-4 w-4 mb-1 text-muted-foreground/60" />
                         {uploadingDoc ? "Enviando..." : "Upload Documento"}
@@ -1946,7 +1946,7 @@ function InboxModule() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[10px] text-muted-foreground text-center py-3 bg-surface-alt/30 border border-dashed border-border rounded-lg">
+                  <p className="text-[10px] text-muted-foreground text-center py-3 bg-surface-alt/30 border border-dashed border-border rounded-2xl">
                     Cadastre o lead como cliente no CRM primeiro para gerenciar seus documentos.
                   </p>
                 )}
@@ -1955,7 +1955,7 @@ function InboxModule() {
                   <div className="space-y-2">
                     {clientDocs.length > 0 ? (
                       clientDocs.map((doc: any) => (
-                        <div key={doc.id} className="p-3 border border-border rounded-xl bg-surface flex flex-col gap-1.5 text-xs">
+                        <div key={doc.id} className="p-3 border border-border rounded-[24px] bg-surface flex flex-col gap-1.5 text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
                             {doc.file_url && (
@@ -1993,7 +1993,7 @@ function InboxModule() {
                       onChange={(e) => setContactNotes(e.target.value)}
                       placeholder="Escreva notas importantes sobre este contato..."
                       rows={10}
-                      className="w-full text-xs p-2.5 border border-border rounded-xl bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
+                      className="w-full text-xs p-2.5 border border-border rounded-[24px] bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
                     />
                   </div>
                 ) : (
@@ -2020,23 +2020,23 @@ function InboxModule() {
                     {leadInsights ? (
                       <div className="space-y-2">
                         {(leadInsights as any).general_profile && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-lg text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
                             <strong>Comportamento:</strong> {(leadInsights as any).general_profile}
                           </div>
                         )}
                         {(leadInsights as any).general_sentiment && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-lg text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
                             <strong>Sentimento:</strong> {(leadInsights as any).general_sentiment}
                           </div>
                         )}
                         {(leadInsights as any).generalized_objections && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-lg text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
                             <strong>Objeções:</strong> {(leadInsights as any).generalized_objections}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/30 border border-dashed border-border rounded-lg">
+                      <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/30 border border-dashed border-border rounded-2xl">
                         Sem insights gerados. Clique em atualizar.
                       </p>
                     )}

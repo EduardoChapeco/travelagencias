@@ -34,7 +34,7 @@ export function AIPanel({ email }: AIPanelProps) {
           {/* Summary Section */}
           <div className="space-y-2">
             <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Resumo Rápido</h4>
-            <div className="p-3 bg-card border border-border rounded-lg text-sm text-foreground shadow-sm">
+            <div className="p-3 bg-card border border-border rounded-2xl text-sm text-foreground shadow-sm">
               {email.ai_summary || "O Cérebro IA não gerou resumo para este email."}
             </div>
           </div>
@@ -46,7 +46,7 @@ export function AIPanel({ email }: AIPanelProps) {
             {hasExtractedData ? (
               <div className="space-y-2">
                 {entities.ticket_hash && (
-                  <div className="flex items-center justify-between p-2 rounded-md bg-card border border-border">
+                  <div className="flex items-center justify-between p-2 rounded-full bg-card border border-border">
                     <div className="flex items-center gap-2 text-sm">
                       <Ticket className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium">{entities.ticket_hash}</span>
@@ -60,7 +60,7 @@ export function AIPanel({ email }: AIPanelProps) {
                 )}
                 
                 {entities.locs?.map((loc: string, i: number) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-md bg-card border border-border">
+                  <div key={i} className="flex items-center justify-between p-2 rounded-full bg-card border border-border">
                     <div className="flex items-center gap-2 text-sm">
                       <Plane className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium">LOC: {loc}</span>
@@ -70,7 +70,7 @@ export function AIPanel({ email }: AIPanelProps) {
                 ))}
                 
                 {entities.passengers?.map((pax: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 p-2 rounded-md bg-card border border-border text-sm">
+                  <div key={i} className="flex items-center gap-2 p-2 rounded-full bg-card border border-border text-sm">
                     <div className="w-2 h-2 rounded-full bg-primary/30" />
                     <span className="truncate">{pax}</span>
                   </div>

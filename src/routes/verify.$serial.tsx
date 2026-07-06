@@ -93,7 +93,7 @@ function Page() {
                   Emitido por {row.issuer}
                 </p>
               </div>
-              <div className="mt-8 overflow-hidden rounded-xl border border-border/50 bg-surface-alt/20">
+              <div className="mt-8 overflow-hidden rounded-[24px] border border-border/50 bg-surface-alt/20">
                 <dl className="divide-y divide-border/50 text-xs">
                   <Row k="Partes Envolvidas" v={mask(row.parties_masked)} />
                   <Row
@@ -126,7 +126,7 @@ function Page() {
                   />
                 </dl>
               </div>
-              <div className="mt-6 rounded-lg bg-warning-bg/50 px-4 py-3 text-center">
+              <div className="mt-6 rounded-2xl bg-warning-bg/50 px-4 py-3 text-center">
                 <p className="text-[10px] font-medium leading-relaxed text-warning-text/80">
                   Este documento foi assinado digitalmente e possui validade jurídica garantida por
                   geolocalização, biometria e IP. O conteúdo completo do contrato está selado por

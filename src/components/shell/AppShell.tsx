@@ -97,9 +97,16 @@ export function AppShell({
 
   const isFullPage = crumbs.length > 2;
   const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+  const isBuilder =
+    isVisualEditor ||
+    pathname.includes("/proposals/new") ||
+    (pathname.includes("/proposals/") && pathname.endsWith("/edit")) ||
+    pathname.includes("/quotes/new") ||
+    (pathname.includes("/quotes/") && pathname.endsWith("/edit")) ||
+    pathname.includes("/client-app-builder");
   const isHome = pathname === `/agency/${agency?.slug}` || pathname === `/agency/${agency?.slug}/`;
 
-  if (isVisualEditor) {
+  if (isBuilder) {
     return (
       <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
         <div className="flex flex-col flex-1 h-full overflow-hidden">
@@ -125,34 +132,23 @@ export function AppShell({
         />
       </div>
 
-      {/* 2. Top macOS-style status bar — z-40 */}
-      <header className="absolute top-0 left-0 right-0 h-11 px-6 flex justify-between items-center text-white z-40 bg-black/10 backdrop-blur-md border-b border-white/5 text-xs font-semibold tracking-wide">
-        {/* Left: Platform name / brand & breadcrumbs */}
-        <div className="flex items-center gap-3">
-          <Link to={`/agency/${agency?.slug}` as any} className="font-extrabold text-sm tracking-tight text-white hover:opacity-85">
-            {agency?.name || "Turis"}
-          </Link>
-          {!isHome && (
-            <div className="flex items-center gap-1.5 opacity-60">
-              <span>/</span>
-              <span className="truncate max-w-[200px]">{title || crumbs[crumbs.length - 1]}</span>
-            </div>
+      {/* 2. Top Status Bar — Ultra-minimalist and transparent */}
+      <header className="absolute top-0 left-0 right-0 h-11 px-6 flex justify-between items-center text-white z-40 bg-transparent border-none text-xs font-semibold tracking-wide pointer-events-none">
+        {/* Left: Vazio em módulos, nome da agência apenas na Home */}
+        <div className="flex items-center gap-3 pointer-events-auto">
+          {isHome && (
+            <Link to={`/agency/${agency?.slug}` as any} className="font-extrabold text-sm tracking-tight text-white hover:opacity-85">
+              {agency?.name || "Turis"}
+            </Link>
           )}
         </div>
 
-        {/* Right: Clock & status items */}
-        <div className="flex items-center gap-4">
+        {/* Right: Clock, Date & Notifications pill */}
+        <div className="flex items-center gap-4 bg-black/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/5 shadow-sm pointer-events-auto">
           <span className="capitalize">{dateStr}</span>
           <span>{timeStr}</span>
           <div className="w-[1px] h-3 bg-white/20" />
           <NotificationBadge />
-          <button 
-            onClick={() => setAiChatState("input")}
-            className="flex items-center gap-1 hover:text-brand-light transition-colors cursor-pointer"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>IA</span>
-          </button>
         </div>
       </header>
 
@@ -168,51 +164,45 @@ export function AppShell({
           </div>
         ) : (
           // ── MODULE VIEW ───────────────────────────────────────────────────
-          // FloatingDock (vertical) floats to the left of the glass window,
-          // both rendered as siblings in the same flex row.
-          <div className="flex-1 flex items-center gap-0 overflow-hidden">
-            {/* Module content window — glass frame, NO internal sidebar */}
-            <div className="flex-1 h-full p-4 pl-4 md:p-6 md:pl-[88px] overflow-hidden flex items-center justify-center min-w-0">
-              <div className="w-full h-full max-w-[1600px] bg-surface/90 dark:bg-zinc-950/80 backdrop-blur-3xl rounded-[32px] border border-white/10 flex flex-col overflow-hidden relative animate-fadeIn">
-                {/* Module inner header */}
-                <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface/50 px-6 backdrop-blur-md rounded-t-[32px]">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setMobileOpen(true)}
-                      className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden"
-                    >
-                      <Menu className="h-4 w-4" />
-                    </button>
-                    <h2 className="text-base font-bold text-foreground">{title || "Painel"}</h2>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div id="app-header-portal" />
-                    {actions}
-                  </div>
-                </header>
-
-                <main className="no-scrollbar flex-1 overflow-y-auto p-6 relative">
-                  {isPastDue && (
-                    <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="h-4 w-4 shrink-0" />
-                        <span>Assinatura atrasada. Regularize o pagamento.</span>
-                      </div>
-                      <a href={`/agency/${agency!.slug}/billing`} className="bg-white text-rose-600 px-3 py-1 rounded font-black hover:bg-zinc-100 transition-colors uppercase text-[10px]">
-                        Regularizar
-                      </a>
-                    </div>
-                  )}
-                  <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
-                </main>
+          // Workspace lateral direito direto, colado na sidebar e sem margens gigantes
+          <div className="flex-1 h-full pl-[72px] overflow-hidden flex flex-col min-w-0">
+            {/* Header minimalista do modulo */}
+            <header className="flex h-14 shrink-0 items-center justify-between px-6 bg-transparent">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setMobileOpen(true)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden"
+                >
+                  <Menu className="h-4 w-4" />
+                </button>
+                <h1 className="text-xl font-bold text-foreground">{title || "Painel"}</h1>
               </div>
-            </div>
+              <div className="flex items-center gap-3">
+                <div id="app-header-portal" />
+                {actions}
+              </div>
+            </header>
+
+            <main className="no-scrollbar flex-1 overflow-y-auto p-6 relative">
+              {isPastDue && (
+                <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <span>Assinatura atrasada. Regularize o pagamento.</span>
+                  </div>
+                  <a href={`/agency/${agency!.slug}/billing`} className="bg-white text-rose-600 px-3 py-1 rounded font-black hover:bg-zinc-100 transition-colors uppercase text-[10px]">
+                    Regularizar
+                  </a>
+                </div>
+              )}
+              <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+            </main>
           </div>
         )}
       </div>
 
-      {/* 5. Floating bottom-left AI chat — always over wallpaper */}
-      <div className="fixed bottom-6 left-6 z-50 pointer-events-none flex flex-col items-start gap-3">
+      {/* 5. Floating bottom-left AI chat — always over wallpaper, offset by sidebar width */}
+      <div className="fixed bottom-6 left-[88px] z-50 pointer-events-none flex flex-col items-start gap-3">
         <AnimatePresence>
           {aiChatState === "input" && (
             <motion.div 
@@ -254,16 +244,6 @@ export function AppShell({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {aiChatState === "collapsed" && (
-          <button 
-            onClick={() => setAiChatState("input")}
-            className="pointer-events-auto flex items-center gap-2.5 h-12 px-4 rounded-full glass border border-white/20 text-white hover:scale-105 transition-all font-semibold text-sm cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4 text-brand-light animate-pulse-slow" />
-            <span>Falar com IA</span>
-          </button>
-        )}
       </div>
 
       {/* 6. Split view (Genie Mode) Overlay */}
@@ -320,7 +300,7 @@ export function AppShell({
                     type="button"
                     onClick={() => setWallpaper(preset.url.replace("w=200", "w=2020"))}
                     className={cn(
-                      "aspect-video rounded-xl bg-cover bg-center border border-white/10 hover:border-white/40 hover:scale-105 active:scale-95 transition-all cursor-pointer",
+                      "aspect-video rounded-[24px] bg-cover bg-center border border-white/10 hover:border-white/40 hover:scale-105 active:scale-95 transition-all cursor-pointer",
                       wallpaper.includes(preset.name.toLowerCase()) ? "ring-2 ring-white border-transparent" : ""
                     )}
                     style={{ backgroundImage: `url('${preset.url}')` }}
@@ -344,7 +324,7 @@ export function AppShell({
                   max="30"
                   value={blurIntensity}
                   onChange={(e) => setBlurIntensity(Number(e.target.value))}
-                  className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
+                  className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
                 />
               </div>
 
@@ -360,7 +340,7 @@ export function AppShell({
                   max="80"
                   value={dimOpacity}
                   onChange={(e) => setDimOpacity(Number(e.target.value))}
-                  className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
+                  className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
                 />
               </div>
             </div>

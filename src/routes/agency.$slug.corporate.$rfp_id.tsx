@@ -124,7 +124,7 @@ function RfpDetailPage() {
                 );
                 toast.success("Link de aprovação copiado!");
               }}
-              className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" /> Link do Cliente
             </button>
@@ -238,19 +238,19 @@ function RfpDetailPage() {
               </h3>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-surface-alt/50 p-3 rounded-lg">
+                <div className="bg-surface-alt/50 p-3 rounded-2xl">
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <MapPin className="w-3 h-3" /> Destino
                   </div>
                   <div className="font-medium text-sm">{rfp.destination || "—"}</div>
                 </div>
-                <div className="bg-surface-alt/50 p-3 rounded-lg">
+                <div className="bg-surface-alt/50 p-3 rounded-2xl">
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Users className="w-3 h-3" /> Pax
                   </div>
                   <div className="font-medium text-sm">{rfp.pax_count} pessoas</div>
                 </div>
-                <div className="bg-surface-alt/50 p-3 rounded-lg">
+                <div className="bg-surface-alt/50 p-3 rounded-2xl">
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <DollarSign className="w-3 h-3" /> Budget Estimado
                   </div>
@@ -258,7 +258,7 @@ function RfpDetailPage() {
                     {rfp.budget_estimated ? `R$ ${rfp.budget_estimated}` : "Aberto"}
                   </div>
                 </div>
-                <div className="bg-surface-alt/50 p-3 rounded-lg">
+                <div className="bg-surface-alt/50 p-3 rounded-2xl">
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Clock className="w-3 h-3" /> Viagem
                   </div>
@@ -268,7 +268,7 @@ function RfpDetailPage() {
                 </div>
               </div>
 
-              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 bg-surface-alt/30 rounded-xl border border-border/50">
+              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 bg-surface-alt/30 rounded-[24px] border border-border/50">
                 {typeof rfp.requirements === "string"
                   ? rfp.requirements
                   : JSON.stringify(rfp.requirements, null, 2)}
@@ -291,7 +291,7 @@ function RfpDetailPage() {
               </div>
 
               {addingOption && (
-                <div className="bg-surface-alt/50 border border-brand/30 p-4 rounded-xl mb-4 space-y-3">
+                <div className="bg-surface-alt/50 border border-brand/30 p-4 rounded-[24px] mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="sm:col-span-2">
                       <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
@@ -338,14 +338,14 @@ function RfpDetailPage() {
 
               <div className="space-y-4">
                 {options.length === 0 && !addingOption && (
-                  <div className="text-center p-6 border-2 border-dashed border-border rounded-xl text-muted-foreground text-sm font-medium">
+                  <div className="text-center p-6 border-2 border-dashed border-border rounded-[24px] text-muted-foreground text-sm font-medium">
                     Nenhuma cotação adicionada ainda.
                   </div>
                 )}
                 {options.map((opt: any) => (
                   <div
                     key={opt.id}
-                    className={`p-4 rounded-xl border ${rfp.approved_option_id === opt.id ? "bg-success/5 border-success/30 ring-1 ring-success/20" : "bg-surface border-border"} relative group`}
+                    className={`p-4 rounded-[24px] border ${rfp.approved_option_id === opt.id ? "bg-success/5 border-success/30 ring-1 ring-success/20" : "bg-surface border-border"} relative group`}
                   >
                     {rfp.approved_option_id === opt.id && (
                       <div className="absolute top-4 right-4 text-success font-bold text-[10px] uppercase tracking-widest flex items-center gap-1">

@@ -84,7 +84,7 @@ function SupportRoute() {
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <PrimaryButton
-            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-[11px] font-bold rounded-lg cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-[11px] font-bold rounded-2xl cursor-pointer"
             onClick={() => setTicketSheetOpen(true)}
             title="Novo Ticket Interno"
           >
@@ -137,7 +137,7 @@ function SupportRoute() {
 
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col space-y-4">
         {isError && (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 shrink-0">
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 shrink-0">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
               <AlertCircle className="h-5 w-5 text-red-600" />
             </div>
@@ -149,7 +149,7 @@ function SupportRoute() {
         )}
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
-          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+          <div className="bg-surface-alt/50 border border-border rounded-[24px] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
             </div>
@@ -160,7 +160,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+          <div className="bg-surface-alt/50 border border-border rounded-[24px] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
@@ -171,7 +171,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+          <div className="bg-surface-alt/50 border border-border rounded-[24px] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5" />
             </div>
@@ -182,7 +182,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-xl p-4 flex items-center gap-4">
+          <div className="bg-surface-alt/50 border border-border rounded-[24px] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center">
               <Star className="w-5 h-5" />
             </div>
@@ -198,7 +198,7 @@ function SupportRoute() {
           </div>
         </div>
 
-        <div className="bg-surface border border-border rounded-xl flex-1 overflow-hidden flex flex-col">
+        <div className="bg-surface border border-border rounded-[24px] flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-surface-alt/50 sticky top-0 z-10 border-b border-border">

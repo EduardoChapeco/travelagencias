@@ -165,7 +165,7 @@ export default function TemplateVoucherEmbarqueA4({
         <Section title="Passageiros">
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {v.passengers.map((p, i) => (
-              <div key={i} className="flex flex-col border border-slate-100 rounded-md px-3 py-2">
+              <div key={i} className="flex flex-col border border-slate-100 rounded-full px-3 py-2">
                 <span
                   className="font-bold text-[12px] text-slate-800"
                   style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
@@ -186,7 +186,7 @@ export default function TemplateVoucherEmbarqueA4({
       {v.flights && v.flights.length > 0 && (
         <Section title="Voos">
           {v.flights.map((f, i) => (
-            <div key={i} className="mb-2 bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
+            <div key={i} className="mb-2 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
               <div className="flex items-center justify-between mb-1">
                 <span
                   className="font-black text-base tracking-tighter"
@@ -216,7 +216,7 @@ export default function TemplateVoucherEmbarqueA4({
       {v.accommodation && v.accommodation.length > 0 && (
         <Section title="Hospedagem">
           {v.accommodation.map((a, i) => (
-            <div key={i} className="mb-2 bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
+            <div key={i} className="mb-2 bg-slate-50 rounded-2xl px-4 py-3 border border-slate-100">
               <div
                 className="font-bold text-[13px]"
                 style={{ fontFamily: "var(--brand-heading-font, sans-serif)" }}
@@ -279,7 +279,7 @@ export default function TemplateVoucherEmbarqueA4({
       {/* GUIA DE DESTINO ADICIONAL */}
       {dest && (
         <Section title="Guia do Destino">
-          <div className="bg-slate-50 border border-slate-100 rounded-lg p-4 space-y-3">
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
             <div className="flex items-center gap-2 border-b border-slate-200/60 pb-2 mb-1">
               <Compass className="h-4 w-4 text-slate-500" style={{ color: brand }} />
               <span className="font-bold text-xs text-slate-800 tracking-wide">

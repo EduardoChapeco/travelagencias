@@ -59,7 +59,7 @@ function Page() {
         <EmptyState title={search ? "Nenhum contrato encontrado" : "Sem contratos"} />
       )}
       {q.data && totalCount > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground">
               <tr>

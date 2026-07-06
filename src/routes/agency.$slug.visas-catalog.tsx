@@ -68,7 +68,7 @@ function VisasCatalogPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Novo Catálogo
           </button>
@@ -80,12 +80,12 @@ function VisasCatalogPage() {
           <Link
             to="/agency/$slug/visas"
             params={{ slug }}
-            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-md shrink-0"
+            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-full shrink-0"
           >
             <ArrowLeft className="w-3 h-3" /> Voltar
           </Link>
           <div className="h-4 w-px bg-border/80 shrink-0" />
-          <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
+          <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
             {[
               { id: "all", label: "Todos" },
               { id: "visa", label: "Vistos" },

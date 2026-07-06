@@ -240,7 +240,7 @@ function HomePage() {
       {/* ── COVER IMAGE (se existir) ─────────────────────────────── */}
       {company?.cover_image_url && (
         <section className="mx-auto max-w-[1240px] px-6 pb-16">
-          <div className="rounded-lg overflow-hidden aspect-[21/7] border border-border">
+          <div className="rounded-2xl overflow-hidden aspect-[21/7] border border-border">
             <img
               src={company.cover_image_url}
               alt={agency.name}
@@ -293,7 +293,7 @@ function HomePage() {
                       </div>
                     )}
                     {/* Date badge */}
-                    <div className="absolute top-3 right-3 rounded-lg bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
+                    <div className="absolute top-3 right-3 rounded-2xl bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
                       {t.departure_date
                         ? new Date(t.departure_date).toLocaleDateString("pt-BR", {
                             day: "2-digit",
@@ -501,7 +501,7 @@ function HomePage() {
                       href={`mailto:${company.email}`}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-brand/30 transition-colors">
                         <Mail className="h-4 w-4" />
                       </div>
                       <div>
@@ -514,7 +514,7 @@ function HomePage() {
                   )}
                   {company.phone && (
                     <div className="flex items-center gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border">
                         <Phone className="h-4 w-4" />
                       </div>
                       <div>
@@ -532,7 +532,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-green-500/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-green-500/30 transition-colors">
                         <MessageCircle className="h-4 w-4 group-hover:text-green-500 transition-colors" />
                       </div>
                       <div>
@@ -550,7 +550,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-brand/30 transition-colors">
                         <Globe className="h-4 w-4" />
                       </div>
                       <div>
@@ -565,7 +565,7 @@ function HomePage() {
                   )}
                   {(company.address as any)?.street && (
                     <div className="flex items-start gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border">
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
@@ -614,7 +614,7 @@ function HomePage() {
                       return (
                         <div
                           key={day}
-                          className={`flex items-center justify-between rounded-xl px-4 py-2.5 text-sm transition-colors ${
+                          className={`flex items-center justify-between rounded-[24px] px-4 py-2.5 text-sm transition-colors ${
                             isToday
                               ? "border border-brand/20 bg-brand/5"
                               : "border border-transparent"
@@ -663,11 +663,11 @@ function HomePage() {
                 <img
                   src={agency.logo_url}
                   alt={agency.name}
-                  className="h-8 w-8 rounded-lg object-contain"
+                  className="h-8 w-8 rounded-2xl object-contain"
                 />
               ) : (
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-2xl text-xs font-bold text-white"
                   style={{ background: brandColor }}
                 >
                   {agency.name.charAt(0)}

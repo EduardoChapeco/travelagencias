@@ -224,7 +224,7 @@ export function LeadCardView({
       {/* Hover action overlay */}
       {!dragging && (onArchive || onTransfer || onCreateProposal) && (
         <div
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-surface/95 backdrop-blur-md p-1 rounded-md border border-border/80 ring-1 ring-black/5"
+          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-surface/95 backdrop-blur-md p-1 rounded-full border border-border/80 ring-1 ring-black/5"
           onPointerDown={(e) => e.stopPropagation()}
         >
           {transferMode ? (

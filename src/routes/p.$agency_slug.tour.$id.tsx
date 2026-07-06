@@ -141,7 +141,7 @@ function Page() {
         </p>
         <button
           onClick={() => q.refetch()}
-          className="mt-4 px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-xs shadow hover:bg-gray-800 transition-all cursor-pointer"
+          className="mt-4 px-4 py-2 rounded-[24px] bg-gray-900 text-white font-bold text-xs shadow hover:bg-gray-800 transition-all cursor-pointer"
         >
           Tentar Novamente
         </button>
@@ -469,7 +469,7 @@ function Page() {
                       </div>
                     </div>
 
-                    <div className="text-left sm:text-right text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shrink-0">
+                    <div className="text-left sm:text-right text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-[24px] shrink-0">
                       <div>
                         Check-in:{" "}
                         <strong className="text-slate-800">{hotel.check_in || "14:00"}</strong>
@@ -519,7 +519,7 @@ function Page() {
                             href={imgUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 group bg-slate-100 block"
+                            className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group bg-slate-100 block"
                           >
                             <img
                               src={imgUrl}
@@ -616,7 +616,7 @@ function Page() {
                 </div>
 
                 {/* Capacidade e Vagas */}
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center space-y-1.5">
+                <div className="bg-slate-50 border border-slate-100 rounded-[24px] p-3 text-center space-y-1.5">
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
                     Disponibilidade
                   </span>
@@ -673,7 +673,7 @@ function Page() {
                             type="button"
                             onClick={() => setSelectedPricingTier(tier)}
                             className={cn(
-                              "w-full text-left p-3 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1",
+                              "w-full text-left p-3 rounded-[24px] border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1",
                               isSelected
                                 ? "border-brand bg-brand/5 shadow-xs font-bold"
                                 : "border-slate-200 bg-white hover:border-slate-400",
@@ -696,7 +696,7 @@ function Page() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-1 bg-slate-50 border border-slate-100 rounded-xl p-3 text-xs text-slate-655 text-center">
+                  <div className="space-y-1 bg-slate-50 border border-slate-100 rounded-[24px] p-3 text-xs text-slate-655 text-center">
                     Tarifa Base Individual:{" "}
                     <strong className="text-brand font-mono">{money(Number(t.base_price))}</strong>
                   </div>
@@ -725,7 +725,7 @@ function Page() {
                               }
                             }}
                             className={cn(
-                              "w-full text-left p-3 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-3",
+                              "w-full text-left p-3 rounded-[24px] border transition-all duration-200 cursor-pointer flex items-center justify-between gap-3",
                               isChecked
                                 ? "border-emerald-300 bg-emerald-50/20 font-bold"
                                 : "border-slate-200 bg-white hover:border-slate-400",
@@ -779,7 +779,7 @@ function Page() {
                       .getElementById("checkout_anchor")
                       ?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className="w-full flex h-11 items-center justify-center bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-xl font-bold uppercase tracking-wider text-xs transition-opacity hover:opacity-90 cursor-pointer shadow-sm"
+                  className="w-full flex h-11 items-center justify-center bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[24px] font-bold uppercase tracking-wider text-xs transition-opacity hover:opacity-90 cursor-pointer shadow-sm"
                 >
                   Reservar Agora
                 </button>
@@ -802,7 +802,7 @@ function Page() {
                 </p>
                 <div className="flex justify-center overflow-x-auto py-2">
                   <div
-                    className="p-4 border border-slate-100 rounded-xl bg-slate-50/50"
+                    className="p-4 border border-slate-100 rounded-[24px] bg-slate-50/50"
                     style={{
                       display: "grid",
                       gridTemplateColumns: `repeat(${layout?.cols ?? 5}, minmax(0, 1fr))`,
@@ -834,7 +834,7 @@ function Page() {
                           disabled={isAssigned}
                           onClick={() => handleSeatClick(cell.label, isSelected)}
                           className={cn(
-                            "h-10 w-10 rounded-md border text-xs font-mono font-bold transition-colors flex flex-col items-center justify-center cursor-pointer",
+                            "h-10 w-10 rounded-full border text-xs font-mono font-bold transition-colors flex flex-col items-center justify-center cursor-pointer",
                             isAssigned
                               ? "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
                               : isSelected
@@ -882,7 +882,7 @@ function Page() {
                   required
                   value={form.passenger_name}
                   onChange={(e) => setForm({ ...form, passenger_name: e.target.value })}
-                  className="h-11 text-sm rounded-xl"
+                  className="h-11 text-sm rounded-[24px]"
                   placeholder="Nome completo do responsável"
                 />
               </Field>
@@ -894,7 +894,7 @@ function Page() {
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="h-11 text-sm rounded-xl"
+                    className="h-11 text-sm rounded-[24px]"
                     placeholder="voce@exemplo.com"
                   />
                 </Field>
@@ -903,7 +903,7 @@ function Page() {
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="h-11 text-sm rounded-xl"
+                    className="h-11 text-sm rounded-[24px]"
                     placeholder="(00) 90000-0000"
                   />
                 </Field>
@@ -914,7 +914,7 @@ function Page() {
                   required
                   value={form.passenger_cpf}
                   onChange={(e) => setForm({ ...form, passenger_cpf: e.target.value })}
-                  className="h-11 text-sm rounded-xl"
+                  className="h-11 text-sm rounded-[24px]"
                   placeholder="000.000.000-00"
                 />
               </Field>
@@ -937,7 +937,7 @@ function Page() {
                             return next;
                           });
                         }}
-                        className="h-10 text-xs rounded-xl"
+                        className="h-10 text-xs rounded-[24px]"
                         placeholder="Nome completo"
                       />
                     </Field>
@@ -949,7 +949,7 @@ function Page() {
                 <Textarea
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  className="min-h-[80px] rounded-xl text-xs"
+                  className="min-h-[80px] rounded-[24px] text-xs"
                   placeholder="Alergias, restrições alimentares, solicitações especiais..."
                 />
               </Field>
@@ -958,7 +958,7 @@ function Page() {
               <div
                 id="lgpd_consent_wrapper"
                 className={cn(
-                  "flex items-start gap-3 rounded-xl border p-4 transition-colors",
+                  "flex items-start gap-3 rounded-[24px] border p-4 transition-colors",
                   lgpdError
                     ? "border-red-300 bg-red-50/50"
                     : lgpdConsent
@@ -998,7 +998,7 @@ function Page() {
               <PrimaryButton
                 type="submit"
                 disabled={!lgpdConsent}
-                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-xl transition-all cursor-pointer disabled:opacity-40"
+                className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[24px] transition-all cursor-pointer disabled:opacity-40"
               >
                 Avançar para Pagamento — {money(totalPrice)}
               </PrimaryButton>
@@ -1010,7 +1010,7 @@ function Page() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 flex w-full h-12 items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 text-sm font-bold text-emerald-700 transition-all cursor-pointer"
+                  className="mt-3 flex w-full h-12 items-center justify-center gap-2 rounded-[24px] border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 text-sm font-bold text-emerald-700 transition-all cursor-pointer"
                 >
                   <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.725 1.45 5.257-.002 9.532-4.282 9.534-9.544.001-2.55-1.01-4.945-2.846-6.782A9.458 9.458 0 0012.008 1.53c-5.26 0-9.536 4.281-9.538 9.543-.001 1.636.485 3.196 1.4 4.597L2.83 19.38l3.817-1.002.001-.001-.001-.001zm11.721-6.425c-.29-.145-1.714-.847-1.979-.942-.266-.096-.459-.145-.653.146-.193.29-.748.942-.917 1.135-.169.193-.338.217-.628.072-2.316-1.16-3.23-1.63-4.524-3.856-.289-.499.29-.464.829-1.538.085-.17.042-.317-.02-.462-.064-.145-.653-1.573-.895-2.152-.236-.569-.475-.49-.652-.499-.169-.008-.362-.008-.556-.008a1.07 1.07 0 00-.773.362c-.266.29-1.014.992-1.014 2.417 0 1.425 1.039 2.798 1.184 2.993.145.193 2.044 3.122 4.951 4.38.692.3 1.232.479 1.652.613.696.222 1.329.19 1.83.115.558-.083 1.714-.7 1.956-1.376.242-.676.242-1.256.17-1.377-.073-.121-.266-.193-.556-.339z" />
@@ -1045,7 +1045,7 @@ function Page() {
                   ? "Código Copia e Cola Pix:"
                   : "Chave Pix para Transferência:"}
               </label>
-              <div className="flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-xl px-4 py-3 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
+              <div className="flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-[24px] px-4 py-3 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
                 <span>{pixKey}</span>
                 <button
                   type="button"
@@ -1068,7 +1068,7 @@ function Page() {
               </h3>
 
               {!uploadedFile ? (
-                <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:bg-slate-50/50 transition-colors relative">
+                <div className="border-2 border-dashed border-slate-300 rounded-[24px] p-6 text-center hover:bg-slate-50/50 transition-colors relative">
                   <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                   <span className="text-xs text-slate-655 block font-semibold">
                     Arraste ou clique para enviar o PDF ou Imagem do Pix
@@ -1090,7 +1090,7 @@ function Page() {
                   )}
                 </div>
               ) : (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between text-xs text-emerald-800">
+                <div className="bg-emerald-50 border border-emerald-100 rounded-[24px] p-4 flex items-center justify-between text-xs text-emerald-800">
                   <div className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span className="font-semibold">{uploadedFileName}</span>
@@ -1116,7 +1116,7 @@ function Page() {
               <PrimaryButton
                 onClick={handleFinalEnrollment}
                 disabled={busy || !uploadedFile}
-                className="flex-1 h-11 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl cursor-pointer disabled:opacity-40"
+                className="flex-1 h-11 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] cursor-pointer disabled:opacity-40"
               >
                 {busy ? "Enviando..." : "Confirmar Inscrição"}
               </PrimaryButton>
@@ -1140,7 +1140,7 @@ function Page() {
               </p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4.5 text-left text-xs space-y-2.5 font-medium">
+            <div className="bg-slate-50 border border-slate-200 rounded-[24px] p-4.5 text-left text-xs space-y-2.5 font-medium">
               <div className="flex justify-between gap-3">
                 <span className="text-slate-500 font-sans">Viagem/Grupo:</span>
                 <strong className="text-slate-800 text-right uppercase">{t.title}</strong>
@@ -1181,7 +1181,7 @@ function Page() {
                 setSelectedExtras([]);
                 setForm({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
               }}
-              className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-xl cursor-pointer hover:bg-slate-800 shadow-sm"
+              className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-[24px] cursor-pointer hover:bg-slate-800 shadow-sm"
             >
               Comprar outra passagem
             </button>
@@ -1205,7 +1205,7 @@ function Page() {
                   .getElementById("checkout_anchor")
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm active:scale-95 transition-transform"
+              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-[24px] shadow-sm active:scale-95 transition-transform"
             >
               Reservar
             </button>

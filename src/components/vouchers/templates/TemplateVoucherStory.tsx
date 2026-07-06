@@ -67,7 +67,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
               src={logoUrl}
               alt={agency.name}
               crossOrigin="anonymous"
-              className="h-10 w-auto object-contain bg-white/5 backdrop-blur-sm rounded-md p-1"
+              className="h-10 w-auto object-contain bg-white/5 backdrop-blur-sm rounded-full p-1"
             />
           ) : (
             <span

@@ -123,7 +123,7 @@ function TripDestinationPage() {
   if (!dest) {
     return (
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
-        <div className="rounded-xl border border-dashed border-warning/40 bg-warning/5 p-5 flex items-start gap-3">
+        <div className="rounded-[24px] border border-dashed border-warning/40 bg-warning/5 p-5 flex items-start gap-3">
           <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-foreground">
@@ -179,7 +179,7 @@ function TripDestinationPage() {
       {/* Grid de informações */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Vistos & Entrada */}
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[24px] border border-border bg-surface p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Globe className="h-3.5 w-3.5" /> Vistos &amp; Entrada
           </h3>
@@ -205,7 +205,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Saúde */}
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[24px] border border-border bg-surface p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Heart className="h-3.5 w-3.5" /> Saúde
           </h3>
@@ -249,7 +249,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Informações Práticas */}
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[24px] border border-border bg-surface p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5" /> Informações Práticas
           </h3>
@@ -279,7 +279,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Segurança & Cultura */}
-        <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="rounded-[24px] border border-border bg-surface p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <ShieldAlert className="h-3.5 w-3.5" /> Segurança &amp; Cultura
           </h3>
@@ -293,7 +293,7 @@ function TripDestinationPage() {
       </div>
 
       {/* Aviso ao agente */}
-      <div className="rounded-xl border border-dashed border-brand/30 bg-brand/5 p-3 flex items-start gap-2.5">
+      <div className="rounded-[24px] border border-dashed border-brand/30 bg-brand/5 p-3 flex items-start gap-2.5">
         <Info className="h-3.5 w-3.5 text-brand shrink-0 mt-0.5" />
         <p className="text-[11px] text-muted-foreground">
           Estas informações são visíveis para o cliente no portal da viagem. Mantenha-as atualizadas

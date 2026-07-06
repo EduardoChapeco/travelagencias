@@ -124,7 +124,7 @@ function Page() {
       <PageHeader title="Meu perfil" description="Atualize seus dados pessoais e de viagem" />
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-2xl space-y-6 rounded-lg border border-border bg-surface p-6"
+        className="max-w-2xl space-y-6 rounded-2xl border border-border bg-surface p-6"
       >
         <section className="space-y-3">
           <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -202,7 +202,7 @@ function Page() {
         </div>
 
         {!me.data?.client && (
-          <div className="rounded-md border border-border bg-warning-bg p-3 text-xs text-foreground">
+          <div className="rounded-full border border-border bg-warning-bg p-3 text-xs text-foreground">
             Você ainda não está vinculado a uma agência. Algumas informações de viagem serão criadas
             pelo seu agente quando você fizer sua primeira reserva.
           </div>

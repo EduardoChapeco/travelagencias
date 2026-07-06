@@ -230,7 +230,7 @@ function Layout() {
                 <img
                   src={agency.logo_url}
                   alt={agency.name}
-                  className="h-8 w-8 rounded-md object-cover"
+                  className="h-8 w-8 rounded-full object-cover"
                 />
               )}
               <span className="font-bold tracking-tight">{agency.name}</span>

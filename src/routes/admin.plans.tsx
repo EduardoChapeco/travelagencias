@@ -137,7 +137,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Planos</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -148,8 +148,8 @@ function Page() {
 
       {q.isLoading && (
         <div className="mt-6 flex flex-col gap-2">
-          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
-          <div className="h-10 w-full animate-pulse rounded-md bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-full bg-primary/10"></div>
+          <div className="h-10 w-full animate-pulse rounded-full bg-primary/10"></div>
         </div>
       )}
 
@@ -164,7 +164,7 @@ function Page() {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative rounded-xl border bg-surface p-5 flex flex-col gap-4 ${
+            className={`relative rounded-[24px] border bg-surface p-5 flex flex-col gap-4 ${
               plan.is_featured ? "border-brand/50 ring-1 ring-brand/20" : "border-border"
             } ${!plan.is_active ? "opacity-60" : ""}`}
           >
@@ -195,7 +195,7 @@ function Page() {
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-lg bg-surface-alt p-3">
+            <div className="grid grid-cols-3 gap-2 rounded-2xl bg-surface-alt p-3">
               <LimitBadge icon={Users} label="Agentes" value={plan.max_agents} />
               <LimitBadge icon={BarChart3} label="Viagens/mês" value={plan.max_trips_per_month} />
               <LimitBadge icon={HardDrive} label="Storage GB" value={plan.max_storage_gb} />
@@ -225,14 +225,14 @@ function Page() {
               <button
                 type="button"
                 onClick={() => handleToggleActive(plan)}
-                className="flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs hover:bg-surface-alt"
+                className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs hover:bg-surface-alt"
               >
                 {plan.is_active ? "Desativar" : "Ativar"}
               </button>
               <button
                 type="button"
                 onClick={() => handleDelete(plan.id)}
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-danger/30 text-danger hover:bg-danger-bg"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-danger/30 text-danger hover:bg-danger-bg"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>

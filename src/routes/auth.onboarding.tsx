@@ -229,7 +229,7 @@ function Page() {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 rounded-xl border border-border bg-surface p-8"
+          className="space-y-4 rounded-[28px] border border-border bg-surface p-8"
         >
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
@@ -251,7 +251,7 @@ function Page() {
                   disabled={
                     loadingCnpj || (documentValue || "").replace(/[^\d]/g, "").length !== 14
                   }
-                  className="mb-[2px] h-10 rounded-md border border-border px-4 text-sm font-medium hover:bg-surface-alt disabled:opacity-50"
+                  className="mb-[2px] h-10 rounded-full border border-border px-4 text-sm font-medium hover:bg-surface-alt disabled:opacity-50 cursor-pointer"
                 >
                   {loadingCnpj ? "Buscando..." : "Buscar CNPJ"}
                 </button>
@@ -298,15 +298,21 @@ function Page() {
                 <Input {...register("address_complement")} />
               </Field>
               <div className="grid grid-cols-3 gap-4">
-                <Field label="Bairro" error={errors.address_neighborhood?.message}>
-                  <Input {...register("address_neighborhood")} />
-                </Field>
-                <Field label="Cidade" error={errors.address_city?.message}>
-                  <Input {...register("address_city")} />
-                </Field>
-                <Field label="UF" error={errors.address_state?.message}>
-                  <Input maxLength={2} {...register("address_state")} />
-                </Field>
+                <div className="col-span-1">
+                  <Field label="Bairro" error={errors.address_neighborhood?.message}>
+                    <Input {...register("address_neighborhood")} />
+                  </Field>
+                </div>
+                <div className="col-span-1">
+                  <Field label="Cidade" error={errors.address_city?.message}>
+                    <Input {...register("address_city")} />
+                  </Field>
+                </div>
+                <div className="col-span-1">
+                  <Field label="UF" error={errors.address_state?.message}>
+                    <Input maxLength={2} {...register("address_state")} />
+                  </Field>
+                </div>
               </div>
             </div>
           )}
@@ -320,7 +326,7 @@ function Page() {
               <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
                 <Input {...register("phone")} />
               </Field>
-              <div className="rounded-md border border-border p-4 bg-muted/30">
+              <div className="rounded-2xl border border-border p-4 bg-muted/30">
                 <p className="text-sm text-muted-foreground">
                   Você poderá configurar os horários detalhados de atendimento no menu{" "}
                   <strong>Minha Empresa</strong> depois de finalizar.
@@ -334,13 +340,13 @@ function Page() {
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt"
+                className="rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt cursor-pointer"
                 disabled={isSubmitting}
               >
                 Voltar
               </button>
             )}
-            <PrimaryButton type="submit" disabled={isSubmitting} className="flex-1">
+            <PrimaryButton type="submit" disabled={isSubmitting} className="flex-1 cursor-pointer">
               {isSubmitting ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}
             </PrimaryButton>
           </div>

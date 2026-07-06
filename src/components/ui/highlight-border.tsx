@@ -18,9 +18,9 @@ export interface HighlightBorderProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const RADII: Record<NonNullable<HighlightBorderProps["radius"]>, string> = {
-  sm: "rounded-sm",
-  md: "rounded-md",
-  lg: "rounded-lg",
+  sm: "rounded-full",
+  md: "rounded-full",
+  lg: "rounded-2xl",
 };
 
 export function HighlightBorder({

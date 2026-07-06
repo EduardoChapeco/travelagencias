@@ -119,7 +119,7 @@ function ConfirmPage() {
             </p>
             <button
               onClick={handleContinue}
-              className="mt-8 w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              className="mt-8 w-full rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               Continuar para Login
             </button>
@@ -147,7 +147,7 @@ function ConfirmPage() {
             <div className="mt-8 space-y-3">
               <Link
                 to="/auth/login"
-                className="block w-full rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt"
+                className="block w-full rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt"
               >
                 Voltar para o Login
               </Link>

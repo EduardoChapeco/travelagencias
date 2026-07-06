@@ -199,7 +199,7 @@ export function SlimSidebar({
           to={item.to!}
           onClick={onMobileClose}
           className={cn(
-            "group/item relative flex h-9 w-full items-center gap-3 rounded-md px-3 text-muted-foreground transition-all",
+            "group/item relative flex h-9 w-full items-center gap-3 rounded-full px-3 text-muted-foreground transition-all",
             "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
             active && "bg-sidebar-accent text-sidebar-accent-foreground font-semibold",
@@ -248,7 +248,7 @@ export function SlimSidebar({
           <span className="text-sm font-semibold text-sidebar-foreground">Turis</span>
           <button
             onClick={onMobileClose}
-            className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             aria-label="Fechar menu"
           >
             <X className="h-4 w-4" />
@@ -302,7 +302,7 @@ export function SlimSidebar({
                     to={item.to!}
                     title={item.label}
                     className={cn(
-                      "relative flex h-9 w-full items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
+                      "relative flex h-9 w-full items-center justify-center rounded-full text-muted-foreground transition-all duration-150",
                       "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                       active && [
@@ -392,7 +392,7 @@ export function SlimSidebar({
                             <Link
                               to={item.to}
                               className={cn(
-                                "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-md px-2.5 text-muted-foreground transition-all duration-150",
+                                "group/ctx relative flex h-8 w-full items-center gap-2.5 rounded-full px-2.5 text-muted-foreground transition-all duration-150",
                                 "hover:bg-accent hover:text-accent-foreground",
                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                                 active && [

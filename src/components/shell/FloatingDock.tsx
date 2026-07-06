@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { type ComponentType, type ReactNode, useState } from "react";
+import { type ComponentType, type ReactNode, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, Sparkles } from "lucide-react";
 import { type SlimSidebarItem, type ContextItem } from "./SlimSidebar";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
@@ -50,16 +50,16 @@ function DockItem({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200",
+            "relative flex shrink-0 items-center justify-center transition-all duration-200",
             baseSize,
             active
-              ? "bg-white/20 text-white"
-              : "text-white/70 hover:text-white hover:bg-white/10",
+              ? "rounded-2xl bg-white/20 text-white"
+              : "rounded-full text-white/70 hover:text-white hover:bg-white/10 hover:rounded-2xl",
             isPending && "opacity-60 animate-pulse",
-            hovered && !active && "scale-125",
+            hovered && !active && "scale-110",
           )}
           style={{
-            transform: hovered && !active ? "scale(1.25)" : active ? "scale(1.05)" : "scale(1)",
+            transform: hovered && !active ? "scale(1.1)" : active ? "scale(1.05)" : "scale(1)",
           }}
         >
           {isPending ? (
@@ -84,7 +84,7 @@ function DockItem({
               className={cn(
                 "absolute rounded-full bg-white",
                 isVertical
-                  ? "-right-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5"
+                  ? "-right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5"
                   : "-bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5",
               )}
             />
@@ -94,7 +94,7 @@ function DockItem({
       <TooltipContent
         side={isVertical ? "right" : "top"}
         sideOffset={12}
-        className="rounded-xl px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+        className="rounded-[24px] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
       >
         {item.label}
       </TooltipContent>
@@ -105,7 +105,7 @@ function DockItem({
 // ─────────────────────────────────────────────────────────────────────────────
 // FloatingDock
 // isHome=true  → horizontal pill, fixed bottom-center (macOS style)
-// isHome=false → vertical pill, fixed left-center (over wallpaper)
+// isHome=false → vertical sidebar, fixed left edge (grudada na esquerda)
 // ─────────────────────────────────────────────────────────────────────────────
 export function FloatingDock({
   items,
@@ -127,7 +127,16 @@ export function FloatingDock({
     }),
   });
 
+  const [showContextOnly, setShowContextOnly] = useState(true);
+
+  // Toda vez que a rota principal muda, foca nos submenus automaticamente
+  useEffect(() => {
+    setShowContextOnly(true);
+  }, [pathname]);
+
   const dockItems = items.filter((i) => i.type !== "header");
+  const hasContext = contextItems.length > 0;
+  const displayItems = (hasContext && showContextOnly) ? (contextItems as SlimSidebarItem[]) : dockItems;
 
   if (isHome) {
     // ── Horizontal dock — bottom center ────────────────────────────────────
@@ -156,41 +165,51 @@ export function FloatingDock({
     );
   }
 
-  // ── Vertical dock — left center ───────────────────────────────────────────
+  // ── Vertical dock — left edge (grudada no canto esquerdo) ───────────────────
   return (
-    <div className="fixed left-4 top-1/2 -translate-y-1/2 z-30 hidden md:block pointer-events-none">
+    <div className="fixed left-0 top-0 bottom-0 w-[72px] z-30 hidden md:flex flex-col items-center justify-between py-6 bg-black/10 dark:bg-black/30 backdrop-blur-2xl border-r border-white/5 shadow-none">
       <TooltipProvider delayDuration={80}>
-        <div className="pointer-events-auto flex flex-col items-center gap-1.5 px-3 py-4 rounded-[28px] bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)] max-h-[calc(100vh-120px)] overflow-y-auto no-scrollbar">
-          {/* Hub items */}
-          {dockItems.map((item, idx) => (
-            <DockItem
-              key={`${item.to}-${idx}`}
-              item={item}
-              pathname={pathname}
-              pendingLocation={pendingLocation}
-              isVertical={true}
-            />
-          ))}
-
-          {/* Context items (e.g. trip sub-pages) */}
-          {contextItems.length > 0 && (
-            <>
-              <div className="w-8 h-[1px] bg-white/15 my-1.5 shrink-0" />
-              {contextItems.map((item, idx) => (
-                <DockItem
-                  key={`ctx-${idx}`}
-                  item={item as any}
-                  pathname={pathname}
-                  pendingLocation={pendingLocation}
-                  isVertical={true}
-                  size="sm"
-                />
-              ))}
-            </>
+        {/* Top: Back button when context mode is active */}
+        <div className="flex flex-col items-center gap-2">
+          {hasContext && showContextOnly && (
+            <button
+              onClick={() => setShowContextOnly(false)}
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
+              title="Voltar para o menu principal"
+            >
+              <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
+            </button>
           )}
 
-          {/* Divider + Footer */}
-          <div className="w-8 h-[1px] bg-white/15 my-1.5 shrink-0" />
+          {/* List items (contextual submenus or general modules) */}
+          <div className="flex flex-col items-center gap-1.5 max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar">
+            {displayItems.map((item, idx) => (
+              <DockItem
+                key={`${item.to}-${idx}`}
+                item={item}
+                pathname={pathname}
+                pendingLocation={pendingLocation}
+                isVertical={true}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom / Footer (IA + Logout) alinhados na base */}
+        <div className="flex flex-col items-center gap-3 mt-auto shrink-0">
+          {/* Botão de IA integrado e alinhado */}
+          <button
+            onClick={() => document.dispatchEvent(new CustomEvent("open-ai-chat"))}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer"
+            title="Falar com IA"
+          >
+            <Sparkles className="h-5 w-5 text-brand-light animate-pulse-slow" />
+          </button>
+
+          {/* Divider */}
+          <div className="w-8 h-[1px] bg-white/10 shrink-0" />
+
+          {/* Logout button */}
           <div className="shrink-0">{footer}</div>
         </div>
       </TooltipProvider>

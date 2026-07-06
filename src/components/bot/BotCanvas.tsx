@@ -102,14 +102,14 @@ export function BotCanvas() {
 
   if (q.isLoading) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-background border rounded-md">
+      <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-background border rounded-full">
         <span className="text-sm text-muted-foreground animate-pulse">Carregando fluxo do chatbot...</span>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-background border rounded-md overflow-hidden relative">
+    <div className="w-full h-full flex flex-col bg-background border rounded-full overflow-hidden relative">
       <div className="p-4 border-b border-border bg-surface flex justify-between items-center z-10 shadow-sm">
         <h3 className="font-semibold">Construtor Visual de Chatbot</h3>
         <div className="flex gap-2">

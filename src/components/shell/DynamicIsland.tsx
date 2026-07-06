@@ -143,7 +143,7 @@ function ShortcutItem({ icon, label, to, onClick }: { icon: React.ReactNode; lab
 
 function SuggestionItem({ text }: { text: string }) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 cursor-pointer transition-colors text-sm text-foreground/80">
+    <div className="flex items-center gap-3 p-3 rounded-[24px] hover:bg-black/5 cursor-pointer transition-colors text-sm text-foreground/80">
       <Zap className="w-4 h-4 text-accent/70" />
       {text}
     </div>

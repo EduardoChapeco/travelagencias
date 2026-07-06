@@ -162,7 +162,7 @@ export function SectionItinerary({ draft, save }: Props) {
             </div>
             
             {showUnsplash === i && (
-              <div className="rounded-lg border border-border bg-surface p-3 mb-2">
+              <div className="rounded-2xl border border-border bg-surface p-3 mb-2">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] uppercase tracking-wide font-semibold">
                     Buscar imagem para o dia

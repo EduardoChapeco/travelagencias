@@ -43,7 +43,7 @@ export function ContractSidebar({
     <div className="space-y-4">
       {/* Client info */}
       {client && (
-        <div className="rounded-lg border border-border bg-surface p-4">
+        <div className="rounded-2xl border border-border bg-surface p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Contratante
           </h3>
@@ -61,7 +61,7 @@ export function ContractSidebar({
 
       {/* Passengers */}
       {passengers && passengers.length > 0 && (
-        <div className="rounded-lg border border-border bg-surface p-4">
+        <div className="rounded-2xl border border-border bg-surface p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Passageiros ({passengers.length})
           </h3>
@@ -79,7 +79,7 @@ export function ContractSidebar({
       )}
 
       {/* Trip summary */}
-      <div className="rounded-lg border border-border bg-surface p-4">
+      <div className="rounded-2xl border border-border bg-surface p-4">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Viagem
         </h3>
@@ -105,7 +105,7 @@ export function ContractSidebar({
 
       {/* Warning: no client */}
       {!trip.client_id && (
-        <div className="rounded-lg border border-warning bg-warning-bg p-4">
+        <div className="rounded-2xl border border-warning bg-warning-bg p-4">
           <div className="flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
             <div className="text-xs text-warning font-medium">

@@ -286,7 +286,7 @@ function PassengersPage() {
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <ConfirmDialog />
       {(list.isError || tripQ.isError || docsQ.isError) && (
-        <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+        <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
           <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
             <AlertCircle className="h-4 w-4 text-red-600" />
           </div>
@@ -307,7 +307,7 @@ function PassengersPage() {
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex h-10 items-center gap-2 rounded-lg bg-brand px-4 text-sm font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
+          className="flex h-10 items-center gap-2 rounded-2xl bg-brand px-4 text-sm font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
         >
           <Plus className="h-4 w-4" /> Adicionar Passageiro
         </button>
@@ -334,7 +334,7 @@ function PassengersPage() {
             <button
               onClick={() => confirmAllImported.mutate()}
               disabled={confirmAllImported.isPending}
-              className="h-9 px-4 rounded-xl bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="h-9 px-4 rounded-[24px] bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {confirmAllImported.isPending ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -408,7 +408,7 @@ function PassengersPage() {
                       onConfirm: () => remove.mutate(p.id),
                     });
                   }}
-                  className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all hover:bg-danger/10 hover:text-danger"
+                  className="rounded-full p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all hover:bg-danger/10 hover:text-danger"
                   title="Remover passageiro"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -420,7 +420,7 @@ function PassengersPage() {
                 <div className="space-y-4">
                   {/* Documentação */}
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
                       <FileText className="h-3.5 w-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -438,7 +438,7 @@ function PassengersPage() {
                   {/* Nascimento e Nacionalidade */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -452,7 +452,7 @@ function PassengersPage() {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-surface-alt text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
                         <ShieldCheck className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -514,7 +514,7 @@ function PassengersPage() {
                         return (
                           <div
                             key={doc.id}
-                            className="flex flex-col gap-1 rounded-lg border border-border/60 bg-surface-alt/10 p-2.5 text-xs"
+                            className="flex flex-col gap-1 rounded-2xl border border-border/60 bg-surface-alt/10 p-2.5 text-xs"
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-semibold text-foreground flex items-center gap-1">
@@ -587,14 +587,14 @@ function PassengersPage() {
                   </div>
 
                   {/* Document upload form inside the card */}
-                  <div className="rounded-xl border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
+                  <div className="rounded-[24px] border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={selectedDocType[p.id] || "passport"}
                         onChange={(e) =>
                           setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })
                         }
-                        className="h-8 rounded-md border border-border bg-surface px-2 text-[10px] font-medium outline-none text-foreground"
+                        className="h-8 rounded-full border border-border bg-surface px-2 text-[10px] font-medium outline-none text-foreground"
                       >
                         <option value="passport">Passaporte</option>
                         <option value="visa">Visto</option>
@@ -606,10 +606,10 @@ function PassengersPage() {
                         value={expDates[p.id] || ""}
                         onChange={(e) => setExpDates({ ...expDates, [p.id]: e.target.value })}
                         placeholder="Vencimento"
-                        className="h-8 rounded-md border border-border bg-surface px-2 text-[10px] outline-none text-foreground"
+                        className="h-8 rounded-full border border-border bg-surface px-2 text-[10px] outline-none text-foreground"
                       />
                     </div>
-                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
+                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                       Anexar & Identificar Dados
                       <input
@@ -632,7 +632,7 @@ function PassengersPage() {
                   </div>
                   <button
                     onClick={() => setActiveReviewPassengerId(p.id)}
-                    className="w-full flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
+                    className="w-full flex h-8 items-center justify-center gap-1.5 rounded-2xl border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
                   >
                     <ShieldCheck className="h-4 w-4" /> Conferência de Dados
                   </button>
@@ -858,7 +858,7 @@ function DataConferencePanel({
             )}
           </div>
 
-          <div className="flex-1 flex items-center justify-center rounded-xl border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
+          <div className="flex-1 flex items-center justify-center rounded-[24px] border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
             {loadingUrl ? (
               <div className="flex flex-col items-center gap-2 text-muted-foreground text-sm">
                 <Loader2 className="h-6 w-6 animate-spin text-brand" />
@@ -866,11 +866,11 @@ function DataConferencePanel({
               </div>
             ) : signedUrl ? (
               doc?.file_path?.toLowerCase().endsWith(".pdf") ? (
-                <iframe src={signedUrl} className="w-full h-full rounded-lg border border-border" />
+                <iframe src={signedUrl} className="w-full h-full rounded-2xl border border-border" />
               ) : (
                 <img
                   src={signedUrl}
-                  className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-sm"
+                  className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-sm"
                   alt="Documento"
                 />
               )
@@ -882,7 +882,7 @@ function DataConferencePanel({
                   Anexe o Passaporte, RG ou Visto do passageiro para visualizar aqui durante a
                   conferência.
                 </p>
-                <label className="flex h-9 items-center justify-center gap-1.5 rounded-xl bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
+                <label className="flex h-9 items-center justify-center gap-1.5 rounded-[24px] bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
                   <Upload className="h-4 w-4" /> Anexar Documento
                   <input
                     type="file"
@@ -901,7 +901,7 @@ function DataConferencePanel({
           </div>
 
           {doc?.extracted_metadata && Object.keys(doc.extracted_metadata).length > 0 && (
-            <div className="mt-4 p-4 rounded-xl border border-border bg-surface text-xs">
+            <div className="mt-4 p-4 rounded-[24px] border border-border bg-surface text-xs">
               <h4 className="font-bold text-foreground mb-2 flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela
                 Inteligência Artificial
@@ -931,7 +931,7 @@ function DataConferencePanel({
             </div>
             <button
               onClick={onClose}
-              className="text-xs text-muted-foreground hover:text-foreground font-semibold bg-surface-alt px-3 py-1.5 rounded-lg"
+              className="text-xs text-muted-foreground hover:text-foreground font-semibold bg-surface-alt px-3 py-1.5 rounded-2xl"
             >
               Fechar
             </button>
@@ -946,7 +946,7 @@ function DataConferencePanel({
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
+                className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
               />
             </div>
 
@@ -957,7 +957,7 @@ function DataConferencePanel({
               <select
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
               >
                 <option value="adult">Adulto</option>
                 <option value="child">Criança (CHD)</option>
@@ -973,7 +973,7 @@ function DataConferencePanel({
                 <select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 >
                   <option value="rg">RG</option>
                   <option value="cpf">CPF</option>
@@ -990,7 +990,7 @@ function DataConferencePanel({
                   type="text"
                   value={docNumber}
                   onChange={(e) => setDocNumber(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
                 />
               </div>
             </div>
@@ -1004,7 +1004,7 @@ function DataConferencePanel({
                   type="date"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
               <div>
@@ -1016,7 +1016,7 @@ function DataConferencePanel({
                   value={nationality}
                   onChange={(e) => setNationality(e.target.value)}
                   placeholder="Ex: Brasileira"
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
             </div>
@@ -1030,7 +1030,7 @@ function DataConferencePanel({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
               <div>
@@ -1041,7 +1041,7 @@ function DataConferencePanel({
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
             </div>
@@ -1054,7 +1054,7 @@ function DataConferencePanel({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ex: Necessita de cadeira de rodas para embarque"
-                className="h-20 w-full rounded-lg border border-border bg-surface p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
+                className="h-20 w-full rounded-2xl border border-border bg-surface p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
               />
             </div>
           </div>
@@ -1062,14 +1062,14 @@ function DataConferencePanel({
           <div className="border-t border-border pt-4 mt-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 h-10 rounded-xl border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               onClick={handleSave}
               disabled={saving || uploading}
-              className="flex-1 h-10 rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               {saving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

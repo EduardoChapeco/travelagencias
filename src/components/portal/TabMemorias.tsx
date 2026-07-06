@@ -40,7 +40,7 @@ export function TabMemorias({
             <button
               onClick={onAcceptLgpd}
               disabled={acceptLgpdPending}
-              className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
+              className="px-6 py-2.5 rounded-[24px] bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
             >
               {acceptLgpdPending ? "Registrando..." : "Aceitar e Habilitar Galeria"}
             </button>

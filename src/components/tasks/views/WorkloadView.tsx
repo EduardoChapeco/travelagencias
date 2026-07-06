@@ -22,9 +22,9 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
       <div className="space-y-4 bg-[var(--surface)] p-6 rounded-2xl border">
         <Skeleton className="h-6 w-1/4 mb-6" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton className="h-40 w-full rounded-xl" />
-          <Skeleton className="h-40 w-full rounded-xl" />
-          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-[24px]" />
+          <Skeleton className="h-40 w-full rounded-[24px]" />
+          <Skeleton className="h-40 w-full rounded-[24px]" />
         </div>
       </div>
     );
@@ -127,11 +127,11 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
 
                   {/* Prioridades */}
                   <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-[var(--danger-bg)] border border-[var(--danger)]/10 text-[var(--danger)]">
+                    <div className="flex items-center gap-1.5 p-2 rounded-2xl bg-[var(--danger-bg)] border border-[var(--danger)]/10 text-[var(--danger)]">
                       <AlertCircle className="h-4 w-4 shrink-0" />
                       <span>{w.criticalCount} Críticas</span>
                     </div>
-                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-[var(--warning-bg)] border border-[var(--warning)]/10 text-[var(--warning)]">
+                    <div className="flex items-center gap-1.5 p-2 rounded-2xl bg-[var(--warning-bg)] border border-[var(--warning)]/10 text-[var(--warning)]">
                       <Clock className="h-4 w-4 shrink-0" />
                       <span>{w.highCount} Altas</span>
                     </div>

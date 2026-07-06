@@ -107,18 +107,18 @@ export function TaskShell() {
         {/* ── Top Bar Unificado ──────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
           {/* TabsList — Contextual sub-tabs of the active sub-module */}
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
             {activeView === "my-day" && (
               <>
                 <TabsTrigger
                   value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Resumo
                 </TabsTrigger>
                 <TabsTrigger
                   value="overdue"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Atrasadas
                 </TabsTrigger>
@@ -128,13 +128,13 @@ export function TaskShell() {
               <>
                 <TabsTrigger
                   value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Todas as Tarefas
                 </TabsTrigger>
                 <TabsTrigger
                   value="my-tasks"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Minhas Tarefas
                 </TabsTrigger>
@@ -144,19 +144,19 @@ export function TaskShell() {
               <>
                 <TabsTrigger
                   value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Todas
                 </TabsTrigger>
                 <TabsTrigger
                   value="pending"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Pendentes
                 </TabsTrigger>
                 <TabsTrigger
                   value="done"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
                 >
                   Concluídas
                 </TabsTrigger>
@@ -165,7 +165,7 @@ export function TaskShell() {
             {activeView === "calendar" && (
               <TabsTrigger
                 value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
               >
                 Visualizar Agenda
               </TabsTrigger>
@@ -173,7 +173,7 @@ export function TaskShell() {
             {activeView === "timeline" && (
               <TabsTrigger
                 value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
               >
                 Visualizar Cronograma
               </TabsTrigger>
@@ -181,7 +181,7 @@ export function TaskShell() {
             {activeView === "workload" && (
               <TabsTrigger
                 value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
               >
                 Carga de Trabalho
               </TabsTrigger>
@@ -189,7 +189,7 @@ export function TaskShell() {
             {activeView === "reports" && (
               <TabsTrigger
                 value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
               >
                 Relatórios e Métricas
               </TabsTrigger>

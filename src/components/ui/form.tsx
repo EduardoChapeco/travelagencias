@@ -29,7 +29,7 @@ export function Field({
 }
 
 const baseInput =
-  "w-full h-[42px] px-3 rounded-sm border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60";
+  "w-full h-[42px] px-3 rounded-full border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60";
 
 export const Input = React.forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   (props, ref) => {
@@ -53,7 +53,7 @@ export const Textarea = React.forwardRef<
     <textarea
       ref={ref}
       {...props}
-      className={`w-full min-h-[85px] p-3 rounded-sm border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60 ${props.className ?? ""}`}
+      className={`w-full min-h-[85px] p-3 rounded-full border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60 ${props.className ?? ""}`}
     />
   );
 });
@@ -63,7 +63,7 @@ export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElemen
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-sm bg-primary px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-full bg-primary px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
     />
   );
 }
@@ -72,7 +72,7 @@ export function GhostButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>
   return (
     <button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-sm border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-full border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
     />
   );
 }

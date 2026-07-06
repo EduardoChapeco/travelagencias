@@ -282,7 +282,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
             </div>
             <button
               onClick={handleClose}
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--surface-alt)] transition-colors shrink-0"
+              className="h-8 w-8 flex items-center justify-center rounded-2xl text-muted-foreground hover:text-foreground hover:bg-[var(--surface-alt)] transition-colors shrink-0"
             >
               <X className="h-4 w-4" />
             </button>
@@ -303,7 +303,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     value={draft.status}
                     onValueChange={(v) => setDraft((d) => ({ ...d, status: v as TaskStatus }))}
                   >
-                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-lg">
+                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-2xl">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: statusDef.color }} />
                         <SelectValue />
@@ -331,7 +331,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     value={draft.priority}
                     onValueChange={(v) => setDraft((d) => ({ ...d, priority: v as TaskPriority }))}
                   >
-                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-lg">
+                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-2xl">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: priorityDef.color }} />
                         <SelectValue />
@@ -359,7 +359,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     type="date"
                     value={draft.due_date}
                     onChange={(e) => setDraft((d) => ({ ...d, due_date: e.target.value }))}
-                    className="h-8 w-full rounded-lg border border-border/60 bg-[var(--surface-alt)]/40 text-xs px-2 font-semibold text-foreground outline-none focus:ring-1 focus:ring-brand transition-all"
+                    className="h-8 w-full rounded-2xl border border-border/60 bg-[var(--surface-alt)]/40 text-xs px-2 font-semibold text-foreground outline-none focus:ring-1 focus:ring-brand transition-all"
                   />
                 </div>
 
@@ -368,7 +368,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                     <User className="h-3 w-3" /> Responsável
                   </label>
-                  <div className="h-8 flex items-center gap-2 rounded-lg border border-border/60 bg-[var(--surface-alt)]/40 px-2.5">
+                  <div className="h-8 flex items-center gap-2 rounded-2xl border border-border/60 bg-[var(--surface-alt)]/40 px-2.5">
                     {task.assignee ? (
                       <>
                         <div className="h-5 w-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-[9px] font-black uppercase shrink-0">
@@ -398,7 +398,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
               {/* ── Time & Complexity Stats ────────────────────────────────── */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-3 rounded-xl border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <Timer className="h-3 w-3" /> Estimado
                   </div>
@@ -408,7 +408,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       : `${task.estimated_minutes}m`}
                   </div>
                 </div>
-                <div className="p-3 rounded-xl border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <Clock className="h-3 w-3" /> Real
                   </div>
@@ -418,7 +418,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       : `${task.actual_minutes || 0}m`}
                   </div>
                 </div>
-                <div className="p-3 rounded-xl border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <BarChart3 className="h-3 w-3" /> Dif.
                   </div>
@@ -436,7 +436,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   value={descValue}
                   onChange={(e) => setDescValue(e.target.value)}
                   placeholder="Adicione uma descrição detalhada da tarefa..."
-                  className="min-h-[80px] text-sm resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-xl"
+                  className="min-h-[80px] text-sm resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[24px]"
                 />
                 {descValue !== ((task.description as string) || "") && (
                   <div className="flex gap-2 pt-1.5 justify-end">
@@ -444,14 +444,14 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       size="sm"
                       variant="ghost"
                       onClick={() => setDescValue((task.description as string) || "")}
-                      className="h-7 text-[10px] px-2.5 rounded-lg border border-border/40 hover:bg-surface-alt/40"
+                      className="h-7 text-[10px] px-2.5 rounded-2xl border border-border/40 hover:bg-surface-alt/40"
                     >
                       Cancelar
                     </Button>
                     <Button
                       size="sm"
                       onClick={handleSave}
-                      className="h-7 text-[10px] px-2.5 rounded-lg bg-brand hover:bg-brand/90 text-white"
+                      className="h-7 text-[10px] px-2.5 rounded-2xl bg-brand hover:bg-brand/90 text-white"
                     >
                       Salvar Descrição
                     </Button>

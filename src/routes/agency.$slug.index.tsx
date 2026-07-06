@@ -205,7 +205,7 @@ function ContextMenuItem({
       <Link
         to={to as any}
         onClick={onClick}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all text-white/80 group text-left"
+        className="flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/10 hover:text-white transition-all text-white/80 group text-left"
       >
         {content}
       </Link>
@@ -215,7 +215,7 @@ function ContextMenuItem({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
+      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-2xl hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
     >
       {content}
     </button>

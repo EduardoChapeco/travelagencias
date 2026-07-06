@@ -110,7 +110,7 @@ function DraggablePassenger({
       {...listeners}
       {...attributes}
       className={cn(
-        "flex items-center justify-between py-1.5 px-3 rounded-lg bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
+        "flex items-center justify-between py-1.5 px-3 rounded-2xl bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
         isDragging && "opacity-45 border-dashed border-brand",
         isCompact
           ? "text-xs font-semibold py-1 px-2.5 bg-brand/5 border-brand/10 text-foreground"
@@ -155,7 +155,7 @@ function DroppableRoom({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-xl border bg-surface overflow-hidden transition-all duration-200",
+        "rounded-[24px] border bg-surface overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
         isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
@@ -175,7 +175,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-xl border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        "rounded-[24px] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -516,14 +516,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs print:break-inside-avoid">
+    <div className="rounded-[24px] border border-border bg-card overflow-hidden shadow-xs print:break-inside-avoid">
       {/* Header Panel Summary Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-border bg-surface/30">
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex flex-1 items-start gap-3.5 text-left cursor-pointer hover:opacity-85 transition-opacity"
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/5 text-brand">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand/5 text-brand">
             <BedDouble className="h-5 w-5" />
           </div>
           <div>
@@ -541,7 +541,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
         {/* Status toggles & stats */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 border border-border/80 rounded-lg p-1 bg-surface/50 text-[10px] font-bold">
+          <div className="flex items-center gap-2 border border-border/80 rounded-2xl p-1 bg-surface/50 text-[10px] font-bold">
             {/* Status (Open / Closed) */}
             <button
               onClick={toggleListStatus}
@@ -625,7 +625,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             )}
 
             {(roomsQ.isError || enrolQ.isError) && (
-              <div className="flex items-center gap-2 p-3 text-xs border border-red-200 bg-red-50 text-red-700 rounded-lg">
+              <div className="flex items-center gap-2 p-3 text-xs border border-red-200 bg-red-50 text-red-700 rounded-2xl">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>
                   Falha ao carregar dados dos quartos:{" "}
@@ -670,7 +670,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportExcel}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <Download className="h-3 w-3" /> Exportar Excel
                 </button>
@@ -678,7 +678,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportWord}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3" /> Exportar Word
                 </button>
@@ -686,14 +686,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportPdf}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3 text-rose-500" /> Exportar PDF
                 </button>
                 <button
                   type="button"
                   onClick={() => setAddOpen(true)}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-brand text-[10px] font-bold text-brand-foreground hover:opacity-90 cursor-pointer"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-brand text-[10px] font-bold text-brand-foreground hover:opacity-90 cursor-pointer"
                 >
                   <Plus className="h-3 w-3" /> Novo Quarto
                 </button>
@@ -702,7 +702,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Add Room Inline Form */}
             {addOpen && (
-              <div className="rounded-xl border border-brand/20 bg-brand/5 p-4">
+              <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-4">
                 <h5 className="text-xs font-bold text-foreground mb-3">Novo Quarto</h5>
                 <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -783,7 +783,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Room cards grid */}
             {rooms.length === 0 && !addOpen ? (
-              <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
+              <div className="rounded-[24px] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
                 Nenhum quarto cadastrado para esta excursão.
               </div>
             ) : (
@@ -922,7 +922,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Validation Closure checklist */}
             {rooms.length > 0 && (
-              <div className="rounded-xl border border-border bg-surface p-4">
+              <div className="rounded-[24px] border border-border bg-surface p-4">
                 <h5 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" /> Checklist de Fechamento do Grupo
                 </h5>
@@ -948,7 +948,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     <div
                       key={i}
                       className={cn(
-                        "flex items-center gap-2 p-2 rounded-lg border",
+                        "flex items-center gap-2 p-2 rounded-2xl border",
                         check.ok
                           ? "bg-success/5 text-success border-success/10"
                           : "bg-warning/5 text-warning border-warning/10",
@@ -970,7 +970,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {/* Drag overlay */}
           <DragOverlay>
             {activeDragId ? (
-              <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-surface border border-brand shadow-md text-xs font-semibold text-foreground cursor-grabbing opacity-90 select-none">
+              <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-2xl bg-surface border border-brand shadow-md text-xs font-semibold text-foreground cursor-grabbing opacity-90 select-none">
                 <Users2 className="h-3.5 w-3.5 text-brand" />
                 <span>{activeDragName}</span>
               </div>
@@ -980,7 +980,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {/* Edit Room Modal */}
           {editingRoom && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="w-full max-w-md rounded-xl bg-background p-6 border border-border shadow-lg">
+              <div className="w-full max-w-md rounded-[24px] bg-background p-6 border border-border shadow-lg">
                 <h4 className="text-sm font-bold text-foreground mb-4">
                   Editar Quarto {editingRoom.room_number}
                 </h4>
@@ -1123,7 +1123,7 @@ function RoomingListDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 border-b border-border px-4 md:px-6 py-4 shrink-0 print:hidden bg-surface/20">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand/10 text-brand">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand/10 text-brand">
             <BedDouble className="h-5 w-5" />
           </div>
           <div>
@@ -1153,14 +1153,14 @@ function RoomingListDashboard() {
             placeholder="Buscar por nome da excursão ou destino..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-8 text-xs w-full bg-surface border border-border rounded-md outline-none focus:border-brand"
+            className="pl-9 h-8 text-xs w-full bg-surface border border-border rounded-full outline-none focus:border-brand"
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-8 text-xs w-[160px] bg-surface border border-border rounded-md px-2 outline-none focus:border-brand"
+          className="h-8 text-xs w-[160px] bg-surface border border-border rounded-full px-2 outline-none focus:border-brand"
         >
           <option value="all">Status: Todos</option>
           <option value="open">Aberto</option>
@@ -1183,7 +1183,7 @@ function RoomingListDashboard() {
       {/* Content list */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         {toursQ.isError && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>

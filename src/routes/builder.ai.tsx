@@ -262,14 +262,14 @@ function AISiteBuilder() {
             <Link
               to="/agency/$slug"
               params={{ slug: activeAgency.slug || "" }}
-              className="p-1.5 hover:bg-surface-alt rounded-lg border border-border text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:bg-surface-alt rounded-2xl border border-border text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
           ) : (
             <Link
               to="/"
-              className="p-1.5 hover:bg-surface-alt rounded-lg border border-border text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:bg-surface-alt rounded-2xl border border-border text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
@@ -295,7 +295,7 @@ function AISiteBuilder() {
               <select
                 value={selectedAgencyId}
                 onChange={(e) => setSelectedAgencyId(e.target.value)}
-                className="w-full h-9 px-3 rounded-lg border border-border bg-surface text-xs font-medium focus:border-brand"
+                className="w-full h-9 px-3 rounded-2xl border border-border bg-surface text-xs font-medium focus:border-brand"
               >
                 {userAgencies.map((ua: any) => (
                   <option key={ua.agency_id} value={ua.agency_id}>
@@ -305,13 +305,13 @@ function AISiteBuilder() {
               </select>
             </div>
           ) : (
-            <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg text-xs text-destructive flex gap-2">
+            <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-2xl text-xs text-destructive flex gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>Você precisa possuir uma agência associada para usar o construtor.</span>
             </div>
           )}
 
-          <div className="border border-border rounded-xl p-4 bg-surface-alt/20 space-y-2.5">
+          <div className="border border-border rounded-[24px] p-4 bg-surface-alt/20 space-y-2.5">
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
@@ -356,7 +356,7 @@ function AISiteBuilder() {
                 </div>
 
                 {m.siteLink && (
-                  <div className="bg-surface border border-border rounded-xl p-4 max-w-sm space-y-3">
+                  <div className="bg-surface border border-border rounded-[24px] p-4 max-w-sm space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600">
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
@@ -369,7 +369,7 @@ function AISiteBuilder() {
                         href={m.siteLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-8 rounded-lg bg-surface border border-border hover:bg-surface-alt text-[10px] font-bold text-center flex items-center justify-center transition-colors"
+                        className="flex-1 h-8 rounded-2xl bg-surface border border-border hover:bg-surface-alt text-[10px] font-bold text-center flex items-center justify-center transition-colors"
                       >
                         Visualizar Site
                       </a>
@@ -380,7 +380,7 @@ function AISiteBuilder() {
                             params: { slug: m.agencySlug!, page_id: m.siteId! },
                           })
                         }
-                        className="flex-1 h-8 rounded-lg bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
+                        className="flex-1 h-8 rounded-2xl bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
                       >
                         Editar Seções
                       </button>
@@ -432,13 +432,13 @@ function AISiteBuilder() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading || !selectedAgencyId}
-            className="flex-1 h-10 px-4 rounded-xl border border-border bg-surface text-xs focus:outline-none focus:border-brand disabled:opacity-50"
+            className="flex-1 h-10 px-4 rounded-[24px] border border-border bg-surface text-xs focus:outline-none focus:border-brand disabled:opacity-50"
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim() || !selectedAgencyId}
-            className="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center hover:bg-brand-hover disabled:opacity-50 shrink-0 transition-colors"
+            className="w-10 h-10 rounded-[24px] bg-brand text-white flex items-center justify-center hover:bg-brand-hover disabled:opacity-50 shrink-0 transition-colors"
           >
             <Send className="w-4 h-4" />
           </button>

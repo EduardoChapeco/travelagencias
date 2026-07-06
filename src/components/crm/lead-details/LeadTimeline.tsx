@@ -91,7 +91,7 @@ export function NewActivity({
   return (
     <form
       onSubmit={submit}
-      className="rounded-xl border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
+      className="rounded-[24px] border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
     >
       <Select
         value={type}
@@ -116,7 +116,7 @@ export function NewActivity({
       <button
         type="submit"
         disabled={busy || !content.trim()}
-        className="m-1 rounded-lg bg-brand text-brand-foreground px-3.5 py-1.5 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
+        className="m-1 rounded-2xl bg-brand text-brand-foreground px-3.5 py-1.5 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
       >
         Postar
       </button>
@@ -133,7 +133,7 @@ export function Timeline({
 }) {
   if (activities.length === 0) {
     return (
-      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-xl border border-border/50 border-dashed">
+      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-[24px] border border-border/50 border-dashed">
         Sem histórico ou atividades registradas.
       </div>
     );
@@ -190,7 +190,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
         <Icon className={`h-3 w-3 ${colorClass}`} />
       </div>
 
-      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-xl p-3.5 transition-colors">
+      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-[24px] p-3.5 transition-colors">
         <div className="flex items-center justify-between">
           <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ??
@@ -238,7 +238,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
               rows={2}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="rounded-lg border-border text-xs"
+              className="rounded-2xl border-border text-xs"
             />
             <div className="flex justify-end gap-1.5">
               <button
@@ -246,14 +246,14 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
                   setEdit(false);
                   setContent(activity.content ?? "");
                 }}
-                className="rounded-lg px-3 py-1 text-xs font-semibold hover:bg-surface-alt transition-colors"
+                className="rounded-2xl px-3 py-1 text-xs font-semibold hover:bg-surface-alt transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={() => save.mutate()}
                 disabled={save.isPending}
-                className="rounded-lg bg-brand text-brand-foreground px-3 py-1 text-xs font-bold transition-opacity hover:opacity-90"
+                className="rounded-2xl bg-brand text-brand-foreground px-3 py-1 text-xs font-bold transition-opacity hover:opacity-90"
               >
                 Salvar
               </button>

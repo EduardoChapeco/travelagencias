@@ -270,7 +270,7 @@ function TripConfirmationPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-4xl">
       {/* ── Header ── */}
-      <div className="rounded-xl border border-border bg-surface p-4 flex items-start justify-between gap-4">
+      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -285,7 +285,7 @@ function TripConfirmationPage() {
         {!showForm && (
           <button
             onClick={openAdd}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Adicionar Localizador</span>
@@ -296,19 +296,19 @@ function TripConfirmationPage() {
       {/* ── Status summary ── */}
       {!isLoading && items.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-lg border border-border bg-surface p-3 text-center">
+          <div className="rounded-2xl border border-border bg-surface p-3 text-center">
             <p className="text-xl font-bold text-foreground">{items.length}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-0.5">
               Total
             </p>
           </div>
-          <div className="rounded-lg border border-emerald-100 bg-emerald-50/50 p-3 text-center">
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-3 text-center">
             <p className="text-xl font-bold text-emerald-700">{confirmedCount}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600/70 mt-0.5">
               Confirmados
             </p>
           </div>
-          <div className="rounded-lg border border-amber-100 bg-amber-50/50 p-3 text-center">
+          <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-3 text-center">
             <p className="text-xl font-bold text-amber-700">{pendingCount}</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600/70 mt-0.5">
               Pendentes
@@ -319,7 +319,7 @@ function TripConfirmationPage() {
 
       {/* ── Alerta crítico se itens pendentes ── */}
       {!isLoading && items.length > 0 && !allConfirmed && (
-        <div className="flex items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2.5">
           <AlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
           <p className="text-xs text-amber-700">
             {pendingCount > 0
@@ -331,7 +331,7 @@ function TripConfirmationPage() {
 
       {/* ── Formulário de cadastro / edição ── */}
       {showForm && (
-        <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
               {editingId ? "Editar Localizador" : "Novo Localizador de Serviço"}
@@ -353,7 +353,7 @@ function TripConfirmationPage() {
               <select
                 value={form.item_type}
                 onChange={(e) => setForm((f) => ({ ...f, item_type: e.target.value }))}
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               >
                 {Object.entries(ITEM_TYPE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
@@ -373,7 +373,7 @@ function TripConfirmationPage() {
                 placeholder="Ex: LATAM Airlines, Sheraton"
                 value={form.provider_name}
                 onChange={(e) => setForm((f) => ({ ...f, provider_name: e.target.value }))}
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
 
@@ -392,7 +392,7 @@ function TripConfirmationPage() {
                     locator_code: e.target.value.toUpperCase(),
                   }))
                 }
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
 
@@ -406,7 +406,7 @@ function TripConfirmationPage() {
                 placeholder="Ex: Apartamento Duplo Vista Mar — Check-in 15h"
                 value={form.details}
                 onChange={(e) => setForm((f) => ({ ...f, details: e.target.value }))}
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
 
@@ -419,7 +419,7 @@ function TripConfirmationPage() {
                 type="date"
                 value={form.service_date}
                 onChange={(e) => setForm((f) => ({ ...f, service_date: e.target.value }))}
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
 
@@ -433,7 +433,7 @@ function TripConfirmationPage() {
                 placeholder="Observações internas para a equipe da agência"
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
           </div>
@@ -441,14 +441,14 @@ function TripConfirmationPage() {
           <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <button
               onClick={closeForm}
-              className="px-3 py-1.5 border border-border text-xs rounded-md hover:bg-surface-alt cursor-pointer transition-colors"
+              className="px-3 py-1.5 border border-border text-xs rounded-full hover:bg-surface-alt cursor-pointer transition-colors"
             >
               Cancelar
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-4 py-1.5 bg-brand text-brand-foreground text-xs rounded-md hover:bg-brand/90 cursor-pointer transition-colors disabled:opacity-50"
+              className="px-4 py-1.5 bg-brand text-brand-foreground text-xs rounded-full hover:bg-brand/90 cursor-pointer transition-colors disabled:opacity-50"
             >
               {isSaving ? "Salvando…" : editingId ? "Atualizar" : "Salvar Localizador"}
             </button>
@@ -483,7 +483,7 @@ function TripConfirmationPage() {
           </p>
           <button
             onClick={openAdd}
-            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand text-brand-foreground text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer"
+            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-brand text-brand-foreground text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Adicionar primeiro localizador
@@ -497,11 +497,11 @@ function TripConfirmationPage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-xl border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-[24px] border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
             >
               {/* ── Left: tipo + info ── */}
               <div className="flex items-center gap-3 min-w-0">
-                <div className="shrink-0 h-8 w-8 rounded-lg bg-surface-alt flex items-center justify-center">
+                <div className="shrink-0 h-8 w-8 rounded-2xl bg-surface-alt flex items-center justify-center">
                   <ItemIcon type={item.item_type} />
                 </div>
 
@@ -592,7 +592,7 @@ function TripConfirmationPage() {
 
       {/* ── Rodapé de status global ── */}
       {!isLoading && items.length > 0 && allConfirmed && (
-        <div className="flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2.5">
           <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
           <p className="text-xs font-semibold text-emerald-700">
             Todos os serviços críticos confirmados. Viagem pronta para embarque.

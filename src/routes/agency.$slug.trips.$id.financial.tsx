@@ -244,7 +244,7 @@ function TripFinancial() {
   if (tripQ.isError || recordsQ.isError || planQ.isError) {
     const errQ = tripQ.isError ? tripQ : recordsQ.isError ? recordsQ : planQ;
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 m-6">
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 m-6">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -263,14 +263,14 @@ function TripFinancial() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowOcrModal(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-4 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer"
+            className="flex h-9 items-center gap-1.5 rounded-full border border-border bg-surface px-4 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer"
           >
             <Upload className="h-3.5 w-3.5" />
             Importar Boleto (OCR)
           </button>
           <button
             onClick={() => setShowAddRecord(true)}
-            className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-95 transition-all cursor-pointer"
+            className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-95 transition-all cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Lançamento
@@ -358,7 +358,7 @@ function TripFinancial() {
         {Array.isArray(planQ.data) && planQ.data.length > 0 && !showPlanForm && (
           <button
             onClick={() => setShowPlanForm(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Plano
@@ -367,7 +367,7 @@ function TripFinancial() {
       </div>
 
       {showPlanForm && agency && (
-        <div className="mb-6 rounded-xl border border-border/60 bg-surface p-5">
+        <div className="mb-6 rounded-[24px] border border-border/60 bg-surface p-5">
           <h4 className="text-sm font-bold mb-4">Criar Novo Plano de Parcelamento</h4>
           <PlanForm
             agencyId={agency.id}
@@ -407,7 +407,7 @@ function TripFinancial() {
             );
           })
         : !showPlanForm && (
-            <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-xl mb-6">
+            <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-[24px] mb-6">
               Nenhum plano de parcelamento criado.
               <button
                 onClick={() => setShowPlanForm(true)}
@@ -450,7 +450,7 @@ function TripFinancial() {
                   setOcrResult(null);
                   setOcrFile(null);
                 }}
-                className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-alt"
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -460,7 +460,7 @@ function TripFinancial() {
               {/* File Upload */}
               {!ocrResult && (
                 <label
-                  className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}
+                  className={`flex flex-col items-center justify-center gap-3 rounded-[24px] border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}
                 >
                   {ocrLoading ? (
                     <>
@@ -505,7 +505,7 @@ function TripFinancial() {
                     <CheckCircle className="h-5 w-5" />
                     <span className="text-sm font-bold">Boleto lido com sucesso!</span>
                   </div>
-                  <div className="rounded-xl border border-border bg-surface-alt/10 p-4 space-y-2 text-xs font-mono">
+                  <div className="rounded-[24px] border border-border bg-surface-alt/10 p-4 space-y-2 text-xs font-mono">
                     {ocrResult.amount && (
                       <div>
                         <span className="text-muted-foreground">Valor:</span>{" "}
@@ -549,7 +549,7 @@ function TripFinancial() {
                     <select
                       value={ocrTargetInstId ?? ""}
                       onChange={(e) => setOcrTargetInstId(e.target.value || null)}
-                      className="w-full h-9 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
+                      className="w-full h-9 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
                     >
                       <option value="">Salvar sem vincular a parcela</option>
                       {planQ.data
@@ -570,13 +570,13 @@ function TripFinancial() {
                         setOcrResult(null);
                         setOcrFile(null);
                       }}
-                      className="flex-1 h-9 rounded-lg border border-border text-xs font-bold text-muted-foreground hover:bg-surface-alt"
+                      className="flex-1 h-9 rounded-2xl border border-border text-xs font-bold text-muted-foreground hover:bg-surface-alt"
                     >
                       Refazer Scan
                     </button>
                     <button
                       onClick={applyOcrToInstallment}
-                      className="flex-1 h-9 rounded-lg bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90"
+                      className="flex-1 h-9 rounded-2xl bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90"
                     >
                       Salvar Dados
                     </button>
@@ -609,7 +609,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 rounded-xl border border-border/60 bg-surface overflow-hidden">
+    <div className="mb-6 rounded-[24px] border border-border/60 bg-surface overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 hover:bg-surface-alt/50 transition-colors">
         <button
           onClick={onToggle}

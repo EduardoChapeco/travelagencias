@@ -113,7 +113,7 @@ function Page() {
       {/* CHARTS + TABLES */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
         {/* REVENUE CHART */}
-        <section className="rounded-xl border border-border bg-surface p-5">
+        <section className="rounded-[24px] border border-border bg-surface p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <div className="font-semibold">Receita confirmada — 12 meses</div>
@@ -163,7 +163,7 @@ function Page() {
               </ChartContainer>
             </div>
           ) : (
-            <div className="h-40 animate-pulse rounded-lg bg-surface-alt" />
+            <div className="h-40 animate-pulse rounded-2xl bg-surface-alt" />
           )}
           {d && (
             <div className="mt-3 text-right text-xs text-muted-foreground">
@@ -182,7 +182,7 @@ function Page() {
         {/* RIGHT COLUMN */}
         <div className="space-y-4">
           {/* RECENT AGENCIES */}
-          <section className="rounded-xl border border-border bg-surface overflow-hidden">
+          <section className="rounded-[24px] border border-border bg-surface overflow-hidden">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <div className="flex items-center gap-2 font-semibold text-sm">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -200,7 +200,7 @@ function Page() {
                   params={{ id: a.id }}
                   className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-alt/50 transition-colors"
                 >
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-surface-alt border border-border overflow-hidden">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-alt border border-border overflow-hidden">
                     {a.logo_url ? (
                       <img src={a.logo_url} alt="" className="h-full w-full object-contain" />
                     ) : (
@@ -221,7 +221,7 @@ function Page() {
           </section>
 
           {/* OPEN TICKETS */}
-          <section className="rounded-xl border border-border bg-surface overflow-hidden">
+          <section className="rounded-[24px] border border-border bg-surface overflow-hidden">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <div className="flex items-center gap-2 font-semibold text-sm">
                 <Activity className="h-4 w-4 text-muted-foreground" />
@@ -288,10 +288,10 @@ function StatCard({
   trend?: number;
 }) {
   const inner = (
-    <div className="relative overflow-hidden rounded-xl border border-border bg-surface p-5 transition-all hover:border-border-strong group">
+    <div className="relative overflow-hidden rounded-[24px] border border-border bg-surface p-5 transition-all hover:border-border-strong group">
       <div className="absolute right-0 top-0 h-20 w-20 -translate-y-6 translate-x-6 rounded-full bg-surface-alt opacity-20 transition-transform group-hover:scale-150" />
       <div className="flex items-center justify-between mb-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bg} ${color}`}>
+        <div className={`flex h-9 w-9 items-center justify-center rounded-2xl ${bg} ${color}`}>
           <Icon className="h-4.5 w-4.5" />
         </div>
         {href && (
@@ -325,7 +325,7 @@ function MiniStat({
 }) {
   return (
     <div
-      className={`flex items-center gap-3 rounded-lg border p-3 ${urgent ? "border-danger/30 bg-danger-bg" : "border-border bg-surface"}`}
+      className={`flex items-center gap-3 rounded-2xl border p-3 ${urgent ? "border-danger/30 bg-danger-bg" : "border-border bg-surface"}`}
     >
       <Icon className={`h-4 w-4 shrink-0 ${urgent ? "text-danger" : "text-muted-foreground"}`} />
       <div>

@@ -68,7 +68,7 @@ export function StudioMapWidget({
 
   if (!mounted || typeof window === "undefined") {
     return (
-      <div className="h-[400px] w-full rounded-md border bg-surface-alt/30 flex items-center justify-center text-muted-foreground text-sm">
+      <div className="h-[400px] w-full rounded-full border bg-surface-alt/30 flex items-center justify-center text-muted-foreground text-sm">
         <Loader2 className="h-6 w-6 animate-spin text-brand/60 mr-2" />
         Carregando mapa interativo...
       </div>
@@ -173,7 +173,7 @@ export function StudioMapWidget({
         ))}
       </div>
 
-      <div className="relative h-[400px] w-full rounded-md border overflow-hidden">
+      <div className="relative h-[400px] w-full rounded-full border overflow-hidden">
         <MapContainer
           center={[0, 0]}
           zoom={2}

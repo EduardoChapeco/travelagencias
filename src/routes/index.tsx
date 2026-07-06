@@ -135,7 +135,7 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[58px] max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
             <div className="flex flex-col">
@@ -163,13 +163,13 @@ function Landing() {
           <div className="flex items-center gap-3">
             <Link
               to="/auth/login"
-              className="h-9 rounded-sm px-4 text-xs font-bold text-muted-foreground hover:text-foreground transition-all hover:bg-surface-alt inline-flex items-center ds-label-caps"
+              className="h-9 rounded-full px-4 text-xs font-bold text-muted-foreground hover:text-foreground transition-all hover:bg-surface-alt inline-flex items-center ds-label-caps"
             >
               Entrar
             </Link>
             <Link
               to="/auth/register"
-              className="h-9 rounded-sm bg-primary px-5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all inline-flex items-center ds-label-caps"
+              className="h-9 rounded-full bg-primary px-5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all inline-flex items-center ds-label-caps"
             >
               Criar Agência Grátis
             </Link>
@@ -201,14 +201,14 @@ function Landing() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/auth/register"
-            className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-3 rounded-sm bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/95 transition-all"
+            className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/95 transition-all"
           >
             Começar Agora Grátis
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <a
             href="#features"
-            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-sm border border-border-strong bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:bg-surface-alt"
+            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border border-border-strong bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:bg-surface-alt"
           >
             Ver Recursos
           </a>
@@ -232,7 +232,7 @@ function Landing() {
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
+                className="flex flex-col items-center justify-center rounded-[24px] border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
               >
                 <div className="text-4xl font-extrabold text-foreground tracking-tight group-hover:scale-105 transition-transform duration-300">
                   {s.value}
@@ -267,7 +267,7 @@ function Landing() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* O Jeito Doloroso */}
-            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
+            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
               <h3 className="text-base font-bold text-danger flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 shrink-0" />O Jeito Lento (Word, PDFs e WhatsApp
                 Solto)
@@ -312,7 +312,7 @@ function Landing() {
             </div>
 
             {/* O Jeito Turis */}
-            <div className="rounded-xl border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
+            <div className="rounded-[24px] border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>
@@ -384,13 +384,13 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                    "group relative overflow-hidden rounded-xl border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
+                    "group relative overflow-hidden rounded-[24px] border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
                     (i === 0 || i === 3) &&
                       "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
                   )}
                 >
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Icon className="h-5 w-5" strokeWidth={2} />
                     </div>
 
@@ -432,7 +432,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -459,7 +459,7 @@ function Landing() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -506,14 +506,14 @@ function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-sm bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 transition-all"
+              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 transition-all"
             >
               Criar Conta Grátis
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 text-primary-foreground" />
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-sm border border-border bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-surface-alt"
+              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border border-border bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-surface-alt"
             >
               Acessar Minha Agência
             </Link>
@@ -525,7 +525,7 @@ function Landing() {
       <footer className="border-t border-border bg-surface-alt py-10 relative z-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-primary text-primary-foreground text-[10px] font-bold">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
               T
             </div>
             <span className="text-xs font-bold text-foreground tracking-tight uppercase">

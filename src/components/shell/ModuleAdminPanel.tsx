@@ -162,7 +162,7 @@ export function ModuleAdminPanel({
       <div className="flex flex-col h-full space-y-4">
         {/* Navigation Tabs */}
         {!editingPlaybook && !isCreatingPlaybook && (
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-0.5 text-xs self-start mb-2">
+          <div className="flex items-center gap-1 rounded-2xl border border-border bg-surface p-0.5 text-xs self-start mb-2">
             <button
               onClick={() => setActiveTab("kpis")}
               className={`rounded px-3.5 py-1.5 font-bold transition-all ${
@@ -218,7 +218,7 @@ export function ModuleAdminPanel({
                   </div>
                   <PrimaryButton
                     onClick={() => setIsCreatingPlaybook(true)}
-                    className="h-8 text-[11px] font-bold gap-1 rounded-lg"
+                    className="h-8 text-[11px] font-bold gap-1 rounded-2xl"
                   >
                     <Plus className="w-3.5 h-3.5" /> Novo Playbook
                   </PrimaryButton>
@@ -230,7 +230,7 @@ export function ModuleAdminPanel({
                     Carregando playbooks...
                   </div>
                 ) : playbooksQ.data && playbooksQ.data.length === 0 ? (
-                  <div className="text-xs text-center p-8 border border-dashed border-border rounded-xl text-muted-foreground">
+                  <div className="text-xs text-center p-8 border border-dashed border-border rounded-[24px] text-muted-foreground">
                     Nenhum playbook operacional definido para este módulo.
                   </div>
                 ) : (
@@ -238,7 +238,7 @@ export function ModuleAdminPanel({
                     {playbooksQ.data?.map((pb: any) => (
                       <div
                         key={pb.id}
-                        className="p-4 rounded-xl border border-border bg-surface flex flex-col justify-between hover:border-brand/45 transition-colors group"
+                        className="p-4 rounded-[24px] border border-border bg-surface flex flex-col justify-between hover:border-brand/45 transition-colors group"
                       >
                         <div className="flex items-start justify-between">
                           <div>
@@ -291,7 +291,7 @@ export function ModuleAdminPanel({
                       Carregando artigos...
                     </div>
                   ) : articlesQ.data && articlesQ.data.length === 0 ? (
-                    <div className="text-xs text-center p-6 border border-dashed border-border rounded-xl text-muted-foreground">
+                    <div className="text-xs text-center p-6 border border-dashed border-border rounded-[24px] text-muted-foreground">
                       Nenhum artigo da base de conhecimento encontrado nesta categoria.
                     </div>
                   ) : (
@@ -299,7 +299,7 @@ export function ModuleAdminPanel({
                       {articlesQ.data?.map((art: any) => (
                         <div
                           key={art.id}
-                          className="p-3 rounded-lg border border-border bg-surface-alt/10 flex items-center justify-between"
+                          className="p-3 rounded-2xl border border-border bg-surface-alt/10 flex items-center justify-between"
                         >
                           <div className="flex items-center gap-2">
                             <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
@@ -329,7 +329,7 @@ export function ModuleAdminPanel({
           <div className="flex-1 overflow-auto space-y-6">
             <form
               onSubmit={handleSaveCustomName}
-              className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-xl"
+              className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-[24px]"
             >
               <div>
                 <h4 className="text-xs font-bold text-foreground">Identificação do Módulo</h4>
@@ -374,7 +374,7 @@ export function ModuleAdminPanel({
                 {customSettingsComponent}
               </div>
             ) : (
-              <div className="p-6 border border-dashed border-border rounded-xl text-center text-xs text-muted-foreground">
+              <div className="p-6 border border-dashed border-border rounded-[24px] text-center text-xs text-muted-foreground">
                 Este módulo não possui configurações adicionais específicas além da identificação.
               </div>
             )}
@@ -540,7 +540,7 @@ function PlaybookForm({
             {steps.map((st, idx) => (
               <div
                 key={idx}
-                className="bg-surface-alt/20 border border-border/80 rounded-xl p-3 relative space-y-2.5"
+                className="bg-surface-alt/20 border border-border/80 rounded-[24px] p-3 relative space-y-2.5"
               >
                 <button
                   type="button"
@@ -561,7 +561,7 @@ function PlaybookForm({
                     value={st.title}
                     onChange={(e) => updateStep(idx, "title", e.target.value)}
                     placeholder={`Título da Etapa (ex: Enviar e-mail de alerta)`}
-                    className="flex-1 h-7 rounded-md border border-border bg-surface px-2 text-xs outline-none focus:border-brand text-foreground"
+                    className="flex-1 h-7 rounded-full border border-border bg-surface px-2 text-xs outline-none focus:border-brand text-foreground"
                   />
                 </div>
 
@@ -570,7 +570,7 @@ function PlaybookForm({
                   value={st.description}
                   onChange={(e) => updateStep(idx, "description", e.target.value)}
                   placeholder="Diretrizes detalhadas para condução da etapa..."
-                  className="w-full rounded-md border border-border bg-surface px-2 py-1 text-xs outline-none focus:border-brand resize-none text-foreground"
+                  className="w-full rounded-full border border-border bg-surface px-2 py-1 text-xs outline-none focus:border-brand resize-none text-foreground"
                 />
               </div>
             ))}

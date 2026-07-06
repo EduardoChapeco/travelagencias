@@ -168,7 +168,7 @@ const pulseIcon = (type: "trip" | "flight") =>
 
 export function RadarMapWidget({ travelers }: { travelers: RadarTraveler[] }) {
   return (
-    <div className="w-full h-full min-h-[350px] relative rounded-xl overflow-hidden border border-slate-800">
+    <div className="w-full h-full min-h-[350px] relative rounded-[24px] overflow-hidden border border-slate-800">
       <MapContainer
         center={[0, 0]}
         zoom={2}

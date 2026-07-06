@@ -522,7 +522,7 @@ export function CardDetailPanel({
                 type="button"
                 onClick={saveInlineEdits}
                 disabled={editSaving}
-                className="flex items-center gap-1.5 h-7 rounded-md bg-brand text-brand-foreground px-3 text-xs font-semibold"
+                className="flex items-center gap-1.5 h-7 rounded-full bg-brand text-brand-foreground px-3 text-xs font-semibold"
               >
                 {editSaving ? "Salvando…" : "Salvar alterações"}
               </button>
@@ -594,7 +594,7 @@ export function CardDetailPanel({
               <h3 className="text-sm font-semibold">Bilhetes / Ingressos</h3>
               <button
                 onClick={() => ticketFileRef.current?.click()}
-                className="flex items-center gap-1.5 h-7 border border-border rounded-md px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                className="flex items-center gap-1.5 h-7 border border-border rounded-full px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
               >
                 <Upload className="h-3 w-3" /> Upload Bilhete
               </button>
@@ -636,7 +636,7 @@ export function CardDetailPanel({
             </div>
 
             {ticketsCardQ.data?.length === 0 && (
-              <div className="text-center py-8 border border-dashed rounded-xl text-sm text-muted-foreground">
+              <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
                 Nenhum bilhete. Envie bilhetes aéreos, ingressos ou vouchers de transfer.
               </div>
             )}
@@ -645,9 +645,9 @@ export function CardDetailPanel({
               {ticketsCardQ.data?.map((t: any) => (
                 <div
                   key={t.id}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-white p-3"
+                  className="flex items-center gap-3 rounded-[24px] border border-border bg-white p-3"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface">
                     <Ticket className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -697,7 +697,7 @@ export function CardDetailPanel({
           <div className="p-5 space-y-5">
             {/* Trip info */}
             {card.trip_title && (
-              <div className="rounded-lg border border-border bg-surface-alt/40 p-3 text-xs">
+              <div className="rounded-2xl border border-border bg-surface-alt/40 p-3 text-xs">
                 <div className="font-semibold text-foreground">{card.trip_title}</div>
                 {card.trip_destination && (
                   <div className="text-muted-foreground">{card.trip_destination}</div>
@@ -707,7 +707,7 @@ export function CardDetailPanel({
 
             {/* Proposta Original Vincular */}
             {card.proposal_details && (
-              <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+              <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   Proposta Original
                 </div>
@@ -783,7 +783,7 @@ export function CardDetailPanel({
 
             {/* Prazo de embarque */}
             {daysToDeparture !== null && (
-              <div className={`rounded-lg border px-4 py-3 text-sm font-semibold ${urgencyColor}`}>
+              <div className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${urgencyColor}`}>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   {daysToDeparture <= 0
@@ -885,7 +885,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ABC123"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -900,7 +900,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="LATAM, GOL…"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                   </div>
@@ -963,7 +963,7 @@ export function CardDetailPanel({
                     })()}
 
                   {/* Botões de Emergência (Fase 7) */}
-                  <div className="mt-3 p-3 rounded-lg border border-red-200 bg-red-50/50 space-y-2">
+                  <div className="mt-3 p-3 rounded-2xl border border-red-200 bg-red-50/50 space-y-2">
                     <div className="flex items-center gap-1.5 text-red-700 font-bold text-xs uppercase tracking-wider">
                       <AlertTriangle className="h-4 w-4" /> Emergência no Aeroporto
                     </div>
@@ -1010,7 +1010,7 @@ export function CardDetailPanel({
                         setDepartureDate(e.target.value);
                         setEditDirty(true);
                       }}
-                      className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-2">
@@ -1025,7 +1025,7 @@ export function CardDetailPanel({
                           setBriefingDate(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1040,7 +1040,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="https://meet.google.com/..."
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                   </div>
@@ -1088,7 +1088,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: Cancún, México"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1099,7 +1099,7 @@ export function CardDetailPanel({
                           setDestinationType(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       >
                         <option value="national">Nacional</option>
                         <option value="international">Internacional</option>
@@ -1115,7 +1115,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="Nome do hotel"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1130,7 +1130,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="+1 555 000 0000"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1144,7 +1144,7 @@ export function CardDetailPanel({
                           setHotelCheckin(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1158,7 +1158,7 @@ export function CardDetailPanel({
                           setHotelCheckout(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1173,7 +1173,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: GiraTur Transfer"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1187,7 +1187,7 @@ export function CardDetailPanel({
                           setTransferTime(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1202,7 +1202,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: Carlos Matos"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div>
@@ -1217,7 +1217,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="55 99999-0000"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                     <div className="col-span-2">
@@ -1232,7 +1232,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="0800 123 456"
-                        className="mt-1 h-8 w-full rounded-md border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
                   </div>
@@ -1287,12 +1287,12 @@ export function CardDetailPanel({
                         }
                       }}
                       placeholder="Nova tag personalizada…"
-                      className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                     />
                     <button
                       type="button"
                       onClick={() => addTag(newTag)}
-                      className="h-8 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
+                      className="h-8 rounded-full border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
                     >
                       + Add
                     </button>
@@ -1366,12 +1366,12 @@ export function CardDetailPanel({
                     }
                   }}
                   placeholder="Novo item…"
-                  className="h-8 flex-1 rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                  className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
                 <button
                   type="button"
                   onClick={addItem}
-                  className="h-8 rounded-md border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
+                  className="h-8 rounded-full border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
                 >
                   + Adicionar
                 </button>
@@ -1384,7 +1384,7 @@ export function CardDetailPanel({
                 Notas do Operador
               </div>
               {!isEditing ? (
-                <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-lg border border-border/40 whitespace-pre-line">
+                <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-2xl border border-border/40 whitespace-pre-line">
                   {notes || "Nenhuma observação cadastrada."}
                 </p>
               ) : (
@@ -1396,14 +1396,14 @@ export function CardDetailPanel({
                   }}
                   placeholder="Observações internas sobre este embarque…"
                   rows={3}
-                  className="w-full rounded-md border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                  className="w-full rounded-full border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
                 />
               )}
             </div>
 
             {/* Alerts do sistema */}
             {card.alerts && card.alerts.length > 0 && (
-              <div className="rounded-lg border border-warning/30 bg-warning-bg p-3">
+              <div className="rounded-2xl border border-warning/30 bg-warning-bg p-3">
                 <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-warning">
                   <AlertTriangle className="h-3.5 w-3.5" /> Alertas do Sistema
                 </div>
@@ -1417,7 +1417,7 @@ export function CardDetailPanel({
 
             {/* Passageiros */}
             {(card.passengers_count ?? 0) > 0 && (
-              <div className="rounded-lg border border-border bg-surface p-3">
+              <div className="rounded-2xl border border-border bg-surface p-3">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
                   <Users className="h-3.5 w-3.5" /> Passageiros
                 </div>
@@ -1426,7 +1426,7 @@ export function CardDetailPanel({
             )}
 
             {/* Suporte / Chamados */}
-            <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+            <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   Chamados de Suporte
@@ -1443,7 +1443,7 @@ export function CardDetailPanel({
               </div>
 
               {showTicketForm && (
-                <div className="rounded-xl border border-border p-3 space-y-3 bg-surface-alt/20 text-xs">
+                <div className="rounded-[24px] border border-border p-3 space-y-3 bg-surface-alt/20 text-xs">
                   <div className="font-semibold text-foreground">Abrir Novo Chamado</div>
                   <div className="space-y-2">
                     <input
@@ -1451,20 +1451,20 @@ export function CardDetailPanel({
                       value={ticketTitle}
                       onChange={(e) => setTicketTitle(e.target.value)}
                       placeholder="Título do chamado (ex: Atraso no voo)"
-                      className="h-8 w-full rounded-md border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="h-8 w-full rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                     />
                     <textarea
                       rows={2}
                       value={ticketDesc}
                       onChange={(e) => setTicketDesc(e.target.value)}
                       placeholder="Descrição / Detalhes..."
-                      className="w-full rounded-md border border-border bg-surface px-2.5 py-1 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                      className="w-full rounded-full border border-border bg-surface px-2.5 py-1 text-xs outline-none focus:border-border-strong resize-none text-foreground"
                     />
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={ticketType}
                         onChange={(e) => setTicketType(e.target.value)}
-                        className="h-8 rounded-md border border-border bg-surface text-xs px-2 text-foreground"
+                        className="h-8 rounded-full border border-border bg-surface text-xs px-2 text-foreground"
                       >
                         <option value="trip">Viagem</option>
                         <option value="financial">Financeiro</option>
@@ -1474,7 +1474,7 @@ export function CardDetailPanel({
                       <select
                         value={ticketPriority}
                         onChange={(e) => setTicketPriority(e.target.value)}
-                        className="h-8 rounded-md border border-border bg-surface text-xs px-2 text-foreground"
+                        className="h-8 rounded-full border border-border bg-surface text-xs px-2 text-foreground"
                       >
                         <option value="low">Baixa</option>
                         <option value="medium">Média</option>
@@ -1516,7 +1516,7 @@ export function CardDetailPanel({
                   {ticketsQ.data.map((t: any) => (
                     <div
                       key={t.id}
-                      className="flex items-center justify-between border border-border/60 rounded-lg p-2.5 text-xs bg-surface-alt/10"
+                      className="flex items-center justify-between border border-border/60 rounded-2xl p-2.5 text-xs bg-surface-alt/10"
                     >
                       <div>
                         <div className="font-mono text-[9px] text-muted-foreground">{t.code}</div>
@@ -1550,7 +1550,7 @@ export function CardDetailPanel({
             </div>
 
             {/* Atividades Timeline */}
-            <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+            <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
               <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 Atividades / Histórico
               </div>

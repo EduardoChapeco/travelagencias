@@ -51,14 +51,14 @@ export const Route = createFileRoute("/agency/$slug")({
             onClick={() => {
               if (typeof window !== "undefined") window.location.reload();
             }}
-            className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-white shadow transition-colors hover:bg-brand/90 cursor-pointer"
+            className="inline-flex h-9 items-center justify-center rounded-full bg-brand px-4 text-sm font-semibold text-white shadow transition-colors hover:bg-brand/90 cursor-pointer"
           >
             Recarregar Página
           </button>
           {slug && (
             <a
               href={`/agency/${slug}`}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-surface-alt"
+              className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-surface-alt"
             >
               Voltar ao Início
             </a>
@@ -108,7 +108,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
             </p>
           </div>
 
-          <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
+          <div className="rounded-[24px] bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
             Se você é o proprietário desta agência, acesse a central de pagamentos ou entre em
             contato com o suporte financeiro do Turis para regularizar sua assinatura.
           </div>
@@ -116,7 +116,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
           <div className="flex justify-center gap-3">
             <button
               onClick={() => window.location.reload()}
-              className="h-10 rounded-lg bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
+              className="h-10 rounded-2xl bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
             >
               Tentar Novamente
             </button>

@@ -45,7 +45,7 @@ export function ContractEditor({
   return (
     <div className="space-y-4">
       {/* Package summary */}
-      <div className="rounded-lg border border-border bg-surface p-5">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 text-sm font-semibold">Resumo do Pacote</h2>
         <textarea
           rows={4}
@@ -53,12 +53,12 @@ export function ContractEditor({
           value={packageSummary}
           onChange={(e) => setPackageSummary(e.target.value)}
           placeholder="Descreva o pacote contratado: destino, datas, serviços incluídos…"
-          className="w-full rounded-md border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
+          className="w-full rounded-full border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
         />
       </div>
 
       {/* Contratantes */}
-      <div className="rounded-lg border border-border bg-surface p-5">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold">Contratantes (Pagantes)</h2>
           {isEditable && (
@@ -83,7 +83,7 @@ export function ContractEditor({
           {clientData.map((c, i) => (
             <div
               key={i}
-              className="flex flex-col gap-2 rounded-md border border-border p-3 bg-surface-alt/10 relative"
+              className="flex flex-col gap-2 rounded-full border border-border p-3 bg-surface-alt/10 relative"
             >
               {isEditable && (
                 <button
@@ -157,9 +157,9 @@ export function ContractEditor({
       </div>
 
       {/* Payment terms */}
-      <div className="rounded-lg border border-border bg-surface p-5">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 text-sm font-semibold">Condições de Pagamento</h2>
-        <div className="mb-3 rounded-md bg-surface-alt px-3 py-2 text-sm">
+        <div className="mb-3 rounded-full bg-surface-alt px-3 py-2 text-sm">
           <span className="text-muted-foreground">Valor total: </span>
           <span className="font-semibold font-mono text-foreground">
             {money(tripTotal, tripCurrency)}
@@ -176,13 +176,13 @@ export function ContractEditor({
           value={paymentTerms}
           onChange={(e) => setPaymentTerms(e.target.value)}
           placeholder="Ex: 50% na assinatura via Pix, saldo 30 dias antes do embarque…"
-          className="w-full rounded-md border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
+          className="w-full rounded-full border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
         />
       </div>
 
       {/* Cláusulas personalizadas */}
       {isEditable && (
-        <div className="rounded-lg border border-border bg-surface p-5">
+        <div className="rounded-2xl border border-border bg-surface p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold">Cláusulas Personalizadas</h2>
             <button
@@ -204,7 +204,7 @@ export function ContractEditor({
             {customClauses.map((c, i) => (
               <div
                 key={i}
-                className="flex gap-2 rounded-md border border-border p-2.5 text-xs bg-surface-alt/10"
+                className="flex gap-2 rounded-full border border-border p-2.5 text-xs bg-surface-alt/10"
               >
                 <div className="flex-1">
                   <div className="font-medium text-muted-foreground uppercase tracking-wide mb-0.5">
@@ -223,7 +223,7 @@ export function ContractEditor({
           </div>
 
           {editingCustom && (
-            <div className="mt-3 rounded-md border border-border p-3 space-y-2 bg-surface-alt/10">
+            <div className="mt-3 rounded-full border border-border p-3 space-y-2 bg-surface-alt/10">
               <input
                 placeholder="Seção (ex: Responsabilidade)"
                 value={newClause.section}
@@ -273,7 +273,7 @@ export function ContractEditor({
       )}
 
       {/* Fixed clauses accordion */}
-      <div className="rounded-lg border border-border bg-surface">
+      <div className="rounded-2xl border border-border bg-surface">
         <button
           onClick={() => setShowClauses(!showClauses)}
           className="flex w-full items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-surface-alt text-foreground"

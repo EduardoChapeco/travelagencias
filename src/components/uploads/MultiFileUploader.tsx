@@ -108,7 +108,7 @@ export function MultiFileUploader({
               if (dragIndex !== null) reorder(dragIndex, i);
               setDragIndex(null);
             }}
-            className="group relative aspect-square overflow-hidden rounded-md border border-border bg-surface"
+            className="group relative aspect-square overflow-hidden rounded-full border border-border bg-surface"
           >
             <img src={url} alt="" className="h-full w-full object-cover" />
             <button
@@ -125,7 +125,7 @@ export function MultiFileUploader({
           <>
             <label
               htmlFor={inputId}
-              className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-border text-muted-foreground hover:bg-surface-alt"
+              className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-full border-2 border-dashed border-border text-muted-foreground hover:bg-surface-alt"
             >
               {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
               <span className="text-[10px]">Adicionar</span>

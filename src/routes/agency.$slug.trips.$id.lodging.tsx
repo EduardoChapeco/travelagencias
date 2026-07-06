@@ -177,7 +177,7 @@ function TripLodgingPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="rounded-xl border border-border bg-surface p-4 flex items-start justify-between gap-4">
+      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <Bed className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -195,7 +195,7 @@ function TripLodgingPage() {
               resetForm();
               setShowAddForm(true);
             }}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Adicionar Hospedagem</span>
@@ -211,7 +211,7 @@ function TripLodgingPage() {
 
       {/* Form de Cadastro / Edição */}
       {(showAddForm || editingCardId) && (
-        <div className="rounded-xl border border-border bg-surface p-4 space-y-4 max-w-3xl">
+        <div className="rounded-[24px] border border-border bg-surface p-4 space-y-4 max-w-3xl">
           <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
             {editingCardId ? "Editar Hospedagem" : "Nova Hospedagem"}
           </h3>
@@ -355,7 +355,7 @@ function TripLodgingPage() {
           {cards.map((card) => (
             <div
               key={card.id}
-              className="rounded-xl border border-border bg-surface overflow-hidden hover:shadow-sm transition-all"
+              className="rounded-[24px] border border-border bg-surface overflow-hidden hover:shadow-sm transition-all"
             >
               <div className="p-4 border-b border-border/60 bg-surface-alt/20 flex items-center justify-between">
                 <div className="flex items-center gap-2">

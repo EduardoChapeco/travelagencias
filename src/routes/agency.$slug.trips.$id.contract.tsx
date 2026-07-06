@@ -581,7 +581,7 @@ function TripContract() {
       ? tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"
       : contractQ.error instanceof Error ? contractQ.error.message : "Erro desconhecido";
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[24px] border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -644,7 +644,7 @@ function TripContract() {
                   navigator.clipboard.writeText(publicUrl);
                   toast.success("Link copiado");
                 }}
-                className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface"
+                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface"
               >
                 <Copy className="h-3.5 w-3.5" />
                 Copiar link de assinatura
@@ -653,7 +653,7 @@ function TripContract() {
                 href={publicUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface animate-pulse"
+                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface animate-pulse"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Visualizar Link
@@ -664,7 +664,7 @@ function TripContract() {
           {contract?.status === "signed" && (
             <button
               onClick={handleDownloadZip}
-              className="flex h-8 items-center gap-1.5 rounded-md border border-success bg-success/10 text-success px-3 text-xs font-semibold hover:bg-success/20 transition-colors"
+              className="flex h-8 items-center gap-1.5 rounded-full border border-success bg-success/10 text-success px-3 text-xs font-semibold hover:bg-success/20 transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Pacote (ZIP)
@@ -720,7 +720,7 @@ function TripContract() {
 
       {/* ── Signed badge ─────────────────────────────────────────────────────── */}
       {isSigned && contract && (
-        <div className="mb-6 flex items-center gap-3 rounded-lg border border-success bg-success-bg px-4 py-3">
+        <div className="mb-6 flex items-center gap-3 rounded-2xl border border-success bg-success-bg px-4 py-3">
           <CheckCircle className="h-5 w-5 text-success shrink-0" />
           <div className="flex-1">
             <div className="text-sm font-bold text-success">Contrato assinado digitalmente</div>

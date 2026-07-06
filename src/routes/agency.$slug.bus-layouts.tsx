@@ -54,7 +54,7 @@ function BusLayoutsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
             title="Novo Layout"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -63,7 +63,7 @@ function BusLayoutsPage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar layouts"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -79,10 +79,10 @@ function BusLayoutsPage() {
             value={qSearch}
             onChange={(e) => setQSearch(e.target.value)}
             placeholder="Buscar veículo..."
-            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
           />
         </div>
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
           {["all", "bus", "van", "plane"].map((t) => (
             <button
               key={t}
@@ -113,10 +113,10 @@ function BusLayoutsPage() {
             {filtered.map((l) => (
               <div
                 key={l.id}
-                className="flex flex-col justify-between rounded-lg border border-border bg-surface p-5 hover:border-border-strong transition-all shadow-xs"
+                className="flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 hover:border-border-strong transition-all shadow-xs"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-alt">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-alt">
                     <Bus className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 text-right">
@@ -129,14 +129,14 @@ function BusLayoutsPage() {
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
                    <button 
                      onClick={() => setEditingLayout(l)} 
-                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-md hover:bg-surface-alt cursor-pointer border border-border bg-surface"
+                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:bg-surface-alt cursor-pointer border border-border bg-surface"
                    >
                      <Settings2 className="h-3 w-3" /> Cadastro
                    </button>
                    <Link
                      to="/agency/$slug/bus-layouts/$id"
                      params={{ slug, id: l.id }}
-                     className="text-[11px] font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-md bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
+                     className="text-[11px] font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
                    >
                      💺 Desenhar Mapa
                    </Link>

@@ -76,7 +76,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
             </div>
           </div>
           {conversation.ai_mode && (
-            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-md whitespace-nowrap ml-4">
+            <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full whitespace-nowrap ml-4">
               IA Gerenciando
             </span>
           )}
@@ -110,7 +110,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
               >
                 <div 
                   className={cn(
-                    "max-w-[75%] rounded-lg p-3 text-sm shadow-sm relative group",
+                    "max-w-[75%] rounded-2xl p-3 text-sm shadow-sm relative group",
                     isOutbound 
                       ? "bg-[#d9fdd3] dark:bg-primary text-slate-900 dark:text-primary-foreground rounded-tr-none" 
                       : "bg-white dark:bg-card text-foreground rounded-tl-none"

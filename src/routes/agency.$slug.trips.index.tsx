@@ -478,7 +478,7 @@ function TripsList() {
           <button
             id="btn-new-trip"
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
             title="Nova viagem"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -486,7 +486,7 @@ function TripsList() {
           </button>
           <button
             onClick={() => setImportOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md border border-border bg-surface px-2 sm:px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             title="Importar do Infotravel"
           >
             <Search className="h-3.5 w-3.5" />
@@ -495,7 +495,7 @@ function TripsList() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Viagens"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -515,7 +515,7 @@ function TripsList() {
               setPage(1);
             }}
             placeholder="Buscar viagem..."
-            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
           />
         </div>
         <div className="relative w-full sm:w-44">
@@ -526,7 +526,7 @@ function TripsList() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-[11px] text-foreground outline-none focus:border-brand"
+            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-[11px] text-foreground outline-none focus:border-brand"
           >
             <option value="all">Todos os status</option>
             <option value="planning">Planejamento</option>
@@ -542,7 +542,7 @@ function TripsList() {
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 container">
         {list.isError && (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-4">
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
               <AlertCircle className="h-5 w-5 text-red-600" />
             </div>
@@ -555,24 +555,24 @@ function TripsList() {
         {list.isLoading && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
-              <div className="h-8 w-64 animate-pulse rounded-md bg-surface-alt" />
-              <div className="h-8 w-24 animate-pulse rounded-md bg-surface-alt" />
+              <div className="h-8 w-64 animate-pulse rounded-full bg-surface-alt" />
+              <div className="h-8 w-24 animate-pulse rounded-full bg-surface-alt" />
             </div>
-            <div className="rounded-xl border border-border bg-surface overflow-hidden">
+            <div className="rounded-[24px] border border-border bg-surface overflow-hidden">
               <div className="border-b border-border bg-surface-alt/50 p-3 h-10 flex gap-4">
-                <div className="h-4 w-12 animate-pulse rounded-md bg-muted/40" />
-                <div className="h-4 w-1/3 animate-pulse rounded-md bg-muted/40" />
-                <div className="h-4 w-24 animate-pulse rounded-md bg-muted/40 ml-auto" />
+                <div className="h-4 w-12 animate-pulse rounded-full bg-muted/40" />
+                <div className="h-4 w-1/3 animate-pulse rounded-full bg-muted/40" />
+                <div className="h-4 w-24 animate-pulse rounded-full bg-muted/40 ml-auto" />
               </div>
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-4 border-b border-border p-4">
-                  <div className="h-4 w-12 animate-pulse rounded-md bg-surface-alt" />
+                  <div className="h-4 w-12 animate-pulse rounded-full bg-surface-alt" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 w-1/4 animate-pulse rounded-md bg-surface-alt" />
-                    <div className="h-3 w-1/6 animate-pulse rounded-md bg-surface-alt/50" />
+                    <div className="h-4 w-1/4 animate-pulse rounded-full bg-surface-alt" />
+                    <div className="h-3 w-1/6 animate-pulse rounded-full bg-surface-alt/50" />
                   </div>
                   <div className="h-6 w-24 animate-pulse rounded-full bg-surface-alt" />
-                  <div className="h-4 w-20 animate-pulse rounded-md bg-surface-alt" />
+                  <div className="h-4 w-20 animate-pulse rounded-full bg-surface-alt" />
                 </div>
               ))}
             </div>
@@ -633,7 +633,7 @@ function TripsList() {
       {importOpen && agency && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
           <div
-            className="w-full max-w-sm rounded-lg border border-border bg-surface p-5 flex flex-col shadow-none"
+            className="w-full max-w-sm rounded-2xl border border-border bg-surface p-5 flex flex-col shadow-none"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
@@ -659,7 +659,7 @@ function TripsList() {
                   value={bookingId}
                   onChange={(e) => setBookingId(e.target.value)}
                   placeholder="Ex: B-998877 ou localizador"
-                  className="h-9 w-full rounded-md border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-full border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
                   Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros
@@ -671,7 +671,7 @@ function TripsList() {
                 type="button"
                 disabled={importing || !bookingId.trim()}
                 onClick={handleImportBooking}
-                className="w-full flex h-9 items-center justify-center rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
+                className="w-full flex h-9 items-center justify-center rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {importing ? "Importando..." : "Confirmar Importação"}
               </button>

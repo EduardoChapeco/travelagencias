@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Trash2, Plus } from "lucide-react";
 
 export const SMALL_INPUT =
-  "w-full h-8 px-3 rounded-lg border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
+  "w-full h-8 px-3 rounded-2xl border border-border/50 bg-surface-alt/50 text-xs font-medium outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong focus:ring-2 focus:ring-brand/20";
 
 export function replaceAt<T>(arr: T[], i: number, item: T): T[] {
   const c = arr.slice();
@@ -21,7 +21,7 @@ export function Accordion({
 }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div className="mb-4 overflow-hidden rounded-xl bg-surface  ring-1 ring-border/50 transition-all">
+    <div className="mb-4 overflow-hidden rounded-[24px] bg-surface  ring-1 ring-border/50 transition-all">
       <button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-surface-alt/50 transition-colors"
@@ -152,7 +152,7 @@ export function L({ label, children }: { label: string; children: React.ReactNod
 
 export function Card({ children, onRemove }: { children: React.ReactNode; onRemove: () => void }) {
   return (
-    <div className="relative mb-3 rounded-xl border border-border/60 bg-surface-alt/20 p-4">
+    <div className="relative mb-3 rounded-[24px] border border-border/60 bg-surface-alt/20 p-4">
       <button
         type="button"
         onClick={onRemove}
@@ -233,7 +233,7 @@ export function AddBtn({ children, onClick }: { children: React.ReactNode; onCli
     <button
       type="button"
       onClick={onClick}
-      className="flex h-8 items-center gap-1.5 rounded-lg border border-border/60 bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
+      className="flex h-8 items-center gap-1.5 rounded-2xl border border-border/60 bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
     >
       <Plus className="h-3.5 w-3.5" />
       {children}

@@ -118,7 +118,7 @@ export function CommandMenu() {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-background/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-2xl bg-surface border border-border rounded-xl overflow-hidden"
+        className="w-full max-w-2xl bg-surface border border-border rounded-[24px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <Command
@@ -162,7 +162,7 @@ export function CommandMenu() {
               <Command.Item
                 key={item.id}
                 onSelect={() => onSelect(item)}
-                className="flex items-center px-3 py-3 text-sm rounded-lg cursor-pointer aria-selected:bg-surface-alt/80 aria-selected:text-foreground text-foreground/80 transition-colors"
+                className="flex items-center px-3 py-3 text-sm rounded-2xl cursor-pointer aria-selected:bg-surface-alt/80 aria-selected:text-foreground text-foreground/80 transition-colors"
               >
                 {getIcon(item.type)}
                 <div className="flex flex-col flex-1">

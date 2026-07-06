@@ -50,7 +50,7 @@ function ClientDocumentsPage() {
                 className="group relative flex items-center justify-between rounded-2xl border border-border/50 bg-surface/40 p-4 transition-all duration-300 hover:border-brand/35 hover:bg-surface/90 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/5 backdrop-blur-md"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[24px] bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
                     <FileText className="h-5 w-5" />
                   </div>
                   <div>
@@ -73,7 +73,7 @@ function ClientDocumentsPage() {
                       }
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
                     >
                       <Download className="h-3.5 w-3.5" /> PDF
                     </a>
@@ -104,7 +104,7 @@ function ClientDocumentsPage() {
                 className="group relative flex items-center justify-between rounded-2xl border border-border/50 bg-surface/40 p-4 transition-all duration-300 hover:border-brand/35 hover:bg-surface/90 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/5 backdrop-blur-md"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[24px] bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
                     <FileText className="h-5 w-5" />
                   </div>
                   <div>
@@ -127,7 +127,7 @@ function ClientDocumentsPage() {
                       }
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
                     >
                       <Download className="h-3.5 w-3.5" /> PDF
                     </a>

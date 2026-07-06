@@ -70,7 +70,7 @@ function TripOverview() {
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
         <form
-          className="space-y-4 rounded-lg border border-border bg-surface p-6 "
+          className="space-y-4 rounded-2xl border border-border bg-surface p-6 "
           onSubmit={(e) => {
             e.preventDefault();
             save.mutate({
@@ -202,7 +202,7 @@ function TripOverview() {
         </form>
 
         <aside className="space-y-4">
-          <div className="rounded-lg border border-border bg-surface p-5 ">
+          <div className="rounded-2xl border border-border bg-surface p-5 ">
             <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Rentabilidade (P&L)
             </h3>
@@ -231,7 +231,7 @@ function TripOverview() {
             <Link
               to="/agency/$slug/proposals/$id"
               params={{ slug, id: t.proposal_id }}
-              className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
+              className="block rounded-2xl border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
             >
               <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">
                 Origem
@@ -243,7 +243,7 @@ function TripOverview() {
             <Link
               to="/agency/$slug/clients/$id"
               params={{ slug, id: t.client_id }}
-              className="block rounded-lg border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
+              className="block rounded-2xl border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
             >
               <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">
                 Titular

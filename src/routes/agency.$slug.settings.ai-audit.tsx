@@ -102,7 +102,7 @@ function Page() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => auditQuery.refetch()}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
+            className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
           >
             <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
             Atualizar logs
@@ -124,7 +124,7 @@ function Page() {
 
         {/* 1. Metrics Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Total de Interações
             </span>
@@ -133,7 +133,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">mensagens/ações</span>
             </div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Ferramentas Executadas
             </span>
@@ -144,7 +144,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">actions</span>
             </div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Falhas / Erros
             </span>
@@ -160,7 +160,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">exceções</span>
             </div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Isolamento Multi-Tenant
             </span>
@@ -172,13 +172,13 @@ function Page() {
         </div>
 
         {/* 2. Filter Controls */}
-        <div className="rounded-xl border border-border bg-surface p-4 flex flex-wrap gap-4 items-center">
+        <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-wrap gap-4 items-center">
           <div className="flex flex-col gap-1 shrink-0">
             <span className="text-[10px] text-muted-foreground uppercase">Operador</span>
             <select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
-              className="rounded-md border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground"
+              className="rounded-full border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground"
             >
               <option value="all">Todos os operadores</option>
               {members.map((m: any) => (
@@ -194,7 +194,7 @@ function Page() {
             <select
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
-              className="rounded-md border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground cursor-pointer"
+              className="rounded-full border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground cursor-pointer"
             >
               <option value="all">Todas as ações</option>
               <option value="ai_chat_message">Mensagem de Chat (IA)</option>
@@ -208,7 +208,7 @@ function Page() {
         </div>
 
         {/* 3. Log Stream */}
-        <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-xs">
+        <div className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-xs">
           <div className="border-b border-border bg-surface-alt px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
             <span className="text-[10px] text-muted-foreground">
@@ -248,7 +248,7 @@ function Page() {
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "px-2 py-0.5 rounded-sm font-mono text-[10px] font-bold uppercase",
+                            "px-2 py-0.5 rounded-full font-mono text-[10px] font-bold uppercase",
                             isMsg ? "bg-muted text-muted-foreground" : "bg-brand/10 text-brand",
                           )}
                         >

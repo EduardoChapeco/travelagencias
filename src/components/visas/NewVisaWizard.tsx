@@ -321,7 +321,7 @@ export function NewVisaWizard({
           {/* STEP 2: Uploads Seguros */}
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-xl border border-warning/30 bg-warning/5 p-4 text-sm text-warning-foreground">
+              <div className="rounded-[24px] border border-warning/30 bg-warning/5 p-4 text-sm text-warning-foreground">
                 <strong>Aviso LGPD:</strong> O upload de passaportes e documentos sensíveis é
                 protegido. Os arquivos serão enviados para um cofre digital isolado e restrito
                 apenas a membros autorizados da agência.
@@ -338,7 +338,7 @@ export function NewVisaWizard({
                   />
                   <label
                     htmlFor="doc-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-32 rounded-[24px] border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-colors"
                   >
                     <Upload className="h-6 w-6 text-brand mb-2" />
                     <span className="text-sm font-semibold text-brand">
@@ -354,7 +354,7 @@ export function NewVisaWizard({
                   {documents.map((doc, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 bg-surface-alt/50 border border-border p-3 rounded-lg"
+                      className="flex items-center gap-3 bg-surface-alt/50 border border-border p-3 rounded-2xl"
                     >
                       <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
                       <div className="flex-1">
@@ -370,7 +370,7 @@ export function NewVisaWizard({
                       </div>
                       <button
                         onClick={() => removeDoc(idx)}
-                        className="text-danger hover:bg-danger/10 p-2 rounded-md"
+                        className="text-danger hover:bg-danger/10 p-2 rounded-full"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -384,7 +384,7 @@ export function NewVisaWizard({
           {/* STEP 3: Revisão */}
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
+              <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6">
                 <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
                   <Globe className="h-5 w-5 text-brand" /> {country} ({category})
                 </h3>
@@ -416,7 +416,7 @@ export function NewVisaWizard({
                       {documents.map((d, i) => (
                         <span
                           key={i}
-                          className="bg-surface border border-border px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5"
+                          className="bg-surface border border-border px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5"
                         >
                           <FileText className="h-3 w-3 text-brand" /> {d.title}
                         </span>

@@ -274,7 +274,7 @@ export function OmnichannelChat({
     : null;
 
   return (
-    <div className="flex flex-col h-[620px] border border-border/80 rounded-xl bg-surface/50 overflow-hidden">
+    <div className="flex flex-col h-[620px] border border-border/80 rounded-[24px] bg-surface/50 overflow-hidden">
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface-alt/20">
         <div className="h-9 w-9 rounded-full bg-[#25d366]/10 flex items-center justify-center">
           <MessageCircle className="h-4 w-4 text-[#25d366]" />
@@ -319,7 +319,7 @@ export function OmnichannelChat({
                 {msg.media_type === "audio" && msg.media_url ? (
                   <audio controls src={msg.media_url} className="max-w-full" />
                 ) : msg.media_url ? (
-                  <img src={msg.media_url} className="rounded-lg max-w-full" alt="media" />
+                  <img src={msg.media_url} className="rounded-2xl max-w-full" alt="media" />
                 ) : (
                   <span>{msg.content}</span>
                 )}
@@ -360,7 +360,7 @@ export function OmnichannelChat({
       <div className="p-3 border-t border-border bg-surface flex items-end gap-2">
         <Paperclip className="h-5 w-5 text-muted-foreground mb-2.5 shrink-0" />
         <textarea
-          className="w-full text-sm bg-surface-alt border border-border/60 rounded-xl px-4 py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
+          className="w-full text-sm bg-surface-alt border border-border/60 rounded-[24px] px-4 py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
           placeholder="Digite uma mensagem..."
           rows={1}
           value={text}

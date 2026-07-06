@@ -305,7 +305,7 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
   return (
     <form onSubmit={submit.mutate} className="space-y-4">
       {submit.isError && (
-        <div className="text-red-400 text-sm font-bold bg-red-400/10 p-3 rounded-xl border border-red-400/20">
+        <div className="text-red-400 text-sm font-bold bg-red-400/10 p-3 rounded-[24px] border border-red-400/20">
           {(submit.error as Error).message}
         </div>
       )}

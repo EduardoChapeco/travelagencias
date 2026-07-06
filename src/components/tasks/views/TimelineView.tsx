@@ -27,7 +27,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
     return (
       <div className="space-y-4 bg-[var(--surface)] p-6 rounded-2xl border h-[400px]">
         <Skeleton className="h-6 w-1/3 mb-6" />
-        <Skeleton className="h-40 w-full rounded-lg" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
       </div>
     );
   }
@@ -65,7 +65,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
       </div>
 
       <div className="flex-1 overflow-auto">
-        <div className="min-w-[800px] border rounded-xl overflow-hidden">
+        <div className="min-w-[800px] border rounded-[24px] overflow-hidden">
           {/* Header do Grid */}
           <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
             <div className="col-span-4 p-3 border-r text-left">Tarefa</div>
@@ -113,7 +113,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
                         <div key={dayIdx} className="h-full w-full flex items-center justify-center relative">
                           {isTaskDay && (
                             <div 
-                              className="absolute inset-y-2 inset-x-0 rounded-md border shadow-sm transition-all"
+                              className="absolute inset-y-2 inset-x-0 rounded-full border shadow-sm transition-all"
                               style={{ 
                                 backgroundColor: `${priorityCfg.color}15`, 
                                 borderColor: `${priorityCfg.color}40`,

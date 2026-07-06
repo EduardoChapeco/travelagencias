@@ -263,7 +263,7 @@ export function NewTripWizard({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
@@ -336,7 +336,7 @@ export function NewTripWizard({
               {/* STEP 1: Passageiros */}
               {step === 1 && (
                 <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="rounded-xl border border-border bg-surface-alt/40 p-5 text-sm text-muted-foreground">
+                  <div className="rounded-[24px] border border-border bg-surface-alt/40 p-5 text-sm text-muted-foreground">
                     O cliente responsável é aquele que realiza o pagamento ou responde pela viagem.
                     Se ele também viajar, será automaticamente adicionado como o primeiro passageiro
                     do roteiro.
@@ -374,7 +374,7 @@ export function NewTripWizard({
                       </Select>
                     </Field>
                   ) : (
-                    <div className="space-y-4 rounded-xl border border-border bg-surface/50 p-4">
+                    <div className="space-y-4 rounded-[24px] border border-border bg-surface/50 p-4">
                       <Field label="Nome Completo *" error={errors.new_client_name?.message}>
                         <Input {...register("new_client_name")} placeholder="Ex: João da Silva" />
                       </Field>
@@ -451,7 +451,7 @@ export function NewTripWizard({
               {/* STEP 3: Revisão */}
               {step === 3 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="rounded-xl border border-border bg-surface-alt/20 p-6">
+                  <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6">
                     <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
                       <Plane className="h-5 w-5 text-brand" /> {watchTitle}
                     </h3>
@@ -506,7 +506,7 @@ export function NewTripWizard({
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-brand/20 bg-brand/5 p-4 text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-brand/20 bg-brand/5 p-4 text-sm text-muted-foreground">
                     <span className="font-semibold text-brand">Tudo certo!</span> Você poderá
                     adicionar passageiros, voos, vouchers e contratos após criar o roteiro.
                   </div>

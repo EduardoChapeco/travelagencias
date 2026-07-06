@@ -20,7 +20,7 @@ export function DevicePreview({
 }: DevicePreviewProps) {
   if (viewport === "desktop") {
     return (
-      <div className={`w-full max-w-6xl mx-auto rounded-xl shadow-xl border border-border overflow-hidden flex flex-col bg-background ${className}`}>
+      <div className={`w-full max-w-6xl mx-auto rounded-[24px] shadow-xl border border-border overflow-hidden flex flex-col bg-background ${className}`}>
         {/* Fake Browser Top */}
         <div className="h-10 bg-surface border-b border-border flex items-center px-4 gap-2 shrink-0">
           <div className="flex gap-1.5">
@@ -28,7 +28,7 @@ export function DevicePreview({
             <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
             <div className="h-3 w-3 rounded-full bg-green-400"></div>
           </div>
-          <div className="mx-auto h-6 w-1/2 bg-background border border-border rounded-md"></div>
+          <div className="mx-auto h-6 w-1/2 bg-background border border-border rounded-full"></div>
         </div>
         <div 
           className="flex-1 w-full h-full overflow-y-auto no-scrollbar relative"
@@ -69,17 +69,17 @@ export function DevicePreview({
         {/* Fake Tab Bar (Opcional, pode ser parametrizado depois se quisermos remover) */}
         <div className="absolute bottom-0 w-full h-16 bg-surface border-t border-border flex items-center justify-around px-2 z-10 rounded-b-[38px]">
           <div className="flex flex-col items-center gap-1" style={{ color: themePrimary }}>
-            <div className="h-5 w-5 rounded-md bg-current opacity-20"></div>
+            <div className="h-5 w-5 rounded-full bg-current opacity-20"></div>
             <div className="h-1 w-6 bg-current rounded-full"></div>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-40">
-            <div className="h-5 w-5 rounded-md bg-current"></div>
+            <div className="h-5 w-5 rounded-full bg-current"></div>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-40">
-            <div className="h-5 w-5 rounded-md bg-current"></div>
+            <div className="h-5 w-5 rounded-full bg-current"></div>
           </div>
           <div className="flex flex-col items-center gap-1 opacity-40">
-            <div className="h-5 w-5 rounded-md bg-current"></div>
+            <div className="h-5 w-5 rounded-full bg-current"></div>
           </div>
         </div>
       </div>
@@ -94,10 +94,10 @@ type DeviceSelectorProps = {
 
 export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
   return (
-    <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1">
+    <div className="flex items-center gap-1 bg-surface border border-border rounded-2xl p-1">
       <button
         onClick={() => onChange("desktop")}
-        className={`p-1.5 rounded-md transition-colors ${
+        className={`p-1.5 rounded-full transition-colors ${
           viewport === "desktop" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
         }`}
         title="Desktop"
@@ -106,7 +106,7 @@ export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
       </button>
       <button
         onClick={() => onChange("tablet")}
-        className={`p-1.5 rounded-md transition-colors ${
+        className={`p-1.5 rounded-full transition-colors ${
           viewport === "tablet" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
         }`}
         title="Tablet"
@@ -115,7 +115,7 @@ export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
       </button>
       <button
         onClick={() => onChange("mobile")}
-        className={`p-1.5 rounded-md transition-colors ${
+        className={`p-1.5 rounded-full transition-colors ${
           viewport === "mobile" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
         }`}
         title="Mobile"

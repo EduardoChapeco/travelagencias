@@ -51,14 +51,14 @@ export function StudioFormatPicker({ value, onChange }: StudioFormatPickerProps)
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
-            className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border text-left transition-all ${
+            className={`flex flex-col items-start gap-1.5 p-3 rounded-[24px] border text-left transition-all ${
               active
                 ? "border-brand bg-brand/5 dark:bg-brand/10 text-brand"
                 : "border-border/60 bg-surface hover:border-border-hover hover:bg-surface-alt/40"
             }`}
           >
             <div className="flex items-center gap-2">
-              <div className={`p-1.5 rounded-lg ${active ? "bg-brand/10" : "bg-muted/15"}`}>
+              <div className={`p-1.5 rounded-2xl ${active ? "bg-brand/10" : "bg-muted/15"}`}>
                 <Icon className="h-4 w-4" />
               </div>
               <span className="text-xs font-bold">{opt.label}</span>

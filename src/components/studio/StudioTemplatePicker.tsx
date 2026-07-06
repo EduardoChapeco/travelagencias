@@ -29,7 +29,7 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
 
   if (relevant.length === 0) {
     return (
-      <div className="text-[10px] text-muted-foreground p-3 text-center border border-dashed border-border rounded-xl">
+      <div className="text-[10px] text-muted-foreground p-3 text-center border border-dashed border-border rounded-[24px]">
         Nenhum template para este formato.
       </div>
     );
@@ -46,7 +46,7 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
             key={tpl.id}
             type="button"
             onClick={() => onChange(tpl.id)}
-            className={`w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${
+            className={`w-full flex items-center gap-3 p-2.5 rounded-[24px] border text-left transition-all ${
               active
                 ? "border-brand bg-brand/5 dark:bg-brand/10"
                 : "border-border/60 bg-surface hover:border-border-hover"
@@ -54,25 +54,25 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
           >
             {/* Visual thumbnail */}
             <div
-              className="h-12 w-9 rounded-md border border-border/20 shrink-0 flex flex-col overflow-hidden"
+              className="h-12 w-9 rounded-full border border-border/20 shrink-0 flex flex-col overflow-hidden"
               style={{ background: style.bg }}
             >
               <div style={{ background: style.accent, height: 3 }} />
               <div className="flex-1 p-1 space-y-0.5">
                 <div
-                  className="rounded-sm h-1"
+                  className="rounded-full h-1"
                   style={{ background: style.accent, opacity: 0.7, width: "80%" }}
                 />
                 <div
-                  className="rounded-sm h-1"
+                  className="rounded-full h-1"
                   style={{ background: style.accent, opacity: 0.3, width: "60%" }}
                 />
                 <div
-                  className="rounded-sm h-1"
+                  className="rounded-full h-1"
                   style={{ background: style.accent, opacity: 0.3, width: "90%" }}
                 />
                 <div
-                  className="rounded-sm h-1"
+                  className="rounded-full h-1"
                   style={{ background: style.accent, opacity: 0.2, width: "70%" }}
                 />
               </div>

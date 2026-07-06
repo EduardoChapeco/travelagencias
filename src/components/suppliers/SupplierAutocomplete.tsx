@@ -113,7 +113,7 @@ export function SupplierAutocomplete({
     <div className={`relative ${className}`}>
       {/* Selected value display */}
       {value ? (
-        <div className="flex items-center gap-2 border border-border rounded-md bg-surface px-3 py-2 text-sm">
+        <div className="flex items-center gap-2 border border-border rounded-full bg-surface px-3 py-2 text-sm">
           <span className="text-xs bg-brand/10 text-brand rounded px-1.5 py-0.5 font-semibold">
             {KIND_LABEL[value.kind] ?? value.kind}
           </span>
@@ -144,7 +144,7 @@ export function SupplierAutocomplete({
             }}
             onFocus={() => setIsOpen(true)}
             placeholder={placeholder}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-full bg-background focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
           />
           {isFetching && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
@@ -156,7 +156,7 @@ export function SupplierAutocomplete({
       {isOpen && !value && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 top-full left-0 right-0 mt-1 border border-border rounded-lg bg-surface shadow-lg overflow-hidden"
+          className="absolute z-50 top-full left-0 right-0 mt-1 border border-border rounded-2xl bg-surface shadow-lg overflow-hidden"
         >
           {debouncedSearch.length < 2 && (
             <div className="px-4 py-3 text-xs text-muted-foreground">

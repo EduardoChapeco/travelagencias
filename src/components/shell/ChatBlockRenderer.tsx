@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 // ─────────────────────────────────────────────────────────────────────────────
 export function LeadCard({ data }: { data: any }) {
   return (
-    <div className="mt-2 rounded-md border border-border bg-surface-alt p-3 shadow-xs">
+    <div className="mt-2 rounded-full border border-border bg-surface-alt p-3 shadow-xs">
       <div className="flex items-center gap-2 border-b border-border/60 pb-1.5 mb-2">
         <User className="h-4 w-4 text-brand" />
         <span className="text-xs font-bold text-foreground">Lead Capturado</span>
@@ -129,7 +129,7 @@ export function ConfirmationCard({
   if (!actionDef) return null;
 
   return (
-    <div className="mt-2 rounded-md border border-border bg-surface p-3 shadow-xs">
+    <div className="mt-2 rounded-full border border-border bg-surface p-3 shadow-xs">
       <div className="flex items-center justify-between border-b border-border/60 pb-1.5 mb-2">
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-brand" />
@@ -137,7 +137,7 @@ export function ConfirmationCard({
         </div>
         <span
           className={cn(
-            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm tracking-wider",
+            "text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full tracking-wider",
             actionDef.riskLevel === "high"
               ? "bg-rose-500/10 text-rose-500"
               : actionDef.riskLevel === "medium"
@@ -150,7 +150,7 @@ export function ConfirmationCard({
       </div>
 
       {/* Render parameters values */}
-      <div className="space-y-1.5 text-xs text-muted-foreground bg-surface-alt p-2 rounded-md border border-border/40">
+      <div className="space-y-1.5 text-xs text-muted-foreground bg-surface-alt p-2 rounded-full border border-border/40">
         {Object.entries(toolCall.payload).map(([k, v]) => {
           if (v === null || v === undefined || k === "leadId" || k === "clientId" || k === "tripId")
             return null;

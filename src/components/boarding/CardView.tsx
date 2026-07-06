@@ -37,7 +37,7 @@ export function CardView({
 
   return (
     <div
-      className={`group relative cursor-grab rounded-sm border bg-surface transition-all duration-200 active:cursor-grabbing ${
+      className={`group relative cursor-grab rounded-full border bg-surface transition-all duration-200 active:cursor-grabbing ${
         dragging
           ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
           : isUrgent
@@ -129,7 +129,7 @@ export function CardView({
       {/* Alerts */}
       {(isUrgent || (card.alerts && card.alerts.length > 0)) && (
         <div
-          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-sm border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
+          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-full border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
         >
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           <div className="flex flex-col">

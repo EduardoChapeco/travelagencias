@@ -102,14 +102,14 @@ function ClientSupportRoute() {
         </div>
         <button
           onClick={() => setIsCreating(true)}
-          className="bg-primary text-primary-foreground h-10 px-4 rounded-md text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
+          className="bg-primary text-primary-foreground h-10 px-4 rounded-full text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" /> Novo Chamado
         </button>
       </div>
 
       {isCreating && (
-        <div className="bg-surface border border-border p-5 rounded-xl">
+        <div className="bg-surface border border-border p-5 rounded-[24px]">
           <h2 className="text-lg font-semibold mb-4">Abrir Novo Chamado</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,7 +119,7 @@ function ClientSupportRoute() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full h-10 bg-background border border-border rounded-md px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full h-10 bg-background border border-border rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
                   placeholder="Ex: Dúvida sobre o voo"
                   required
                 />
@@ -129,7 +129,7 @@ function ClientSupportRoute() {
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="w-full h-10 bg-background border border-border rounded-md px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full h-10 bg-background border border-border rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
                 >
                   <option value="general">Dúvida / Suporte Geral</option>
                   <option value="request">Alteração de Reserva</option>
@@ -146,7 +146,7 @@ function ClientSupportRoute() {
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm focus:border-primary outline-none transition-colors resize-none h-32"
+                className="w-full bg-background border border-border rounded-full px-3 py-2 text-sm focus:border-primary outline-none transition-colors resize-none h-32"
                 placeholder="Descreva como podemos te ajudar..."
                 required
               />
@@ -156,14 +156,14 @@ function ClientSupportRoute() {
               <button
                 type="button"
                 onClick={() => setIsCreating(false)}
-                className="h-10 px-4 rounded-md text-sm font-semibold bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
+                className="h-10 px-4 rounded-full text-sm font-semibold bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={!title || !description}
-                className="h-10 px-4 rounded-md text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="h-10 px-4 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 Enviar Chamado
               </button>
@@ -173,7 +173,7 @@ function ClientSupportRoute() {
       )}
 
       {!isCreating && tickets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-xl">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[24px]">
           <LifeBuoy className="h-12 w-12 text-muted-foreground opacity-50 mb-3" />
           <h3 className="text-lg font-medium">Nenhum chamado aberto</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-md">
@@ -183,7 +183,7 @@ function ClientSupportRoute() {
       ) : (
         <div className="grid gap-3">
           {tickets.map((ticket) => (
-            <div key={ticket.id} className="bg-surface border border-border p-4 rounded-xl flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
+            <div key={ticket.id} className="bg-surface border border-border p-4 rounded-[24px] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {getStatusBadge(ticket.status)}
@@ -198,7 +198,7 @@ function ClientSupportRoute() {
               </div>
               <div className="shrink-0">
                 {/* No futuro podemos adicionar uma página de detalhes do ticket, por enquanto mostramos resumo */}
-                <button className="h-9 px-3 rounded-md border border-border text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
+                <button className="h-9 px-3 rounded-full border border-border text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
                   <ExternalLink className="h-4 w-4" /> Detalhes
                 </button>
               </div>

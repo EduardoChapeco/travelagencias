@@ -302,7 +302,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "closing" && (
           <div className="max-w-3xl space-y-6">
-            <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Calendar className="h-4 w-4 text-brand" /> Períodos Contábeis Recentes
               </div>
@@ -317,7 +317,7 @@ function FinancialSettingsPage() {
                   Carregando períodos contábeis...
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-xl border border-border bg-white">
+                <div className="overflow-hidden rounded-[24px] border border-border bg-white">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-gray-50 border-b border-border text-[10px] uppercase font-bold text-gray-500">
                       <tr>
@@ -366,7 +366,7 @@ function FinancialSettingsPage() {
                                       close: false,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-md cursor-pointer transition-colors"
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Unlock className="w-3 h-3" /> Reabrir
                                 </button>
@@ -380,7 +380,7 @@ function FinancialSettingsPage() {
                                       close: true,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-md cursor-pointer transition-colors"
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Lock className="w-3 h-3" /> Travar Mês
                                 </button>
@@ -402,7 +402,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "commissions" && (
           <div className="max-w-4xl space-y-6">
-            <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <TrendingUp className="h-4 w-4 text-brand" /> Regras de Comissionamento de
                 Vendedores
@@ -418,7 +418,7 @@ function FinancialSettingsPage() {
                   Carregando planos de comissão...
                 </div>
               ) : (plansQ.data || []).length === 0 ? (
-                <div className="text-center py-10 border border-dashed border-border rounded-xl text-xs text-muted-foreground bg-white">
+                <div className="text-center py-10 border border-dashed border-border rounded-[24px] text-xs text-muted-foreground bg-white">
                   Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para
                   parametrizar.
                 </div>
@@ -427,7 +427,7 @@ function FinancialSettingsPage() {
                   {(plansQ.data || []).map((plan) => (
                     <div
                       key={plan.id}
-                      className="border border-border bg-white rounded-xl overflow-hidden shadow-xs"
+                      className="border border-border bg-white rounded-[24px] overflow-hidden shadow-xs"
                     >
                       {/* Card header */}
                       <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-b border-border">
@@ -474,7 +474,7 @@ function FinancialSettingsPage() {
                         </div>
 
                         {/* List tiers */}
-                        <div className="overflow-hidden rounded-lg border border-border max-w-xl">
+                        <div className="overflow-hidden rounded-2xl border border-border max-w-xl">
                           <table className="w-full text-[11px] text-left">
                             <thead className="bg-gray-50 border-b border-border text-[9px] uppercase font-bold text-gray-500">
                               <tr>
@@ -555,7 +555,7 @@ function FinancialSettingsPage() {
                 <select
                   value={selectedSeller}
                   onChange={(e) => setSelectedSeller(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
                   required
                 >
                   <option value="">Selecione o vendedor...</option>
@@ -572,7 +572,7 @@ function FinancialSettingsPage() {
                   <select
                     value={tierMode}
                     onChange={(e) => setTierMode(e.target.value as "integral" | "progressive")}
-                    className="w-full h-10 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
+                    className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
                     required
                   >
                     <option value="progressive">Progressiva (por fatias)</option>
@@ -600,7 +600,7 @@ function FinancialSettingsPage() {
                 <PrimaryButton
                   onClick={() => createPlan.mutate()}
                   disabled={createPlan.isPending || !newPlanName || !selectedSeller}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-xl"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[24px]"
                 >
                   {createPlan.isPending ? "Criando..." : "Salvar Plano"}
                 </PrimaryButton>

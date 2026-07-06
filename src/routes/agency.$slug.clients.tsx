@@ -216,7 +216,7 @@ function ClientsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowDeleted(!showDeleted)}
-            className={`flex h-8 items-center justify-center gap-1.5 rounded-sm border px-2 sm:px-3 text-xs font-semibold transition-all cursor-pointer ${
+            className={`flex h-8 items-center justify-center gap-1.5 rounded-full border px-2 sm:px-3 text-xs font-semibold transition-all cursor-pointer ${
               showDeleted
                 ? "bg-danger/10 border-danger text-danger hover:bg-danger/20"
                 : "bg-surface border-border text-muted-foreground hover:text-foreground"
@@ -243,7 +243,7 @@ function ClientsPage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Clientes"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -259,7 +259,7 @@ function ClientsPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Buscar por nome, email, telefone ou documento..."
-            className="h-8 w-full rounded-sm border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
           />
         </div>
         <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">

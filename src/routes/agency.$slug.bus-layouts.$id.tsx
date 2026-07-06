@@ -148,7 +148,7 @@ function BusLayoutEditorPage() {
           <PrimaryButton
             onClick={saveLayout}
             disabled={saving}
-            className="h-8 px-3 text-xs bg-brand text-brand-foreground hover:bg-brand/90 font-semibold rounded-md flex items-center gap-1.5 cursor-pointer"
+            className="h-8 px-3 text-xs bg-brand text-brand-foreground hover:bg-brand/90 font-semibold rounded-full flex items-center gap-1.5 cursor-pointer"
           >
             <Save className="h-3.5 w-3.5" /> {saving ? "Salvando..." : "Salvar Layout"}
           </PrimaryButton>
@@ -160,7 +160,7 @@ function BusLayoutEditorPage() {
         description="Selecione uma ferramenta na barra de edição e clique nas células do veículo para pintar."
       />
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-xl shadow-xs">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-[24px] shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground mr-2">Ferramenta Ativa:</span>
           {(["seat", "aisle", "wc", "door"] as const).map((t) => (
@@ -169,7 +169,7 @@ function BusLayoutEditorPage() {
               type="button"
               onClick={() => setActiveTool(t)}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
+                "px-3 py-1.5 rounded-2xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
                 activeTool === t
                   ? "bg-brand text-white border-brand shadow-xs"
                   : "bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-alt"
@@ -203,7 +203,7 @@ function BusLayoutEditorPage() {
 
       <div className="flex justify-center mt-6">
         <div
-          className="bg-surface border border-border rounded-xl p-8 "
+          className="bg-surface border border-border rounded-[24px] p-8 "
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`,
@@ -216,7 +216,7 @@ function BusLayoutEditorPage() {
                 type="button"
                 onClick={() => handleCellClick(idx)}
                 className={cn(
-                  "flex h-16 w-16 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-colors focus:outline-none",
+                  "flex h-16 w-16 items-center justify-center rounded-2xl border-2 text-xs font-semibold transition-colors focus:outline-none",
                   cell.type === "seat" && "border-brand bg-brand/5 text-brand hover:bg-brand/10",
                   cell.type === "aisle" &&
                     "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt",

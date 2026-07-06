@@ -223,7 +223,7 @@ export function CommissionSection({
   }
 
   return (
-    <div className="mb-6 rounded-xl border border-border bg-surface overflow-hidden">
+    <div className="mb-6 rounded-[24px] border border-border bg-surface overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -262,7 +262,7 @@ export function CommissionSection({
                   ))}
               </Select>
             </Field>
-            <div className="rounded-lg bg-surface-alt/30 border border-border/50 p-3 flex flex-col justify-center">
+            <div className="rounded-2xl bg-surface-alt/30 border border-border/50 p-3 flex flex-col justify-center">
               <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                 Faturamento Mensal do Agente
               </div>
@@ -305,7 +305,7 @@ export function CommissionSection({
                 {items.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className="p-4 rounded-xl border border-border bg-surface-alt/20 space-y-3"
+                    className="p-4 rounded-[24px] border border-border bg-surface-alt/20 space-y-3"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Field label="Descrição">
@@ -423,7 +423,7 @@ export function CommissionSection({
 
           {/* KPIs de Comissão Consolidados */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/55">
-            <div className="rounded-lg border border-border bg-surface-alt/40 p-3">
+            <div className="rounded-2xl border border-border bg-surface-alt/40 p-3">
               <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                 Base Comissionável
               </div>
@@ -438,7 +438,7 @@ export function CommissionSection({
                 - taxas: R$ {totalTaxas.toLocaleString("pt-BR")}
               </div>
             </div>
-            <div className="rounded-lg border border-success/20 bg-success/5 p-3">
+            <div className="rounded-2xl border border-success/20 bg-success/5 p-3">
               <div className="text-[10px] font-bold uppercase tracking-wider text-success mb-1">
                 Comissão Agência
               </div>
@@ -450,7 +450,7 @@ export function CommissionSection({
                 {items.reduce((s, item) => s + (item.bonus || 0), 0).toLocaleString("pt-BR")}
               </div>
             </div>
-            <div className="rounded-lg border border-brand/20 bg-brand/5 p-3">
+            <div className="rounded-2xl border border-brand/20 bg-brand/5 p-3">
               <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
                 Comissão Agente ({agentPct}%)
               </div>
@@ -462,7 +462,7 @@ export function CommissionSection({
               </div>
             </div>
             <div
-              className={`rounded-lg border p-3 ${netProfit >= 0 ? "border-success/20 bg-success/5" : "border-danger/20 bg-danger/5"}`}
+              className={`rounded-2xl border p-3 ${netProfit >= 0 ? "border-success/20 bg-success/5" : "border-danger/20 bg-danger/5"}`}
             >
               <div
                 className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${netProfit >= 0 ? "text-success" : "text-danger"}`}
@@ -481,7 +481,7 @@ export function CommissionSection({
             <button
               onClick={saveCommission}
               disabled={saving}
-              className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60 transition-all cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60 transition-all cursor-pointer"
             >
               {saving ? "Salvando…" : "Salvar configuração de comissão"}
             </button>

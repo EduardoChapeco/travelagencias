@@ -65,7 +65,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
   if (isMobileLanding) {
     return (
-      <div className="w-full h-28 rounded-sm bg-slate-900 border border-slate-800 flex flex-col items-center p-3 gap-2 overflow-hidden transition-all duration-300 relative group-hover:scale-[1.02] select-none">
+      <div className="w-full h-28 rounded-full bg-slate-900 border border-slate-800 flex flex-col items-center p-3 gap-2 overflow-hidden transition-all duration-300 relative group-hover:scale-[1.02] select-none">
         {/* Phone Notch/Header indicator */}
         <div className="w-10 h-1.5 bg-slate-800 rounded-full shrink-0"></div>
         {/* Mock LP Hero image */}
@@ -87,7 +87,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
     return (
       <div
-        className={`w-full h-28 rounded-sm flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border border-border/40 relative group-hover:scale-[1.02] select-none${
+        className={`w-full h-28 rounded-full flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border border-border/40 relative group-hover:scale-[1.02] select-none${
           isDark
             ? "bg-slate-900 border-slate-800"
             : isVibrant
@@ -135,7 +135,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
   // Render standard site mini view
   return (
-    <div className="w-full h-28 rounded-sm bg-gradient-to-b from-slate-50 to-slate-100/50 border border-slate-200 flex flex-col p-2.5 gap-2 overflow-hidden transition-all duration-300 group-hover:scale-[1.02] select-none">
+    <div className="w-full h-28 rounded-full bg-gradient-to-b from-slate-50 to-slate-100/50 border border-slate-200 flex flex-col p-2.5 gap-2 overflow-hidden transition-all duration-300 group-hover:scale-[1.02] select-none">
       {/* Mock Header */}
       <div className="flex justify-between items-center w-full border-b border-slate-200/60 pb-1.5 shrink-0">
         <div className="w-6 h-2 bg-indigo-500/20 rounded-full"></div>
@@ -145,7 +145,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
         </div>
       </div>
       {/* Mock Hero Block */}
-      <div className="flex-1 rounded-sm bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/40 p-2 flex flex-col justify-center gap-1.5">
+      <div className="flex-1 rounded-full bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100/40 p-2 flex flex-col justify-center gap-1.5">
         <div className="w-16 h-2 bg-indigo-500/30 rounded-full"></div>
         <div className="w-24 h-1.5 bg-slate-400/20 rounded-full"></div>
         <div className="flex gap-1 mt-0.5">
@@ -384,7 +384,7 @@ function PagesPage() {
               setNewPageSlug("");
               setCreateModalOpen(true);
             }}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Nova Página
           </button>
@@ -392,7 +392,7 @@ function PagesPage() {
       </HeaderPortal>
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
-        <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-sm border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-full border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
           {(["all", "sites", "biolinks", "mobile_landings", "templates"] as const).map((tabId) => {
             const labels = {
               all: "Todas as Páginas",
@@ -427,7 +427,7 @@ function PagesPage() {
               placeholder="Buscar por título ou link..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-full rounded-sm border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
+              className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
             />
           </div>
         )}
@@ -435,7 +435,7 @@ function PagesPage() {
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
         {(q.isError || analyticsQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -449,50 +449,50 @@ function PagesPage() {
         {/* Modern Analytics & Highlight Row */}
         {agency && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-md border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Páginas Criadas
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalPages}</h3>
               </div>
-              <div className="p-3 rounded-sm bg-indigo-50 text-indigo-600">
+              <div className="p-3 rounded-full bg-indigo-50 text-indigo-600">
                 <LayoutTemplate className="h-5 w-5" />
               </div>
             </div>
 
-            <div className="rounded-md border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Visualizações
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
               </div>
-              <div className="p-3 rounded-sm bg-emerald-50 text-emerald-600">
+              <div className="p-3 rounded-full bg-emerald-50 text-emerald-600">
                 <Eye className="h-5 w-5" />
               </div>
             </div>
 
-            <div className="rounded-md border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Cliques em Links
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalClicks}</h3>
               </div>
-              <div className="p-3 rounded-sm bg-sky-50 text-sky-600">
+              <div className="p-3 rounded-full bg-sky-50 text-sky-600">
                 <MousePointerClick className="h-5 w-5" />
               </div>
             </div>
 
-            <div className="rounded-md border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   CTR Geral
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{globalCtr}%</h3>
               </div>
-              <div className="p-3 rounded-sm bg-amber-50 text-amber-600">
+              <div className="p-3 rounded-full bg-amber-50 text-amber-600">
                 <TrendingUp className="h-5 w-5" />
               </div>
             </div>
@@ -519,11 +519,11 @@ function PagesPage() {
                 return (
                   <div
                     key={tpl.id}
-                    className="group relative flex flex-col justify-between rounded-md border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
+                    className="group relative flex flex-col justify-between rounded-full border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
                   >
                     <div className="space-y-4">
                       {/* Visual Preview Block */}
-                      <div className="relative overflow-hidden rounded-sm">
+                      <div className="relative overflow-hidden rounded-full">
                         <PageMiniPreview template={tpl.id} />
                         <div className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] uppercase font-black font-mono tracking-wider bg-background border text-foreground">
                           {isBiolink
@@ -547,7 +547,7 @@ function PagesPage() {
                     <div className="mt-5 pt-3 border-t border-border/40">
                       <button
                         onClick={() => openCreateWithTemplate(tpl.id)}
-                        className="w-full flex items-center justify-center gap-1 py-2 rounded-sm border border-brand/20 bg-brand/5 text-xs font-bold text-brand group-hover:bg-brand group-hover:text-brand-foreground group-hover:border-transparent transition-all"
+                        className="w-full flex items-center justify-center gap-1 py-2 rounded-full border border-brand/20 bg-brand/5 text-xs font-bold text-brand group-hover:bg-brand group-hover:text-brand-foreground group-hover:border-transparent transition-all"
                       >
                         Usar este design{" "}
                         <ArrowRight className="h-3.5 w-3.5 ml-1 transition-transform group-hover:translate-x-0.5" />
@@ -564,7 +564,7 @@ function PagesPage() {
         {activeTab !== "templates" && (
           <>
             {filteredPages.length === 0 && !q.isLoading && (
-              <div className="rounded-md border border-dashed border-border/80 bg-surface-alt/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
+              <div className="rounded-full border border-dashed border-border/80 bg-surface-alt/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
                 <LayoutTemplate className="h-12 w-12 text-muted-foreground/30 mb-4" />
                 <h4 className="font-bold text-sm text-foreground">Nenhuma página encontrada</h4>
                 <p className="text-xs text-muted-foreground max-w-xs mt-1">
@@ -576,7 +576,7 @@ function PagesPage() {
                   <div className="flex gap-2 mt-5">
                     <button
                       onClick={() => setActiveTab("templates")}
-                      className="flex h-9 items-center gap-1.5 rounded-sm border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-all"
+                      className="flex h-9 items-center gap-1.5 rounded-full border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-all"
                     >
                       <LayoutTemplate className="h-3.5 w-3.5" /> Escolher Template
                     </button>
@@ -587,7 +587,7 @@ function PagesPage() {
                         setNewPageSlug("");
                         setCreateModalOpen(true);
                       }}
-                      className="flex h-9 items-center gap-1.5 rounded-sm bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all"
+                      className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all"
                     >
                       <Plus className="h-4 w-4" /> Página em Branco
                     </button>
@@ -614,11 +614,11 @@ function PagesPage() {
                   return (
                     <div
                       key={p.id}
-                      className="group relative flex flex-col justify-between rounded-md border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40"
+                      className="group relative flex flex-col justify-between rounded-full border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40"
                     >
                       <div className="space-y-4">
                         {/* Interactive Visual Preview representation */}
-                        <div className="relative rounded-sm overflow-hidden">
+                        <div className="relative rounded-full overflow-hidden">
                           <PageMiniPreview template={p.template} />
                           {/* Hover Overlay */}
                           <div
@@ -630,7 +630,7 @@ function PagesPage() {
                             }
                             className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-200"
                           >
-                            <span className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-900 flex items-center gap-1">
+                            <span className="rounded-2xl bg-white px-3 py-1.5 text-xs font-bold text-slate-900 flex items-center gap-1">
                               Abrir Construtor <ChevronRight className="h-3 w-3" />
                             </span>
                           </div>
@@ -686,7 +686,7 @@ function PagesPage() {
                               href={`${window.location.origin}/p/${agency.slug}/${p.slug}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center justify-center p-1.5 rounded-sm border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
+                              className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
                               title="Ver página online"
                             >
                               <ExternalLink className="h-3.5 w-3.5" />
@@ -694,14 +694,14 @@ function PagesPage() {
                           )}
                           <button
                             onClick={() => handleDuplicate(p)}
-                            className="flex items-center justify-center p-1.5 rounded-sm border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
+                            className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
                             title="Duplicar Página"
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => deletePage(p)}
-                            className="flex items-center justify-center p-1.5 rounded-sm border border-border hover:bg-destructive/5 text-muted-foreground hover:text-destructive transition-colors"
+                            className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-destructive/5 text-muted-foreground hover:text-destructive transition-colors"
                             title="Excluir Página"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -710,7 +710,7 @@ function PagesPage() {
 
                         <button
                           onClick={() => togglePublish(p)}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-sm transition-colors${
+                          className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors${
                             p.is_published
                               ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
                               : "bg-brand/10 hover:bg-brand/20 text-brand"
@@ -748,7 +748,7 @@ function PagesPage() {
               <label className="text-xs font-bold text-muted-foreground">
                 Endereço da Página (URL Slug)
               </label>
-              <div className="flex h-10 w-full items-center rounded-sm border border-border bg-surface overflow-hidden">
+              <div className="flex h-10 w-full items-center rounded-full border border-border bg-surface overflow-hidden">
                 <span className="bg-surface-alt/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
                   /{agency?.slug}/
                 </span>

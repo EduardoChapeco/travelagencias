@@ -96,7 +96,7 @@ export function DSTagPicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div
-          className={`flex min-h-9 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent px-3 py-1.5 text-sm shadow-sm ring-offset-background cursor-text ${
+          className={`flex min-h-9 w-full flex-wrap items-center gap-1.5 rounded-full border border-input bg-transparent px-3 py-1.5 text-sm shadow-sm ring-offset-background cursor-text ${
             disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-accent/10"
           } ${className}`}
           onClick={() => !disabled && setOpen(true)}

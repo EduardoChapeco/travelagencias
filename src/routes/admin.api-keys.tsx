@@ -97,7 +97,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Chaves</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -109,7 +109,7 @@ function Page() {
       <div className="mt-4 space-y-4 max-w-5xl">
         <form
           onSubmit={add}
-          className="grid gap-4 rounded-lg border border-border bg-surface p-4 sm:grid-cols-5 items-end"
+          className="grid gap-4 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-5 items-end"
         >
           <Field label="Provedor (ex: gemini, resend)">
             <Input
@@ -167,7 +167,7 @@ function Page() {
         )}
 
         {!q.isLoading && keysList.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-border bg-surface">
+          <div className="overflow-hidden rounded-2xl border border-border bg-surface">
             <table className="w-full text-sm">
               <thead className="bg-surface-alt text-xs text-muted-foreground border-b border-border">
                 <tr>
@@ -205,7 +205,7 @@ function Page() {
                       <GhostButton
                         type="button"
                         onClick={() => remove(k.id)}
-                        className="h-8 w-8 p-0 text-danger hover:bg-danger/10 flex items-center justify-center rounded-md"
+                        className="h-8 w-8 p-0 text-danger hover:bg-danger/10 flex items-center justify-center rounded-full"
                         aria-label="Remover chave"
                       >
                         <Trash2 className="h-3.5 w-3.5" />

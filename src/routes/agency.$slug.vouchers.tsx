@@ -228,7 +228,7 @@ function VouchersPage() {
           {isAgencyAdmin && activeTab === "vouchers" && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Vouchers"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -293,7 +293,7 @@ function VouchersPage() {
                 value={qSearch}
                 onChange={(e) => setQSearch(e.target.value)}
                 placeholder="Buscar por destino ou localizador..."
-                className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+                className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
@@ -303,7 +303,7 @@ function VouchersPage() {
 
           <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
             {vouchersQ.isError && (
-              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60">
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 </div>
@@ -397,7 +397,7 @@ function VouchersPage() {
                           <Link
                             to="/agency/$slug/trips/$id/vouchers"
                             params={{ slug, id: v.trip_id }}
-                            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-surface-alt hover:bg-surface-alt/80 px-4 py-2.5 text-xs font-bold transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 rounded-[24px] bg-surface-alt hover:bg-surface-alt/80 px-4 py-2.5 text-xs font-bold transition-colors"
                           >
                             <Eye className="h-4 w-4" /> Visualizar Roteiro
                           </Link>
@@ -406,7 +406,7 @@ function VouchersPage() {
                               href={v.pdf_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-xl bg-brand/10 text-brand hover:bg-brand/20 transition-colors"
+                              className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-[24px] bg-brand/10 text-brand hover:bg-brand/20 transition-colors"
                               title="Baixar PDF Original"
                             >
                               <Download className="h-4 w-4" />
@@ -451,7 +451,7 @@ function VouchersPage() {
         <>
           {/* Audit top KPIs */}
           <div className="border-b border-border bg-surface px-4 md:px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
-            <div className="rounded-xl border border-border bg-surface-alt/20 p-3 text-center">
+            <div className="rounded-[24px] border border-border bg-surface-alt/20 p-3 text-center">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
                 Total de Voos
               </span>
@@ -459,7 +459,7 @@ function VouchersPage() {
                 {flightsQ.data?.length ?? 0}
               </strong>
             </div>
-            <div className="rounded-xl border border-success/20 bg-success/5 p-3 text-center">
+            <div className="rounded-[24px] border border-success/20 bg-success/5 p-3 text-center">
               <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
                 Conferidos
               </span>
@@ -467,7 +467,7 @@ function VouchersPage() {
                 {(flightsQ.data || []).filter((f) => f.status === "confirmed").length}
               </strong>
             </div>
-            <div className="rounded-xl border border-warning/20 bg-warning/5 p-3 text-center">
+            <div className="rounded-[24px] border border-warning/20 bg-warning/5 p-3 text-center">
               <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
                 Pendentes
               </span>
@@ -475,7 +475,7 @@ function VouchersPage() {
                 {(flightsQ.data || []).filter((f) => f.status !== "confirmed").length}
               </strong>
             </div>
-            <div className="rounded-xl border border-brand/20 bg-brand/5 p-3 text-center">
+            <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-3 text-center">
               <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
                 Taxa de Sucesso
               </span>
@@ -497,12 +497,12 @@ function VouchersPage() {
                   value={flightSearch}
                   onChange={(e) => setFlightSearch(e.target.value)}
                   placeholder="Buscar passageiro, rota ou localizador..."
-                  className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+                  className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               {/* Status segment control */}
-              <div className="flex gap-1 bg-surface-alt p-0.5 rounded-lg border border-border shrink-0">
+              <div className="flex gap-1 bg-surface-alt p-0.5 rounded-2xl border border-border shrink-0">
                 {[
                   { id: "all", label: "Todos" },
                   { id: "pending", label: "Pendentes" },
@@ -512,7 +512,7 @@ function VouchersPage() {
                     key={btn.id}
                     onClick={() => setStatusFilter(btn.id as any)}
                     className={cn(
-                      "px-3 py-1 rounded-md text-xs font-semibold cursor-pointer transition-all",
+                      "px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all",
                       statusFilter === btn.id
                         ? "bg-surface text-foreground border border-border shadow-sm"
                         : "text-muted-foreground hover:text-foreground border border-transparent",
@@ -531,7 +531,7 @@ function VouchersPage() {
           {/* Fila list table */}
           <div className="flex-1 overflow-auto p-4 md:p-6 min-h-0">
             {flightsQ.isError && (
-              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 </div>
@@ -568,7 +568,7 @@ function VouchersPage() {
             )}
 
             {flightsQ.data && filteredFlights.length > 0 && (
-              <div className="border border-border rounded-xl bg-surface overflow-x-auto">
+              <div className="border border-border rounded-[24px] bg-surface overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
                   <thead className="bg-surface-alt/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
                     <tr>

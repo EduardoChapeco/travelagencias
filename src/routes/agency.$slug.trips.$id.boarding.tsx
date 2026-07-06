@@ -247,7 +247,7 @@ function TripBoardingPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header informativo */}
-      <div className="rounded-xl border border-border bg-surface p-4 flex items-start gap-3 justify-between">
+      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start gap-3 justify-between">
         <div className="flex items-start gap-3">
           <Navigation className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -260,11 +260,11 @@ function TripBoardingPage() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex bg-surface-alt p-0.5 rounded-lg border border-border/60 text-[11px] font-semibold">
+        <div className="flex bg-surface-alt p-0.5 rounded-2xl border border-border/60 text-[11px] font-semibold">
           <button
             onClick={() => setActiveTab("cards")}
             className={cn(
-              "px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5",
+              "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
               activeTab === "cards"
                 ? "bg-surface shadow text-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -275,7 +275,7 @@ function TripBoardingPage() {
           <button
             onClick={() => setActiveTab("settings")}
             className={cn(
-              "px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5",
+              "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
               activeTab === "settings"
                 ? "bg-surface shadow text-foreground"
                 : "text-muted-foreground hover:text-foreground",
@@ -318,7 +318,7 @@ function TripBoardingPage() {
                 return (
                   <div
                     key={card.id}
-                    className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm"
+                    className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-sm"
                   >
                     {/* Header do Card */}
                     <div className="p-4 border-b border-border/60 bg-surface-alt/20 flex flex-wrap items-center justify-between gap-4">
@@ -456,7 +456,7 @@ function TripBoardingPage() {
                                     })
                                   }
                                   className={cn(
-                                    "flex items-center gap-2.5 p-2 rounded-lg border text-left transition-colors text-xs cursor-pointer",
+                                    "flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-colors text-xs cursor-pointer",
                                     item.done
                                       ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-950 dark:text-emerald-300"
                                       : "bg-surface border-border hover:bg-surface-alt text-foreground",
@@ -483,7 +483,7 @@ function TripBoardingPage() {
 
                         {/* Alertas operacionais */}
                         {card.alerts && card.alerts.length > 0 && (
-                          <div className="mt-3 p-2.5 rounded-lg border border-warning/30 bg-warning/5 space-y-1">
+                          <div className="mt-3 p-2.5 rounded-2xl border border-warning/30 bg-warning/5 space-y-1">
                             <p className="text-[9px] font-bold uppercase tracking-widest text-warning-foreground flex items-center gap-1">
                               <AlertCircle className="h-3 w-3" /> Atenção & Alertas
                             </p>
@@ -509,7 +509,7 @@ function TripBoardingPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Panel: Check-in overrides */}
-          <div className="bg-surface rounded-xl border border-border p-5 space-y-4 shadow-sm">
+          <div className="bg-surface rounded-[24px] border border-border p-5 space-y-4 shadow-sm">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <Link2 className="h-4 w-4 text-brand" />
               <span>Link de Check-in (Overrides)</span>
@@ -524,7 +524,7 @@ function TripBoardingPage() {
                 Carregando trechos...
               </div>
             ) : segments.length === 0 ? (
-              <div className="text-xs text-muted-foreground py-4 border border-dashed border-border rounded-lg text-center">
+              <div className="text-xs text-muted-foreground py-4 border border-dashed border-border rounded-2xl text-center">
                 Nenhum trecho de voo confirmado ativo para esta viagem.
               </div>
             ) : (
@@ -551,7 +551,7 @@ function TripBoardingPage() {
                         onChange={(e) =>
                           setOverrideUrls({ ...overrideUrls, [seg.id]: e.target.value })
                         }
-                        className="flex-1 text-xs border border-border rounded-lg px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+                        className="flex-1 text-xs border border-border rounded-2xl px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
                       />
                       <button
                         onClick={() =>
@@ -562,7 +562,7 @@ function TripBoardingPage() {
                           })
                         }
                         disabled={saveCheckinLinkMut.isPending}
-                        className="bg-brand text-brand-foreground hover:bg-brand/90 px-3 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
+                        className="bg-brand text-brand-foreground hover:bg-brand/90 px-3 py-2 rounded-2xl text-xs font-bold transition-all disabled:opacity-50"
                       >
                         Salvar
                       </button>
@@ -574,7 +574,7 @@ function TripBoardingPage() {
           </div>
 
           {/* Panel: Boarding events timeline */}
-          <div className="bg-surface rounded-xl border border-border p-5 space-y-4 shadow-sm">
+          <div className="bg-surface rounded-[24px] border border-border p-5 space-y-4 shadow-sm">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <FileText className="h-4 w-4 text-brand" />
               <span>Eventos & Ocorrências de Embarque</span>
@@ -588,7 +588,7 @@ function TripBoardingPage() {
                 Carregando timeline...
               </div>
             ) : boardingEvents.length === 0 ? (
-              <div className="text-xs text-muted-foreground py-8 border border-dashed border-border rounded-lg text-center">
+              <div className="text-xs text-muted-foreground py-8 border border-dashed border-border rounded-2xl text-center">
                 Nenhum evento registrado até o momento.
               </div>
             ) : (

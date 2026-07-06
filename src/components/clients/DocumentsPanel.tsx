@@ -136,7 +136,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
             return (
               <div
                 key={doc.id}
-                className={`flex items-start justify-between gap-3 rounded-xl border p-3 ${
+                className={`flex items-start justify-between gap-3 rounded-[24px] border p-3 ${
                   status === "expired"
                     ? "border-danger/30 bg-danger/5"
                     : status === "soon"
@@ -177,7 +177,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
           })}
 
           {adding && (
-            <div className="rounded-xl border border-brand/30 bg-brand/5 p-4 space-y-3">
+            <div className="rounded-[24px] border border-brand/30 bg-brand/5 p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
@@ -186,7 +186,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   <select
                     value={form.doc_type}
                     onChange={(e) => setForm({ ...form, doc_type: e.target.value })}
-                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
                   >
                     {DOC_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>
@@ -202,7 +202,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   <input
                     value={form.doc_number}
                     onChange={(e) => setForm({ ...form, doc_number: e.target.value })}
-                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
                     placeholder="Ex: AB123456"
                   />
                 </div>
@@ -214,7 +214,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                     type="date"
                     value={form.issued_at}
                     onChange={(e) => setForm({ ...form, issued_at: e.target.value })}
-                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
                   />
                 </div>
                 <div>
@@ -225,7 +225,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                     type="date"
                     value={form.expires_at}
                     onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
-                    className="h-9 w-full rounded-md border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
                   />
                 </div>
               </div>
@@ -233,13 +233,13 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                 <button
                   onClick={saveDoc}
                   disabled={saving}
-                  className="flex-1 h-9 rounded-lg bg-brand text-brand-foreground text-xs font-bold hover:opacity-90 disabled:opacity-60 cursor-pointer"
+                  className="flex-1 h-9 rounded-2xl bg-brand text-brand-foreground text-xs font-bold hover:opacity-90 disabled:opacity-60 cursor-pointer"
                 >
                   {saving ? "Salvando..." : "Salvar"}
                 </button>
                 <button
                   onClick={() => setAdding(false)}
-                  className="h-9 px-4 rounded-lg border border-border text-xs font-semibold cursor-pointer text-foreground bg-surface"
+                  className="h-9 px-4 rounded-2xl border border-border text-xs font-semibold cursor-pointer text-foreground bg-surface"
                 >
                   Cancelar
                 </button>

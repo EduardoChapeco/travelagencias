@@ -3648,12 +3648,17 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
 
       const clientId = clients?.[0]?.id;
 
+      if (!fileUrl) {
+        toast.error("Falha no upload do arquivo. Tente novamente.");
+        return;
+      }
+
       const { error } = await supabase.from("client_documents" as any).insert({
         client_id: clientId || null,
         agency_id: agencyId,
         document_type: block.document_type || "RG",
         document_number: clientCpf.trim(),
-        file_url: fileUrl || "https://placeholder-doc-url.pdf",
+        file_url: fileUrl,
         status: "pending_verification",
       });
 

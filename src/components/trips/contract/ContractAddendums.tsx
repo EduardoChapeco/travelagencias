@@ -84,7 +84,7 @@ export function ContractAddendums({
   });
 
   return (
-    <div className="rounded-lg border border-border bg-surface p-5">
+    <div className="rounded-2xl border border-border bg-surface p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-foreground">Aditivos e Retificações</h2>
         {contractStatus === "signed" && !showAddForm && (
@@ -99,7 +99,7 @@ export function ContractAddendums({
       </div>
 
       {showAddForm && (
-        <div className="mb-4 rounded-xl border border-border p-4 space-y-4 bg-surface-alt/20">
+        <div className="mb-4 rounded-[24px] border border-border p-4 space-y-4 bg-surface-alt/20">
           <h3 className="text-xs font-bold text-foreground">Novo Aditivo ao Contrato</h3>
           <Field label="Título do Aditivo">
             <Input
@@ -115,7 +115,7 @@ export function ContractAddendums({
               placeholder="Descreva detalhadamente o acordo complementar..."
               value={addendumContent}
               onChange={(e) => setAddendumContent(e.target.value)}
-              className="w-full rounded-md border border-input bg-surface p-2.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+              className="w-full rounded-full border border-input bg-surface p-2.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
             />
           </Field>
           <div className="flex gap-2">
@@ -151,7 +151,7 @@ export function ContractAddendums({
           {addendums.map((ad) => (
             <div
               key={ad.id}
-              className="rounded-xl border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs"
+              className="rounded-[24px] border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs"
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-foreground">{ad.title}</span>

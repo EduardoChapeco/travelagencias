@@ -47,7 +47,7 @@ function GroupToursPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
             title="Nova excursão"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -56,7 +56,7 @@ function GroupToursPage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Excursões"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -73,10 +73,10 @@ function GroupToursPage() {
             value={qSearch}
             onChange={(e) => setQSearch(e.target.value)}
             placeholder="Buscar excursão ou destino..."
-            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
           />
         </div>
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
           {["all", "draft", "open", "confirmed", "completed", "cancelled"].map((s) => (
             <button
               key={s}
@@ -106,7 +106,7 @@ function GroupToursPage() {
       <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
         {q.isError && (
-          <div className="p-4 rounded-xl border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
+          <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
             <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
             <span>Erro ao carregar lista de excursões. Verifique sua conexão ou permissões.</span>
           </div>
@@ -137,7 +137,7 @@ function GroupToursPage() {
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
                         {t.destination ?? "—"}
                         {t.bus_layout_id && (
-                          <span className="ml-2 flex items-center gap-1 rounded-md bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
+                          <span className="ml-2 flex items-center gap-1 rounded-full bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
                             <svg
                               className="h-3 w-3"
                               fill="none"

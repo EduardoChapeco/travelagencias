@@ -296,7 +296,7 @@ function TripFlightsPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-5xl">
       {/* Header */}
-      <div className="rounded-xl border border-border bg-surface p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
           <Plane className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -309,10 +309,10 @@ function TripFlightsPage() {
         </div>
 
         {/* Tab switchers */}
-        <div className="flex bg-surface-alt p-0.5 rounded-lg border border-border shrink-0 self-start sm:self-center">
+        <div className="flex bg-surface-alt p-0.5 rounded-2xl border border-border shrink-0 self-start sm:self-center">
           <button
             onClick={() => setActiveTab("itineraries")}
-            className={`px-3 py-1 text-[11px] font-semibold rounded-md transition-colors cursor-pointer ${
+            className={`px-3 py-1 text-[11px] font-semibold rounded-full transition-colors cursor-pointer ${
               activeTab === "itineraries"
                 ? "bg-surface text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -322,7 +322,7 @@ function TripFlightsPage() {
           </button>
           <button
             onClick={() => setActiveTab("boarding_cards")}
-            className={`px-3 py-1 text-[11px] font-semibold rounded-md transition-colors cursor-pointer ${
+            className={`px-3 py-1 text-[11px] font-semibold rounded-full transition-colors cursor-pointer ${
               activeTab === "boarding_cards"
                 ? "bg-surface text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -355,7 +355,7 @@ function TripFlightsPage() {
                     setCompareBId(otherIt.id);
                     setShowDiffModal(true);
                   }}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-xs font-medium hover:bg-surface-alt transition-colors cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-medium hover:bg-surface-alt transition-colors cursor-pointer"
                 >
                   <GitCompare className="h-3.5 w-3.5" />
                   <span>Comparar Versões</span>
@@ -365,7 +365,7 @@ function TripFlightsPage() {
               {!showAddForm && (
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Nova Versão</span>
@@ -376,7 +376,7 @@ function TripFlightsPage() {
 
           {/* Add form */}
           {showAddForm && (
-            <div className="rounded-xl border border-border bg-surface p-5 space-y-4 animate-in fade-in duration-300">
+            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4 animate-in fade-in duration-300">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Registrar Nova Versão de Itinerário
@@ -397,7 +397,7 @@ function TripFlightsPage() {
                   <select
                     value={itineraryType}
                     onChange={(e: any) => setItineraryType(e.target.value)}
-                    className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                    className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
                   >
                     {Object.entries(ITINERARY_TYPE_LABELS).map(([k, v]) => (
                       <option key={k} value={k}>
@@ -414,7 +414,7 @@ function TripFlightsPage() {
                   <select
                     value={itineraryStatus}
                     onChange={(e: any) => setItineraryStatus(e.target.value)}
-                    className="w-full text-xs border border-border rounded-md px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                    className="w-full text-xs border border-border rounded-full px-2 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand"
                   >
                     <option value="draft">Rascunho</option>
                     <option value="active">Ativo / Vigente (Arquiva anteriores)</option>
@@ -431,12 +431,12 @@ function TripFlightsPage() {
                 {segments.map((seg, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg border border-border bg-surface-alt/40 space-y-3 relative"
+                    className="p-4 rounded-2xl border border-border bg-surface-alt/40 space-y-3 relative"
                   >
                     {segments.length > 1 && (
                       <button
                         onClick={() => removeSegmentField(idx)}
-                        className="absolute right-2 top-2 h-6 w-6 inline-flex items-center justify-center rounded-md text-rose-500 hover:bg-rose-50 cursor-pointer"
+                        className="absolute right-2 top-2 h-6 w-6 inline-flex items-center justify-center rounded-full text-rose-500 hover:bg-rose-50 cursor-pointer"
                         title="Remover Trecho"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -586,7 +586,7 @@ function TripFlightsPage() {
                 <button
                   type="button"
                   onClick={addSegmentField}
-                  className="inline-flex h-8 items-center gap-1.5 border border-dashed border-border rounded-md px-3 text-xs font-semibold hover:bg-surface-alt transition-colors cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1.5 border border-dashed border-border rounded-full px-3 text-xs font-semibold hover:bg-surface-alt transition-colors cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Adicionar Trecho/Escala</span>
@@ -596,14 +596,14 @@ function TripFlightsPage() {
               <div className="flex justify-end gap-2 pt-3 border-t border-border">
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="px-3 py-1.5 border border-border text-xs rounded-md hover:bg-surface-alt cursor-pointer transition-colors"
+                  className="px-3 py-1.5 border border-border text-xs rounded-full hover:bg-surface-alt cursor-pointer transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={() => addItineraryMut.mutate()}
                   disabled={addItineraryMut.isPending}
-                  className="px-4 py-1.5 bg-brand text-brand-foreground text-xs rounded-md hover:bg-brand/90 cursor-pointer transition-colors disabled:opacity-50"
+                  className="px-4 py-1.5 bg-brand text-brand-foreground text-xs rounded-full hover:bg-brand/90 cursor-pointer transition-colors disabled:opacity-50"
                 >
                   {addItineraryMut.isPending ? "Salvando…" : "Salvar Versão"}
                 </button>
@@ -636,7 +636,7 @@ function TripFlightsPage() {
               {itinerariesQ.data.map((it) => (
                 <div
                   key={it.id}
-                  className={`rounded-xl border bg-surface overflow-hidden hover:shadow-sm transition-all ${
+                  className={`rounded-[24px] border bg-surface overflow-hidden hover:shadow-sm transition-all ${
                     it.status === "active" ? "border-brand ring-1 ring-brand/35" : "border-border"
                   }`}
                 >
@@ -808,7 +808,7 @@ function TripFlightsPage() {
                   return (
                     <div
                       key={card.id}
-                      className="rounded-xl border border-border bg-surface p-4 space-y-3 hover:shadow-sm transition-all"
+                      className="rounded-[24px] border border-border bg-surface p-4 space-y-3 hover:shadow-sm transition-all"
                     >
                       {/* Header do cartão */}
                       <div className="flex items-start justify-between gap-2">
@@ -953,7 +953,7 @@ function TripFlightsPage() {
                 <select
                   value={compareAId || ""}
                   onChange={(e) => setCompareAId(e.target.value || null)}
-                  className="w-full text-xs border border-border rounded-md p-2 bg-surface"
+                  className="w-full text-xs border border-border rounded-full p-2 bg-surface"
                 >
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
@@ -972,7 +972,7 @@ function TripFlightsPage() {
                 <select
                   value={compareBId || ""}
                   onChange={(e) => setCompareBId(e.target.value || null)}
-                  className="w-full text-xs border border-border rounded-md p-2 bg-surface"
+                  className="w-full text-xs border border-border rounded-full p-2 bg-surface"
                 >
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
@@ -995,7 +995,7 @@ function TripFlightsPage() {
               ) : (
                 <div className="space-y-6">
                   {/* Summary of changes */}
-                  <div className="p-4 rounded-xl border border-border bg-surface-alt/40 flex items-center justify-between gap-4">
+                  <div className="p-4 rounded-[24px] border border-border bg-surface-alt/40 flex items-center justify-between gap-4">
                     <div className="text-xs">
                       <p className="font-semibold text-foreground">
                         Diferenças calculadas deterministicamente
@@ -1028,7 +1028,7 @@ function TripFlightsPage() {
                       return (
                         <div
                           key={index}
-                          className="rounded-xl border border-border bg-surface overflow-hidden"
+                          className="rounded-[24px] border border-border bg-surface overflow-hidden"
                         >
                           <div className="p-3 border-b border-border bg-surface-alt/20 flex items-center gap-2">
                             <span className="h-5 w-5 rounded bg-surface-alt border border-border flex items-center justify-center font-bold text-[10px] font-mono text-muted-foreground">
@@ -1192,7 +1192,7 @@ function TripFlightsPage() {
             <div className="p-4 border-t border-border/60 flex justify-end">
               <button
                 onClick={() => setShowDiffModal(false)}
-                className="px-4 py-2 bg-brand text-brand-foreground text-xs font-semibold rounded-md hover:bg-brand/90 cursor-pointer"
+                className="px-4 py-2 bg-brand text-brand-foreground text-xs font-semibold rounded-full hover:bg-brand/90 cursor-pointer"
               >
                 Concluir Visualização
               </button>

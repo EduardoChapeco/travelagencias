@@ -121,7 +121,7 @@ export function FileUploader({
     <div className={className}>
       {label && <div className="mb-1 text-xs font-medium text-muted-foreground">{label}</div>}
       {value ? (
-        <div className="relative flex items-center gap-3 rounded-md border border-border bg-surface p-2">
+        <div className="relative flex items-center gap-3 rounded-full border border-border bg-surface p-2">
           {variant === "image" ? (
             <img src={value} alt="" className="h-16 w-16 rounded object-cover" />
           ) : variant === "video" ? (
@@ -133,7 +133,7 @@ export function FileUploader({
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="rounded-md border border-border p-1 hover:bg-surface-alt"
+            className="rounded-full border border-border p-1 hover:bg-surface-alt"
             aria-label="Remover"
           >
             <X className="h-4 w-4" />
@@ -151,7 +151,7 @@ export function FileUploader({
             setDragOver(false);
             handleFiles(e.dataTransfer.files);
           }}
-          className={`flex flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-center text-xs transition-colors ${
+          className={`flex flex-col items-center justify-center gap-2 rounded-full border-2 border-dashed p-4 text-center text-xs transition-colors ${
             dragOver ? "border-foreground bg-surface-alt" : "border-border bg-surface"
           }`}
         >
@@ -163,7 +163,7 @@ export function FileUploader({
           <div className="text-muted-foreground">Arraste um arquivo ou</div>
           <label
             htmlFor={inputId}
-            className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-xs hover:bg-surface-alt"
+            className="cursor-pointer rounded-full border border-border px-3 py-1.5 text-xs hover:bg-surface-alt"
           >
             Selecionar arquivo
           </label>

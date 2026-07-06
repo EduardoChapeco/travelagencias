@@ -165,7 +165,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
 
       <div className="space-y-1">
         {checklist.map((item) => (
-          <div key={item.id} className="flex items-center gap-2 group p-2 rounded-lg hover:bg-[var(--surface-alt)]/30 transition-colors">
+          <div key={item.id} className="flex items-center gap-2 group p-2 rounded-2xl hover:bg-[var(--surface-alt)]/30 transition-colors">
             <button
               onClick={() => toggleCheckItem(item)}
               className={cn(

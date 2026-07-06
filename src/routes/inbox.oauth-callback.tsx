@@ -117,7 +117,7 @@ function OAuthCallbackPage() {
             <p className="text-sm text-muted-foreground mb-4">{message}</p>
             <button
               onClick={() => navigate({ to: "/" })}
-              className="w-full h-10 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer"
+              className="w-full h-10 rounded-[24px] bg-brand text-white text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer"
             >
               Voltar ao Painel
             </button>

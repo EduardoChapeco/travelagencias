@@ -43,7 +43,7 @@ export function FilterBar({
               key={option.value}
               onClick={() => onValueChange(option.value)}
               className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
+                "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"

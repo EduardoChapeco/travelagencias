@@ -359,11 +359,11 @@ function PublicProposalView() {
               <img
                 src={p.agency.logo_url}
                 alt={p.agency.name}
-                className="h-9 w-9 rounded-lg object-cover border border-border/40"
+                className="h-9 w-9 rounded-2xl object-cover border border-border/40"
               />
             ) : (
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-lg font-bold text-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-2xl font-bold text-sm"
                 style={{ background: brand, color: brandFg }}
               >
                 {p.agency?.name?.charAt(0).toUpperCase()}
@@ -471,7 +471,7 @@ function PublicProposalView() {
               </div>
             </div>
             {p.valid_until && (
-              <div className="rounded-lg bg-amber-500/15 p-2.5 text-[10px] text-amber-700 dark:text-amber-500 font-medium">
+              <div className="rounded-2xl bg-amber-500/15 p-2.5 text-[10px] text-amber-700 dark:text-amber-500 font-medium">
                 Condições de tarifas garantidas até {fmtDate(p.valid_until)}.
               </div>
             )}
@@ -523,14 +523,14 @@ function DecideActions({
     <div className="flex flex-col gap-2">
       <button
         onClick={() => setConfirm("accepted")}
-        className="h-10 w-full rounded-xl text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+        className="h-10 w-full rounded-[24px] text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
         style={{ background: brand, color: brandFg }}
       >
         Aceitar proposta
       </button>
       <button
         onClick={() => setConfirm("rejected")}
-        className="h-10 w-full rounded-xl border border-border bg-surface text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
+        className="h-10 w-full rounded-[24px] border border-border bg-surface text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
       >
         Recusar proposta
       </button>

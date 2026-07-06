@@ -123,7 +123,7 @@ function CorporatePage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-primary px-2 sm:px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
             title="Nova RFP"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -133,7 +133,7 @@ function CorporatePage() {
           {isAgencyAdmin && (
             <button
               onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               title="Administrar Corporativo"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -153,7 +153,7 @@ function CorporatePage() {
               setPage(1);
             }}
             placeholder="Buscar RFP..."
-            className="h-8 w-full rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-border-strong placeholder:text-muted-foreground"
           />
         </div>
         <div className="relative w-full sm:w-40">
@@ -164,7 +164,7 @@ function CorporatePage() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="h-8 w-full appearance-none rounded-md border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
+            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-border-strong text-foreground text-[11px]"
           >
             <option value="all">Todos os Status</option>
             <option value="pending">Pendente</option>
@@ -189,7 +189,7 @@ function CorporatePage() {
           {rfps.map((rfp) => (
             <div
               key={rfp.id}
-              className="rounded-md border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
+              className="rounded-full border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
             >
               <div
                 onClick={() =>
@@ -214,7 +214,7 @@ function CorporatePage() {
                 </StatusBadge>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-lg text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-2xl text-xs">
                 <div>
                   <div className="text-muted-foreground mb-0.5">Solicitante</div>
                   <div className="font-medium truncate" title={rfp.requester_email}>

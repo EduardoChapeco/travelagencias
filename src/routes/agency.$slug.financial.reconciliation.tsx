@@ -264,7 +264,7 @@ function ReconciliationPage() {
           className="max-w-md h-9 text-xs"
         />
 
-        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-xl text-xs text-amber-800">
+        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[24px] text-xs text-amber-800">
           <Clock className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
             <strong>{list.length}</strong> comprovantes pendentes de validação hoje.
@@ -345,7 +345,7 @@ function ReconciliationPage() {
                       <div className="inline-flex items-center gap-1.5">
                         <button
                           onClick={() => handleViewReceipt(rec.receipt_url)}
-                          className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
+                          className="h-7 w-7 rounded-2xl border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
                           title="Ver Comprovante"
                         >
                           <Eye className="w-4 h-4" />
@@ -361,13 +361,13 @@ function ReconciliationPage() {
                               setSelectedRegisterId(matchingSession.cash_register_id);
                             }
                           }}
-                          className="h-7 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <Check className="w-3.5 h-3.5" /> Conciliar
                         </button>
                         <button
                           onClick={() => setRejectReceipt(rec)}
-                          className="h-7 px-2.5 rounded-lg border border-border hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-2xl border border-border hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <X className="w-3.5 h-3.5" /> Recusar
                         </button>
@@ -401,7 +401,7 @@ function ReconciliationPage() {
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="bg-gray-50 border border-border rounded-xl p-4 text-xs space-y-2 font-mono">
+              <div className="bg-gray-50 border border-border rounded-[24px] p-4 text-xs space-y-2 font-mono">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Passageiro:</span>
                   <strong className="text-gray-800">
@@ -438,7 +438,7 @@ function ReconciliationPage() {
                     );
                     setSelectedSessionId(sess ? String(sess.id) : "");
                   }}
-                  className="w-full h-10 rounded-lg border border-border bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
                   required
                 >
                   <option value="">Selecione a conta de depósito...</option>
@@ -451,7 +451,7 @@ function ReconciliationPage() {
               </div>
 
               {selectedRegisterId && !selectedSessionId && (
-                <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-start gap-1.5">
+                <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[24px] flex items-start gap-1.5">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                   <span>
                     A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
@@ -476,7 +476,7 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !selectedRegisterId}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px]"
                 >
                   {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
                 </PrimaryButton>
@@ -517,7 +517,7 @@ function ReconciliationPage() {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Ex: Valor do Pix divergente, comprovante cortado, ou de outra data..."
-                  className="w-full rounded-lg border border-border bg-background p-3 text-xs outline-none focus:border-brand h-20 resize-none text-foreground"
+                  className="w-full rounded-2xl border border-border bg-background p-3 text-xs outline-none focus:border-brand h-20 resize-none text-foreground"
                   required
                 />
               </Field>
@@ -534,7 +534,7 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !rejectionReason.trim()}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-xl"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[24px]"
                 >
                   {actionBusy ? "Recusando..." : "Confirmar Recusa"}
                 </PrimaryButton>

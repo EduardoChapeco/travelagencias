@@ -497,7 +497,7 @@ function TripReaccommodationPage() {
                     <Plane className="h-3.5 w-3.5" /> Voo Original Afetado
                   </h4>
                   {c.original_itinerary ? (
-                    <div className="rounded-xl border border-border/40 p-4 bg-surface/50 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div className="rounded-[24px] border border-border/40 p-4 bg-surface/50 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                       <div>
                         <div className="text-xs text-muted-foreground">
                           Itinerário Atual (V{c.original_itinerary.version})
@@ -569,7 +569,7 @@ function TripReaccommodationPage() {
                       return (
                         <div
                           key={alt.id}
-                          className="rounded-xl border border-border/50 bg-surface/30 overflow-hidden"
+                          className="rounded-[24px] border border-border/50 bg-surface/30 overflow-hidden"
                         >
                           <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center border-b border-border/30">
                             {/* Route & Segments */}
@@ -655,7 +655,7 @@ function TripReaccommodationPage() {
                             <div className="lg:col-span-3 flex items-center justify-between lg:justify-end gap-4">
                               <div
                                 className={cn(
-                                  "text-xs font-semibold px-2.5 py-1 rounded-lg border",
+                                  "text-xs font-semibold px-2.5 py-1 rounded-2xl border",
                                   riskColor,
                                 )}
                               >
@@ -716,7 +716,7 @@ function TripReaccommodationPage() {
                     })}
 
                     {c.alternatives?.length === 0 && (
-                      <div className="rounded-xl border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground bg-surface-alt/5">
+                      <div className="rounded-[24px] border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground bg-surface-alt/5">
                         Nenhuma alternativa proposta ainda. Clique em "Adicionar Alternativa" para
                         cadastrar itinerários e rodar o comparador.
                       </div>
@@ -728,7 +728,7 @@ function TripReaccommodationPage() {
                 {c.workflow_status !== "resolved" &&
                   c.alternatives &&
                   c.alternatives.length > 0 && (
-                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-4 bg-surface-alt/10 p-4 rounded-xl">
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-4 bg-surface-alt/10 p-4 rounded-[24px]">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Info className="h-4 w-4 text-brand shrink-0" />
                         <span>
@@ -769,7 +769,7 @@ function TripReaccommodationPage() {
 
                 {/* 4. Client Acceptance Audit Certificate */}
                 {activeDecision && (
-                  <div className="border border-emerald-200 bg-emerald-500/5 rounded-xl overflow-hidden shadow-sm">
+                  <div className="border border-emerald-200 bg-emerald-500/5 rounded-[24px] overflow-hidden shadow-sm">
                     <div className="bg-emerald-500/10 border-b border-emerald-200 py-3 px-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wide">
                         <FileSignature className="h-4 w-4" /> Certificado de Aceite Digital
@@ -883,7 +883,7 @@ function TripReaccommodationPage() {
                     {c.operator_requests?.map((req: any) => (
                       <div
                         key={req.id}
-                        className="rounded-lg border border-border/40 p-3 text-xs bg-surface-alt/10 flex items-center justify-between"
+                        className="rounded-2xl border border-border/40 p-3 text-xs bg-surface-alt/10 flex items-center justify-between"
                       >
                         <div>
                           <span className="font-semibold text-foreground">
@@ -947,7 +947,7 @@ function TripReaccommodationPage() {
                     ))}
 
                     {c.operator_requests?.length === 0 && (
-                      <div className="text-xs text-muted-foreground italic bg-surface/50 p-4 rounded-xl border border-dashed border-border/60 text-center">
+                      <div className="text-xs text-muted-foreground italic bg-surface/50 p-4 rounded-[24px] border border-dashed border-border/60 text-center">
                         Nenhum envio ou contato com a operadora registrado para este caso.
                       </div>
                     )}
@@ -1023,7 +1023,7 @@ function TripReaccommodationPage() {
               {altSegments.map((seg, index) => (
                 <div
                   key={index}
-                  className="p-4 rounded-xl border border-border/60 bg-surface-alt/20 space-y-4 relative"
+                  className="p-4 rounded-[24px] border border-border/60 bg-surface-alt/20 space-y-4 relative"
                 >
                   {altSegments.length > 1 && (
                     <Button

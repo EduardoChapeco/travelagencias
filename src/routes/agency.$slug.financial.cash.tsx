@@ -348,7 +348,7 @@ function CashPage() {
   if (registersQ.isError) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-surface-alt">
-        <div className="text-center space-y-3 max-w-md bg-surface p-6 rounded-xl border border-red-200 text-red-800">
+        <div className="text-center space-y-3 max-w-md bg-surface p-6 rounded-[24px] border border-red-200 text-red-800">
           <AlertCircle className="w-8 h-8 mx-auto text-red-600" />
           <h3 className="text-sm font-bold">Erro ao carregar caixas</h3>
           <p className="text-xs text-red-700">Não foi possível recuperar a lista de caixas da agência. Verifique sua conexão ou suas credenciais de acesso.</p>
@@ -392,14 +392,14 @@ function CashPage() {
             (activeSession ? (
               <GhostButton
                 onClick={() => setCloseRegisterSheet(true)}
-                className="flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
               >
                 <Lock className="h-3.5 w-3.5" /> Fechar Caixa
               </GhostButton>
             ) : (
               <PrimaryButton
                 onClick={() => setOpenRegisterSheet(true)}
-                className="flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-foreground transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-foreground transition-colors cursor-pointer"
               >
                 <Unlock className="h-3.5 w-3.5" /> Abrir Caixa
               </PrimaryButton>
@@ -409,29 +409,29 @@ function CashPage() {
             <div className="flex gap-1.5 flex-wrap">
               <button
                 onClick={() => setNewTxType("receipt")}
-                className="flex h-8 items-center gap-1.5 rounded-md bg-success hover:bg-success/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full bg-success hover:bg-success/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
               >
                 + Entrada
               </button>
               <button
                 onClick={() => setNewTxType("payment")}
-                className="flex h-8 items-center gap-1.5 rounded-md bg-danger hover:bg-danger/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full bg-danger hover:bg-danger/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
               >
                 + Saída
               </button>
               <button
                 onClick={() => setNewTxType("reconciliation")}
-                className="flex h-8 items-center gap-1.5 rounded-md bg-info hover:bg-info/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full bg-info hover:bg-info/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
               >
                 <Coins className="h-3.5 w-3.5" /> Conciliação B2B
               </button>
               <button
                 onClick={() => setNewTxType("vale")}
-                className="flex h-8 items-center gap-1.5 rounded-md bg-warning hover:bg-warning/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1.5 rounded-full bg-warning hover:bg-warning/90 px-3 text-xs font-semibold text-white transition-colors cursor-pointer"
               >
                 <Users className="h-3.5 w-3.5" /> Vale Funcionário
               </button>
-              <label className="flex h-8 items-center gap-1.5 rounded-md border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-semibold text-foreground transition-colors cursor-pointer">
+              <label className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-semibold text-foreground transition-colors cursor-pointer">
                 <FileText className="h-3.5 w-3.5" /> OCR Boleto/NF
                 <input
                   type="file"
@@ -446,7 +446,7 @@ function CashPage() {
 
           <GhostButton
             onClick={() => setNewRegisterSheet(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-medium border border-border text-muted-foreground hover:text-foreground"
+            className="flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium border border-border text-muted-foreground hover:text-foreground"
           >
             <Landmark className="h-3.5 w-3.5" /> Novo Caixa
           </GhostButton>
@@ -455,7 +455,7 @@ function CashPage() {
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
         {/* Register Selector */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-xl p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-4">
           <div>
             <h1 className="text-xl font-bold tracking-tight">Fluxo de Caixa Diário</h1>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -485,7 +485,7 @@ function CashPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {activeReg?.type === "physical" && (
-            <div className="bg-surface border border-border rounded-xl p-4">
+            <div className="bg-surface border border-border rounded-[24px] p-4">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
                 Saldo de Abertura
               </span>
@@ -500,7 +500,7 @@ function CashPage() {
             </div>
           )}
 
-          <div className="bg-surface border border-border rounded-xl p-4">
+          <div className="bg-surface border border-border rounded-[24px] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total Entradas
             </span>
@@ -512,7 +512,7 @@ function CashPage() {
             </span>
           </div>
 
-          <div className="bg-surface border border-border rounded-xl p-4">
+          <div className="bg-surface border border-border rounded-[24px] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total Saídas
             </span>
@@ -522,7 +522,7 @@ function CashPage() {
             </span>
           </div>
 
-          <div className="bg-surface border border-border rounded-xl p-4">
+          <div className="bg-surface border border-border rounded-[24px] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
               Saldo Atual
             </span>
@@ -539,7 +539,7 @@ function CashPage() {
 
         {/* Verification Error */}
         {activeReg?.type === "physical" && sessionQ.isError && (
-          <div className="rounded-xl border border-red-200 bg-red-50/50 p-6 text-center text-red-800 flex items-center justify-center gap-2">
+          <div className="rounded-[24px] border border-red-200 bg-red-50/50 p-6 text-center text-red-800 flex items-center justify-center gap-2">
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
             <span className="text-xs font-semibold">Falha ao verificar status da sessão de caixa. Recarregue a página.</span>
           </div>
@@ -547,7 +547,7 @@ function CashPage() {
 
         {/* Closed Physical Register */}
         {activeReg?.type === "physical" && !activeSession && !sessionQ.isLoading && !sessionQ.isError && (
-          <div className="rounded-xl border border-dashed border-border bg-surface p-12 text-center">
+          <div className="rounded-[24px] border border-dashed border-border bg-surface p-12 text-center">
             <Lock className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
             <h3 className="text-sm font-bold text-foreground">O caixa está fechado</h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
@@ -565,7 +565,7 @@ function CashPage() {
 
         {/* Transactions List */}
         {(activeReg?.type !== "physical" || activeSession) && (
-          <div className="bg-surface border border-border rounded-xl overflow-hidden">
+          <div className="bg-surface border border-border rounded-[24px] overflow-hidden">
             <div className="px-5 py-4 border-b border-border flex justify-between items-center">
               <div>
                 <h3 className="text-sm font-bold text-foreground">Extrato de Movimentações</h3>
@@ -825,7 +825,7 @@ function CloseForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="bg-surface-alt border border-border rounded-xl p-4 text-xs space-y-2">
+      <div className="bg-surface-alt border border-border rounded-[24px] p-4 text-xs space-y-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Saldo esperado no sistema:</span>
           <strong className="font-mono">{money(currentBalance)}</strong>
@@ -1049,7 +1049,7 @@ function ReconciliationForm({
         <Input type="number" {...register("commission_rate")} />
       </Field>
 
-      <div className="bg-surface-alt border border-border rounded-xl p-4 text-xs space-y-2.5">
+      <div className="bg-surface-alt border border-border rounded-[24px] p-4 text-xs space-y-2.5">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Valor Total da Venda:</span>
           <strong className="font-mono">{money(totalSale)}</strong>
@@ -1065,7 +1065,7 @@ function ReconciliationForm({
           </strong>
         </div>
         {netDue < 0 && (
-          <div className="flex items-start gap-1.5 text-[10px] text-danger bg-danger-bg border border-danger/20 p-2 rounded-lg mt-1">
+          <div className="flex items-start gap-1.5 text-[10px] text-danger bg-danger-bg border border-danger/20 p-2 rounded-2xl mt-1">
             <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>O valor recebido supera nossa comissão. A operadora deduzirá a diferença.</span>
           </div>

@@ -431,7 +431,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                         className="h-10 w-10 object-contain rounded"
                       />
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-sm font-black text-white">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-sm font-black text-white">
                         {receiptDetails.agencyName.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -456,7 +456,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 </div>
 
                 {/* Amount / Value showcase block */}
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-5 flex items-center justify-between">
+                <div className="bg-slate-50 border border-slate-100 rounded-[24px] p-5 flex items-center justify-between">
                   <div>
                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
                       Valor Recebido
@@ -521,7 +521,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 </div>
 
                 {receiptDetails.description && (
-                  <div className="border border-slate-100 bg-slate-50/50 rounded-xl p-4 text-[11px] text-slate-600 leading-relaxed">
+                  <div className="border border-slate-100 bg-slate-50/50 rounded-[24px] p-4 text-[11px] text-slate-600 leading-relaxed">
                     <strong className="text-slate-800 block font-semibold mb-1 text-[10px] uppercase">
                       Observações do Agente
                     </strong>
@@ -569,7 +569,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
         <div className="border-t border-border bg-slate-50 px-5 py-3 flex flex-wrap gap-2 justify-end">
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 h-8 px-3.5 rounded-md border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+            className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
           >
             <Printer className="h-3.5 w-3.5" /> Imprimir Recibo
           </button>
@@ -577,7 +577,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
           <button
             onClick={handleDownloadPdf}
             disabled={exporting}
-            className="flex items-center gap-1.5 h-8 px-3.5 rounded-md border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
           >
             <Download className="h-3.5 w-3.5" /> Baixar PDF
           </button>
@@ -585,7 +585,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
           <button
             onClick={handleDownloadPng}
             disabled={exporting}
-            className="flex items-center gap-1.5 h-8 px-3.5 rounded-md border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
           >
             <ImageIcon className="h-3.5 w-3.5" /> Salvar Imagem
           </button>

@@ -224,7 +224,7 @@ export function RoomingList({
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="rounded-xl border border-border bg-surface p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="rounded-[24px] border border-border bg-surface p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="flex items-center justify-between border-b border-border pb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
@@ -417,7 +417,7 @@ export function RoomingList({
 
       {/* Room list */}
       {!isLoading && rooms.length === 0 && !showForm && (
-        <div className="text-center py-6 border border-dashed border-border rounded-lg text-xs text-muted-foreground">
+        <div className="text-center py-6 border border-dashed border-border rounded-2xl text-xs text-muted-foreground">
           Nenhum quarto cadastrado. Clique em "+ Quarto" para começar.
         </div>
       )}
@@ -427,7 +427,7 @@ export function RoomingList({
           {rooms.map((room) => (
             <div
               key={room.id}
-              className={`border rounded-lg p-3 transition-all ${
+              className={`border rounded-2xl p-3 transition-all ${
                 room.is_confirmed
                   ? "border-success/40 bg-success-bg/20"
                   : "border-border bg-surface"

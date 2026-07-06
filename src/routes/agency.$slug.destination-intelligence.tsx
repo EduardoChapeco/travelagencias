@@ -325,12 +325,12 @@ function DestinationIntelligencePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar destino…"
-              className="h-8 rounded-md border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand w-48"
+              className="h-8 rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand w-48"
             />
           </div>
           <button
             onClick={openCreate}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
           >
             <Plus className="h-3.5 w-3.5" /> Novo Destino
           </button>
@@ -371,7 +371,7 @@ function DestinationIntelligencePage() {
             {!searchQuery && (
               <button
                 onClick={openCreate}
-                className="mt-3 flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+                className="mt-3 flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
               >
                 <Plus className="h-3.5 w-3.5" /> Cadastrar primeiro destino
               </button>
@@ -554,7 +554,7 @@ function DestinationIntelligencePage() {
 
                   {/* Vaccinations */}
                   {(dest.vaccinations_required ?? []).length > 0 && (
-                    <div className="bg-danger/5 border border-danger/20 rounded-lg px-3 py-2 text-[10px]">
+                    <div className="bg-danger/5 border border-danger/20 rounded-2xl px-3 py-2 text-[10px]">
                       <span className="font-bold text-danger uppercase tracking-wide block mb-0.5">
                         Vacinas Obrigatórias
                       </span>
@@ -635,7 +635,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Visa */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" /> Visto & Entrada
                 </div>
@@ -670,7 +670,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Health */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Heart className="h-3.5 w-3.5" /> Saúde
                 </div>
@@ -700,7 +700,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Safety */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <ShieldAlert className="h-3.5 w-3.5" /> Segurança
                 </div>
@@ -725,7 +725,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Practical */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" /> Informações Práticas
                 </div>
@@ -779,7 +779,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tax */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
                 </div>
@@ -814,7 +814,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Curadoria e Controle */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Curadoria e Qualidade
                 </div>
@@ -854,7 +854,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tips */}
-              <div className="border border-border rounded-xl p-4 space-y-3">
+              <div className="border border-border rounded-[24px] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Dicas e Contexto
                 </div>

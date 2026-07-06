@@ -19,14 +19,14 @@ export function MyDayView({ filters }: MyDayViewProps) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Skeleton className="h-32 w-full rounded-xl" />
-          <Skeleton className="h-32 w-full rounded-xl" />
-          <Skeleton className="h-32 w-full rounded-xl" />
-          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-[24px]" />
+          <Skeleton className="h-32 w-full rounded-[24px]" />
+          <Skeleton className="h-32 w-full rounded-[24px]" />
+          <Skeleton className="h-32 w-full rounded-[24px]" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-[400px] lg:col-span-2 rounded-xl" />
-          <Skeleton className="h-[400px] rounded-xl" />
+          <Skeleton className="h-[400px] lg:col-span-2 rounded-[24px]" />
+          <Skeleton className="h-[400px] rounded-[24px]" />
         </div>
       </div>
     );
@@ -101,7 +101,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
                   <div
                     key={t.id}
                     onClick={() => setSelectedTask(t)}
-                    className="p-3 border rounded-md bg-[var(--surface-alt)] flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/80 transition-all"
+                    className="p-3 border rounded-full bg-[var(--surface-alt)] flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/80 transition-all"
                   >
                     <span className="font-medium text-sm">{t.title}</span>
                     <span className="text-xs text-[var(--muted-foreground)]">{t.due_time}</span>
@@ -111,7 +111,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
                   <div
                     key={t.id}
                     onClick={() => setSelectedTask(t)}
-                    className="p-3 border rounded-md flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/40 transition-all"
+                    className="p-3 border rounded-full flex justify-between items-center cursor-pointer hover:border-brand/40 hover:bg-[var(--surface-alt)]/40 transition-all"
                   >
                     <span className="font-medium text-sm">{t.title}</span>
                     <span className="text-xs text-[var(--muted-foreground)]">{t.priority}</span>

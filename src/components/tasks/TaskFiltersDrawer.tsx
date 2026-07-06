@@ -143,7 +143,7 @@ export function TaskFiltersDrawer({
                   <div
                     key={key}
                     onClick={() => toggleStatus(statusKey)}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
                   >
                     <Checkbox checked={checked} onCheckedChange={() => {}} />
                     <span className="text-xs font-medium text-foreground truncate">{cfg.label}</span>
@@ -169,7 +169,7 @@ export function TaskFiltersDrawer({
                   <div
                     key={key}
                     onClick={() => togglePriority(priorityKey)}
-                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
                   >
                     <Checkbox checked={checked} onCheckedChange={() => {}} />
                     <div className="flex items-center gap-1.5 truncate">
@@ -200,7 +200,7 @@ export function TaskFiltersDrawer({
                     <div
                       key={member.id}
                       onClick={() => toggleAssignee(member.id)}
-                      className="flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
+                      className="flex items-center justify-between px-2.5 py-1.5 rounded-2xl border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
                     >
                       <div className="flex items-center gap-2 truncate">
                         <div className="w-5 h-5 rounded-full bg-surface-alt border border-border flex items-center justify-center text-[9px] font-bold text-muted-foreground shrink-0 uppercase">

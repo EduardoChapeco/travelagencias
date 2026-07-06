@@ -323,7 +323,7 @@ function TourDetailPage() {
 
   if (tourQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-xl border border-red-200 bg-red-50/50 m-6">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[24px] border border-red-200 bg-red-50/50 m-6">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertTriangle className="h-5 w-5 text-red-600" />
         </div>
@@ -335,7 +335,7 @@ function TourDetailPage() {
         </p>
         <button
           onClick={() => tourQ.refetch()}
-          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
+          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-semibold shadow-sm transition-colors"
         >
           Tentar Novamente
         </button>
@@ -345,7 +345,7 @@ function TourDetailPage() {
 
   if (!tourQ.data) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-xl border border-dashed border-border m-6">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[24px] border border-dashed border-border m-6">
         <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center mb-4">
           <XCircle className="h-5 w-5 text-slate-500" />
         </div>
@@ -355,7 +355,7 @@ function TourDetailPage() {
         </p>
         <a
           href={`/agency/${agency?.slug}/group-tours`}
-          className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
+          className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-semibold shadow-sm transition-colors"
         >
           Voltar para Lista de Excursões
         </a>
@@ -406,7 +406,7 @@ function TourDetailPage() {
           <Select
             value={t.status}
             onChange={(e) => updateStatus(e.target.value)}
-            className="h-8 text-xs shrink-0 bg-surface text-foreground border border-border rounded-md px-2 focus:border-brand"
+            className="h-8 text-xs shrink-0 bg-surface text-foreground border border-border rounded-full px-2 focus:border-brand"
           >
             <option value="draft">Rascunho</option>
             <option value="open">Aberta / Inscrições</option>
@@ -423,7 +423,7 @@ function TourDetailPage() {
           </GhostButton>
           <button
             onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
           >
             <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
           </button>
@@ -590,7 +590,7 @@ function TourDetailPage() {
               Carregando lista de passageiros...
             </div>
           ) : enrolQ.isError ? (
-            <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-xs text-red-750 flex items-center gap-2">
+            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-750 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
               <span>
                 Falha ao obter lista de inscrições:{" "}
@@ -603,7 +603,7 @@ function TourDetailPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-800">
+              <div className="flex items-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-800">
                 <span>
                   ⚠️ Lembrete: De acordo com o contrato, todos os saldos terrestres devem ser
                   integralmente quitados antes do embarque ({fmtDate(t.departure_date)}).
@@ -612,7 +612,7 @@ function TourDetailPage() {
 
               {/* Segment filter tabs */}
               <div className="flex flex-wrap gap-2 items-center justify-between">
-                <div className="flex gap-1.5 bg-gray-100 p-0.5 rounded-lg border border-border">
+                <div className="flex gap-1.5 bg-gray-100 p-0.5 rounded-2xl border border-border">
                   {[
                     { id: "all", label: "Todos" },
                     { id: "bus", label: "Ônibus" },
@@ -623,7 +623,7 @@ function TourDetailPage() {
                     <button
                       key={btn.id}
                       onClick={() => setSegmentFilter(btn.id)}
-                      className={`px-3 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                      className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
                         segmentFilter === btn.id
                           ? "bg-white text-gray-900 border border-border shadow-sm"
                           : "text-muted-foreground hover:text-foreground border border-transparent"
@@ -686,7 +686,7 @@ function TourDetailPage() {
                             <select
                               value={e.segment_type || "bus"}
                               onChange={(ev) => updatePassengerSegment(e.id, ev.target.value)}
-                              className="bg-white text-gray-900 border border-border rounded-lg text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                              className="bg-white text-gray-900 border border-border rounded-2xl text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
                             >
                               <option value="bus">🚌 Ônibus</option>
                               <option value="flight">✈️ Aéreo</option>
@@ -698,7 +698,7 @@ function TourDetailPage() {
                             <select
                               value={e.payment_routing || "agency"}
                               onChange={(ev) => updatePassengerRouting(e.id, ev.target.value)}
-                              className="bg-white text-gray-900 border border-border rounded-lg text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                              className="bg-white text-gray-900 border border-border rounded-2xl text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
                             >
                               <option value="agency">🏢 Agência</option>
                               <option value="operator">🚢 Operadora</option>
@@ -799,8 +799,8 @@ function TourDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* ROI Metrics Card */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white border border-border rounded-xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="bg-white border border-border rounded-[24px] p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3 bg-gray-50 rounded-2xl">
                   <span className="text-[10px] text-muted-foreground uppercase font-bold">
                     Faturamento Bruto
                   </span>
@@ -808,7 +808,7 @@ function TourDetailPage() {
                     {money(totalRevenue)}
                   </strong>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50 rounded-2xl">
                   <span className="text-[10px] text-muted-foreground uppercase font-bold">
                     Custos Operacionais
                   </span>
@@ -816,7 +816,7 @@ function TourDetailPage() {
                     {money(totalCosts)}
                   </strong>
                 </div>
-                <div className="p-3 bg-[#e8f3f1] rounded-lg">
+                <div className="p-3 bg-[#e8f3f1] rounded-2xl">
                   <span className="text-[10px] text-teal-800 uppercase font-bold">
                     Resultado Líquido
                   </span>
@@ -827,7 +827,7 @@ function TourDetailPage() {
               </div>
 
               {/* Costs Breakdown */}
-              <div className="bg-white border border-border rounded-xl overflow-hidden">
+              <div className="bg-white border border-border rounded-[24px] overflow-hidden">
                 <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-gray-50/50">
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700">
@@ -909,7 +909,7 @@ function TourDetailPage() {
             {/* Sidebar Budgets */}
             <div className="space-y-6">
               {/* Savings account */}
-              <div className="bg-white border border-border rounded-xl p-5 space-y-4">
+              <div className="bg-white border border-border rounded-[24px] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Landmark className="w-5 h-5 text-gray-400" />
                   <GhostButton
@@ -934,7 +934,7 @@ function TourDetailPage() {
               </div>
 
               {/* CAC & Ads stats */}
-              <div className="bg-white border border-border rounded-xl p-5 space-y-4">
+              <div className="bg-white border border-border rounded-[24px] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Target className="w-5 h-5 text-gray-400" />
                   <GhostButton
@@ -1334,13 +1334,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               </h2>
 
               <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span className="bg-white/10 backdrop-blur-xs text-white rounded-md px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
+                <span className="bg-white/10 backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
                   <Calendar className="h-2.5 w-2.5 text-amber-400" />
                   {fmtDate(tour.departure_date)} a {fmtDate(tour.return_date)}
                 </span>
 
                 {tour.transport_type && (
-                  <span className="bg-white/10 backdrop-blur-xs text-white rounded-md px-1.5 py-0.5 text-[8px] font-bold border border-white/5 uppercase">
+                  <span className="bg-white/10 backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 uppercase">
                     {tour.transport_type === "bus"
                       ? "🚌 Rodoviário"
                       : tour.transport_type === "air"
@@ -1383,7 +1383,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             </div>
 
             {/* Premium QR Code scanning card */}
-            <div className="bg-white text-slate-950 rounded-xl p-2 flex items-center justify-between gap-2.5 shadow-lg border border-white/10">
+            <div className="bg-white text-slate-950 rounded-[24px] p-2 flex items-center justify-between gap-2.5 shadow-lg border border-white/10">
               <div className="flex-1 min-w-0">
                 <span className="text-[8px] font-black uppercase tracking-wider block text-slate-900 leading-none">
                   {ctaTitle}
@@ -1395,7 +1395,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               <img
                 src={qrCodeUrl}
                 alt="Inscrições"
-                className="h-10 w-10 border border-slate-200 p-0.5 bg-white shrink-0 rounded-lg shadow-sm"
+                className="h-10 w-10 border border-slate-200 p-0.5 bg-white shrink-0 rounded-2xl shadow-sm"
               />
             </div>
           </div>
@@ -1404,14 +1404,14 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         <button
           onClick={handleDownloadFlyer}
           disabled={downloading}
-          className="flex items-center justify-center gap-1.5 h-9 w-[300px] rounded-lg bg-brand text-xs font-bold text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 h-9 w-[300px] rounded-2xl bg-brand text-xs font-bold text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
         >
           <Download className="h-3.5 w-3.5" /> Baixar Flyer (PNG)
         </button>
       </div>
 
       {/* Col 2: Customization Controls */}
-      <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+      <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
         <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
           Personalizar Flyer
         </h4>
@@ -1443,7 +1443,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                 key={th.id}
                 type="button"
                 onClick={() => setSelectedTheme(th.id as any)}
-                className={`p-2 rounded-lg border text-[11px] font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
+                className={`p-2 rounded-2xl border text-[11px] font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
                   selectedTheme === th.id
                     ? "border-brand bg-brand/5 font-bold shadow-xs"
                     : "border-border hover:bg-slate-50 text-slate-650"
@@ -1478,7 +1478,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
       </div>
 
       {/* Col 3: Apresentação Comercial */}
-      <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+      <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
         <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
           Apresentação da Viagem
         </h4>
@@ -1497,7 +1497,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-lg"
+              className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-2xl"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-brand" />
               <span>{item}</span>
@@ -1509,7 +1509,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           <button
             onClick={handleCreateBrochure}
             disabled={creatingBrochure}
-            className="flex items-center justify-center gap-2 h-10 w-full rounded-lg bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex items-center justify-center gap-2 h-10 w-full rounded-2xl bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
           </button>
@@ -1724,7 +1724,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Hotel & Video Column */}
-      <div className="lg:col-span-1 bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm self-start">
+      <div className="lg:col-span-1 bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <Hotel className="h-5 w-5 text-brand" />
           <h3 className="font-bold text-sm text-foreground">Hospedagem & Mídia</h3>
@@ -1845,7 +1845,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       {/* Pricing & Extras Columns */}
       <div className="lg:col-span-2 space-y-6">
         {/* pricing card */}
-        <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
               <BedDouble className="h-5 w-5 text-brand" />
@@ -1863,7 +1863,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
-            <div className="p-4 border border-border rounded-lg bg-slate-50/50 space-y-3 self-start">
+            <div className="p-4 border border-border rounded-2xl bg-slate-50/50 space-y-3 self-start">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Tarifa
               </span>
@@ -1905,7 +1905,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 pricingTiers.map((t: any, i: number) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-white text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-2xl border border-border bg-white text-xs"
                   >
                     <div className="min-w-0 flex-1">
                       <strong className="font-semibold block truncate text-slate-800">
@@ -1929,7 +1929,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-lg bg-slate-50/50">
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-2xl bg-slate-50/50">
                   Nenhuma acomodação cadastrada. Clientes usarão o preço base do pacote.
                 </div>
               )}
@@ -1938,7 +1938,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
         </div>
 
         {/* Extras card */}
-        <div className="bg-white border border-border rounded-xl p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm">
           <div className="flex items-center border-b border-border pb-3">
             <Layers className="h-5 w-5 text-brand mr-2" />
             <h3 className="font-bold text-sm text-foreground">
@@ -1948,7 +1948,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
-            <div className="p-4 border border-border rounded-lg bg-slate-50/50 space-y-3 self-start">
+            <div className="p-4 border border-border rounded-2xl bg-slate-50/50 space-y-3 self-start">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Opcional
               </span>
@@ -1990,7 +1990,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 extraOptions.map((e: any, i: number) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-white text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-2xl border border-border bg-white text-xs"
                   >
                     <div className="min-w-0 flex-1">
                       <strong className="font-semibold block truncate text-slate-800">
@@ -2014,7 +2014,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-lg bg-slate-50/50">
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-2xl bg-slate-50/50">
                   Nenhum opcional cadastrado.
                 </div>
               )}
@@ -2208,7 +2208,7 @@ function ItineraryEditor({
           key={d.day_number || (d as any).day || idx}
           className="rounded border border-border bg-surface p-4 flex items-start gap-4"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-alt text-xs font-semibold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-alt text-xs font-semibold">
             D{d.day_number || (d as any).day}
           </div>
           <div className="flex-1">
@@ -2417,7 +2417,7 @@ function BusSeatManager({
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex-1 bg-surface border border-border rounded-xl p-8 overflow-x-auto">
+      <div className="flex-1 bg-surface border border-border rounded-[24px] p-8 overflow-x-auto">
         <div className="min-w-max mx-auto">
           <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] bg-surface-alt/20 flex items-end justify-center pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Motorista
@@ -2439,7 +2439,7 @@ function BusSeatManager({
                     onClick={() => cell.type === "seat" && setSelectedSeat(cell)}
                     disabled={cell.type !== "seat"}
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-all",
+                      "flex h-12 w-12 items-center justify-center rounded-2xl border-2 text-xs font-semibold transition-all",
                       cell.type === "seat" &&
                         !isOccupied &&
                         "border-border/60 bg-surface hover:border-brand hover:text-brand",
@@ -2465,7 +2465,7 @@ function BusSeatManager({
 
       <div className="w-full md:w-80 space-y-4">
         {orphans.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 space-y-2">
+          <div className="bg-amber-50 border border-amber-200 rounded-[24px] p-4 text-xs text-amber-900 space-y-2">
             <div className="font-bold flex items-center gap-1">
               ⚠️ Inconsistência de Assentos
             </div>
@@ -2490,7 +2490,7 @@ function BusSeatManager({
                 toast.success("Assentos inconsistentes liberados!");
                 onChange();
               }}
-              className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[10px] transition-colors cursor-pointer"
+              className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl text-[10px] transition-colors cursor-pointer"
             >
               Liberar Assentos
             </button>
@@ -2535,13 +2535,13 @@ function BusSeatManager({
           </div>
           <div className="flex justify-between items-center text-sm mb-2">
             <span className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-brand/10 border border-brand rounded-sm" /> Vendidos
+              <div className="w-3 h-3 bg-brand/10 border border-brand rounded-full" /> Vendidos
             </span>
             <span className="font-semibold">{passengers.filter((p) => p.seat_number).length}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-surface border border-border/60 rounded-sm" /> Livres
+              <div className="w-3 h-3 bg-surface border border-border/60 rounded-full" /> Livres
             </span>
             <span className="font-semibold">
               {mapData.filter((c) => c.type === "seat").length -
@@ -2896,7 +2896,7 @@ function EditTour({
                       setNewInc("");
                     }
                   }}
-                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-lg text-sm shrink-0 cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-2xl text-sm shrink-0 cursor-pointer"
                 >
                   +
                 </button>
@@ -2906,7 +2906,7 @@ function EditTour({
               {includes.map((inc, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between bg-emerald-50/60 border border-emerald-100 text-emerald-800 text-xs py-1 px-2.5 rounded-lg font-semibold"
+                  className="flex items-center justify-between bg-emerald-50/60 border border-emerald-100 text-emerald-800 text-xs py-1 px-2.5 rounded-2xl font-semibold"
                 >
                   <span className="truncate">✓ {inc}</span>
                   <button
@@ -2950,7 +2950,7 @@ function EditTour({
                       setNewExc("");
                     }
                   }}
-                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-lg text-sm shrink-0 cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 border border-border px-3 rounded-2xl text-sm shrink-0 cursor-pointer"
                 >
                   +
                 </button>
@@ -2960,7 +2960,7 @@ function EditTour({
               {excludes.map((exc, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between bg-red-50/60 border border-red-100 text-red-800 text-xs py-1 px-2.5 rounded-lg font-semibold"
+                  className="flex items-center justify-between bg-red-50/60 border border-red-100 text-red-800 text-xs py-1 px-2.5 rounded-2xl font-semibold"
                 >
                   <span className="truncate">✗ {exc}</span>
                   <button
@@ -3025,7 +3025,7 @@ function DraggablePassenger({
       {...listeners}
       {...attributes}
       className={cn(
-        "flex items-center justify-between py-1.5 px-3 rounded-lg bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
+        "flex items-center justify-between py-1.5 px-3 rounded-2xl bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
         isDragging && "opacity-45 border-dashed border-brand",
         isCompact
           ? "text-xs font-semibold py-1 px-2.5 bg-brand/5 border-brand/10 text-foreground"
@@ -3070,7 +3070,7 @@ function DroppableRoom({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-xl border bg-surface overflow-hidden transition-all duration-200",
+        "rounded-[24px] border bg-surface overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
         isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
@@ -3090,7 +3090,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-xl border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        "rounded-[24px] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -3373,7 +3373,7 @@ function RoomingListManager({
 
   if (roomsQ.isError) {
     return (
-      <div className="p-6 text-center rounded-xl border border-red-200 bg-red-50/50 text-sm text-red-700 m-4 flex flex-col items-center justify-center">
+      <div className="p-6 text-center rounded-[24px] border border-red-200 bg-red-50/50 text-sm text-red-700 m-4 flex flex-col items-center justify-center">
         <AlertTriangle className="h-6 w-6 text-red-600 mb-2 shrink-0" />
         <span className="font-semibold">Falha ao obter rooming list:</span>
         <span className="text-xs text-red-650 mt-1 max-w-sm">
@@ -3388,26 +3388,26 @@ function RoomingListManager({
       <div className="space-y-6">
         {/* Summary KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Quartos
             </div>
             <div className="text-2xl font-black text-foreground">{rooms.length}</div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Leitos
             </div>
             <div className="text-2xl font-black text-foreground">{totalBeds}</div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4 text-center">
+          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Alocados
             </div>
             <div className="text-2xl font-black text-brand">{totalOccupied}</div>
           </div>
           <div
-            className={`rounded-xl border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}
+            className={`rounded-[24px] border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}
           >
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Sem Quarto
@@ -3457,7 +3457,7 @@ function RoomingListManager({
                   onClick={handleExportExcel}
                   disabled={exporting}
                   title="Exportar Rooming List para Excel (.xlsx)"
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download className="h-3.5 w-3.5" />{" "}
                   {exporting ? "Exportando..." : "Exportar Excel"}
@@ -3467,7 +3467,7 @@ function RoomingListManager({
                   onClick={handleExportPdf}
                   disabled={exporting}
                   title="Exportar Rooming List para PDF (.pdf)"
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-md border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-surface text-xs font-semibold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FileText className="h-3.5 w-3.5 text-rose-500" />{" "}
                   {exporting ? "Exportando..." : "Exportar PDF"}
@@ -3477,7 +3477,7 @@ function RoomingListManager({
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> Novo Quarto
             </button>
@@ -3486,7 +3486,7 @@ function RoomingListManager({
 
         {/* Add room form */}
         {addOpen && (
-          <div className="rounded-xl border border-brand/20 bg-brand/5 p-5">
+          <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-5">
             <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
             <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -3553,7 +3553,7 @@ function RoomingListManager({
 
         {/* Room cards grid */}
         {rooms.length === 0 && !addOpen ? (
-          <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+          <div className="rounded-[24px] border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
             <BedDouble className="h-8 w-8 mx-auto mb-3 text-muted-foreground/30" />
             Nenhum quarto cadastrado. Clique em "Novo Quarto" para começar a montagem do rooming
             list.
@@ -3641,7 +3641,7 @@ function RoomingListManager({
                             e.target.value = "";
                           }
                         }}
-                        className="w-full mt-1 h-8 rounded-lg border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
+                        className="w-full mt-1 h-8 rounded-2xl border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
                       >
                         <option value="">+ Alocar passageiro...</option>
                         {unallocated.map((p) => (
@@ -3674,7 +3674,7 @@ function RoomingListManager({
 
         {/* Group Closure Checklist */}
         {rooms.length > 0 && (
-          <div className="rounded-xl border border-border bg-surface p-5 mt-2">
+          <div className="rounded-[24px] border border-border bg-surface p-5 mt-2">
             <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-success" /> Validação de Fechamento do Grupo
             </h4>
@@ -3699,7 +3699,7 @@ function RoomingListManager({
               ].map((check, i) => (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-2xl text-xs font-semibold ${check.ok ? "bg-success/5 text-success" : "bg-warning/5 text-warning"}`}
                 >
                   {check.ok ? (
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
@@ -3717,7 +3717,7 @@ function RoomingListManager({
       {/* Drag Overlay for Premium Ghosting */}
       <DragOverlay>
         {activeDragId ? (
-          <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-surface border border-brand shadow-md text-xs font-semibold text-foreground select-none cursor-grabbing opacity-90">
+          <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-2xl bg-surface border border-brand shadow-md text-xs font-semibold text-foreground select-none cursor-grabbing opacity-90">
             <Users2 className="h-3.5 w-3.5 text-brand" />
             <span>{activeDragName}</span>
           </div>

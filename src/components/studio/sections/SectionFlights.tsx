@@ -227,7 +227,7 @@ export function SectionFlights({ draft, save }: Props) {
       {infotravelOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
           <div
-            className="w-full max-w-lg rounded-lg border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
+            className="w-full max-w-lg rounded-2xl border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">

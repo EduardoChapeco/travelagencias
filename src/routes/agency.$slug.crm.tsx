@@ -184,23 +184,23 @@ function CRMPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
             <TabsTrigger
               value="kanban"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
             >
               Funil de Vendas (Kanban)
             </TabsTrigger>
             <TabsTrigger
               value="archived"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
             >
               Leads Arquivados
             </TabsTrigger>
             {isAgencyAdmin && (
               <TabsTrigger
                 value="admin"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-md data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
               >
                 Configurações
               </TabsTrigger>
@@ -211,7 +211,7 @@ function CRMPage() {
             {activeTab !== "admin" && (
               <button
                 onClick={() => setNewOpen(true)}
-                className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+                className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
                 title="Novo Lead"
               >
                 <Plus className="h-3.5 w-3.5" />
@@ -229,7 +229,7 @@ function CRMPage() {
               placeholder="Buscar lead..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-full rounded-sm border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
+              className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
             />
           </div>
           <div className="relative w-full sm:w-44">
@@ -237,7 +237,7 @@ function CRMPage() {
             <select
               value={ownerFilter}
               onChange={(e) => setOwnerFilter(e.target.value)}
-              className="h-8 w-full appearance-none rounded-sm border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+              className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
             >
               <option value="">Responsáveis</option>
               {usersQ.data?.map(
@@ -256,7 +256,7 @@ function CRMPage() {
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
-              className="h-8 w-full appearance-none rounded-sm border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
+              className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
             >
               <option value="">Origens</option>
               <option value="whatsapp">WhatsApp</option>
@@ -281,7 +281,7 @@ function CRMPage() {
 
       {(stagesQ.isError || leadsQ.isError || usersQ.isError) && (
         <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-md border border-danger/20">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-full border border-danger/20">
             <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
               <X className="h-6 w-6" />
             </div>
@@ -295,7 +295,7 @@ function CRMPage() {
 
       {activeTab === "archived" && leadsQ.data && (
         <div className="flex-1 overflow-auto p-6 bg-surface/30">
-          <div className="rounded-md border border-border bg-surface p-6">
+          <div className="rounded-full border border-border bg-surface p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
             {leadsQ.data.length === 0 ? (
               <div className="text-center py-12 text-sm text-muted-foreground">
@@ -604,7 +604,7 @@ function NewLeadSheet({
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2 pb-20">
         {/* Seção Cliente */}
-        <div className="space-y-4 rounded-sm border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             1. Perfil do Cliente
           </h3>
@@ -644,7 +644,7 @@ function NewLeadSheet({
         </div>
 
         {/* Seção Oportunidade */}
-        <div className="space-y-4 rounded-sm border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             2. Detalhes do Interesse
           </h3>
@@ -736,7 +736,7 @@ function NewLeadSheet({
         </div>
 
         {/* Anotações */}
-        <div className="space-y-4 rounded-sm border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
           <Field label="Anotações Iniciais" error={errors.notes?.message}>
             <Textarea
               rows={4}
@@ -873,7 +873,7 @@ function StageSettingsPanel({
           {localStages.map((s, idx) => (
             <div
               key={s.id}
-              className="flex items-center gap-4 bg-background p-3 rounded-sm border border-border"
+              className="flex items-center gap-4 bg-background p-3 rounded-full border border-border"
             >
               <div className="flex flex-col gap-1 items-center justify-center px-1">
                 <button
@@ -908,7 +908,7 @@ function StageSettingsPanel({
                     curr.map((x) => (x.id === s.id ? { ...x, color: e.target.value } : x)),
                   )
                 }
-                className="h-8 w-8 rounded-sm cursor-pointer border-0 p-0"
+                className="h-8 w-8 rounded-full cursor-pointer border-0 p-0"
               />
 
               <Input
@@ -938,7 +938,7 @@ function StageSettingsPanel({
               {!s.is_won && !s.is_lost && (
                 <button
                   onClick={() => handleDelete(s.id)}
-                  className="p-2 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded-md transition-colors"
+                  className="p-2 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded-full transition-colors"
                   title="Excluir Coluna"
                 >
                   <Trash2 className="h-4 w-4" />

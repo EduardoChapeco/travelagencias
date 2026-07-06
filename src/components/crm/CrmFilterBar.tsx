@@ -34,7 +34,7 @@ export function CrmFilterBar({
       <select
         value={ownerFilter}
         onChange={(e) => setOwnerFilter(e.target.value)}
-        className="h-9 w-48 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
+        className="h-9 w-48 rounded-full border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
       >
         <option value="">Todos os Responsáveis</option>
         {users?.map(
@@ -49,7 +49,7 @@ export function CrmFilterBar({
       <select
         value={sourceFilter}
         onChange={(e) => setSourceFilter(e.target.value)}
-        className="h-9 w-40 rounded-md border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
+        className="h-9 w-40 rounded-full border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
       >
         <option value="">Todas as Origens</option>
         <option value="whatsapp">WhatsApp / Telefone</option>

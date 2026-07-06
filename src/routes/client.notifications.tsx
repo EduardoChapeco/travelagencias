@@ -55,7 +55,7 @@ function Page() {
           {q.data?.map((n) => (
             <li
               key={n.id}
-              className={`flex items-start gap-3 rounded-lg border p-4 ${n.read_at ? "border-border bg-surface" : "border-primary/40 bg-primary/5"}`}
+              className={`flex items-start gap-3 rounded-2xl border p-4 ${n.read_at ? "border-border bg-surface" : "border-primary/40 bg-primary/5"}`}
             >
               <div className="flex-1">
                 <div className="font-medium">{n.title}</div>

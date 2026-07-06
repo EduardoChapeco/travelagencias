@@ -137,7 +137,7 @@ function ClientAppBuilderPage() {
           <button
             onClick={saveSettings}
             disabled={busy}
-            className="h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 hover:bg-primary/90 disabled:opacity-50"
+            className="h-9 px-4 rounded-full bg-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 hover:bg-primary/90 disabled:opacity-50"
           >
             {busy ? <div className="h-4 w-4 border-2 border-background border-t-transparent animate-spin rounded-full" /> : <Save className="h-4 w-4" />}
             Salvar
@@ -174,7 +174,7 @@ function ClientAppBuilderPage() {
                         theme_colors: { ...settings.theme_colors, primary: e.target.value },
                       })
                     }
-                    className="flex-1 h-10 px-3 rounded-md border border-border bg-background text-sm uppercase"
+                    className="flex-1 h-10 px-3 rounded-full border border-border bg-background text-sm uppercase"
                   />
                 </div>
               </div>
@@ -199,12 +199,12 @@ function ClientAppBuilderPage() {
                     <DraggableItem 
                       key={block.id} 
                       id={block.id} 
-                      className={`mb-2 rounded-lg border transition-colors ${
+                      className={`mb-2 rounded-2xl border transition-colors ${
                         block.hidden ? "bg-accent/50 border-transparent opacity-60" : "bg-surface border-border shadow-sm"
                       }`}
                     >
                       <div className="flex items-center gap-3 p-3">
-                        <div className="flex items-center justify-center h-8 w-8 rounded-md bg-primary/10 text-primary">
+                        <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 text-primary">
                           <meta.icon className="h-4 w-4" />
                         </div>
                         <div className="flex-1">
@@ -213,7 +213,7 @@ function ClientAppBuilderPage() {
                         </div>
                         <button
                           onClick={() => handleToggleHide(block.id)}
-                          className="text-xs px-2 py-1 rounded-md bg-accent text-accent-foreground hover:bg-muted"
+                          className="text-xs px-2 py-1 rounded-full bg-accent text-accent-foreground hover:bg-muted"
                         >
                           {block.hidden ? "Mostrar" : "Ocultar"}
                         </button>
@@ -253,8 +253,8 @@ function ClientAppBuilderPage() {
                   return (
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Próximas Viagens</h3>
-                      <div className="w-full h-24 bg-surface border border-border rounded-xl shadow-sm p-4 flex gap-3 items-center">
-                        <div className="h-16 w-16 bg-accent rounded-lg shrink-0"></div>
+                      <div className="w-full h-24 bg-surface border border-border rounded-[24px] shadow-sm p-4 flex gap-3 items-center">
+                        <div className="h-16 w-16 bg-accent rounded-2xl shrink-0"></div>
                         <div>
                           <p className="font-semibold text-sm">Paris & Roma</p>
                           <p className="text-xs text-muted-foreground">Em 15 dias</p>
@@ -270,7 +270,7 @@ function ClientAppBuilderPage() {
                         <h3 className="font-bold text-lg">Ofertas Exclusivas</h3>
                         <span className="text-xs font-semibold" style={{ color: settings.theme_colors.primary }}>Ver tudo</span>
                       </div>
-                      <div className="w-full h-40 bg-surface border border-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+                      <div className="w-full h-40 bg-surface border border-border rounded-[24px] shadow-sm overflow-hidden flex flex-col">
                         <div className="flex-1 bg-accent relative">
                           <span className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">R$ 2.500</span>
                         </div>
@@ -286,11 +286,11 @@ function ClientAppBuilderPage() {
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Precisa de Ajuda?</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="h-20 border border-border rounded-xl flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border border-border rounded-[24px] flex flex-col items-center justify-center gap-1 bg-surface">
                           <LifeBuoy className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chamados</span>
                         </div>
-                        <div className="h-20 border border-border rounded-xl flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border border-border rounded-[24px] flex flex-col items-center justify-center gap-1 bg-surface">
                           <Smartphone className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chat</span>
                         </div>

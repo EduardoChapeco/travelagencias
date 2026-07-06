@@ -128,14 +128,14 @@ export function ProposalHistorySheet({
           <span className="text-xs text-muted-foreground">Carregando histórico...</span>
         </div>
       ) : error ? (
-        <div className="rounded-lg border border-danger/20 bg-danger/5 p-4 text-center">
+        <div className="rounded-2xl border border-danger/20 bg-danger/5 p-4 text-center">
           <p className="text-xs text-danger font-medium">Erro ao carregar histórico</p>
           <p className="text-[11px] text-muted-foreground mt-1">
             {(error as any)?.message || "Ocorreu um erro ao buscar o log de atividades."}
           </p>
         </div>
       ) : history.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-xl bg-surface-alt/20">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[24px] bg-surface-alt/20">
           <History className="h-8 w-8 text-muted-foreground/60 mb-2.5" />
           <span className="text-xs font-semibold text-foreground">Sem histórico registrado</span>
           <span className="text-[11px] text-muted-foreground mt-1 max-w-[240px]">
@@ -197,7 +197,7 @@ export function ProposalHistorySheet({
 
                 {/* Extra Details Box */}
                 {extraDetails.length > 0 && (
-                  <div className="mt-2.5 rounded-lg border border-border/55 bg-surface-alt/30 p-2.5 text-[10px] space-y-1">
+                  <div className="mt-2.5 rounded-2xl border border-border/55 bg-surface-alt/30 p-2.5 text-[10px] space-y-1">
                     <span className="block font-bold text-[9px] uppercase tracking-wider text-muted-foreground/80 mb-1">
                       Detalhes do Evento
                     </span>

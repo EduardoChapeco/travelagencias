@@ -44,7 +44,7 @@ function FinancialLayout() {
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
         <Tabs defaultValue="cash" className="w-auto">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-lg p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
             {tabs.map((t) => {
               const active = activeSubTab === "route" && pathname.endsWith(t.to.split("/").pop()!);
               return (
@@ -53,7 +53,7 @@ function FinancialLayout() {
                   to={t.to}
                   params={{ slug } as any}
                   onClick={() => setActiveSubTab("route")}
-                  className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-md transition-all ${
+                  className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all ${
                     active
                       ? "bg-[var(--surface)] text-foreground shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
@@ -66,7 +66,7 @@ function FinancialLayout() {
             {isAgencyAdmin && (
               <button
                 onClick={() => setActiveSubTab("settings")}
-                className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-md transition-all cursor-pointer ${
+                className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
                   activeSubTab === "settings"
                     ? "bg-[var(--surface)] text-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"

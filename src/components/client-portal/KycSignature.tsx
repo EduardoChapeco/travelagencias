@@ -117,7 +117,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
         </div>
         <button
           onClick={startKycProcess}
-          className="w-full bg-primary text-primary-foreground font-semibold h-11 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
+          className="w-full bg-primary text-primary-foreground font-semibold h-11 rounded-[24px] flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
         >
           <Camera className="h-5 w-5" /> Iniciar Verificação
         </button>
@@ -129,13 +129,13 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
     return (
       <div className="bg-black border border-border p-4 rounded-2xl max-w-sm mx-auto overflow-hidden">
         {errorMsg ? (
-          <div className="text-center p-6 bg-surface text-foreground rounded-xl">
+          <div className="text-center p-6 bg-surface text-foreground rounded-[24px]">
             <ShieldAlert className="h-10 w-10 text-red-500 mx-auto mb-3" />
             <p className="font-semibold">{errorMsg}</p>
             <button onClick={() => setStep("intro")} className="mt-4 text-primary text-sm font-semibold hover:underline">Tentar Novamente</button>
           </div>
         ) : (
-          <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-zinc-900">
+          <div className="relative aspect-[3/4] w-full rounded-[24px] overflow-hidden bg-zinc-900">
             <video
               ref={videoRef}
               autoPlay
@@ -175,7 +175,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
           {photoUrl && <img src={photoUrl} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" />}
         </div>
         
-        <div className="flex justify-center items-center gap-2 text-xs font-medium bg-accent px-3 py-1.5 rounded-md inline-flex mx-auto text-muted-foreground">
+        <div className="flex justify-center items-center gap-2 text-xs font-medium bg-accent px-3 py-1.5 rounded-full inline-flex mx-auto text-muted-foreground">
           {location?.lat ? (
             <><MapPin className="h-3.5 w-3.5 text-green-600" /> GPS Registrado</>
           ) : (
@@ -187,7 +187,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="w-full bg-green-600 text-white font-semibold h-11 rounded-xl flex items-center justify-center gap-2 hover:bg-green-700 transition-colors disabled:opacity-50"
+            className="w-full bg-green-600 text-white font-semibold h-11 rounded-[24px] flex items-center justify-center gap-2 hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
             Confirmar e Assinar

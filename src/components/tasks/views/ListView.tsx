@@ -141,7 +141,7 @@ function StatusGroupSection({
   return (
     <div className="space-y-2">
       {/* Group Header */}
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)]/40 rounded-lg border border-border/30">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)]/40 rounded-2xl border border-border/30">
         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
         <span className="text-[10px] font-black uppercase text-foreground tracking-wider">{label}</span>
         <span className="text-[9px] font-mono font-bold bg-slate-100 dark:bg-slate-900 border px-1.5 py-0.5 rounded text-muted-foreground ml-auto">
@@ -150,7 +150,7 @@ function StatusGroupSection({
       </div>
 
       {/* Table Container */}
-      <div className="border border-border/50 bg-[var(--surface)] rounded-xl overflow-hidden shadow-xs">
+      <div className="border border-border/50 bg-[var(--surface)] rounded-[24px] overflow-hidden shadow-xs">
         {tasks.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
@@ -218,7 +218,7 @@ function StatusGroupSection({
                             task.labels.map((lbl) => (
                               <span
                                 key={lbl.id}
-                                className="text-[9px] px-1.5 py-0.5 rounded-md font-bold border"
+                                className="text-[9px] px-1.5 py-0.5 rounded-full font-bold border"
                                 style={{ color: lbl.color, backgroundColor: `${lbl.color}08`, borderColor: `${lbl.color}15` }}
                               >
                                 {lbl.name}

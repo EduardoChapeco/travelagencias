@@ -347,7 +347,7 @@ function TripVouchers() {
           onClick={() => {
             if (trip) initNewVoucher(trip, passengersQ.data ?? []);
           }}
-          className="flex h-9 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand"
+          className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-brand"
         >
           <Plus className="h-3.5 w-3.5" />
           Novo voucher
@@ -359,7 +359,7 @@ function TripVouchers() {
       )}
 
       {vouchersQ.data?.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[24px] border border-dashed border-border py-16 text-center">
           <Ticket className="mb-3 h-8 w-8 text-muted-foreground" />
           <div className="text-sm font-medium">Nenhum voucher emitido</div>
           <div className="mt-1 text-xs text-muted-foreground">
@@ -369,7 +369,7 @@ function TripVouchers() {
             onClick={() => {
               if (trip) initNewVoucher(trip, passengersQ.data ?? []);
             }}
-            className="mt-4 flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground"
+            className="mt-4 flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
           >
             <Plus className="h-3.5 w-3.5" />
             Criar voucher
@@ -381,7 +381,7 @@ function TripVouchers() {
         {(vouchersQ.data ?? []).map((v) => (
           <div
             key={v.id}
-            className="group relative rounded-lg border border-border bg-surface p-4 transition hover:border-border-strong"
+            className="group relative rounded-2xl border border-border bg-surface p-4 transition hover:border-border-strong"
           >
             {/* Template badge */}
             <div className="mb-3 flex items-center justify-between">
@@ -435,7 +435,7 @@ function TripVouchers() {
             <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
               <button
                 onClick={() => editVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border text-xs hover:bg-surface-alt"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border border-border text-xs hover:bg-surface-alt"
               >
                 <Edit2 className="h-3.5 w-3.5" />
                 Editar
@@ -445,7 +445,7 @@ function TripVouchers() {
                   href={v.pdf_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-7 items-center gap-1 rounded-md border border-border px-2 text-xs hover:bg-surface-alt"
+                  className="flex h-7 items-center gap-1 rounded-full border border-border px-2 text-xs hover:bg-surface-alt"
                 >
                   <Download className="h-3.5 w-3.5" />
                   PDF
@@ -453,7 +453,7 @@ function TripVouchers() {
               )}
               <button
                 onClick={() => setStoryVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border border-border text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
               >
                 <Instagram className="h-3.5 w-3.5" />
                 Story
@@ -467,7 +467,7 @@ function TripVouchers() {
                     onConfirm: () => deleteVoucher.mutate(v.id),
                   });
                 }}
-                className="flex h-7 items-center justify-center rounded-md border border-border px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
+                className="flex h-7 items-center justify-center rounded-full border border-border px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -491,7 +491,7 @@ function TripVouchers() {
               redes sociais.
             </p>
 
-            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-xl overflow-hidden py-4">
+            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-[24px] overflow-hidden py-4">
               {/* This is the invisible scaled canvas we take a snapshot of */}
               <div
                 id="story-canvas"
@@ -508,7 +508,7 @@ function TripVouchers() {
                       <img
                         src={agency.logo_url}
                         alt="Logo"
-                        className="h-10 w-auto object-contain bg-white rounded-md p-1"
+                        className="h-10 w-auto object-contain bg-white rounded-full p-1"
                         crossOrigin="anonymous"
                       />
                     ) : (

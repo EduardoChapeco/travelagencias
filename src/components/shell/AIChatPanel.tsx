@@ -398,7 +398,7 @@ export function AIChatPanel({
                     <div 
                       key={idx} 
                       className={cn(
-                        "relative flex items-center gap-2 p-2 rounded-xl glass border border-white/15 text-white text-[11px] font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
+                        "relative flex items-center gap-2 p-2 rounded-[24px] glass border border-white/15 text-white text-[11px] font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
                         rotClass
                       )}
                     >
@@ -442,7 +442,7 @@ export function AIChatPanel({
               />
               <label 
                 htmlFor="genie-file-input"
-                className="flex h-8 w-8 items-center justify-center rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-[24px] hover:bg-white/10 text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
                 title="Anexar arquivos"
               >
                 <Paperclip className="h-4 w-4" />
@@ -464,7 +464,7 @@ export function AIChatPanel({
               <button
                 type="submit"
                 id="chat-send-btn"
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-white hover:bg-brand/90 transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-[24px] bg-brand text-white hover:bg-brand/90 transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
                 disabled={(!input.trim() && attachments.length === 0) || sending}
               >
                 <Send className="h-4 w-4" />
@@ -553,7 +553,7 @@ export function AIChatPanel({
             ) : messages.length === 0 ? (
               <div className="space-y-3">
                 {aiStatus === "offline" && (
-                  <div className="rounded-md border border-amber-200 bg-amber-50/50 p-3 text-xs text-amber-800">
+                  <div className="rounded-full border border-amber-200 bg-amber-50/50 p-3 text-xs text-amber-800">
                     <span className="font-semibold block mb-1">Aviso de Contingência</span>O motor
                     de IA está temporariamente offline ou sem chaves configuradas. Você pode
                     realizar qualquer cadastro ou alteração de forma totalmente funcional utilizando
@@ -564,7 +564,7 @@ export function AIChatPanel({
                   Olá. Posso ajudar com leads, cotações, vouchers, contratos ou financeiro desta
                   página.
                 </p>
-                <div className="rounded-md border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
+                <div className="rounded-full border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
                   Rota atual: <code className="font-mono">{pathname}</code>
                 </div>
               </div>
@@ -634,7 +634,7 @@ export function AIChatPanel({
                 <div 
                   key={idx} 
                   className={cn(
-                    "relative flex items-center gap-1.5 p-1.5 rounded-lg border border-border bg-surface-alt text-[10px] shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[120px] shrink-0",
+                    "relative flex items-center gap-1.5 p-1.5 rounded-2xl border border-border bg-surface-alt text-[10px] shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[120px] shrink-0",
                     rotClass
                   )}
                 >
@@ -664,7 +664,7 @@ export function AIChatPanel({
             })}
           </div>
         )}
-        <div className="flex items-end gap-2 rounded-md border border-border bg-surface px-2 py-1.5 focus-within:border-border-strong">
+        <div className="flex items-end gap-2 rounded-full border border-border bg-surface px-2 py-1.5 focus-within:border-border-strong">
           <input 
             type="file" 
             multiple 
@@ -678,7 +678,7 @@ export function AIChatPanel({
           />
           <label 
             htmlFor="panel-file-input"
-            className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer"
+            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer"
             title="Anexar arquivos"
           >
             <Paperclip className="h-3.5 h-3.5" />
@@ -711,7 +711,7 @@ export function AIChatPanel({
           <button
             type="submit"
             id="chat-send-btn"
-            className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground disabled:opacity-50 cursor-pointer"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-50 cursor-pointer"
             disabled={(!input.trim() && attachments.length === 0) || sending || !agency?.id}
             aria-label="Enviar"
           >

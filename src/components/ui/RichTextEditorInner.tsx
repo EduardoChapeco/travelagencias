@@ -67,7 +67,7 @@ export function RichTextEditorInner({
   const activeClass = "bg-surface-alt text-foreground";
 
   return (
-    <div className="border border-input rounded-md overflow-hidden bg-surface">
+    <div className="border border-input rounded-full overflow-hidden bg-surface">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 border-b border-border p-1 bg-surface-alt/30">
         <button

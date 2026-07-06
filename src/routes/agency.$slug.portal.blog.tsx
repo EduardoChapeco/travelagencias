@@ -124,7 +124,7 @@ function BlogPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Novo artigo
           </button>
@@ -132,7 +132,7 @@ function BlogPage() {
       </HeaderPortal>
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
-        <div className="flex items-center gap-1 rounded-md border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
+        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
           {["all", "published", "draft", "scheduled"].map((s) => (
             <button
               key={s}
@@ -151,7 +151,7 @@ function BlogPage() {
 
       <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
         {q.isError && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-xl border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -173,7 +173,7 @@ function BlogPage() {
               icon: BarChart2,
             },
           ].map((s) => (
-            <div key={s.label} className="rounded-lg border border-border bg-surface p-4">
+            <div key={s.label} className="rounded-2xl border border-border bg-surface p-4">
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <s.icon className="h-3.5 w-3.5" />
                 {s.label}
@@ -203,7 +203,7 @@ function BlogPage() {
               <button
                 key={p.id}
                 onClick={() => setEditing(p)}
-                className="group rounded-xl border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
+                className="group rounded-[24px] border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
               >
                 {/* Cover */}
                 <div className="relative aspect-video overflow-hidden bg-surface-alt">
@@ -419,7 +419,7 @@ function BlogSheet({
                 href={previewUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium hover:bg-surface-alt"
+                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-2.5 text-xs font-medium hover:bg-surface-alt"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Ver publicado
@@ -428,7 +428,7 @@ function BlogSheet({
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-border hover:bg-surface-alt"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border hover:bg-surface-alt"
             >
               <X className="h-4 w-4" />
             </button>
@@ -467,7 +467,7 @@ function BlogSheet({
               />
             </Field>
 
-            <div className="rounded-xl border border-border p-4 bg-surface-alt/50 space-y-4">
+            <div className="rounded-[24px] border border-border p-4 bg-surface-alt/50 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
               </div>
@@ -496,7 +496,7 @@ function BlogSheet({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full h-9 px-2.5 rounded-md border border-input bg-surface text-sm outline-none focus:border-border-strong"
+                className="w-full h-9 px-2.5 rounded-full border border-input bg-surface text-sm outline-none focus:border-border-strong"
               >
                 <option value="draft">Rascunho</option>
                 <option value="published">Publicado</option>
@@ -519,7 +519,7 @@ function BlogSheet({
             )}
 
             {/* SEO SECTION */}
-            <div className="rounded-lg border border-border">
+            <div className="rounded-2xl border border-border">
               <button
                 type="button"
                 onClick={() => setSeoOpen((v) => !v)}
@@ -596,7 +596,7 @@ function BlogSheet({
                 type="button"
                 onClick={postToGoogleBusiness}
                 disabled={gbpPosting}
-                className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground disabled:opacity-50 transition-colors"
               >
                 <Share2 className="h-3.5 w-3.5" />
                 {gbpPosting ? "Publicando..." : "Publicar no Google"}

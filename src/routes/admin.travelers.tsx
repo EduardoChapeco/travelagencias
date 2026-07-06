@@ -54,7 +54,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-lg border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Viajantes</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -71,7 +71,7 @@ function Page() {
         <EmptyState title={search ? "Nenhum viajante encontrado" : "Sem viajantes"} />
       )}
       {q.data && totalCount > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt text-xs text-muted-foreground">
               <tr>

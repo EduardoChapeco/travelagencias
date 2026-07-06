@@ -113,7 +113,7 @@ function ClientChatRoute() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] md:h-[calc(100vh-40px)] bg-zinc-50 border border-border rounded-xl overflow-hidden mt-4 shadow-sm">
+    <div className="flex flex-col h-[calc(100vh-100px)] md:h-[calc(100vh-40px)] bg-zinc-50 border border-border rounded-[24px] overflow-hidden mt-4 shadow-sm">
         {/* HEADER */}
         <div className="bg-white border-b border-border p-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -172,7 +172,7 @@ function ClientChatRoute() {
               if (event.type === "ticket") {
                 return (
                   <div key={`ticket-${event.id}`} className="flex justify-center my-4">
-                    <div className="bg-zinc-100 border border-zinc-200 rounded-xl p-3 flex flex-col items-center max-w-sm text-center shadow-sm">
+                    <div className="bg-zinc-100 border border-zinc-200 rounded-[24px] p-3 flex flex-col items-center max-w-sm text-center shadow-sm">
                       <LifeBuoy className="w-5 h-5 text-amber-600 mb-1" />
                       <p className="text-xs font-semibold text-zinc-800">
                         Chamado #{event.data.number || event.data.id.slice(0,4)} Aberto
@@ -193,7 +193,7 @@ function ClientChatRoute() {
               if (event.type === "kyc") {
                 return (
                   <div key={`kyc-${event.id}`} className="flex justify-center my-4">
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex flex-col items-center max-w-sm text-center shadow-sm">
+                    <div className="bg-green-50 border border-green-200 rounded-[24px] p-3 flex flex-col items-center max-w-sm text-center shadow-sm">
                       <ShieldCheck className="w-5 h-5 text-green-600 mb-1" />
                       <p className="text-xs font-semibold text-green-900">
                         Assinatura Criptografada via KYC
@@ -212,7 +212,7 @@ function ClientChatRoute() {
                 const isAccepted = event.data.status === "approved";
                 return (
                   <div key={`prop-${event.id}`} className="flex justify-center my-4">
-                    <div className={`border rounded-xl p-3 flex flex-col items-center max-w-sm text-center shadow-sm ${isAccepted ? 'bg-blue-50 border-blue-200' : 'bg-white border-zinc-200'}`}>
+                    <div className={`border rounded-[24px] p-3 flex flex-col items-center max-w-sm text-center shadow-sm ${isAccepted ? 'bg-blue-50 border-blue-200' : 'bg-white border-zinc-200'}`}>
                       {isAccepted ? <CheckCircle className="w-5 h-5 text-blue-600 mb-1" /> : <FileText className="w-5 h-5 text-zinc-600 mb-1" />}
                       <p className={`text-xs font-semibold ${isAccepted ? 'text-blue-900' : 'text-zinc-800'}`}>
                         {isAccepted ? 'Proposta Aprovada!' : `Proposta #${event.data.number} Recebida`}

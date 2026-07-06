@@ -113,7 +113,7 @@ function Page() {
   if (err)
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-6">
-        <div className="rounded-xl border border-border bg-surface p-8 text-center text-danger font-bold uppercase tracking-widest">
+        <div className="rounded-[24px] border border-border bg-surface p-8 text-center text-danger font-bold uppercase tracking-widest">
           {err}
         </div>
       </div>
@@ -181,7 +181,7 @@ function Page() {
               </div>
 
               <div
-                className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-xl border bg-surface p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
+                className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-[24px] border bg-surface p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -240,11 +240,11 @@ function Page() {
 
             <div className="space-y-4">
               {selectedInst.payment_method === "pix" && selectedInst.external_link ? (
-                <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-5 text-center">
+                <div className="rounded-[24px] border border-border/50 bg-surface-alt/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     PIX Copia e Cola
                   </div>
-                  <div className="break-all rounded-md bg-surface p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
+                  <div className="break-all rounded-full bg-surface p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
                   <PrimaryButton
@@ -259,7 +259,7 @@ function Page() {
                       Enviar Comprovante de Pagamento
                     </label>
                     <div className="space-y-2">
-                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-4 bg-surface hover:bg-surface-alt transition-colors cursor-pointer text-center">
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[24px] p-4 bg-surface hover:bg-surface-alt transition-colors cursor-pointer text-center">
                         <span className="text-xs font-bold text-brand">
                           {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
                         </span>
@@ -279,7 +279,7 @@ function Page() {
                   </div>
                 </div>
               ) : selectedInst.payment_method === "credit_card" && selectedInst.external_link ? (
-                <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-5 text-center">
+                <div className="rounded-[24px] border border-border/50 bg-surface-alt/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Pagamento via Cartão
                   </div>

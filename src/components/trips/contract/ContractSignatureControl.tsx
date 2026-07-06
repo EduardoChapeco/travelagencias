@@ -49,11 +49,11 @@ export function ContractSignatureControl({
   return (
     <div className="space-y-4">
       {/* Controle de Assinaturas */}
-      <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
+      <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
           <UserCheck className="h-4 w-4" /> Controle de Assinaturas
         </h3>
-        <div className="rounded-xl border border-border/50 bg-surface-alt/30 p-3">
+        <div className="rounded-[24px] border border-border/50 bg-surface-alt/30 p-3">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-bold text-foreground">
@@ -198,7 +198,7 @@ export function ContractSignatureControl({
       </div>
 
       {/* Cadeia de Auditoria Criptográfica (Ledger) */}
-      <div className="rounded-lg border border-border bg-surface p-4">
+      <div className="rounded-2xl border border-border bg-surface p-4">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
           <History className="h-4 w-4 text-muted-foreground" /> Cadeia de Auditoria (Ledger)
         </h3>
