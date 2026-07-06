@@ -47,6 +47,8 @@ export function AppShell({
   const [wallpaper, setWallpaper] = useState("https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2020&auto=format&fit=crop");
   const [blurIntensity, setBlurIntensity] = useState(0);
   const [dimOpacity, setDimOpacity] = useState(25);
+  // Opacidade dos elementos glass (sidebar, dock, cards) — padrão 20%
+  const [glassOpacity, setGlassOpacity] = useState(20);
 
   const loadPreferences = async () => {
     try {
@@ -63,6 +65,7 @@ export function AppShell({
         if (prefs.desktop_wallpaper) setWallpaper(prefs.desktop_wallpaper);
         if (prefs.desktop_blur_intensity !== undefined) setBlurIntensity(Number(prefs.desktop_blur_intensity));
         if (prefs.desktop_dim_opacity !== undefined) setDimOpacity(Number(prefs.desktop_dim_opacity));
+        if (prefs.desktop_glass_opacity !== undefined) setGlassOpacity(Number(prefs.desktop_glass_opacity));
       }
     } catch (err) {
       console.warn("Failed to load user desktop preferences:", err);
@@ -118,7 +121,13 @@ export function AppShell({
   }
 
   return (
-    <div className="flex h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none">
+    <div
+      className="flex h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
+      style={{
+        // Expor opacidade do glass como CSS var global, usada nas classes glass-*
+        "--os-glass-opacity": `${glassOpacity / 100}`,
+      } as React.CSSProperties}
+    >
       {/* 1. Wallpaper Global — base layer */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
@@ -133,28 +142,28 @@ export function AppShell({
         />
       </div>
 
-      {/* 2. Top Status Bar — Ultra-minimalist and transparent */}
-      <header className="absolute top-0 left-0 right-0 h-11 px-6 flex justify-between items-center text-white z-40 bg-transparent border-none text-xs font-semibold tracking-wide pointer-events-none">
-        {/* Left: Vazio em módulos, nome da agência apenas na Home */}
+      {/* 2. Top Status Bar — Ultra-minimalista, pill só à direita */}
+      <header className="absolute top-0 left-0 right-0 h-11 px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
+        {/* Left: Nome da agência apenas na Home, vazio nos módulos */}
         <div className="flex items-center gap-3 pointer-events-auto">
           {isHome && (
-            <Link to={`/agency/${agency?.slug}` as any} className="font-extrabold text-sm tracking-tight text-white hover:opacity-85">
+            <Link to={`/agency/${agency?.slug}` as any} className="font-extrabold text-sm tracking-tight text-white/80 hover:text-white transition-colors">
               {agency?.name || "Turis"}
             </Link>
           )}
         </div>
 
-        {/* Right: Clock, Date & Notifications pill */}
-        <div className="flex items-center gap-4 bg-black/25 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/5 shadow-sm pointer-events-auto">
-          <span className="capitalize">{dateStr}</span>
-          <span>{timeStr}</span>
-          <div className="w-[1px] h-3 bg-white/20" />
+        {/* Right: Pill ultra-fina — hora, data e notificações */}
+        <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide">
+          <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>
+          <span className="text-white/90">{timeStr}</span>
+          <div className="w-[1px] h-2.5 bg-white/15" />
           <NotificationBadge />
         </div>
       </header>
 
-      {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop */}
-      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+      {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop (oculto na Home) */}
+      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
 
       {/* 4. Main Workspace — full screen, below status bar */}
       <div className="w-full h-full flex pt-11 z-10 relative overflow-hidden">
@@ -181,7 +190,7 @@ export function AppShell({
             {/* Portal para ações do header injetadas pelas rotas */}
             <div id="app-header-portal" className="hidden" />
 
-            <main className="no-scrollbar flex-1 overflow-y-auto p-4 md:pl-[68px] md:pr-6 md:pt-4 md:pb-6 relative os-workspace">
+            <main className="no-scrollbar flex-1 overflow-y-auto p-4 md:pl-[76px] md:pr-6 md:pt-4 md:pb-6 relative os-workspace">
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
                   <div className="flex items-center gap-2">
@@ -268,10 +277,10 @@ export function AppShell({
 
             {/* Sliders */}
             <div className="space-y-4">
-              {/* Blur Slider */}
+              {/* Blur do wallpaper */}
               <div className="space-y-1">
                 <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-white/80">Intensidade de Blur</span>
+                  <span className="text-white/80">Blur do Wallpaper</span>
                   <span>{blurIntensity}px</span>
                 </div>
                 <input 
@@ -284,7 +293,7 @@ export function AppShell({
                 />
               </div>
 
-              {/* Dim Slider */}
+              {/* Escurecimento de fundo */}
               <div className="space-y-1">
                 <div className="flex justify-between text-xs font-semibold">
                   <span className="text-white/80">Escurecimento de Fundo</span>
@@ -298,6 +307,25 @@ export function AppShell({
                   onChange={(e) => setDimOpacity(Number(e.target.value))}
                   className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
                 />
+              </div>
+
+              {/* Opacidade do Glass (sidebar, dock, cards) */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-white/80">Transparência do Glass</span>
+                  <span>{glassOpacity}%</span>
+                </div>
+                <input 
+                  type="range"
+                  min="5"
+                  max="60"
+                  value={glassOpacity}
+                  onChange={(e) => setGlassOpacity(Number(e.target.value))}
+                  className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
+                />
+                <p className="text-[10px] text-white/40">
+                  {glassOpacity <= 15 ? "Blur intenso — wallpaper bem visível" : glassOpacity <= 30 ? "Equilíbrio (recomendado)" : "Mais opaco"}
+                </p>
               </div>
             </div>
 
@@ -318,7 +346,8 @@ export function AppShell({
                   ...currentPrefs,
                   desktop_wallpaper: wallpaper,
                   desktop_blur_intensity: blurIntensity,
-                  desktop_dim_opacity: dimOpacity
+                  desktop_dim_opacity: dimOpacity,
+                  desktop_glass_opacity: glassOpacity,
                 };
 
                 const { error } = await (supabase as any)

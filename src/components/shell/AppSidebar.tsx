@@ -391,11 +391,13 @@ export function buildContext(
 export function AppSidebar({
   mobileOpen,
   onMobileClose,
+  isHome = false,
 }: {
   isPinned?: boolean;
   onTogglePin?: () => void;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
+  isHome?: boolean;
 }) {
   const navigate = useNavigate();
   const { agency, isAgencyAdmin } = useAgency();
@@ -459,7 +461,7 @@ export function AppSidebar({
     to: i.to !== undefined ? `${base}${i.to ? `/${i.to}` : ""}` : undefined,
   }));
 
-  const isHome = pathname === base;
+  // isHome é recebida como prop — não redeclarar aqui
 
   // ── Map hub items → items para DynamicIslandNav ──
   const islandItems: IslandNavItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map((h) => ({
@@ -497,8 +499,9 @@ export function AppSidebar({
         />
       </div>
 
-      {/* ── Desktop Dynamic Island Nav (md+) ────────────────────── */}
+      {/* ── Desktop Dynamic Island Nav (md+) — escondido na Home ───────── */}
       <DynamicIslandNav
+        hidden={isHome}
         items={islandItems}
         footer={
           <button

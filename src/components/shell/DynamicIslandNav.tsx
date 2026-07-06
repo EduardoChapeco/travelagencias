@@ -129,10 +129,12 @@ export function DynamicIslandNav({
   items,
   footer,
   brand,
+  hidden: hiddenProp = false,
 }: {
   items: IslandNavItem[];
   footer?: React.ReactNode;
   brand?: React.ReactNode;
+  hidden?: boolean;
 }) {
   const { slug } = useParams({ strict: false }) as { slug?: string };
   const base = slug ? `/agency/${slug}` : "";
@@ -160,18 +162,22 @@ export function DynamicIslandNav({
 
   const navItems = items.filter((i) => i.type !== "header" && i.to !== undefined);
 
+  if (hiddenProp) return null;
+
   return (
     <motion.aside
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      animate={{ width: hovered ? 188 : 52 }}
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0, width: hovered ? 184 : 52 }}
       transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
       className={cn(
-        "fixed left-0 top-1/2 -translate-y-1/2 z-40 flex flex-col",
-        "glass-sidebar rounded-r-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.35)]",
+        "fixed left-[4px] top-1/2 -translate-y-1/2 z-40 flex flex-col",
+        "glass-sidebar",
+        "rounded-l-[14px] rounded-r-[28px]",
+        "shadow-[2px_4px_32px_rgba(0,0,0,0.30)]",
         "py-4 gap-0.5 overflow-hidden",
         "hidden md:flex",
-        "animate-island-in"
       )}
       aria-label="Navegação principal"
       style={{ minHeight: 0 }}
@@ -200,7 +206,7 @@ export function DynamicIslandNav({
         })}
       </nav>
 
-      {/* Footer */}
+      {/* Footer (logout) */}
       {footer && (
         <div className="shrink-0 pt-1 border-t border-white/8 px-1.5">
           {footer}

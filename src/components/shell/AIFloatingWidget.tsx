@@ -82,17 +82,17 @@ export function AIFloatingWidget() {
   return (
     <div
       ref={widgetRef}
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans select-none pointer-events-auto"
+      className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-3 font-sans select-none pointer-events-auto"
     >
-      {/* ── Chat Container (Card Retangular Vertical) ────────────────── */}
+      {/* ── Chat Container — abre acima e à direita do botão ──────────── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-            className="w-[380px] sm:w-[400px] h-[580px] rounded-[28px] overflow-hidden glass dark:glass-dark border border-white/20 shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col backdrop-blur-3xl"
+            className="w-[380px] sm:w-[400px] h-[540px] rounded-[28px] overflow-hidden glass dark:glass-dark border border-white/20 shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col backdrop-blur-3xl origin-bottom-left"
           >
             {/* Header / Top suggestions */}
             {aiActions && aiActions.length > 0 && (
@@ -128,7 +128,7 @@ export function AIFloatingWidget() {
         )}
       </AnimatePresence>
 
-      {/* ── Floating Pill Trigger Button ────────────────────────────── */}
+      {/* ── Pill Trigger — mesma altura do dock (h-14/56px), expande no hover ── */}
       <motion.button
         layout
         onClick={() => {
@@ -138,15 +138,17 @@ export function AIFloatingWidget() {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "h-12 flex items-center justify-center rounded-full glass border border-white/25 text-white hover:border-white/50 cursor-pointer shadow-lg transition-all duration-200",
-          isOpen ? "bg-brand border-brand/40 text-brand-foreground w-12" : "bg-black/35 hover:scale-105"
+          "h-14 flex items-center justify-center rounded-full glass-dock border border-white/20 text-white hover:border-white/40 cursor-pointer transition-all duration-200",
+          isOpen
+            ? "bg-brand/20 border-brand/35 w-14"
+            : "hover:scale-[1.03]"
         )}
         style={{
-          width: isOpen ? "48px" : isHovered ? "160px" : "48px",
+          width: isOpen ? "56px" : isHovered ? "148px" : "56px",
         }}
         transition={{ type: "spring", stiffness: 380, damping: 30 }}
       >
-        <div className="flex items-center gap-2 px-3 overflow-hidden whitespace-nowrap font-sans">
+        <div className="flex items-center gap-2 px-3.5 overflow-hidden whitespace-nowrap">
           {isOpen ? (
             <X className="w-5 h-5 shrink-0" strokeWidth={2.2} />
           ) : (
@@ -156,12 +158,12 @@ export function AIFloatingWidget() {
           <AnimatePresence>
             {!isOpen && isHovered && (
               <motion.span
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="text-xs font-black uppercase tracking-wider"
+                exit={{ opacity: 0, x: -8 }}
+                className="text-[11px] font-black uppercase tracking-wider text-white/85"
               >
-                Falar com IA
+                IA Assistant
               </motion.span>
             )}
           </AnimatePresence>

@@ -227,51 +227,63 @@
 }
 
 @layer utilities {
-  /* ── Core glass primitives ─────────────────────────────────────────── */
+  /* ── Core glass primitives — BLUR REAL: wallpaper transpassa ────────── */
   .glass {
-    background: var(--glass-light);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.20);
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
   }
 
   .glass-dark {
-    background: var(--glass-dark);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(0, 0, 0, 0.20);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
   }
 
-  /* Dynamic Island / sidebar — ultra dark, grudada na borda esquerda */
+  /*
+   * Pill sidebar vertical (DynamicIslandNav) — blur puro, wallpaper bem visível.
+   * Opacidade controlada por --os-glass-opacity (padrão 0.20 = 20%).
+   */
   .glass-sidebar {
-    background: var(--os-sidebar-bg);
-    backdrop-filter: blur(48px) saturate(200%);
-    -webkit-backdrop-filter: blur(48px) saturate(200%);
-    border: 1px solid var(--os-sidebar-border);
+    background: rgba(0, 0, 0, var(--os-glass-opacity, 0.22));
+    backdrop-filter: blur(48px) saturate(220%);
+    -webkit-backdrop-filter: blur(48px) saturate(220%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-left: none;
+  }
+
+  /* Dock horizontal inferior (macOS-style) na Home — mesma opacidade do glass */
+  .glass-dock {
+    background: rgba(0, 0, 0, calc(var(--os-glass-opacity, 0.22) + 0.03));
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   /* Card de dados (kanban cards, tabelas, listas) */
   .glass-card {
-    background: var(--os-glass-bg);
+    background: rgba(15, 15, 22, 0.32);
     backdrop-filter: blur(24px) saturate(160%);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid var(--os-glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* Seção de ação (barras de filtro, search, toolbars) */
+  /* Seção de ação (barras de filtro, search, toolbars) — pill nos módulos */
   .glass-section {
-    background: var(--os-glass-bg-strong);
+    background: rgba(15, 15, 22, 0.35);
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border: 1px solid var(--os-glass-border-strong);
+    border: 1px solid rgba(255, 255, 255, 0.10);
   }
 
-  /* Status pills, tooltips, badges */
+  /* Status pills, tooltips, badges — ultra-fino */
   .glass-pill {
-    background: rgba(0, 0, 0, 0.30);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
   }
 
   /* ── OS Workspace Context ──────────────────────────────────────────── */
@@ -282,39 +294,32 @@
    */
   .os-workspace {
     background: transparent !important;
-    
-    /* Redefinimos todas as cores principais para um esquema claro sobre vidro escuro */
     --background: transparent !important;
     --foreground: rgba(255, 255, 255, 0.95) !important;
-    
-    --surface: rgba(15, 15, 22, 0.50);
-    --surface-alt: rgba(15, 15, 22, 0.65);
-    --card: rgba(15, 15, 22, 0.45);
+    --surface: rgba(15, 15, 22, 0.38);
+    --surface-alt: rgba(15, 15, 22, 0.50);
+    --card: rgba(15, 15, 22, 0.35);
     --card-foreground: rgba(255, 255, 255, 0.95);
-    --popover: rgba(20, 20, 26, 0.95);
-    
-    --muted: rgba(255, 255, 255, 0.08);
-    --muted-foreground: rgba(255, 255, 255, 0.60) !important;
-    --muted-2: rgba(255, 255, 255, 0.40);
-    
-    --border: rgba(255, 255, 255, 0.12);
-    --border-strong: rgba(255, 255, 255, 0.22);
-    --input: rgba(255, 255, 255, 0.10);
-    --ring: rgba(255, 255, 255, 0.30);
-    
-    --accent: rgba(255, 255, 255, 0.12);
+    --popover: rgba(20, 20, 26, 0.92);
+    --muted: rgba(255, 255, 255, 0.07);
+    --muted-foreground: rgba(255, 255, 255, 0.58) !important;
+    --muted-2: rgba(255, 255, 255, 0.38);
+    --border: rgba(255, 255, 255, 0.10);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --input: rgba(255, 255, 255, 0.09);
+    --ring: rgba(255, 255, 255, 0.28);
+    --accent: rgba(255, 255, 255, 0.10);
     --accent-foreground: rgba(255, 255, 255, 0.95);
-    --accent-soft: rgba(255, 255, 255, 0.05);
-    
+    --accent-soft: rgba(255, 255, 255, 0.04);
     color: rgba(255, 255, 255, 0.95) !important;
   }
 
-  /* bg-background e variantes → transparente */
+  /* bg-background → transparente */
   .os-workspace .bg-background {
     background: transparent !important;
   }
 
-  /* bg-card, bg-white, bg-secondary, bg-surface, bg-surface-alt, bg-neutral → dark glass */
+  /* Superfícies de cards, paíneis, bg-white → glass com blur real */
   .os-workspace .bg-card,
   .os-workspace .bg-white,
   .os-workspace .bg-secondary,
@@ -324,32 +329,54 @@
   .os-workspace [class*="bg-neutral"],
   .os-workspace [class*="bg-card"],
   .os-workspace [class*="bg-white"] {
-    background: rgba(15, 15, 22, 0.45) !important;
+    background: rgba(15, 15, 22, 0.35) !important;
     backdrop-filter: blur(28px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
 
-  /* Remover linhas divisórias rígidas nas tabelas, cabeçalhos e painéis */
-  .os-workspace border-b,
+  /* Linhas divisórias internas quase invisíveis */
   .os-workspace .border-b,
   .os-workspace .border-t,
   .os-workspace .divide-y > * {
     border-color: rgba(255, 255, 255, 0.05) !important;
   }
 
-  /* Padronização horizontal e flutuante dos cabeçalhos de ações/filtros de cada módulo */
+  /*
+   * Cabeçalhos de ação/filtro/search de cada módulo → pill rounded.
+   * Interceptamos padrões comuns de toolbar e os transformamos em pills glass.
+   */
   .os-workspace .flex-col.sm\:flex-row.gap-2.sm\:items-center.border-b,
   .os-workspace .flex-col.sm\:flex-row.gap-2.border-b,
-  .os-workspace div[class*="border-b"][class*="px-4"][class*="py-3"] {
+  .os-workspace div[class*="border-b"][class*="px-4"][class*="py-3"],
+  .os-workspace [data-toolbar],
+  .os-workspace [data-module-header] {
     border-bottom: none !important;
-    background: rgba(15, 15, 22, 0.40) !important;
-    backdrop-filter: blur(20px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 24px !important;
+    background: rgba(15, 15, 22, 0.35) !important;
+    backdrop-filter: blur(24px) saturate(170%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(170%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 28px !important;
     margin-bottom: 16px !important;
-    padding: 12px 20px !important;
+    padding: 10px 20px !important;
+  }
+
+  /* Tabs internas dos módulos → pill rounded-full no item ativo */
+  .os-workspace [role="tablist"] {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 999px !important;
+    padding: 3px !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  }
+  .os-workspace [role="tab"] {
+    border-radius: 999px !important;
+    transition: background 0.2s ease, color 0.2s ease !important;
+  }
+  .os-workspace [role="tab"][data-state="active"],
+  .os-workspace [role="tab"][aria-selected="true"] {
+    background: rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(12px);
+    color: rgba(255, 255, 255, 0.98) !important;
   }
 
   /* Interceptar cores escuras de texto do Tailwind dentro do workspace e torná-las claras e legíveis */

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StickyNote, type NoteData } from "./StickyNote";
+import { cn } from "@/lib/utils";
 import { 
   Users, PlaneTakeoff, TrendingUp, Bus, Globe, Wallet, Calendar,
   Sparkles, Settings, Plus, LayoutGrid, Edit3, CheckCircle, 
@@ -11,6 +12,7 @@ import {
 import { Link, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { fetchTeamMembers } from "@/services/settings";
+
 
 interface StickyNotesCanvasProps {
   renderNoteContent?: (content: string) => React.ReactNode;
@@ -179,7 +181,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 w-auto h-full min-h-[500px] select-none md:ml-[60px]"
+      className="relative flex-1 w-full h-full min-h-[500px] select-none"
       style={{ overflow: "hidden" }}
     >
       {/* ── Background Workspace Canvas Area ── */}
@@ -204,89 +206,83 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
         ))
       )}
 
-      {/* ── Central Island Floating Menu Pill (macOS style) ── */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-        <div className="flex items-center gap-2 px-4 py-3 rounded-full bg-black/45 backdrop-blur-2xl border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.5)] text-white text-xs font-semibold select-none">
-          {/* Dashboard Hub Shortcuts */}
-          <Link
-            to={`/agency/${slug}/crm` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+      {/* ── Dock Inferior — macOS pill centralizado na base ─────────────────── */}
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+        <div className="flex items-center gap-1 px-4 py-2.5 rounded-full glass-dock shadow-[0_8px_32px_rgba(0,0,0,0.40)] text-white select-none">
+
+          {/* Atalhos dos módulos principais */}
+          <Link to={`/agency/${slug}/crm` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Clientes & CRM"
           >
             <Users className="w-[18px] h-[18px]" />
           </Link>
 
-          <Link
-            to={`/agency/${slug}/quotes` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          <Link to={`/agency/${slug}/quotes` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Central de Cotações"
           >
             <Compass className="w-[18px] h-[18px]" />
           </Link>
 
-          <Link
-            to={`/agency/${slug}/trips` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          <Link to={`/agency/${slug}/trips` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Viagens & Embarques"
           >
             <Bus className="w-[18px] h-[18px]" />
           </Link>
 
-          <Link
-            to={`/agency/${slug}/financial` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          <Link to={`/agency/${slug}/financial` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Financeiro"
           >
             <Wallet className="w-[18px] h-[18px]" />
           </Link>
 
-          <Link
-            to={`/agency/${slug}/calendar` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          <Link to={`/agency/${slug}/calendar` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Agenda & Compromissos"
           >
             <Calendar className="w-[18px] h-[18px]" />
           </Link>
 
-          <Link
-            to={`/agency/${slug}/inbox` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
+          <Link to={`/agency/${slug}/inbox` as any}
+            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
             title="Mensagens & Chat"
           >
             <MessageSquare className="w-[18px] h-[18px]" />
           </Link>
 
-          {/* Divider */}
-          <div className="w-[1px] h-6 bg-white/15 mx-1" />
+          {/* Divisor */}
+          <div className="w-[1px] h-5 bg-white/12 mx-1" />
 
-          {/* Add note button (only if editable) */}
+          {/* Adicionar nota (apenas no modo editar) */}
           {isEditable && (
             <button
               onClick={() => addMutation.mutate()}
               disabled={addMutation.isPending}
-              className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/25 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/20 hover:bg-brand/35 text-brand border border-brand/25 transition-all cursor-pointer disabled:opacity-50"
               title="Adicionar Nota"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-[18px] h-[18px]" />
             </button>
           )}
 
-          {/* Toggle Edit Mode */}
+          {/* Toggle modo organizar */}
           <button
             onClick={() => setIsEditable(!isEditable)}
-            className="flex items-center gap-2 h-10 px-4 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer"
-            title={isEditable ? "Salvar Organização" : "Editar Lembretes"}
+            className={cn(
+              "flex items-center gap-1.5 h-10 px-4 rounded-full transition-all cursor-pointer text-[11px] font-black uppercase tracking-wider",
+              isEditable
+                ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/25"
+                : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white"
+            )}
+            title={isEditable ? "Concluir Organização" : "Organizar Lembretes"}
           >
             {isEditable ? (
-              <>
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                <span className="text-[11px] font-black uppercase tracking-wider">Pronto</span>
-              </>
+              <><CheckCircle className="w-3.5 h-3.5" /><span>Pronto</span></>
             ) : (
-              <>
-                <Edit3 className="w-4 h-4 opacity-75" />
-                <span className="text-[11px] font-black uppercase tracking-wider">Organizar</span>
-              </>
+              <><Edit3 className="w-3.5 h-3.5" /><span>Organizar</span></>
             )}
           </button>
         </div>
