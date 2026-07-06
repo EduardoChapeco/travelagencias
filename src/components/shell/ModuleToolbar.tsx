@@ -68,10 +68,10 @@ export function ModuleToolbar({
             onChange={(e) => search.onChange(e.target.value)}
             placeholder={search.placeholder ?? "Buscar..."}
             className={cn(
-              "w-full h-8 bg-white/5 border border-white/10 rounded-full",
+              "w-full h-8 glass-pill",
               "pl-8 pr-8 text-[12px] text-white/85 placeholder:text-white/35",
-              "focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/8",
-              "transition-all duration-150 backdrop-blur-md"
+              "focus:outline-none focus:ring-1 focus:ring-white/30 focus:bg-white/8",
+              "transition-all duration-150"
             )}
           />
           {search.value && (
@@ -88,7 +88,7 @@ export function ModuleToolbar({
 
       {/* ── Filter Pills ── */}
       {filters && filters.length > 0 && (
-        <div className="flex items-center gap-0.5 bg-white/5 border border-white/8 rounded-full p-0.5 backdrop-blur-md overflow-x-auto no-scrollbar max-w-[400px] sm:max-w-md">
+        <div className="flex items-center gap-0.5 glass-pill p-0.5 overflow-x-auto no-scrollbar max-w-[320px] sm:max-w-md shrink-0">
           {filters.map((f) => (
             <button
               key={f.value}
@@ -119,7 +119,7 @@ export function ModuleToolbar({
 
       {/* ── Actions ── */}
       {actions && (
-        <div className="flex items-center gap-1 bg-white/5 border border-white/8 rounded-full p-0.5 backdrop-blur-md">
+        <div className="flex items-center gap-1 glass-pill p-0.5 shrink-0">
           {actions}
         </div>
       )}
@@ -128,8 +128,8 @@ export function ModuleToolbar({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ModuleActionButton — botão de ação contextual FIXO por módulo
-// Posição: fixed bottom-[88px] left-[64px] (acima do AI Pill, ao lado do Dynamic Island)
+// ModuleActionButton — botão de ação contextual circular flutuante
+// Posição: fixed left-[12px] top-[54px] z-30 (acima do menu lateral / DynamicIslandNav)
 // ─────────────────────────────────────────────────────────────────────────────
 type ModuleActionButtonProps = {
   label: string;
@@ -145,23 +145,24 @@ export function ModuleActionButton({
   className,
 }: ModuleActionButtonProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "fixed bottom-[88px] left-[64px] z-30",
-        "h-10 px-4 rounded-full",
-        "glass-dock border border-white/20",
-        "text-white text-[12px] font-bold",
-        "flex items-center gap-1.5",
-        "cursor-pointer hover:bg-white/15 hover:border-white/35",
-        "transition-all duration-200 shadow-[0_4px_16px_rgba(0,0,0,0.3)]",
-        "hidden md:flex",
-        className
-      )}
-    >
-      {icon && <span className="shrink-0">{icon}</span>}
-      {label}
-    </button>
+    <div className="fixed top-[54px] left-[12px] z-30 hidden md:block group">
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "h-9 w-9 flex items-center justify-center rounded-full",
+          "glass-dock border border-white/20 text-white",
+          "cursor-pointer hover:bg-white/15 hover:border-white/35",
+          "transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.25)]",
+          className
+        )}
+      >
+        {icon && <span className="shrink-0">{icon}</span>}
+      </button>
+      {/* Tooltip */}
+      <div className="absolute left-full ml-2.5 top-1/2 -translate-y-1/2 scale-90 opacity-0 pointer-events-none group-hover:scale-100 group-hover:opacity-100 transition-all duration-150 ease-out z-40 bg-neutral-900/95 backdrop-blur-md border border-white/10 text-white text-[11px] font-semibold px-2 py-1 rounded-full whitespace-nowrap shadow-md">
+        {label}
+      </div>
+    </div>
   );
 }
