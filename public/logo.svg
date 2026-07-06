@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Brand Icon -->
+  <rect width="32" height="32" rx="10" fill="url(#paint0_linear_logo)" />
+  <!-- Abstract Globe / Navigation Paths -->
+  <path d="M16 8C11.5817 8 8 11.5817 8 16C8 20.4183 11.5817 24 16 24C20.4183 24 24 20.4183 24 16" stroke="white" stroke-width="2" stroke-linecap="round" />
+  <path d="M16 12C13.7909 12 12 13.7909 12 16C12 18.2091 13.7909 20 16 20C18.2091 20 20 18.2091 20 16" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+  <!-- Navigation Arrow / Spark -->
+  <path d="M16 14.5L17.5 16L16 17.5L14.5 16L16 14.5Z" fill="#B6F24C" />
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="paint0_linear_logo" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3D6FF2" />
+      <stop offset="1" stop-color="#1A4ABF" />
+    </linearGradient>
+  </defs>
+</svg>
