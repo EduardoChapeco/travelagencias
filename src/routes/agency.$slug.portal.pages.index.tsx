@@ -616,11 +616,11 @@ function PagesPage() {
                   return (
                     <div
                       key={p.id}
-                      className="group relative flex flex-col justify-between rounded-full border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40"
+                      className="group relative flex flex-col justify-between rounded-[24px] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5 shadow-xs"
                     >
                       <div className="space-y-4">
                         {/* Interactive Visual Preview representation */}
-                        <div className="relative rounded-full overflow-hidden">
+                        <div className="relative rounded-[20px] overflow-hidden">
                           <PageMiniPreview template={p.template} />
                           {/* Hover Overlay */}
                           <div

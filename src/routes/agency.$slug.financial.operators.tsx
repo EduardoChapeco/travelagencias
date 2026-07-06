@@ -13,6 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/financial/operators")({
   head: ({ context }: any) => ({ meta: [{ title: `Faturamento Operadoras · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -142,127 +143,138 @@ function OperatorsFinancial() {
   const errQ = recordsQ.isError ? recordsQ : installmentsQ;
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
-        {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <Building2 className="h-5 w-5 text-brand" />
-          <h2 className="text-xl font-bold tracking-tight text-foreground">
-            Faturamento via Operadoras
-          </h2>
+    <div className="flex h-full flex-col overflow-hidden">
+      <HeaderPortal>
+        <div className="flex items-center gap-2">
+          {/* Espaço contextual de topo */}
         </div>
-        <p className="text-sm text-muted-foreground max-w-2xl">
-          Visão completa dos valores pagos diretamente às operadoras e financeiras pelos clientes.
-          Esses movimentos <strong>não afetam o caixa oficial da agência</strong> — aqui você
-          visualiza apenas a sua comissão e seu market share de operação.
-        </p>
+      </HeaderPortal>
+
+      {/* ── Barra superior de busca e abas integrada ── */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
+        {/* Tab Toggle (pills circulares) */}
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
+          <button
+            onClick={() => setActiveTab("records")}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === "records"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            Lançamentos ({records.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("installments")}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === "installments"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            Parcelas ({installments.length})
+          </button>
+        </div>
+
+        {/* Campo de Busca */}
+        <div className="relative w-full sm:w-64">
+          <span className="absolute inset-y-0 left-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
+            <Search className="h-3.5 w-3.5 text-muted-foreground/60" />
+          </span>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por viagem ou destino..."
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
+          />
+        </div>
       </div>
 
-      {/* ── Info Banner ────────────────────────────────────────────────── */}
-      <div className="mb-6 flex items-start gap-3 rounded-[24px] border border-blue-200 bg-blue-50/60 p-4">
-        <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-        <div className="text-xs text-blue-800 leading-relaxed">
-          <strong>Como funciona:</strong> Quando o cliente paga diretamente para a operadora ou
-          financeira (boleto, financiamento, etc.), a agência registra esse movimento aqui apenas
-          para controle e market share. O valor que entra no caixa oficial é somente a{" "}
-          <strong>comissão</strong> e o <strong>over</strong> negociado. Os planos de pagamento
-          marcados como "Faturamento via Operadora" também aparecem abaixo.
-        </div>
-      </div>
-
-      {/* ── Error State ──────────────────────────────────────────────────── */}
-      {isError && (
-        <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
-          <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
-            <AlertCircle className="h-5 w-5 text-red-600" />
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
+        {/* ── Header descritivo ── */}
+        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-2">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-brand" />
+            <h2 className="text-sm font-bold tracking-tight text-foreground uppercase">
+              Faturamento via Operadoras
+            </h2>
           </div>
-          <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Dados das Operadoras</h3>
-          <p className="text-xs text-red-600 mt-1 max-w-sm">
-            {errQ.error instanceof Error ? errQ.error.message : "Erro desconhecido."}
+          <p className="text-xs text-muted-foreground max-w-3xl leading-relaxed">
+            Visão completa dos valores pagos diretamente às operadoras e financeiras pelos clientes.
+            Esses movimentos <strong>não afetam o caixa oficial da agência</strong> — aqui você
+            visualiza apenas a sua comissão e seu market share de operação.
           </p>
         </div>
-      )}
 
-      {/* ── KPI Cards ─────────────────────────────────────────────────── */}
-      {!isError && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div className="rounded-[24px] border border-border bg-surface p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="h-4 w-4 text-brand" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Volume Total de Operações
-                </span>
-              </div>
-              <p className="text-2xl font-extrabold text-foreground">{money(totalVolume, "BRL")}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Soma de todos os lançamentos via operadoras
-              </p>
-            </div>
-
-            <div className="rounded-[24px] border border-border bg-surface p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <BarChart2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Recebido via Operadoras
-                </span>
-              </div>
-              <p className="text-2xl font-extrabold text-emerald-600">{money(totalPaid, "BRL")}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Parcelas confirmadas como pagas
-              </p>
-            </div>
-
-            <div className="rounded-[24px] border border-border bg-surface p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Building2 className="h-4 w-4 text-amber-500" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  A Receber (Operadoras)
-                </span>
-              </div>
-              <p className="text-2xl font-extrabold text-amber-600">{money(totalPending, "BRL")}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Parcelas pendentes via operadoras
-              </p>
-            </div>
+        {/* ── Info Banner ────────────────────────────────────────────────── */}
+        <div className="flex items-start gap-3 rounded-[24px] border border-blue-200 bg-blue-50/60 p-4">
+          <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-blue-800 leading-relaxed">
+            <strong>Como funciona:</strong> Quando o cliente paga diretamente para a operadora ou
+            financeira (boleto, financiamento, etc.), a agência registra esse movimento aqui apenas
+            para controle e market share. O valor que entra no caixa oficial é somente a{" "}
+            <strong>comissão</strong> e o <strong>over</strong> negociado. Os planos de pagamento
+            marcados como "Faturamento via Operadora" também aparecem abaixo.
           </div>
+        </div>
 
-          {/* ── Search ──────────────────────────────────────────────────── */}
-          <div className="relative mb-4 w-full sm:w-72">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por viagem ou destino..."
-              className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-            />
+        {/* ── Error State ──────────────────────────────────────────────────── */}
+        {isError && (
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
+            <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
+              <AlertCircle className="h-5 w-5 text-red-600" />
+            </div>
+            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Dados das Operadoras</h3>
+            <p className="text-xs text-red-600 mt-1 max-w-sm">
+              {errQ.error instanceof Error ? errQ.error.message : "Erro desconhecido."}
+            </p>
           </div>
+        )}
 
-          {/* ── Tab Toggle ──────────────────────────────────────────────── */}
-          <div className="flex bg-surface-alt border border-border rounded-2xl p-0.5 mb-4 w-fit text-[11px] font-semibold">
-            <button
-              onClick={() => setActiveTab("records")}
-              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                activeTab === "records"
-                  ? "bg-surface shadow text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Lançamentos ({records.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("installments")}
-              className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                activeTab === "installments"
-                  ? "bg-surface shadow text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Parcelas ({installments.length})
-            </button>
-          </div>
+        {/* ── KPI Cards ─────────────────────────────────────────────────── */}
+        {!isError && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="rounded-[24px] border border-border bg-surface p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="h-4 w-4 text-brand" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Volume Total de Operações
+                  </span>
+                </div>
+                <p className="text-2xl font-extrabold text-foreground">{money(totalVolume, "BRL")}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Soma de todos os lançamentos via operadoras
+                </p>
+              </div>
+
+              <div className="rounded-[24px] border border-border bg-surface p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <BarChart2 className="h-4 w-4 text-emerald-500" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Recebido via Operadoras
+                  </span>
+                </div>
+                <p className="text-2xl font-extrabold text-emerald-600">{money(totalPaid, "BRL")}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Parcelas confirmadas como pagas
+                </p>
+              </div>
+
+              <div className="rounded-[24px] border border-border bg-surface p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Building2 className="h-4 w-4 text-amber-500" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    A Receber (Operadoras)
+                  </span>
+                </div>
+                <p className="text-2xl font-extrabold text-amber-600">{money(totalPending, "BRL")}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Parcelas pendentes via operadoras
+                </p>
+              </div>
+            </div>
 
           {/* ── Records Table ─────────────────────────────────────────── */}
           {activeTab === "records" && (

@@ -47,8 +47,8 @@ function InvoicesPage() {
   });
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
         {!q.isLoading && !q.data?.data.length && (
@@ -60,7 +60,7 @@ function InvoicesPage() {
 
         {!q.isLoading && q.data && q.data.data.length > 0 && (
           <>
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
               <table className="w-full text-sm">
                 <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                   <tr>

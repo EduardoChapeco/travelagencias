@@ -117,8 +117,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       to="/agency/$slug/suppliers/$id"
       params={{ slug, id: s.id }}
       className={cn(
-        "group flex flex-col rounded-[24px] border border-border bg-white p-5 transition-all duration-200",
-        "hover:border-[--brand-primary,theme(colors.pink.400)] hover:bg-gray-50/40",
+        "group flex flex-col rounded-[24px] border border-border bg-surface p-5 transition-all duration-200 hover:border-brand/40 shadow-xs",
         !s.is_active && "opacity-60",
       )}
     >
@@ -210,8 +209,8 @@ function SupplierRow({ s, slug }: { s: Supplier; slug: string }) {
       to="/agency/$slug/suppliers/$id"
       params={{ slug, id: s.id }}
       className={cn(
-        "group flex items-center gap-4 border-b border-border bg-white px-5 py-3 transition-colors",
-        "hover:bg-surface last:border-0",
+        "group flex items-center gap-4 border-b border-border bg-surface/30 px-5 py-3 transition-colors",
+        "hover:bg-surface/60 last:border-0",
         !s.is_active && "opacity-60",
       )}
     >
@@ -381,7 +380,7 @@ function SuppliersPage() {
         {/* ── Conteúdo principal ── */}
         <div className="flex flex-1 flex-col overflow-hidden bg-transparent">
           {/* Toolbar */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-5 py-2.5 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <input
@@ -389,7 +388,7 @@ function SuppliersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar fornecedor, cidade, país..."
-                className="h-8 w-full rounded-full border border-border bg-white pl-8 pr-3 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground placeholder:text-muted-foreground"
+                className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
@@ -399,7 +398,7 @@ function SuppliersPage() {
               <select
                 value={kindFilter}
                 onChange={(e) => setKindFilter(e.target.value)}
-                className="h-8 w-full appearance-none rounded-full border border-border bg-white pl-8 pr-8 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground"
+                className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground"
               >
                 <option value="all">Todas Categorias</option>
                 <option value="operator">Operadora GDS</option>
@@ -418,10 +417,10 @@ function SuppliersPage() {
               <button
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors cursor-pointer",
                   viewMode === "grid"
-                    ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
-                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
+                    ? "border-brand bg-brand/10 text-brand"
+                    : "border-border bg-surface text-muted-foreground hover:bg-surface-alt",
                 )}
                 title="Grid"
               >
@@ -430,10 +429,10 @@ function SuppliersPage() {
               <button
                 onClick={() => setViewMode("list")}
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors cursor-pointer",
                   viewMode === "list"
-                    ? "border-[--brand-primary,theme(colors.pink.400)] bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)]"
-                    : "border-border bg-white text-muted-foreground hover:bg-surface-alt",
+                    ? "border-brand bg-brand/10 text-brand"
+                    : "border-border bg-surface text-muted-foreground hover:bg-surface-alt",
                 )}
                 title="Lista"
               >
@@ -447,7 +446,7 @@ function SuppliersPage() {
           </div>
 
           {/* Main list/grid */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
             {q.isError && (
               <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
                 <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

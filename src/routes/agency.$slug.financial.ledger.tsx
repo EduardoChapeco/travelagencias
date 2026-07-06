@@ -115,10 +115,10 @@ export function LedgerDashboard() {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
       {/* Title block */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-5 shadow-xs">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-foreground">Livro-Razão Contábil</h1>
           <p className="text-xs text-muted-foreground mt-0.5 font-medium">
@@ -238,7 +238,7 @@ export function LedgerDashboard() {
           ) : null}
 
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="bg-surface-alt/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Data/Hora</th>
                 <th className="px-5 py-3">Código da Conta</th>

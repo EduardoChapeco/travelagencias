@@ -42,7 +42,7 @@ function FinancialLayout() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
         <Tabs defaultValue="cash" className="w-auto">
           <TabsList className="h-8 bg-white/5 border border-white/5 rounded-full p-0.5 flex-wrap gap-0">
             {tabs.map((t) => {

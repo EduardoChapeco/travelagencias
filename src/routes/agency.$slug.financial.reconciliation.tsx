@@ -246,8 +246,8 @@ function ReconciliationPage() {
   });
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-surface-alt">
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 min-h-0">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
         <div className="mb-2">
         <h2 className="text-lg font-bold text-foreground">Conciliação Diária de Recibos</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
@@ -288,10 +288,10 @@ function ReconciliationPage() {
           <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-none">
+        <div className="overflow-hidden rounded-[24px] border border-border bg-surface shadow-none">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-xs">
-              <thead className="bg-gray-50 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-gray-500">
+              <thead className="bg-surface-alt/40 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Código/Viagem</th>
                   <th className="px-4 py-3">Passageiro</th>

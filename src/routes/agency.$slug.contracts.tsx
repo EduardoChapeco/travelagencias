@@ -91,14 +91,14 @@ function ContractsPage() {
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 gap-2 no-margin-bottom">
+          <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap h-auto bg-transparent border-none">
             <TabsTrigger
               value="list"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
             >
               Lista de Contratos
             </TabsTrigger>
@@ -106,13 +106,13 @@ function ContractsPage() {
               <>
                 <TabsTrigger
                   value="clauses"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
                 >
                   Biblioteca de Cláusulas
                 </TabsTrigger>
                 <TabsTrigger
                   value="admin"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                  className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
                 >
                   Configurações
                 </TabsTrigger>
@@ -124,7 +124,7 @@ function ContractsPage() {
         {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
         {activeTab === "list" && (
           <>
-            <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <input
@@ -162,7 +162,7 @@ function ContractsPage() {
               </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 flex flex-col gap-4">
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
               {q.isError && (
@@ -198,7 +198,7 @@ function ContractsPage() {
                 return (
                   <div
                     key={c.id}
-                    className="group flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all hover:border-brand/40"
+                    className="group flex flex-col rounded-[24px] border border-border bg-surface p-5 transition-all hover:border-brand/40 shadow-xs"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -322,14 +322,14 @@ function ContractsPage() {
 
         {/* ── Visualização de Biblioteca de Cláusulas Contratuais (Inline) ───────────── */}
         {activeTab === "clauses" && agency && (
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
             <ContractClauseLibrary agencyId={agency.id} isInline={true} />
           </div>
         )}
 
         {/* ── Visualização do Painel de Administrador (Inline) ───────────────────────── */}
         {activeTab === "admin" && agency && (
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
             <ModuleAdminPanel
               moduleKey="contracts"
               moduleName="Contratos"

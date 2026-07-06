@@ -41,41 +41,43 @@ function DREPage() {
   });
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Período:</span>
-          {(["month", "quarter", "year"] as const).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPeriod(p)}
-              className={`rounded px-2.5 py-1 text-xs font-semibold cursor-pointer transition-colors ${
-                period === p
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "border border-border hover:bg-surface-alt text-muted-foreground"
-              }`}
-            >
-              {p === "month" ? "30d" : p === "quarter" ? "90d" : "12m"}
-            </button>
-          ))}
+          <span className="text-xs text-white/60">Período:</span>
+          <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1">
+            {(["month", "quarter", "year"] as const).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                  period === p
+                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                    : "text-white/60 hover:text-white"
+                }`}
+              >
+                {p === "month" ? "30d" : p === "quarter" ? "90d" : "12m"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="px-4 md:px-6 pt-4 md:pt-6 shrink-0">
+      <div className="px-4 md:px-6 pt-4 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-border bg-surface p-4">
+          <div className="rounded-[24px] border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
             <div className="mt-1 font-mono text-xl font-semibold text-success">
               {money(q.data?.income ?? 0)}
             </div>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
+          <div className="rounded-[24px] border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
             <div className="mt-1 font-mono text-xl font-semibold text-danger">
               {money(q.data?.expense ?? 0)}
             </div>
           </div>
-          <div className="rounded-2xl border border-border bg-surface p-4">
+          <div className="rounded-[24px] border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
               Resultado
             </div>
@@ -88,8 +90,8 @@ function DREPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+        <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
