@@ -199,35 +199,35 @@ function CRMPage() {
           onFilterChange={(v) => setActiveTab(v as any)}
           actions={
             activeTab !== "admin" ? (
-              <div className="flex items-center gap-1.5">
-                <Select
+              <div className="flex items-center gap-1">
+                <select
                   value={ownerFilter}
                   onChange={(e: any) => setOwnerFilter(e.target.value)}
-                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+                  className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
                 >
-                  <option value="">Responsáveis</option>
+                  <option value="" className="bg-neutral-900 text-white">Responsáveis</option>
                   {usersQ.data?.map(
                     (u: any) =>
                       u.user_id && (
-                        <option key={u.user_id} value={u.user_id}>
-                          👤 {u.user_name || "Sem nome"}
+                        <option key={u.user_id} value={u.user_id} className="bg-neutral-900 text-white">
+                          {u.user_name || "Sem nome"}
                         </option>
                       ),
                   )}
-                </Select>
+                </select>
 
-                <Select
+                <select
                   value={sourceFilter}
                   onChange={(e: any) => setSourceFilter(e.target.value)}
-                  className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 outline-none px-2"
+                  className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
                 >
-                  <option value="">Origens</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="website">Site</option>
-                  <option value="referral">Indicação</option>
-                  <option value="walkin">Presencial</option>
-                </Select>
+                  <option value="" className="bg-neutral-900 text-white">Origens</option>
+                  <option value="whatsapp" className="bg-neutral-900 text-white">WhatsApp</option>
+                  <option value="instagram" className="bg-neutral-900 text-white">Instagram</option>
+                  <option value="website" className="bg-neutral-900 text-white">Site</option>
+                  <option value="referral" className="bg-neutral-900 text-white">Indicação</option>
+                  <option value="walkin" className="bg-neutral-900 text-white">Presencial</option>
+                </select>
               </div>
             ) : undefined
           }

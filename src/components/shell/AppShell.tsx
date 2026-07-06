@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useBrand } from "@/hooks/use-brand";
 
 export function AppShell({
   title,
@@ -24,6 +25,7 @@ export function AppShell({
   children?: ReactNode;
 }) {
   const { agency } = useAgency();
+  const { data: brandInfo } = useBrand();
   const subQuery = useQuery({
     queryKey: ["agency-subscription-status", agency?.id],
     enabled: !!agency,
@@ -142,19 +144,37 @@ export function AppShell({
         />
       </div>
 
-      {/* 2. Top Status Bar — Ultra-minimalista, pill só à direita */}
+      {/* 2. Top Status Bar — Ultra-minimalista com logo à esquerda, portal contextual no meio e hora à direita */}
       <header className="absolute top-0 left-0 right-0 h-11 px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
-        {/* Left: Nome da agência apenas na Home, vazio nos módulos */}
-        <div className="flex items-center gap-3 pointer-events-auto">
-          {isHome && (
-            <Link to={`/agency/${agency?.slug}` as any} className="font-extrabold text-sm tracking-tight text-white/80 hover:text-white transition-colors">
-              {agency?.name || "Turis"}
-            </Link>
-          )}
+        {/* Left: Logo da agência (quadrado verde) */}
+        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
+          <Link to={`/agency/${agency?.slug}` as any} className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-white/85 hover:text-white transition-colors">
+            {brandInfo?.logo_url ? (
+              <img
+                src={brandInfo.logo_url}
+                alt={brandInfo.platform_name || "Turis"}
+                className="h-6 w-auto object-contain max-w-[120px] rounded"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            ) : null}
+            <span className="hidden sm:inline-block">
+              {brandInfo?.platform_name || "Turis"}
+            </span>
+          </Link>
         </div>
 
+        {/* Center: Module Contextual Toolbar Portal (linha amarela) */}
+        {!isHome && (
+          <div
+            id="app-header-portal"
+            className="flex-1 max-w-xl mx-4 flex items-center justify-center gap-2 pointer-events-auto h-full"
+          />
+        )}
+
         {/* Right: Pill ultra-fina — hora, data e notificações */}
-        <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide">
+        <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
           <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>
           <span className="text-white/90">{timeStr}</span>
           <div className="w-[1px] h-2.5 bg-white/15" />
@@ -199,14 +219,8 @@ export function AppShell({
                   </a>
                 </div>
               )}
-              <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+            <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </main>
-
-            {/* ── Module Floating Toolbar Portal (bottom-right) ── */}
-            <div
-              id="app-header-portal"
-              className="fixed bottom-6 right-6 z-30 flex items-center gap-2 pointer-events-auto"
-            />
           </div>
         )}
       </div>

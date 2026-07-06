@@ -115,21 +115,21 @@ function ContractsPage() {
           onFilterChange={(v) => setActiveTab(v as any)}
           actions={
             activeTab === "list" ? (
-              <Select
+              <select
                 value={statusFilter}
                 onChange={(e: any) => {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-7 text-[10px] bg-white/5 border-white/10 w-32 rounded-full text-white/90 outline-none px-2"
+                className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2 cursor-pointer transition-colors"
               >
-                <option value="all">Todos Status</option>
-                <option value="draft">Rascunho</option>
-                <option value="sent">Enviado</option>
-                <option value="viewed">Visualizado</option>
-                <option value="signed">Assinado</option>
-                <option value="cancelled">Cancelado</option>
-              </Select>
+                <option value="all" className="bg-neutral-900 text-white">Todos Status</option>
+                <option value="draft" className="bg-neutral-900 text-white">Rascunho</option>
+                <option value="sent" className="bg-neutral-900 text-white">Enviado</option>
+                <option value="viewed" className="bg-neutral-900 text-white">Visualizado</option>
+                <option value="signed" className="bg-neutral-900 text-white">Assinado</option>
+                <option value="cancelled" className="bg-neutral-900 text-white">Cancelado</option>
+              </select>
             ) : undefined
           }
         />

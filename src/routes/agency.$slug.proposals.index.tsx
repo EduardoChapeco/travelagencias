@@ -161,23 +161,23 @@ function ProposalsList() {
           }}
           actions={
             <div className="flex items-center gap-1.5">
-              <Select
+              <select
                 value={statusFilter}
                 onChange={(e: any) => {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+                className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2 cursor-pointer transition-colors"
               >
-                <option value="all">Todos Status</option>
-                <option value="draft">Rascunho</option>
-                <option value="sent">Enviada</option>
-                <option value="viewed">Visualizada</option>
-                <option value="accepted">Aceita</option>
-                <option value="converted">Convertida</option>
-                <option value="rejected">Recusada</option>
-                <option value="expired">Expirada</option>
-              </Select>
+                <option value="all" className="bg-neutral-900 text-white">Todos Status</option>
+                <option value="draft" className="bg-neutral-900 text-white">Rascunho</option>
+                <option value="sent" className="bg-neutral-900 text-white">Enviada</option>
+                <option value="viewed" className="bg-neutral-900 text-white">Visualizada</option>
+                <option value="accepted" className="bg-neutral-900 text-white">Aceita</option>
+                <option value="converted" className="bg-neutral-900 text-white">Convertida</option>
+                <option value="rejected" className="bg-neutral-900 text-white">Recusada</option>
+                <option value="expired" className="bg-neutral-900 text-white">Expirada</option>
+              </select>
               {isAgencyAdmin && (
                 <button
                   onClick={() => setAdminPanelOpen(true)}
