@@ -187,12 +187,6 @@ export function AppShell({
               {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
             </div>
 
-            {/* ── Module Header Bar — injetado pelas rotas via HeaderPortal ── */}
-            <div
-              id="app-header-portal"
-              className="shrink-0 h-12 flex items-center gap-3 px-4 md:pl-[64px] md:pr-4 border-b border-white/8 glass-toolbar"
-            />
-
             <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace">
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
@@ -207,6 +201,12 @@ export function AppShell({
               )}
               <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </main>
+
+            {/* ── Module Floating Toolbar Portal (bottom-right) ── */}
+            <div
+              id="app-header-portal"
+              className="fixed bottom-6 right-6 z-30 flex items-center gap-2 pointer-events-auto"
+            />
           </div>
         )}
       </div>

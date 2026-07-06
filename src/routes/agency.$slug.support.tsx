@@ -110,7 +110,7 @@ function SupportRoute() {
         onClick={() => setTicketSheetOpen(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col space-y-4">
+      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 space-y-4 pb-24">
         {isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 shrink-0">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
@@ -173,7 +173,7 @@ function SupportRoute() {
           </div>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] flex-1 overflow-hidden flex flex-col">
+        <div className="bg-surface border border-border rounded-[28px] flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-surface-alt/50 sticky top-0 z-10 border-b border-border">

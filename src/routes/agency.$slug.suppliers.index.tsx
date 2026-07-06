@@ -408,7 +408,7 @@ function SuppliersPage() {
         {/* ── Conteúdo principal ── */}
         <div className="flex flex-1 flex-col overflow-hidden bg-transparent">
           {/* Main list/grid */}
-          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
             {q.isError && (
               <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
                 <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
@@ -441,7 +441,7 @@ function SuppliersPage() {
             )}
 
             {filtered.length > 0 && viewMode === "list" && (
-              <div className="rounded-[24px] border border-border overflow-hidden pb-10">
+              <div className="rounded-[28px] border border-border overflow-hidden">
                 {/* List header */}
                 <div className="flex items-center gap-4 bg-surface px-5 py-2 border-b border-border">
                   <div className="w-8 shrink-0" />

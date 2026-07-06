@@ -41,7 +41,6 @@ type ModuleToolbarProps = {
 };
 
 export function ModuleToolbar({
-  title,
   search,
   filters,
   activeFilter,
@@ -52,25 +51,13 @@ export function ModuleToolbar({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 w-full min-w-0 h-full",
+        "flex items-center gap-2 pointer-events-auto",
         className
       )}
     >
-      {/* ── Título Pill (esquerda) ──────────────────────────────────── */}
-      {title && (
-        <span className="shrink-0 text-[13px] font-black tracking-tight text-white/90 px-3 py-1 rounded-full glass-section border border-white/10 hidden sm:inline-flex items-center">
-          {title}
-        </span>
-      )}
-
-      {/* ── Divider após título ─────────────────────────────────────── */}
-      {title && (search || filters) && (
-        <div className="shrink-0 w-[1px] h-5 bg-white/12 hidden sm:block" />
-      )}
-
-      {/* ── Search Input (expande para ocupar espaço disponível) ─────── */}
+      {/* ── Search Input ── */}
       {search && (
-        <div className="relative flex-1 min-w-0 max-w-[260px]">
+        <div className="relative flex-1 min-w-0 max-w-[200px] sm:max-w-[240px]">
           <Search
             className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40 pointer-events-none"
             strokeWidth={2}
@@ -81,10 +68,10 @@ export function ModuleToolbar({
             onChange={(e) => search.onChange(e.target.value)}
             placeholder={search.placeholder ?? "Buscar..."}
             className={cn(
-              "w-full h-8 bg-white/6 border border-white/10 rounded-full",
+              "w-full h-8 bg-white/5 border border-white/10 rounded-full",
               "pl-8 pr-8 text-[12px] text-white/85 placeholder:text-white/35",
               "focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/8",
-              "transition-all duration-150"
+              "transition-all duration-150 backdrop-blur-md"
             )}
           />
           {search.value && (
@@ -99,9 +86,9 @@ export function ModuleToolbar({
         </div>
       )}
 
-      {/* ── Filter Pills ─────────────────────────────────────────────── */}
+      {/* ── Filter Pills ── */}
       {filters && filters.length > 0 && (
-        <div className="flex items-center gap-1 shrink-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-0.5 bg-white/5 border border-white/8 rounded-full p-0.5 backdrop-blur-md overflow-x-auto no-scrollbar max-w-[400px] sm:max-w-md">
           {filters.map((f) => (
             <button
               key={f.value}
@@ -110,16 +97,16 @@ export function ModuleToolbar({
               className={cn(
                 "h-7 px-3 rounded-full text-[11px] font-semibold transition-all duration-150 cursor-pointer shrink-0 flex items-center gap-1 whitespace-nowrap",
                 activeFilter === f.value
-                  ? "bg-white/18 text-white border border-white/20"
-                  : "text-white/55 hover:text-white/80 hover:bg-white/8 border border-transparent"
+                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                  : "text-white/55 hover:text-white/80 hover:bg-white/5 border border-transparent"
               )}
             >
               {f.label}
               {f.count !== undefined && (
                 <span
                   className={cn(
-                    "text-[10px] font-black",
-                    activeFilter === f.value ? "text-white/70" : "text-white/35"
+                    "text-[10px] font-black ml-0.5",
+                    activeFilter === f.value ? "text-white/75" : "text-white/30"
                   )}
                 >
                   {f.count}
@@ -130,12 +117,11 @@ export function ModuleToolbar({
         </div>
       )}
 
-      {/* ── Spacer ───────────────────────────────────────────────────── */}
-      <div className="flex-1 min-w-0" />
-
-      {/* ── Slot de Ações (direita) ──────────────────────────────────── */}
+      {/* ── Actions ── */}
       {actions && (
-        <div className="shrink-0 flex items-center gap-1.5">{actions}</div>
+        <div className="flex items-center gap-1 bg-white/5 border border-white/8 rounded-full p-0.5 backdrop-blur-md">
+          {actions}
+        </div>
       )}
     </div>
   );

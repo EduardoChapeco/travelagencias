@@ -522,7 +522,7 @@ function TripsList() {
         onClick={() => setNewOpen(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4">
+      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isError && (
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

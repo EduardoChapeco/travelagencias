@@ -127,7 +127,7 @@ function ClientAppBuilderPage() {
   if (q.isLoading) return <div>Carregando construtor...</div>;
 
   return (
-    <div className="flex h-[calc(100vh-60px)] -m-4 md:-m-8">
+    <div className="flex flex-1 overflow-hidden h-full md:pl-[64px] pb-24">
       <HeaderPortal>
         <ModuleToolbar
           title="App Builder"

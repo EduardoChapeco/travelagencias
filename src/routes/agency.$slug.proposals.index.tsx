@@ -198,7 +198,7 @@ function ProposalsList() {
         onClick={() => setNewOpen(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4">
+      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
@@ -213,11 +213,11 @@ function ProposalsList() {
             description="Crie sua primeira proposta comercial."
           />
         ) : (
-          <div className="space-y-4">
-            <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
-              <div className="overflow-x-auto w-full">
+          <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
+            <div className="flex-1 rounded-[28px] border border-border bg-surface overflow-hidden flex flex-col">
+              <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
-                  <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 bg-surface backdrop-blur-md z-10">
                     <tr>
                       <th className="px-3 py-2 font-medium">#</th>
                       <th className="px-3 py-2 font-medium">Título</th>
@@ -358,23 +358,23 @@ function ProposalsList() {
               </div>
             </div>
 
-            <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-4">
-              <div className="text-xs text-muted-foreground">
-                Página <span className="font-medium text-foreground">{page}</span> de{" "}
+            <div className="flex items-center justify-between px-4 py-2 rounded-[28px] bg-white/5 border border-white/5 shadow-xs select-none">
+              <div className="text-xs text-muted-foreground/80 font-medium">
+                Página <span className="font-semibold text-foreground">{page}</span> de{" "}
                 {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
               </div>
               <div className="flex items-center gap-2">
                 <GhostButton
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-8 px-3 text-xs"
+                  className="h-7 px-3 text-xs rounded-full"
                 >
                   Anterior
                 </GhostButton>
                 <GhostButton
                   disabled={page * pageSize >= (list.data?.count ?? 0)}
                   onClick={() => setPage((p) => p + 1)}
-                  className="h-8 px-3 text-xs"
+                  className="h-7 px-3 text-xs rounded-full"
                 >
                   Próxima
                 </GhostButton>

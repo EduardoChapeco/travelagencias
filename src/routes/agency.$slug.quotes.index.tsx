@@ -633,7 +633,7 @@ Texto: "${aiText}"`;
       )}
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4">
+      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
@@ -651,8 +651,9 @@ Texto: "${aiText}"`;
               action={<PrimaryButton onClick={() => setNewOpen(true)}>Criar Cotação</PrimaryButton>}
             />
           ) : (
-            <div className="rounded-[24px] border border-border overflow-hidden bg-surface">
-              <table className="w-full text-left border-collapse text-xs">
+            <div className="flex-1 rounded-[28px] border border-border bg-surface overflow-hidden flex flex-col">
+              <div className="flex-1 overflow-y-auto no-scrollbar">
+                <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-surface-alt border-b border-border text-muted-foreground font-semibold">
                     <th className="px-4 py-3">Cliente / Lead</th>
@@ -744,8 +745,9 @@ Texto: "${aiText}"`;
                 </tbody>
               </table>
             </div>
-          )
-        ) : /* Tab: RAG Knowledge Management */
+          </div>
+        )
+      ) : /* Tab: RAG Knowledge Management */
         isDocsError ? (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
             <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
