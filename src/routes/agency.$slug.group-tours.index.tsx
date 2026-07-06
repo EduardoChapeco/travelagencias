@@ -9,6 +9,7 @@ import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({
   head: ({ context }: any) => ({ meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -42,66 +43,44 @@ function GroupToursPage() {
   }, [q.data, qSearch, statusFilter]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden bg-transparent">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-            title="Nova excursão"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Nova excursão</span>
-          </button>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Excursões"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Excursões"
+          search={{
+            value: qSearch,
+            onChange: setQSearch,
+            placeholder: "Buscar excursão...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Rascunho", value: "draft" },
+            { label: "Aberta", value: "open" },
+            { label: "Confirmada", value: "confirmed" },
+            { label: "Concluída", value: "completed" },
+            { label: "Cancelada", value: "cancelled" },
+          ]}
+          activeFilter={statusFilter}
+          onFilterChange={(v) => setStatusFilter(v)}
+          actions={
+            isAgencyAdmin && (
+              <button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Administrar Excursões"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </button>
+            )
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            value={qSearch}
-            onChange={(e) => setQSearch(e.target.value)}
-            placeholder="Buscar excursão ou destino..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
-          {["all", "draft", "open", "confirmed", "completed", "cancelled"].map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`rounded-full px-3 py-1 font-semibold transition-colors capitalize shrink-0 ${
-                statusFilter === s
-                  ? "bg-white/10 text-white border border-white/5"
-                  : "text-white/60 hover:text-white"
-              }`}
-            >
-              {s === "all"
-                ? "Todos"
-                : s === "draft"
-                  ? "Rascunho"
-                  : s === "open"
-                    ? "Aberta"
-                    : s === "confirmed"
-                      ? "Confirmada"
-                      : s === "completed"
-                        ? "Concluída"
-                        : "Cancelada"}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Nova Excursão"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
