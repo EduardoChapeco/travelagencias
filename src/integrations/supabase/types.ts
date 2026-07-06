@@ -52,6 +52,8 @@ export type Database = {
           h_pos: number
           created_at: string
           updated_at: string
+          visibility: string
+          assigned_profile_id: string | null
         }
         Insert: {
           id?: string
@@ -65,6 +67,8 @@ export type Database = {
           h_pos?: number
           created_at?: string
           updated_at?: string
+          visibility?: string
+          assigned_profile_id?: string | null
         }
         Update: {
           id?: string
@@ -78,6 +82,8 @@ export type Database = {
           h_pos?: number
           created_at?: string
           updated_at?: string
+          visibility?: string
+          assigned_profile_id?: string | null
         }
         Relationships: [
           {
@@ -89,6 +95,12 @@ export type Database = {
           {
             foreignKeyName: "desktop_notes_profile_id_fkey"
             columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "desktop_notes_assigned_profile_id_fkey"
+            columns: ["assigned_profile_id"]
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }

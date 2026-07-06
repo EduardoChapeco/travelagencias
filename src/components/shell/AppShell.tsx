@@ -181,7 +181,7 @@ export function AppShell({
             {/* Portal para ações do header injetadas pelas rotas */}
             <div id="app-header-portal" className="hidden" />
 
-            <main className="no-scrollbar flex-1 overflow-y-auto p-4 md:pl-[84px] md:pr-6 md:pt-4 md:pb-6 relative os-workspace">
+            <main className="no-scrollbar flex-1 overflow-y-auto p-4 md:pl-[68px] md:pr-6 md:pt-4 md:pb-6 relative os-workspace">
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
                   <div className="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Trash2, GripHorizontal, Palette, Users, Bus, ScrollText } from "lucide-react";
+import { Trash2, GripHorizontal, Palette, Users, Bus, ScrollText, Lock, Globe, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,16 +12,22 @@ export type NoteData = {
   y_pos: number;
   w_pos: number;
   h_pos: number;
+  visibility?: string;
+  assigned_profile_id?: string | null;
+  profile_id?: string;
+  profiles?: { full_name: string | null } | null;
 };
 
 interface StickyNoteProps {
   note: NoteData;
   isEditable: boolean;
+  userId?: string | null;
   onUpdate: (id: string, updates: Partial<NoteData>) => void;
   onDelete: (id: string) => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
   renderContent?: (content: string) => React.ReactNode;
   onFocusChange?: (focused: boolean) => void;
+  teamMembers?: Array<{ user_id: string; full_name: string }>;
 }
 
 const COLORS = [
@@ -35,16 +41,20 @@ const COLORS = [
 export function StickyNote({
   note,
   isEditable,
+  userId,
   onUpdate,
   onDelete,
   containerRef,
   renderContent,
   onFocusChange,
+  teamMembers,
 }: StickyNoteProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: note.x_pos, y: note.y_pos });
   const [text, setText] = useState(note.content);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showSharingPicker, setShowSharingPicker] = useState(false);
+  const [showAgentSelector, setShowAgentSelector] = useState(false);
 
   const [atIndex, setAtIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -255,6 +265,18 @@ export function StickyNote({
     setShowColorPicker(false);
   };
 
+  const handleVisibilityChange = (vis: string) => {
+    onUpdate(note.id, { visibility: vis, assigned_profile_id: null });
+    setShowSharingPicker(false);
+    setShowAgentSelector(false);
+  };
+
+  const handleAssignAgent = (memberId: string) => {
+    onUpdate(note.id, { visibility: "assigned", assigned_profile_id: memberId });
+    setShowSharingPicker(false);
+    setShowAgentSelector(false);
+  };
+
   return (
     <div
       ref={noteRef}
@@ -279,11 +301,14 @@ export function StickyNote({
         >
           <GripHorizontal className="w-3.5 h-3.5 opacity-40 hover:opacity-80 transition-opacity" />
           
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             {/* Color picker toggle */}
             <div className="relative">
               <button
-                onClick={() => setShowColorPicker(!showColorPicker)}
+                onClick={() => {
+                  setShowColorPicker(!showColorPicker);
+                  setShowSharingPicker(false);
+                }}
                 className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-inherit"
                 title="Mudar cor"
               >
@@ -302,6 +327,91 @@ export function StickyNote({
                       title={c.name}
                     />
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Sharing / Visibility options toggle */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowSharingPicker(!showSharingPicker);
+                  setShowColorPicker(false);
+                  setShowAgentSelector(false);
+                }}
+                className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-inherit"
+                title={
+                  note.visibility === "public"
+                    ? "Público Agência"
+                    : note.visibility === "assigned"
+                    ? "Encaminhado para colega"
+                    : "Pessoal (Privado)"
+                }
+              >
+                {note.visibility === "public" ? (
+                  <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                ) : note.visibility === "assigned" ? (
+                  <UserCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <Lock className="w-3.5 h-3.5 opacity-60" />
+                )}
+              </button>
+              {showSharingPicker && (
+                <div className="absolute top-6 right-0 bg-white dark:bg-zinc-950 border border-border rounded-2xl p-2 flex flex-col gap-1 z-50 shadow-2xl w-48 text-foreground">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground px-2 py-1">Visibilidade</span>
+                  <button
+                    onClick={() => handleVisibilityChange("private")}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                      note.visibility === "private" && "bg-black/5 dark:bg-white/5"
+                    )}
+                  >
+                    <Lock className="w-3.5 h-3.5 opacity-70" />
+                    <span>Pessoal (Privado)</span>
+                  </button>
+                  <button
+                    onClick={() => handleVisibilityChange("public")}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                      note.visibility === "public" && "bg-black/5 dark:bg-white/5"
+                    )}
+                  >
+                    <Globe className="w-3.5 h-3.5 opacity-70" />
+                    <span>Público Agência</span>
+                  </button>
+                  {teamMembers && teamMembers.length > 0 && (
+                    <>
+                      <button
+                        onClick={() => setShowAgentSelector(!showAgentSelector)}
+                        className={cn(
+                          "flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                          note.visibility === "assigned" && "bg-black/5 dark:bg-white/5"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <UserCheck className="w-3.5 h-3.5 opacity-70" />
+                          <span>Para Agente...</span>
+                        </div>
+                      </button>
+                      
+                      {showAgentSelector && (
+                        <div className="mt-1 border-t border-border pt-1.5 flex flex-col gap-0.5 max-h-32 overflow-y-auto no-scrollbar">
+                          {teamMembers.map((member) => (
+                            <button
+                              key={member.user_id}
+                              onClick={() => handleAssignAgent(member.user_id)}
+                              className={cn(
+                                "px-2.5 py-1.5 rounded-lg hover:bg-brand/10 hover:text-brand text-left cursor-pointer text-[10px] font-black truncate w-full",
+                                note.assigned_profile_id === member.user_id && "text-brand bg-brand/5"
+                              )}
+                            >
+                              {member.full_name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -354,8 +464,20 @@ export function StickyNote({
             )}
           </>
         ) : (
-          <div className="flex-1 w-full overflow-y-auto no-scrollbar text-xs font-semibold leading-relaxed whitespace-pre-wrap select-text text-inherit">
-            {renderContent ? renderContent(text) : text}
+          <div className="flex-1 w-full flex flex-col justify-between min-h-0 select-text text-inherit">
+            <div className="flex-1 w-full overflow-y-auto no-scrollbar text-xs font-semibold leading-relaxed whitespace-pre-wrap">
+              {renderContent ? renderContent(text) : text}
+            </div>
+            
+            {/* Author / Creator indicator */}
+            {note.profiles?.full_name && note.profile_id !== userId && (
+              <div className="mt-2 text-[9px] font-black uppercase tracking-wider text-black/40 dark:text-white/40 flex items-center gap-1 shrink-0 border-t border-black/5 dark:border-white/5 pt-1.5 select-none">
+                <span>Por: {note.profiles.full_name}</span>
+                {note.visibility === "assigned" && (
+                  <span className="text-blue-600 dark:text-blue-400 font-black ml-auto">Direcionado a você</span>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

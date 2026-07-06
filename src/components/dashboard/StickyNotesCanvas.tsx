@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { fetchTeamMembers } from "@/services/settings";
 
 interface StickyNotesCanvasProps {
   renderNoteContent?: (content: string) => React.ReactNode;
@@ -34,16 +35,31 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
     });
   }, []);
 
-  // 2. Fetch Notes Query
+  // 2. Fetch Team Members List for sharing
+  const { data: teamMembers = [] } = useQuery({
+    queryKey: ["team-members", agency?.id],
+    enabled: !!agency?.id,
+    queryFn: async () => {
+      const members = await fetchTeamMembers(agency!.id);
+      return members.map((m: any) => ({
+        user_id: m.user_id,
+        full_name: m.profile?.full_name || m.user_id,
+      }));
+    }
+  });
+
+  // 3. Fetch Notes Query (Join with profiles)
   const { data: notes = [], isLoading } = useQuery({
     queryKey: ["desktop-notes", agency?.id, userId],
     enabled: !!agency?.id && !!userId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("desktop_notes")
-        .select("id, content, color, x_pos, y_pos, w_pos, h_pos")
-        .eq("agency_id", agency!.id)
-        .eq("profile_id", userId!);
+        .select(`
+          id, content, color, x_pos, y_pos, w_pos, h_pos, visibility, assigned_profile_id, profile_id,
+          profiles:profiles!profile_id (full_name)
+        `)
+        .eq("agency_id", agency!.id);
       
       if (error) throw error;
       return (data as NoteData[]) || [];
@@ -77,8 +93,13 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           y_pos: randomY,
           w_pos: 220,
           h_pos: 220,
+          visibility: "private",
+          assigned_profile_id: null,
         })
-        .select("id, content, color, x_pos, y_pos, w_pos, h_pos")
+        .select(`
+          id, content, color, x_pos, y_pos, w_pos, h_pos, visibility, assigned_profile_id, profile_id,
+          profiles:profiles!profile_id (full_name)
+        `)
         .single();
 
       if (error) throw error;
@@ -107,6 +128,8 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           y_pos: updates.y_pos,
           w_pos: updates.w_pos,
           h_pos: updates.h_pos,
+          visibility: updates.visibility,
+          assigned_profile_id: updates.assigned_profile_id,
           updated_at: new Date().toISOString()
         })
         .eq("id", id);
@@ -156,7 +179,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 w-full h-full min-h-[500px] select-none"
+      className="relative flex-1 w-auto h-full min-h-[500px] select-none md:ml-[60px]"
       style={{ overflow: "hidden" }}
     >
       {/* ── Background Workspace Canvas Area ── */}
@@ -169,12 +192,14 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           <StickyNote
             key={note.id}
             note={note}
-            isEditable={isEditable}
+            isEditable={isEditable && note.profile_id === userId}
+            userId={userId}
             onUpdate={handleUpdateNoteLocal}
             onDelete={handleDeleteNoteLocal}
             containerRef={containerRef}
             renderContent={renderNoteContent}
             onFocusChange={onNoteFocusChange}
+            teamMembers={teamMembers}
           />
         ))
       )}
