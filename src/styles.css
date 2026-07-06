@@ -314,12 +314,7 @@
     color: rgba(255, 255, 255, 0.95) !important;
   }
 
-  /* bg-background → transparente */
-  .os-workspace .bg-background {
-    background: transparent !important;
-  }
-
-  /* Superfícies de cards, paíneis, bg-white → glass com blur real */
+  /* Superfícies de cards, painéis, bg-white → glass com blur real dinâmico */
   .os-workspace .bg-card,
   .os-workspace .bg-white,
   .os-workspace .bg-secondary,
@@ -329,7 +324,7 @@
   .os-workspace [class*="bg-neutral"],
   .os-workspace [class*="bg-card"],
   .os-workspace [class*="bg-white"] {
-    background: rgba(15, 15, 22, 0.35) !important;
+    background: rgba(15, 15, 22, var(--os-glass-opacity, 0.20)) !important;
     backdrop-filter: blur(28px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -344,7 +339,7 @@
 
   /*
    * Cabeçalhos de ação/filtro/search de cada módulo → pill rounded.
-   * Interceptamos padrões comuns de toolbar e os transformamos em pills glass.
+   * Usando opacidade de vidro dinâmica.
    */
   .os-workspace .flex-col.sm\:flex-row.gap-2.sm\:items-center.border-b,
   .os-workspace .flex-col.sm\:flex-row.gap-2.border-b,
@@ -352,7 +347,7 @@
   .os-workspace [data-toolbar],
   .os-workspace [data-module-header] {
     border-bottom: none !important;
-    background: rgba(15, 15, 22, 0.35) !important;
+    background: rgba(15, 15, 22, var(--os-glass-opacity, 0.20)) !important;
     backdrop-filter: blur(24px) saturate(170%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(170%) !important;
     border: 1px solid rgba(255, 255, 255, 0.09) !important;

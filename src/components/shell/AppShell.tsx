@@ -158,7 +158,7 @@ export function AppShell({
           <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>
           <span className="text-white/90">{timeStr}</span>
           <div className="w-[1px] h-2.5 bg-white/15" />
-          <NotificationBadge />
+          <NotificationBadge minimal />
         </div>
       </header>
 

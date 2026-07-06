@@ -540,7 +540,7 @@ function TripsList() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 container">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
         {list.isError && (
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

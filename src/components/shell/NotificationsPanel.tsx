@@ -229,7 +229,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function NotificationBadge() {
+export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
   const { agency } = useAgency();
   const [open, setOpen] = useState(false);
 
@@ -254,18 +254,26 @@ export function NotificationBadge() {
   });
 
   return (
-    <div className="relative">
+    <div className="relative flex items-center">
       <button
         onClick={() => setOpen(!open)}
-        className={`relative flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-medium ${
-          open
-            ? "bg-surface-alt text-foreground"
-            : "bg-surface text-muted-foreground hover:text-foreground"
-        }`}
+        className={
+          minimal
+            ? "relative flex h-5 w-5 items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+            : `relative flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-medium cursor-pointer ${
+                open
+                  ? "bg-surface-alt text-foreground"
+                  : "bg-surface text-muted-foreground hover:text-foreground"
+              }`
+        }
       >
         <Bell className="h-3.5 w-3.5" />
         {q.data ? (
-          <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white">
+          <span className={
+            minimal
+              ? "absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-danger text-[7px] font-bold text-white"
+              : "absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white"
+          }>
             {q.data > 9 ? "9+" : q.data}
           </span>
         ) : null}

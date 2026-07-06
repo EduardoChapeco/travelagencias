@@ -405,10 +405,10 @@ function PagesPage() {
               <button
                 key={tabId}
                 onClick={() => setActiveTab(tabId)}
-                className={`rounded-xs px-2.5 py-1 font-semibold transition-colors shrink-0 cursor-pointer${
+                className={`rounded-full px-3 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
                   activeTab === tabId
-                    ? "bg-surface-alt text-foreground border border-border/50"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white/10 text-white border border-white/5"
+                    : "text-white/60 hover:text-white"
                 }`}
               >
                 {labels[tabId]}
@@ -433,7 +433,7 @@ function PagesPage() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
         {(q.isError || analyticsQ.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

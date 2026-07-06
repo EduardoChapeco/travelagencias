@@ -128,46 +128,46 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between px-2">
-        <div className="flex-1 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between px-4 py-2 rounded-full bg-white/5 border border-white/5 shadow-xs select-none">
+        <div className="text-xs text-muted-foreground/80 font-medium">
           {table.getFilteredRowModel().rows.length} linha(s) total
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex w-[100px] items-center justify-center text-xs font-medium">
+          <div className="flex items-center justify-center text-xs font-medium text-muted-foreground/90">
             Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount() || 1}
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <GhostButton
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Ir para a primeira página</span>
-              <ChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className="h-3.5 w-3.5" />
             </GhostButton>
             <GhostButton
-              className="h-8 w-8 p-0"
+              className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Voltar uma página</span>
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </GhostButton>
             <GhostButton
-              className="h-8 w-8 p-0"
+              className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Ir para a próxima página</span>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </GhostButton>
             <GhostButton
-              className="hidden h-8 w-8 p-0 lg:flex"
+              className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Ir para a última página</span>
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronsRight className="h-3.5 w-3.5" />
             </GhostButton>
           </div>
         </div>

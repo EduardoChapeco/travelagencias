@@ -42,7 +42,7 @@ function GroupToursPage() {
   }, [q.data, qSearch, statusFilter]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -81,10 +81,10 @@ function GroupToursPage() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`rounded px-2.5 py-1 font-semibold transition-colors capitalize shrink-0 ${
+              className={`rounded-full px-3 py-1 font-semibold transition-colors capitalize shrink-0 ${
                 statusFilter === s
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white/10 text-white border border-white/5"
+                  : "text-white/60 hover:text-white"
               }`}
             >
               {s === "all"
@@ -103,7 +103,7 @@ function GroupToursPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
         {q.isError && (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
@@ -129,7 +129,7 @@ function GroupToursPage() {
                   key={t.id}
                   to="/agency/$slug/group-tours/$id"
                   params={{ slug, id: t.id }}
-                  className="rounded border border-border bg-surface p-4 hover:border-border-strong"
+                  className="rounded-2xl border border-border bg-surface p-5 hover:border-border-strong transition-all duration-200"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
