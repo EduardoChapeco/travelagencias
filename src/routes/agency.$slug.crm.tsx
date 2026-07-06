@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchStages,
@@ -181,94 +182,67 @@ function CRMPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
-        {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-          <TabsList className="h-8 bg-white/5 border border-white/5 rounded-full p-0.5 flex-wrap gap-0">
-            <TabsTrigger
-              value="kanban"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
-            >
-              Funil de Vendas (Kanban)
-            </TabsTrigger>
-            <TabsTrigger
-              value="archived"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
-            >
-              Leads Arquivados
-            </TabsTrigger>
-            {isAgencyAdmin && (
-              <TabsTrigger
-                value="admin"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
-              >
-                Configurações
-              </TabsTrigger>
-            )}
-          </TabsList>
+      <HeaderPortal>
+        <ModuleToolbar
+          title="CRM"
+          search={activeTab !== "admin" ? {
+            value: searchQuery,
+            onChange: setSearchQuery,
+            placeholder: "Buscar lead...",
+          } : undefined}
+          filters={[
+            { label: "Funil (Kanban)", value: "kanban" },
+            { label: "Arquivados", value: "archived" },
+            ...(isAgencyAdmin ? [{ label: "Configurações", value: "admin" }] : []),
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+          actions={
+            activeTab !== "admin" ? (
+              <div className="flex items-center gap-1.5">
+                <Select
+                  value={ownerFilter}
+                  onChange={(e: any) => setOwnerFilter(e.target.value)}
+                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+                >
+                  <option value="">Responsáveis</option>
+                  {usersQ.data?.map(
+                    (u: any) =>
+                      u.user_id && (
+                        <option key={u.user_id} value={u.user_id}>
+                          👤 {u.user_name || "Sem nome"}
+                        </option>
+                      ),
+                  )}
+                </Select>
 
-          <div className="flex items-center gap-2">
-            {activeTab !== "admin" && (
-              <button
-                onClick={() => setNewOpen(true)}
-                className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-                title="Novo Lead"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Novo Lead</span>
-              </button>
-            )}
-          </div>
-        </div>
+                <Select
+                  value={sourceFilter}
+                  onChange={(e: any) => setSourceFilter(e.target.value)}
+                  className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 outline-none px-2"
+                >
+                  <option value="">Origens</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="website">Site</option>
+                  <option value="referral">Indicação</option>
+                  <option value="walkin">Presencial</option>
+                </Select>
+              </div>
+            ) : undefined
+          }
+        />
+      </HeaderPortal>
 
-        {activeTab !== "admin" && (
-        <div className="flex flex-col sm:flex-row gap-2 border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <input
-              placeholder="Buscar lead..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
-          <div className="relative w-full sm:w-44">
-            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <select
-              value={ownerFilter}
-              onChange={(e) => setOwnerFilter(e.target.value)}
-              className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
-            >
-              <option value="">Responsáveis</option>
-              {usersQ.data?.map(
-                (u: any) =>
-                  u.user_id && (
-                    <option key={u.user_id} value={u.user_id}>
-                      {u.user_name || "Sem nome"}
-                    </option>
-                  ),
-              )}
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          </div>
-          <div className="relative w-full sm:w-40">
-            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <select
-              value={sourceFilter}
-              onChange={(e) => setSourceFilter(e.target.value)}
-              className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
-            >
-              <option value="">Origens</option>
-              <option value="whatsapp">WhatsApp</option>
-              <option value="instagram">Instagram</option>
-              <option value="website">Site</option>
-              <option value="referral">Indicação</option>
-              <option value="walkin">Presencial</option>
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          </div>
-        </div>
+      {activeTab !== "admin" && (
+        <ModuleActionButton
+          label="Novo Lead"
+          icon={<Plus className="h-3.5 w-3.5" />}
+          onClick={() => setNewOpen(true)}
+        />
       )}
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
 
       {(stagesQ.isLoading || leadsQ.isLoading) && (
         <div className="flex flex-1 items-center justify-center">
@@ -294,8 +268,8 @@ function CRMPage() {
       )}
 
       {activeTab === "archived" && leadsQ.data && (
-        <div className="flex-1 overflow-auto p-6 bg-surface/30">
-          <div className="rounded-full border border-border bg-surface p-6">
+        <div className="flex-1 overflow-auto p-6 md:pl-[64px] md:pr-6 py-4 bg-transparent">
+          <div className="rounded-[24px] border border-border bg-surface p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
             {leadsQ.data.length === 0 ? (
               <div className="text-center py-12 text-sm text-muted-foreground">

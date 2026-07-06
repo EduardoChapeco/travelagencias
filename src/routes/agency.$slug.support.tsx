@@ -8,6 +8,7 @@ import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form"
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
@@ -82,60 +83,34 @@ function SupportRoute() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-[11px] font-bold rounded-2xl cursor-pointer"
-            onClick={() => setTicketSheetOpen(true)}
-            title="Novo Ticket Interno"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Novo Ticket Interno</span>
-          </PrimaryButton>
-        </div>
+        <ModuleToolbar
+          title="Suporte"
+          search={{
+            value: searchTerm,
+            onChange: setSearchTerm,
+            placeholder: "Buscar por código, assunto ou cliente...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Novo", value: "new" },
+            { label: "Aberto", value: "open" },
+            { label: "Ag. Fornecedor", value: "pending_supplier" },
+            { label: "Ag. Cliente", value: "pending_client" },
+            { label: "Resolvido", value: "resolved" },
+            { label: "Fechado", value: "closed" },
+          ]}
+          activeFilter={stageFilter}
+          onFilterChange={setStageFilter}
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por código, assunto ou cliente..."
-            className="pl-8 h-8 text-xs w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="w-full sm:w-40 shrink-0">
-            <Select
-              value={stageFilter}
-              onChange={(e) => setStageFilter(e.target.value)}
-              className="h-8 text-xs w-full"
-            >
-              <option value="all">Todos os Estágios</option>
-              {Object.entries(STAGE_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="w-full sm:w-36 shrink-0">
-            <Select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="h-8 text-xs w-full"
-            >
-              <option value="all">Todas Prioridades</option>
-              <option value="low">Baixa</option>
-              <option value="medium">Média</option>
-              <option value="high">Alta</option>
-              <option value="urgent">Urgente</option>
-            </Select>
-          </div>
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Novo Ticket"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setTicketSheetOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col space-y-4">
         {isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 shrink-0">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

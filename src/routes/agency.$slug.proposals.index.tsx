@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
@@ -148,65 +149,56 @@ function ProposalsList() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-            title="Nova cotação"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Nova cotação</span>
-          </button>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Cotações"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Cotações"
+          search={{
+            value: searchQuery,
+            onChange: (v) => {
+              setSearchQuery(v);
+              setPage(1);
+            },
+            placeholder: "Buscar cotação...",
+          }}
+          actions={
+            <div className="flex items-center gap-1.5">
+              <Select
+                value={statusFilter}
+                onChange={(e: any) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+              >
+                <option value="all">Todos Status</option>
+                <option value="draft">Rascunho</option>
+                <option value="sent">Enviada</option>
+                <option value="viewed">Visualizada</option>
+                <option value="accepted">Aceita</option>
+                <option value="converted">Convertida</option>
+                <option value="rejected">Recusada</option>
+                <option value="expired">Expirada</option>
+              </Select>
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Cotações"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar cotação..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPage(1);
-            }}
-          />
-        </div>
-        <div className="relative w-full sm:w-44">
-          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <select
-            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Todos os Status</option>
-            <option value="draft">Rascunho</option>
-            <option value="sent">Enviada</option>
-            <option value="viewed">Visualizada</option>
-            <option value="accepted">Aceita</option>
-            <option value="converted">Convertida</option>
-            <option value="rejected">Recusada</option>
-            <option value="expired">Expirada</option>
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Nova Cotação"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">

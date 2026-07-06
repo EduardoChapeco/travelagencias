@@ -25,6 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -224,86 +225,46 @@ function VouchersPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {isAgencyAdmin && activeTab === "vouchers" && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Vouchers"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Vouchers"
+          search={activeTab === "vouchers" ? {
+            value: qSearch,
+            onChange: setQSearch,
+            placeholder: "Buscar por destino ou localizador...",
+          } : undefined}
+          filters={[
+            { label: "🎫 Vouchers", value: "vouchers" },
+            { label: "✈️ Conferência de Voos", value: "flight_audit" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => {
+            setActiveTab(v as any);
+            if (typeof window !== "undefined") {
+              const url = new URL(window.location.href);
+              url.searchParams.set("tab", v);
+              window.history.replaceState({}, "", url.toString());
+            }
+          }}
+          actions={
+            isAgencyAdmin && activeTab === "vouchers" ? (
+              <button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Administrar Vouchers"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </button>
+            ) : undefined
+          }
+        />
       </HeaderPortal>
 
-      {/* Tabs list — pill format */}
-      <div className="flex border-b border-border bg-surface/50 shrink-0 px-4 md:px-6 py-3">
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0">
-          <button
-            onClick={() => {
-              setActiveTab("vouchers");
-              if (typeof window !== "undefined") {
-                const url = new URL(window.location.href);
-                url.searchParams.set("tab", "vouchers");
-                window.history.replaceState({}, "", url.toString());
-              }
-            }}
-            className={cn(
-              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer",
-              activeTab === "vouchers"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white",
-            )}
-          >
-            🎫 Vouchers Emitidos
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("flight_audit");
-              if (typeof window !== "undefined") {
-                const url = new URL(window.location.href);
-                url.searchParams.set("tab", "flight_audit");
-                window.history.replaceState({}, "", url.toString());
-              }
-            }}
-            className={cn(
-              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5",
-              activeTab === "flight_audit"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white",
-            )}
-          >
-            ✈️ Conferência de Voos
-            <span className="bg-brand/15 text-brand text-[9px] px-1.5 py-0.5 rounded-full font-mono font-bold">
-              Fila 60 dias
-            </span>
-          </button>
-        </div>
-      </div>
-
       {activeTab === "vouchers" ? (
-        // ==========================================
+        // ========================================
         // Vouchers Tab View
-        // ==========================================
+        // ========================================
         <>
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                type="text"
-                value={qSearch}
-                onChange={(e) => setQSearch(e.target.value)}
-                placeholder="Buscar por destino ou localizador..."
-                className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
-              {vouchersQ.data?.count ?? 0} vouchers
-            </span>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4">
             {vouchersQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
@@ -447,9 +408,9 @@ function VouchersPage() {
           </div>
         </>
       ) : (
-        // ==========================================
+        // ========================================
         // Flight Audit Tab View
-        // ==========================================
+        // ========================================
         <>
           {/* Audit top KPIs */}
           <div className="border-b border-border bg-surface px-4 md:px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">

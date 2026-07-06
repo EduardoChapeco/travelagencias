@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
@@ -49,57 +50,44 @@ function BusLayoutsPage() {
   }, [q.data, qSearch, typeFilter]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-            title="Novo Layout"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Novo Layout</span>
-          </button>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar layouts"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Frota & Ônibus"
+          search={{
+            value: qSearch,
+            onChange: setQSearch,
+            placeholder: "Buscar veículo...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Ônibus", value: "bus" },
+            { label: "Van", value: "van" },
+            { label: "Avião", value: "plane" },
+          ]}
+          activeFilter={typeFilter}
+          onFilterChange={setTypeFilter}
+          actions={
+            isAgencyAdmin ? (
+              <button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Administrar layouts"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </button>
+            ) : undefined
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            value={qSearch}
-            onChange={(e) => setQSearch(e.target.value)}
-            placeholder="Buscar veículo..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs shrink-0 overflow-x-auto no-scrollbar max-w-full">
-          {["all", "bus", "van", "plane"].map((t) => (
-            <button
-              key={t}
-              onClick={() => setTypeFilter(t)}
-              className={`rounded px-2.5 py-1 font-semibold transition-colors shrink-0 ${
-                typeFilter === t
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t === "all" ? "Todos" : t === "bus" ? "Ônibus" : t === "van" ? "Van" : "Avião"}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Novo Layout"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {filtered.length === 0 && !q.isLoading && (
           <EmptyState

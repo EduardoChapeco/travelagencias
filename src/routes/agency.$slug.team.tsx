@@ -13,6 +13,8 @@ import {
 } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import {
   Field,
   Input,
@@ -24,7 +26,6 @@ import {
   fmtDate,
 } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/team")({
@@ -137,44 +138,23 @@ function TeamPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Convidar
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Equipe"
+          search={{
+            value: searchQuery,
+            onChange: setSearchQuery,
+            placeholder: "Buscar por nome ou email...",
+          }}
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-        <div className="relative w-full sm:w-64">
-          <span className="absolute inset-y-0 left-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-            <svg
-              className="h-3.5 w-3.5 text-muted-foreground/60"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </span>
-          <input
-            type="text"
-            placeholder="Buscar por nome ou email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
-          />
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Convidar Membro"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
         {(members.isError || invites.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

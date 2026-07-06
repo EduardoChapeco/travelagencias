@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/financial/invoices")({
   component: InvoicesPage,
@@ -48,7 +50,11 @@ function InvoicesPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <HeaderPortal>
+        <ModuleToolbar title="Faturas" />
+      </HeaderPortal>
+
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
         {!q.isLoading && !q.data?.data.length && (

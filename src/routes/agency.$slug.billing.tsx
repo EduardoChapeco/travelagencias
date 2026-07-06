@@ -20,7 +20,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader } from "@/components/shell/PageHeader";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 
@@ -189,11 +190,12 @@ function BillingPage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-background p-4 md:p-6 pb-24">
-      <PageHeader
-        title="Assinatura & Planos"
-        description="Gerencie o plano da sua agência de viagens, limites de agentes e histórico de pagamentos."
-      />
+    <div className="flex h-full flex-col overflow-hidden">
+      <HeaderPortal>
+        <ModuleToolbar title="Assinatura & Planos" />
+      </HeaderPortal>
+
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 pb-24">
 
       {/* MÉTRICAS DE USO DOS LIMITES */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -642,6 +644,7 @@ function BillingPage() {
           </div>
         )}
       </SheetPage>
+      </div>
     </div>
   );
 }

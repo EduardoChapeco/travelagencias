@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PrimaryButton } from "@/components/ui/form";
 
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
 import { UniversalDevicePreview } from "@/components/ui/universal-device-preview";
@@ -125,24 +128,24 @@ function ClientAppBuilderPage() {
 
   return (
     <div className="flex h-[calc(100vh-60px)] -m-4 md:-m-8">
+      <HeaderPortal>
+        <ModuleToolbar
+          title="App Builder"
+          actions={
+            <PrimaryButton
+              onClick={saveSettings}
+              disabled={busy}
+              className="flex h-7 items-center gap-1.5 px-3 text-xs font-semibold cursor-pointer"
+            >
+              {busy ? <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent animate-spin rounded-full" /> : <Save className="h-3.5 w-3.5" />}
+              Salvar
+            </PrimaryButton>
+          }
+        />
+      </HeaderPortal>
+
       {/* Esquerda: Painel de Controle */}
-      <div className="w-1/2 max-w-md border-r border-border bg-surface p-6 flex flex-col overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <Smartphone className="h-5 w-5 text-primary" /> App Builder
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">Configure o portal do passageiro.</p>
-          </div>
-          <button
-            onClick={saveSettings}
-            disabled={busy}
-            className="h-9 px-4 rounded-full bg-primary text-primary-foreground font-semibold text-sm flex items-center gap-2 hover:bg-primary/90 disabled:opacity-50"
-          >
-            {busy ? <div className="h-4 w-4 border-2 border-background border-t-transparent animate-spin rounded-full" /> : <Save className="h-4 w-4" />}
-            Salvar
-          </button>
-        </div>
+      <div className="w-1/2 max-w-md border-r border-border bg-surface/50 p-6 flex flex-col overflow-y-auto">
 
         <div className="space-y-8">
           {/* Editor de Cores */}

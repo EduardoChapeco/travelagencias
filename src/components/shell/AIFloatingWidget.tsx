@@ -79,10 +79,17 @@ export function AIFloatingWidget() {
 
   if (!slug || !agency) return null;
 
+  const isHome = pathname === `/agency/${slug}` || pathname === `/agency/${slug}/`;
+
   return (
     <div
       ref={widgetRef}
-      className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-3 font-sans select-none pointer-events-auto"
+      className={cn(
+        "fixed z-50 flex flex-col items-start gap-3 font-sans select-none pointer-events-auto",
+        isHome
+          ? "bottom-6 left-4"
+          : "bottom-6 left-[64px]"
+      )}
     >
       {/* ── Chat Container — abre acima e à direita do botão ──────────── */}
       <AnimatePresence>

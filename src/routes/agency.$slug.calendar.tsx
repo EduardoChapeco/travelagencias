@@ -28,6 +28,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchAgencyMeetings,
@@ -251,87 +252,79 @@ function CalendarPage() {
         onUpdated={() => tasksQ.refetch()}
       />
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {/* Actions */}
-          <PrimaryButton
-            onClick={() => setNewEventOpen(true)}
-            className="flex h-7 items-center justify-center gap-1 px-2 text-[10px] font-bold rounded cursor-pointer"
-            title="Novo Evento"
-          >
-            <Plus className="h-3 w-3" />
-            <span className="hidden sm:inline">Evento</span>
-          </PrimaryButton>
+        <ModuleToolbar
+          title={`${MONTHS[month]} ${year}`}
+          actions={
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={handlePrevMonth}
+                className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
+              >
+                <ChevronLeft className="h-3 w-3" />
+              </button>
+              <button
+                onClick={handleToday}
+                className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 text-[10px] font-bold rounded-full transition-colors cursor-pointer text-white/90"
+              >
+                Hoje
+              </button>
+              <button
+                onClick={handleNextMonth}
+                className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
+              >
+                <ChevronRight className="h-3 w-3" />
+              </button>
 
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-7 w-7 items-center justify-center rounded border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Calendário"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+              <div className="w-[1px] h-5 bg-white/12" />
+
+              <Select
+                value={filterType}
+                onChange={(e: any) => setFilterType(e.target.value)}
+                className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 outline-none px-2"
+              >
+                <option value="all">Tipos</option>
+                <option value="call">📞 Telefone</option>
+                <option value="video">💻 Vídeo</option>
+                <option value="in_person">👤 Presencial</option>
+                <option value="whatsapp">💬 WhatsApp</option>
+              </Select>
+
+              {usersQ.data && (
+                <Select
+                  value={filterUser}
+                  onChange={(e: any) => setFilterUser(e.target.value)}
+                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+                >
+                  <option value="all">Agentes</option>
+                  {usersQ.data.map((u: any) => (
+                    <option key={u.user_id} value={u.user_id || ""}>
+                      👤 {u.user_name}
+                    </option>
+                  ))}
+                </Select>
+              )}
+
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Calendário"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        {/* Month Navigation */}
-        <div className="flex items-center justify-between sm:justify-start gap-1.5 w-full sm:w-auto">
-          <button
-            onClick={handlePrevMonth}
-            className="p-1.5 border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
-          >
-            <ChevronLeft className="h-3 w-3" />
-          </button>
-          <button
-            onClick={handleToday}
-            className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 text-[10px] font-bold rounded-full transition-colors cursor-pointer text-white/90"
-          >
-            Hoje
-          </button>
-          <span className="text-[11px] font-bold min-w-[90px] text-center text-white/90 uppercase tracking-wide px-1">
-            {MONTHS[month].substring(0, 3)} {year}
-          </span>
-          <button
-            onClick={handleNextMonth}
-            className="p-1.5 border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
-          >
-            <ChevronRight className="h-3 w-3" />
-          </button>
-        </div>
+      <ModuleActionButton
+        label="Novo Evento"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewEventOpen(true)}
+      />
 
-        {/* Filters */}
-        <div className="flex items-center gap-2 justify-end w-full sm:w-auto">
-          <Select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="h-7 text-[10px] bg-white/5 border-white/10 w-full sm:w-28 rounded-full text-white/90 outline-none px-2"
-          >
-            <option value="all">Tipos</option>
-            <option value="call">📞 Telefone</option>
-            <option value="video">💻 Vídeo</option>
-            <option value="in_person">👤 Presencial</option>
-            <option value="whatsapp">💬 WhatsApp</option>
-          </Select>
-
-          {usersQ.data && (
-            <Select
-              value={filterUser}
-              onChange={(e) => setFilterUser(e.target.value)}
-              className="h-7 text-[10px] bg-white/5 border-white/10 w-full sm:w-32 rounded-full text-white/90 outline-none px-2"
-            >
-              <option value="all">Agentes</option>
-              {usersQ.data.map((u: any) => (
-                <option key={u.user_id} value={u.user_id || ""}>
-                  👤 {u.user_name}
-                </option>
-              ))}
-            </Select>
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-auto px-4 md:px-6 py-4 flex flex-col">
+      <div className="flex-1 overflow-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

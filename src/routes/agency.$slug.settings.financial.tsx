@@ -16,6 +16,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import {
   Field,
   Input,
@@ -258,45 +259,26 @@ function FinancialSettingsPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {activeTab === "commissions" && (
-            <PrimaryButton
-              onClick={() => setShowPlanModal(true)}
-              className="flex items-center gap-1.5 h-8 text-xs font-semibold"
-            >
-              <Plus className="w-3.5 h-3.5" /> Novo Plano
-            </PrimaryButton>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Finanças"
+          filters={[
+            { label: "Fechamento Mensal", value: "closing" },
+            { label: "Planos de Comissões", value: "commissions" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+        />
       </HeaderPortal>
 
-      {/* Tabs Menu */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
-          <button
-            onClick={() => setActiveTab("closing")}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "closing"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Fechamento Mensal
-          </button>
-          <button
-            onClick={() => setActiveTab("commissions")}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "commissions"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Planos de Comissões
-          </button>
-        </div>
-      </div>
+      {activeTab === "commissions" && (
+        <ModuleActionButton
+          label="Novo Plano"
+          icon={<Plus className="h-3.5 w-3.5" />}
+          onClick={() => setShowPlanModal(true)}
+        />
+      )}
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
         {/* ─────────────────────────────────────────────────────────────────────
             TAB: Fechamento Contábil Mensal
             ───────────────────────────────────────────────────────────────────── */}

@@ -392,7 +392,7 @@ function Page() {
   const isCompanyTab = !["brand", "portal_config"].includes(tab);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <a

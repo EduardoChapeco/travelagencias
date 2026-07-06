@@ -30,6 +30,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Input, PrimaryButton, GhostButton, StatusBadge, Field } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 import type { Database } from "@/integrations/supabase/types";
 import {
   DndContext,
@@ -1120,68 +1122,35 @@ function RoomingListDashboard() {
 
   return (
     <div className="flex flex-col h-full text-foreground overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4 border-b border-border px-4 md:px-6 py-3 shrink-0 print:hidden bg-surface/50 no-margin-bottom">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand/10 text-brand">
-            <BedDouble className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold leading-tight">Rooming List Geral</h1>
-            <p className="text-xs text-muted-foreground">
-              Monitore a alocação de quartos em {filteredTours.length} grupo
-              {filteredTours.length !== 1 ? "s" : ""}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <GhostButton
-            onClick={handlePrint}
-            className="gap-1.5 h-8 text-xs border border-border bg-surface"
-          >
-            <Printer className="h-3.5 w-3.5" />
-            Imprimir Dashboard
-          </GhostButton>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 md:px-6 py-3 shrink-0 print:hidden bg-surface/50">
-        <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            placeholder="Buscar por nome da excursão ou destino..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-8 text-xs w-full bg-surface border border-border rounded-full outline-none focus:border-brand"
-          />
-        </div>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-8 text-xs w-[160px] bg-surface border border-border rounded-full px-2 outline-none focus:border-brand"
-        >
-          <option value="all">Status: Todos</option>
-          <option value="open">Aberto</option>
-          <option value="closed">Fechado</option>
-        </select>
-
-        {search || statusFilter !== "all" ? (
-          <button
-            className="h-8 text-xs text-muted-foreground hover:text-foreground font-semibold cursor-pointer"
-            onClick={() => {
-              setSearch("");
-              setStatusFilter("all");
-            }}
-          >
-            Limpar filtros
-          </button>
-        ) : null}
-      </div>
+      <HeaderPortal>
+        <ModuleToolbar
+          title="Rooming List"
+          search={{
+            value: search,
+            onChange: setSearch,
+            placeholder: "Buscar excursão ou destino...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Abertos", value: "open" },
+            { label: "Fechados", value: "closed" },
+          ]}
+          activeFilter={statusFilter}
+          onFilterChange={setStatusFilter}
+          actions={
+            <GhostButton
+              onClick={handlePrint}
+              className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+            >
+              <Printer className="h-3 w-3" />
+              Imprimir
+            </GhostButton>
+          }
+        />
+      </HeaderPortal>
 
       {/* Content list */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 space-y-4">
         {toursQ.isError && (
           <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

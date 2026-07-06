@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2, AlertCircle } from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   DndContext,
@@ -171,35 +172,36 @@ function VisasPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
-          Painel de Processos Consulares
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/agency/$slug/visas-catalog"
-            params={{ slug }}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
-          >
-            <FileText className="w-3.5 h-3.5" /> Catálogo
-          </Link>
-          <button
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo Processo
-          </button>
-
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Vistos"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Vistos"
+          actions={
+            <div className="flex items-center gap-1.5">
+              <Link
+                to="/agency/$slug/visas-catalog"
+                params={{ slug }}
+                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+              >
+                <FileText className="w-3.5 h-3.5" /> Catálogo
+              </Link>
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Vistos"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
+
+      <ModuleActionButton
+        label="Novo Processo"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewOpen(true)}
+      />
 
       <div className="flex-1 overflow-x-auto pb-4 scrollbar-thin px-4 md:px-6 pt-4">
         {(stagesQ.isError || visasQ.isError) && (

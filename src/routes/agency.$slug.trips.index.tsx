@@ -24,8 +24,9 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -474,73 +475,54 @@ function TripsList() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            id="btn-new-trip"
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-2 sm:px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-            title="Nova viagem"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Nova viagem</span>
-          </button>
-          <button
-            onClick={() => setImportOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-            title="Importar do Infotravel"
-          >
-            <Search className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Importar do Infotravel</span>
-          </button>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Viagens"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Viagens"
+          search={{
+            value: search,
+            onChange: (v) => { setSearch(v); setPage(1); },
+            placeholder: "Buscar viagem...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Planejamento", value: "planning" },
+            { label: "Confirmada", value: "confirmed" },
+            { label: "Em andamento", value: "in_progress" },
+            { label: "Concluída", value: "completed" },
+            { label: "Cancelada", value: "cancelled" },
+            { label: "Arquivadas", value: "archived" },
+          ]}
+          activeFilter={statusFilter}
+          onFilterChange={(v) => { setStatusFilter(v); setPage(1); }}
+          actions={
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setImportOpen(true)}
+                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+                title="Importar do Infotravel"
+              >
+                <Search className="h-3 w-3" /> Infotravel
+              </button>
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Viagens"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Buscar viagem..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-          />
-        </div>
-        <div className="relative w-full sm:w-44">
-          <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-[11px] text-foreground outline-none focus:border-brand"
-          >
-            <option value="all">Todos os status</option>
-            <option value="planning">Planejamento</option>
-            <option value="confirmed">Confirmada</option>
-            <option value="in_progress">Em andamento</option>
-            <option value="completed">Concluída</option>
-            <option value="cancelled">Cancelada</option>
-            <option value="archived">Arquivadas</option>
-          </select>
-          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Nova Viagem"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4">
         {list.isError && (
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

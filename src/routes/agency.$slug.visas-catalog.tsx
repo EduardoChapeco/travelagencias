@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
   Field,
@@ -66,53 +67,37 @@ function VisasCatalogPage() {
       <ConfirmDialog />
 
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Novo Catálogo
-          </button>
-        </div>
+        <ModuleToolbar
+          title="Requisitos de Viagem"
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Vistos", value: "visa" },
+            { label: "Taxas", value: "fee" },
+            { label: "Saúde", value: "health" },
+            { label: "Seguro", value: "insurance" },
+            { label: "Outros", value: "other" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+          actions={
+            <Link
+              to="/agency/$slug/visas"
+              params={{ slug }}
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-[11px] font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+            >
+              <ArrowLeft className="w-3 h-3" /> Voltar
+            </Link>
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Link
-            to="/agency/$slug/visas"
-            params={{ slug }}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Voltar
-          </Link>
-          <div className="h-4 w-px bg-border/80 shrink-0" />
-          <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
-            {[
-              { id: "all", label: "Todos" },
-              { id: "visa", label: "Vistos" },
-              { id: "fee", label: "Taxas" },
-              { id: "health", label: "Saúde" },
-              { id: "insurance", label: "Seguro" },
-              { id: "other", label: "Outros" },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={cn(
-                  "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer shrink-0",
-                  activeTab === tab.id
-                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                    : "text-white/60 hover:text-white"
-                )}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <ModuleActionButton
+        label="Novo Catálogo"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (
             <div

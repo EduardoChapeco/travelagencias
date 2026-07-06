@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import {
   StatusBadge,
@@ -568,126 +569,71 @@ Texto: "${aiText}"`;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* Top Bar / Header Contextual Unificado */}
-      <div className="flex flex-col md:flex-row gap-2 md:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
-          <button
-            onClick={() => {
-              setActiveTab("quotes");
-              setSearchQuery("");
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "quotes"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Cotações Ativas
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("knowledge");
-              setSearchQuery("");
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "knowledge"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Cérebro Global &amp; RAG
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("rules");
-              setSearchQuery("");
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === "rules"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            <Zap className="h-3.5 w-3.5" />
-            Regras &amp; IA
-            {ruleCandidates.filter((c: any) => c.status === "pending").length > 0 && (
-              <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning/20 px-1 text-[9px] font-bold text-warning">
-                {ruleCandidates.filter((c: any) => c.status === "pending").length}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("promotions");
-              setSearchQuery("");
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === "promotions"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            <Bell className="h-3.5 w-3.5" />
-            Monitor de Promoções
-            {promotionCandidates.filter((c: any) => c.status === "new").length > 0 && (
-              <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-success/20 px-1 text-[9px] font-bold text-success">
-                {promotionCandidates.filter((c: any) => c.status === "new").length}
-              </span>
-            )}
-          </button>
-        </div>
+      <HeaderPortal>
+        <ModuleToolbar
+          title="Cotações"
+          search={{
+            value: searchQuery,
+            onChange: setSearchQuery,
+            placeholder: "Buscar...",
+          }}
+          filters={[
+            { label: "Ativas", value: "quotes" },
+            { label: "Cérebro & RAG", value: "knowledge" },
+            { label: "Regras IA", value: "rules" },
+            { label: "Promoções", value: "promotions" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => {
+            setActiveTab(v as any);
+            setSearchQuery("");
+          }}
+          actions={
+            activeTab === "knowledge" ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handleFeedDefaultGuidelines}
+                  disabled={feedingDefaults}
+                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+                >
+                  {feedingDefaults ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Plus className="h-3 w-3" />
+                  )}
+                  Padrões
+                </button>
+                <button
+                  onClick={() => setNewKnowledgeOpen(true)}
+                  className="h-7 px-2.5 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer text-[11px] font-semibold"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  Alimentar Diretriz
+                </button>
+              </div>
+            ) : undefined
+          }
+        />
+      </HeaderPortal>
 
-        <div className="flex items-center gap-2.5 w-full md:w-auto justify-end">
-          <div className="relative w-full md:w-auto">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              className="w-full md:w-[180px] h-8 pl-8 pr-3 rounded bg-[var(--surface-alt)] border border-border/80 text-xs outline-none focus:ring-1 focus:ring-brand"
-              placeholder="Buscar..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+      {activeTab === "quotes" && (
+        <ModuleActionButton
+          label="Nova Cotação"
+          icon={<Plus className="h-3.5 w-3.5" />}
+          onClick={() => setNewOpen(true)}
+        />
+      )}
 
-          {activeTab === "quotes" && (
-            <PrimaryButton onClick={() => setNewOpen(true)} className="h-8 gap-1.5 text-xs px-3">
-              <Plus className="h-3.5 w-3.5" />
-              Nova Cotação VibeTour
-            </PrimaryButton>
-          )}
-          {activeTab === "knowledge" && (
-            <div className="flex gap-2">
-              <GhostButton
-                onClick={handleFeedDefaultGuidelines}
-                disabled={feedingDefaults}
-                className="h-8 gap-1.5 border border-border text-xs px-2.5"
-              >
-                {feedingDefaults ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Plus className="h-3.5 w-3.5" />
-                )}
-                Carregar Regras Padrão
-              </GhostButton>
-              <PrimaryButton
-                onClick={() => setNewKnowledgeOpen(true)}
-                className="h-8 gap-1.5 text-xs px-3"
-              >
-                <Sparkles className="h-3.5 w-3.5" />
-                Auto-Alimentar Diretriz (IA)
-              </PrimaryButton>
-            </div>
-          )}
-          {activeTab === "promotions" && (
-            <PrimaryButton onClick={() => setWatcherOpen(true)} className="h-8 gap-1.5 text-xs px-3">
-              <Bell className="h-3.5 w-3.5" />
-              Novo Alerta de Promoção
-            </PrimaryButton>
-          )}
-        </div>
-      </div>
+      {activeTab === "promotions" && (
+        <ModuleActionButton
+          label="Novo Alerta"
+          icon={<Bell className="h-3.5 w-3.5" />}
+          onClick={() => setWatcherOpen(true)}
+        />
+      )}
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4">
         {activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">

@@ -61,8 +61,8 @@ export function CrmKanbanBoard({
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
         >
-          <div className="flex-1 overflow-x-auto overflow-y-hidden p-3 no-scrollbar cursor-grab active:cursor-grabbing bg-transparent">
-            <div className="flex h-full min-w-max gap-3.5">
+          <div className="flex-1 overflow-x-auto overflow-y-hidden px-4 lg:pl-[64px] lg:pr-6 py-4 no-scrollbar cursor-grab active:cursor-grabbing bg-transparent">
+            <div className="flex h-full min-w-max gap-3.5 pb-16">
               {stages.map((stage) => {
                 const items = stagesById[stage.id] ?? [];
                 return (

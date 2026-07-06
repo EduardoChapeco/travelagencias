@@ -30,6 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -298,26 +299,53 @@ function SuppliersPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-xs font-semibold cursor-pointer"
-            title="Novo Fornecedor"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Novo Fornecedor</span>
-          </PrimaryButton>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Fornecedores"
+          search={{
+            value: search,
+            onChange: setSearch,
+            placeholder: "Buscar fornecedor, cidade...",
+          }}
+          filters={[
+            { label: "Todos", value: "all" },
+            { label: "Operadora", value: "operator" },
+            { label: "Hotel", value: "hotel" },
+            { label: "Aéreo", value: "flight" },
+            { label: "Transfer", value: "transfer" },
+            { label: "Seguro", value: "insurance" },
+            { label: "Visto", value: "visa" },
+            { label: "Outros", value: "other" },
+          ]}
+          activeFilter={kindFilter}
+          onFilterChange={(v) => setKindFilter(v as any)}
+          actions={
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+                className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+                title={viewMode === "grid" ? "Ver em Lista" : "Ver em Grid"}
+              >
+                {viewMode === "grid" ? <List className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
+              </button>
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
+
+      <ModuleActionButton
+        label="Novo Fornecedor"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
       <div className="flex flex-1 overflow-hidden">
         {/* ── Sidebar de filtros ── */}
@@ -379,74 +407,8 @@ function SuppliersPage() {
 
         {/* ── Conteúdo principal ── */}
         <div className="flex flex-1 flex-col overflow-hidden bg-transparent">
-          {/* Toolbar */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar fornecedor, cidade, país..."
-                className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-
-            {/* Mobile filter dropdown */}
-            <div className="relative lg:hidden w-full sm:w-44">
-              <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-              <select
-                value={kindFilter}
-                onChange={(e) => setKindFilter(e.target.value)}
-                className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground"
-              >
-                <option value="all">Todas Categorias</option>
-                <option value="operator">Operadora GDS</option>
-                <option value="hotel">Hotel / Hospedagem</option>
-                <option value="flight">Aéreo / Cia Aérea</option>
-                <option value="transfer">Receptivo / Transfer</option>
-                <option value="insurance">Seguro Viagem</option>
-                <option value="visa">Assessoria Consular</option>
-                <option value="other">Outros</option>
-              </select>
-              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            </div>
-
-            {/* View toggle */}
-            <div className="flex items-center gap-1 ml-auto">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors cursor-pointer",
-                  viewMode === "grid"
-                    ? "border-brand bg-brand/10 text-brand"
-                    : "border-border bg-surface text-muted-foreground hover:bg-surface-alt",
-                )}
-                title="Grid"
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-colors cursor-pointer",
-                  viewMode === "list"
-                    ? "border-brand bg-brand/10 text-brand"
-                    : "border-border bg-surface text-muted-foreground hover:bg-surface-alt",
-                )}
-                title="Lista"
-              >
-                <List className="h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            <div className="text-xs text-muted-foreground shrink-0">
-              {filtered.length} {filtered.length === 1 ? "parceiro" : "parceiros"}
-            </div>
-          </div>
-
           {/* Main list/grid */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
             {q.isError && (
               <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
                 <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

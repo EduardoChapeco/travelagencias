@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/financial/operators")({
   head: ({ context }: any) => ({ meta: [{ title: `Faturamento Operadoras · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -145,53 +147,23 @@ function OperatorsFinancial() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          {/* Espaço contextual de topo */}
-        </div>
+        <ModuleToolbar
+          title="Faturamento Operadoras"
+          search={{
+            value: search,
+            onChange: setSearch,
+            placeholder: "Buscar por viagem ou destino...",
+          }}
+          filters={[
+            { label: `Lançamentos (${records.length})`, value: "records" },
+            { label: `Parcelas (${installments.length})`, value: "installments" },
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+        />
       </HeaderPortal>
 
-      {/* ── Barra superior de busca e abas integrada ── */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-        {/* Tab Toggle (pills circulares) */}
-        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
-          <button
-            onClick={() => setActiveTab("records")}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "records"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Lançamentos ({records.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("installments")}
-            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "installments"
-                ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                : "text-white/60 hover:text-white"
-            }`}
-          >
-            Parcelas ({installments.length})
-          </button>
-        </div>
-
-        {/* Campo de Busca */}
-        <div className="relative w-full sm:w-64">
-          <span className="absolute inset-y-0 left-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-            <Search className="h-3.5 w-3.5 text-muted-foreground/60" />
-          </span>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por viagem ou destino..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground/60"
-          />
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6">
         {/* ── Header descritivo ── */}
         <div className="rounded-[24px] border border-border bg-surface p-5 space-y-2">
           <div className="flex items-center gap-2">

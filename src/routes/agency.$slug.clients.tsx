@@ -1,20 +1,19 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, queryOptions, useMutation } from "@tanstack/react-query";
-import { Plus, Search, Settings2, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Settings2, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   Field,
   Input,
   Select,
   Textarea,
-  PrimaryButton,
-  GhostButton,
   Sheet,
   fmtDate,
 } from "@/components/ui/form";
@@ -213,61 +212,39 @@ function ClientsPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowDeleted(!showDeleted)}
-            className={`flex h-8 items-center justify-center gap-1.5 rounded-full border px-2 sm:px-3 text-xs font-semibold transition-all cursor-pointer ${
-              showDeleted
-                ? "bg-danger/10 border-danger text-danger hover:bg-danger/20"
-                : "bg-surface border-border text-muted-foreground hover:text-foreground"
-            }`}
-            title={showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
-          >
-            {showDeleted ? (
-              <ArrowLeft className="h-3.5 w-3.5" />
-            ) : (
-              <Trash2 className="h-3.5 w-3.5" />
-            )}
-            <span className="hidden sm:inline">
-              {showDeleted ? "Sair da Lixeira" : "Ver Lixeira"}
-            </span>
-          </button>
-          <PrimaryButton
-            onClick={() => setNewOpen(true)}
-            className="flex h-8 items-center justify-center gap-1.5 px-2 sm:px-3 text-xs font-semibold cursor-pointer"
-            title="Novo cliente"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Novo cliente</span>
-          </PrimaryButton>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Clientes"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Clientes"
+          search={{
+            value: q,
+            onChange: setQ,
+            placeholder: "Buscar por nome, email, telefone...",
+          }}
+          filters={[
+            { label: showDeleted ? "← Ativa" : "Ativos", value: showDeleted ? "active" : "active" },
+          ]}
+          activeFilter="active"
+          onFilterChange={() => setShowDeleted(!showDeleted)}
+          actions={
+            isAgencyAdmin ? (
+              <button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Administrar Clientes"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </button>
+            ) : undefined
+          }
+        />
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar por nome, email, telefone ou documento..."
-            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground"
-          />
-        </div>
-        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
-          {list.data?.count ?? 0} clientes
-        </span>
-      </div>
+      <ModuleActionButton
+        label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
+        icon={showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+        onClick={() => showDeleted ? setShowDeleted(false) : setNewOpen(true)}
+      />
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4">
         {list.isLoading && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-12 w-full" />

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { exportBoardingListXlsx } from "@/lib/exportRoomingList";
 import {
@@ -238,78 +239,49 @@ function BoardingKanbanPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-transparent">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center border border-border rounded-full p-0.5 bg-surface-alt">
-            <button
-              onClick={() => setViewMode("kanban")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                viewMode === "kanban"
-                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                  : "text-white/60 hover:text-white"
-              }`}
-              title="Visualização em Quadro (Kanban)"
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Kanban</span>
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                viewMode === "list"
-                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                  : "text-white/60 hover:text-white"
-              }`}
-              title="Visualização em Lista"
-            >
-              <List className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Lista</span>
-            </button>
-            <button
-              onClick={() => setViewMode("calendar")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
-                viewMode === "calendar"
-                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                  : "text-white/60 hover:text-white"
-              }`}
-              title="Visualização em Calendário"
-            >
-              <CalendarIcon className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Calendário</span>
-            </button>
-          </div>
-
-          <PrimaryButton
-            onClick={() => setOpen(true)}
-            className="gap-1.5 text-xs font-semibold h-8 rounded-full animate-in fade-in duration-200"
-          >
-            <Plus className="h-3.5 w-3.5" /> Cadastrar Localizador
-          </PrimaryButton>
-          {isAgencyAdmin && (
-            <button
-              onClick={() => setAdminPanelOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Embarques"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-          {(localCards?.length ?? 0) > 0 && (
-            <button
-              onClick={handleExportExcel}
-              disabled={exporting}
-              className="flex h-8 items-center gap-1.5 px-3 rounded-full border border-border bg-surface text-foreground text-xs font-semibold hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Exportar Lista de Embarque (.xlsx)"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">
-                {exporting ? "Exportando..." : "Exportar Excel"}
-              </span>
-            </button>
-          )}
-        </div>
+        <ModuleToolbar
+          title="Embarques"
+          filters={[
+            { label: "Kanban", value: "kanban" },
+            { label: "Lista", value: "list" },
+            { label: "Calendário", value: "calendar" },
+          ]}
+          activeFilter={viewMode}
+          onFilterChange={(v) => setViewMode(v as "kanban" | "list" | "calendar")}
+          actions={
+            <div className="flex items-center gap-1.5">
+              {(localCards?.length ?? 0) > 0 && (
+                <button
+                  onClick={handleExportExcel}
+                  disabled={exporting}
+                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold disabled:opacity-50"
+                  title="Exportar Lista de Embarque (.xlsx)"
+                >
+                  <Download className="h-3 w-3" />
+                  {exporting ? "..." : "Excel"}
+                </button>
+              )}
+              {isAgencyAdmin && (
+                <button
+                  onClick={() => setAdminPanelOpen(true)}
+                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  title="Administrar Embarques"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
       </HeaderPortal>
+
+      <ModuleActionButton
+        label="Cadastrar Localizador"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setOpen(true)}
+      />
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">

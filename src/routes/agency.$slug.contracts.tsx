@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -92,77 +93,53 @@ function ContractsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
-        {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 gap-2 no-margin-bottom">
-          <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap h-auto bg-transparent border-none">
-            <TabsTrigger
-              value="list"
-              className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
-            >
-              Lista de Contratos
-            </TabsTrigger>
-            {isAgencyAdmin && (
-              <>
-                <TabsTrigger
-                  value="clauses"
-                  className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
-                >
-                  Biblioteca de Cláusulas
-                </TabsTrigger>
-                <TabsTrigger
-                  value="admin"
-                  className="h-7 px-3 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white transition-all cursor-pointer border border-transparent"
-                >
-                  Configurações
-                </TabsTrigger>
-              </>
-            )}
-          </TabsList>
-        </div>
+      <HeaderPortal>
+        <ModuleToolbar
+          title="Contratos"
+          search={activeTab === "list" ? {
+            value: search,
+            onChange: (v) => {
+              setSearch(v);
+              setPage(1);
+            },
+            placeholder: "Buscar por pacote...",
+          } : undefined}
+          filters={[
+            { label: "Lista de Contratos", value: "list" },
+            ...(isAgencyAdmin ? [
+              { label: "Biblioteca de Cláusulas", value: "clauses" },
+              { label: "Configurações", value: "admin" },
+            ] : []),
+          ]}
+          activeFilter={activeTab}
+          onFilterChange={(v) => setActiveTab(v as any)}
+          actions={
+            activeTab === "list" ? (
+              <Select
+                value={statusFilter}
+                onChange={(e: any) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="h-7 text-[10px] bg-white/5 border-white/10 w-32 rounded-full text-white/90 outline-none px-2"
+              >
+                <option value="all">Todos Status</option>
+                <option value="draft">Rascunho</option>
+                <option value="sent">Enviado</option>
+                <option value="viewed">Visualizado</option>
+                <option value="signed">Assinado</option>
+                <option value="cancelled">Cancelado</option>
+              </Select>
+            ) : undefined
+          }
+        />
+      </HeaderPortal>
 
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
         {activeTab === "list" && (
           <>
-            <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Buscar por pacote..."
-                  className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-3 text-xs outline-none focus:border-brand text-foreground placeholder:text-muted-foreground"
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setPage(1);
-                  }}
-                />
-              </div>
-              <div className="relative w-full sm:w-44">
-                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value);
-                    setPage(1);
-                  }}
-                  className="h-8 w-full appearance-none rounded-full border border-border bg-surface pl-8 pr-8 text-xs outline-none focus:border-brand text-foreground text-[11px]"
-                >
-                  <option value="all">Todos os Status</option>
-                  <option value="draft">Rascunho</option>
-                  <option value="sent">Enviado</option>
-                  <option value="viewed">Visualizado</option>
-                  <option value="signed">Assinado</option>
-                  <option value="cancelled">Cancelado</option>
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-              </div>
-              <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 pl-1 sm:pl-2">
-                {q.data?.count ?? 0} contratos
-              </span>
-            </div>
-
-            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4">
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
               {q.isError && (
@@ -322,14 +299,14 @@ function ContractsPage() {
 
         {/* ── Visualização de Biblioteca de Cláusulas Contratuais (Inline) ───────────── */}
         {activeTab === "clauses" && agency && (
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
             <ContractClauseLibrary agencyId={agency.id} isInline={true} />
           </div>
         )}
-
+ 
         {/* ── Visualização do Painel de Administrador (Inline) ───────────────────────── */}
         {activeTab === "admin" && agency && (
-          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
             <ModuleAdminPanel
               moduleKey="contracts"
               moduleName="Contratos"

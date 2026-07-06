@@ -6,6 +6,8 @@ import { useState } from "react";
 import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
 import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/financial/groups")({
   head: ({ context }: any) => ({ meta: [{ title: `Financeiro de Grupos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -141,23 +143,11 @@ export function GroupFinancialsDashboard() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
-      {/* Title block */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-5 shadow-xs">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Financeiro do Hub de Grupos
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5 font-medium">
-            Visão consolidada de rentabilidade, poupanças de frotas e investimentos em marketing das
-            viagens coletivas.
-          </p>
-        </div>
-        <div className="text-[10px] text-muted-foreground font-bold uppercase bg-surface-alt px-2.5 py-1 rounded border border-border">
-          {kpisQ.isLoading ? "Carregando..." : `${activeKpis.length} Grupos Ativos`}
-        </div>
-      </div>
+      <HeaderPortal>
+        <ModuleToolbar title="Financeiro de Grupos" />
+      </HeaderPortal>
 
+      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Panel */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="bg-surface border border-border rounded-[24px] p-4">
