@@ -243,7 +243,7 @@ function CalendarPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <TaskDetailDrawer
         task={selectedTask}
         open={!!selectedTask}
@@ -276,25 +276,25 @@ function CalendarPage() {
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         {/* Month Navigation */}
-        <div className="flex items-center justify-between sm:justify-start gap-1 w-full sm:w-auto">
+        <div className="flex items-center justify-between sm:justify-start gap-1.5 w-full sm:w-auto">
           <button
             onClick={handlePrevMonth}
-            className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+            className="p-1.5 border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
           >
             <ChevronLeft className="h-3 w-3" />
           </button>
           <button
             onClick={handleToday}
-            className="h-7 px-2 border border-border/80 hover:border-brand/40 bg-surface text-[10px] font-bold rounded transition-colors cursor-pointer"
+            className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 text-[10px] font-bold rounded-full transition-colors cursor-pointer text-white/90"
           >
             Hoje
           </button>
-          <span className="text-[11px] font-bold min-w-[90px] text-center text-foreground uppercase tracking-wide px-1">
+          <span className="text-[11px] font-bold min-w-[90px] text-center text-white/90 uppercase tracking-wide px-1">
             {MONTHS[month].substring(0, 3)} {year}
           </span>
           <button
             onClick={handleNextMonth}
-            className="p-1 border border-border/80 hover:border-brand/40 bg-surface rounded transition-colors cursor-pointer"
+            className="p-1.5 border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
           >
             <ChevronRight className="h-3 w-3" />
           </button>
@@ -305,7 +305,7 @@ function CalendarPage() {
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="h-7 text-[10px] bg-background border-border/80 w-full sm:w-28 rounded"
+            className="h-7 text-[10px] bg-white/5 border-white/10 w-full sm:w-28 rounded-full text-white/90 outline-none px-2"
           >
             <option value="all">Tipos</option>
             <option value="call">📞 Telefone</option>
@@ -318,7 +318,7 @@ function CalendarPage() {
             <Select
               value={filterUser}
               onChange={(e) => setFilterUser(e.target.value)}
-              className="h-7 text-[10px] bg-background border-border/80 w-full sm:w-32 rounded"
+              className="h-7 text-[10px] bg-white/5 border-white/10 w-full sm:w-32 rounded-full text-white/90 outline-none px-2"
             >
               <option value="all">Agentes</option>
               {usersQ.data.map((u: any) => (
@@ -331,14 +331,14 @@ function CalendarPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-background p-2">
+      <div className="flex-1 overflow-auto px-4 md:px-6 py-4 flex flex-col">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
-              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertCircle className="h-4 w-4 text-red-650" />
             </div>
             <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Agenda</h3>
-            <p className="text-xs text-red-600 mt-1">
+            <p className="text-xs text-red-650 mt-1">
               {meetingsQ.isError && meetingsQ.error instanceof Error ? meetingsQ.error.message : usersQ.isError && usersQ.error instanceof Error ? usersQ.error.message : leadsQ.isError && leadsQ.error instanceof Error ? leadsQ.error.message : "Erro desconhecido."}
             </p>
           </div>
@@ -356,7 +356,7 @@ function CalendarPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-border/50 bg-border/20">
+          <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-white/5 bg-transparent">
             {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
               const dateMeetings = getMeetingsForDate(date, filteredMeetings);
               const dateTasks = getTasksForDate(date, tasksQ.data || []);
@@ -366,9 +366,9 @@ function CalendarPage() {
                 <div
                   key={idx}
                   onClick={() => handleCellClick(date)}
-                  className={`min-h-[100px] lg:min-h-[120px] bg-surface p-2 transition-colors hover:bg-surface-alt/15 relative flex flex-col justify-between cursor-pointer group ${
-                    !isCurrentMonth ? "opacity-35" : ""
-                  } ${today ? "bg-brand/[0.02]" : ""}`}
+                  className={`min-h-[100px] lg:min-h-[120px] bg-transparent p-2 transition-all duration-200 hover:bg-white/[0.04] relative flex flex-col justify-between cursor-pointer group ${
+                    !isCurrentMonth ? "opacity-30" : ""
+                  } ${today ? "bg-white/[0.03]" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <span

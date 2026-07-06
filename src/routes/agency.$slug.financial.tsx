@@ -40,11 +40,11 @@ function FinancialLayout() {
   ] as const;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
         <Tabs defaultValue="cash" className="w-auto">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
+          <TabsList className="h-8 bg-white/5 border border-white/5 rounded-full p-0.5 flex-wrap gap-0">
             {tabs.map((t) => {
               const active = activeSubTab === "route" && pathname.endsWith(t.to.split("/").pop()!);
               return (
@@ -53,10 +53,10 @@ function FinancialLayout() {
                   to={t.to}
                   params={{ slug } as any}
                   onClick={() => setActiveSubTab("route")}
-                  className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all ${
+                  className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
                     active
-                      ? "bg-[var(--surface)] text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   {t.label}
@@ -68,8 +68,8 @@ function FinancialLayout() {
                 onClick={() => setActiveSubTab("settings")}
                 className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
                   activeSubTab === "settings"
-                    ? "bg-[var(--surface)] text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                    : "text-white/60 hover:text-white"
                 }`}
               >
                 Configurações
@@ -85,7 +85,7 @@ function FinancialLayout() {
         </div>
       ) : (
         agency && (
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
             <ModuleAdminPanel
               moduleKey="financial"
               moduleName="Financeiro"

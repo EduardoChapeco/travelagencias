@@ -222,7 +222,7 @@ function VouchersPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {isAgencyAdmin && activeTab === "vouchers" && (
@@ -237,47 +237,49 @@ function VouchersPage() {
         </div>
       </HeaderPortal>
 
-      {/* Tabs list */}
-      <div className="flex border-b border-border bg-surface shrink-0 px-4 md:px-6">
-        <button
-          onClick={() => {
-            setActiveTab("vouchers");
-            if (typeof window !== "undefined") {
-              const url = new URL(window.location.href);
-              url.searchParams.set("tab", "vouchers");
-              window.history.replaceState({}, "", url.toString());
-            }
-          }}
-          className={cn(
-            "px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer",
-            activeTab === "vouchers"
-              ? "border-brand text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground",
-          )}
-        >
-          🎫 Vouchers Emitidos
-        </button>
-        <button
-          onClick={() => {
-            setActiveTab("flight_audit");
-            if (typeof window !== "undefined") {
-              const url = new URL(window.location.href);
-              url.searchParams.set("tab", "flight_audit");
-              window.history.replaceState({}, "", url.toString());
-            }
-          }}
-          className={cn(
-            "px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5",
-            activeTab === "flight_audit"
-              ? "border-brand text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground",
-          )}
-        >
-          ✈️ Conferência de Voos
-          <span className="bg-brand/10 text-brand text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
-            Fila 60 dias
-          </span>
-        </button>
+      {/* Tabs list — pill format */}
+      <div className="flex border-b border-border bg-surface/50 shrink-0 px-4 md:px-6 py-3">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0">
+          <button
+            onClick={() => {
+              setActiveTab("vouchers");
+              if (typeof window !== "undefined") {
+                const url = new URL(window.location.href);
+                url.searchParams.set("tab", "vouchers");
+                window.history.replaceState({}, "", url.toString());
+              }
+            }}
+            className={cn(
+              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer",
+              activeTab === "vouchers"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white",
+            )}
+          >
+            🎫 Vouchers Emitidos
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("flight_audit");
+              if (typeof window !== "undefined") {
+                const url = new URL(window.location.href);
+                url.searchParams.set("tab", "flight_audit");
+                window.history.replaceState({}, "", url.toString());
+              }
+            }}
+            className={cn(
+              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5",
+              activeTab === "flight_audit"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white",
+            )}
+          >
+            ✈️ Conferência de Voos
+            <span className="bg-brand/15 text-brand text-[9px] px-1.5 py-0.5 rounded-full font-mono font-bold">
+              Fila 60 dias
+            </span>
+          </button>
+        </div>
       </div>
 
       {activeTab === "vouchers" ? (
@@ -301,7 +303,7 @@ function VouchersPage() {
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col gap-4">
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 flex flex-col gap-4">
             {vouchersQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
