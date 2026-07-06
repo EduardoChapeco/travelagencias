@@ -486,6 +486,8 @@ export function AppSidebar({
     to: i.to !== undefined ? `${base}${i.to ? `/${i.to}` : ""}` : undefined,
   }));
 
+  const isHome = pathname === base;
+
   return (
     <>
       <div className="md:hidden">
@@ -516,10 +518,11 @@ export function AppSidebar({
       <FloatingDock 
         items={visibleHubs} 
         contextItems={contextItems}
+        orientation={isHome ? "horizontal" : "vertical"}
         footer={
           <button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-surface-alt hover:text-foreground"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-surface-alt hover:text-foreground cursor-pointer"
             title="Sair da conta"
           >
             <LogOut className="h-5 w-5 shrink-0" strokeWidth={2} />

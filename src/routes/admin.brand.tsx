@@ -82,9 +82,20 @@ function Page() {
 
   async function onSubmit(data: BrandConfigFormData) {
     try {
-      await saveBrandingConfig(data);
+      // Map form fields to branding table payload fields
+      const payload = {
+        platform_name: data.product_name,
+        platform_short_name: data.product_name,
+        logo_url: data.logo_url,
+        favicon_url: data.favicon_url,
+        primary_color_token: data.primary_color,
+        support_email: data.support_email,
+        legal_entity_name: data.product_name + " S.A.",
+      };
+      await saveBrandingConfig(payload);
       toast.success("Marca global salva");
       qc.invalidateQueries({ queryKey: ["admin-brand-config"] });
+      qc.invalidateQueries({ queryKey: ["platform_branding"] });
     } catch (error: any) {
       toast.error(error.message);
     }

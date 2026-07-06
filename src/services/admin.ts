@@ -302,6 +302,35 @@ export async function saveBrandingConfig(data: any): Promise<void> {
       .insert({ key: "branding_config", value: data });
     if (error) throw error;
   }
+
+  // Synchronize to platform_branding table
+  const { data: currentRows, error: selectErr } = await supabase
+    .from("platform_branding" as any)
+    .select("id")
+    .limit(1);
+
+  const payload = {
+    platform_name: data.platform_name || "Turis",
+    platform_short_name: data.platform_short_name || "Turis OS",
+    logo_url: data.logo_url || "/logo.svg",
+    favicon_url: data.favicon_url || "/favicon.ico",
+    primary_color_token: data.primary_color_token || "#3D6FF2",
+    support_email: data.support_email || "suporte@turis.com",
+    legal_entity_name: data.legal_entity_name || "Turis Tecnologia Ltda",
+  };
+
+  if (!selectErr && currentRows && currentRows.length > 0) {
+    const { error: updateErr } = await supabase
+      .from("platform_branding" as any)
+      .update(payload)
+      .eq("id", (currentRows as any)[0].id);
+    if (updateErr) throw updateErr;
+  } else {
+    const { error: insertErr } = await supabase
+      .from("platform_branding" as any)
+      .insert(payload);
+    if (insertErr) throw insertErr;
+  }
 }
 
 // ─── Administrative Overview & Listings ──────────────────────────────────────
