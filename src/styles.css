@@ -282,19 +282,31 @@
    */
   .os-workspace {
     background: transparent !important;
-  }
-
-  /* Redefinição dos tokens CSS para o contexto OS */
-  .os-workspace {
-    --foreground: var(--os-text);
-    --card-foreground: var(--os-text);
-    --muted-foreground: var(--os-text-muted);
-    --border: var(--os-glass-border);
+    
+    /* Redefinimos todas as cores principais para um esquema claro sobre vidro escuro */
+    --background: transparent !important;
+    --foreground: rgba(255, 255, 255, 0.95) !important;
+    
+    --surface: rgba(15, 15, 22, 0.50);
+    --surface-alt: rgba(15, 15, 22, 0.65);
+    --card: rgba(15, 15, 22, 0.45);
+    --card-foreground: rgba(255, 255, 255, 0.95);
+    --popover: rgba(20, 20, 26, 0.95);
+    
+    --muted: rgba(255, 255, 255, 0.08);
+    --muted-foreground: rgba(255, 255, 255, 0.60) !important;
+    --muted-2: rgba(255, 255, 255, 0.40);
+    
+    --border: rgba(255, 255, 255, 0.12);
+    --border-strong: rgba(255, 255, 255, 0.22);
     --input: rgba(255, 255, 255, 0.10);
-    --muted: rgba(255, 255, 255, 0.07);
+    --ring: rgba(255, 255, 255, 0.30);
+    
     --accent: rgba(255, 255, 255, 0.12);
     --accent-foreground: rgba(255, 255, 255, 0.95);
     --accent-soft: rgba(255, 255, 255, 0.05);
+    
+    color: rgba(255, 255, 255, 0.95) !important;
   }
 
   /* bg-background e variantes → transparente */
@@ -303,18 +315,57 @@
     background: transparent !important;
   }
 
-  /* bg-card, bg-white, bg-surface → glass */
+  /* bg-card, bg-white, bg-surface, bg-secondary, bg-neutral → dark glass */
   .os-workspace .bg-card,
   .os-workspace .bg-white,
   .os-workspace .bg-secondary,
-  .os-workspace .bg-surface,
   .os-workspace .bg-surface-alt,
   .os-workspace [class*="bg-surface"],
-  .os-workspace [class*="bg-neutral"] {
-    background: var(--os-glass-bg) !important;
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border-color: var(--os-glass-border) !important;
+  .os-workspace [class*="bg-neutral"],
+  .os-workspace [class*="bg-card"],
+  .os-workspace [class*="bg-white"] {
+    background: rgba(15, 15, 22, 0.50) !important;
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* Interceptar cores escuras de texto do Tailwind dentro do workspace e torná-las claras e legíveis */
+  .os-workspace .text-zinc-950,
+  .os-workspace .text-zinc-900,
+  .os-workspace .text-zinc-800,
+  .os-workspace .text-zinc-700,
+  .os-workspace .text-zinc-600,
+  .os-workspace .text-gray-950,
+  .os-workspace .text-gray-900,
+  .os-workspace .text-gray-800,
+  .os-workspace .text-gray-700,
+  .os-workspace .text-gray-600,
+  .os-workspace .text-slate-950,
+  .os-workspace .text-slate-900,
+  .os-workspace .text-slate-800,
+  .os-workspace .text-slate-700,
+  .os-workspace .text-slate-600,
+  .os-workspace .text-neutral-950,
+  .os-workspace .text-neutral-900,
+  .os-workspace .text-neutral-800,
+  .os-workspace .text-neutral-700,
+  .os-workspace .text-neutral-600,
+  .os-workspace .text-black,
+  .os-workspace .text-foreground {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .os-workspace .text-zinc-500,
+  .os-workspace .text-zinc-400,
+  .os-workspace .text-gray-500,
+  .os-workspace .text-gray-400,
+  .os-workspace .text-slate-500,
+  .os-workspace .text-slate-400,
+  .os-workspace .text-neutral-500,
+  .os-workspace .text-neutral-400,
+  .os-workspace .text-muted-foreground {
+    color: rgba(255, 255, 255, 0.60) !important;
   }
 
   /* bg-muted → ultra leve */
@@ -323,18 +374,19 @@
     background: rgba(255, 255, 255, 0.06) !important;
   }
 
-  /* Inputs e textareas */
+  /* Inputs, textareas, selects */
   .os-workspace input:not([type="range"]),
   .os-workspace textarea,
+  .os-workspace select,
   .os-workspace [role="combobox"],
   .os-workspace [data-slot="input"] {
     background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    color: var(--os-text) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
   }
   .os-workspace input::placeholder,
   .os-workspace textarea::placeholder {
-    color: var(--os-text-muted) !important;
+    color: rgba(255, 255, 255, 0.45) !important;
   }
 
   /* Tabelas */
@@ -354,7 +406,7 @@
   /* Kanban columns */
   .os-workspace [data-kanban-col],
   .os-workspace .kanban-column {
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-color: rgba(255, 255, 255, 0.10) !important;
