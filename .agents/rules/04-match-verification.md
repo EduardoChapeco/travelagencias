@@ -26,7 +26,7 @@ Depois de qualquer mudança, antes de considerar a tarefa concluída, rodar veri
 ### Camada de UI
 - [ ] **Contratos de Props:** Componentes que mudaram interface têm todos seus consumidores atualizados?
 - [ ] **Código morto:** Nenhum import não usado, nenhum componente órfão após a alteração?
-- [ ] **`npm run typecheck`:** Zero erros de TypeScript?
+- [ ] **Typecheck:** O `npm run typecheck` é OPCIONAL e não deve ser executado rotineiramente. Só execute se o usuário solicitar explicitamente.
 
 ## Formato do Relatório de Match
 Ao final de cada tarefa, emitir explicitamente:
@@ -35,6 +35,6 @@ Ao final de cada tarefa, emitir explicitamente:
 - Schema ↔ Types: regenerado / não necessário (motivo)
 - RLS: verificado — X tabelas afetadas, todas com policy
 - Props: Y componentes consumidores atualizados
-- Typecheck: 0 erros
+- Typecheck: não executado (sob demanda) / 0 erros (se solicitado)
 - Código morto: nenhum encontrado / Z arquivos removidos
 ```

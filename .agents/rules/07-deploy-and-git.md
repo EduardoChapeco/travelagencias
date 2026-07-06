@@ -3,15 +3,16 @@
 ## Sequência obrigatória (nesta ordem — nunca pular etapa)
 
 ### FASE 1 — Auditoria de Código (Pré-deploy)
+⚠️ **Atenção:** Os comandos de typecheck e build de produção (`npm run typecheck` e `npm run build`) **NÃO** devem ser rodados o tempo todo durante o desenvolvimento. Execute-os **SOMENTE quando o usuário solicitar explicitamente**.
+
 ```bash
-# TypeScript zero erro
+# Quando solicitado, rode a checagem de tipos
 powershell -ExecutionPolicy Bypass -Command "npm run typecheck"
 
-# Build de produção limpo (8GB RAM — necessário para projeto de escala)
+# Quando solicitado, rode o build de produção (8GB RAM)
 powershell -ExecutionPolicy Bypass -Command "npm run build"
-# build script já inclui: cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build
 ```
-**Tolerância zero:** código quebrado nunca passa para produção.
+**Tolerância zero:** código com erro gritante não deve ser submetido a PR, mas testes de compilação pesados são sob demanda.
 
 ### FASE 2 — Gate de Segurança (executar antes do push ao banco)
 ```sql

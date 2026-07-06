@@ -99,7 +99,7 @@ export function AIFloatingWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-            className="w-[380px] sm:w-[400px] h-[540px] rounded-[28px] overflow-hidden glass dark:glass-dark border border-white/20 shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col backdrop-blur-3xl origin-bottom-left"
+            className="w-[380px] sm:w-[400px] h-[540px] rounded-[28px] overflow-hidden mac-glass-heavy shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col origin-bottom-left"
           >
             {/* Header / Top suggestions */}
             {aiActions && aiActions.length > 0 && (

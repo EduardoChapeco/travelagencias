@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useBrand } from "@/hooks/use-brand";
+import { useLayoutStore } from "@/hooks/use-layout-store";
 
 export function AppShell({
   title,
@@ -24,6 +25,7 @@ export function AppShell({
   actions?: ReactNode;
   children?: ReactNode;
 }) {
+  const { backgroundImage } = useLayoutStore();
   const { agency } = useAgency();
   const { data: brandInfo } = useBrand();
   const subQuery = useQuery({
@@ -39,7 +41,6 @@ export function AppShell({
     },
   });
 
-  const isPastDue = subQuery.data === "past_due";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [aiChatState, setAiChatState] = useState<"collapsed" | "input" | "split">("collapsed");
   const [aiInput, setAiInput] = useState("");
@@ -51,6 +52,8 @@ export function AppShell({
   const [dimOpacity, setDimOpacity] = useState(25);
   // Opacidade dos elementos glass (sidebar, dock, cards) — padrão 20%
   const [glassOpacity, setGlassOpacity] = useState(20);
+
+  const activeWallpaper = backgroundImage || wallpaper;
 
   const loadPreferences = async () => {
     try {
@@ -101,10 +104,9 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
 
-  const isFullPage = crumbs.length > 2;
-  const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+  const isPastDue = subQuery.data === "past_due";
   const isBuilder =
-    isVisualEditor ||
+    (/\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/")) ||
     pathname.includes("/proposals/new") ||
     (pathname.includes("/proposals/") && pathname.endsWith("/edit")) ||
     pathname.includes("/quotes/new") ||
@@ -122,11 +124,31 @@ export function AppShell({
     );
   }
 
+  if (isPastDue) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-zinc-950 text-white font-sans p-6 text-center">
+        <div className="max-w-md w-full mac-glass-heavy p-8 rounded-3xl border border-red-500/30 flex flex-col items-center">
+          <AlertTriangle className="w-16 h-16 text-red-500 mb-6" />
+          <h2 className="text-2xl font-bold tracking-tight mb-3">Assinatura Pendente</h2>
+          <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
+            Sua agência ({agency?.name}) está com pendências financeiras. 
+            Por favor, regularize a assinatura no portal do cliente para continuar usando o sistema.
+          </p>
+          <a 
+            href={`/agency/${agency?.slug}/settings/billing`}
+            className="w-full bg-white text-black font-semibold h-12 rounded-full flex items-center justify-center hover:bg-zinc-200 transition-colors"
+          >
+            Acessar Faturamento
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="flex h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
       style={{
-        // Expor opacidade do glass como CSS var global, usada nas classes glass-*
         "--os-glass-opacity": `${glassOpacity / 100}`,
       } as React.CSSProperties}
     >
@@ -134,7 +156,7 @@ export function AppShell({
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
         style={{ 
-          backgroundImage: `url('${wallpaper}')`,
+          backgroundImage: `url('${activeWallpaper}')`,
           filter: `blur(${blurIntensity}px)`
         }}
       >
